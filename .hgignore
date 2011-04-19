@@ -1,0 +1,9 @@
+syntax: glob
+MiniProfiler/bin/
+MiniProfiler/obj/
+SampleWeb/bin/
+SampleWeb/obj/
+*.suo
+*.user
+packages/*
+*.nupkg

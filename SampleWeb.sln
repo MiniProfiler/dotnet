@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler", "MiniProfiler\MiniProfiler.csproj", "{386222BD-6B6E-480F-A342-8DE1AB516E2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWeb", "SampleWeb\SampleWeb.csproj", "{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
+	ProjectSection(SolutionItems) = preProject
+		MiniProfiler.nuspec = MiniProfiler.nuspec
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{386222BD-6B6E-480F-A342-8DE1AB516E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{386222BD-6B6E-480F-A342-8DE1AB516E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{386222BD-6B6E-480F-A342-8DE1AB516E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{386222BD-6B6E-480F-A342-8DE1AB516E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
