@@ -7,3 +7,4 @@ SampleWeb/obj/
 *.user
 packages/*
 *.nupkg
+*.docstates
