@@ -31,13 +31,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.1.0.0.280\lib\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ProfiledDbCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\ProfiledDbConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\ProfiledDbDataReader.cs" />
+    <Compile Include="Data\ProfiledDbTransaction.cs" />
     <Compile Include="MiniProfiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlProfiler.cs" />
+    <Compile Include="SqlTiming.cs" />
+    <Compile Include="Timing.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

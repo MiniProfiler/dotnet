@@ -4,153 +4,327 @@ using System.Diagnostics;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Linq;
+using System.Runtime.Serialization;
+using ProtoBuf;
 
 namespace Profiling
 {
     /// <summary>
     /// A single MiniProfiler can be used to represent any number of steps/levels in a call-graph, via Step()
     /// </summary>
+    /// <remarks>Totally baller.</remarks>
+    [ProtoContract]
     public class MiniProfiler
     {
-        public class Timing : IDisposable
-        {
-            private string name;
-            public string Name { get { return name; } }
-            private readonly MiniProfiler parent;
-            private readonly long startTicks;
-            private long endTicks;
-            internal Timing(string name, MiniProfiler parent, int depth)
-            {
-                this.parent = parent;
-                startTicks = parent.EllapsedTicks;
-                this.depth = depth;
-                this.name = name;
-            }
-            public void AddData(string key, string value)
-            {
-                name += "; " + key + "=" + value;
-            }
 
-            private readonly int depth;
-            public int Depth { get { return depth; } }
-            public decimal Duration
+        /// <summary>
+        /// Identifies this Profiler so it may be stored/cached.
+        /// </summary>
+        [ProtoMember(1)]
+        public Guid Id { get; private set; }
+
+        /// <summary>
+        /// A display name for this profiling session.
+        /// </summary>
+        [ProtoMember(2)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// When this profiler was instantiated.
+        /// </summary>
+        [ProtoMember(3)]
+        public DateTime Started { get; private set; }
+
+        /// <summary>
+        /// Where this profiler was run.
+        /// </summary>
+        [ProtoMember(4)]
+        public string MachineName { get; private set; }
+
+        /// <summary>
+        /// Allows filtering of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
+        /// the steps are created with.
+        /// </summary>
+        [ProtoMember(5)]
+        public ProfileLevel Level { get; set; }
+
+
+        private Timing _root;
+        /// <summary>
+        /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
+        /// All other <see cref="Timing"/>s will be children of this one.
+        /// </summary>
+        [ProtoMember(6)]
+        public Timing Root
+        {
+            get { return _root; }
+            set
             {
-                get
+                _root = value;
+
+                // when being deserialized, we need to go through and set all child timings' parents
+                if (_root.HasChildren)
                 {
-                    long z = (10000 * (endTicks - startTicks));
-                    decimal msTimesTen = (int)(z / Stopwatch.Frequency);
-                    return msTimesTen / 10;
+                    var timings = new Stack<Timing>();
+
+                    timings.Push(_root);
+
+                    while (timings.Count > 0)
+                    {
+                        var timing = timings.Pop();
+
+                        if (timing.HasChildren)
+                        {
+                            var children = timing.Children;
+
+                            for (int i = children.Count - 1; i >= 0; i--)
+                            {
+                                children[i].Parent = timing;
+                                timings.Push(children[i]);
+                            }
+                        }
+                    }
                 }
             }
-            void IDisposable.Dispose()
-            {
-                End();
-            }
-            public bool HasChildren { get { return children != null && children.Count > 0; } }
-            private List<Timing> children;
-            public List<Timing> Children { get { return (children ?? (children = new List<Timing>())); } }
-            internal void AddChild(Timing timing)
-            {
-                Children.Add(timing);
-            }
-            public void End()
-            {
-                if (endTicks == 0L) endTicks = parent.EllapsedTicks;
-                parent.EndTiming(this);
-            }
-
-
         }
 
-        private readonly Stopwatch watch;
-        private readonly List<Timing> stack; // but not really a stack as we need more flexibility...
-        private readonly Timing root;
-        public Timing Root { get { return root; } }
-        public string Path { get { return root.Name; } }
-        public MiniProfiler(string path)
+        /// <summary>
+        /// Contains information about queries executed during this profiling session.
+        /// </summary>
+        internal SqlProfiler SqlProfiler { get; private set; }
+
+        /// <summary>
+        /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
+        /// their starting time.
+        /// </summary>
+        private readonly Stopwatch _watch;
+
+        /// <summary>
+        /// Milliseconds, to one decimal place, that this MiniProfiler ran.
+        /// </summary>
+        public double DurationMilliseconds
         {
-            watch = Stopwatch.StartNew();
-            root = new Timing(path, this, 0);
-            stack = new List<Timing>();
-            stack.Add(root);
+            get { return _root.DurationMilliseconds ?? GetRoundedMilliseconds(ElapsedTicks); }
         }
-        private long EllapsedTicks { get { return watch.ElapsedTicks; } }
-        private void EndTiming(Timing timing)
+
+        /// <summary>
+        /// Milliseconds, to one decimal place, that this MiniProfiler was executing sql.
+        /// </summary>
+        public double DurationMillisecondsInSql
         {
-            int index = stack.LastIndexOf(timing);
-            if (index >= 0) stack.RemoveRange(index, stack.Count - index);
+            get { return GetTimingHierarchy().Sum(t => t.HasSqlTimings ? t.SqlTimings.Sum(s => s.DurationMilliseconds) : 0); }
         }
-        public void EndAllImpl()
+
+        /// <summary>
+        /// Returns true when we have profiled queries.
+        /// </summary>
+        public bool HasSqlTimings
         {
-            Kill();
-            if (stack.Count > 0)
+            get
             {
-                var clone = stack.ToArray();
-                stack.Clear();
-                for (int i = 0; i < clone.Length; i++) clone[i].End();
+                foreach (var t in GetTimingHierarchy())
+                {
+                    if (t.HasSqlTimings)
+                        return true;
+                }
+                return false;
             }
         }
-        private Timing Head { get { return stack.Count == 0 ? root : stack[stack.Count - 1]; } }
-        public IDisposable StepImpl(string name)
+
+        /// <summary>
+        /// Ticks since this MiniProfiler was started.
+        /// </summary>
+        internal long ElapsedTicks { get { return _watch.ElapsedTicks; } }
+
+        /// <summary>
+        /// Points to the currently executing Timing.
+        /// </summary>
+        internal Timing Head { get; set; }
+
+
+        public MiniProfiler(string path, ProfileLevel level = ProfileLevel.Info)
         {
-            var newTiming = new Timing(name, this, Head.Depth + 1);
-            Head.AddChild(newTiming);
-            stack.Add(newTiming);
-            return newTiming;
+            Started = DateTime.UtcNow;
+            _watch = Stopwatch.StartNew();
+            Root = new Timing(this, parent: null, name: path);
+            Id = Guid.NewGuid();
+            Level = level;
+            SqlProfiler = new SqlProfiler(this);
+            MachineName = Environment.MachineName;
+        }
+
+        [Obsolete("Used for serialization")]
+        public MiniProfiler()
+        {
+        }
+
+
+        public IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
+        {
+            if (level > this.Level) return null;
+
+            return new Timing(this, Head, name);
+        }
+
+        public void StopImpl()
+        {
+            _watch.Stop();
+            foreach (var timing in GetTimingHierarchy()) timing.Stop();
         }
 
         internal void AddDataImpl(string key, string value)
         {
-            Head.AddData(key, value);
+            Head.AddKeyValue(key, value);
         }
 
-        internal void Kill()
+        internal void AddSqlTiming(SqlTiming stats)
         {
-            watch.Stop();
+            Head.AddSqlTiming(stats);
         }
+
+        /// <summary>
+        /// Walks the <see cref="Timing"/> hierarchy contained in this profiler, starting with <see cref="Root"/>, and returns each Timing found.
+        /// </summary>
+        public IEnumerable<Timing> GetTimingHierarchy()
+        {
+            var timings = new Stack<Timing>();
+
+            timings.Push(_root);
+
+            while (timings.Count > 0)
+            {
+                var timing = timings.Pop();
+
+                yield return timing;
+
+                if (timing.HasChildren)
+                {
+                    var children = timing.Children;
+                    for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
+                }
+            }
+        }
+
+        public List<SqlTiming> GetSqlTimings()
+        {
+            return GetTimingHierarchy().Where(t => t.HasSqlTimings).SelectMany(t => t.SqlTimings).ToList();
+        }
+
+        /// <summary>
+        /// Returns milliseconds based on Stopwatch's Frequency, rounded to 1 decimal place.
+        /// </summary>
+        internal static double GetRoundedMilliseconds(long stopwatchElapsedTicks)
+        {
+            long z = 10000 * stopwatchElapsedTicks;
+            double msTimesTen = (int)(z / Stopwatch.Frequency);
+            return msTimesTen / 10;
+        }
+
+
+        public static MiniProfiler Start(string path, ProfileLevel level = ProfileLevel.Info)
+        {
+            var context = HttpContext.Current;
+            if (context == null) return null;
+
+            var result = new MiniProfiler(path, level);
+            context.Items[ContextItemsKey] = result;
+
+            return result;
+        }
+
+        public static MiniProfiler Current
+        {
+            get
+            {
+                var context = HttpContext.Current;
+                if (context == null) return null;
+
+                return context.Items[ContextItemsKey] as MiniProfiler;
+            }
+        }
+
+        private const string ContextItemsKey = ":mini-profiler";
+
     }
+
+    public enum ProfileLevel
+    {
+        Info = 0,
+        Verbose = 1
+    }
+
     public static class MiniProfilerExtensions
     {
-        public static IDisposable Step(this MiniProfiler profiler, string name)
+
+        public static void SetName(this MiniProfiler profiler, string name)
         {
-            return profiler == null ? null : profiler.StepImpl(name);
+            if (profiler == null) return;
+            profiler.Name = name;
+        }
+
+        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
+        {
+            if (selector == null) throw new ArgumentNullException("selector");
+            if (profiler == null) return selector();
+            using (profiler.StepImpl(name))
+            {
+                return selector();
+            }
+        }
+
+        public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
+        {
+            return profiler == null ? null : profiler.StepImpl(name, level);
         }
 
         public static void AddData(this MiniProfiler profiler, string key, string value)
         {
             if (profiler != null) profiler.AddDataImpl(key, value);
         }
+
+        /// <summary>
+        /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
+        /// allowing other threads, remote calls, etc. to be profiled and joined into this profiling session.
+        /// </summary>
+        public static void AddProfilerResults(this MiniProfiler profiler, MiniProfiler externalProfiler)
+        {
+            if (profiler == null || externalProfiler == null) return;
+            profiler.Head.AddChild(externalProfiler.Root);
+        }
+
+        public static void Stop(this MiniProfiler profiler)
+        {
+            if (profiler != null) profiler.StopImpl();
+        }
+
         public static IHtmlString Render(this MiniProfiler profiler)
         {
             if (profiler == null) return MvcHtmlString.Empty;
-            profiler.EndAllImpl();
+
             var text = new StringBuilder()
-                .Append(HttpUtility.HtmlEncode(Environment.MachineName)).Append(" at ").Append(DateTime.UtcNow).AppendLine()
-                .Append("Path: ").AppendLine(HttpUtility.HtmlEncode(profiler.Path));
-            Stack<MiniProfiler.Timing> timings = new Stack<MiniProfiler.Timing>();
+                .Append(HttpUtility.HtmlEncode(Environment.MachineName)).Append(" at ").Append(DateTime.UtcNow).AppendLine();
+
+            Stack<Timing> timings = new Stack<Timing>();
             timings.Push(profiler.Root);
             while (timings.Count > 0)
             {
                 var timing = timings.Pop();
                 string name = HttpUtility.HtmlEncode(timing.Name);
-                text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.Duration, new string('>', timing.Depth)).AppendLine();
+                text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.DurationMilliseconds, new string('>', timing.Depth)).AppendLine();
                 if (timing.HasChildren)
                 {
-                    IList<MiniProfiler.Timing> children = timing.Children;
+                    IList<Timing> children = timing.Children;
                     for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }
             return MvcHtmlString.Create(text.ToString());
         }
 
-        private static readonly string ContextKey = ":mini-prof";
-        public static MiniProfiler GetProfiler(this HttpContextBase context)
+        public static IHtmlString RenderId(this MiniProfiler profiler)
         {
-            return (MiniProfiler)context.Items[ContextKey];
-        }
-        public static void SetProfiler(this HttpContextBase context, MiniProfiler profiler)
-        {
-            context.Items[ContextKey] = profiler;
+            if (profiler == null) return MvcHtmlString.Empty;
+            return MvcHtmlString.Create(profiler.Id.ToString());
         }
 
     }
