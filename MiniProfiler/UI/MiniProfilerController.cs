@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web.Mvc;
+using System.Web.Routing;
+using System.IO;
+
+namespace Profiling.UI
+{
+    public class MiniProfilerController : Controller
+    {
+
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.MapRoute("", "mini-profiler-includes.{type}", new { controller = "MiniProfiler", action = "Includes", type = "" });
+            routes.MapRoute("", "mini-profiler-results", new { controller = "MiniProfiler", action = "Results" });
+        }
+
+        public ActionResult Includes(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type)) return NotFound();
+
+            var filename = "Includes." + type;
+            var contentType = "";
+
+            switch (type)
+            {
+                case "js":
+                    contentType = "application/javascript";
+                    break;
+                case "less":
+                    contentType = "text/plain";
+                    break;
+                default:
+                    return NotFound();
+            }
+
+            using (var stream = GetResource(filename))
+            {
+                stream.CopyTo(Response.OutputStream);
+            }
+            return Content(null, contentType);
+        }
+
+        private static volatile bool _isResultsCompiled = false;
+
+        public ActionResult Results(Guid id, string share)
+        {
+            var profiler = MiniProfiler.GetFromShortTermCache(id);
+            if (profiler == null) return NotFound();
+
+            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, ShowShareLink = !string.IsNullOrWhiteSpace(share) };
+
+            EnsureResultsCompiled();
+            var html = RazorEngine.Razor.Run(model, "MiniProfilerResults");
+            return Content(html);
+        }
+
+        private void EnsureResultsCompiled()
+        {
+            if (_isResultsCompiled) return;
+
+            lock (typeof(MiniProfilerController))
+            {
+                if (_isResultsCompiled) return;
+
+                string html = "";
+                using (var reader = new StreamReader(GetResource("MiniProfilerResults.cshtml")))
+                {
+                    html = reader.ReadToEnd();
+                }
+                try
+                {
+                    RazorEngine.Razor.Compile(html, typeof(MiniProfilerResultsModel), "MiniProfilerResults");
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                _isResultsCompiled = true;
+            }
+        }
+
+        private Stream GetResource(string filename)
+        {
+            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MiniProfiler.UI." + filename);
+        }
+
+        private ActionResult NotFound(string contentType = "text/plain")
+        {
+            Response.StatusCode = 404;
+            return Content(null, contentType);
+        }
+    }
+}

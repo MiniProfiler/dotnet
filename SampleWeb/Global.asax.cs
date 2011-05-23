@@ -22,6 +22,8 @@ namespace SampleWeb
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            Profiling.UI.MiniProfilerController.RegisterRoutes(routes);
+
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters

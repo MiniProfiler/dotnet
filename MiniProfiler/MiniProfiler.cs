@@ -160,17 +160,23 @@ namespace Profiling
         }
 
 
-        public IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
+        internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
             if (level > this.Level) return null;
 
             return new Timing(this, Head, name);
         }
 
-        public void StopImpl()
+        internal void StopImpl()
         {
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
+
+            if (SetToShortTermCache == null)
+            {
+                CreateDefaultCacheAccessActions();
+            }
+            SetToShortTermCache(this);
         }
 
         internal void AddDataImpl(string key, string value)
@@ -228,7 +234,7 @@ namespace Profiling
             if (context == null) return null;
 
             var result = new MiniProfiler(path, level);
-            context.Items[ContextItemsKey] = result;
+            context.Items[Key] = result;
 
             return result;
         }
@@ -240,12 +246,32 @@ namespace Profiling
                 var context = HttpContext.Current;
                 if (context == null) return null;
 
-                return context.Items[ContextItemsKey] as MiniProfiler;
+                return context.Items[Key] as MiniProfiler;
             }
         }
 
-        private const string ContextItemsKey = ":mini-profiler";
+        private const string Key = ":mini-profiler:";
 
+        public static Func<Guid, MiniProfiler> GetFromShortTermCache { get; set; }
+        public static Action<MiniProfiler> SetToShortTermCache { get; set; }
+
+        private static void CreateDefaultCacheAccessActions()
+        {
+            MiniProfiler.SetToShortTermCache = (prof) =>
+                HttpRuntime.Cache.Add(
+                    key: Key + prof.Id.ToString(),
+                    value: prof,
+                    dependencies: null,
+                    absoluteExpiration: DateTime.Now.AddMinutes(5),
+                    slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
+                    priority: System.Web.Caching.CacheItemPriority.Low,
+                    onRemoveCallback: null);
+
+            MiniProfiler.GetFromShortTermCache = (guid) =>
+            {
+                return HttpRuntime.Cache[Key + guid.ToString()] as MiniProfiler;
+            };
+        }
     }
 
     public enum ProfileLevel
@@ -325,6 +351,16 @@ namespace Profiling
         {
             if (profiler == null) return MvcHtmlString.Empty;
             return MvcHtmlString.Create(profiler.Id.ToString());
+        }
+
+        public static IHtmlString RenderOnLoadScript(this MiniProfiler profiler)
+        {
+            if (profiler == null) return MvcHtmlString.Empty;
+
+            return MvcHtmlString.Create(string.Format(
+@"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
+<script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
+<script type=""text/javascript""> jQuery(function() {{ miniProfiler.init('{0}'); }} ); </script>", profiler.Id));
         }
 
     }

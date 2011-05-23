@@ -1,0 +1,354 @@
+﻿/*
+.rounded-corners(@radius, @addition: ``) {
+    -moz-border-radius: @radius @addition;
+    -webkit-border-radius: @radius @addition;
+    border-radius: @radius @addition;
+}
+
+.opacity(@value) {
+    opacity: @value;
+    filter: `alpha(opacity=` 100*@value `)`;
+}
+
+.box-shadow(@dx, @dy, @radius, @color, @addition: ``) {
+    -moz-box-shadow: @dx @dy @radius @color @addition;
+    -webkit-box-shadow: @dx @dy @radius @color @addition;
+    box-shadow: @dx @dy @radius @color @addition;
+}
+*/
+
+/* all in-page results that get loaded via ajax will be stored here */
+.profiler-results {
+    position:fixed;
+    top:0px;
+    right:0px;
+
+    .ms {
+        margin-left:4px;
+        color:#888;
+    }
+
+    .profiler-result:last-child .profiler-popup-button {
+        -webkit-border-bottom-left-radius: 10px;
+        -moz-border-radius-bottomleft: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .profiler-popup-button {
+        display:none;
+        z-index:998;
+        background-color:#fff;
+        font-size: 12px;
+        padding: 4px 7px;
+        border-left: 1px solid #aaa;
+        border-bottom: 1px solid #aaa;
+        text-align:right;
+        cursor:pointer;
+
+        .duration {
+            font-family:Consolas, monospace, serif;
+            font-size:12px;
+            .ms {
+                margin-left:4px;
+            }
+        }
+
+        &.profiler-popup-button-active {
+            font-weight:bold;
+            color:#fff;
+            background-color:maroon;
+            .ms {
+                color:#fff;
+                font-weight:normal;
+            }
+        }
+    }
+
+    .profiler-popup {
+        display:none;
+        z-index:999;
+        position:absolute;
+        background-color:#fff;
+        border: 1px solid #aaa;
+        padding:3px 10px 7px 0;
+        text-align:left;
+        font-size:12px;
+        line-height:16px;
+
+        //.box-shadow(0px, 1px, 15px, #777);
+
+        .info {
+            font-family:Consolas, monospace, serif;
+            font-size:12px;
+            border-bottom:1px solid #aaa;
+            padding-bottom:1px;
+            margin-bottom:5px;
+            margin-left:10px;
+
+            .server {
+                float:right
+            }
+        }
+
+        .timings {
+
+            td:first-child, td:last-child {
+                padding-left:10px;
+            }
+
+            .label {
+                color:#777;
+                white-space:nowrap;
+                max-width:275px;
+                overflow:hidden;
+            }
+
+            .duration, .sql-count {
+                text-align:right;
+                padding-left:12px;
+            }
+
+            .indent {
+                color:#fff;
+                letter-spacing:7px;
+            }
+
+            .options {
+                td {
+                    padding-top:15px;
+                    padding-right:12px;
+                }
+                label {
+                    float:right;
+                    display: block;
+                    padding-left: 15px;
+                    text-indent: -15px;
+                    cursor:pointer;
+                }
+                input {
+                    width: 13px;
+                    height: 13px;
+                    padding: 0;
+                    margin:0;
+                    vertical-align: bottom;
+                    position: relative;
+                    top: -1px;
+                    *overflow: hidden;
+                }
+            }
+        }
+    }
+
+    .profiler-queries {
+        display:none;
+    }
+}
+
+/* ajaxed-in results will clone their .queries into this container */
+.profiler-queries-container {
+    z-index:1001;
+    position:absolute;
+    top:20px;
+    left:0px;
+    width:100%;
+
+    .profiler-queries {
+        width:95%;
+        margin:0 auto;
+        background-color:#fff;
+
+        th {
+            padding:10px 15px;
+            white-space:nowrap;
+            font-size:17px;
+        }
+
+        .odd {
+            td {
+                background-color:#e5e5e5;
+
+                pre, code {
+                    background-color:#e5e5e5;
+                }
+            }
+        }
+
+        td {
+            padding:15px 10px;
+            text-align:left;
+        }
+
+        .since-start, .duration {
+            text-align:right;
+        }
+
+        .info div {
+            text-align:right;
+            margin-bottom:5px;
+        }
+
+        .query {
+            pre {
+                padding:0;
+            }
+            pre, code {
+                background-color:#fff;
+            }
+            code {
+                cursor:pointer;
+            }
+            .white-space-pre {
+                white-space:pre;
+            }
+        }
+
+        .ms {
+            margin-left:4px;
+            color:#888;
+        }
+    }
+}
+
+
+/* used when viewing a saved, shared result */
+.profiler-result.profiler-result-full {
+
+    .ms {
+        margin-left:4px;
+        color:#888;
+    }
+
+    .profiler-popup-button {
+        display:none;
+    }
+
+    .profiler-popup {
+
+        .info {
+            font-size: 24px;
+            border-bottom:1px solid #888;
+            padding-bottom:2px;
+            margin-bottom:15px;
+
+            .name {
+
+            }
+
+            .server {
+                float:right;
+            }
+        }
+
+        .timings {
+
+            td {
+                font-size:14px;
+                padding-bottom:4px;
+
+                &:first-child {
+                    padding-left:10px;
+                }
+            }
+
+            .label {
+                color:#444;
+                white-space:nowrap;
+                max-width:750px;
+                overflow:hidden;
+            }
+
+            .indent {
+                color:#fff;
+                letter-spacing:7px;
+            }
+
+            .duration, .sql-count {
+                text-align:right;
+                padding-left:12px;
+            }
+
+            .sql-count {
+                a {
+                    color:#444 !important;
+                    &:hover {
+                        text-decoration:none;
+                        cursor:text;
+                    }
+                }
+            }
+
+            .options {
+                td {
+                    padding-top:15px;
+                    padding-right:12px;
+                    text-align:right;
+                }
+                label {
+                    padding-left: 15px;
+                    text-indent: -15px;
+                    cursor:pointer;
+                }
+                input {
+                    width: 13px;
+                    height: 13px;
+                    padding: 0;
+                    margin:0;
+                    vertical-align: bottom;
+                    position: relative;
+                    top: -1px;
+                    *overflow: hidden;
+                }
+            }
+        }
+    }
+
+    .profiler-queries {
+        margin-top:25px;
+
+        th {
+            padding:10px 15px;
+            white-space:nowrap;
+            font-size:16px;
+            color:#555;
+        }
+
+        .odd {
+            td {
+                background-color:#e5e5e5;
+
+                pre, code {
+                    background-color:#e5e5e5;
+                }
+            }
+        }
+
+        td {
+            padding:15px 10px;
+            text-align:left;
+        }
+
+        .since-start, .duration {
+            text-align:right;
+        }
+
+        .info div {
+            text-align:right;
+            margin-bottom:5px;
+        }
+
+        .query {
+            pre {
+                padding:0;
+            }
+            pre, code {
+                background-color:#fff;
+            }
+            code {
+                cursor:pointer;
+            }
+            .white-space-pre {
+                white-space:pre;
+            }
+        }
+    }
+}
