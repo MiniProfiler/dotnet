@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Profiling;
 
 namespace SampleWeb
 {
@@ -35,6 +36,24 @@ namespace SampleWeb
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+        }
+
+        protected void Application_BeginRequest()
+        {
+            // might want to decide here (or maybe inside the action) whether you want
+            // to profile this request - for example, using an "IsSystemAdmin" flag against
+            // the user, or similar; this could also all be done in action filters, but this
+            // is simple and practical; just return null for most users. For our test, we'll
+            // profiler only for local requests (seems reasonable)
+            if (Request.IsLocal)
+            {
+                MiniProfiler.Start(Request.Url.OriginalString);
+            }
+        }
+
+        protected void Application_EndRequest()
+        {
+            MiniProfiler.Current.Stop();
         }
     }
 }

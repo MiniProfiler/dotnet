@@ -7,7 +7,7 @@ namespace SampleWeb.Controllers
     {
         public ActionResult Index()
         {
-            var profiler = GetProfiler();
+            var profiler = MiniProfiler.Current;
 
             using (profiler.Step("Set page title"))
             {
@@ -25,7 +25,7 @@ namespace SampleWeb.Controllers
                     Thread.Sleep(250);
                 }
             }
-            
+
             return View();
         }
 
