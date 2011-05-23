@@ -40,10 +40,9 @@ namespace Profiling.UI
             {
                 stream.CopyTo(Response.OutputStream);
             }
+
             return Content(null, contentType);
         }
-
-        private static volatile bool _isResultsCompiled = false;
 
         public ActionResult Results(Guid id, string share)
         {
@@ -57,6 +56,8 @@ namespace Profiling.UI
             return Content(html);
         }
 
+        private static volatile bool _isResultsCompiled = false;
+
         private void EnsureResultsCompiled()
         {
             if (_isResultsCompiled) return;
@@ -69,14 +70,17 @@ namespace Profiling.UI
                 using (var reader = new StreamReader(GetResource("MiniProfilerResults.cshtml")))
                 {
                     html = reader.ReadToEnd();
+                    // HACK: RazorEngine doesn't like @model, but intellisense needs it
+                    html = html.Replace("@model Profiling.UI.MiniProfilerResultsModel", "");
                 }
                 try
                 {
                     RazorEngine.Razor.Compile(html, typeof(MiniProfilerResultsModel), "MiniProfilerResults");
                 }
-                catch (Exception ex)
+                catch (RazorEngine.Templating.TemplateCompilationException ex)
                 {
-                    throw;
+                    var msg = "Razor compile error: " + string.Join("\n", ex.Errors.Select(e => e.ToString()));
+                    throw new InvalidOperationException(msg);
                 }
                 _isResultsCompiled = true;
             }

@@ -347,20 +347,14 @@ namespace Profiling
             return MvcHtmlString.Create(text.ToString());
         }
 
-        public static IHtmlString RenderId(this MiniProfiler profiler)
-        {
-            if (profiler == null) return MvcHtmlString.Empty;
-            return MvcHtmlString.Create(profiler.Id.ToString());
-        }
-
-        public static IHtmlString RenderOnLoadScript(this MiniProfiler profiler)
+        public static IHtmlString RenderOnLoadScript(this MiniProfiler profiler, bool renderTopRight = false)
         {
             if (profiler == null) return MvcHtmlString.Empty;
 
             return MvcHtmlString.Create(string.Format(
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ miniProfiler.init('{0}'); }} ); </script>", profiler.Id));
+<script type=""text/javascript""> jQuery(function() {{ miniProfiler.init({{ id:'{0}', renderTopRight:{1} }}); }} ); </script>", profiler.Id, renderTopRight ? "true" : "false"));
         }
 
     }

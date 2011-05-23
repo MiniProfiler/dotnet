@@ -9,30 +9,56 @@
     opacity: @value;
     filter: `alpha(opacity=` 100*@value `)`;
 }
-
-.box-shadow(@dx, @dy, @radius, @color, @addition: ``) {
-    -moz-box-shadow: @dx @dy @radius @color @addition;
-    -webkit-box-shadow: @dx @dy @radius @color @addition;
-    box-shadow: @dx @dy @radius @color @addition;
-}
 */
 
-/* all in-page results that get loaded via ajax will be stored here */
-.profiler-results {
-    position:fixed;
-    top:0px;
-    right:0px;
+.box-shadow(@dx, @dy, @radius, @color) {
+    -moz-box-shadow: @dx @dy @radius @color;
+    -webkit-box-shadow: @dx @dy @radius @color;
+    box-shadow: @dx @dy @radius @color;
+}
 
+// styles shared between popup view and full view
+.profiler-result {
     .ms {
         margin-left:4px;
         color:#888;
     }
 
-    .profiler-result:last-child .profiler-popup-button {
-        -webkit-border-bottom-left-radius: 10px;
-        -moz-border-radius-bottomleft: 10px;
-        border-bottom-left-radius: 10px;
+    .negligible {
+        display:none;
     }
+
+    pre, code, .duration, .info {
+        font-family:Consolas, monospace, serif;
+    }
+}
+
+// all in-page results that get loaded via ajax will be stored here
+.profiler-results {
+    position:fixed;
+    top:0px;
+
+    &.left {
+        left:0px;
+
+        .profiler-result:last-child .profiler-popup-button {
+            -webkit-border-bottom-right-radius: 10px;
+            -moz-border-radius-bottomright: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    }
+
+    &.right {
+        right:0px;
+
+        .profiler-result:last-child .profiler-popup-button {
+            -webkit-border-bottom-left-radius: 10px;
+            -moz-border-radius-bottomleft: 10px;
+            border-bottom-left-radius: 10px;
+        }
+    }
+
+
 
     .profiler-popup-button {
         display:none;
@@ -46,7 +72,7 @@
         cursor:pointer;
 
         .duration {
-            font-family:Consolas, monospace, serif;
+
             font-size:12px;
             .ms {
                 margin-left:4px;
@@ -75,10 +101,9 @@
         font-size:12px;
         line-height:16px;
 
-        //.box-shadow(0px, 1px, 15px, #777);
+        .box-shadow(0px, 1px, 15px, #777);
 
         .info {
-            font-family:Consolas, monospace, serif;
             font-size:12px;
             border-bottom:1px solid #aaa;
             padding-bottom:1px;
@@ -216,6 +241,10 @@
     .ms {
         margin-left:4px;
         color:#888;
+    }
+
+    .dno {
+        display:none;
     }
 
     .profiler-popup-button {

@@ -1,8 +1,8 @@
 ﻿
 var miniProfiler = (function() {
-        
+    
+    var options;    
     var container;
-    var queries = { }; // stores .profiler-queries keyed by .profiler-popup
 
     var fetch = function(id) {
         $.get('/mini-profiler-results?id=' + id, function(html) {
@@ -15,7 +15,7 @@ var miniProfiler = (function() {
             button = result.find('.profiler-popup-button'),
             popup = result.find('.profiler-popup');
 
-        // button will appear in the upper right corner with the total profiling duration - click to show details
+        // button will appear in corner with the total profiling duration - click to show details
         button.click(function() { buttonClick(button, popup); });
 
         lowDurationCheckChange(popup);
@@ -33,7 +33,7 @@ var miniProfiler = (function() {
         // we hide any timings <= 2.0 ms by default; allow toggling of these hidden rows
         popup.find('label.toggle-low-duration input').change(function() {
             var chk = $(this);
-            popup.find('tr.dno').toggle(!chk.is(':checked'));
+            popup.find('tr.negligible').toggle(!chk.is(':checked'));
         });
     };
 
@@ -56,7 +56,7 @@ var miniProfiler = (function() {
 
     var popupShow = function(button, popup) {
         button.addClass('profiler-popup-button-active');
-        popup.css({ 'top':button.position().top - 1, 'right':button.outerWidth() - 3 }).show();
+        popup.css('top', button.position().top - 1).css(options.renderClass, button.outerWidth() - 3).show();
     };
 
     var popupHide = function(button, popup) {
@@ -144,10 +144,12 @@ var miniProfiler = (function() {
     };
       
     return {
-        init: function(profilerId) {
+        init: function(opt) {
+            
+            options = opt || { };
 
-            if (!profilerId) { // nothing was profiled
-                if (location.href.indexOf('/developer/profiler-results') > -1) { // but we're looking at some shared results
+            if (!options.id) { // nothing was profiled
+                if (location.href.indexOf('/mini-profiler-results') > -1) { // but we're looking at some shared results
                     // and we need to bind some events
                     initForSharedView();
                 }
@@ -157,8 +159,12 @@ var miniProfiler = (function() {
             // all fetched profilings will go in here
             container = $('<div class="profiler-results"/>').appendTo('body');
 
+            // profiler.RenderOnLoadScript() can set which corner to render in - default is upper left
+            options.renderClass = options.renderTopRight ? 'right' : 'left';
+            container.addClass(options.renderClass);
+
             // get master page profiler results
-            fetch(profilerId);
+            fetch(options.id);
 
             // fetch profile results for any ajax calls
             $(document).ajaxComplete(function (e, xhr, settings) {

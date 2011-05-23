@@ -1,5 +1,7 @@
-﻿@using System.Web.Mvc
+﻿@using System.Web
+@using System.Web.Mvc
 @using Profiling
+@model Profiling.UI.MiniProfilerResultsModel
 @{
     var p = Model.MiniProfiler;
     var timingLookup = new Dictionary<SqlTiming, Timing>();
@@ -9,7 +11,12 @@
     // to help with display, put some space around sammiched commas
     string AddSpacesToParameters(string commandString) 
     {
-        return System.Text.RegularExpressions.Regex.Replace(commandString, @"[^\s],[^\s]", ", ");
+        return e(System.Text.RegularExpressions.Regex.Replace(commandString, @"[^\s],[^\s]", ", "));
+    }
+    // IMPORTANT: RazorEngine does not encode @object.ToString() calls by default!
+    string e(object o) 
+    {
+        return o == null ? "" : HttpUtility.HtmlEncode(o);
     }
 }
 @helper RenderStatRow(int stat, string label) 
@@ -17,14 +24,14 @@
     if (stat <= 0) { return; }
 
     <tr>
-        <td>@label</td>
+        <td>@e(label)</td>
         <td>@stat</td>
     </tr>
 }
 @helper RenderStatRow(double stat, string label, string unit = "<span class='ms'>ms</span>") 
 {
     <tr>
-        <td>@label</td>
+        <td>@e(label)</td>
         <td>@stat.ToString("#.0")@MvcHtmlString.Create(unit)</td>
     </tr>
 }
@@ -37,18 +44,18 @@
 
     <div class="profiler-popup">
         <div class="info">
-            <span class="name">@p.Name</span>
-            <span class="server">@p.MachineName at @p.Started</span>
+            <span class="name">@e(p.Name)</span>
+            <span class="server">@e(p.MachineName) at @e(p.Started)</span>
         </div>
         <div class="profiler-output">
             <table class="timings"> 
             <tbody>
             @foreach (var t in p.GetTimingHierarchy())
             {
-                <tr class="@(t.DurationMilliseconds <= 2 ? "dno" : "")">
+                <tr class="@(t.DurationMilliseconds <= 2 ? "negligible" : "")">
                     <td class="label">
                         <span class="indent">@(new string('>', t.Depth))</span>
-                        @t.Name
+                        @e(t.Name)
                         <span class="indent"> =</span>
                     </td>
                     <td class="duration" title="total time spent in this row">
@@ -105,12 +112,12 @@
         <tr class="for-timing-@timingLookup[s].Name.GetHashCode() @(i++ % 2 == 0 ? "" : "odd")">
             <td class="info">
                 <div><span class="ms">T+</span>@s.StartMilliseconds<span class="ms">ms</span></div>
-                <div>@s.ExecuteType</div>
+                <div>@e(s.ExecuteType)</div>
                 <div>@s.DurationMilliseconds<span class="ms">ms</span></div>
             </td>
             <td>
                 <div class="query">
-                    <pre>@s.StackTraceSnippet</pre>
+                    <pre>@e(s.StackTraceSnippet)</pre>
                     <code>@AddSpacesToParameters(s.CommandString)</code>
                 </div>
             </td>
