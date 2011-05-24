@@ -17,8 +17,29 @@
     box-shadow: @dx @dy @radius @color;
 }
 
+// do some resets
+.profiler-result {
+
+    line-height:1;
+
+    pre, code, label, table, tbody, thead, tfoot, tr, th, td {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+}
+
 // styles shared between popup view and full view
 .profiler-result {
+    font-family: Arial, sans-serif;
+
     .ms {
         margin-left:4px;
         color:#888;
@@ -28,8 +49,27 @@
         display:none;
     }
 
-    pre, code, .duration, .info {
+    pre, code, .duration {
         font-family:Consolas, monospace, serif;
+    }
+
+    .duration {
+        color:#000;
+    }
+
+    .info {
+        white-space:nowrap;
+
+        .time:before {
+            content:'at ';
+        }
+        .server:before {
+            content:'on ';
+        }
+    }
+
+    .label {
+
     }
 }
 
@@ -58,8 +98,6 @@
         }
     }
 
-
-
     .profiler-popup-button {
         display:none;
         z-index:998;
@@ -80,9 +118,11 @@
         }
 
         &.profiler-popup-button-active {
-            font-weight:bold;
-            color:#fff;
             background-color:maroon;
+            .duration {
+                font-weight:bold;
+                color:#fff;
+            }
             .ms {
                 color:#fff;
                 font-weight:normal;
@@ -110,9 +150,11 @@
             margin-bottom:5px;
             margin-left:10px;
 
-            .server {
-                float:right
+            .time {
+                padding-left:10px;
+
             }
+
         }
 
         .timings {
@@ -141,7 +183,7 @@
             .options {
                 td {
                     padding-top:15px;
-                    padding-right:12px;
+                    //padding-right:12px;
                 }
                 label {
                     float:right;
@@ -309,7 +351,7 @@
             .options {
                 td {
                     padding-top:15px;
-                    padding-right:12px;
+                    //padding-right:12px;
                     text-align:right;
                 }
                 label {

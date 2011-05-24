@@ -8,47 +8,37 @@
 }
 @functions 
 {
+    // IMPORTANT: RazorEngine does not encode @object.ToString() calls by default!
+    string e(object o)
+    {
+        return o == null ? "" : HttpUtility.HtmlEncode(o);
+    }
     // to help with display, put some space around sammiched commas
     string AddSpacesToParameters(string commandString) 
     {
         return e(System.Text.RegularExpressions.Regex.Replace(commandString, @"[^\s],[^\s]", ", "));
     }
-    // IMPORTANT: RazorEngine does not encode @object.ToString() calls by default!
-    string e(object o) 
-    {
-        return o == null ? "" : HttpUtility.HtmlEncode(o);
-    }
+    
 }
-@helper RenderStatRow(int stat, string label) 
+@helper RenderDuration(double ms) 
 {
-    if (stat <= 0) { return; }
-
-    <tr>
-        <td>@e(label)</td>
-        <td>@stat</td>
-    </tr>
-}
-@helper RenderStatRow(double stat, string label, string unit = "<span class='ms'>ms</span>") 
-{
-    <tr>
-        <td>@e(label)</td>
-        <td>@stat.ToString("#.0")@MvcHtmlString.Create(unit)</td>
-    </tr>
+    @ms.ToString("0.0")<span class="ms">ms</span>
 }
 <div class="profiler-result @(Model.ShowShareLink ? "profiler-result-full" : "")">
     <div class="profiler-popup-button">
         <div class="duration">
-            @p.DurationMilliseconds<span class="ms">ms</span>
+            @RenderDuration(p.DurationMilliseconds)
         </div>
     </div>
 
     <div class="profiler-popup">
         <div class="info">
             <span class="name">@e(p.Name)</span>
-            <span class="server">@e(p.MachineName) at @e(p.Started)</span>
+            <span class="time">@e(p.Started.ToString("u"))</span>
+            <span class="server">@e(p.MachineName)</span>
         </div>
         <div class="profiler-output">
-            <table class="timings"> 
+            <table class="timings">
             <tbody>
             @foreach (var t in p.GetTimingHierarchy())
             {
@@ -59,7 +49,7 @@
                         <span class="indent"> =</span>
                     </td>
                     <td class="duration" title="total time spent in this row">
-                        @t.DurationMilliseconds<span class="ms">ms</span>
+                        @RenderDuration(t.DurationMilliseconds.GetValueOrDefault())
                     </td>
                 @if (t.HasSqlTimings)
                 {
@@ -72,7 +62,7 @@
                         <a class="show-queries-for-@t.Name.GetHashCode()">@t.SqlTimings.Count<span class="ms">sql</span></a>
                     </td>
                     <td class="duration" title="time spent executing queries in this row">
-                        @t.SqlTimings.Sum(s => s.DurationMilliseconds)<span class="ms">ms</span>
+                        @RenderDuration(t.SqlTimings.Sum(s => s.DurationMilliseconds))
                     </td>
                 }
                 </tr>
@@ -83,7 +73,7 @@
                     {
                         <a id="@p.Id" class="share-profiler">share</a>
                     }
-                        <label class="toggle-low-duration"><input type="checkbox" checked> hide &lt; 2.0<span class="ms">ms</span></label>
+                        <label class="toggle-low-duration"><input type="checkbox" checked> hide &lt; @RenderDuration(2)</label>
                     </td>
                 @if (p.HasSqlTimings)
                 {

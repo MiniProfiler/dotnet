@@ -9,5 +9,14 @@
 }
 <h2>@ViewBag.Message</h2>
 <p>
-    To learn more about ASP.NET MVC visit <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
+    <a id="make-request" href="javascript:void(0);">click me to make an ajax request</a>
 </p>
+
+<script type="text/javascript">
+    $(function() {
+        $('#make-request').click(function() {
+            var link = $(this);
+            $.get('/home/ajaxmethod', function(data) { link.parent().append($('<p/>').text(data)); });
+        });
+    });
+</script>

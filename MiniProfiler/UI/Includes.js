@@ -169,7 +169,7 @@ var miniProfiler = (function() {
             // fetch profile results for any ajax calls
             $(document).ajaxComplete(function (e, xhr, settings) {
                 if (xhr) {
-                    var id = xhr.getResponseHeader('X-Profiler-Id');
+                    var id = xhr.getResponseHeader('X-MiniProfiler-Id');
                     if (id) {
                         fetch(id);
                     }

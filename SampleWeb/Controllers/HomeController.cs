@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using Profiling;
 using System.Threading;
 namespace SampleWeb.Controllers
@@ -32,6 +33,25 @@ namespace SampleWeb.Controllers
         public ActionResult About()
         {
             return View();
+        }
+
+        public ActionResult AjaxMethod()
+        {
+            var profiler = MiniProfiler.Current;
+
+            using (profiler.Step("Doing complex stuff"))
+            {
+                using (profiler.Step("Step A"))
+                {
+                    Thread.Sleep(100);
+                }
+                using (profiler.Step("Step B"))
+                {
+                    Thread.Sleep(250);
+                }
+            }
+
+            return Content("the time is now " + DateTime.Now);
         }
     }
 }

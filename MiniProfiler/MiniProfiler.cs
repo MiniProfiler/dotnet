@@ -177,6 +177,19 @@ namespace Profiling
                 CreateDefaultCacheAccessActions();
             }
             SetToShortTermCache(this);
+
+            var context = HttpContext.Current;
+
+            // allow profiling of ajax requests
+            context.Response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
+
+            // also set the profiler name to Controller/Action
+            var mvc = context.Handler as MvcHandler;
+            if (mvc != null)
+            {
+                var values = mvc.RequestContext.RouteData.Values;
+                this.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+            }
         }
 
         internal void AddDataImpl(string key, string value)
@@ -218,7 +231,7 @@ namespace Profiling
         }
 
         /// <summary>
-        /// Returns milliseconds based on Stopwatch's Frequency, rounded to 1 decimal place.
+        /// Returns milliseconds based on Stopwatch's Frequency.
         /// </summary>
         internal static double GetRoundedMilliseconds(long stopwatchElapsedTicks)
         {
@@ -227,9 +240,11 @@ namespace Profiling
             return msTimesTen / 10;
         }
 
-
         public static MiniProfiler Start(string path, ProfileLevel level = ProfileLevel.Info)
         {
+            // don't profile our profiler routes!
+            if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
+
             var context = HttpContext.Current;
             if (context == null) return null;
 

@@ -10,6 +10,11 @@ namespace Profiling.UI
 {
     public class MiniProfilerController : Controller
     {
+        public static bool IsProfilerPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            return path.Contains("/mini-profiler-includes.") || path.Contains("/mini-profiler-results");
+        }
 
         public static void RegisterRoutes(RouteCollection routes)
         {
