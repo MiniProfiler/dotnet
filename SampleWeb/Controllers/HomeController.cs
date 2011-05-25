@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using Profiling;
 using System.Threading;
+using Dapper;
 namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
@@ -12,7 +13,7 @@ namespace SampleWeb.Controllers
 
             using (profiler.Step("Set page title"))
             {
-                ViewBag.Message = "Welcome to ASP.NET MVC!";
+                ViewBag.Message = "See the profiler in the top left corner!";
             }
 
             using (profiler.Step("Doing complex stuff"))
@@ -35,23 +36,27 @@ namespace SampleWeb.Controllers
             return View();
         }
 
-        public ActionResult AjaxMethod()
+        public ActionResult FetchRouteHits()
         {
             var profiler = MiniProfiler.Current;
 
-            using (profiler.Step("Doing complex stuff"))
+            using (profiler.Step("Do more complex stuff"))
             {
-                using (profiler.Step("Step A"))
-                {
-                    Thread.Sleep(100);
-                }
-                using (profiler.Step("Step B"))
-                {
-                    Thread.Sleep(250);
-                }
+                Thread.Sleep(new Random().Next(100, 400));
             }
 
-            return Content("the time is now " + DateTime.Now);
+            using (profiler.Step("FetchRouteHits"))
+            using (var conn = GetOpenConnection())
+            {
+                var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public class RouteHit
+        {
+            public string RouteName { get; set; }
+            public Int64 HitCount { get; set; }
         }
     }
 }

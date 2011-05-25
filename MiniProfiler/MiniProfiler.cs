@@ -185,7 +185,7 @@ namespace Profiling
 
             // also set the profiler name to Controller/Action
             var mvc = context.Handler as MvcHandler;
-            if (mvc != null)
+            if (string.IsNullOrWhiteSpace(this.Name) && mvc != null)
             {
                 var values = mvc.RequestContext.RouteData.Values;
                 this.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();

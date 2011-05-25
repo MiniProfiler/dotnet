@@ -9,14 +9,52 @@
 }
 <h2>@ViewBag.Message</h2>
 <p>
-    <a id="make-request" href="javascript:void(0);">click me to make an ajax request</a>
+    <a id="fetch-hits" href="javascript:void(0);">Fetch Route Hits</a>
+    <table id="fetch-results">
+        <thead>
+            <tr>
+                <th>Route Name</th>
+                <th>Hits</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </p>
 
 <script type="text/javascript">
     $(function() {
-        $('#make-request').click(function() {
-            var link = $(this);
-            $.get('/home/ajaxmethod', function(data) { link.parent().append($('<p/>').text(data)); });
+        $('#fetch-hits').click(function() {
+            var table = $('#fetch-results');
+
+            if (table.data('working')) return; // one request at a time, please
+
+            table
+                .data('working', true)
+                .fadeTo('fast', 0.3) // dim while fetching
+            
+            var tbody = table.find('tbody');
+            
+            $.ajax({
+                type: 'GET',
+                url: '/Home/FetchRouteHits',
+                dataType: 'json',
+                success: function(data) {
+                    tbody.empty();
+                    for (var i = 0; i < data.length; i++) {
+                        tbody.append('<tr><td>' + data[i].RouteName + '</td><td>' + data[i].HitCount + '</td></tr>');
+                    }
+                },
+                error: function() {
+                    alert('oops!')
+                },
+                complete: function() {
+                    table
+                        .fadeTo('fast', 1)
+                        .data('working', false);
+                }
+            });
+
         });
     });
 </script>
