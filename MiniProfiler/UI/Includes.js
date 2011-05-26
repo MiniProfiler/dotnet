@@ -12,7 +12,7 @@ var MiniProfiler = (function() {
 
     var buttonShow = function(html) {
         var result = $(html).appendTo(container),
-            button = result.find('.profiler-popup-button'),
+            button = result.find('.profiler-button'),
             popup = result.find('.profiler-popup');
 
         // button will appear in corner with the total profiling duration - click to show details
@@ -21,7 +21,7 @@ var MiniProfiler = (function() {
         lowDurationCheckChange(popup);
 
         // lightbox in the queries
-        popup.find('.sql-count a').click(function() { queriesShow(popup); });
+        popup.find('.sql-count a').click(function() { queriesShow($(this), result); });
 
         // allow saving and sharing
         popup.find('.share-profiler').click(function() { share($(this)); });
@@ -29,10 +29,10 @@ var MiniProfiler = (function() {
         button.show();
 
         // TODO: remove after testing
-        //button.click();
+        button.click();
 
         // TODO: remove after testing
-        //queriesShow(popup);
+        queriesShow(popup.find('.sql-count a').first(), result);
     };
 
     var lowDurationCheckChange = function(popup) {
@@ -51,7 +51,7 @@ var MiniProfiler = (function() {
         else {
             // hide any other popups
             var visiblePopups = container.find('.profiler-popup:visible'),
-                theirButtons = visiblePopups.siblings('.profiler-popup-button');
+                theirButtons = visiblePopups.siblings('.profiler-button');
 
             popupHide(theirButtons, visiblePopups);
 
@@ -61,7 +61,7 @@ var MiniProfiler = (function() {
     };
 
     var popupShow = function(button, popup) {
-        button.addClass('profiler-popup-button-active');
+        button.addClass('profiler-button-active');
 
         var top = button.position().top - 1, // position next to the button we clicked
             windowHeight = $(window).height(),
@@ -75,25 +75,44 @@ var MiniProfiler = (function() {
     };
 
     var popupHide = function(button, popup) {
-        button.removeClass('profiler-popup-button-active');
+        button.removeClass('profiler-button-active');
         popup.hide();
     };
 
-    var queriesShow = function(popup) {
+    var queriesShow = function(link, result) {
         // opaque background
         $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
 
-        // because our main container users a position:fixed, we need to show the queries
-        // outside of this container - easiest way is to clone and attach somewhere else
-        var container = $('<div class="profiler-queries-container"/>').css({ 'height':$(window).height() - 40, 'top':20 }).appendTo('body'),
-            queries = popup.closest('.profiler-result').find('.profiler-queries').clone().appendTo(container).show();
+        var px = 30,
+            win = $(window),
+            width = win.width() - 2 * px,
+            height = win.height() - 2 * px,
+            queries = result.find('.profiler-queries')
+                .css({ 'top':px, 'max-height':height, 'left':px, 'width':width })
+                .find('table')
+                    .css({ 'width':width }).end()
+                .show();
 
-        queriesToggleWhiteSpace(queries);
+        // some queries shouldn't be wrapped, so allow toggling of white-space:pre; (for easier copy/paste)
+        queriesToggleExpansion(queries);
     };
 
-    var queriesToggleWhiteSpace = function(queries) {
-        // some queries shouldn't be wrapped, so allow toggling of white-space:pre; on click (for easier copy/paste into sql)
-        queries.find('.query code').click(function() { $(this).toggleClass('white-space-pre'); });
+    var queriesToggleExpansion = function(queries) {
+
+        var codes = queries.find('.query code'),
+            singleLineHeight = Math.ceil(parseFloat(codes.first().css('line-height'))),
+            expand = $('<a class="toggle-expanded">expand</a>')
+                        .click(function() {
+                            var text = $(this).is('.expanded') ? 'expand' : 'shrink';
+                            $(this).text(text).siblings('code').andSelf().toggleClass('expanded');
+                        });
+
+        codes
+            .filter(function() {
+                // HACK: couldn't figure out a better way to determine when lines wrap
+                return $(this).innerHeight() > singleLineHeight;
+            })
+            .parent().append(expand);
     };
 
     var bindDocumentEvents = function() {
@@ -101,20 +120,20 @@ var MiniProfiler = (function() {
 
             var popup = $('.profiler-popup:visible');
 
-            if (popup.length == 0) {
+            if (!popup.length) {
                 return;
             }
 
-            var button = popup.siblings('.profiler-popup-button'),
+            var button = popup.siblings('.profiler-button'),
+                queries = popup.closest('.profiler-result').find('.profiler-queries'),
                 bg = $('.profiler-queries-bg'),
-                queriesContainer = $('.profiler-queries-container'),
                 isEscPress = e.type == 'keyup' && e.which == 27,
                 hidePopup = false,
                 hideQueries = false;
 
 
             if (bg.is(':visible') && !$.contains(popup[0], e.target)) {
-                hideQueries = isEscPress || !$.contains(queriesContainer.find('.profiler-queries')[0], e.target);
+                hideQueries = isEscPress || !$.contains(queries[0], e.target);
             }
             else if (popup.is(':visible')) {
                 hidePopup = isEscPress || (!$.contains(popup[0], e.target) && !$.contains(button[0], e.target) && button[0] != e.target);
@@ -122,7 +141,7 @@ var MiniProfiler = (function() {
 
             if (hideQueries) {
                 bg.remove();
-                queriesContainer.remove();
+                queries.hide();
             }
 
             if (hidePopup) {

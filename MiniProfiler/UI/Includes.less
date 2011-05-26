@@ -1,4 +1,9 @@
-﻿
+﻿.rounded-corners(@radius, @addition: ~"") {
+    -moz-border-radius: @radius @addition;
+    -webkit-border-radius: @radius @addition;
+    border-radius: @radius @addition;
+}
+
 .box-shadow(@dx, @dy, @radius, @color) {
     -moz-box-shadow: @dx @dy @radius @color;
     -webkit-box-shadow: @dx @dy @radius @color;
@@ -110,15 +115,20 @@
     code {
         display:block;
         margin-top:17px;
-        cursor:pointer;
 
-        &.white-space-pre { // js will toggle this on queries
+        &.expanded {
             white-space:pre;
         }
     }
     pre, code {
         background-color:#fff;
         font-family:@codeFonts;
+    }
+
+    .toggle-expanded {
+        display:block;
+        margin-top:10px;
+        font-size:90%;
     }
 
     th {
@@ -132,6 +142,10 @@
     td {
         padding:15px;
         text-align:left;
+
+        &:last-child {
+            padding-right:25px; // compensate for scrollbars
+        }
     }
 
     .odd td {
@@ -150,24 +164,25 @@
         text-align:right;
         margin-bottom:5px;
     }
-
 }
 
-// all in-page results that get loaded via ajax will be stored here
+// ajaxed-in results will be appended to this
 .profiler-results {
     position:fixed;
     top:0px;
 
+    @radius:10px;
+
     &.left {
         left:0px;
 
-        .profiler-result:last-child .profiler-popup-button {
-            -webkit-border-bottom-right-radius: 10px;
-            -moz-border-radius-bottomright: 10px;
-            border-bottom-right-radius: 10px;
+        .profiler-result:last-child .profiler-button {
+            -webkit-border-bottom-right-radius: @radius;
+            -moz-border-radius-bottomright: @radius;
+            border-bottom-right-radius: @radius;
         }
 
-        .profiler-popup-button {
+        .profiler-button {
             border-right: 1px solid @buttonBorderColor;
         }
     }
@@ -175,20 +190,20 @@
     &.right {
         right:0px;
 
-        .profiler-result:last-child .profiler-popup-button {
-            -webkit-border-bottom-left-radius: 10px;
-            -moz-border-radius-bottomleft: 10px;
-            border-bottom-left-radius: 10px;
+        .profiler-result:last-child .profiler-button {
+            -webkit-border-bottom-left-radius: @radius;
+            -moz-border-radius-bottomleft: @radius;
+            border-bottom-left-radius: @radius;
         }
 
-        .profiler-popup-button {
+        .profiler-button {
             border-left: 1px solid @buttonBorderColor;
         }
     }
 
-    .profiler-popup-button {
+    .profiler-button {
         display:none;
-        z-index:998;
+        z-index:1000;
         border-bottom: 1px solid @buttonBorderColor;
         background-color:#fff;
         font-size: 12px;
@@ -204,7 +219,7 @@
             }
         }
 
-        &.profiler-popup-button-active {
+        &.profiler-button-active {
             background-color:maroon;
 
             .duration {
@@ -220,7 +235,7 @@
 
     .profiler-popup {
         display:none;
-        z-index:999;
+        z-index:1001;
         position:absolute;
         background-color:#fff;
         border: 1px solid #aaa;
@@ -230,7 +245,7 @@
         line-height:16px;
         overflow:auto;
 
-        .box-shadow(0px, 1px, 15px, #777);
+        .box-shadow(0px, 1px, 15px, #555);
 
         .info {
             font-size:12px;
@@ -277,25 +292,27 @@
 
     .profiler-queries {
         display:none;
-    }
-}
-
-/* ajaxed-in results will clone their .queries into this container */
-.profiler-queries-container {
-    z-index:1001;
-    position:fixed;
-    left:0px;
-    width:94%;
-    margin-left:3%;
-    overflow:auto;
-
-    .profiler-queries {
+        z-index:1003;
+        position:absolute;
+        overflow-y:auto;
+        overflow-x:hidden;
         background-color:#fff;
 
         th {
             font-size:17px;
         }
     }
+}
+
+.profiler-queries-bg {
+    z-index:1002;
+    display:none;
+    background:#000;
+    opacity:0.7;
+    position:absolute;
+    top:0px;
+    left:0px;
+    min-width:100%;
 }
 
 
@@ -311,7 +328,7 @@
         display:none;
     }
 
-    .profiler-popup-button {
+    .profiler-button {
         display:none;
     }
 
@@ -411,33 +428,7 @@
             text-align:right;
             margin-bottom:5px;
         }
-
-        .query {
-            pre {
-                padding:0;
-            }
-            pre, code {
-                background-color:#fff;
-            }
-            code {
-                cursor:pointer;
-            }
-            .white-space-pre {
-                white-space:pre;
-            }
-        }
     }
-}
-
-.profiler-queries-bg {
-    z-index:1000;
-    display:none;
-    background:#000;
-    opacity:0.7;
-    position:absolute;
-    top:0px;
-    left:0px;
-    min-width:100%;
 }
 
 // prettify.css

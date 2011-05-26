@@ -93,6 +93,7 @@ namespace Profiling.UI
 
         private Stream GetResource(string filename)
         {
+            // TODO: return string from here and cache it
             return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MiniProfiler.UI." + filename);
         }
 

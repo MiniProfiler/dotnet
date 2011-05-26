@@ -80,7 +80,7 @@ namespace Profiling
                             for (int i = children.Count - 1; i >= 0; i--)
                             {
                                 children[i].Parent = timing;
-                                timings.Push(children[i]);
+                                timings.Push(children[i]); // FLORIDA!  TODO: refactor this and other stack creation methods into one 
                             }
                         }
                     }
