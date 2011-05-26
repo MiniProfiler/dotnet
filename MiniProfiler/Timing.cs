@@ -2,41 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace Profiling
 {
-    [ProtoContract]
+    [DataContract]
     public class Timing : IDisposable
     {
         /// <summary>
         /// Text displayed when this Timing is rendered.
         /// </summary>
-        [ProtoMember(1)]
+        [DataMember(Order = 0)]
         public string Name { get; private set; }
 
         /// <summary>
         /// How long this Timing step took in ms; includes any <see cref="Children"/> Timings' durations.
         /// </summary>
-        [ProtoMember(2)]
+        [DataMember(Order = 1)]
         public double? DurationMilliseconds { get; private set; }
 
         /// <summary>
         /// All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
-        [ProtoMember(3)]
+        [DataMember(Order = 2)]
         public List<Timing> Children { get; private set; }
 
         /// <summary>
         /// Stores arbitrary key/value strings on this Timing step. Add new tuples through <see cref="AddKeyValue"/>.
         /// </summary>
-        [ProtoMember(4)]
+        [DataMember(Order = 3)]
         public Dictionary<string, string> KeyValues { get; private set; }
 
         /// <summary>
         /// Any queries that occurred during this Timing step.
         /// </summary>
-        [ProtoMember(5)]
+        [DataMember(Order = 4)]
         public List<SqlTiming> SqlTimings { get; set; }
 
         /// <summary>

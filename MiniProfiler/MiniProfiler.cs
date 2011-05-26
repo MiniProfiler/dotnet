@@ -6,7 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Linq;
 using System.Runtime.Serialization;
-using ProtoBuf;
 
 namespace Profiling
 {
@@ -14,39 +13,39 @@ namespace Profiling
     /// A single MiniProfiler can be used to represent any number of steps/levels in a call-graph, via Step()
     /// </summary>
     /// <remarks>Totally baller.</remarks>
-    [ProtoContract]
+    [DataContract]
     public class MiniProfiler
     {
 
         /// <summary>
         /// Identifies this Profiler so it may be stored/cached.
         /// </summary>
-        [ProtoMember(1)]
+        [DataMember(Order = 0)]
         public Guid Id { get; private set; }
 
         /// <summary>
         /// A display name for this profiling session.
         /// </summary>
-        [ProtoMember(2)]
+        [DataMember(Order = 1)]
         public string Name { get; set; }
 
         /// <summary>
         /// When this profiler was instantiated.
         /// </summary>
-        [ProtoMember(3)]
+        [DataMember(Order = 2)]
         public DateTime Started { get; private set; }
 
         /// <summary>
         /// Where this profiler was run.
         /// </summary>
-        [ProtoMember(4)]
+        [DataMember(Order = 3)]
         public string MachineName { get; private set; }
 
         /// <summary>
         /// Allows filtering of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
         /// the steps are created with.
         /// </summary>
-        [ProtoMember(5)]
+        [DataMember(Order = 4)]
         public ProfileLevel Level { get; set; }
 
 
@@ -55,7 +54,7 @@ namespace Profiling
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
         /// All other <see cref="Timing"/>s will be children of this one.
         /// </summary>
-        [ProtoMember(6)]
+        [DataMember(Order = 5)]
         public Timing Root
         {
             get { return _root; }

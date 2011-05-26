@@ -5,29 +5,29 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Profiling.Data;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace Profiling
 {
-    [ProtoContract]
+    [DataContract]
     public class SqlTiming
     {
-        [ProtoMember(1)]
+        [DataMember(Order = 0)]
         public ExecuteType ExecuteType { get; private set; }
 
-        [ProtoMember(2)]
+        [DataMember(Order = 1)]
         public string CommandString { get; private set; }
 
-        [ProtoMember(3)]
+        [DataMember(Order = 2)]
         public string StackTraceSnippet { get; private set; }
 
-        [ProtoMember(4)]
+        [DataMember(Order = 3)]
         public double StartMilliseconds { get; private set; }
 
-        [ProtoMember(5)]
+        [DataMember(Order = 4)]
         public double DurationMilliseconds { get; private set; }
 
-        [ProtoMember(6)]
+        [DataMember(Order = 5)]
         public double FirstFetchDurationMilliseconds { get; private set; }
 
         private long _startTicks;
