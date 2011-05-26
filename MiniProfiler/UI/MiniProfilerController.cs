@@ -51,7 +51,7 @@ namespace Profiling.UI
 
         public ActionResult Results(Guid id, string share)
         {
-            var profiler = MiniProfiler.GetFromShortTermCache(id);
+            var profiler = MiniProfiler.ShortTermCacheGetter(id);
             if (profiler == null) return NotFound();
 
             var model = new MiniProfilerResultsModel { MiniProfiler = profiler, ShowShareLink = !string.IsNullOrWhiteSpace(share) };

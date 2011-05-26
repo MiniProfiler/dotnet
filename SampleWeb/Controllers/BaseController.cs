@@ -32,7 +32,11 @@ namespace SampleWeb.Controllers
                     }
                     using (profiler.Step("Update RouteHits"))
                     {
-                        conn.Execute("update RouteHits set HitCount = HitCount + 1 where RouteName = @routeName", param);
+                        // let's put some whitespace in this query to demonstrate clicking on a query in the profiler
+                        conn.Execute(
+@"update RouteHits
+set    HitCount = HitCount + 1
+where  RouteName = @routeName", param);
                     }
                 }
                 base.OnActionExecuting(filterContext);
@@ -65,8 +69,8 @@ namespace SampleWeb.Controllers
                 var dbPath = Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
                 var wrapped = new System.Data.SQLite.SQLiteConnection("Data Source = " + dbPath);
 
-                // to get profiling times, we have to wrap whatever connection we're using in this ProfiledDbConnection
-                // when MiniProfiler.Current is null, this connection will not 
+                // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
+                // when MiniProfiler.Current is null, this connection will not record any database timings
                 var result = new Profiling.Data.ProfiledDbConnection(wrapped, MiniProfiler.Current);
 
                 result.Open();

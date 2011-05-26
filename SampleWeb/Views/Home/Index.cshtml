@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
     var profiler = MiniProfiler.Current;
 
     using (profiler.Step("Some complex thinking"))
@@ -7,10 +6,10 @@
         System.Threading.Thread.Sleep(25);
     }
 }
-<h2>@ViewBag.Message</h2>
-<p>
+<h2>See the profiler in the top left corner - click links to see ajax profilings</h2>
+<div style="width:50%; float:left;">
     <a id="fetch-hits" href="javascript:void(0);">Fetch Route Hits</a>
-    <table id="fetch-results">
+    <table id="fetch-results" style="margin-top:20px;">
         <thead>
             <tr>
                 <th>Route Name</th>
@@ -19,8 +18,16 @@
         </thead>
         <tbody>
         </tbody>
-    </table>
-</p>
+    </table>    
+</div>
+
+<div style="width:50%; float:right;">
+    <a class="massive-nesting" href="javascript:void(0);">Massive Nesting</a><a class="massive-nesting" href="javascript:void(0);" style="padding-left:20px">Massive Nesting 2</a>
+</div>
+
+<div style="clear:both; margin:900px 0 300px 0;">
+    Some content way down the page - notice how the profiler button is fixed in the upper left corner.
+</div>
 
 <script type="text/javascript">
     $(function() {
@@ -54,7 +61,13 @@
                         .data('working', false);
                 }
             });
+        });
 
+        $('.massive-nesting').click(function() {
+            var link = $(this);
+            $.get('/Home/MassiveNesting' + (link.text().indexOf('2') < 0 ? '' : '2'), function(data) {
+                link.parent().append('<p>' + data + '</p>');
+            });
         });
     });
 </script>

@@ -172,11 +172,11 @@ namespace Profiling
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
 
-            if (SetToShortTermCache == null)
+            if (ShortTermCacheSetter == null)
             {
                 CreateDefaultCacheAccessActions();
             }
-            SetToShortTermCache(this);
+            ShortTermCacheSetter(this.Id, this);
 
             var context = HttpContext.Current;
 
@@ -267,14 +267,14 @@ namespace Profiling
 
         private const string Key = ":mini-profiler:";
 
-        public static Func<Guid, MiniProfiler> GetFromShortTermCache { get; set; }
-        public static Action<MiniProfiler> SetToShortTermCache { get; set; }
+        public static Func<Guid, MiniProfiler> ShortTermCacheGetter { get; set; }
+        public static Action<Guid, MiniProfiler> ShortTermCacheSetter { get; set; }
 
         private static void CreateDefaultCacheAccessActions()
         {
-            MiniProfiler.SetToShortTermCache = (prof) =>
+            MiniProfiler.ShortTermCacheSetter = (guid, prof) =>
                 HttpRuntime.Cache.Add(
-                    key: Key + prof.Id.ToString(),
+                    key: Key + guid.ToString(),
                     value: prof,
                     dependencies: null,
                     absoluteExpiration: DateTime.Now.AddMinutes(5),
@@ -282,7 +282,7 @@ namespace Profiling
                     priority: System.Web.Caching.CacheItemPriority.Low,
                     onRemoveCallback: null);
 
-            MiniProfiler.GetFromShortTermCache = (guid) =>
+            MiniProfiler.ShortTermCacheGetter = (guid) =>
             {
                 return HttpRuntime.Cache[Key + guid.ToString()] as MiniProfiler;
             };
@@ -369,7 +369,7 @@ namespace Profiling
             return MvcHtmlString.Create(string.Format(
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ miniProfiler.init({{ id:'{0}', renderTopRight:{1} }}); }} ); </script>", profiler.Id, renderTopRight ? "true" : "false"));
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderTopRight:{1} }}); }} ); </script>", profiler.Id, renderTopRight ? "true" : "false"));
         }
 
     }
