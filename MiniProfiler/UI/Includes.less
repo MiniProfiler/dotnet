@@ -29,7 +29,7 @@
 
 // do some resets
 .profiler-result, .profiler-queries {
-    color:#000;
+    color:#555;
     line-height:1;
 
     pre, code, label, table, tbody, thead, tfoot, tr, th, td {
@@ -313,10 +313,6 @@
                 background-color:transparent;
             }
         }
-
-        .selected-query.odd td {
-            background-color:fadeIn(@selectedColor, 7%);
-        }
     }
 }
 
@@ -449,8 +445,21 @@
 
 // prettify.css
 // http://code.google.com/p/google-code-prettify/
-.query .code {
 
-    .str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun{color:#660}.pln{color:#000}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec{color:#606}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}@media print{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun{color:#440}.pln{color:#000}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}
 
-}
+    .str{color:maroon}
+    .kwd{color:#00008b}
+    .com{color:gray}
+    .typ{color:#2b91af}
+    .lit{color:maroon}
+    .pun{color:#000}
+    .pln{color:#000}
+    .tag{color:maroon}
+    .atn{color:red}
+    .atv{color:blue}
+    .dec{color:purple}
+    pre.prettyprint{padding:2px;border:1px solid #888}
+    ol.linenums{margin-top:0;margin-bottom:0}
+    li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style:none}
+    li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+

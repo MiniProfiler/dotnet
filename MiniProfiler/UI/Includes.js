@@ -103,12 +103,15 @@ var MiniProfiler = (function() {
         var firstQuery = queries.find('tr[data-timing-id="' + id + '"]').addClass(klass).first();
 
         // some queries shouldn't be wrapped, so allow toggling of white-space:pre; (for easier copy/paste)
-        queriesToggleExpansion(queries);
+        //queriesToggleExpansion(queries);
 
         // have to show everything before we can get a position for the first query
         queries.show(0, function() {
             // ensure they're in view
             queries.scrollTop(queries.scrollTop() + firstQuery.position().top - 100);
+
+            // sql blocks should be syntax-highlighted
+            prettyPrint();
         });
     };
 
