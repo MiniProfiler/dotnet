@@ -29,7 +29,7 @@ var MiniProfiler = (function() {
         button.show();
 
         // TODO: remove after testing
-        button.click();
+        //button.click();
 
         // TODO: remove after testing
         //queriesShow(popup.find('.sql-count a').first(), result);
@@ -80,26 +80,43 @@ var MiniProfiler = (function() {
     };
 
     var queriesShow = function(link, result) {
-        // opaque background
-        $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
 
         var px = 30,
             win = $(window),
             width = win.width() - 2 * px,
             height = win.height() - 2 * px,
-            queries = result.find('.profiler-queries')
-                .css({ 'top':px, 'max-height':height, 'left':px, 'width':width })
-                .find('table')
-                    .css({ 'width':width }).end()
-                .show();
+            queries = result.find('.profiler-queries'),
+            id = link.closest('tr').attr('data-timing-id'),
+            klass = 'selected-query';
 
+        // opaque background
+        $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
 
+        // center the queries and ensure long content is scrolled
+        queries.css({ 'top':px, 'max-height':height, 'left':px, 'width':width })
+            .find('table').css({ 'width':width });
+
+        // reset any previous highlights
+        queries.find('.' + klass).removeClass(klass);
+
+        // highlight the queries that were clicked
+        var firstQuery = queries.find('tr[data-timing-id="' + id + '"]').addClass(klass).first();
 
         // some queries shouldn't be wrapped, so allow toggling of white-space:pre; (for easier copy/paste)
         queriesToggleExpansion(queries);
+
+        // have to show everything before we can get a position for the first query
+        queries.show(0, function() {
+            // ensure they're in view
+            queries.scrollTop(queries.scrollTop() + firstQuery.position().top - 100);
+        });
     };
 
     var queriesToggleExpansion = function(queries) {
+
+        if (queries.find('.toggle-expanded').length) {
+            return;
+        }
 
         var expand =
         $('<a class="toggle-expanded">expand</a>')
