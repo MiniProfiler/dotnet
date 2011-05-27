@@ -55,7 +55,6 @@ namespace Profiling
 
         public List<SqlTiming> GetExecutionStats()
         {
-
             var result = new List<SqlTiming>();
             foreach (var t in _profiler.GetTimingHierarchy())
             {
@@ -63,7 +62,6 @@ namespace Profiling
                     result.AddRange(t.SqlTimings);
             }
             return result;
-
         }
     }
 

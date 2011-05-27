@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Data\ProfiledDbDataReader.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
+    <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="MiniProfiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlProfiler.cs" />

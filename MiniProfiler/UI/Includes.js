@@ -32,7 +32,7 @@ var MiniProfiler = (function() {
         button.click();
 
         // TODO: remove after testing
-        queriesShow(popup.find('.sql-count a').first(), result);
+        //queriesShow(popup.find('.sql-count a').first(), result);
     };
 
     var lowDurationCheckChange = function(popup) {
@@ -93,24 +93,24 @@ var MiniProfiler = (function() {
                     .css({ 'width':width }).end()
                 .show();
 
+
+
         // some queries shouldn't be wrapped, so allow toggling of white-space:pre; (for easier copy/paste)
         queriesToggleExpansion(queries);
     };
 
     var queriesToggleExpansion = function(queries) {
 
-        var codes = queries.find('.query code'),
-            singleLineHeight = Math.ceil(parseFloat(codes.first().css('line-height'))),
-            expand = $('<a class="toggle-expanded">expand</a>')
-                        .click(function() {
-                            var text = $(this).is('.expanded') ? 'expand' : 'shrink';
-                            $(this).text(text).siblings('code').andSelf().toggleClass('expanded');
-                        });
+        var expand =
+        $('<a class="toggle-expanded">expand</a>')
+            .click(function() {
+                var text = $(this).is('.expanded') ? 'expand' : 'shrink';
+                $(this).text(text).siblings('code').andSelf().toggleClass('expanded');
+            });
 
-        codes
+        queries.find('.query code')
             .filter(function() {
-                // HACK: couldn't figure out a better way to determine when lines wrap
-                return $(this).innerHeight() > singleLineHeight;
+                return $(this).text().indexOf('\n') > -1;
             })
             .parent().append(expand);
     };

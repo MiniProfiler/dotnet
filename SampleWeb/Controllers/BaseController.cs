@@ -12,53 +12,6 @@ namespace SampleWeb.Controllers
 {
     public abstract class BaseController : Controller
     {
-
-        protected override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            var profiler = MiniProfiler.Current;
-
-            using (profiler.Step("OnActionExecuting"))
-            {
-                var actionDesc = filterContext.ActionDescriptor;
-                var routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
-
-                using (var conn = GetOpenConnection(profiler))
-                {
-                    var param = new { routeName = routeName };
-
-                    using (profiler.Step("Insert RouteHits"))
-                    {
-                        conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
-                    }
-                    using (profiler.Step("Update RouteHits"))
-                    {
-                        // let's put some whitespace in this query to demonstrate clicking on a query in the profiler
-                        conn.Execute(
-@"update RouteHits
-set    HitCount = HitCount + 1
-where  RouteName = @routeName", param);
-                    }
-                }
-                base.OnActionExecuting(filterContext);
-            }
-        }
-
-        private IDisposable _viewRenderingStep;
-
-        protected override void OnResultExecuting(ResultExecutingContext filterContext)
-        {
-            _viewRenderingStep = MiniProfiler.Current.Step("OnResultExecuting");
-
-            base.OnResultExecuting(filterContext);
-        }
-
-        protected override void OnResultExecuted(ResultExecutedContext filterContext)
-        {
-            if (_viewRenderingStep != null) _viewRenderingStep.Dispose();
-
-            base.OnResultExecuted(filterContext);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -78,5 +31,59 @@ where  RouteName = @routeName", param);
                 return result;
             }
         }
+
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var profiler = MiniProfiler.Current;
+
+            using (profiler.Step("OnActionExecuting"))
+            {
+                UpsertRouteHit(filterContext.ActionDescriptor, profiler);
+                base.OnActionExecuting(filterContext);
+            }
+        }
+
+        protected override void OnResultExecuting(ResultExecutingContext filterContext)
+        {
+            _resultExecutingToExecuted = MiniProfiler.Current.Step("OnResultExecuting");
+
+            base.OnResultExecuting(filterContext);
+        }
+
+        private IDisposable _resultExecutingToExecuted;
+
+        protected override void OnResultExecuted(ResultExecutedContext filterContext)
+        {
+            if (_resultExecutingToExecuted != null)
+                _resultExecutingToExecuted.Dispose();
+
+            base.OnResultExecuted(filterContext);
+        }
+
+
+        private void UpsertRouteHit(ActionDescriptor actionDesc, MiniProfiler profiler)
+        {
+            var routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
+
+            using (var conn = GetOpenConnection(profiler))
+            {
+                var param = new { routeName = routeName };
+
+                using (profiler.Step("Insert RouteHits"))
+                {
+                    conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
+                }
+                using (profiler.Step("Update RouteHits"))
+                {
+                    // let's put some whitespace in this query to demonstrate clicking on a query in the profiler
+                    conn.Execute(
+@"update RouteHits
+set    HitCount = HitCount + 1
+where  RouteName = @routeName", param);
+                }
+            }
+        }
+
     }
 }

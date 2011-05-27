@@ -14,7 +14,7 @@ namespace Profiling
     /// </summary>
     /// <remarks>Totally baller.</remarks>
     [DataContract]
-    public class MiniProfiler
+    public partial class MiniProfiler
     {
 
         /// <summary>
