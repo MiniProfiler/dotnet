@@ -10,20 +10,11 @@
     box-shadow: @dx @dy @radius @color;
 }
 
-.align-checkbox() {
-    width: 13px;
-    height: 13px;
-    padding: 0;
-    margin:0;
-    vertical-align: bottom;
-    position: relative;
-    top: -1px;
-    *overflow: hidden;
-}
-
 @anchorColor: #0077CC;
 @buttonBorderColor: #888;
-@mutedColor: #888;
+@numberColor: #111;
+@textColor: #555;
+@mutedColor: #aaa;
 @normalFonts: Helvetica, Arial, sans-serif;
 @codeFonts: Consolas, monospace, serif;
 
@@ -31,6 +22,7 @@
 .profiler-result, .profiler-queries {
     color:#555;
     line-height:1;
+    font-size:12px;
 
     pre, code, label, table, tbody, thead, tfoot, tr, th, td {
         margin:0;
@@ -57,50 +49,81 @@
 .profiler-result {
     font-family:@normalFonts;
 
-    .ms {
-        margin-left:4px;
+    .label {
+        color:@textColor;
+    }
+
+    .unit {
+        //margin-left:4px;
         color:@mutedColor;
     }
 
-    .negligible {
+    .trivial {
         display:none;
+        td, td * {
+            color:@mutedColor;
+        }
     }
 
-    pre, code, .duration {
+    pre, code, .number, .unit {
         font-family:@codeFonts;
     }
 
-    .duration {
-        color:#000;
+    .number {
+        color:@numberColor;
     }
 
     .info {
-        white-space:nowrap;
-
-        .time:before {
-            content:'at ';
-        }
-        .server:before {
-            content:'on ';
+        .server-time {
+            float:right;
         }
     }
 
     .timings {
-        .duration, .sql-count {
+        th {
+            background-color:#fff;
+            color:@mutedColor;
+            text-align:center;
+            font-size:95%;
+            padding-bottom:3px;
+        }
+        th, td {
+            white-space:nowrap;
+        }
+        .duration-with-children {
+            display:none;
+        }
+        .duration {
             text-align:right;
-            padding-left:12px;
         }
-
         .indent {
-            color:#fff;
-            letter-spacing:7px;
+            letter-spacing:3px;
         }
-    }
+        .queries-show {
+            .number, .unit {
+                color:@anchorColor;
+            }
+        }
+        .queries-duration {
+            padding-left:6px;
+        }
+        .percent-in-sql {
+            white-space:nowrap;
+            text-align:right;
+        }
 
-    .label {
-
+        tfoot {
+            td {
+                padding-top:10px;
+                a {
+                    font-size:95%;
+                }
+            }
+        }
     }
 }
+
+// styles shared between popup view and full view
 .profiler-queries {
     font-family:@normalFonts;
 
@@ -108,27 +131,13 @@
         margin-left:4px;
         color:@mutedColor;
     }
-
+    .stack-trace {
+        margin-bottom:15px;
+    }
     pre {
-
-    }
-    code {
-        display:block;
-        margin-top:17px;
-
-        &.expanded {
-            white-space:pre;
-        }
-    }
-    pre, code {
         background-color:#fff;
         font-family:@codeFonts;
-    }
-
-    .toggle-expanded {
-        display:block;
-        margin-top:10px;
-        font-size:90%;
+        white-space:pre-wrap;
     }
 
     th {
@@ -164,6 +173,19 @@
         text-align:right;
         margin-bottom:5px;
     }
+
+    // prettify colors
+    .str{color:maroon}
+    .kwd{color:#00008b}
+    .com{color:gray}
+    .typ{color:#2b91af}
+    .lit{color:maroon}
+    .pun{color:#000}
+    .pln{color:#000}
+    .tag{color:maroon}
+    .atn{color:red}
+    .atv{color:blue}
+    .dec{color:purple}
 }
 
 // ajaxed-in results will be appended to this
@@ -206,27 +228,18 @@
         z-index:1000;
         border-bottom: 1px solid @buttonBorderColor;
         background-color:#fff;
-        font-size: 12px;
         padding: 4px 7px;
         text-align:right;
         cursor:pointer;
 
-        .duration {
-            font-size:12px;
-
-            .ms {
-                margin-left:4px;
-            }
-        }
-
         &.profiler-button-active {
             background-color:maroon;
 
-            .duration {
-                font-weight:bold;
+            .number {
                 color:#fff;
+                font-weight:bold;
             }
-            .ms {
+            .unit {
                 color:#fff;
                 font-weight:normal;
             }
@@ -239,53 +252,35 @@
         position:absolute;
         background-color:#fff;
         border: 1px solid #aaa;
-        padding:3px 10px 7px 0;
+        padding:5px 10px;
         text-align:left;
-        font-size:12px;
         line-height:16px;
         overflow:auto;
 
         .box-shadow(0px, 1px, 15px, #555);
 
         .info {
-            font-size:12px;
-            border-bottom:1px solid #aaa;
-            padding-bottom:1px;
-            margin-bottom:5px;
-            margin-left:10px;
+            margin-bottom:3px;
 
-            .time {
-                padding-left:10px;
+            .name {
+                font-size:110%;
+            }
+            .server-time {
+                font-size:95%;
             }
         }
 
         .timings {
 
-            td:first-child, td:last-child {
-                padding-left:10px;
+            th, td {
+                padding-left:6px;
+                padding-right:6px;
             }
 
             .label {
-                color:#777;
                 white-space:nowrap;
                 max-width:275px;
                 overflow:hidden;
-            }
-
-            .options {
-                td {
-                    padding-top:15px;
-                }
-                label {
-                    float:right;
-                    display: block;
-                    padding-left: 15px;
-                    text-indent: -15px;
-                    cursor:pointer;
-                }
-                input {
-                    .align-checkbox();
-                }
             }
         }
     }
@@ -378,32 +373,6 @@
                 max-width:750px;
                 overflow:hidden;
             }
-
-            .sql-count {
-                a {
-                    color:#444 !important;
-                    &:hover {
-                        text-decoration:none;
-                        cursor:text;
-                    }
-                }
-            }
-
-            .options {
-                td {
-                    padding-top:15px;
-                    //padding-right:12px;
-                    text-align:right;
-                }
-                label {
-                    padding-left: 15px;
-                    text-indent: -15px;
-                    cursor:pointer;
-                }
-                input {
-                    .align-checkbox();
-                }
-            }
         }
     }
 
@@ -432,34 +401,9 @@
             text-align:left;
         }
 
-        .since-start, .duration {
-            text-align:right;
-        }
-
         .info div {
             text-align:right;
             margin-bottom:5px;
         }
     }
 }
-
-// prettify.css
-// http://code.google.com/p/google-code-prettify/
-
-
-    .str{color:maroon}
-    .kwd{color:#00008b}
-    .com{color:gray}
-    .typ{color:#2b91af}
-    .lit{color:maroon}
-    .pun{color:#000}
-    .pln{color:#000}
-    .tag{color:maroon}
-    .atn{color:red}
-    .atv{color:blue}
-    .dec{color:purple}
-    pre.prettyprint{padding:2px;border:1px solid #888}
-    ol.linenums{margin-top:0;margin-bottom:0}
-    li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style:none}
-    li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
-

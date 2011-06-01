@@ -76,7 +76,7 @@ namespace SampleWeb.Controllers
                 }
                 using (profiler.Step("Update RouteHits"))
                 {
-                    // let's put some whitespace in this query to demonstrate clicking on a query in the profiler
+                    // let's put some whitespace in this query to demonstrate formatting
                     conn.Execute(
 @"update RouteHits
 set    HitCount = HitCount + 1

@@ -31,21 +31,27 @@ namespace Profiling
         public double? DurationMilliseconds { get; private set; }
 
         /// <summary>
-        /// All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
+        /// The offset from the start of profiling.
         /// </summary>
         [DataMember(Order = 3)]
+        public double StartMilliseconds { get; private set; }
+
+        /// <summary>
+        /// All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
+        /// </summary>
+        [DataMember(Order = 4)]
         public List<Timing> Children { get; private set; }
 
         /// <summary>
         /// Stores arbitrary key/value strings on this Timing step. Add new tuples through <see cref="AddKeyValue"/>.
         /// </summary>
-        [DataMember(Order = 4)]
+        [DataMember(Order = 5)]
         public Dictionary<string, string> KeyValues { get; private set; }
 
         /// <summary>
         /// Any queries that occurred during this Timing step.
         /// </summary>
-        [DataMember(Order = 5)]
+        [DataMember(Order = 6)]
         public List<SqlTiming> SqlTimings { get; set; }
 
         /// <summary>
@@ -53,6 +59,24 @@ namespace Profiling
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         public Timing Parent { get; internal set; }
+
+        public double DurationWithoutChildrenMilliseconds
+        {
+            get
+            {
+                double result = DurationMilliseconds.GetValueOrDefault();
+
+                if (HasChildren)
+                {
+                    foreach (var child in Children)
+                    {
+                        result -= child.DurationMilliseconds.GetValueOrDefault();
+                    }
+                }
+
+                return result;
+            }
+        }
 
         /// <summary>
         /// Reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
@@ -117,6 +141,7 @@ namespace Profiling
             Name = name;
 
             _startTicks = profiler.ElapsedTicks;
+            StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
         }
 
         [Obsolete("Used for serialization")]

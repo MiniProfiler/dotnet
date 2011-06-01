@@ -18,10 +18,14 @@ var MiniProfiler = (function() {
         // button will appear in corner with the total profiling duration - click to show details
         button.click(function() { buttonClick(button, popup); });
 
-        lowDurationCheckChange(popup);
+        toggleHidden(popup, '.toggle-trivial');
+        toggleHidden(popup, '.toggle-duration-with-children', function() {
+            popup.css('width', ''); // we added another column, so clear explicit width
+            popupSetDimensions(button, popup); // and set again
+        });
 
         // lightbox in the queries
-        popup.find('.sql-count a').click(function() { queriesShow($(this), result); });
+        popup.find('.queries-show').click(function() { queriesShow($(this), result); });
 
         // allow saving and sharing
         popup.find('.share-profiler').click(function() { share($(this)); });
@@ -35,11 +39,18 @@ var MiniProfiler = (function() {
         //queriesShow(popup.find('.sql-count a').first(), result);
     };
 
-    var lowDurationCheckChange = function(popup) {
+    var toggleHidden = function(popup, linkSelector, afterToggle) {
         // we hide any timings <= 2.0 ms by default; allow toggling of these hidden rows
-        popup.find('label.toggle-low-duration input').change(function() {
-            var chk = $(this);
-            popup.find('tr.negligible').toggle(!chk.is(':checked'));
+        popup.find(linkSelector).click(function() {
+            var link = $(this),
+                klass = link.attr('class').substr('toggle-'.length),
+                isHidden = link.text().indexOf('show') > -1;
+
+            popup.find('.' + klass).toggle(isHidden);
+            link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
+            if (afterToggle) {
+                afterToggle();
+            }
         });
     };
 
@@ -49,10 +60,10 @@ var MiniProfiler = (function() {
             popupHide(button, popup);
         }
         else {
-            // hide any other popups
             var visiblePopups = container.find('.profiler-popup:visible'),
                 theirButtons = visiblePopups.siblings('.profiler-button');
 
+            // hide any other popups
             popupHide(theirButtons, visiblePopups);
 
             // before showing the one we clicked
@@ -63,6 +74,12 @@ var MiniProfiler = (function() {
     var popupShow = function(button, popup) {
         button.addClass('profiler-button-active');
 
+        popupSetDimensions(button, popup);
+
+        popup.show();
+    };
+
+    var popupSetDimensions = function(button, popup) {
         var top = button.position().top - 1, // position next to the button we clicked
             windowHeight = $(window).height(),
             maxHeight = windowHeight - top - 40, // make sure the popup doesn't extend below the fold
@@ -70,8 +87,7 @@ var MiniProfiler = (function() {
 
         popup
             .css({ 'top':top, 'max-height':maxHeight, 'width':widthForScrollBars })
-            .css(options.renderClass, button.outerWidth() - 3) // move left or right, based on config
-            .show();
+            .css(options.renderClass, button.outerWidth() - 3); // move left or right, based on config
     };
 
     var popupHide = function(button, popup) {
@@ -102,37 +118,13 @@ var MiniProfiler = (function() {
         // highlight the queries that were clicked
         var firstQuery = queries.find('tr[data-timing-id="' + id + '"]').addClass(klass).first();
 
-        // some queries shouldn't be wrapped, so allow toggling of white-space:pre; (for easier copy/paste)
-        //queriesToggleExpansion(queries);
-
         // have to show everything before we can get a position for the first query
         queries.show(0, function() {
             // ensure they're in view
             queries.scrollTop(queries.scrollTop() + firstQuery.position().top - 100);
-
-            // sql blocks should be syntax-highlighted
+            // syntax highlighting
             prettyPrint();
         });
-    };
-
-    var queriesToggleExpansion = function(queries) {
-
-        if (queries.find('.toggle-expanded').length) {
-            return;
-        }
-
-        var expand =
-        $('<a class="toggle-expanded">expand</a>')
-            .click(function() {
-                var text = $(this).is('.expanded') ? 'expand' : 'shrink';
-                $(this).text(text).siblings('code').andSelf().toggleClass('expanded');
-            });
-
-        queries.find('.query code')
-            .filter(function() {
-                return $(this).text().indexOf('\n') > -1;
-            })
-            .parent().append(expand);
     };
 
     var bindDocumentEvents = function() {
@@ -249,6 +241,7 @@ var MiniProfiler = (function() {
 location.hostname=="0.0.0.0"||location.hostname=="localhost"||location.port.length>0||g?"development":"production"),d.async=!1,d.poll=d.poll||(g?1e3:1500),d.watch=function(){return this.watchMode=!0},d.unwatch=function(){return this.watchMode=!1},d.env==="development"?(d.optimization=0,/!watch/.test(location.hash)&&d.watch(),d.watchTimer=setInterval(function(){d.watchMode&&n(function(a,b,c){a&&q(a.toCSS(),b,c.lastModified)})},d.poll)):d.optimization=3;var h;try{h=typeof a.localStorage=="undefined"?null:a.localStorage}catch(i){h=null}var j=document.getElementsByTagName("link"),k=/^text\/(x-)?less$/;d.sheets=[];for(var l=0;l<j.length;l++)(j[l].rel==="stylesheet/less"||j[l].rel.match(/stylesheet/)&&j[l].type.match(k))&&d.sheets.push(j[l]);d.refresh=function(a){var b,c;b=c=new Date,n(function(a,d,e){e.local?u("loading "+d.href+" from cache."):(u("parsed "+d.href+" successfully."),q(a.toCSS(),d,e.lastModified)),u("css for "+d.href+" generated in "+(new Date-c)+"ms"),e.remaining===0&&u("css generated in "+(new Date-b)+"ms"),c=new Date},a),m()},d.refreshStyles=m,d.refresh(d.env==="development")})(window)
 
 ;
+
 
 // prettify.js
 // http://code.google.com/p/google-code-prettify/

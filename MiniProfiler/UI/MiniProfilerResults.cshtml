@@ -5,6 +5,10 @@
 @{
     var p = Model.MiniProfiler;
     var parentLookup = new Dictionary<SqlTiming, Timing>();
+
+    // TODO: make this a setting
+    const double HideDurationsLessThanMilliseconds = 2;
+    var showTrivialToggle = false;
 }
 @functions 
 {
@@ -20,36 +24,65 @@
     }
     
 }
-@helper RenderDuration(double ms) 
+@helper RenderNumber(double ms, string unit = "", string format = "0.0") 
 {
-    @ms.ToString("0.0")<span class="ms">ms</span>
+    <span class="number">
+        @ms.ToString(format)
+        @if (!string.IsNullOrWhiteSpace(unit)) 
+        {
+            <span class="unit">@unit</span>
+        }
+    </span>
 }
 <div class="profiler-result @(Model.ShowShareLink ? "profiler-result-full" : "")">
     <div class="profiler-button">
-        <div class="duration">
-            @RenderDuration(p.DurationMilliseconds)
-        </div>
+        @RenderNumber(p.DurationMilliseconds, "ms")
     </div>
 
     <div class="profiler-popup">
         <div class="info">
+            <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
             <span class="name">@e(p.Name)</span>
-            <span class="time">@e(p.Started.ToString("u"))</span>
-            <span class="server">@e(p.MachineName)</span>
         </div>
         <div class="profiler-output">
             <table class="timings">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>duration (ms)</th>
+                    <th class="duration-with-children">with children (ms)</th>
+                    <th class="time-from-start">from start (ms)</th>
+                @if (p.HasSqlTimings)
+                {
+                    <th colspan="2">query time (ms)</th>
+                }
+                else 
+                {
+                    <th colspan="2"></th>
+                }
+                </tr>
+            </thead>
             <tbody>
             @foreach (var t in p.GetTimingHierarchy())
             {
-                <tr class="@(t.DurationMilliseconds <= 2 ? "negligible" : "")" data-timing-id="@t.Id">
+                var trivial = t.DurationWithoutChildrenMilliseconds <= HideDurationsLessThanMilliseconds;
+                if (trivial && !showTrivialToggle) 
+                {
+                    showTrivialToggle = true;
+                }
+                <tr class="@(trivial ? "trivial" : "")" data-timing-id="@t.Id">
                     <td class="label">
-                        <span class="indent">@(new string('>', t.Depth))</span>
+                        <span class="indent">@for (int i = 0; i < t.Depth; i++) { <text>&nbsp;</text> }</span>
                         @e(t.Name)
-                        <span class="indent"> =</span>
                     </td>
-                    <td class="duration" title="total time spent in this row">
-                        @RenderDuration(t.DurationMilliseconds.GetValueOrDefault())
+                    <td class="duration" title="duration of this step without any children's durations">
+                        @RenderNumber(t.DurationWithoutChildrenMilliseconds)
+                    </td>
+                    <td class="duration duration-with-children" title="duration of this step and its children">
+                        @RenderNumber(t.DurationMilliseconds.GetValueOrDefault())
+                    </td>
+                    <td class="duration time-from-start" title="time ellapsed since profiling started">
+                        <span class="unit">+</span>@RenderNumber(t.StartMilliseconds)
                     </td>
                 @if (t.HasSqlTimings)
                 {
@@ -58,31 +91,39 @@
                     var scalers = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.Scalar);
                     var nons = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.NonQuery);
                     
-                    <td class="sql-count" title="@readers reader, @scalers scaler, @nons non-query statements executed">
-                        <a class="show-queries-for-@t.Name.GetHashCode()">@t.SqlTimings.Count<span class="ms">sql</span></a>
+                    <td class="duration" title="@readers reader, @scalers scaler, @nons non-query statements executed">
+                        <a class="queries-show">@RenderNumber(t.SqlTimings.Count, "sql", "0")</a>
                     </td>
-                    <td class="duration" title="time spent executing queries in this row">
-                        @RenderDuration(t.SqlTimings.Sum(s => s.DurationMilliseconds))
+                    <td class="duration" title="aggregate duration of all queries in this step (excludes children)">
+                        @RenderNumber(t.SqlTimings.Sum(s => s.DurationMilliseconds))
                     </td>
                 }
                 </tr>
             }
-                <tr class="options">
-                    <td colspan="2">
-                    @if (!Model.ShowShareLink)
-                    {
-                        <a id="@p.Id" class="share-profiler">share</a>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                    @if (showTrivialToggle)
+                    { 
+                        <a class="toggle-trivial" title="toggles any rows with &lt; @HideDurationsLessThanMilliseconds ms">show trivial</a>
                     }
-                        <label class="toggle-low-duration"><input type="checkbox" checked> hide &lt; @RenderDuration(2)</label>
                     </td>
+                    <td colspan="2">
+                        <a class="toggle-duration-with-children" title="toggles column with aggregate child durations">show time with children</a>
+                    </td>                  
                 @if (p.HasSqlTimings)
                 {
-                    <td colspan="2">
-                        @((p.DurationMillisecondsInSql / p.DurationMilliseconds * 100).ToString("0.#"))<span class="ms">% in sql</span>
-                    </td> 
+                    <td colspan="0" class="percent-in-sql" title="percentage of total time spent executing sql">
+                        @RenderNumber(p.DurationMillisecondsInSql / p.DurationMilliseconds * 100, "% in sql")
+                    </td>
+                }
+                else
+                {
+                    <td colspan="0"></td>
                 }
                 </tr>
-            </tbody>
+            </tfoot>
             </table>
         </div>
     </div>
@@ -93,26 +134,26 @@
         <table>
         <thead>
             <tr>
-                <th style="text-align:right">time from start<br />query type<br />duration</th>
+                <th style="text-align:right">step<br />time from start<br />query type<br />duration</th>
                 <th style="text-align:left">call stack<br />query</th>
             </tr>
         </thead>
         <tbody>
-        @{ int i = 0; }
+        @{ int i = 0; Timing parent = null; }
         @foreach (var s in sqlTimings)
         {
-            <tr class="@(i++ % 2 == 0 ? "" : "odd")" data-timing-id="@parentLookup[s].Id">
+            parent = parentLookup[s];
+            <tr class="@(i++ % 2 == 0 ? "" : "odd")" data-timing-id="@parent.Id">
                 <td class="info">
-                    <div><span class="ms">T+</span>@s.StartMilliseconds<span class="ms">ms</span></div>
+                    <div>@parent.Name</div>
+                    <div><span class="ms">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
                     <div>@e(s.ExecuteType)</div>
-                    <div>@s.DurationMilliseconds<span class="ms">ms</span></div>
+                    <div>@RenderNumber(s.DurationMilliseconds, "ms")</div>
                 </td>
                 <td>
                     <div class="query">
-                        <pre>@e(s.StackTraceSnippet)</pre>
-                        <pre>
-                            <code class="prettyprint lang-sql">@AddSpacesToParameters(s.CommandString)</code>
-                        </pre>
+                        <pre class="stack-trace">@e(s.StackTraceSnippet)</pre>
+                        <pre class="prettyprint lang-sql"><code>@AddSpacesToParameters(s.CommandString)</code></pre>
                     </div>
                 </td>
             </tr>

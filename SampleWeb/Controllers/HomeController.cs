@@ -81,15 +81,10 @@ namespace SampleWeb.Controllers
 
             using (profiler.Step("Nested call " + i))
             {
-                // let's run a few queries, too - the formatted ones can have their formatting restored by clicking on them in the results
+                // run some meaningless queries to illustrate formatting
                 conn.Query("select * from RouteHits");
 
-                conn.Query(
-@"select RouteName,
-       HitCount
-from   RouteHits
-where  HitCount > 10
-order  by RouteName");
+                conn.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName");
 
                 conn.Query(
 @"select *
