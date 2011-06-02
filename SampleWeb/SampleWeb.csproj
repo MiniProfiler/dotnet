@@ -152,4 +152,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>del $(TargetDir)RazorEngine.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>

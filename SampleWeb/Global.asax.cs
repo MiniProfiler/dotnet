@@ -41,7 +41,7 @@ namespace SampleWeb
             // to profile this request - for example, using an "IsSystemAdmin" flag against
             // the user, or similar; this could also all be done in action filters, but this
             // is simple and practical; just return null for most users. For our test, we'll
-            // profiler only for local requests (seems reasonable)
+            // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
                 profiler = MiniProfiler.Start();
@@ -49,7 +49,7 @@ namespace SampleWeb
 
             using (profiler.Step("Application_BeginRequest"))
             {
-                // you can start profiling your code immediately after starting
+                // you can start profiling your code immediately
             }
         }
 

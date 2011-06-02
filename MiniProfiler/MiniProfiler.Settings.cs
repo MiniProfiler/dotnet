@@ -29,6 +29,12 @@ namespace Profiling
             }
 
             /// <summary>
+            /// When true, link and script tags will be written to the response stream when MiniProfiler.Stop is called.
+            /// </summary>
+            [DefaultValue(true)]
+            public static bool WriteScriptsToResponseOnStop { get; set; }
+
+            /// <summary>
             /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.
             /// </summary>
             [DefaultValue(2.0)]

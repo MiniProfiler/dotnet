@@ -167,7 +167,7 @@ namespace Profiling
             return new Timing(this, Head, name);
         }
 
-        internal void StopImpl(bool writeScriptsToResponse)
+        internal void StopImpl()
         {
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
@@ -194,7 +194,7 @@ namespace Profiling
             }
 
             // by default, we should be calling .Stop in HttpApplication.EndRequest
-            if (writeScriptsToResponse)
+            if (Settings.WriteScriptsToResponseOnStop)
             {
                 var response = context.Response;
                 if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
@@ -279,11 +279,11 @@ namespace Profiling
             return result;
         }
 
-        public static void Stop(bool writeScriptsToResponse = true)
+        public static void Stop()
         {
             if (Current == null) return;
 
-            Current.StopImpl(writeScriptsToResponse);
+            Current.StopImpl();
         }
 
         /// <summary>
