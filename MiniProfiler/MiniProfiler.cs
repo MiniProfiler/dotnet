@@ -176,11 +176,9 @@ namespace Profiling
             if (context == null)
                 return;
 
-            if (ShortTermCacheSetter == null)
-            {
-                CreateDefaultCacheAccessActions();
-            }
-            ShortTermCacheSetter(this.Id, this);
+            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
+            Settings.EnsureCacheMethods();
+            Settings.ShortTermCacheSetter(this);
 
             // allow profiling of ajax requests
             context.Response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
@@ -274,7 +272,7 @@ namespace Profiling
             if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
 
             var result = new MiniProfiler(path, level);
-            context.Items[Key] = result;
+            context.Items[CacheKey] = result;
 
             return result;
         }
@@ -296,32 +294,14 @@ namespace Profiling
                 var context = HttpContext.Current;
                 if (context == null) return null;
 
-                return context.Items[Key] as MiniProfiler;
+                return context.Items[CacheKey] as MiniProfiler;
             }
         }
 
-        private const string Key = ":mini-profiler:";
 
-        public static Func<Guid, MiniProfiler> ShortTermCacheGetter { get; set; }
-        public static Action<Guid, MiniProfiler> ShortTermCacheSetter { get; set; }
+        private const string CacheKey = ":mini-profiler:";
 
-        private static void CreateDefaultCacheAccessActions()
-        {
-            MiniProfiler.ShortTermCacheSetter = (guid, prof) =>
-                HttpRuntime.Cache.Add(
-                    key: Key + guid.ToString(),
-                    value: prof,
-                    dependencies: null,
-                    absoluteExpiration: DateTime.Now.AddMinutes(5),
-                    slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
-                    priority: System.Web.Caching.CacheItemPriority.Low,
-                    onRemoveCallback: null);
 
-            MiniProfiler.ShortTermCacheGetter = (guid) =>
-            {
-                return HttpRuntime.Cache[Key + guid.ToString()] as MiniProfiler;
-            };
-        }
     }
 
     public enum ProfileLevel

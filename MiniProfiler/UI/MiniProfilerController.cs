@@ -51,10 +51,20 @@ namespace Profiling.UI
 
         public ActionResult Results(Guid id, string popup)
         {
-            var profiler = MiniProfiler.ShortTermCacheGetter(id);
-            if (profiler == null) return NotFound();
+            var isPopup = !string.IsNullOrWhiteSpace(popup);
 
-            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = !string.IsNullOrWhiteSpace(popup) };
+            var profiler = MiniProfiler.Settings.ShortTermCacheGetter(id);
+
+            if (profiler == null)
+                profiler = MiniProfiler.Settings.LongTermCacheGetter(id);
+
+            if (profiler == null)
+                return isPopup ? NotFound() : NotFound("text/html", "No MiniProfiler results found with Id=" + id.ToString());
+
+            if (!isPopup)
+                MiniProfiler.Settings.LongTermCacheSetter(profiler);
+
+            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup };
 
             EnsureResultsCompiled();
             var html = RazorEngine.Razor.Run(model, "MiniProfilerResults");
@@ -97,10 +107,10 @@ namespace Profiling.UI
             return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MiniProfiler.UI." + filename);
         }
 
-        private ActionResult NotFound(string contentType = "text/plain")
+        private ActionResult NotFound(string contentType = "text/plain", string message = null)
         {
             Response.StatusCode = 404;
-            return Content(null, contentType);
+            return Content(message, contentType);
         }
     }
 }
