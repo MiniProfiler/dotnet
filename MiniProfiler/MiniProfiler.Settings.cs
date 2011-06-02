@@ -34,6 +34,11 @@ namespace Profiling
             [DefaultValue(2.0)]
             public static double TrivialDurationThresholdMilliseconds { get; set; }
 
+            /// <summary>
+            /// Dictates on which side of the page the profiler popup button is displayed; defaults to true (i.e. left side).
+            /// </summary>
+            [DefaultValue(true)]
+            public static bool RenderPopupButtonOnLeft { get; set; }
 
         }
     }

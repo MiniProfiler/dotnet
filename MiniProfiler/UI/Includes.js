@@ -188,7 +188,7 @@ var MiniProfiler = (function($) {
             container = $('<div class="profiler-results"/>').appendTo('body');
 
             // profiler.RenderOnLoadScript() can set which corner to render in - default is upper left
-            options.renderClass = options.renderTopRight ? 'right' : 'left';
+            options.renderClass = options.renderLeft ? 'left' : 'right';
             container.addClass(options.renderClass);
 
             // get master page profiler results
