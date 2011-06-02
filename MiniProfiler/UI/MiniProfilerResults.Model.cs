@@ -8,6 +8,6 @@ namespace Profiling.UI
     public class MiniProfilerResultsModel
     {
         public MiniProfiler MiniProfiler { get; set; }
-        public bool ShowShareLink { get; set; }
+        public bool IsPopup { get; set; }
     }
 }

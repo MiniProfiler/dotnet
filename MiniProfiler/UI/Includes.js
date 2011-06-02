@@ -1,11 +1,14 @@
-﻿
-var MiniProfiler = (function() {
+﻿if (!window.jQuery) {
+    alert('MiniProfiler requires jQuery');
+}
+
+var MiniProfiler = (function($) {
 
     var options,
         container;
 
     var fetch = function(id) {
-        $.get('/mini-profiler-results?id=' + id, function(html) {
+        $.get('/mini-profiler-results?id=' + id + '&popup=1', function(html) {
             buttonShow(html);
         });
     };
@@ -18,11 +21,8 @@ var MiniProfiler = (function() {
         // button will appear in corner with the total profiling duration - click to show details
         button.click(function() { buttonClick(button, popup); });
 
-        toggleHidden(popup, '.toggle-trivial');
-        toggleHidden(popup, '.toggle-duration-with-children', function() {
-            popup.css('width', ''); // we added another column, so clear explicit width
-            popupSetDimensions(button, popup); // and set again
-        });
+        // small duration steps and the column with aggregate durations are hidden by default; allow toggling
+        toggleHidden(popup);
 
         // lightbox in the queries
         popup.find('.queries-show').click(function() { queriesShow($(this), result); });
@@ -33,24 +33,20 @@ var MiniProfiler = (function() {
         button.show();
 
         // TODO: remove after testing
-        //button.click();
+        button.click();
 
         // TODO: remove after testing
         //queriesShow(popup.find('.sql-count a').first(), result);
     };
 
-    var toggleHidden = function(popup, linkSelector, afterToggle) {
-        // we hide any timings <= 2.0 ms by default; allow toggling of these hidden rows
-        popup.find(linkSelector).click(function() {
+    var toggleHidden = function(popup) {
+        popup.find('.toggle-trivial, .toggle-duration-with-children').click(function() {
             var link = $(this),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
 
             popup.find('.' + klass).toggle(isHidden);
             link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
-            if (afterToggle) {
-                afterToggle();
-            }
         });
     };
 
@@ -82,11 +78,14 @@ var MiniProfiler = (function() {
     var popupSetDimensions = function(button, popup) {
         var top = button.position().top - 1, // position next to the button we clicked
             windowHeight = $(window).height(),
-            maxHeight = windowHeight - top - 40, // make sure the popup doesn't extend below the fold
-            widthForScrollBars = popup.width() + (popup.height() > maxHeight ? 30 : 0);
+            maxHeight = windowHeight - top - 40; // make sure the popup doesn't extend below the fold
+
+        if (popup.height() > maxHeight) {
+            popup.css({ 'padding-right':30 }); // scrollbar padding
+        }
 
         popup
-            .css({ 'top':top, 'max-height':maxHeight, 'width':widthForScrollBars })
+            .css({ 'top':top, 'max-height':maxHeight })
             .css(options.renderClass, button.outerWidth() - 3); // move left or right, based on config
     };
 
@@ -101,9 +100,7 @@ var MiniProfiler = (function() {
             win = $(window),
             width = win.width() - 2 * px,
             height = win.height() - 2 * px,
-            queries = result.find('.profiler-queries'),
-            id = link.closest('tr').attr('data-timing-id'),
-            klass = 'selected-query';
+            queries = result.find('.profiler-queries');
 
         // opaque background
         $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
@@ -112,19 +109,27 @@ var MiniProfiler = (function() {
         queries.css({ 'top':px, 'max-height':height, 'left':px, 'width':width })
             .find('table').css({ 'width':width });
 
+        // have to show everything before we can get a position for the first query
+        queries.show();
+
+        queriesScrollIntoView(link, queries, queries);
+
+        // syntax highlighting
+        prettyPrint();
+    };
+
+    var queriesScrollIntoView = function(link, queries, whatToScroll) {
+        var klass = 'selected-query',
+            id = link.closest('tr').attr('data-timing-id');
+
         // reset any previous highlights
         queries.find('.' + klass).removeClass(klass);
 
         // highlight the queries that were clicked
         var firstQuery = queries.find('tr[data-timing-id="' + id + '"]').addClass(klass).first();
 
-        // have to show everything before we can get a position for the first query
-        queries.show(0, function() {
-            // ensure they're in view
-            queries.scrollTop(queries.scrollTop() + firstQuery.position().top - 100);
-            // syntax highlighting
-            prettyPrint();
-        });
+        // ensure they're in view
+        whatToScroll.scrollTop(whatToScroll.scrollTop() + firstQuery.position().top - 100);
     };
 
     var bindDocumentEvents = function() {
@@ -144,8 +149,8 @@ var MiniProfiler = (function() {
                 hideQueries = false;
 
 
-            if (bg.is(':visible') && !$.contains(popup[0], e.target)) {
-                hideQueries = isEscPress || !$.contains(queries[0], e.target);
+            if (bg.is(':visible')) {
+                hideQueries = isEscPress || !$.contains(queries[0], e.target) && !$.contains(popup[0], e.target);
             }
             else if (popup.is(':visible')) {
                 hidePopup = isEscPress || (!$.contains(popup[0], e.target) && !$.contains(button[0], e.target) && button[0] != e.target);
@@ -162,32 +167,17 @@ var MiniProfiler = (function() {
         });
     };
 
-    var share = function(link) {
+    var initFullView = function() {
+        var popup = $('.profiler-popup');
 
-        if (link.data('working')) return;
-        link.data('working', true).addSpinnerAfter({ 'margin-left': 3 });
+        toggleHidden(popup);
 
-        $.ajax({
-            type: 'GET',
-            url: '/developer/profiler-results/save?id=' + link[0].id,
-            dataType: 'text',
-            success: function(url) {
-                link.hide();
-                $('<input type="text" value="' + url + '" style="width:' + (url.length * 6) + 'px"/>').insertBefore(link).select();
-            },
-            error: function(res, textStatus, errorThrown) {
-                link.parent().showErrorPopup(res.responseText && res.responseText.length < 100 ? res.responseText : 'An error occurred - check log');
-            },
-            complete: StackExchange.helpers.removeSpinner
+        prettyPrint();
+
+        // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
+        popup.find('.queries-show').click(function() {
+            queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
         });
-    };
-
-    var initForSharedView = function() {
-        lowDurationCheckChange($('.profiler-popup'));
-        queriesToggleWhiteSpace($('.profiler-queries'));
-
-        // for now, remove anchors on the sql durations
-        $('a[class^=show-queries-for-]');
     };
 
     return {
@@ -198,7 +188,7 @@ var MiniProfiler = (function() {
             if (!options.id) { // nothing was profiled
                 if (location.href.indexOf('/mini-profiler-results') > -1) { // but we're looking at some shared results
                     // and we need to bind some events
-                    initForSharedView();
+                    initFullView();
                 }
                 return;
             }
@@ -227,7 +217,7 @@ var MiniProfiler = (function() {
             bindDocumentEvents();
         }
     };
-})();
+})(jQuery);
 
 
 //

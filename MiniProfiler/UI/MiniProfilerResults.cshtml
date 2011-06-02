@@ -7,7 +7,6 @@
     var parentLookup = new Dictionary<SqlTiming, Timing>();
 
     // TODO: make this a setting
-    const double HideDurationsLessThanMilliseconds = 2;
     var showTrivialToggle = false;
 }
 @functions 
@@ -34,7 +33,23 @@
         }
     </span>
 }
-<div class="profiler-result @(Model.ShowShareLink ? "profiler-result-full" : "")">
+@if (!Model.IsPopup)
+{
+<text> 
+<html>
+<head>
+    <title>@p.Name (@p.DurationMilliseconds ms) - MiniProfiler Results</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet/less" href="/mini-profiler-includes.less" />
+    <script type="text/javascript" src="/mini-profiler-includes.js"></script>
+    <script type="text/javascript">
+        jQuery(function() { MiniProfiler.init(); });
+    </script>
+</head>
+<body>
+</text>
+}
+<div class="profiler-result @(Model.IsPopup ? "" : "profiler-result-full")">
     <div class="profiler-button">
         @RenderNumber(p.DurationMilliseconds, "ms")
     </div>
@@ -42,7 +57,7 @@
     <div class="profiler-popup">
         <div class="info">
             <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
-            <span class="name">@e(p.Name)</span>
+            <a class="name" href="/mini-profiler-results?id=@p.Id" target="_blank">@e(p.Name)</a>
         </div>
         <div class="profiler-output">
             <table class="timings">
@@ -56,16 +71,12 @@
                 {
                     <th colspan="2">query time (ms)</th>
                 }
-                else 
-                {
-                    <th colspan="2"></th>
-                }
                 </tr>
             </thead>
             <tbody>
             @foreach (var t in p.GetTimingHierarchy())
             {
-                var trivial = t.DurationWithoutChildrenMilliseconds <= HideDurationsLessThanMilliseconds;
+                var trivial = t.DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds;
                 if (trivial && !showTrivialToggle) 
                 {
                     showTrivialToggle = true;
@@ -106,7 +117,7 @@
                     <td>
                     @if (showTrivialToggle)
                     { 
-                        <a class="toggle-trivial" title="toggles any rows with &lt; @HideDurationsLessThanMilliseconds ms">show trivial</a>
+                        <a class="toggle-trivial" title="toggles any rows with &lt; @MiniProfiler.Settings.TrivialDurationThresholdMilliseconds ms">show trivial</a>
                     }
                     </td>
                     <td colspan="2">
@@ -114,13 +125,9 @@
                     </td>                  
                 @if (p.HasSqlTimings)
                 {
-                    <td colspan="0" class="percent-in-sql" title="percentage of total time spent executing sql">
+                    <td colspan="2" class="percent-in-sql" title="percentage of total time spent executing sql">
                         @RenderNumber(p.DurationMillisecondsInSql / p.DurationMilliseconds * 100, "% in sql")
                     </td>
-                }
-                else
-                {
-                    <td colspan="0"></td>
                 }
                 </tr>
             </tfoot>
@@ -159,7 +166,13 @@
             </tr>
         }
         </tbody>
-        </table> 
+        </table>
     </div>
 }
 </div>
+
+@if (!Model.IsPopup)
+{
+</body>
+</html>
+}

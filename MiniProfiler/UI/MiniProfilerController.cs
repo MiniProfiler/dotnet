@@ -49,12 +49,12 @@ namespace Profiling.UI
             return Content(null, contentType);
         }
 
-        public ActionResult Results(Guid id, string share)
+        public ActionResult Results(Guid id, string popup)
         {
             var profiler = MiniProfiler.ShortTermCacheGetter(id);
             if (profiler == null) return NotFound();
 
-            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, ShowShareLink = !string.IsNullOrWhiteSpace(share) };
+            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = !string.IsNullOrWhiteSpace(popup) };
 
             EnsureResultsCompiled();
             var html = RazorEngine.Razor.Run(model, "MiniProfilerResults");

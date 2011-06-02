@@ -40,8 +40,11 @@
         cursor:pointer;
         color:@anchorColor;
     }
-    a:hover {
-        text-decoration:underline;
+    a {
+        text-decoration:none;
+        &:hover {
+            text-decoration:underline;
+        }
     }
 }
 
@@ -51,6 +54,8 @@
 
     .label {
         color:@textColor;
+        overflow:hidden;
+        text-overflow: ellipsis;
     }
 
     .unit {
@@ -83,9 +88,7 @@
         th {
             background-color:#fff;
             color:@mutedColor;
-            text-align:center;
-            font-size:95%;
-            padding-bottom:3px;
+            text-align:right;
         }
         th, td {
             white-space:nowrap;
@@ -118,6 +121,9 @@
                 a {
                     font-size:95%;
                 }
+            }
+            td:first-child ~ td { // "time with children" link
+                text-align:right;
             }
         }
     }
@@ -162,6 +168,16 @@
 
         pre, code {
             background-color:#e5e5e5;
+        }
+    }
+
+    .selected-query td { // this needs to come after .odd
+        background-color:rgba(255, 255, 0, 0.2);
+        border-top:1px solid #ccc;
+        border-bottom:1px solid #ccc;
+
+        code, pre {
+            background-color:transparent;
         }
     }
 
@@ -277,10 +293,13 @@
                 padding-right:6px;
             }
 
+            th {
+                font-size:95%;
+                padding-bottom:3px;
+            }
+
             .label {
-                white-space:nowrap;
                 max-width:275px;
-                overflow:hidden;
             }
         }
     }
@@ -295,18 +314,6 @@
 
         th {
             font-size:17px;
-        }
-
-        @selectedColor:rgba(255, 255, 0, 0.2);
-
-        .selected-query td {
-            background-color:@selectedColor;
-            border-top:1px solid #ccc;
-            border-bottom:1px solid #ccc;
-
-            code, pre {
-                background-color:transparent;
-            }
         }
     }
 }
@@ -323,17 +330,11 @@
 }
 
 
-// used when viewing a saved, shared result
+// used when viewing a shared, full result
 .profiler-result.profiler-result-full {
 
-    .ms {
-        margin-left:4px;
-        color:#888;
-    }
-
-    .dno {
-        display:none;
-    }
+    width:950px;
+    margin:30px auto;
 
     .profiler-button {
         display:none;
@@ -342,22 +343,20 @@
     .profiler-popup {
 
         .info {
-            font-size: 24px;
-            border-bottom:1px solid #888;
-            padding-bottom:2px;
-            margin-bottom:15px;
-
-            .name {
-
-            }
-
-            .server {
-                float:right;
-            }
+            font-size: 25px;
+            border-bottom:1px solid @mutedColor;
+            padding-bottom:3px;
+            margin-bottom:25px;
         }
 
         .timings {
-
+            td, th {
+                padding-left:8px;
+                padding-right:8px;
+            }
+            th {
+                padding-bottom:7px;
+            }
             td {
                 font-size:14px;
                 padding-bottom:4px;
@@ -368,10 +367,7 @@
             }
 
             .label {
-                color:#444;
-                white-space:nowrap;
-                max-width:750px;
-                overflow:hidden;
+                max-width:550px;
             }
         }
     }
@@ -379,21 +375,9 @@
     .profiler-queries {
         margin:25px 0;
 
-        height:100%;
-
         th {
             font-size:16px;
             color:#555;
-        }
-
-        .odd {
-            td {
-                background-color:#e5e5e5;
-
-                pre, code {
-                    background-color:#e5e5e5;
-                }
-            }
         }
 
         td {

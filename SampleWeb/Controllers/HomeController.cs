@@ -84,7 +84,7 @@ namespace SampleWeb.Controllers
                 // run some meaningless queries to illustrate formatting
                 conn.Query("select * from RouteHits");
 
-                conn.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName");
+                conn.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
 
                 conn.Query(
 @"select *

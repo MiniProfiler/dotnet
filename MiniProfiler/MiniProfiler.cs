@@ -166,18 +166,20 @@ namespace Profiling
             return new Timing(this, Head, name);
         }
 
-        internal void StopImpl()
+        internal void StopImpl(bool writeScriptsToResponse)
         {
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
+
+            var context = HttpContext.Current;
+            if (context == null)
+                return;
 
             if (ShortTermCacheSetter == null)
             {
                 CreateDefaultCacheAccessActions();
             }
             ShortTermCacheSetter(this.Id, this);
-
-            var context = HttpContext.Current;
 
             // allow profiling of ajax requests
             context.Response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
@@ -188,6 +190,19 @@ namespace Profiling
             {
                 var values = mvc.RequestContext.RouteData.Values;
                 this.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+            }
+
+            // by default, we should be calling .Stop in HttpApplication.EndRequest
+            if (writeScriptsToResponse)
+            {
+                var response = context.Response;
+                if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
+                    return;
+
+                if (!string.IsNullOrWhiteSpace(context.Request.Headers["X-Requested-With"]))
+                    return;
+
+                response.Write(MiniProfiler.Current.RenderOnLoadScript());
             }
         }
 
@@ -239,18 +254,27 @@ namespace Profiling
             return msTimesTen / 10;
         }
 
-        public static MiniProfiler Start(string path, ProfileLevel level = ProfileLevel.Info)
+        public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info)
         {
-            // don't profile our profiler routes!
-            if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
-
             var context = HttpContext.Current;
             if (context == null) return null;
+
+            var path = context.Request.Url.OriginalString;
+
+            // don't profile our profiler routes!
+            if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
 
             var result = new MiniProfiler(path, level);
             context.Items[Key] = result;
 
             return result;
+        }
+
+        public static void Stop(bool writeScriptsToResponse = true)
+        {
+            if (Current == null) return;
+
+            Current.StopImpl(writeScriptsToResponse);
         }
 
         public static MiniProfiler Current
@@ -318,10 +342,11 @@ namespace Profiling
             return profiler == null ? null : profiler.StepImpl(name, level);
         }
 
-        public static void AddData(this MiniProfiler profiler, string key, string value)
-        {
-            if (profiler != null) profiler.AddDataImpl(key, value);
-        }
+        // TODO: get this working in the UI
+        //public static void AddData(this MiniProfiler profiler, string key, string value)
+        //{
+        //    if (profiler != null) profiler.AddDataImpl(key, value);
+        //}
 
         /// <summary>
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
@@ -331,11 +356,6 @@ namespace Profiling
         {
             if (profiler == null || externalProfiler == null) return;
             profiler.Head.AddChild(externalProfiler.Root);
-        }
-
-        public static void Stop(this MiniProfiler profiler)
-        {
-            if (profiler != null) profiler.StopImpl();
         }
 
         public static IHtmlString Render(this MiniProfiler profiler)

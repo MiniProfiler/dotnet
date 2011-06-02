@@ -60,6 +60,9 @@ namespace Profiling
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         public Timing Parent { get; internal set; }
 
+        /// <summary>
+        /// Gets the ellapsed milliseconds in this step without any children's durations.
+        /// </summary>
         public double DurationWithoutChildrenMilliseconds
         {
             get

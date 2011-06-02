@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Profiling;
+using System.IO;
 
 namespace SampleWeb
 {
@@ -48,13 +49,13 @@ namespace SampleWeb
             // profiler only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                MiniProfiler.Start(Request.Url.OriginalString);
+                MiniProfiler.Start();
             }
         }
 
         protected void Application_EndRequest()
         {
-            MiniProfiler.Current.Stop();
+            MiniProfiler.Stop();
         }
     }
 }
