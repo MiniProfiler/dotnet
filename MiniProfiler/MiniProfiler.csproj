@@ -85,7 +85,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(ProjectDir)lib\ILRepack.exe /out:$(TargetDir)MiniProfiler.dll $(TargetDir)MiniProfiler.dll $(TargetDir)RazorEngine.dll</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)lib\ILRepack.exe /out:$(TargetDir)MiniProfiler.dll $(TargetDir)MiniProfiler.dll $(TargetDir)RazorEngine.dll
+del $(TargetDir)RazorEngine.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
