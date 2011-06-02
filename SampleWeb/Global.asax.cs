@@ -12,17 +12,13 @@ namespace SampleWeb
 
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
-            filters.Add(new HandleErrorAttribute());
-        }
 
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             // hook up our UI
-            Profiling.UI.MiniProfilerController.RegisterRoutes(routes);
+            MiniProfiler.RegisterRoutes(routes);
 
             routes.MapRoute(
                 "Default", // Route name
@@ -34,14 +30,13 @@ namespace SampleWeb
 
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
-
-            RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
 
         protected void Application_BeginRequest()
         {
+            MiniProfiler profiler = null;
+
             // might want to decide here (or maybe inside the action) whether you want
             // to profile this request - for example, using an "IsSystemAdmin" flag against
             // the user, or similar; this could also all be done in action filters, but this
@@ -49,12 +44,18 @@ namespace SampleWeb
             // profiler only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                MiniProfiler.Start();
+                profiler = MiniProfiler.Start();
+            }
+
+            using (profiler.Step("Application_BeginRequest"))
+            {
+                // you can start profiling your code immediately after starting
             }
         }
 
         protected void Application_EndRequest()
         {
+            // by default, .Stop() will write our UI scripts out to the Response
             MiniProfiler.Stop();
         }
     }

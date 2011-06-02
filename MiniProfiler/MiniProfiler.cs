@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Web.Routing;
 
 namespace Profiling
 {
@@ -254,6 +255,14 @@ namespace Profiling
             return msTimesTen / 10;
         }
 
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            UI.MiniProfilerController.RegisterRoutes(routes);
+        }
+
+        /// <summary>
+        /// Starts a new MiniProfiler for the current Request.
+        /// </summary>
         public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info)
         {
             var context = HttpContext.Current;
@@ -277,6 +286,9 @@ namespace Profiling
             Current.StopImpl(writeScriptsToResponse);
         }
 
+        /// <summary>
+        /// Returns the currently running MiniProfiler for the current HttpContext; null otherwise.
+        /// </summary>
         public static MiniProfiler Current
         {
             get

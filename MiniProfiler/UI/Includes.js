@@ -27,16 +27,7 @@ var MiniProfiler = (function($) {
         // lightbox in the queries
         popup.find('.queries-show').click(function() { queriesShow($(this), result); });
 
-        // allow saving and sharing
-        popup.find('.share-profiler').click(function() { share($(this)); });
-
         button.show();
-
-        // TODO: remove after testing
-        button.click();
-
-        // TODO: remove after testing
-        //queriesShow(popup.find('.sql-count a').first(), result);
     };
 
     var toggleHidden = function(popup) {

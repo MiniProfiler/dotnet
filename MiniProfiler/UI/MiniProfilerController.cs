@@ -16,7 +16,7 @@ namespace Profiling.UI
             return path.Contains("/mini-profiler-includes.") || path.Contains("/mini-profiler-results");
         }
 
-        public static void RegisterRoutes(RouteCollection routes)
+        internal static void RegisterRoutes(RouteCollection routes)
         {
             routes.MapRoute("", "mini-profiler-includes.{type}", new { controller = "MiniProfiler", action = "Includes", type = "" });
             routes.MapRoute("", "mini-profiler-results", new { controller = "MiniProfiler", action = "Results" });
