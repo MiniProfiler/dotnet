@@ -1,0 +1,9 @@
+﻿il-repack
+Merge IL assemblies into one, using Mono.Cecil
+http://code.google.com/p/il-repack/
+
+Code license
+Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
+
+
+Note: MiniProfiler is using this in a post-build step to combine our output and RazorEngine.dll for easier distribution.

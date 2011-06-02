@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\ILRepack.exe" />
+    <Content Include="lib\ILRepack.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

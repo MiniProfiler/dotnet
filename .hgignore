@@ -5,6 +5,5 @@ SampleWeb/bin/
 SampleWeb/obj/
 *.suo
 *.user
-packages/*
 *.nupkg
 *.docstates
