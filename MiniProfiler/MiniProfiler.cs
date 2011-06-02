@@ -218,7 +218,7 @@ namespace Profiling
                 if (!string.IsNullOrWhiteSpace(context.Request.Headers["X-Requested-With"]))
                     return;
 
-                response.Write(MiniProfiler.Current.RenderOnLoadScript());
+                response.Write(RenderIncludes());
             }
         }
 
@@ -299,6 +299,19 @@ namespace Profiling
             if (Current == null) return;
 
             Current.StopImpl();
+        }
+
+        /// <summary>
+        /// Renders the css and javascript includes needed to render our UI.
+        /// </summary>
+        public static IHtmlString RenderIncludes()
+        {
+            if (Current == null) return MvcHtmlString.Empty;
+
+            return MvcHtmlString.Create(string.Format(
+@"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
+<script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderLeft:{1} }}); }} ); </script>", Current.Id, MiniProfiler.Settings.RenderPopupButtonOnLeft ? "true" : "false"));
         }
 
         /// <summary>
@@ -388,16 +401,6 @@ namespace Profiling
                 }
             }
             return MvcHtmlString.Create(text.ToString());
-        }
-
-        public static IHtmlString RenderOnLoadScript(this MiniProfiler profiler)
-        {
-            if (profiler == null) return MvcHtmlString.Empty;
-
-            return MvcHtmlString.Create(string.Format(
-@"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
-<script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderLeft:{1} }}); }} ); </script>", profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnLeft ? "true" : "false"));
         }
 
     }
