@@ -32,7 +32,7 @@ namespace Profiling
             /// <summary>
             /// When true, link and script tags will be written to the response stream when MiniProfiler.Stop is called.
             /// </summary>
-            [DefaultValue(true)]
+            [DefaultValue(false)]
             public static bool WriteScriptsToResponseOnStop { get; set; }
 
             /// <summary>

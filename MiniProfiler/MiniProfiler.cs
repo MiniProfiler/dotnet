@@ -176,25 +176,42 @@ namespace Profiling
             if (context == null)
                 return;
 
+            var request = context.Request;
+            var response = context.Response;
+
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             Settings.EnsureCacheMethods();
             Settings.ShortTermCacheSetter(this);
 
-            // allow profiling of ajax requests
-            context.Response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
-
-            // also set the profiler name to Controller/Action
-            var mvc = context.Handler as MvcHandler;
-            if (string.IsNullOrWhiteSpace(this.Name) && mvc != null)
+            try
             {
-                var values = mvc.RequestContext.RouteData.Values;
-                this.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+                // allow profiling of ajax requests
+                response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
+            }
+            catch { } // headers blew up
+
+            // also set the profiler name to Controller/Action or /url
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                var mvc = context.Handler as MvcHandler;
+
+                if (mvc != null)
+                {
+                    var values = mvc.RequestContext.RouteData.Values;
+                    Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(this.Name))
+                {
+                    Name = request.Url.AbsolutePath ?? "";
+                    if (Name.Length > 50)
+                        Name = Name.Remove(50);
+                }
             }
 
             // by default, we should be calling .Stop in HttpApplication.EndRequest
             if (Settings.WriteScriptsToResponseOnStop)
             {
-                var response = context.Response;
                 if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
                     return;
 
