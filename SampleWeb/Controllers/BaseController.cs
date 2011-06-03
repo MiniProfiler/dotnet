@@ -13,7 +13,7 @@ namespace SampleWeb.Controllers
     public abstract class BaseController : Controller
     {
         /// <summary>
-        /// 
+        /// Returns an open connection that will have its queries profiled.
         /// </summary>
         protected DbConnection GetOpenConnection(MiniProfiler profiler = null)
         {

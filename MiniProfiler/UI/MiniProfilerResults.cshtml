@@ -6,8 +6,8 @@
     var p = Model.MiniProfiler;
     var parentLookup = new Dictionary<SqlTiming, Timing>();
 
-    // TODO: make this a setting
     var showTrivialToggle = false;
+    var allTimingsTrivial = true;
 }
 @functions 
 {
@@ -56,8 +56,8 @@
 
     <div class="profiler-popup">
         <div class="info">
-            <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
             <a class="name" href="/mini-profiler-results?id=@p.Id" target="_blank">@e(p.Name)</a>
+            <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
         </div>
         <div class="profiler-output">
             <table class="timings">
@@ -76,12 +76,18 @@
             <tbody>
             @foreach (var t in p.GetTimingHierarchy())
             {
-                var trivial = t.DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds;
-                if (trivial && !showTrivialToggle) 
+                if (t.IsTrivial)
                 {
-                    showTrivialToggle = true;
+                    if (!showTrivialToggle)
+                    {
+                        showTrivialToggle = true;
+                    }
                 }
-                <tr class="@(trivial ? "trivial" : "")" data-timing-id="@t.Id">
+                else 
+                {
+                    allTimingsTrivial = false; 
+                }
+                <tr class="@(t.IsTrivial ? "trivial" : "")" data-timing-id="@t.Id">
                     <td class="label">
                         <span class="indent">@for (int i = 0; i < t.Depth; i++) { <text>&nbsp;</text> }</span>
                         @e(t.Name)
@@ -117,7 +123,9 @@
                     <td>
                     @if (showTrivialToggle)
                     { 
-                        <a class="toggle-trivial" title="toggles any rows with &lt; @MiniProfiler.Settings.TrivialDurationThresholdMilliseconds ms">show trivial</a>
+                        <a class="toggle-trivial"
+                           data-show-on-load="@(allTimingsTrivial ? "true" : "")"
+                           title="toggles any rows with &lt; @MiniProfiler.Settings.TrivialDurationThresholdMilliseconds ms">show trivial</a>
                     }
                     </td>
                     <td colspan="2">

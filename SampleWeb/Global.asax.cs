@@ -55,7 +55,6 @@ namespace SampleWeb
 
         protected void Application_EndRequest()
         {
-            // by default, .Stop() will write our UI scripts out to the Response
             Profiling.MiniProfiler.Stop();
         }
     }

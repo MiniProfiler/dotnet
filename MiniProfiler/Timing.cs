@@ -82,6 +82,15 @@ namespace Profiling
         }
 
         /// <summary>
+        /// Returns true when this <see cref="DurationWithoutChildrenMilliseconds"/> is less than the configured
+        /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
+        /// </summary>
+        public bool IsTrivial
+        {
+            get { return DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds; }
+        }
+
+        /// <summary>
         /// Reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
         private readonly MiniProfiler _profiler;

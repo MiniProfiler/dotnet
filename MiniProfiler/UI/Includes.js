@@ -31,7 +31,9 @@ var MiniProfiler = (function($) {
     };
 
     var toggleHidden = function(popup) {
-        popup.find('.toggle-trivial, .toggle-duration-with-children').click(function() {
+        var trivial = popup.find('.toggle-trivial');
+
+        popup.find('.toggle-duration-with-children').add(trivial).click(function() {
             var link = $(this),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
@@ -39,6 +41,11 @@ var MiniProfiler = (function($) {
             popup.find('.' + klass).toggle(isHidden);
             link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
         });
+
+        // if all our timings are trivial, go ahead and show them
+        if (trivial.data('show-on-load')) {
+            trivial.click();
+        }
     };
 
     var buttonClick = function(button, popup) {
