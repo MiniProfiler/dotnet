@@ -167,65 +167,10 @@ namespace Profiling
             return new Timing(this, Head, name);
         }
 
-        internal void StopImpl(bool discardResults)
+        internal void StopImpl()
         {
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
-
-            if (discardResults)
-            {
-                Current = null;
-                return;
-            }
-
-            var context = HttpContext.Current;
-            if (context == null)
-                return;
-
-            var request = context.Request;
-            var response = context.Response;
-
-            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            Settings.EnsureCacheMethods();
-            Settings.ShortTermCacheSetter(this);
-
-            try
-            {
-                // allow profiling of ajax requests
-                response.AppendHeader("X-MiniProfiler-Id", Id.ToString());
-            }
-            catch { } // headers blew up
-
-            // also set the profiler name to Controller/Action or /url
-            if (string.IsNullOrWhiteSpace(Name))
-            {
-                var mvc = context.Handler as MvcHandler;
-
-                if (mvc != null)
-                {
-                    var values = mvc.RequestContext.RouteData.Values;
-                    Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
-                }
-
-                if (string.IsNullOrWhiteSpace(this.Name))
-                {
-                    Name = request.Url.AbsolutePath ?? "";
-                    if (Name.Length > 50)
-                        Name = Name.Remove(50);
-                }
-            }
-
-            // by default, we should be calling .Stop in HttpApplication.EndRequest
-            if (Settings.WriteScriptsToResponseOnStop)
-            {
-                if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
-                    return;
-
-                if (!string.IsNullOrWhiteSpace(context.Request.Headers["X-Requested-With"]))
-                    return;
-
-                response.Write(RenderIncludes());
-            }
         }
 
         internal void AddDataImpl(string key, string value)
@@ -293,12 +238,20 @@ namespace Profiling
             var context = HttpContext.Current;
             if (context == null) return null;
 
-            var path = context.Request.Url.OriginalString;
+            var url = context.Request.Url;
+            var path = url.AbsolutePath.ToLower();
 
             // don't profile our profiler routes!
             if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
 
-            var result = new MiniProfiler(path, level);
+            // don't profile /content or /scripts, either - happens in web.dev
+            foreach (var ignored in Settings.IgnoredRootPaths ?? new string[0])
+            {
+                if (path.StartsWith(ignored, StringComparison.OrdinalIgnoreCase))
+                    return null;
+            }
+
+            var result = new MiniProfiler(url.OriginalString, level);
             Current = result;
 
             return result;
@@ -313,9 +266,67 @@ namespace Profiling
         /// </param>
         public static void Stop(bool discardResults = false)
         {
-            if (Current == null) return;
+            var context = HttpContext.Current;
+            if (context == null)
+                return;
 
-            Current.StopImpl(discardResults);
+            var current = Current;
+            if (current == null)
+                return;
+
+            // stop our timings
+            current.StopImpl();
+
+            if (discardResults)
+            {
+                Current = null;
+                return;
+            }
+
+            var request = context.Request;
+            var response = context.Response;
+
+            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
+            Settings.EnsureCacheMethods();
+            Settings.ShortTermCacheSetter(current);
+
+            try
+            {
+                // allow profiling of ajax requests
+                response.AppendHeader("X-MiniProfiler-Id", current.Id.ToString());
+            }
+            catch { } // headers blew up
+
+            // also set the profiler name to Controller/Action or /url
+            if (string.IsNullOrWhiteSpace(current.Name))
+            {
+                var mvc = context.Handler as MvcHandler;
+
+                if (mvc != null)
+                {
+                    var values = mvc.RequestContext.RouteData.Values;
+                    current.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(current.Name))
+                {
+                    current.Name = request.Url.AbsolutePath ?? "";
+                    if (current.Name.Length > 50)
+                        current.Name = current.Name.Remove(50);
+                }
+            }
+
+            // by default, we should be calling .Stop in HttpApplication.EndRequest
+            if (Settings.WriteScriptsToResponseOnStop)
+            {
+                if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
+                    return;
+
+                if (!string.IsNullOrWhiteSpace(context.Request.Headers["X-Requested-With"]))
+                    return;
+
+                response.Write(RenderIncludes());
+            }
         }
 
         /// <summary>

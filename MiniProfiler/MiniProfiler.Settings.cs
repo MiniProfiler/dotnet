@@ -47,6 +47,12 @@ namespace Profiling
             [DefaultValue(true)]
             public static bool RenderPopupButtonOnLeft { get; set; }
 
+            /// <summary>
+            /// When <see cref="MiniProfiler.Start()"/> is called, if the current request url starts with this property,
+            /// no profiler will be instantiated and no results will be displayed.  Default value is { "/content", "/scripts" }.
+            /// </summary>
+            [DefaultValue(new string[] { "/content/", "/scripts/" })]
+            public static string[] IgnoredRootPaths { get; set; }
 
             /// <summary>
             /// A method that will return a MiniProfiler when given a Guid.  Meant for caching individual page profilings for a 
