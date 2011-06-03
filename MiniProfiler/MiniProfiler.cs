@@ -167,10 +167,15 @@ namespace Profiling
             return new Timing(this, Head, name);
         }
 
-        internal void StopImpl()
+        internal bool StopImpl()
         {
+            if (!_watch.IsRunning)
+                return false;
+
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
+
+            return true;
         }
 
         internal void AddDataImpl(string key, string value)
@@ -274,8 +279,9 @@ namespace Profiling
             if (current == null)
                 return;
 
-            // stop our timings
-            current.StopImpl();
+            // stop our timings - when this is false, we've already called .Stop before on this session
+            if (!current.StopImpl())
+                return;
 
             if (discardResults)
             {
