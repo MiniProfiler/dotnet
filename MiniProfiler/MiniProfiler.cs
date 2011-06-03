@@ -167,10 +167,16 @@ namespace Profiling
             return new Timing(this, Head, name);
         }
 
-        internal void StopImpl()
+        internal void StopImpl(bool discardResults)
         {
             _watch.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
+
+            if (discardResults)
+            {
+                Current = null;
+                return;
+            }
 
             var context = HttpContext.Current;
             if (context == null)
@@ -270,13 +276,17 @@ namespace Profiling
             return msTimesTen / 10;
         }
 
+        /// <summary>
+        /// Hooks up MiniProfiler's controller actions needed to display results.
+        /// </summary>
         public static void RegisterRoutes(RouteCollection routes)
         {
             UI.MiniProfilerController.RegisterRoutes(routes);
         }
 
         /// <summary>
-        /// Starts a new MiniProfiler for the current Request.
+        /// Starts a new MiniProfiler for the current Request. This new profiler can be accessed by
+        /// <see cref="MiniProfiler.Current"/>
         /// </summary>
         public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info)
         {
@@ -289,21 +299,29 @@ namespace Profiling
             if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
 
             var result = new MiniProfiler(path, level);
-            context.Items[CacheKey] = result;
+            Current = result;
 
             return result;
         }
 
-        public static void Stop()
+        /// <summary>
+        /// Ends the current profiling session, if one exists.
+        /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
+        public static void Stop(bool discardResults = false)
         {
             if (Current == null) return;
 
-            Current.StopImpl();
+            Current.StopImpl(discardResults);
         }
 
         /// <summary>
-        /// Renders the css and javascript includes needed to render our UI.
+        /// Returns the css and javascript includes needed to display the MiniProfiler results UI.
         /// </summary>
+        /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes()
         {
             if (Current == null) return MvcHtmlString.Empty;
@@ -315,7 +333,7 @@ namespace Profiling
         }
 
         /// <summary>
-        /// Returns the currently running MiniProfiler for the current HttpContext; null otherwise.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
         /// </summary>
         public static MiniProfiler Current
         {
@@ -326,12 +344,16 @@ namespace Profiling
 
                 return context.Items[CacheKey] as MiniProfiler;
             }
+            private set
+            {
+                var context = HttpContext.Current;
+                if (context == null) return;
+
+                context.Items[CacheKey] = value;
+            }
         }
 
-
         private const string CacheKey = ":mini-profiler:";
-
-
     }
 
     public enum ProfileLevel

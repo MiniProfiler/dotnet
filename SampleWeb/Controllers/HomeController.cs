@@ -34,6 +34,9 @@ namespace SampleWeb.Controllers
 
         public ActionResult About()
         {
+            // prevent this specific route from being profiled
+            MiniProfiler.Stop(discardResults: true);
+
             return View();
         }
 
