@@ -112,7 +112,7 @@ from   (select RouteName,
         where  HitCount > 30)
 order  by RouteName");
 
-                using (profiler.Step("Increment i"))
+                using (profiler.Step("Incrementing a variable named i")) // need a long title to test max-width
                 {
                     i++;
                 }

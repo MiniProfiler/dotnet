@@ -40,6 +40,8 @@ var MiniProfiler = (function($) {
 
             popup.find('.' + klass).toggle(isHidden);
             link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
+
+            popupPreventHorizontalScroll(popup);
         });
 
         // if all our timings are trivial, go ahead and show them
@@ -71,6 +73,8 @@ var MiniProfiler = (function($) {
         popupSetDimensions(button, popup);
 
         popup.show();
+
+        popupPreventHorizontalScroll(popup);
     };
 
     var popupSetDimensions = function(button, popup) {
@@ -78,14 +82,18 @@ var MiniProfiler = (function($) {
             windowHeight = $(window).height(),
             maxHeight = windowHeight - top - 40; // make sure the popup doesn't extend below the fold
 
-        if (popup.height() > maxHeight) {
-            popup.css({ 'padding-right':30 }); // scrollbar padding
-        }
-
         popup
             .css({ 'top':top, 'max-height':maxHeight })
             .css(options.renderClass, button.outerWidth() - 3); // move left or right, based on config
     };
+
+    var popupPreventHorizontalScroll = function(popup) {
+        var childrenHeight = 0;
+
+        popup.children().each(function() { childrenHeight += $(this).height(); });
+
+        popup.css({ 'padding-right':(childrenHeight > popup.height() ? 30 : 0) });
+    }
 
     var popupHide = function(button, popup) {
         button.removeClass('profiler-button-active');
