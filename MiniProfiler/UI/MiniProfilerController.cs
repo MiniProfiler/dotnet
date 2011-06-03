@@ -51,8 +51,9 @@ namespace Profiling.UI
 
         public ActionResult Results(Guid id, string popup)
         {
-            var isPopup = !string.IsNullOrWhiteSpace(popup);
+            MiniProfiler.Settings.EnsureCacheMethods();
 
+            var isPopup = !string.IsNullOrWhiteSpace(popup);
             var profiler = MiniProfiler.Settings.ShortTermCacheGetter(id);
 
             if (profiler == null)
@@ -61,6 +62,8 @@ namespace Profiling.UI
             if (profiler == null)
                 return isPopup ? NotFound() : NotFound("text/html", "No MiniProfiler results found with Id=" + id.ToString());
 
+            // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
+            // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
             if (!isPopup)
                 MiniProfiler.Settings.LongTermCacheSetter(profiler);
 
