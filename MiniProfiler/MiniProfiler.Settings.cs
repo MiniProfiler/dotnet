@@ -42,10 +42,10 @@ namespace Profiling
             public static double TrivialDurationThresholdMilliseconds { get; set; }
 
             /// <summary>
-            /// Dictates on which side of the page the profiler popup button is displayed; defaults to true (i.e. left side).
+            /// Dictates on which side of the page the profiler popup button is displayed; defaults to false (i.e. renders on left side).
             /// </summary>
-            [DefaultValue(true)]
-            public static bool RenderPopupButtonOnLeft { get; set; }
+            [DefaultValue(false)]
+            public static bool RenderPopupButtonOnRight { get; set; }
 
             /// <summary>
             /// When <see cref="MiniProfiler.Start()"/> is called, if the current request url starts with this property,

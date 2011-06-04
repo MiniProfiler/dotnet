@@ -346,7 +346,7 @@ namespace Profiling
             return MvcHtmlString.Create(string.Format(
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderLeft:{1} }}); }} ); </script>", Current.Id, MiniProfiler.Settings.RenderPopupButtonOnLeft ? "true" : "false"));
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderDirection:'{1}' }}); }} ); </script>", Current.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left"));
         }
 
         /// <summary>

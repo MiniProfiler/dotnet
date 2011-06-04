@@ -84,7 +84,7 @@ var MiniProfiler = (function($) {
 
         popup
             .css({ 'top':top, 'max-height':maxHeight })
-            .css(options.renderClass, button.outerWidth() - 3); // move left or right, based on config
+            .css(options.renderDirection, button.outerWidth() - 3); // move left or right, based on config
     };
 
     var popupPreventHorizontalScroll = function(popup) {
@@ -92,7 +92,7 @@ var MiniProfiler = (function($) {
 
         popup.children().each(function() { childrenHeight += $(this).height(); });
 
-        popup.css({ 'padding-right':(childrenHeight > popup.height() ? 30 : 0) });
+        popup.css({ 'padding-right':childrenHeight > popup.height() ? 40 : 10 });
     }
 
     var popupHide = function(button, popup) {
@@ -112,7 +112,7 @@ var MiniProfiler = (function($) {
         $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
 
         // center the queries and ensure long content is scrolled
-        queries.css({ 'top':px, 'max-height':height, 'left':px, 'width':width })
+        queries.css({ 'top':px, 'max-height':height, 'width':width }).css(options.renderDirection, px)
             .find('table').css({ 'width':width });
 
         // have to show everything before we can get a position for the first query
@@ -202,9 +202,8 @@ var MiniProfiler = (function($) {
             // all fetched profilings will go in here
             container = $('<div class="profiler-results"/>').appendTo('body');
 
-            // profiler.RenderOnLoadScript() can set which corner to render in - default is upper left
-            options.renderClass = options.renderLeft ? 'left' : 'right';
-            container.addClass(options.renderClass);
+            // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
+            container.addClass(options.renderDirection);
 
             // get master page profiler results
             fetch(options.id);
