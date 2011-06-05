@@ -22,6 +22,11 @@ namespace Profiling.UI
             routes.MapRoute("", "mini-profiler-results", new { controller = "MiniProfiler", action = "Results" });
         }
 
+        /// <summary>
+        /// Includes files keyed by filename.
+        /// </summary>
+        private static readonly Dictionary<string, string> _IncludesCache = new Dictionary<string, string>();
+
         public ActionResult Includes(string type)
         {
             if (string.IsNullOrWhiteSpace(type)) return NotFound();
@@ -41,12 +46,25 @@ namespace Profiling.UI
                     return NotFound();
             }
 
-            using (var stream = GetResource(filename))
+            string fileContents = null;
+
+            if (!_IncludesCache.TryGetValue(filename, out fileContents))
             {
-                stream.CopyTo(Response.OutputStream);
+                using (var stream = GetResource(filename))
+                using (var reader = new StreamReader(stream))
+                {
+                    fileContents = reader.ReadToEnd();
+                }
+
+                _IncludesCache[filename] = fileContents;
             }
 
-            return Content(null, contentType);
+            var cache = Response.Cache;
+            cache.SetCacheability(System.Web.HttpCacheability.Public);
+            cache.SetExpires(DateTime.Now.AddDays(7));
+            cache.SetValidUntilExpires(true);
+
+            return Content(fileContents, contentType);
         }
 
         public ActionResult Results(Guid id, string popup)
