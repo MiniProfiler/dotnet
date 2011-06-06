@@ -8,9 +8,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Web.Routing;
 using System.Web.Hosting;
-using StackExchange.MvcMiniProfiler.Helpers;
+using MvcMiniProfiler.Helpers;
 
-namespace StackExchange.MvcMiniProfiler
+namespace MvcMiniProfiler
 {
     /// <summary>
     /// A single MiniProfiler can be used to represent any number of steps/levels in a call-graph, via Step()

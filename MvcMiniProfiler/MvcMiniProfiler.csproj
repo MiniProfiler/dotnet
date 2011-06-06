@@ -8,7 +8,7 @@
     <ProjectGuid>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StackExchange.MvcMiniProfiler</RootNamespace>
+    <RootNamespace>MvcMiniProfiler</RootNamespace>
     <AssemblyName>MvcMiniProfiler</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

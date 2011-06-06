@@ -2,7 +2,7 @@
 using System.Data.Common;
 using System.Data;
 
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
 
     public class ProfiledDbDataReader : DbDataReader

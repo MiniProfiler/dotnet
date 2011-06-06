@@ -17,7 +17,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.CodeDom;
 
-namespace StackExchange.MvcMiniProfiler.Helpers
+namespace MvcMiniProfiler.Helpers
 {
     public class RazorCompiler
     {
@@ -160,7 +160,7 @@ namespace StackExchange.MvcMiniProfiler.Helpers
                 DefaultNamespace = "CompiledRazorTemplates.Dynamic",
                 GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral",
                                                                   "WriteTo", "WriteLiteralTo",
-                                                                  "StackExchange.MvcMiniProfiler.Helpers.RazorCompiler.TemplateWriter")
+                                                                  "MvcMiniProfiler.Helpers.RazorCompiler.TemplateWriter")
             };
 
             CodeCompileUnit code;

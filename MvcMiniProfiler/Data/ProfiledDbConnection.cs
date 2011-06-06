@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.Common;
 
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
     public class ProfiledDbConnection : DbConnection
     {

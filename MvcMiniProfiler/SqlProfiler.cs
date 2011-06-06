@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 
 
-namespace StackExchange.MvcMiniProfiler
+namespace MvcMiniProfiler
 {
     public enum ExecuteType
     {

@@ -6,10 +6,10 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.IO;
 using System.Web.UI;
-using StackExchange.MvcMiniProfiler.Helpers;
+using MvcMiniProfiler.Helpers;
 using System.Diagnostics;
 
-namespace StackExchange.MvcMiniProfiler.UI
+namespace MvcMiniProfiler.UI
 {
     public class MiniProfilerController : Controller
     {
@@ -100,7 +100,7 @@ namespace StackExchange.MvcMiniProfiler.UI
 
         private Stream GetResource(string filename)
         {
-            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("StackExchange.MvcMiniProfiler.UI." + filename);
+            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MvcMiniProfiler.UI." + filename);
         }
 
         private ActionResult NotFound(string contentType = "text/plain", string message = null)

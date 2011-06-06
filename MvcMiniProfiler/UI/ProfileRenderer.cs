@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace StackExchange.MvcMiniProfiler.UI
+namespace MvcMiniProfiler.UI
 {
     public class ProfileRenderer
     {
@@ -55,7 +55,7 @@ namespace StackExchange.MvcMiniProfiler.UI
             sb.Append("</div>");
         }
 
-        private static void RenderTimings(MiniProfilerResultsModel model, StringBuilder sb, List<StackExchange.MvcMiniProfiler.SqlTiming> sqlTimings)
+        private static void RenderTimings(MiniProfilerResultsModel model, StringBuilder sb, List<MvcMiniProfiler.SqlTiming> sqlTimings)
         {
             throw new NotImplementedException();
         }

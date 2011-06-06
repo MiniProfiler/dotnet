@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
-using StackExchange.MvcMiniProfiler;
+using MvcMiniProfiler;
 using System.Threading;
 using Dapper;
 using System.Data.Common;
