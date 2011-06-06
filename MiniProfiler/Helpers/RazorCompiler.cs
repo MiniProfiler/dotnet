@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.CodeDom;
 
 namespace StackExchange.MvcMiniProfiler.Helpers
 {
@@ -65,12 +66,12 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             DummyHtmlHelper helper;
             public DummyHtmlHelper Html
             {
-                get 
+                get
                 {
-                    if (helper!= null) return helper;
+                    if (helper != null) return helper;
                     helper = new DummyHtmlHelper(Builder);
                     return helper;
-                } 
+                }
             }
 
             public T Model { get; set; }
@@ -121,23 +122,23 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             }
         }
 
-        static ConcurrentDictionary<Tuple<string, Type>, Type> cache = new ConcurrentDictionary<Tuple<string, Type>, Type>(); 
+        static ConcurrentDictionary<Tuple<string, Type>, Type> cache = new ConcurrentDictionary<Tuple<string, Type>, Type>();
 
         public static string Render<T>(string template, T model)
         {
-            var key = Tuple.Create(template,typeof(T));
-            Type type; 
+            var key = Tuple.Create(template, typeof(T));
+            Type type;
             if (!cache.TryGetValue(key, out type))
             {
                 type = GetCompiledType<T>(template);
                 cache[key] = type;
             }
-            
+
             var instance = (TemplateBase<T>)Activator.CreateInstance(type);
             instance.Model = model;
             instance.Execute();
 
-            return(instance.Result);
+            return (instance.Result);
         }
 
         private static Type GetCompiledType<T>(string template)
@@ -162,27 +163,17 @@ namespace StackExchange.MvcMiniProfiler.Helpers
                                                                   "StackExchange.MvcMiniProfiler.Helpers.RazorCompiler.TemplateWriter")
             };
 
-            var engine = new RazorTemplateEngine(host);
-            GeneratorResults result;
+            CodeCompileUnit code;
             using (var reader = new StringReader(template))
             {
-                result = engine.GenerateCode(reader);
+                code = new RazorTemplateEngine(host).GenerateCode(reader).GeneratedCode;
             }
-
-            var code = result.GeneratedCode;
-
-            var appDataPath = HttpContext.Current.Server.MapPath(@"~/App_Data");
-            if (!Directory.Exists(appDataPath))
-            {
-                Directory.CreateDirectory(appDataPath);
-            }
-            var filename = appDataPath + @"/" + key + ".dll";
 
             var @params = new CompilerParameters
             {
                 IncludeDebugInformation = false,
-                TempFiles = new TempFileCollection(HttpContext.Current.Server.MapPath(@"~/App_Data")),
-                OutputAssembly = filename, 
+                TempFiles = new TempFileCollection(AppDomain.CurrentDomain.DynamicDirectory),
+                GenerateInMemory = true,
                 CompilerOptions = "/target:library /optimize"
             };
 
@@ -195,7 +186,6 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             @params.ReferencedAssemblies.AddRange(assemblies);
 
             var provider = new CSharpCodeProvider();
-
             var compiled = provider.CompileAssemblyFromDom(@params, code);
 
             if (compiled.Errors.Count > 0)
@@ -204,9 +194,9 @@ namespace StackExchange.MvcMiniProfiler.Helpers
                 throw new ApplicationException("Failed to compile Razor:" + compileErrors);
             }
 
-            var assembly = Assembly.Load(System.IO.File.ReadAllBytes(filename));
+            var assembly = compiled.CompiledAssembly;
             var type = assembly.GetType("CompiledRazorTemplates.Dynamic." + key);
-            File.Delete(filename);
+
             return type;
         }
     }
