@@ -19,6 +19,30 @@ namespace StackExchange.MvcMiniProfiler.Helpers
 {
     public class RazorCompiler
     {
+        // begged borrowed and stole from http://razorengine.codeplex.com/
+
+        public class TemplateWriter
+        {
+            private readonly Action<TextWriter> writerDelegate;
+
+            public TemplateWriter(Action<TextWriter> writer)
+            {
+                if (writer == null)
+                    throw new ArgumentNullException("writer");
+
+                writerDelegate = writer;
+            }
+
+            public override string ToString()
+            {
+                using (var writer = new StringWriter())
+                {
+                    writerDelegate(writer);
+                    return writer.ToString();
+                }
+            }
+
+        }
 
         public abstract class TemplateBase<T>
         {
@@ -132,7 +156,7 @@ namespace StackExchange.MvcMiniProfiler.Helpers
                 DefaultNamespace = "CompiledRazorTemplates.Dynamic",
                 GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral",
                                                                   "WriteTo", "WriteLiteralTo",
-                                                                  "RazorEngine.Templating.TemplateWriter")
+                                                                  "StackExchange.MvcMiniProfiler.Helpers.RazorCompiler.TemplateWriter")
             };
 
             var engine = new RazorTemplateEngine(host);
@@ -147,14 +171,16 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             var @params = new CompilerParameters
             {
 #if DEBUG
-                GenerateInMemory = true,
+                GenerateInMemory = false,
                 GenerateExecutable = false,
                 IncludeDebugInformation = true,
 #else 
-                GenerateInMemory = true,
+                GenerateInMemory = false,
                 GenerateExecutable = false,
                 IncludeDebugInformation = false,
 #endif
+                TempFiles = new TempFileCollection(HttpContext.Current.Server.MapPath(@"~/App_Data")),
+                OutputAssembly = HttpContext.Current.Server.MapPath(@"~/App_Data") + @"/test.dll", 
                 CompilerOptions = "/target:library /optimize"
             };
 
@@ -167,14 +193,13 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             @params.ReferencedAssemblies.AddRange(assemblies);
 
             var provider = new CSharpCodeProvider();
+
             var compiled = provider.CompileAssemblyFromDom(@params, code);
 
             if (compiled.Errors.Count > 0)
             {
-                foreach (var error in compiled.Errors)
-                {
-                    Trace.WriteLine(error);
-                }
+                var compileErrors = string.Join("\r\n", compiled.Errors.Cast<object>().Select(o => o.ToString()));
+                throw new ApplicationException("Failed to compile Razor:" + compileErrors);
             }
 
             var type = compiled.CompiledAssembly.GetType("CompiledRazorTemplates.Dynamic.TestClass");
