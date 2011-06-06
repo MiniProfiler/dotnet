@@ -114,13 +114,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj">
-      <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
-      <Name>MiniProfiler</Name>
-    </ProjectReference>
+    <None Include="App_Data\TestMiniProfiler.sqlite" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Data\TestMiniProfiler.sqlite" />
+    <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
+      <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
+      <Name>MvcMiniProfiler</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
