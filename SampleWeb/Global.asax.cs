@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-using Profiling;
+using StackExchange.MvcMiniProfiler;
 
 namespace SampleWeb
 {
@@ -18,7 +18,7 @@ namespace SampleWeb
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             // hook up our UI
-            Profiling.MiniProfiler.RegisterRoutes(routes);
+            StackExchange.MvcMiniProfiler.MiniProfiler.Init();
 
             routes.MapRoute(
                 "Default", // Route name
@@ -44,7 +44,7 @@ namespace SampleWeb
             // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                profiler = Profiling.MiniProfiler.Start();
+                profiler = StackExchange.MvcMiniProfiler.MiniProfiler.Start();
             }
 
             using (profiler.Step("Application_BeginRequest"))
@@ -55,7 +55,7 @@ namespace SampleWeb
 
         protected void Application_EndRequest()
         {
-            Profiling.MiniProfiler.Stop();
+            StackExchange.MvcMiniProfiler.MiniProfiler.Stop();
         }
     }
 }

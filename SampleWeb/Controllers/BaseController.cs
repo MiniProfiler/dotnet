@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Profiling;
+using StackExchange.MvcMiniProfiler;
 using System.Data.Common;
 
 using Dapper;
@@ -24,7 +24,7 @@ namespace SampleWeb.Controllers
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
                 // when MiniProfiler.Current is null, this connection will not record any database timings
-                var result = new Profiling.Data.ProfiledDbConnection(wrapped, MiniProfiler.Current);
+                var result = new StackExchange.MvcMiniProfiler.Data.ProfiledDbConnection(wrapped, MiniProfiler.Current);
 
                 result.Open();
 
