@@ -7,8 +7,10 @@ using System.Web.Mvc;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web.Routing;
+using System.Web.Hosting;
+using StackExchange.MvcMiniProfiler.Helpers;
 
-namespace Profiling
+namespace StackExchange.MvcMiniProfiler
 {
     /// <summary>
     /// A single MiniProfiler can be used to represent any number of steps/levels in a call-graph, via Step()
@@ -229,9 +231,9 @@ namespace Profiling
         /// <summary>
         /// Hooks up MiniProfiler's controller actions needed to display results.
         /// </summary>
-        public static void RegisterRoutes(RouteCollection routes)
+        public static void Init()
         {
-            UI.MiniProfilerController.RegisterRoutes(routes);
+            UI.MiniProfilerController.RegisterRoutes(RouteTable.Routes);
         }
 
         /// <summary>

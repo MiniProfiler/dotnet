@@ -2,7 +2,7 @@
 using System.Data.Common;
 using System.Data;
 
-namespace Profiling.Data
+namespace StackExchange.MvcMiniProfiler.Data
 {
     public class ProfiledDbTransaction : DbTransaction
     {

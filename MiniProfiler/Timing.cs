@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Runtime.Serialization;
 
-namespace Profiling
+namespace StackExchange.MvcMiniProfiler
 {
     /// <summary>
     /// An individual profiling step

@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using Profiling.Data;
+using StackExchange.MvcMiniProfiler.Data;
 using System.Runtime.Serialization;
 
-namespace Profiling
+namespace StackExchange.MvcMiniProfiler
 {
     [DataContract]
     public class SqlTiming

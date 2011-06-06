@@ -5,8 +5,11 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.IO;
+using System.Web.UI;
+using StackExchange.MvcMiniProfiler.Helpers;
+using System.Diagnostics;
 
-namespace Profiling.UI
+namespace StackExchange.MvcMiniProfiler.UI
 {
     public class MiniProfilerController : Controller
     {
@@ -87,45 +90,17 @@ namespace Profiling.UI
 
             var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup };
 
-            EnsureResultsCompiled();
-            var html = RazorEngine.Razor.Run(model, "MiniProfilerResults");
-            return Content(html);
-        }
-
-        private static volatile bool _isResultsCompiled = false;
-
-        private void EnsureResultsCompiled()
-        {
-            if (_isResultsCompiled) return;
-
-            lock (typeof(MiniProfilerController))
-            {
-                if (_isResultsCompiled) return;
-
-                string html = "";
-                using (var reader = new StreamReader(GetResource("MiniProfilerResults.cshtml")))
-                {
-                    html = reader.ReadToEnd();
-                    // HACK: RazorEngine doesn't like @model, but intellisense needs it
-                    html = html.Replace("@model Profiling.UI.MiniProfilerResultsModel", "");
-                }
-                try
-                {
-                    RazorEngine.Razor.Compile(html, typeof(MiniProfilerResultsModel), "MiniProfilerResults");
-                }
-                catch (RazorEngine.Templating.TemplateCompilationException ex)
-                {
-                    var msg = "Razor compile error: " + string.Join("\n", ex.Errors.Select(e => e.ToString()));
-                    throw new InvalidOperationException(msg);
-                }
-                _isResultsCompiled = true;
+            
+            string html = "";            using (var reader = new StreamReader(GetResource("MiniProfilerResults.cshtml")))            {                html = reader.ReadToEnd();
             }
+
+            return Content(RazorCompiler.Render(html, model));
         }
+
 
         private Stream GetResource(string filename)
         {
-            // TODO: return string from here and cache it
-            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MiniProfiler.UI." + filename);
+            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("StackExchange.MvcMiniProfiler.UI." + filename);
         }
 
         private ActionResult NotFound(string contentType = "text/plain", string message = null)

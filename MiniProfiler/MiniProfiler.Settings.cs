@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Web;
 
-namespace Profiling
+namespace StackExchange.MvcMiniProfiler
 {
     partial class MiniProfiler
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Profiling.UI
+namespace StackExchange.MvcMiniProfiler.UI
 {
     public class MiniProfilerResultsModel
     {

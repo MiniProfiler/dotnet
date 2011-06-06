@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Profiling.Data;
+using StackExchange.MvcMiniProfiler.Data;
 using System.Web.Mvc;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Profiling.Helpers
+namespace StackExchange.MvcMiniProfiler.Helpers
 {
     /// <summary>
     /// Gets part of a stack trace containing only methods we care about.

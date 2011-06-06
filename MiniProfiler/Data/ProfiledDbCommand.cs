@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Data.Common;
 using System.Data;
+using StackExchange.MvcMiniProfiler;
 
-using Profiling;
-
-namespace Profiling.Data
+namespace StackExchange.MvcMiniProfiler.Data
 {
     public class ProfiledDbCommand : DbCommand
     {

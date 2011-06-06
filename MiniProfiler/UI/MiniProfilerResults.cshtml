@@ -1,7 +1,9 @@
 ﻿@using System.Web
 @using System.Web.Mvc
-@using Profiling
-@model Profiling.UI.MiniProfilerResultsModel
+@using StackExchange.MvcMiniProfiler
+@using System.Linq
+@using System.Collections.Generic
+@model StackExchange.MvcMiniProfiler.UI.MiniProfilerResultsModel
 @{
     var p = Model.MiniProfiler;
     var parentLookup = new Dictionary<SqlTiming, Timing>();
@@ -181,6 +183,7 @@
 
 @if (!Model.IsPopup)
 {
+@Html.Raw(@"
 </body>
-</html>
+</html>")
 }
