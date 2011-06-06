@@ -14,6 +14,7 @@ using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace StackExchange.MvcMiniProfiler.Helpers
 {
@@ -141,6 +142,8 @@ namespace StackExchange.MvcMiniProfiler.Helpers
 
         private static Type GetCompiledType<T>(string template)
         {
+            var key = "C" + Guid.NewGuid().ToString("N");
+
             var parser = new HtmlMarkupParser();
 
             var baseType = typeof(TemplateBase<>).MakeGenericType(typeof(T));
@@ -152,7 +155,7 @@ namespace StackExchange.MvcMiniProfiler.Helpers
             var host = new RazorEngineHost(new System.Web.Razor.CSharpRazorCodeLanguage(), () => parser)
             {
                 DefaultBaseClass = baseType.FullName,
-                DefaultClassName = "TestClass",
+                DefaultClassName = key,
                 DefaultNamespace = "CompiledRazorTemplates.Dynamic",
                 GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral",
                                                                   "WriteTo", "WriteLiteralTo",
@@ -168,19 +171,18 @@ namespace StackExchange.MvcMiniProfiler.Helpers
 
             var code = result.GeneratedCode;
 
+            var appDataPath = HttpContext.Current.Server.MapPath(@"~/App_Data");
+            if (!Directory.Exists(appDataPath))
+            {
+                Directory.CreateDirectory(appDataPath);
+            }
+            var filename = appDataPath + @"/" + key + ".dll";
+
             var @params = new CompilerParameters
             {
-#if DEBUG
-                GenerateInMemory = false,
-                GenerateExecutable = false,
-                IncludeDebugInformation = true,
-#else 
-                GenerateInMemory = false,
-                GenerateExecutable = false,
                 IncludeDebugInformation = false,
-#endif
                 TempFiles = new TempFileCollection(HttpContext.Current.Server.MapPath(@"~/App_Data")),
-                OutputAssembly = HttpContext.Current.Server.MapPath(@"~/App_Data") + @"/test.dll", 
+                OutputAssembly = filename, 
                 CompilerOptions = "/target:library /optimize"
             };
 
@@ -202,7 +204,9 @@ namespace StackExchange.MvcMiniProfiler.Helpers
                 throw new ApplicationException("Failed to compile Razor:" + compileErrors);
             }
 
-            var type = compiled.CompiledAssembly.GetType("CompiledRazorTemplates.Dynamic.TestClass");
+            var assembly = Assembly.Load(System.IO.File.ReadAllBytes(filename));
+            var type = assembly.GetType("CompiledRazorTemplates.Dynamic." + key);
+            File.Delete(filename);
             return type;
         }
     }
