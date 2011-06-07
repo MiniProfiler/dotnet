@@ -15,11 +15,11 @@ namespace SampleWeb.Controllers
         /// <summary>
         /// Returns an open connection that will have its queries profiled.
         /// </summary>
-        protected DbConnection GetOpenConnection(MiniProfiler profiler = null)
+        public static DbConnection GetOpenConnection(MiniProfiler profiler = null)
         {
             using (profiler.Step("GetOpenConnection"))
             {
-                var dbPath = Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
+                var dbPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
                 var wrapped = new System.Data.SQLite.SQLiteConnection("Data Source = " + dbPath);
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
