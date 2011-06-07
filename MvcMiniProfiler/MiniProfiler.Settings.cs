@@ -104,7 +104,7 @@ namespace MvcMiniProfiler
             {
                 if (ShortTermCacheGetter == null || ShortTermCacheSetter == null)
                 {
-                    ShortTermCacheSetter = (prof) => SetProfilerIntoRuntimeCache(CacheKey + prof.Id.ToString(), prof, DateTime.Now.AddMinutes(5));
+                    ShortTermCacheSetter = (prof) => SetProfilerIntoRuntimeCache(CacheKey + prof.Id.ToString(), prof, DateTime.Now.AddMinutes(10));
                     ShortTermCacheGetter = (guid) => { return HttpRuntime.Cache[CacheKey + guid.ToString()] as MiniProfiler; };
                 }
 
