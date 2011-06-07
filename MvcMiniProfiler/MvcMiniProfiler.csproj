@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ContextUtils.cs" />
+    <Compile Include="Data\Link.cs" />
     <Compile Include="Data\ProfiledDbCommand.cs">
       <SubType>Component</SubType>
     </Compile>

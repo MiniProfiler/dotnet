@@ -2,6 +2,8 @@
 using System.Data.Common;
 using System.Data;
 using MvcMiniProfiler;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace MvcMiniProfiler.Data
 {
@@ -14,7 +16,58 @@ namespace MvcMiniProfiler.Data
         private MiniProfiler _profiler;
         private SqlProfiler _sqlProfiler;
 
-        
+        private bool bindByName;
+        /// <summary>
+        /// If the underlying command supports BindByName, this sets/clears the underlying
+        /// implementation accordingly. This is required to support OracleCommand from dapper-dot-net
+        /// </summary>
+        public bool BindByName
+        {
+            get { return bindByName; }
+            set
+            {
+                if (bindByName != value)
+                {
+                    if (_cmd != null)
+                    {
+                        var inner = GetBindByName(_cmd.GetType());
+                        if (inner != null) inner(_cmd, value);
+                    }
+                    bindByName = value;
+                }
+            }
+        }
+        static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
+        static Action<IDbCommand, bool> GetBindByName(Type commandType)
+        {
+            if (commandType == null) return null; // GIGO
+            Action<IDbCommand, bool> action;
+            if (Link<Type, Action<IDbCommand, bool>>.TryGet(bindByNameCache, commandType, out action))
+            {
+                return action;
+            }
+            var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
+            action = null;
+            ParameterInfo[] indexers;
+            MethodInfo setter;
+            if (prop != null && prop.CanWrite && prop.PropertyType == typeof(bool)
+                && ((indexers = prop.GetIndexParameters()) == null || indexers.Length == 0)
+                && (setter = prop.GetSetMethod()) != null
+                )
+            {
+                var method = new DynamicMethod(commandType.Name + "_BindByName", null, new Type[] { typeof(IDbCommand), typeof(bool) });
+                var il = method.GetILGenerator();
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Castclass, commandType);
+                il.Emit(OpCodes.Ldarg_1);
+                il.EmitCall(OpCodes.Callvirt, setter, null);
+                il.Emit(OpCodes.Ret);
+                action = (Action<IDbCommand, bool>)method.CreateDelegate(typeof(Action<IDbCommand, bool>));
+            }
+            // cache it            
+            Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
+            return action;
+        }
         public ProfiledDbCommand(DbCommand cmd, DbConnection conn, MiniProfiler profiler)
         {
             if (cmd == null) throw new ArgumentNullException("cmd");
