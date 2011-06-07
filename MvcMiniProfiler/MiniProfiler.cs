@@ -231,9 +231,10 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Hooks up MiniProfiler's controller actions needed to display results.
         /// </summary>
-        public static void Init()
+        /// <remarks>Should be called before any default/catch-all routes are registered.</remarks>
+        public static void RegisterRoutes(RouteCollection routes)
         {
-            UI.MiniProfilerController.RegisterRoutes(RouteTable.Routes);
+            UI.MiniProfilerController.RegisterRoutes(routes);
         }
 
         /// <summary>

@@ -169,12 +169,14 @@ namespace MvcMiniProfiler.Helpers
                 code = new RazorTemplateEngine(host).GenerateCode(reader).GeneratedCode;
             }
 
+            var outputAssembly = Path.Combine(AppDomain.CurrentDomain.DynamicDirectory, "MvcMiniProfiler.RazorViews.dll");
+
             var @params = new CompilerParameters
             {
                 IncludeDebugInformation = false,
                 TempFiles = new TempFileCollection(AppDomain.CurrentDomain.DynamicDirectory),
-                GenerateInMemory = true,
-                CompilerOptions = "/target:library /optimize"
+                CompilerOptions = "/target:library /optimize",
+                OutputAssembly = outputAssembly
             };
 
             var assemblies = AppDomain.CurrentDomain
@@ -194,8 +196,9 @@ namespace MvcMiniProfiler.Helpers
                 throw new ApplicationException("Failed to compile Razor:" + compileErrors);
             }
 
-            var assembly = compiled.CompiledAssembly;
+            var assembly = Assembly.Load(File.ReadAllBytes(outputAssembly));
             var type = assembly.GetType("CompiledRazorTemplates.Dynamic." + key);
+            File.Delete(outputAssembly);
 
             return type;
         }
