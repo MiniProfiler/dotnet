@@ -163,7 +163,7 @@ namespace MvcMiniProfiler
 
         static MiniProfiler()
         {
-            UI.MiniProfilerController.RegisterRoutes();
+            UI.MiniProfilerHandler.RegisterRoutes();
         }
 
 

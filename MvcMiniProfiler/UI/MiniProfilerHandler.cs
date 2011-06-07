@@ -8,7 +8,7 @@ using MvcMiniProfiler.Helpers;
 
 namespace MvcMiniProfiler.UI
 {
-    public class MiniProfilerController : IRouteHandler, IHttpHandler
+    public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
         internal static void RegisterRoutes()
         {
@@ -19,7 +19,7 @@ namespace MvcMiniProfiler.UI
             {
                 foreach (var url in urls)
                 {
-                    var route = new Route(url, new MiniProfilerController());
+                    var route = new Route(url, new MiniProfilerHandler());
                     // put our routes at the beginning, like a boss
                     routes.Insert(0, route);
                 }
@@ -28,7 +28,7 @@ namespace MvcMiniProfiler.UI
 
         public IHttpHandler GetHttpHandler(RequestContext requestContext)
         {
-            return this;
+            return this; // elegant? I THINK SO.
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace MvcMiniProfiler.UI
 
             if (!_ResourceCache.TryGetValue(filename, out result))
             {
-                using (var stream = typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MvcMiniProfiler.UI." + filename))
+                using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("MvcMiniProfiler.UI." + filename))
                 using (var reader = new StreamReader(stream))
                 {
                     result = reader.ReadToEnd();

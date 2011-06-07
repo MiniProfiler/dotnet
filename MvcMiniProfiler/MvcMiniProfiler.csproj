@@ -65,7 +65,7 @@
     <Compile Include="SqlProfiler.cs" />
     <Compile Include="SqlTiming.cs" />
     <Compile Include="Timing.cs" />
-    <Compile Include="UI\MiniProfilerController.cs" />
+    <Compile Include="UI\MiniProfilerHandler.cs" />
     <Compile Include="UI\MiniProfilerResults.Model.cs" />
     <Compile Include="UI\ProfileRenderer.cs" />
   </ItemGroup>
