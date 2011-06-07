@@ -1,16 +1,34 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 
 namespace StackExchange.MvcMiniProfiler.Data
 {
-    public class ProfiledDbConnection : DbConnection
+    public class ProfiledDbConnection : DbConnection, ICloneable
     {
 
         private DbConnection _conn;
         private MiniProfiler _profiler;
         private SqlProfiler _sqlProfiler;
+        private DbProviderFactory _factory;
+        private static readonly Func<DbConnection, DbProviderFactory> ripInnerProvider =
+                (Func<DbConnection, DbProviderFactory>)Delegate.CreateDelegate(typeof(Func<DbConnection, DbProviderFactory>),
+                typeof(DbConnection).GetProperty("DbProviderFactory", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                .GetGetMethod(true));
 
+
+         
+        protected override DbProviderFactory DbProviderFactory
+        {
+            get
+            {
+                if (_factory != null) return _factory;
+                DbProviderFactory tail = ripInnerProvider(_conn);
+                _factory = new ProfiledDbProviderFactory(_profiler, tail);
+                return _factory;
+            }
+        }
         public ProfiledDbConnection(DbConnection connection, MiniProfiler profiler)
         {
             if (connection == null) throw new ArgumentNullException("connection");
@@ -118,7 +136,9 @@ namespace StackExchange.MvcMiniProfiler.Data
                 _conn.StateChange -= StateChangeHandler;
                 _conn.Dispose();
             }
+            _factory = null;
             _conn = null;
+            _profiler = null;
             base.Dispose(disposing);
         }
 
@@ -126,6 +146,12 @@ namespace StackExchange.MvcMiniProfiler.Data
         {
             OnStateChange(e);
         }
+
+        public ProfiledDbConnection Clone()
+        {
+            return new ProfiledDbConnection(_conn, _profiler);
+        }
+        object ICloneable.Clone() { return Clone(); }
 
     }
 }
