@@ -23,32 +23,32 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Identifies this Profiler so it may be stored/cached.
         /// </summary>
-        [DataMember(Order = 0)]
+        [DataMember(Order = 1)]
         public Guid Id { get; private set; }
 
         /// <summary>
         /// A display name for this profiling session.
         /// </summary>
-        [DataMember(Order = 1)]
+        [DataMember(Order = 2)]
         public string Name { get; set; }
 
         /// <summary>
         /// When this profiler was instantiated.
         /// </summary>
-        [DataMember(Order = 2)]
+        [DataMember(Order = 3)]
         public DateTime Started { get; private set; }
 
         /// <summary>
         /// Where this profiler was run.
         /// </summary>
-        [DataMember(Order = 3)]
+        [DataMember(Order = 4)]
         public string MachineName { get; private set; }
 
         /// <summary>
         /// Allows filtering of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
         /// the steps are created with.
         /// </summary>
-        [DataMember(Order = 4)]
+        [DataMember(Order = 5)]
         public ProfileLevel Level { get; set; }
 
 
@@ -57,7 +57,7 @@ namespace MvcMiniProfiler
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
         /// All other <see cref="Timing"/>s will be children of this one.
         /// </summary>
-        [DataMember(Order = 5)]
+        [DataMember(Order = 6)]
         public Timing Root
         {
             get { return _root; }

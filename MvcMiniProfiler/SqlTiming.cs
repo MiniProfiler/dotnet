@@ -12,22 +12,22 @@ namespace MvcMiniProfiler
     [DataContract]
     public class SqlTiming
     {
-        [DataMember(Order = 0)]
+        [DataMember(Order = 1)]
         public ExecuteType ExecuteType { get; private set; }
 
-        [DataMember(Order = 1)]
+        [DataMember(Order = 2)]
         public string CommandString { get; private set; }
 
-        [DataMember(Order = 2)]
+        [DataMember(Order = 3)]
         public string StackTraceSnippet { get; private set; }
 
-        [DataMember(Order = 3)]
+        [DataMember(Order = 4)]
         public double StartMilliseconds { get; private set; }
 
-        [DataMember(Order = 4)]
+        [DataMember(Order = 5)]
         public double DurationMilliseconds { get; private set; }
 
-        [DataMember(Order = 5)]
+        [DataMember(Order = 6)]
         public double FirstFetchDurationMilliseconds { get; private set; }
 
         private long _startTicks;

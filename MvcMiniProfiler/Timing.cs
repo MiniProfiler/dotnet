@@ -15,43 +15,43 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Unique identifer for this timing; set during construction.
         /// </summary>
-        [DataMember(Order = 0)]
+        [DataMember(Order = 1)]
         public Guid Id { get; private set; }
 
         /// <summary>
         /// Text displayed when this Timing is rendered.
         /// </summary>
-        [DataMember(Order = 1)]
+        [DataMember(Order = 2)]
         public string Name { get; private set; }
 
         /// <summary>
         /// How long this Timing step took in ms; includes any <see cref="Children"/> Timings' durations.
         /// </summary>
-        [DataMember(Order = 2)]
+        [DataMember(Order = 3)]
         public double? DurationMilliseconds { get; private set; }
 
         /// <summary>
         /// The offset from the start of profiling.
         /// </summary>
-        [DataMember(Order = 3)]
+        [DataMember(Order = 4)]
         public double StartMilliseconds { get; private set; }
 
         /// <summary>
         /// All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
-        [DataMember(Order = 4)]
+        [DataMember(Order = 5)]
         public List<Timing> Children { get; private set; }
 
         /// <summary>
         /// Stores arbitrary key/value strings on this Timing step. Add new tuples through <see cref="AddKeyValue"/>.
         /// </summary>
-        [DataMember(Order = 5)]
+        [DataMember(Order = 6)]
         public Dictionary<string, string> KeyValues { get; private set; }
 
         /// <summary>
         /// Any queries that occurred during this Timing step.
         /// </summary>
-        [DataMember(Order = 6)]
+        [DataMember(Order = 7)]
         public List<SqlTiming> SqlTimings { get; set; }
 
         /// <summary>
