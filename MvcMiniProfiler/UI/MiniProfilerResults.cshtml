@@ -75,8 +75,13 @@
                 </tr>
             </thead>
             <tbody>
+            @{
+                
+                Dictionary<string, int> sqlCounts = new Dictionary<string, int>();
+            }
             @foreach (var t in p.GetTimingHierarchy())
             {
+                bool flagDuplicates = false;
                 if (t.IsTrivial)
                 {
                     if (!showTrivialToggle)
@@ -104,15 +109,20 @@
                     </td>
                 @if (t.HasSqlTimings)
                 {
-                    t.SqlTimings.ForEach(s => parentLookup[s] = t); // we'll look this up later when rendering the queries
+                    t.SqlTimings.ForEach(s => {
+                        parentLookup[s] = t;
+                        int count;
+                        if (!sqlCounts.TryGetValue(s.CommandString, out count)) { sqlCounts.Add(s.CommandString, 1); }
+                        else { flagDuplicates = true; sqlCounts[s.CommandString] = count + 1; }                        
+                    }); // we'll look this up later when rendering the queries
                     var readers = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.Reader);
                     var scalers = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.Scalar);
                     var nons = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.NonQuery);
-                    
-                    <td class="duration" title="@readers reader, @scalers scaler, @nons non-query statements executed">
+                    var dups = flagDuplicates ? " duplicates" : "";
+                    <td class="duration@(dups)" title="@readers reader, @scalers scaler, @nons non-query statements executed">
                         <a class="queries-show">@RenderNumber(t.SqlTimings.Count, "sql", "0")</a>
                     </td>
-                    <td class="duration" title="aggregate duration of all queries in this step (excludes children)">
+                    <td class="duration@(dups)" title="aggregate duration of all queries in this step (excludes children)">
                         @RenderNumber(t.SqlTimings.Sum(s => s.DurationMilliseconds))
                     </td>
                 }
@@ -144,7 +154,7 @@
         </div>
     </div>
 @{ List<SqlTiming> sqlTimings; }
-@if ((sqlTimings = p.GetSqlTimings()).Any()) 
+@if ((sqlTimings = p.GetSqlTimings()).Any())
 {
     <div class="profiler-queries">
         <table>
@@ -155,7 +165,9 @@
             </tr>
         </thead>
         <tbody>
-        @{ int i = 0; Timing parent = null; }
+        @{ int i = 0; Timing parent = null;
+           HashSet<string> unique = new HashSet<string>();
+           }
         @foreach (var s in sqlTimings)
         {
             parent = parentLookup[s];
@@ -163,7 +175,9 @@
                 <td class="info">
                     <div>@parent.Name</div>
                     <div><span class="ms">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
-                    <div>@e(s.ExecuteType)</div>
+                    <div>@if (!unique.Add(s.CommandString)){
+                             <span class="duplicates">DUPLICATE</span>
+                         }@e(s.ExecuteType)</div>
                     <div>@RenderNumber(s.DurationMilliseconds, "ms")</div>
                 </td>
                 <td>

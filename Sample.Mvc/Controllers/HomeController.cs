@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using MvcMiniProfiler;
 using System.Threading;
 using Dapper;
+using System.Linq;
 using System.Data.Common;
 namespace SampleWeb.Controllers
 {
@@ -74,6 +75,19 @@ namespace SampleWeb.Controllers
                 MassiveNesting();
             }
             return Content("MassiveNesting2 completed");
+        }
+
+        public ActionResult Duplicated()
+        {
+            using (var conn = GetOpenConnection())
+            {
+                long total = 0;
+                for (int i = 0; i < 20; i++)
+                {
+                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+                }
+                return Content("Duplicate queries completed");
+            }
         }
 
         private void RecursiveMethod(ref int i, DbConnection conn, MiniProfiler profiler)
