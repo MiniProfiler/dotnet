@@ -26,7 +26,7 @@ namespace System.Data.Objects
         {
             var workspace = new System.Data.Metadata.Edm.MetadataWorkspace(
               new string[] { "res://*/" },
-              new Assembly[] { Assembly.GetCallingAssembly() });
+              new Assembly[] { typeof(T).Assembly });
 
             var factory = DbProviderServices.GetProviderFactory(connection);
             var itemCollection = workspace.GetItemCollection(System.Data.Metadata.Edm.DataSpace.SSpace);
