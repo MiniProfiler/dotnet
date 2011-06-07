@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data.Common;
 using System.Data;
-using MvcMiniProfiler;
+using StackExchange.MvcMiniProfiler;
 
-namespace MvcMiniProfiler.Data
+namespace StackExchange.MvcMiniProfiler.Data
 {
-    public class ProfiledDbCommand : DbCommand
+    public class ProfiledDbCommand : DbCommand, ICloneable
     {
         private DbCommand _cmd;
         private DbConnection _conn;
@@ -14,7 +14,7 @@ namespace MvcMiniProfiler.Data
         private MiniProfiler _profiler;
         private SqlProfiler _sqlProfiler;
 
-
+        
         public ProfiledDbCommand(DbCommand cmd, DbConnection conn, MiniProfiler profiler)
         {
             if (cmd == null) throw new ArgumentNullException("cmd");
@@ -144,5 +144,13 @@ namespace MvcMiniProfiler.Data
             base.Dispose(disposing);
         }
 
+
+        public ProfiledDbCommand Clone()
+        { // EF expects ICloneable
+            ICloneable tail = _cmd as ICloneable;
+            if (tail == null) throw new NotSupportedException("Underlying " + _cmd.GetType().Name + " is not cloneable");
+            return new ProfiledDbCommand((DbCommand)tail.Clone(), _conn, _profiler);
+        }
+        object ICloneable.Clone() { return Clone(); }
     }
 }

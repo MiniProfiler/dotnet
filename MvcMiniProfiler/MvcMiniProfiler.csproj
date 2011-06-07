@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ENTITY_FRAMEWORK LINQ_TO_SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;ENTITY_FRAMEWORK LINQ_TO_SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,6 +36,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -46,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ContextUtils.cs" />
     <Compile Include="Data\ProfiledDbCommand.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -53,6 +56,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Data\ProfiledDbDataReader.cs" />
+    <Compile Include="Data\ProfiledDbProviderFactory.cs" />
+    <Compile Include="Data\ProfiledDbProviderServices.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
     <Compile Include="Helpers\RazorCompiler.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
