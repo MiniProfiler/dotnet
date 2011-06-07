@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace MvcMiniProfiler.Data
 {
+    /// <summary>
+    /// Wraps a database connection, allowing sql execution timings to be collected when a <see cref="MiniProfiler"/> session is started.
+    /// </summary>
     public class ProfiledDbConnection : DbConnection, ICloneable
     {
 
@@ -17,18 +20,12 @@ namespace MvcMiniProfiler.Data
                 typeof(DbConnection).GetProperty("DbProviderFactory", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
                 .GetGetMethod(true));
 
-
-         
-        protected override DbProviderFactory DbProviderFactory
-        {
-            get
-            {
-                if (_factory != null) return _factory;
-                DbProviderFactory tail = ripInnerProvider(_conn);
-                _factory = new ProfiledDbProviderFactory(_profiler, tail);
-                return _factory;
-            }
-        }
+        /// <summary>
+        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, providing query execution profiling
+        /// when <paramref name="profiler"/> is not null.
+        /// </summary>
+        /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
+        /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
         public ProfiledDbConnection(DbConnection connection, MiniProfiler profiler)
         {
             if (connection == null) throw new ArgumentNullException("connection");
@@ -40,6 +37,20 @@ namespace MvcMiniProfiler.Data
             {
                 _profiler = profiler;
                 _sqlProfiler = profiler.SqlProfiler;
+            }
+        }
+
+
+#pragma warning disable 1591 // xml doc comments warnings
+
+        protected override DbProviderFactory DbProviderFactory
+        {
+            get
+            {
+                if (_factory != null) return _factory;
+                DbProviderFactory tail = ripInnerProvider(_conn);
+                _factory = new ProfiledDbProviderFactory(_profiler, tail);
+                return _factory;
             }
         }
 
@@ -155,3 +166,5 @@ namespace MvcMiniProfiler.Data
 
     }
 }
+
+#pragma warning restore 1591 // xml doc comments warnings

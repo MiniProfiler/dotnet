@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using MvcMiniProfiler.Data;
 
+#pragma warning disable 1591 // xml doc comments warnings
+
 #if LINQ_TO_SQL
 namespace System.Data.Linq
 {
@@ -65,3 +67,5 @@ namespace MvcMiniProfiler.Data
     }
 }
 #endif
+
+#pragma warning restore 1591 // xml doc comments warnings

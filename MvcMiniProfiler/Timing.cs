@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace MvcMiniProfiler
 {
     /// <summary>
-    /// An individual profiling step
+    /// An individual profiling step that can contain child steps.
     /// </summary>
     [DataContract]
     public class Timing : IDisposable
@@ -108,11 +108,17 @@ namespace MvcMiniProfiler
             get { return Children != null && Children.Count > 0; }
         }
 
+        /// <summary>
+        /// Returns true if this Timing step collected sql execution timings.
+        /// </summary>
         public bool HasSqlTimings
         {
             get { return SqlTimings != null && SqlTimings.Count > 0; }
         }
 
+        /// <summary>
+        /// Returns true when this Timing is the first one created in a MiniProfiler session.
+        /// </summary>
         public bool IsRoot
         {
             get { return Parent == null; }
@@ -138,6 +144,9 @@ namespace MvcMiniProfiler
             }
         }
 
+        /// <summary>
+        /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
+        /// </summary>
         public Timing(MiniProfiler profiler, Timing parent, string name)
         {
             this.Id = Guid.NewGuid();
@@ -155,13 +164,17 @@ namespace MvcMiniProfiler
             _startTicks = profiler.ElapsedTicks;
             StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
         }
-
+        /// <summary>
+        /// Obsolete - used for serialization.
+        /// </summary>
         [Obsolete("Used for serialization")]
         public Timing()
         {
         }
 
-
+        /// <summary>
+        /// Adds arbitrary string 'value' under 'key', allowing custom properties to be stored in this Timing step.
+        /// </summary>
         public void AddKeyValue(string key, string value)
         {
             if (KeyValues == null)
@@ -170,6 +183,9 @@ namespace MvcMiniProfiler
             KeyValues[key] = value;
         }
 
+        /// <summary>
+        /// Completes this Timing's duration and sets the MiniProfiler's Head up one level.
+        /// </summary>
         public void Stop()
         {
             if (DurationMilliseconds == null)

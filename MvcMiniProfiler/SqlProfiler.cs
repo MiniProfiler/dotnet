@@ -5,11 +5,29 @@ using System.Data.Common;
 
 namespace MvcMiniProfiler
 {
+    /// <summary>
+    /// Categories of sql statements.
+    /// </summary>
     public enum ExecuteType
     {
+        /// <summary>
+        /// Unknown
+        /// </summary>
         None = 0,
+
+        /// <summary>
+        /// DML statements that alter database state, e.g. INSERT, UPDATE
+        /// </summary>
         NonQuery,
+
+        /// <summary>
+        /// Statements that return a single record
+        /// </summary>
         Scalar,
+
+        /// <summary>
+        /// Statements that iterate over a result set
+        /// </summary>
         Reader
     }
 

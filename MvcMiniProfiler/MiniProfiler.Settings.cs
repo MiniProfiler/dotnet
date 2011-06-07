@@ -48,7 +48,7 @@ namespace MvcMiniProfiler
             public static bool RenderPopupButtonOnRight { get; set; }
 
             /// <summary>
-            /// When <see cref="MiniProfiler.Start()"/> is called, if the current request url starts with this property,
+            /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
             /// no profiler will be instantiated and no results will be displayed.  
             /// Default value is { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" }.
             /// </summary>

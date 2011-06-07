@@ -17,6 +17,8 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.CodeDom;
 
+#pragma warning disable 1591 // xml doc comments warnings
+
 namespace MvcMiniProfiler.Helpers
 {
     public class RazorCompiler
@@ -204,3 +206,5 @@ namespace MvcMiniProfiler.Helpers
         }
     }
 }
+
+#pragma warning restore 1591 // xml doc comments warnings

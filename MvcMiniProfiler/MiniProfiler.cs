@@ -145,17 +145,23 @@ namespace MvcMiniProfiler
         internal Timing Head { get; set; }
 
 
-        public MiniProfiler(string path, ProfileLevel level = ProfileLevel.Info)
+        /// <summary>
+        /// Creates and starts a new MiniProfiler for the root <paramref name="url"/>, filtering <see cref="Timing"/> steps to <paramref name="level"/>.
+        /// </summary>
+        public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info)
         {
             Started = DateTime.UtcNow;
             _watch = Stopwatch.StartNew();
-            Root = new Timing(this, parent: null, name: path);
+            Root = new Timing(this, parent: null, name: url);
             Id = Guid.NewGuid();
             Level = level;
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
         }
 
+        /// <summary>
+        /// Obsolete - used for serialization.
+        /// </summary>
         [Obsolete("Used for serialization")]
         public MiniProfiler()
         {
@@ -218,6 +224,9 @@ namespace MvcMiniProfiler
             }
         }
 
+        /// <summary>
+        /// Returns all <see cref="SqlTiming"/> results contained in all child <see cref="Timing"/> steps.
+        /// </summary>
         public List<SqlTiming> GetSqlTimings()
         {
             return GetTimingHierarchy().Where(t => t.HasSqlTimings).SelectMany(t => t.SqlTimings).ToList();
@@ -378,21 +387,34 @@ namespace MvcMiniProfiler
         private const string CacheKey = ":mini-profiler:";
     }
 
+    /// <summary>
+    /// Categorizes individual <see cref="Timing"/> steps to allow filtering.
+    /// </summary>
     public enum ProfileLevel
     {
+        /// <summary>
+        /// Default level given to Timings.
+        /// </summary>
         Info = 0,
+
+        /// <summary>
+        /// Useful when profiling many items in a loop, but you don't wish to always see this detail.
+        /// </summary>
         Verbose = 1
     }
 
+    /// <summary>
+    /// Contains helper methods that ease working with null <see cref="MiniProfiler"/>s.
+    /// </summary>
     public static class MiniProfilerExtensions
     {
-
-        public static void SetName(this MiniProfiler profiler, string name)
-        {
-            if (profiler == null) return;
-            profiler.Name = name;
-        }
-
+        /// <summary>
+        /// Wraps <paramref name="selector"/> in a <see cref="Step"/> call and executes it, returning its result.
+        /// </summary>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <param name="selector">Method to execute and profile.</param>
+        /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
+        /// <returns></returns>
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
         {
             if (selector == null) throw new ArgumentNullException("selector");
@@ -403,6 +425,12 @@ namespace MvcMiniProfiler
             }
         }
 
+        /// <summary>
+        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
+        /// </summary>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
         public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
         {
             return profiler == null ? null : profiler.StepImpl(name, level);
@@ -424,6 +452,10 @@ namespace MvcMiniProfiler
             profiler.Head.AddChild(externalProfiler.Root);
         }
 
+        /// <summary>
+        /// Returns an html-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
+        /// </summary>
+        /// <param name="profiler">The current profiling session or null.</param>
         public static IHtmlString Render(this MiniProfiler profiler)
         {
             if (profiler == null) return new HtmlString("");
