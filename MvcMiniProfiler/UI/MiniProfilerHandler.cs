@@ -14,12 +14,18 @@ namespace MvcMiniProfiler.UI
         {
             var urls = new[] { "mini-profiler-includes.js", "mini-profiler-includes.less", "mini-profiler-results" };
             var routes = RouteTable.Routes;
+            var handler = new MiniProfilerHandler();
 
             using (routes.GetWriteLock())
             {
                 foreach (var url in urls)
                 {
-                    var route = new Route(url, new MiniProfilerHandler());
+                    var route = new Route(url, handler)
+                    {
+                        // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
+                        Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
+                    };
+
                     // put our routes at the beginning, like a boss
                     routes.Insert(0, route);
                 }

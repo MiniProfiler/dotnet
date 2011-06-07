@@ -302,12 +302,16 @@ namespace MvcMiniProfiler
             // also set the profiler name to Controller/Action or /url
             if (string.IsNullOrWhiteSpace(current.Name))
             {
-                var mvc = context.Handler as MvcHandler;
+                var rc = request.RequestContext;
+                RouteValueDictionary values;
 
-                if (mvc != null)
+                if (rc != null && rc.RouteData != null && (values = rc.RouteData.Values).Count > 0)
                 {
-                    var values = mvc.RequestContext.RouteData.Values;
-                    current.Name = values["Controller"].ToString() + "/" + values["Action"].ToString();
+                    var controller = values["Controller"];
+                    var action = values["Action"];
+
+                    if (controller != null && action != null)
+                        current.Name = controller.ToString() + "/" + action.ToString();
                 }
 
                 if (string.IsNullOrWhiteSpace(current.Name))
@@ -337,13 +341,18 @@ namespace MvcMiniProfiler
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes()
         {
-            if (Current == null) return MvcHtmlString.Empty;
+            var profiler = Current;
+            var result = Current == null ? "" :
 
-            return MvcHtmlString.Create(string.Format(
+            string.Format(
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderDirection:'{1}' }}); }} ); </script>", Current.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left"));
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderDirection:'{1}' }}); }} ); </script>", profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left");
+
+            return new HtmlString(result);
         }
+
+        private static readonly IHtmlString EmptyHtmlString = new HtmlString("");
 
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
@@ -417,7 +426,7 @@ namespace MvcMiniProfiler
 
         public static IHtmlString Render(this MiniProfiler profiler)
         {
-            if (profiler == null) return MvcHtmlString.Empty;
+            if (profiler == null) return new HtmlString("");
 
             var text = new StringBuilder()
                 .Append(HttpUtility.HtmlEncode(Environment.MachineName)).Append(" at ").Append(DateTime.UtcNow).AppendLine();
@@ -435,7 +444,7 @@ namespace MvcMiniProfiler
                     for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }
-            return MvcHtmlString.Create(text.ToString());
+            return new HtmlString(text.ToString());
         }
 
     }

@@ -59,7 +59,7 @@ namespace MvcMiniProfiler.Helpers
                 public IHtmlString Raw(object o)
                 {
                     if (o == null) return null;
-                    return MvcHtmlString.Create(o.ToString());
+                    return new HtmlString(o.ToString());
                 }
             }
 
