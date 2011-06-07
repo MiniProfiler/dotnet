@@ -7,6 +7,7 @@
     var p = Model.MiniProfiler;
     var parentLookup = new Dictionary<SqlTiming, Timing>();
 
+    var hasSqlTimings = p.HasSqlTimings;
     var showTrivialToggle = false;
     var allTimingsTrivial = true;
 }
@@ -57,7 +58,7 @@
 
     <div class="profiler-popup">
         <div class="info">
-            <a class="name" href="/mini-profiler-results?id=@p.Id" target="_blank">@e(p.Name)</a>
+            <span class="name">@e(p.Name)</span>
             <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
         </div>
         <div class="profiler-output">
@@ -126,20 +127,25 @@
                         @RenderNumber(t.SqlTimings.Sum(s => s.DurationMilliseconds))
                     </td>
                 }
+                else if (hasSqlTimings) 
+                {
+                    <td colspan="2"></td>
+                }
                 </tr>
             }
             </tbody>
             <tfoot>
                 <tr>
-                    <td>
+                    <td colspan="3">
+                        <a href="/mini-profiler-results?id=@p.Id" target="_blank">share</a>
                     @if (showTrivialToggle)
                     { 
+                        <span class="link-separator">|</span>
                         <a class="toggle-trivial"
                            data-show-on-load="@(allTimingsTrivial ? "true" : "")"
                            title="toggles any rows with &lt; @MiniProfiler.Settings.TrivialDurationThresholdMilliseconds ms">show trivial</a>
                     }
-                    </td>
-                    <td colspan="2">
+                        <span class="link-separator">|</span>
                         <a class="toggle-duration-with-children" title="toggles column with aggregate child durations">show time with children</a>
                     </td>                  
                 @if (p.HasSqlTimings)
