@@ -69,18 +69,18 @@ namespace MvcMiniProfiler.UI
         /// </summary>
         private static string Includes(HttpContext context)
         {
-            var type = Path.GetExtension(context.Request.Url.AbsolutePath);
-            if (string.IsNullOrWhiteSpace(type)) return NotFound(context);
+            var extension = Path.GetExtension(context.Request.Url.AbsolutePath);
+            if (string.IsNullOrWhiteSpace(extension)) return NotFound(context);
 
             var response = context.Response;
-            var filename = "Includes." + type;
+            var filename = "Includes" + extension;
 
-            switch (type)
+            switch (extension)
             {
-                case "js":
+                case ".js":
                     response.ContentType = "application/javascript";
                     break;
-                case "less":
+                case ".less":
                     response.ContentType = "text/plain";
                     break;
                 default:
