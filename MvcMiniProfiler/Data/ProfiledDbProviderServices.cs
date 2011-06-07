@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 
 #if ENTITY_FRAMEWORK
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
     class ProfiledDbProviderServices : DbProviderServices
     {

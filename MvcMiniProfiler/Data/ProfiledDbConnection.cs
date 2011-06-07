@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
     public class ProfiledDbConnection : DbConnection, ICloneable
     {

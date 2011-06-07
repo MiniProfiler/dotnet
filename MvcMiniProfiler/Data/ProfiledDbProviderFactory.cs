@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.Common;
+using MvcMiniProfiler;
 
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
     internal class ProfiledDbProviderFactory : DbProviderFactory, IServiceProvider
     {

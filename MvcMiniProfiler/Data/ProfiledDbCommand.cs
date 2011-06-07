@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data.Common;
 using System.Data;
-using StackExchange.MvcMiniProfiler;
+using MvcMiniProfiler;
 
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
     public class ProfiledDbCommand : DbCommand, ICloneable
     {

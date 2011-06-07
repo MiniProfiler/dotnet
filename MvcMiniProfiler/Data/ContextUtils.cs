@@ -2,7 +2,7 @@
 using System.Data.Common;
 using System.Reflection;
 using System.Reflection.Emit;
-using StackExchange.MvcMiniProfiler.Data;
+using MvcMiniProfiler.Data;
 
 #if LINQ_TO_SQL
 namespace System.Data.Linq
@@ -39,9 +39,9 @@ namespace System.Data.Objects
 }
 #endif
 #if LINQ_TO_SQL || ENTITY_FRAMEWORK
-namespace StackExchange.MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data
 {
-    static class CtorCache<TType, TArg> where TType : class
+    internal static class CtorCache<TType, TArg> where TType : class
     {
         public static readonly Func<TArg, TType> Ctor;
         static CtorCache()
