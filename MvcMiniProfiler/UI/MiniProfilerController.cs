@@ -1,112 +1,167 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using System.Web.Routing;
 using System.IO;
-using System.Web.UI;
+using System.Web;
+using System.Web.Routing;
+
 using MvcMiniProfiler.Helpers;
-using System.Diagnostics;
 
 namespace MvcMiniProfiler.UI
 {
-    public class MiniProfilerController : Controller
+    public class MiniProfilerController : IRouteHandler, IHttpHandler
     {
-        public static bool IsProfilerPath(string path)
+        internal static void RegisterRoutes()
         {
-            if (string.IsNullOrWhiteSpace(path)) return false;
-            return path.Contains("/mini-profiler-includes.") || path.Contains("/mini-profiler-results");
+            var urls = new[] { "mini-profiler-includes.js", "mini-profiler-includes.less", "mini-profiler-results" };
+            var routes = RouteTable.Routes;
+
+            using (routes.GetWriteLock())
+            {
+                foreach (var url in urls)
+                {
+                    var route = new Route(url, new MiniProfilerController());
+                    // put our routes at the beginning, like a boss
+                    routes.Insert(0, route);
+                }
+            }
         }
 
-        internal static void RegisterRoutes(RouteCollection routes)
+        public IHttpHandler GetHttpHandler(RequestContext requestContext)
         {
-            routes.MapRoute("", "mini-profiler-includes.{type}", new { controller = "MiniProfiler", action = "Includes", type = "" });
-            routes.MapRoute("", "mini-profiler-results", new { controller = "MiniProfiler", action = "Results" });
+            return this;
         }
 
         /// <summary>
-        /// Includes files keyed by filename.
+        /// Try to keep everything static so we can easily be reused.
         /// </summary>
-        private static readonly Dictionary<string, string> _IncludesCache = new Dictionary<string, string>();
-
-        public ActionResult Includes(string type)
+        public bool IsReusable
         {
-            if (string.IsNullOrWhiteSpace(type)) return NotFound();
+            get { return true; }
+        }
 
+        /// <summary>
+        /// Returns either includes' css/javascript or results' html.
+        /// </summary>
+        public void ProcessRequest(HttpContext context)
+        {
+            string output;
+
+            switch (Path.GetFileNameWithoutExtension(context.Request.Url.AbsolutePath))
+            {
+                case "mini-profiler-includes":
+                    output = Includes(context);
+                    break;
+
+                case "mini-profiler-results":
+                    output = Results(context);
+                    break;
+
+                default:
+                    output = NotFound(context);
+                    break;
+            }
+
+            context.Response.Write(output);
+        }
+
+        /// <summary>
+        /// Handles rendering our .js and .less static content files.
+        /// </summary>
+        private static string Includes(HttpContext context)
+        {
+            var type = Path.GetExtension(context.Request.Url.AbsolutePath);
+            if (string.IsNullOrWhiteSpace(type)) return NotFound(context);
+
+            var response = context.Response;
             var filename = "Includes." + type;
-            var contentType = "";
 
             switch (type)
             {
                 case "js":
-                    contentType = "application/javascript";
+                    response.ContentType = "application/javascript";
                     break;
                 case "less":
-                    contentType = "text/plain";
+                    response.ContentType = "text/plain";
                     break;
                 default:
-                    return NotFound();
+                    return NotFound(context);
             }
 
-            string fileContents = null;
-
-            if (!_IncludesCache.TryGetValue(filename, out fileContents))
-            {
-                using (var stream = GetResource(filename))
-                using (var reader = new StreamReader(stream))
-                {
-                    fileContents = reader.ReadToEnd();
-                }
-
-                _IncludesCache[filename] = fileContents;
-            }
-
-            var cache = Response.Cache;
+            var cache = response.Cache;
             cache.SetCacheability(System.Web.HttpCacheability.Public);
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
 
-            return Content(fileContents, contentType);
+            return GetResource(filename);
         }
 
-        public ActionResult Results(Guid id, string popup)
+        /// <summary>
+        /// Handles rendering a previous MiniProfiler session, identified by its "?id=GUID" on the query.
+        /// </summary>
+        private static string Results(HttpContext context)
         {
-            MiniProfiler.Settings.EnsureCacheMethods();
+            // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
+            // if it's absent, we're rendering results as a full page for sharing
+            var isPopup = !string.IsNullOrWhiteSpace(context.Request.QueryString["popup"]);
 
-            var isPopup = !string.IsNullOrWhiteSpace(popup);
+            // this guid is the MiniProfiler.Id property
+            Guid id;
+            if (!Guid.TryParse(context.Request.QueryString["id"], out id))
+                return isPopup ? NotFound(context) : NotFound(context, "text/html", "No Guid id specified on the query string");
+
+            MiniProfiler.Settings.EnsureCacheMethods();
             var profiler = MiniProfiler.Settings.ShortTermCacheGetter(id);
 
             if (profiler == null)
                 profiler = MiniProfiler.Settings.LongTermCacheGetter(id);
 
             if (profiler == null)
-                return isPopup ? NotFound() : NotFound("text/html", "No MiniProfiler results found with Id=" + id.ToString());
+                return isPopup ? NotFound(context) : NotFound(context, "text/html", "No MiniProfiler results found with Id=" + id.ToString());
 
             // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
             // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
             if (!isPopup)
                 MiniProfiler.Settings.LongTermCacheSetter(profiler);
 
+            var html = GetResource("MiniProfilerResults.cshtml");
             var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup };
 
-            
-            string html = "";            using (var reader = new StreamReader(GetResource("MiniProfilerResults.cshtml")))            {                html = reader.ReadToEnd();
+            return RazorCompiler.Render(html, model);
+        }
+
+        private static string GetResource(string filename)
+        {
+            string result;
+
+            if (!_ResourceCache.TryGetValue(filename, out result))
+            {
+                using (var stream = typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MvcMiniProfiler.UI." + filename))
+                using (var reader = new StreamReader(stream))
+                {
+                    result = reader.ReadToEnd();
+                }
+
+                _ResourceCache[filename] = result;
             }
 
-            return Content(RazorCompiler.Render(html, model));
+            return result;
         }
 
+        /// <summary>
+        /// Embedded resource contents keyed by filename.
+        /// </summary>
+        private static readonly Dictionary<string, string> _ResourceCache = new Dictionary<string, string>();
 
-        private Stream GetResource(string filename)
+        /// <summary>
+        /// Helper method that sets a proper 404 response code.
+        /// </summary>
+        private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
         {
-            return typeof(MiniProfilerController).Assembly.GetManifestResourceStream("MvcMiniProfiler.UI." + filename);
+            context.Response.StatusCode = 404;
+            context.Response.ContentType = contentType;
+
+            return message;
         }
 
-        private ActionResult NotFound(string contentType = "text/plain", string message = null)
-        {
-            Response.StatusCode = 404;
-            return Content(message, contentType);
-        }
     }
 }

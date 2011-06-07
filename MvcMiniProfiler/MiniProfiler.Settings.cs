@@ -49,9 +49,10 @@ namespace MvcMiniProfiler
 
             /// <summary>
             /// When <see cref="MiniProfiler.Start()"/> is called, if the current request url starts with this property,
-            /// no profiler will be instantiated and no results will be displayed.  Default value is { "/content", "/scripts" }.
+            /// no profiler will be instantiated and no results will be displayed.  
+            /// Default value is { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" }.
             /// </summary>
-            [DefaultValue(new string[] { "/content/", "/scripts/" })]
+            [DefaultValue(new string[] { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" })]
             public static string[] IgnoredRootPaths { get; set; }
 
             /// <summary>

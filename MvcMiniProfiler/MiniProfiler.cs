@@ -161,6 +161,11 @@ namespace MvcMiniProfiler
         {
         }
 
+        static MiniProfiler()
+        {
+            UI.MiniProfilerController.RegisterRoutes();
+        }
+
 
         internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
@@ -229,15 +234,6 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Hooks up MiniProfiler's controller actions needed to display results.
-        /// </summary>
-        /// <remarks>Should be called before any default/catch-all routes are registered.</remarks>
-        public static void RegisterRoutes(RouteCollection routes)
-        {
-            UI.MiniProfilerController.RegisterRoutes(routes);
-        }
-
-        /// <summary>
         /// Starts a new MiniProfiler for the current Request. This new profiler can be accessed by
         /// <see cref="MiniProfiler.Current"/>
         /// </summary>
@@ -248,9 +244,6 @@ namespace MvcMiniProfiler
 
             var url = context.Request.Url;
             var path = url.AbsolutePath.ToLower();
-
-            // don't profile our profiler routes!
-            if (UI.MiniProfilerController.IsProfilerPath(path)) return null;
 
             // don't profile /content or /scripts, either - happens in web.dev
             foreach (var ignored in Settings.IgnoredRootPaths ?? new string[0])

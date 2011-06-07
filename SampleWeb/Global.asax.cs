@@ -17,9 +17,6 @@ namespace SampleWeb
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            // hook up our UI - should be done before your default/catch-all route handler
-            MvcMiniProfiler.MiniProfiler.RegisterRoutes(routes);
-
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
