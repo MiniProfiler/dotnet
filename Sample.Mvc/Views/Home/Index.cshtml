@@ -27,6 +27,7 @@
 
 <div style="width:50%; float:right;">
     <a class="massive-nesting" href="javascript:void(0);">Massive Nesting</a><a class="massive-nesting" href="javascript:void(0);" style="padding-left:20px">Massive Nesting 2</a>
+    <a class="duplicate" href="javascript:void(0);">Duplicated Queries (N+1)</a>
 
     <script type="text/javascript">
         $(function() {
@@ -65,6 +66,12 @@
             $('.massive-nesting').click(function() {
                 var link = $(this);
                 $.get('/Home/MassiveNesting' + (link.text().indexOf('2') < 0 ? '' : '2'), function(data) {
+                    link.parent().append('<p>' + data + '</p>');
+                });
+            });
+            $('.duplicate').click(function () {
+                var link = $(this);
+                $.get('/Home/Duplicated', function (data) {
                     link.parent().append('<p>' + data + '</p>');
                 });
             });
