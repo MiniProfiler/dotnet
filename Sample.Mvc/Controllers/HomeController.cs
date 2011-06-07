@@ -89,6 +89,7 @@ namespace SampleWeb.Controllers
 
                 conn.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
 
+                // massive query to test if max-height is properly removed from <pre> stylings
                 conn.Query(
 @"select *
 from   (select RouteName,
@@ -104,12 +105,47 @@ from   (select RouteName,
         select RouteName,
                HitCount
         from   RouteHits
-        where  HitCount between 20 and 30
+        where  HitCount between 20 and 29
         union all
         select RouteName,
                HitCount
         from   RouteHits
-        where  HitCount > 30)
+        where  HitCount between 30 and 39
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 40 and 49
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 50 and 59
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 60 and 69
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 70 and 79
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 80 and 89
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount between 90 and 99
+        union all
+        select RouteName,
+               HitCount
+        from   RouteHits
+        where  HitCount > 100)
 order  by RouteName");
 
                 using (profiler.Step("Incrementing a variable named i")) // need a long title to test max-width
