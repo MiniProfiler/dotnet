@@ -140,12 +140,10 @@
                         <a href="/mini-profiler-results?id=@p.Id" target="_blank">share</a>
                     @if (showTrivialToggle)
                     { 
-                        <span class="link-separator">|</span>
                         <a class="toggle-trivial"
                            data-show-on-load="@(allTimingsTrivial ? "true" : "")"
                            title="toggles any rows with &lt; @MiniProfiler.Settings.TrivialDurationThresholdMilliseconds ms">show trivial</a>
                     }
-                        <span class="link-separator">|</span>
                         <a class="toggle-duration-with-children" title="toggles column with aggregate child durations">show time with children</a>
                     </td>                  
                 @if (p.HasSqlTimings)

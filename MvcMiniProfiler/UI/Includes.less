@@ -127,13 +127,18 @@
         tfoot {
             td {
                 padding-top:10px;
+                text-align:right;
+
+
                 a {
                     font-size:95%;
-                }
+                    display:inline-block;
+                    margin-left:12px;
 
-                .link-separator {
-                    color:#fff;
-                    padding:0 10px;
+                    &:first-child {
+                        float:left;
+                        margin-left:0px;
+                    }
                 }
             }
         }

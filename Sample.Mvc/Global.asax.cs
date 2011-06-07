@@ -89,15 +89,16 @@ namespace SampleWeb
             // the getter will be passed a guid and should return the saved MiniProfiler
             MiniProfiler.Settings.LongTermCacheGetter = (id) =>
             {
-                byte[] results;
+                byte[] results = null;
                 using (var conn = BaseController.GetOpenConnection())
                 {
                     dynamic buffer = conn.Query("select Results from MiniProfilerResults where Id = @id", new { id = id }).SingleOrDefault();
-                    results = buffer.Results as byte[];
-                }
 
-                if (results == null || results.Length == 0)
-                    return null;
+                    if (buffer == null)
+                        return null;
+
+                    results = (byte[])buffer.Results;
+                }
 
                 using (var ms = new MemoryStream(results))
                 {
