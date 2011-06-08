@@ -62,7 +62,6 @@
     }
 
     .unit {
-        //margin-left:4px;
         color:@mutedColor;
     }
 
@@ -90,9 +89,6 @@
             white-space:nowrap;
         }
     }
-	.duplicates {
-		background-color: #ffa07a;
-	}
     .timings {
         th {
             background-color:#fff;
@@ -129,7 +125,6 @@
                 padding-top:10px;
                 text-align:right;
 
-
                 a {
                     font-size:95%;
                     display:inline-block;
@@ -143,81 +138,74 @@
             }
         }
     }
-}
 
-// styles shared between popup view and full view
-.profiler-queries {
-    font-family:@normalFonts;
+    .profiler-queries {
+        font-family:@normalFonts;
 
-    .ms {
-        margin-left:4px;
-        color:@mutedColor;
-    }
-    .stack-trace {
-        margin-bottom:15px;
-    }
-    pre {
-        background-color:#fff;
-        font-family:@codeFonts;
-        white-space:pre-wrap;
-    }
-
-    th {
-        background-color:#fff;
-        border-bottom:1px solid #555;
-        font-weight:bold;
-        padding:15px;
-        white-space:nowrap;
-    }
-
-    td {
-        padding:15px;
-        text-align:left;
-
-        &:last-child {
-            padding-right:25px; // compensate for scrollbars
+        .stack-trace {
+            margin-bottom:15px;
         }
-    }
+        pre {
+            font-family:@codeFonts;
+            white-space:pre-wrap;
+        }
 
-    .odd td {
-        background-color:#e5e5e5;
+        th {
+            background-color:#fff;
+            border-bottom:1px solid #555;
+            font-weight:bold;
+            padding:15px;
+            white-space:nowrap;
+        }
 
-        pre, code {
+        td {
+            padding:15px;
+            text-align:left;
+            background-color:#fff;
+
+            &:last-child {
+                padding-right:25px; // compensate for scrollbars
+            }
+        }
+
+        .odd td {
             background-color:#e5e5e5;
         }
-    }
 
-    .selected-query td { // this needs to come after .odd
-        background-color:rgba(255, 255, 0, 0.2);
-        border-top:1px solid #ccc;
-        border-bottom:1px solid #ccc;
-
-        code, pre {
-            background-color:transparent;
+        .since-start, .duration {
+            text-align:right;
         }
+
+        .info div {
+            text-align:right;
+            margin-bottom:5px;
+        }
+
+        // prettify colors
+        .str{color:maroon}
+        .kwd{color:#00008b}
+        .com{color:gray}
+        .typ{color:#2b91af}
+        .lit{color:maroon}
+        .pun{color:#000}
+        .pln{color:#000}
+        .tag{color:maroon}
+        .atn{color:red}
+        .atv{color:blue}
+        .dec{color:purple}
     }
 
-    .since-start, .duration {
-        text-align:right;
+    .warning, .warning * {
+        color:#f00 !important;
     }
 
-    .info div {
-        text-align:right;
-        margin-bottom:5px;
+    .nuclear {
+        .warning;
+        //font-size:130%;
+        //font-family:Verdana;
+        font-weight:bold;
+        padding-right:5px;
     }
-
-    // prettify colors
-    .str{color:maroon}
-    .kwd{color:#00008b}
-    .com{color:gray}
-    .typ{color:#2b91af}
-    .lit{color:maroon}
-    .pun{color:#000}
-    .pln{color:#000}
-    .tag{color:maroon}
-    .atn{color:red}
-    .atv{color:blue}
-    .dec{color:purple}
 }
 
 // ajaxed-in results will be appended to this
@@ -298,7 +286,7 @@
 
             .name {
                 font-size:110%;
-
+                font-weight:bold;
                 .overall-duration {
                     display:none;
                 }
@@ -340,6 +328,7 @@
     }
 }
 
+// popup results' queries will be displayed in front of this
 .profiler-queries-bg {
     z-index:1002;
     display:none;
@@ -351,8 +340,7 @@
     min-width:100%;
 }
 
-
-// used when viewing a shared, full result
+// used when viewing a shared, full page result
 .profiler-result.profiler-result-full {
 
     width:950px;
@@ -402,10 +390,13 @@
 
     .profiler-queries {
         margin:25px 0;
-
+        table {
+            width:100%;
+        }
         th {
             font-size:16px;
             color:#555;
+            line-height:20px;
         }
 
         td {

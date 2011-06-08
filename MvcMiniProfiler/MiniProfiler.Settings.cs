@@ -27,6 +27,8 @@ namespace MvcMiniProfiler
                 {
                     pair.PropertyInfo.SetValue(null, pair.DefaultValue.Value, null);
                 }
+
+                Version = System.Diagnostics.FileVersionInfo.GetVersionInfo(typeof(Settings).Assembly.Location).ProductVersion;
             }
 
             /// <summary>
@@ -93,6 +95,11 @@ namespace MvcMiniProfiler
             /// back into your chosen storage medium (e.g. no-op when it already exists).
             /// </remarks>
             public static Action<MiniProfiler> LongTermCacheSetter { get; set; }
+
+            /// <summary>
+            /// Assembly version of this dank MiniProfiler.
+            /// </summary>
+            public static string Version { get; private set; }
 
             /// <summary>
             /// When setters are null, creates default getters and setters that operate on the HttpRuntime.Cache.

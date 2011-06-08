@@ -14,10 +14,13 @@ namespace MvcMiniProfiler.Helpers
     /// </summary>
     internal class StackTraceSnippet
     {
+
+        // TODO: make these MiniProfiler.Settings properties, so people can add their own
+
         public static readonly HashSet<string> AssembliesToExclude = new HashSet<string>
         {
             // our assembly
-            "MiniProfiler",
+            "MvcMiniProfiler",
 
             // reflection emit
             "Anonymously Hosted DynamicMethods Assembly",
@@ -35,8 +38,8 @@ namespace MvcMiniProfiler.Helpers
         /// </summary>
         public static readonly HashSet<string> TypesToExclude = new HashSet<string>
         {
-            // while we like our friend, we don't want to see him all the time
-            "Dapper.SqlMapper",
+            // while we like our Dapper friend, we don't want to see him all the time
+            "SqlMapper",
         };
 
         public static readonly HashSet<string> MethodsToExclude = new HashSet<string>
@@ -85,7 +88,7 @@ namespace MvcMiniProfiler.Helpers
 
             while (t != null)
             {
-                if (TypesToExclude.Contains(t.FullName))
+                if (TypesToExclude.Contains(t.Name))
                     return true;
 
                 t = t.DeclaringType;
