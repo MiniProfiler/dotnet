@@ -6,6 +6,7 @@
 @{
     var p = Model.MiniProfiler;
     var parentLookup = new Dictionary<SqlTiming, Timing>();
+    var sqlCounts = new Dictionary<string, int>();
 
     var hasSqlTimings = p.HasSqlTimings;
     var showTrivialToggle = false;
@@ -23,7 +24,6 @@
     {
         return e(System.Text.RegularExpressions.Regex.Replace(commandString, @"[^\s],[^\s]", ", "));
     }
-    
 }
 @helper RenderNumber(double ms, string unit = "", string format = "0.0") 
 {
@@ -76,9 +76,6 @@
                 </tr>
             </thead>
             <tbody>
-            @{
-                Dictionary<string, int> sqlCounts = new Dictionary<string, int>();
-            }
             @foreach (var t in p.GetTimingHierarchy())
             {
                 bool flagDuplicates = false;
@@ -182,9 +179,9 @@
             <tr class="@(i++ % 2 == 0 ? "" : "odd")" data-timing-id="@parent.Id">
                 <td class="info">
                     <div>@parent.Name</div>
-                    <div><span class="ms">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
+                    <div><span class="unit">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
                     <div>@if (sqlCounts.TryGetValue(s.CommandString, out count) && count > 1){
-                             <span class="duplicates">DUPLICATE</span>
+                             <span class="warning">DUPLICATE</span>
                          }@e(s.ExecuteType)</div>
                     <div>@RenderNumber(s.DurationMilliseconds, "ms")</div>
                 </td>
