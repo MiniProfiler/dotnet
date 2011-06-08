@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5D385DE4-0D4C-4908-909C-7CD27D1D10DF}</ProjectGuid>
+    <ProjectGuid>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MvcMiniProfiler</RootNamespace>

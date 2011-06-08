@@ -17,6 +17,7 @@
 @mutedColor: #aaa;
 @normalFonts: Helvetica, Arial, sans-serif;
 @codeFonts: Consolas, monospace, serif;
+@zindex:2147483640; // near 32bit max 2147483647
 
 // do some resets
 .profiler-result, .profiler-queries {
@@ -201,10 +202,8 @@
 
     .nuclear {
         .warning;
-        //font-size:130%;
-        //font-family:Verdana;
         font-weight:bold;
-        padding-right:5px;
+        padding-right:2px;
     }
 }
 
@@ -245,7 +244,7 @@
 
     .profiler-button {
         display:none;
-        z-index:1000;
+        z-index:@zindex;
         border-bottom: 1px solid @buttonBorderColor;
         background-color:#fff;
         padding: 4px 7px;
@@ -268,7 +267,7 @@
 
     .profiler-popup {
         display:none;
-        z-index:1001;
+        z-index:@zindex + 1;
         position:absolute;
         background-color:#fff;
         border: 1px solid #aaa;
@@ -316,7 +315,7 @@
 
     .profiler-queries {
         display:none;
-        z-index:1003;
+        z-index:@zindex + 3;
         position:absolute;
         overflow-y:auto;
         overflow-x:hidden;
@@ -330,7 +329,7 @@
 
 // popup results' queries will be displayed in front of this
 .profiler-queries-bg {
-    z-index:1002;
+    z-index:@zindex + 2;
     display:none;
     background:#000;
     opacity:0.7;
