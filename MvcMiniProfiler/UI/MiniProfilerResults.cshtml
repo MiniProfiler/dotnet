@@ -58,7 +58,7 @@
 
     <div class="profiler-popup">
         <div class="info">
-            <span class="name">@e(p.Name)</span>
+            <span class="name">@e(p.Name) <span class="overall-duration">(@p.DurationMilliseconds.ToString("0.0")ms)</span></span>
             <span class="server-time">@e(p.MachineName) at @e(p.Started.ToString("u"))</span>
         </div>
         <div class="profiler-output">
@@ -77,7 +77,6 @@
             </thead>
             <tbody>
             @{
-                
                 Dictionary<string, int> sqlCounts = new Dictionary<string, int>();
             }
             @foreach (var t in p.GetTimingHierarchy())

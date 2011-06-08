@@ -350,15 +350,7 @@ namespace MvcMiniProfiler
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes()
         {
-            var profiler = Current;
-            var result = Current == null ? "" :
-
-            string.Format(
-@"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less"">
-<script type=""text/javascript"" src=""/mini-profiler-includes.js""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{0}', renderDirection:'{1}' }}); }} ); </script>", profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left");
-
-            return new HtmlString(result);
+            return UI.MiniProfilerHandler.RenderIncludes(Current);
         }
 
         private static readonly IHtmlString EmptyHtmlString = new HtmlString("");
