@@ -1,7 +1,7 @@
 ﻿@using System.Web
-@using MvcMiniProfiler
 @using System.Linq
 @using System.Collections.Generic
+@using MvcMiniProfiler
 @model MvcMiniProfiler.UI.MiniProfilerResultsModel
 @{
     var p = Model.MiniProfiler;
@@ -42,8 +42,8 @@
 <head>
     <title>@p.Name (@p.DurationMilliseconds ms) - MiniProfiler Results</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-    <link type="text/css" rel="stylesheet/less" href="/mini-profiler-includes.less" />
-    <script type="text/javascript" src="/mini-profiler-includes.js"></script>
+    <link type="text/css" rel="stylesheet/less" href="/mini-profiler-includes.less?v=@MiniProfiler.Settings.Version" />
+    <script type="text/javascript" src="/mini-profiler-includes.js?v=@MiniProfiler.Settings.Version"></script>
     <script type="text/javascript">
         jQuery(function() { MiniProfiler.init(); });
     </script>
@@ -118,11 +118,18 @@
                     var readers = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.Reader);
                     var scalers = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.Scalar);
                     var nons = t.SqlTimings.Count(s => s.ExecuteType == ExecuteType.NonQuery);
-                    var dups = flagDuplicates ? " duplicates" : "";
-                    <td class="duration@(dups)" title="@readers reader, @scalers scaler, @nons non-query statements executed">
-                        <a class="queries-show">@RenderNumber(t.SqlTimings.Count, "sql", "0")</a>
+                    var css = flagDuplicates ? " warning" : "";
+                    var title = flagDuplicates ? "duplicate queries detected -" : "";
+                    <td class="duration@(css)" title="@title @readers reader, @scalers scaler, @nons non-query statements executed">
+                        <a class="queries-show">
+                        @if (flagDuplicates) 
+                        {
+                            <span class="nuclear">!</span> 
+                        }
+                            @RenderNumber(t.SqlTimings.Count, "sql", "0")
+                        </a>
                     </td>
-                    <td class="duration@(dups)" title="aggregate duration of all queries in this step (excludes children)">
+                    <td class="duration" title="aggregate duration of all queries in this step (excludes children)">
                         @RenderNumber(t.SqlTimings.Sum(s => s.DurationMilliseconds))
                     </td>
                 }
@@ -177,9 +184,9 @@
             <tr class="@(i++ % 2 == 0 ? "" : "odd")" data-timing-id="@parent.Id">
                 <td class="info">
                     <div>@parent.Name</div>
-                    <div><span class="ms">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
+                    <div><span class="unit">T+</span>@RenderNumber(s.StartMilliseconds, "ms")</div>
                     <div>@if (!unique.Add(s.CommandString)){
-                             <span class="duplicates">DUPLICATE</span>
+                             <span class="warning" title="possible N+1 query problem">DUPLICATE</span>
                          }@e(s.ExecuteType)</div>
                     <div>@RenderNumber(s.DurationMilliseconds, "ms")</div>
                 </td>

@@ -13,12 +13,6 @@ namespace MvcMiniProfiler.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        private static readonly string _CacheBreaker;
-
-        static MiniProfilerHandler()
-        {
-            _CacheBreaker = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductVersion;
-        }
 
         internal static HtmlString RenderIncludes(MiniProfiler profiler)
         {
@@ -27,7 +21,7 @@ namespace MvcMiniProfiler.UI
 <script type=""text/javascript"" src=""/mini-profiler-includes.js?v={0}""></script>
 <script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}' }}); }} ); </script>";
 
-            var result = profiler == null ? "" : string.Format(format, _CacheBreaker, profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left");
+            var result = profiler == null ? "" : string.Format(format, MiniProfiler.Settings.Version, profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left");
 
             return new HtmlString(result);
         }
