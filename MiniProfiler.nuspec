@@ -2,16 +2,16 @@
 <package>
   <metadata>
     <id>MiniProfiler</id>
-    <version>1.0</version>
-    <authors>Marc Gravell</authors>
-    <owners>Marc Gravell</owners>
-    <description>Lightweight mini-profiler, in particular designed for ASP.NET sites</description>
+    <version>1.1</version>
+    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
+    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
+    <description>Lightweight mini-profiler, in particular designed for ASP.NET MVC 3 sites</description>
     <projectUrl>http://code.google.com/p/mvc-mini-profiler/</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <tags>profiler mvc asp.net performance timing</tags>
+    <tags>profiler sql mvc asp.net performance timing</tags>
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="MiniProfiler\bin\Release\*.*" target="lib" />
+    <file src="MvcMiniProfiler\bin\Release\*.*" target="lib" />
   </files>
 </package>
