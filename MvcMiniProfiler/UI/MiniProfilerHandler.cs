@@ -14,14 +14,18 @@ namespace MvcMiniProfiler.UI
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
 
-        internal static HtmlString RenderIncludes(MiniProfiler profiler)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, bool showTrivial = false)
         {
             const string format =
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less?v={0}"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js?v={0}""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}' }}); }} ); </script>";
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}', showTrivial: {3} }}); }} ); </script>";
 
-            var result = profiler == null ? "" : string.Format(format, MiniProfiler.Settings.Version, profiler.Id, MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left");
+            var result = profiler == null ? "" : string.Format(format,
+                                                               MiniProfiler.Settings.Version,
+                                                               profiler.Id,
+                                                               MiniProfiler.Settings.RenderPopupButtonOnRight ? "right" : "left",
+                                                               showTrivial ? "true" : "false");
 
             return new HtmlString(result);
         }

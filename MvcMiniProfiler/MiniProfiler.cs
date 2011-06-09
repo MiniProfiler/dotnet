@@ -345,9 +345,9 @@ namespace MvcMiniProfiler
         /// Returns the css and javascript includes needed to display the MiniProfiler results UI.
         /// </summary>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes()
+        public static IHtmlString RenderIncludes(bool showTrivial = false)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current);
+            return UI.MiniProfilerHandler.RenderIncludes(Current, showTrivial: showTrivial);
         }
 
         private static readonly IHtmlString EmptyHtmlString = new HtmlString("");
