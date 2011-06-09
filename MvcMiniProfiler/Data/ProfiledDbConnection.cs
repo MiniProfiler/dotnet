@@ -46,7 +46,13 @@ namespace MvcMiniProfiler.Data
             return new ProfiledDbConnection(connection, profiler);
         }
 
-        private ProfiledDbConnection(DbConnection connection, MiniProfiler profiler)
+        /// <summary>
+        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
+        /// providing query execution profiling.  If profiler is null, no profiling will occur.
+        /// </summary>
+        /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
+        /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
+        protected ProfiledDbConnection(DbConnection connection, MiniProfiler profiler)
         {
             if (connection == null) throw new ArgumentNullException("connection");
 
