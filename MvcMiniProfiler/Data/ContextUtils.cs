@@ -12,7 +12,7 @@ namespace System.Data.Linq
     public static class DataContextUtils
     {
 
-        public static T CreateDataContext<T>(this ProfiledDbConnection connection) where T : System.Data.Linq.DataContext
+        public static T CreateDataContext<T>(this DbConnection connection) where T : System.Data.Linq.DataContext
         {
             return CtorCache<T, IDbConnection>.Ctor(connection);
         }
@@ -24,7 +24,7 @@ namespace System.Data.Objects
 {
     public static class ObjectContextUtils
     {
-        public static T CreateObjectContext<T>(this ProfiledDbConnection connection) where T : System.Data.Objects.ObjectContext
+        public static T CreateObjectContext<T>(this DbConnection connection) where T : System.Data.Objects.ObjectContext
         {
             var workspace = new System.Data.Metadata.Edm.MetadataWorkspace(
               new string[] { "res://*/" },
