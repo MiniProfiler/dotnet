@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using System.Web.Mvc;
 using MvcMiniProfiler.Data;
 using System.Runtime.Serialization;
 
