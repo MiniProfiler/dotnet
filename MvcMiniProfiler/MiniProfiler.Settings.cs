@@ -46,7 +46,7 @@ namespace MvcMiniProfiler
             /// <summary>
             /// Dictates on which side of the page the profiler popup button is displayed; defaults to false (i.e. renders on left side).
             /// </summary>
-            [DefaultValue(false)]
+            [DefaultValue(false), Obsolete("Please use .RenderIncludes(position: RenderPosition.Left/Right)")]
             public static bool RenderPopupButtonOnRight { get; set; }
 
             /// <summary>

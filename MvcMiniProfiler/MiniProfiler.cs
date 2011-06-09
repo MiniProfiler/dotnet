@@ -344,13 +344,13 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Returns the css and javascript includes needed to display the MiniProfiler results UI.
         /// </summary>
+        /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
+        /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(bool showTrivial = false)
+        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool showTrivial = false)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current, showTrivial: showTrivial);
+            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial);
         }
-
-        private static readonly IHtmlString EmptyHtmlString = new HtmlString("");
 
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
@@ -390,6 +390,22 @@ namespace MvcMiniProfiler
         /// Useful when profiling many items in a loop, but you don't wish to always see this detail.
         /// </summary>
         Verbose = 1
+    }
+
+    /// <summary>
+    /// Dictates on which side of the page the profiler popup button is displayed; defaults to left.
+    /// </summary>
+    public enum RenderPosition
+    {
+        /// <summary>
+        /// Profiler popup button is displayed on the left.
+        /// </summary>
+        Left = 0,
+
+        /// <summary>
+        /// Profiler popup button is displayed on the right.
+        /// </summary>
+        Right = 1
     }
 
     /// <summary>
