@@ -186,7 +186,9 @@ namespace MvcMiniProfiler.Data
 
         public ProfiledDbConnection Clone()
         {
-            return new ProfiledDbConnection(_conn, _profiler);
+            ICloneable tail = _conn as ICloneable;
+            if (tail == null) throw new NotSupportedException("Underlying " + _conn.GetType().Name + " is not cloneable");
+            return new ProfiledDbConnection((DbConnection)tail.Clone(), _profiler);
         }
         object ICloneable.Clone() { return Clone(); }
 
