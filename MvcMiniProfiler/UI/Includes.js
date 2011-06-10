@@ -21,7 +21,7 @@ var MiniProfiler = (function($) {
         // button will appear in corner with the total profiling duration - click to show details
         button.click(function() { buttonClick(button, popup); });
 
-        if (options.showTrivial) console.log(popup.find('.toggle-trivial').data('show-on-load', true));
+        if (options.showTrivial) popup.find('.toggle-trivial').data('show-on-load', true);
 
         // small duration steps and the column with aggregate durations are hidden by default; allow toggling
         toggleHidden(popup);
