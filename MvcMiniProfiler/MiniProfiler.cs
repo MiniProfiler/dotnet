@@ -346,10 +346,11 @@ namespace MvcMiniProfiler
         /// </summary>
         /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
         /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
+        /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool showTrivial = false)
+        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial);
+            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren);
         }
 
         /// <summary>

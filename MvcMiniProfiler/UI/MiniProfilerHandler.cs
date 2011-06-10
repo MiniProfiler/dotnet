@@ -13,12 +13,12 @@ namespace MvcMiniProfiler.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false)
         {
             const string format =
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less?v={0}"">
 <script type=""text/javascript"" src=""/mini-profiler-includes.js?v={0}""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}', showTrivial: {3} }}); }} ); </script>";
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}', showTrivial: {3}, showChildrenTime: {4} }}); }} ); </script>";
 
             var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
 
@@ -26,7 +26,8 @@ namespace MvcMiniProfiler.UI
                                                                MiniProfiler.Settings.Version,
                                                                profiler.Id,
                                                                pos.ToString().ToLower(),
-                                                               showTrivial ? "true" : "false");
+                                                               showTrivial ? "true" : "false",
+                                                               showTimeWithChildren ? "true" : "false");
 
             return new HtmlString(result);
         }

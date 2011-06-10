@@ -21,8 +21,6 @@ var MiniProfiler = (function($) {
         // button will appear in corner with the total profiling duration - click to show details
         button.click(function() { buttonClick(button, popup); });
 
-        if (options.showTrivial) popup.find('.toggle-trivial').data('show-on-load', true);
-
         // small duration steps and the column with aggregate durations are hidden by default; allow toggling
         toggleHidden(popup);
 
@@ -34,8 +32,9 @@ var MiniProfiler = (function($) {
 
     var toggleHidden = function(popup) {
         var trivial = popup.find('.toggle-trivial');
+        var childrenTime = popup.find('.toggle-duration-with-children');
 
-        popup.find('.toggle-duration-with-children').add(trivial).click(function() {
+        childrenTime.add(trivial).click(function() {
             var link = $(this),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
@@ -46,9 +45,13 @@ var MiniProfiler = (function($) {
             popupPreventHorizontalScroll(popup);
         });
 
-        // if all our timings are trivial, go ahead and show them
-        if (trivial.data('show-on-load')) {
+        // if option is set or all our timings are trivial, go ahead and show them
+        if (options.showTrivial || trivial.data('show-on-load')) {
             trivial.click();
+        }
+        // if option is set, go ahead and show time with children
+        if (options.showChildrenTime) {
+            childrenTime.click();
         }
     };
 
