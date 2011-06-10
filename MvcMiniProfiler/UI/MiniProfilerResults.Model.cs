@@ -11,6 +11,7 @@ namespace MvcMiniProfiler.UI
     {
         public MiniProfiler MiniProfiler { get; set; }
         public bool IsPopup { get; set; }
+        public string AppRoot { get; set; }
     }
 }
 

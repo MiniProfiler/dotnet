@@ -42,8 +42,8 @@
 <head>
     <title>@p.Name (@p.DurationMilliseconds ms) - MiniProfiler Results</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-    <link type="text/css" rel="stylesheet/less" href="/mini-profiler-includes.less?v=@MiniProfiler.Settings.Version" />
-    <script type="text/javascript" src="/mini-profiler-includes.js?v=@MiniProfiler.Settings.Version"></script>
+    <link type="text/css" rel="stylesheet/less" href="@(Model.AppRoot)mini-profiler-includes.less?v=@MiniProfiler.Settings.Version" />
+    <script type="text/javascript" src="@(Model.AppRoot)mini-profiler-includes.js?v=@MiniProfiler.Settings.Version"></script>
     <script type="text/javascript">
         jQuery(function() { MiniProfiler.init(); });
     </script>
@@ -140,7 +140,7 @@
             <tfoot>
                 <tr>
                     <td colspan="3">
-                        <a href="/mini-profiler-results?id=@p.Id" target="_blank">share</a>
+                        <a href="@(Model.AppRoot)mini-profiler-results?id=@p.Id" target="_blank">share</a>
                     @if (showTrivialToggle)
                     { 
                         <a class="toggle-trivial"

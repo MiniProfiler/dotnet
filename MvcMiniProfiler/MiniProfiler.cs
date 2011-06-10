@@ -249,7 +249,7 @@ namespace MvcMiniProfiler
             if (context == null) return null;
 
             var url = context.Request.Url;
-            var path = url.AbsolutePath.ToLower();
+            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToLower();
 
             // don't profile /content or /scripts, either - happens in web.dev
             foreach (var ignored in Settings.IgnoredRootPaths ?? new string[0])

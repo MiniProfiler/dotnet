@@ -44,7 +44,7 @@
             
                 $.ajax({
                     type: 'GET',
-                    url: '/Home/FetchRouteHits',
+                    url: 'Home/FetchRouteHits',
                     dataType: 'json',
                     success: function(data) {
                         tbody.empty();
@@ -65,13 +65,13 @@
 
             $('.massive-nesting').click(function() {
                 var link = $(this);
-                $.get('/Home/MassiveNesting' + (link.text().indexOf('2') < 0 ? '' : '2'), function(data) {
+                $.get('Home/MassiveNesting' + (link.text().indexOf('2') < 0 ? '' : '2'), function(data) {
                     link.parent().append('<p>' + data + '</p>');
                 });
             });
             $('.duplicate').click(function () {
                 var link = $(this);
-                $.get('/Home/Duplicated', function (data) {
+                $.get('Home/Duplicated', function (data) {
                     link.parent().append('<p>' + data + '</p>');
                 });
             });

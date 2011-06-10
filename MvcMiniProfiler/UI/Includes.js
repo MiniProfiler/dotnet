@@ -8,7 +8,7 @@ var MiniProfiler = (function($) {
         container;
 
     var fetch = function(id) {
-        $.get('/mini-profiler-results?id=' + id + '&popup=1', function(html) {
+        $.get(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function(html) {
             buttonShow(html);
         });
     };

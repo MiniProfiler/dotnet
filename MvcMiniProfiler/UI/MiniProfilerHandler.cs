@@ -16,13 +16,14 @@ namespace MvcMiniProfiler.UI
         internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false)
         {
             const string format =
-@"<link rel=""stylesheet/less"" type=""text/css"" href=""/mini-profiler-includes.less?v={0}"">
-<script type=""text/javascript"" src=""/mini-profiler-includes.js?v={0}""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{1}', renderDirection:'{2}', showTrivial: {3}, showChildrenTime: {4} }}); }} ); </script>";
+@"<link rel=""stylesheet/less"" type=""text/css"" href=""{0}mini-profiler-includes.less?v={1}"">
+<script type=""text/javascript"" src=""{0}mini-profiler-includes.js?v={1}""></script>
+<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{2}', path:'{0}', renderDirection:'{3}', showTrivial: {4}, showChildrenTime: {5} }}); }} ); </script>";
 
             var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
-
+            
             var result = profiler == null ? "" : string.Format(format,
+                                                               EnsureEndingSlash(HttpContext.Current.Request.ApplicationPath),
                                                                MiniProfiler.Settings.Version,
                                                                profiler.Id,
                                                                pos.ToString().ToLower(),
@@ -54,6 +55,13 @@ namespace MvcMiniProfiler.UI
             }
         }
 
+        internal static string EnsureEndingSlash(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return "/";
+            if (!input.EndsWith("/")) input += "/";
+            return input;
+        }
+
         /// <summary>
         /// Returns this <see cref="MiniProfilerHandler"/> to handle <paramref name="requestContext"/>.
         /// </summary>
@@ -77,7 +85,7 @@ namespace MvcMiniProfiler.UI
         {
             string output;
 
-            switch (Path.GetFileNameWithoutExtension(context.Request.Url.AbsolutePath))
+            switch (Path.GetFileNameWithoutExtension(context.Request.AppRelativeCurrentExecutionFilePath))
             {
                 case "mini-profiler-includes":
                     output = Includes(context);
@@ -155,7 +163,7 @@ namespace MvcMiniProfiler.UI
                 MiniProfiler.Settings.LongTermCacheSetter(profiler);
 
             var html = GetResource("MiniProfilerResults.cshtml");
-            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup };
+            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup, AppRoot = EnsureEndingSlash(context.Request.ApplicationPath) };
 
             return RazorCompiler.Render(html, model);
         }
