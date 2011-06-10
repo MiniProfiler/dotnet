@@ -66,9 +66,13 @@ namespace MvcMiniProfiler
 
         public void ReaderFinishedImpl(DbDataReader reader)
         {
-            var stat = _inProgressReaders[reader];
-            stat.ReaderFetchComplete();
-            _inProgressReaders.Remove(reader);
+            SqlTiming stat;
+            // this reader may have been disposed/closed by reader code, not by our using()
+            if (_inProgressReaders.TryGetValue(reader, out stat))
+            {
+                stat.ReaderFetchComplete();
+                _inProgressReaders.Remove(reader);
+            }
         }
 
         public List<SqlTiming> GetExecutionStats()
