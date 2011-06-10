@@ -5,3 +5,4 @@ syntax: glob
 *.user
 *.nupkg
 *.docstates
+_ReSharper*
