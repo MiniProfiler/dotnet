@@ -74,38 +74,22 @@ namespace SampleWeb
             // a setter will take the current profiler and should save it somewhere by its guid Id
             MiniProfiler.Settings.LongTermCacheSetter = (profiler) =>
             {
-                using (var ms = new MemoryStream())
+                using (var conn = BaseController.GetOpenConnection())
                 {
-                    ProtoBuf.Serializer.Serialize(ms, profiler);
-
-                    using (var conn = BaseController.GetOpenConnection())
-                    {
-                        // we use the insert to ignore syntax here, because MiniProfiler will
-                        conn.Execute("insert or ignore into MiniProfilerResults (Id, Results) values (@id, @results)", new { id = profiler.Id, results = ms.GetBuffer() });
-                    }
+                    // we use the insert to ignore syntax here, because MiniProfiler will
+                    conn.Execute("insert or ignore into MiniProfilerResults (Id, Results) values (@id, @results)", new { id = profiler.Id, results = MiniProfiler.ToJson(profiler) });
                 }
             };
 
             // the getter will be passed a guid and should return the saved MiniProfiler
             MiniProfiler.Settings.LongTermCacheGetter = (id) =>
             {
-                byte[] results = null;
                 using (var conn = BaseController.GetOpenConnection())
                 {
-                    dynamic buffer = conn.Query("select Results from MiniProfilerResults where Id = @id", new { id = id }).SingleOrDefault();
-
-                    if (buffer == null)
-                        return null;
-
-                    results = (byte[])buffer.Results;
-                }
-
-                using (var ms = new MemoryStream(results))
-                {
-                    return ProtoBuf.Serializer.Deserialize<MiniProfiler>(ms);
+                    string json = conn.Query<string>("select Results from MiniProfilerResults where Id = @id", new { id = id }).SingleOrDefault();
+                    return MiniProfiler.FromJson(json);
                 }
             };
-
         }
 
 

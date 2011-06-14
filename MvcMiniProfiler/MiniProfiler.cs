@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
 using System.Web.Routing;
+using System.Web.Script.Serialization;
 
 namespace MvcMiniProfiler
 {
@@ -21,7 +22,7 @@ namespace MvcMiniProfiler
         /// Identifies this Profiler so it may be stored/cached.
         /// </summary>
         [DataMember(Order = 1)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// A display name for this profiling session.
@@ -33,13 +34,13 @@ namespace MvcMiniProfiler
         /// When this profiler was instantiated.
         /// </summary>
         [DataMember(Order = 3)]
-        public DateTime Started { get; private set; }
+        public DateTime Started { get; set; }
 
         /// <summary>
         /// Where this profiler was run.
         /// </summary>
         [DataMember(Order = 4)]
-        public string MachineName { get; private set; }
+        public string MachineName { get; set; }
 
         /// <summary>
         /// Allows filtering of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
@@ -375,6 +376,27 @@ namespace MvcMiniProfiler
         }
 
         private const string CacheKey = ":mini-profiler:";
+
+        public static string ToJson()
+        {
+            return ToJson(MiniProfiler.Current);
+        }
+
+        public static string ToJson(MiniProfiler profiler)
+        {
+            if (profiler == null) return null;
+
+            var result = new JavaScriptSerializer().Serialize(profiler);
+            return result;
+        }
+
+        public static MiniProfiler FromJson(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return null;
+
+            var result = new JavaScriptSerializer().Deserialize<MiniProfiler>(json);
+            return result;
+        }
     }
 
     /// <summary>

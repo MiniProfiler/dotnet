@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Runtime.Serialization;
+using System.Web.Script.Serialization;
 
 namespace MvcMiniProfiler
 {
@@ -16,37 +17,37 @@ namespace MvcMiniProfiler
         /// Unique identifer for this timing; set during construction.
         /// </summary>
         [DataMember(Order = 1)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Text displayed when this Timing is rendered.
         /// </summary>
         [DataMember(Order = 2)]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// How long this Timing step took in ms; includes any <see cref="Children"/> Timings' durations.
         /// </summary>
         [DataMember(Order = 3)]
-        public double? DurationMilliseconds { get; private set; }
+        public double? DurationMilliseconds { get; set; }
 
         /// <summary>
         /// The offset from the start of profiling.
         /// </summary>
         [DataMember(Order = 4)]
-        public double StartMilliseconds { get; private set; }
+        public double StartMilliseconds { get; set; }
 
         /// <summary>
         /// All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public List<Timing> Children { get; private set; }
+        public List<Timing> Children { get; set; }
 
         /// <summary>
         /// Stores arbitrary key/value strings on this Timing step. Add new tuples through <see cref="AddKeyValue"/>.
         /// </summary>
         [DataMember(Order = 6)]
-        public Dictionary<string, string> KeyValues { get; private set; }
+        public Dictionary<string, string> KeyValues { get; set; }
 
         /// <summary>
         /// Any queries that occurred during this Timing step.
@@ -58,6 +59,7 @@ namespace MvcMiniProfiler
         /// Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
+        [ScriptIgnore]
         public Timing Parent { get; internal set; }
 
         /// <summary>
@@ -77,7 +79,7 @@ namespace MvcMiniProfiler
                     }
                 }
 
-                return result;
+                return Math.Round(result, 1);
             }
         }
 
