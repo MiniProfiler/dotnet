@@ -341,72 +341,74 @@
 }
 
 // used when viewing a shared, full page result
-.profiler-result.profiler-result-full {
+.profiler-result-full {
+    .profiler-result {
 
-    width:950px;
-    margin:30px auto;
+        width:950px;
+        margin:30px auto;
 
-    .profiler-button {
-        display:none;
-    }
-
-    .profiler-popup {
-
-        .info {
-            font-size: 25px;
-            border-bottom:1px solid @mutedColor;
-            padding-bottom:3px;
-            margin-bottom:25px;
-
-            .overall-duration {
-                padding-right:20px;
-                font-size:80%;
-                color:#888;
-            }
+        .profiler-button {
+            display:none;
         }
 
-        .timings {
-            td, th {
-                padding-left:8px;
-                padding-right:8px;
-            }
-            th {
-                padding-bottom:7px;
-            }
-            td {
-                font-size:14px;
-                padding-bottom:4px;
+        .profiler-popup {
 
-                &:first-child {
-                    padding-left:10px;
+            .info {
+                font-size: 25px;
+                border-bottom:1px solid @mutedColor;
+                padding-bottom:3px;
+                margin-bottom:25px;
+
+                .overall-duration {
+                    padding-right:20px;
+                    font-size:80%;
+                    color:#888;
                 }
             }
 
-            .label {
-                max-width:550px;
+            .timings {
+                td, th {
+                    padding-left:8px;
+                    padding-right:8px;
+                }
+                th {
+                    padding-bottom:7px;
+                }
+                td {
+                    font-size:14px;
+                    padding-bottom:4px;
+
+                    &:first-child {
+                        padding-left:10px;
+                    }
+                }
+
+                .label {
+                    max-width:550px;
+                }
             }
         }
-    }
 
-    .profiler-queries {
-        margin:25px 0;
-        table {
-            width:100%;
-        }
-        th {
-            font-size:16px;
-            color:#555;
-            line-height:20px;
-        }
+        .profiler-queries {
+            margin:25px 0;
+            table {
+                width:100%;
+            }
+            th {
+                font-size:16px;
+                color:#555;
+                line-height:20px;
+            }
 
-        td {
-            padding:15px 10px;
-            text-align:left;
-        }
+            td {
+                padding:15px 10px;
+                text-align:left;
+            }
 
-        .info div {
-            text-align:right;
-            margin-bottom:5px;
+            .info div {
+                text-align:right;
+                margin-bottom:5px;
+            }
         }
     }
 }

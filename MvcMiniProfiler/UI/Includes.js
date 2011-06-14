@@ -7,14 +7,13 @@ var MiniProfiler = (function($) {
     var options,
         container;
 
-    var fetchTemplates = function() {
+    var fetchTemplates = function(success) {
+
         // TODO: cache this in local storage
         $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function(data) {
             if (data) {
                 $('body').append(data);
-
-                // get master page profiler results
-                fetchResults(options.id);
+                success();
             }
         });
     };
@@ -25,8 +24,12 @@ var MiniProfiler = (function($) {
         });
     };
 
+    var renderTemplate = function(json) {
+        return $('#profilerTemplate').tmpl(json);
+    };
+
     var buttonShow = function(json) {
-        var result = $('#profilerTemplate').tmpl(json).appendTo(container),
+        var result = renderTemplate(json).appendTo(container),
             button = result.find('.profiler-button'),
             popup = result.find('.profiler-popup');
 
@@ -192,53 +195,68 @@ var MiniProfiler = (function($) {
     };
 
     var initFullView = function() {
-        var popup = $('.profiler-popup');
 
-        toggleHidden(popup);
+        // first, get jquery tmpl, then render and bind handlers
+        fetchTemplates(function() {
 
-        prettyPrint();
+            // profiler will be defined in the full page's head
+            renderTemplate(profiler).appendTo(container);
 
-        // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
-        popup.find('.queries-show').click(function() {
-            queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
+            var popup = $('.profiler-popup');
+
+            toggleHidden(popup);
+
+            prettyPrint();
+
+            // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
+            popup.find('.queries-show').click(function() {
+                queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
+            });
         });
     };
 
+    var initPopupView = function() {
+        // all fetched profilings will go in here
+        container = $('<div class="profiler-results"/>').appendTo('body');
+
+        // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
+        container.addClass(options.renderPosition);
+
+        // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
+        fetchTemplates(function() {
+            // get master page profiler results
+            fetchResults(options.id);
+        });
+
+        // fetch profile results for any ajax calls
+        $(document).ajaxComplete(function (e, xhr, settings) {
+            if (xhr) {
+                var id = xhr.getResponseHeader('X-MiniProfiler-Id');
+                if (id) {
+                    fetchResults(id);
+                }
+            }
+        });
+
+        // some elements want to be hidden on certain doc events
+        bindDocumentEvents();
+    };
+
     return {
+
         init: function(opt) {
 
             options = opt || { };
 
-            // all fetched profilings will go in here
-            container = $('<div class="profiler-results"/>').appendTo('body');
+            // when rendering a shared, full page, this div will exist
+            container = $('.profiler-result-full');
 
-            // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-            container.addClass(options.renderPosition);
-
-            // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to popuplate it
-            fetchTemplates();
-
-            // are we rendering a full page?
-            if ($('.profiler-results-full').length > 0) {
-
+            if (container.length) {
                 initFullView();
-
-                // no need to bind document-level events or ajax profilings
-                return;
             }
-
-            // fetch profile results for any ajax calls
-            $(document).ajaxComplete(function (e, xhr, settings) {
-                if (xhr) {
-                    var id = xhr.getResponseHeader('X-MiniProfiler-Id');
-                    if (id) {
-                        fetchResults(id);
-                    }
-                }
-            });
-
-            // some elements want to be hidden on certain doc events
-            bindDocumentEvents();
+            else {
+                initPopupView();
+            }
         },
 
         renderDate: function(jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/

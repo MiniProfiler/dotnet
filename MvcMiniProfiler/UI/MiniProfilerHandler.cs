@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Routing;
 
 using MvcMiniProfiler.Helpers;
+using System.Text;
 
 namespace MvcMiniProfiler.UI
 {
@@ -18,23 +19,23 @@ namespace MvcMiniProfiler.UI
             const string format =
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""{path}mini-profiler-includes.less?v={version}"">
 <script type=""text/javascript"" src=""{path}mini-profiler-includes.js?v={version}""></script>
-<script type=""text/javascript""> 
-jQuery(function() {{ 
-    MiniProfiler.init({{ 
-        id:'{id}', 
+<script type=""text/javascript"">
+jQuery(function() {{
+    MiniProfiler.init({{
+        id:'{id}',
         path:'{path}',
         version:'{version}',
-        renderPosition:'{position}', 
-        showTrivial:{showTrivial}, 
-        showChildrenTime:{showChildren} 
-    }}); 
-}}); 
+        renderPosition:'{position}',
+        showTrivial:{showTrivial},
+        showChildrenTime:{showChildren}
+    }});
+}});
 </script>";
             var result = "";
 
             if (profiler != null)
             {
-                // TODO: phase this out after a few version
+                // TODO: remove after a few versions
                 var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
 
                 result = format.Format(new
@@ -75,7 +76,7 @@ jQuery(function() {{
 
         internal static string EnsureEndingSlash(string input)
         {
-            if (string.IsNullOrEmpty(input)) return "/";
+            if (string.IsNullOrWhiteSpace(input)) return "/";
             if (!input.EndsWith("/")) input += "/";
             return input;
         }
@@ -178,20 +179,40 @@ jQuery(function() {{
             if (profiler == null)
                 return isPopup ? NotFound(context) : NotFound(context, "text/html", "No MiniProfiler results found with Id=" + id.ToString());
 
-            // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
-            // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
-            if (!isPopup)
+            if (isPopup)
+            {
+                return ResultsJson(context, profiler);
+            }
+            else
+            {
+                // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
+                // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
                 MiniProfiler.Settings.LongTermCacheSetter(profiler);
+                return ResultsFullPage(context, profiler);
+            }
+        }
 
-            //if (isPopup)
+        private static string ResultsJson(HttpContext context, MiniProfiler profiler)
+        {
             context.Response.ContentType = "application/json";
             return MiniProfiler.ToJson(profiler);
         }
 
-        //private static string ResultsJson(HttpContext context, MiniProfiler profiler)
-        //{
-
-        //}
+        private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
+        {
+            context.Response.ContentType = "text/html";
+            return new StringBuilder()
+                .AppendLine("<html><head>")
+                .AppendFormat("<title>{0} ({1} ms) - MvcMiniProfiler Results</title>", profiler.Name, profiler.DurationMilliseconds)
+                .AppendLine()
+                .AppendLine("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>")
+                .Append("<script type='text/javascript'> var profiler = ")
+                .Append(MiniProfiler.ToJson(profiler))
+                .AppendLine(";</script>")
+                .Append(RenderIncludes(profiler)) // figure out how to better pass display options
+                .AppendLine("</head><body><div class='profiler-result-full'></div></body></html>")
+                .ToString();
+        }
 
         private static string GetResource(string filename)
         {
