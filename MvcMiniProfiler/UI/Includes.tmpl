@@ -118,11 +118,11 @@
 
   <tr class="{{if i % 2 == 1}}odd{{/if}}" data-timing-id="${s.TimingId}">
     <td class="info">
-      <div>${s.Name}</div>
+      <div>${s.TimingName}</div>
       <div class="number"><span class="unit">T+</span>${s.StartMilliseconds} <span class="unit">ms</span></div>
       <div>
         {{if s.IsDuplicate}}<span class="warning">DUPLICATE</span>{{/if}}
-        ${MiniProfiler.rednerExecuteType(s.ExecuteType)}
+        ${MiniProfiler.renderExecuteType(s.ExecuteType)}
       </div>
       <div>${s.DurationMilliseconds} <span class="unit">ms</span></div>
     </td>
