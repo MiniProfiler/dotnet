@@ -7,15 +7,55 @@ var MiniProfiler = (function($) {
     var options,
         container;
 
-    var fetchTemplates = function(success) {
+    var hasLocalStorage = function() {
+        try {
+            return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+            return false;
+        }
+    };
 
-        // TODO: cache this in local storage
-        $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function(data) {
-            if (data) {
-                $('body').append(data);
-                success();
+    var getVersionedKey = function(keyPrefix) {
+        return keyPrefix + '-' + options.version;
+    }
+
+    var save = function(keyPrefix, value) {
+        if (!hasLocalStorage()) { return; }
+
+        // clear old keys with this prefix, if any
+        for (var i = 0; i < localStorage.length; i++) {
+            if ((localStorage.key(i) || '').indexOf(keyPrefix) > -1) {
+                localStorage.removeItem(localStorage.key(i));
             }
-        });
+        }
+
+        // save under this version
+        localStorage[getVersionedKey(keyPrefix)] = value;
+    };
+
+    var load = function(keyPrefix) {
+        if (!hasLocalStorage()) { return null; }
+
+        return localStorage[getVersionedKey(keyPrefix)];
+    };
+
+    var fetchTemplates = function(success) {
+        var key = 'mini-profiler-templates',
+            cached = load(key);
+
+        if (cached) {
+            $('body').append(cached);
+            success();
+        }
+        else {
+            $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function(data) {
+                if (data) {
+                    save(key, data);
+                    $('body').append(data);
+                    success();
+                }
+            });
+        }
     };
 
     var fetchResults = function(id) {
