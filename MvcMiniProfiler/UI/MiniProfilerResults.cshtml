@@ -22,7 +22,7 @@
     // to help with display, put some space around sammiched commas
     string AddSpacesToParameters(string commandString) 
     {
-        return e(System.Text.RegularExpressions.Regex.Replace(commandString, @"[^\s],[^\s]", ", "));
+        return e(System.Text.RegularExpressions.Regex.Replace(commandString, @",([^\s])", ", $1"));
     }
 }
 @helper RenderNumber(double ms, string unit = "", string format = "0.0") 
