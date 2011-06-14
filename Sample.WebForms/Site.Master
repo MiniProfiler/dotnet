@@ -33,12 +33,17 @@
                 </asp:LoginView>
             </div>
             <div class="clear hideSkiplink">
+            <% using (MvcMiniProfiler.MiniProfiler.StepStatic("Navigation rendering")) 
+               { 
+                   System.Threading.Thread.Sleep(20); 
+            %>
                 <asp:Menu ID="NavigationMenu" runat="server" CssClass="menu" EnableViewState="false" IncludeStyleBlock="false" Orientation="Horizontal">
                     <Items>
                         <asp:MenuItem NavigateUrl="~/Default.aspx" Text="Home"/>
                         <asp:MenuItem NavigateUrl="~/About.aspx" Text="About"/>
                     </Items>
                 </asp:Menu>
+            <% } %>
             </div>
         </div>
         <div class="main">

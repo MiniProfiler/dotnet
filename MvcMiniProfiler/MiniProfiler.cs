@@ -215,7 +215,6 @@ namespace MvcMiniProfiler
         internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
             if (level > this.Level) return null;
-
             return new Timing(this, Head, name);
         }
 
@@ -386,6 +385,17 @@ namespace MvcMiniProfiler
 
                 response.Write(RenderIncludes());
             }
+        }
+
+        /// <summary>
+        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you
+        /// do not wish to include the MvcMiniProfiler namespace for the <see cref="MiniProfilerExtensions.Step"/> extension method.
+        /// </summary>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
+        public static IDisposable StepStatic(string name, ProfileLevel level = ProfileLevel.Info)
+        {
+            return MiniProfilerExtensions.Step(Current, name, level);
         }
 
         /// <summary>
