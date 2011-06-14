@@ -423,11 +423,17 @@ namespace MvcMiniProfiler
 
         private const string CacheKey = ":mini-profiler:";
 
+        /// <summary>
+        /// Renders the current <see cref="MiniProfiler"/> to json.
+        /// </summary>
         public static string ToJson()
         {
             return ToJson(MiniProfiler.Current);
         }
 
+        /// <summary>
+        /// Renders the parameter <see cref="MiniProfiler"/> to json.
+        /// </summary>
         public static string ToJson(MiniProfiler profiler)
         {
             if (profiler == null) return null;
@@ -436,6 +442,9 @@ namespace MvcMiniProfiler
             return result;
         }
 
+        /// <summary>
+        /// Deserializes the json string parameter to a <see cref="MiniProfiler"/>.
+        /// </summary>
         public static MiniProfiler FromJson(string json)
         {
             if (string.IsNullOrWhiteSpace(json)) return null;

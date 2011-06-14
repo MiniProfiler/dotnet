@@ -8,7 +8,7 @@ using System.Web;
 namespace MvcMiniProfiler.Helpers
 {
     // http://haacked.com/archive/2009/01/04/fun-with-named-formats-string-parsing-and-edge-cases.aspx
-    public static class HaackFormatter
+    internal static class HaackFormatter
     {
         public static string Format(this string format, object source)
         {
