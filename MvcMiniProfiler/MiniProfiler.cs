@@ -93,6 +93,11 @@ namespace MvcMiniProfiler
         private readonly Stopwatch _watch;
 
         /// <summary>
+        /// 
+        /// </summary>
+        private Dictionary<string, int> _sqlCounts;
+
+        /// <summary>
         /// Milliseconds, to one decimal place, that this MiniProfiler ran.
         /// </summary>
         public double DurationMilliseconds
@@ -125,6 +130,46 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
+        /// Returns true when <see cref="Root"/> or any of its <see cref="Timing.Children"/> are <see cref="Timing.IsTrivial"/>.
+        /// </summary>
+        public bool HasTrivialTimings
+        {
+            get
+            {
+                foreach (var t in GetTimingHierarchy())
+                {
+                    if (t.IsTrivial)
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns true when all child <see cref="Timing"/>s are <see cref="Timing.IsTrivial"/>.
+        /// </summary>
+        public bool HasAllTrivialTimings
+        {
+            get
+            {
+                foreach (var t in GetTimingHierarchy())
+                {
+                    if (!t.IsTrivial)
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.
+        /// </summary>
+        public double TrivialDurationThresholdMilliseconds
+        {
+            get { return Settings.TrivialDurationThresholdMilliseconds; }
+        }
+
+        /// <summary>
         /// Ticks since this MiniProfiler was started.
         /// </summary>
         internal long ElapsedTicks { get { return _watch.ElapsedTicks; } }
@@ -140,13 +185,17 @@ namespace MvcMiniProfiler
         /// </summary>
         public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info)
         {
-            Started = DateTime.UtcNow;
-            _watch = Stopwatch.StartNew();
-            Root = new Timing(this, parent: null, name: url);
             Id = Guid.NewGuid();
             Level = level;
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
+            _sqlCounts = new Dictionary<string, int>();
+
+            Started = DateTime.UtcNow;
+
+            // stopwatch must start before any child Timings are instantiated
+            _watch = Stopwatch.StartNew();
+            Root = new Timing(this, parent: null, name: url);
         }
 
         /// <summary>
@@ -188,6 +237,11 @@ namespace MvcMiniProfiler
 
         internal void AddSqlTiming(SqlTiming stats)
         {
+            int count;
+
+            stats.IsDuplicate = _sqlCounts.TryGetValue(stats.CommandString, out count);
+            _sqlCounts[stats.CommandString] = count + 1;
+
             Head.AddSqlTiming(stats);
         }
 

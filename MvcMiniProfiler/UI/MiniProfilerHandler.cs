@@ -16,26 +16,44 @@ namespace MvcMiniProfiler.UI
         internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false)
         {
             const string format =
-@"<link rel=""stylesheet/less"" type=""text/css"" href=""{0}mini-profiler-includes.less?v={1}"">
-<script type=""text/javascript"" src=""{0}mini-profiler-includes.js?v={1}""></script>
-<script type=""text/javascript""> jQuery(function() {{ MiniProfiler.init({{ id:'{2}', path:'{0}', renderDirection:'{3}', showTrivial: {4}, showChildrenTime: {5} }}); }} ); </script>";
+@"<link rel=""stylesheet/less"" type=""text/css"" href=""{path}mini-profiler-includes.less?v={version}"">
+<script type=""text/javascript"" src=""{path}mini-profiler-includes.js?v={version}""></script>
+<script type=""text/javascript""> 
+jQuery(function() {{ 
+    MiniProfiler.init({{ 
+        id:'{id}', 
+        path:'{path}',
+        version:'{version}',
+        renderPosition:'{position}', 
+        showTrivial:{showTrivial}, 
+        showChildrenTime:{showChildren} 
+    }}); 
+}}); 
+</script>";
+            var result = "";
 
-            var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
-            
-            var result = profiler == null ? "" : string.Format(format,
-                                                               EnsureEndingSlash(HttpContext.Current.Request.ApplicationPath),
-                                                               MiniProfiler.Settings.Version,
-                                                               profiler.Id,
-                                                               pos.ToString().ToLower(),
-                                                               showTrivial ? "true" : "false",
-                                                               showTimeWithChildren ? "true" : "false");
+            if (profiler != null)
+            {
+                // TODO: phase this out after a few version
+                var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
+
+                result = format.Format(new
+                {
+                    path = EnsureEndingSlash(HttpContext.Current.Request.ApplicationPath),
+                    version = MiniProfiler.Settings.Version,
+                    id = profiler.Id,
+                    position = pos.ToString().ToLower(),
+                    showTrivial = showTrivial ? "true" : "false",
+                    showChildren = showTimeWithChildren ? "true" : "false"
+                });
+            }
 
             return new HtmlString(result);
         }
 
         internal static void RegisterRoutes()
         {
-            var urls = new[] { "mini-profiler-includes.js", "mini-profiler-includes.less", "mini-profiler-results" };
+            var urls = new[] { "mini-profiler-includes.js", "mini-profiler-includes.less", "mini-profiler-includes.tmpl", "mini-profiler-results" };
             var routes = RouteTable.Routes;
             var handler = new MiniProfilerHandler();
 
@@ -122,6 +140,9 @@ namespace MvcMiniProfiler.UI
                 case ".less":
                     response.ContentType = "text/plain";
                     break;
+                case ".tmpl":
+                    response.ContentType = "text/x-jquery-tmpl";
+                    break;
                 default:
                     return NotFound(context);
             }
@@ -162,11 +183,15 @@ namespace MvcMiniProfiler.UI
             if (!isPopup)
                 MiniProfiler.Settings.LongTermCacheSetter(profiler);
 
-            var html = GetResource("MiniProfilerResults.cshtml");
-            var model = new MiniProfilerResultsModel { MiniProfiler = profiler, IsPopup = isPopup, AppRoot = EnsureEndingSlash(context.Request.ApplicationPath) };
-
-            return RazorCompiler.Render(html, model);
+            //if (isPopup)
+            context.Response.ContentType = "application/json";
+            return MiniProfiler.ToJson(profiler);
         }
+
+        //private static string ResultsJson(HttpContext context, MiniProfiler profiler)
+        //{
+
+        //}
 
         private static string GetResource(string filename)
         {

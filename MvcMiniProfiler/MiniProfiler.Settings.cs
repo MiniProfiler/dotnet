@@ -54,7 +54,7 @@ namespace MvcMiniProfiler
             /// no profiler will be instantiated and no results will be displayed.  
             /// Default value is { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" }.
             /// </summary>
-            [DefaultValue(new string[] { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" })]
+            [DefaultValue(new string[] { "/mini-profiler-includes.", "/mini-profiler-results", "/content/", "/scripts/" })]
             public static string[] IgnoredRootPaths { get; set; }
 
             /// <summary>

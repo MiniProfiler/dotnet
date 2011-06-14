@@ -75,6 +75,14 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
+        /// Gets the aggregate ellapsed milliseconds of all SqlTimings executed in this Timing, excluding Children Timings.
+        /// </summary>
+        public double SqlTimingsDurationMilliseconds
+        {
+            get { return HasSqlTimings ? Math.Round(SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
+        }
+
+        /// <summary>
         /// Returns true when this <see cref="DurationWithoutChildrenMilliseconds"/> is less than the configured
         /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
@@ -110,6 +118,14 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
+        /// Returns true if any <see cref="SqlTiming"/>s executed in this step are detected as duplicate statements.
+        /// </summary>
+        public bool HasDuplicateSqlTimings
+        {
+            get { return HasSqlTimings && SqlTimings.Any(s => s.IsDuplicate); }
+        }
+
+        /// <summary>
         /// Returns true when this Timing is the first one created in a MiniProfiler session.
         /// </summary>
         public bool IsRoot
@@ -135,6 +151,30 @@ namespace MvcMiniProfiler
 
                 return result;
             }
+        }
+
+        /// <summary>
+        /// How many sql data readers were executed in this Timing step.
+        /// </summary>
+        public int ExecutedReaders
+        {
+            get { return ExecutedCount(ExecuteType.Reader); }
+        }
+
+        /// <summary>
+        /// How many sql scalar queries were executed in this Timing step.
+        /// </summary>
+        public int ExecutedScalars
+        {
+            get { return ExecutedCount(ExecuteType.Scalar); }
+        }
+
+        /// <summary>
+        /// How many sql non-query statements were executed in this Timing step.
+        /// </summary>
+        public int ExecutedNonQueries
+        {
+            get { return ExecutedCount(ExecuteType.NonQuery); }
         }
 
         /// <summary>
@@ -207,6 +247,11 @@ namespace MvcMiniProfiler
                 SqlTimings = new List<SqlTiming>();
 
             SqlTimings.Add(stat);
+        }
+
+        private int ExecutedCount(ExecuteType type)
+        {
+            return HasSqlTimings ? SqlTimings.Count(s => s.ExecuteType == type) : 0;
         }
     }
 }

@@ -18,17 +18,17 @@ namespace MvcMiniProfiler
         /// <summary>
         /// DML statements that alter database state, e.g. INSERT, UPDATE
         /// </summary>
-        NonQuery,
+        NonQuery = 1,
 
         /// <summary>
         /// Statements that return a single record
         /// </summary>
-        Scalar,
+        Scalar = 2,
 
         /// <summary>
         /// Statements that iterate over a result set
         /// </summary>
-        Reader
+        Reader = 3
     }
 
     // TODO: refactor this out into MiniProfiler

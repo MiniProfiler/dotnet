@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using MvcMiniProfiler.Data;
+using System.Text.RegularExpressions;
 
 namespace MvcMiniProfiler
 {
@@ -12,6 +13,7 @@ namespace MvcMiniProfiler
     /// </summary>
     public class SqlTiming
     {
+
         /// <summary>
         /// Category of sql statement executed.
         /// </summary>
@@ -43,6 +45,11 @@ namespace MvcMiniProfiler
         /// </summary>
         public double FirstFetchDurationMilliseconds { get; set; }
 
+        /// <summary>
+        /// True when other identical sql statements have been executed during this MiniProfiler session.
+        /// </summary>
+        public bool IsDuplicate { get; set; }
+
         private long _startTicks;
         private MiniProfiler _profiler;
 
@@ -51,7 +58,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public SqlTiming(DbCommand command, ExecuteType type, MiniProfiler profiler)
         {
-            CommandString = command.CommandText;
+            CommandString = AddSpacesToParameters(command.CommandText);
             ExecuteType = type;
             StackTraceSnippet = Helpers.StackTraceSnippet.Get();
 
@@ -96,6 +103,14 @@ namespace MvcMiniProfiler
         private double GetDurationMilliseconds()
         {
             return MiniProfiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
+        }
+
+        /// <summary>
+        /// To help with display, put some space around sammiched commas
+        /// </summary>
+        private string AddSpacesToParameters(string commandString)
+        {
+            return Regex.Replace(commandString, @",([^\s])", ", $1");
         }
 
     }

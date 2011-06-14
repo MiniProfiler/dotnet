@@ -63,6 +63,7 @@
     <Compile Include="Data\ProfiledDbTransaction.cs" />
     <Compile Include="Helpers\RazorCompiler.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
+    <Compile Include="Helpers\HaackFormatter.cs" />
     <Compile Include="MiniProfiler.Settings.cs">
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>
@@ -72,7 +73,9 @@
     <Compile Include="SqlTiming.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="UI\MiniProfilerHandler.cs" />
-    <Compile Include="UI\MiniProfilerResults.Model.cs" />
+    <Compile Include="UI\MiniProfilerResults.Model.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Includes.tmpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
