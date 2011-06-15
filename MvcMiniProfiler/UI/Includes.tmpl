@@ -2,7 +2,8 @@
 
   <div class="profiler-result">
 
-    <div class="profiler-button">
+    <div class="profiler-button {{if HasDuplicateSqlTimings}}warning{{/if}}">
+    {{if HasDuplicateSqlTimings}}<span class="nuclear">!</span>{{/if}}
       <span class="number">
         ${DurationMilliseconds} <span class="unit">ms</span>
       </span>

@@ -197,8 +197,11 @@
         .dec{color:purple}
     }
 
-    .warning, .warning * {
-        color:#f00 !important;
+    .warning, .warning *, .warning .queries-show, .warning .queries-show .unit { // i'm no good at css
+        color:#f00;
+        &:hover {
+            color:#f00;
+        }
     }
 
     .nuclear {
@@ -255,7 +258,7 @@
         &.profiler-button-active {
             background-color:maroon;
 
-            .number {
+            .number, .nuclear {
                 color:#fff;
                 font-weight:bold;
             }

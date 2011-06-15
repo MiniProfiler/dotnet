@@ -116,18 +116,12 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Returns true when we have profiled queries.
         /// </summary>
-        public bool HasSqlTimings
-        {
-            get
-            {
-                foreach (var t in GetTimingHierarchy())
-                {
-                    if (t.HasSqlTimings)
-                        return true;
-                }
-                return false;
-            }
-        }
+        public bool HasSqlTimings { get; set; }
+
+        /// <summary>
+        /// Returns true when any child Timings have duplicate queries.
+        /// </summary>
+        public bool HasDuplicateSqlTimings { get; set; }
 
         /// <summary>
         /// Returns true when <see cref="Root"/> or any of its <see cref="Timing.Children"/> are <see cref="Timing.IsTrivial"/>.
@@ -240,6 +234,9 @@ namespace MvcMiniProfiler
 
             stats.IsDuplicate = _sqlCounts.TryGetValue(stats.CommandString, out count);
             _sqlCounts[stats.CommandString] = count + 1;
+
+            HasSqlTimings = true;
+            if (stats.IsDuplicate) HasDuplicateSqlTimings = true;
 
             Head.AddSqlTiming(stats);
         }
