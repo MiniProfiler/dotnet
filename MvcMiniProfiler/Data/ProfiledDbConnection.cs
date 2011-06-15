@@ -22,8 +22,8 @@ namespace MvcMiniProfiler.Data
 
 
         /// <summary>
-        /// When <see cref="MiniProfiler.Current"/> is not null, returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
-        /// providing query execution profiling.  If <see cref="MiniProfiler.Current"/> is null, connection is returned unwrapped.
+        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
+        /// providing query execution profiling.
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
         public static DbConnection Get(DbConnection connection)
@@ -32,17 +32,13 @@ namespace MvcMiniProfiler.Data
         }
 
         /// <summary>
-        /// When <paramref name="profiler"/> is not null, returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
-        /// providing query execution profiling.  If profiler is null, connection is returned unwrapped.
+        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
+        /// providing query execution profiling.
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
         public static DbConnection Get(DbConnection connection, MiniProfiler profiler)
         {
-            if (profiler == null)
-            {
-                return connection;
-            }
             return new ProfiledDbConnection(connection, profiler);
         }
 
