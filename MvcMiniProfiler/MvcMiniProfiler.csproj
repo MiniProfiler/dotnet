@@ -73,13 +73,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="UI\Includes.less" />
+    <EmbeddedResource Include="UI\includes.less" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Includes.js" />
+    <EmbeddedResource Include="UI\includes.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Includes.tmpl" />
+    <EmbeddedResource Include="UI\includes.tmpl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\yepnope.1.0.1.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\jquery.1.6.1.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

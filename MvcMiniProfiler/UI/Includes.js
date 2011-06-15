@@ -1,8 +1,4 @@
-﻿if (!window.jQuery) {
-    alert('MiniProfiler requires jQuery');
-}
-
-var MiniProfiler = (function($) {
+﻿var MiniProfiler = (function($) {
 
     var options,
         container;

@@ -18,18 +18,24 @@ namespace MvcMiniProfiler.UI
         {
             const string format =
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""{path}mini-profiler-includes.less?v={version}"">
-<script type=""text/javascript"" src=""{path}mini-profiler-includes.js?v={version}""></script>
+<script type=""text/javascript"" src=""{path}mini-profiler-yepnope.1.0.1.js""></script>
 <script type=""text/javascript"">
-jQuery(function() {{
-    MiniProfiler.init({{
-        id:'{id}',
-        path:'{path}',
-        version:'{version}',
-        renderPosition:'{position}',
-        showTrivial:{showTrivial},
-        showChildrenTime:{showChildren}
-    }});
-}});
+    yepnope([
+        {{ test: window.jQuery, nope: '{path}mini-profiler-jquery.1.6.1.js' }}, 
+        {{ load: '{path}mini-profiler-includes.js?v={version}',
+           complete: function() {{
+               jQuery(function() {{
+                   MiniProfiler.init({{
+                       id: '{id}',
+                       path: '{path}',
+                       version: '{version}',
+                       renderPosition: '{position}',
+                       showTrivial: {showTrivial},
+                       showChildrenTime: {showChildren}
+                   }});
+               }});
+         }}
+    }}]);
 </script>";
             var result = "";
 
@@ -54,7 +60,16 @@ jQuery(function() {{
 
         internal static void RegisterRoutes()
         {
-            var urls = new[] { "mini-profiler-includes.js", "mini-profiler-includes.less", "mini-profiler-includes.tmpl", "mini-profiler-results" };
+            // TODO: make a Setting to allow customization of these urls, e.g. RoutePrefix, defaults to "mini-profiler-"
+            var urls = new[] 
+            { 
+                "mini-profiler-yepnope.1.0.1.js", 
+                "mini-profiler-jquery.1.6.1.js", 
+                "mini-profiler-includes.js", 
+                "mini-profiler-includes.less", 
+                "mini-profiler-includes.tmpl", 
+                "mini-profiler-results" 
+            };
             var routes = RouteTable.Routes;
             var handler = new MiniProfilerHandler();
 
@@ -103,11 +118,14 @@ jQuery(function() {{
         public void ProcessRequest(HttpContext context)
         {
             string output;
+            string path = context.Request.AppRelativeCurrentExecutionFilePath;
 
-            switch (Path.GetFileNameWithoutExtension(context.Request.AppRelativeCurrentExecutionFilePath))
+            switch (Path.GetFileNameWithoutExtension(path))
             {
                 case "mini-profiler-includes":
-                    output = Includes(context);
+                case "mini-profiler-jquery.1.6.1":
+                case "mini-profiler-yepnope.1.0.1":
+                    output = Includes(context, path);
                     break;
 
                 case "mini-profiler-results":
@@ -125,15 +143,11 @@ jQuery(function() {{
         /// <summary>
         /// Handles rendering our .js and .less static content files.
         /// </summary>
-        private static string Includes(HttpContext context)
+        private static string Includes(HttpContext context, string path)
         {
-            var extension = Path.GetExtension(context.Request.Url.AbsolutePath);
-            if (string.IsNullOrWhiteSpace(extension)) return NotFound(context);
-
             var response = context.Response;
-            var filename = "Includes" + extension;
 
-            switch (extension)
+            switch (Path.GetExtension(path))
             {
                 case ".js":
                     response.ContentType = "application/javascript";
@@ -153,7 +167,8 @@ jQuery(function() {{
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
 
-            return GetResource(filename);
+            var embeddedFile = Path.GetFileName(path).Replace("mini-profiler-", "");
+            return GetResource(embeddedFile);
         }
 
         /// <summary>
@@ -216,6 +231,7 @@ jQuery(function() {{
 
         private static string GetResource(string filename)
         {
+            filename = filename.ToLower();
             string result;
 
             if (!_ResourceCache.TryGetValue(filename, out result))
