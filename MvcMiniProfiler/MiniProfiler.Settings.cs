@@ -82,49 +82,6 @@ namespace MvcMiniProfiler
             public static Storage.IStorage LongTermStorage { get; set; }
 
             /// <summary>
-            /// A method that will return a MiniProfiler when given a Guid.  Meant for caching individual page profilings for a 
-            /// very limited time.
-            /// </summary>
-            /// <remarks>
-            /// By default, MiniProfilers will be cached for 5 minutes in the HttpRuntime.Cache.  This can be extended when the cache is shared
-            /// from its top link.
-            /// </remarks>
-            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.ShortTermStorage")]
-            public static Func<Guid, MiniProfiler> ShortTermCacheGetter { get; set; }
-
-            /// <summary>
-            /// A method that will save a MiniProfiler into a short-duration cache, so results can fetched down to the client after page load.
-            /// It is important that you cache the MiniProfiler under its Id, a Guid - this Id will be passed to the ShortTermCacheGetter.
-            /// </summary>
-            /// <remarks>
-            /// By default, MiniProfilers will be cached for 5 minutes in the HttpRuntime.Cache.
-            /// </remarks>
-            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.ShortTermStorage")]
-            public static Action<MiniProfiler> ShortTermCacheSetter { get; set; }
-
-            /// <summary>
-            /// A method that will return a MiniProfiler when given a Guid.  Meant for caching profilings for an extended period of time, so
-            /// they may be shared with others.
-            /// </summary>
-            /// <remarks>
-            /// This is used by the full page results view, which is linked in the popup's header.
-            /// </remarks>
-            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.LongTermStorage")]
-            public static Func<Guid, MiniProfiler> LongTermCacheGetter { get; set; }
-
-            /// <summary>
-            /// A method that will save a MiniProfiler, identified by its Guid Id, into long-term storage.  Allows results to be shared with others.
-            /// It is important that you cache the MiniProfiler under its Id, a Guid - this Id will be passed to the LongTermCacheGetter.
-            /// </summary>
-            /// <remarks>
-            /// This is activated EVERY TIME the top left header link is clicked in the popup UI and the full page results 
-            /// view is displayed.  When overriding the default, your code will need to handle setting the same profiler 
-            /// back into your chosen storage medium (e.g. no-op when it already exists).
-            /// </remarks>
-            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.LongTermStorage")]
-            public static Action<MiniProfiler> LongTermCacheSetter { get; set; }
-
-            /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
             public static string Version { get; private set; }

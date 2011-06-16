@@ -67,31 +67,12 @@ namespace SampleWeb
             // a powerful feature of the MiniProfiler is the ability to share links to results with other developers.
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
-            // let's rig up methods to binary serialize our profiler results to a database, so they survive app restarts.
-            // (note: this method is more to test that the MiniProfiler can be serialized by protobuf-net - a real database storage
+            // let's rig up methods to json serialize our profiler results to a database, so they survive app restarts.
+            // (note: this method is more to test that the MiniProfiler can be serialized - a real database storage
             // scheme would put each property into its own column, so they could be queried independently of the MiniProfiler's UI)
 
-            // a setter will take the current profiler and should save it somewhere by its guid Id
-            MiniProfiler.Settings.LongTermCacheSetter = (profiler) =>
-            {
-                using (var conn = BaseController.GetOpenConnection())
-                {
-                    // we use the insert to ignore syntax here, because MiniProfiler will
-                    conn.Execute("insert or ignore into MiniProfilerResults (Id, Results) values (@id, @results)", new { id = profiler.Id, results = MiniProfiler.ToJson(profiler) });
-                }
-            };
-
-            // the getter will be passed a guid and should return the saved MiniProfiler
-            MiniProfiler.Settings.LongTermCacheGetter = (id) =>
-            {
-                using (var conn = BaseController.GetOpenConnection())
-                {
-                    string json = conn.Query<string>("select Results from MiniProfilerResults where Id = @id", new { id = id }).SingleOrDefault();
-                    return MiniProfiler.FromJson(json);
-                }
-            };
+            MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage();
         }
-
 
     }
 }
