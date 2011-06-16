@@ -57,6 +57,30 @@ namespace MvcMiniProfiler
             [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/" })]
             public static string[] IgnoredRootPaths { get; set; }
 
+
+            /// <summary>
+            /// Understands how to save and load MiniProfilers for a very limited time. Used for caching between when
+            /// a profiling session ends and results can be fetched to the client.
+            /// </summary>
+            /// <remarks>
+            /// The normal profiling session life-cycle is as follows:
+            /// 1) request begins
+            /// 2) profiler is started
+            /// 3) normal page/controller/request execution
+            /// 4) profiler is stopped
+            /// 5) profiler is cached with <see cref="ShortTermStorage"/>'s implementation of <see cref="Storage.IStorage.SaveMiniProfiler"/>
+            /// 6) request ends
+            /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
+            ///    <see cref="ShortTermStorage"/>'s implementation of <see cref="Storage.IStorage.LoadMiniProfiler"/>
+            /// </remarks>
+            public static Storage.IStorage ShortTermStorage { get; set; }
+
+            /// <summary>
+            /// Understands how to save and load MiniProfilers for an extended (even indefinite) time, allowing results to be
+            /// shared with other developers or even tracked over time.
+            /// </summary>
+            public static Storage.IStorage LongTermStorage { get; set; }
+
             /// <summary>
             /// A method that will return a MiniProfiler when given a Guid.  Meant for caching individual page profilings for a 
             /// very limited time.
@@ -65,6 +89,7 @@ namespace MvcMiniProfiler
             /// By default, MiniProfilers will be cached for 5 minutes in the HttpRuntime.Cache.  This can be extended when the cache is shared
             /// from its top link.
             /// </remarks>
+            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.ShortTermStorage")]
             public static Func<Guid, MiniProfiler> ShortTermCacheGetter { get; set; }
 
             /// <summary>
@@ -74,6 +99,7 @@ namespace MvcMiniProfiler
             /// <remarks>
             /// By default, MiniProfilers will be cached for 5 minutes in the HttpRuntime.Cache.
             /// </remarks>
+            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.ShortTermStorage")]
             public static Action<MiniProfiler> ShortTermCacheSetter { get; set; }
 
             /// <summary>
@@ -83,6 +109,7 @@ namespace MvcMiniProfiler
             /// <remarks>
             /// This is used by the full page results view, which is linked in the popup's header.
             /// </remarks>
+            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.LongTermStorage")]
             public static Func<Guid, MiniProfiler> LongTermCacheGetter { get; set; }
 
             /// <summary>
@@ -94,6 +121,7 @@ namespace MvcMiniProfiler
             /// view is displayed.  When overriding the default, your code will need to handle setting the same profiler 
             /// back into your chosen storage medium (e.g. no-op when it already exists).
             /// </remarks>
+            [Obsolete("For custom cache getters/setters, please implement MvcMiniProfiler.Storage.IStorage and set Settings.LongTermStorage")]
             public static Action<MiniProfiler> LongTermCacheSetter { get; set; }
 
             /// <summary>
@@ -102,23 +130,19 @@ namespace MvcMiniProfiler
             public static string Version { get; private set; }
 
             /// <summary>
-            /// When setters are null, creates default getters and setters that operate on the HttpRuntime.Cache.
+            /// Ensures that <see cref="ShortTermStorage"/> and <see cref="LongTermStorage"/> objects are initialized. Null values will
+            /// be initialized to use the default <see cref="Storage.HttpRuntimeCacheStorage"/> strategy.
             /// </summary>
-            /// <remarks>
-            /// Our MiniProfiler must have these to run.
-            /// </remarks>
-            internal static void EnsureCacheMethods()
+            internal static void EnsureStorageStrategies()
             {
-                if (ShortTermCacheGetter == null || ShortTermCacheSetter == null)
+                if (ShortTermStorage == null)
                 {
-                    ShortTermCacheSetter = (prof) => SetProfilerIntoRuntimeCache(CacheKey + prof.Id.ToString(), prof, DateTime.Now.AddMinutes(10));
-                    ShortTermCacheGetter = (guid) => { return HttpRuntime.Cache[CacheKey + guid.ToString()] as MiniProfiler; };
+                    ShortTermStorage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromMinutes(20));
                 }
 
-                if (LongTermCacheGetter == null || LongTermCacheSetter == null)
+                if (LongTermStorage == null)
                 {
-                    LongTermCacheSetter = (prof) => SetProfilerIntoRuntimeCache(CacheKey + "longterm:" + prof.Id.ToString(), prof, DateTime.Now.AddDays(1));
-                    LongTermCacheGetter = (guid) => { return HttpRuntime.Cache[CacheKey + "longterm:" + guid.ToString()] as MiniProfiler; };
+                    LongTermStorage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
                 }
             }
 

@@ -66,6 +66,8 @@
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniProfiler.cs" />
+    <Compile Include="Storage\HttpRuntimeCacheStorage.cs" />
+    <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlProfiler.cs" />
     <Compile Include="SqlTiming.cs" />
@@ -88,6 +90,7 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\jquery.1.6.1.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -346,8 +346,8 @@ namespace MvcMiniProfiler
             var response = context.Response;
 
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            Settings.EnsureCacheMethods();
-            Settings.ShortTermCacheSetter(current);
+            Settings.EnsureStorageStrategies();
+            Settings.ShortTermStorage.SaveMiniProfiler(current.Id, current);
 
             try
             {

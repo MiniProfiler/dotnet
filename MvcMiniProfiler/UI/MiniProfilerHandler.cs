@@ -185,11 +185,11 @@ namespace MvcMiniProfiler.UI
             if (!Guid.TryParse(context.Request.QueryString["id"], out id))
                 return isPopup ? NotFound(context) : NotFound(context, "text/html", "No Guid id specified on the query string");
 
-            MiniProfiler.Settings.EnsureCacheMethods();
-            var profiler = MiniProfiler.Settings.ShortTermCacheGetter(id);
+            MiniProfiler.Settings.EnsureStorageStrategies();
+            var profiler = MiniProfiler.Settings.ShortTermStorage.LoadMiniProfiler(id);
 
             if (profiler == null)
-                profiler = MiniProfiler.Settings.LongTermCacheGetter(id);
+                profiler = MiniProfiler.Settings.LongTermStorage.LoadMiniProfiler(id);
 
             if (profiler == null)
                 return isPopup ? NotFound(context) : NotFound(context, "text/html", "No MiniProfiler results found with Id=" + id.ToString());
@@ -202,7 +202,7 @@ namespace MvcMiniProfiler.UI
             {
                 // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
                 // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
-                MiniProfiler.Settings.LongTermCacheSetter(profiler);
+                MiniProfiler.Settings.LongTermStorage.SaveMiniProfiler(profiler.Id, profiler);
                 return ResultsFullPage(context, profiler);
             }
         }

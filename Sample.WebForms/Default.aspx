@@ -1,7 +1,16 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
     CodeBehind="Default.aspx.cs" Inherits="Sample.WebForms._Default" %>
-
+<%@ Import Namespace="MvcMiniProfiler" %>
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
+
+<% using (MiniProfiler.Current.Step("Default's <head>"))
+   {
+       System.Threading.Thread.Sleep(20); %>
+
+    <script type="text/javascript"></script>
+
+<% } %>
+
 </asp:Content>
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
     <h2>
