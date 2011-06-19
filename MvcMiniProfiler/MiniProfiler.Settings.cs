@@ -25,7 +25,7 @@ namespace MvcMiniProfiler
 
                 foreach (var pair in props)
                 {
-                    pair.PropertyInfo.SetValue(null, pair.DefaultValue.Value, null);
+                    pair.PropertyInfo.SetValue(null, Convert.ChangeType(pair.DefaultValue.Value, pair.PropertyInfo.PropertyType), null);
                 }
 
                 Version = System.Diagnostics.FileVersionInfo.GetVersionInfo(typeof(Settings).Assembly.Location).ProductVersion;
@@ -41,7 +41,7 @@ namespace MvcMiniProfiler
             /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.
             /// </summary>
             [DefaultValue(2.0)]
-            public static double TrivialDurationThresholdMilliseconds { get; set; }
+            public static decimal TrivialDurationThresholdMilliseconds { get; set; }
 
             /// <summary>
             /// Dictates on which side of the page the profiler popup button is displayed; defaults to false (i.e. renders on left side).

@@ -15,12 +15,11 @@ namespace SampleWeb.Controllers
         /// <summary>
         /// Returns an open connection that will have its queries profiled.
         /// </summary>
-        public static DbConnection GetOpenConnection(MiniProfiler profiler = null)
+        public static DbConnection GetConnection(MiniProfiler profiler = null)
         {
             using (profiler.Step("GetOpenConnection"))
             {
-                var dbPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
-                var cnn = new System.Data.SQLite.SQLiteConnection("Data Source = " + dbPath);
+                var cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString);
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
                 // when MiniProfiler.Current is null, this connection will not record any database timings
@@ -66,7 +65,7 @@ namespace SampleWeb.Controllers
         {
             var routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
 
-            using (var conn = GetOpenConnection(profiler))
+            using (var conn = GetConnection(profiler))
             {
                 var param = new { routeName = routeName };
 

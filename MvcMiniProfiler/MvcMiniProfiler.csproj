@@ -60,6 +60,7 @@
     <Compile Include="Data\ProfiledDbProviderFactory.cs" />
     <Compile Include="Data\ProfiledDbProviderServices.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
+    <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="Helpers\HaackFormatter.cs" />
     <Compile Include="MiniProfiler.Settings.cs">
@@ -71,6 +72,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlProfiler.cs" />
     <Compile Include="SqlTiming.cs" />
+    <Compile Include="Storage\DatabaseStorageBase.cs" />
+    <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="UI\MiniProfilerHandler.cs" />
   </ItemGroup>

@@ -8,26 +8,40 @@ using SampleWeb.Controllers;
 
 namespace SampleWeb.Helpers
 {
-    public class SqliteMiniProfilerStorage : MvcMiniProfiler.Storage.IStorage
+    public class SqliteMiniProfilerStorage : MvcMiniProfiler.Storage.DatabaseStorageBase
     {
-
-        public void SaveMiniProfiler(Guid id, MiniProfiler profiler)
+        public SqliteMiniProfilerStorage(string connectionString)
+            : base(connectionString)
         {
-            using (var conn = BaseController.GetOpenConnection())
-            {
-                // we use the insert to ignore syntax here, because MiniProfiler will call this method each time the full results are displayed
-                conn.Execute("insert or ignore into MiniProfilerResults (Id, Results) values (@id, @results)", new { id = id, results = MiniProfiler.ToJson(profiler) });
-            }
         }
 
-        public MiniProfiler LoadMiniProfiler(Guid id)
+        protected override System.Data.Common.DbConnection GetConnection()
         {
-            using (var conn = BaseController.GetOpenConnection())
-            {
-                string json = conn.Query<string>("select Results from MiniProfilerResults where Id = @id", new { id = id }).SingleOrDefault();
-                return MiniProfiler.FromJson(json);
-            }
+            return new System.Data.SQLite.SQLiteConnection(ConnectionString);
         }
 
+        public override MiniProfiler LoadMiniProfiler(Guid id)
+        {
+            // sqlite can't execute multiple result sets at once, so we need to override and run three queries
+            MiniProfiler result = null;
+
+            using (var conn = GetOpenConnection())
+            {
+                var param = new { id = id };
+                result = conn.Query<MiniProfiler>("select * from MiniProfiler where Id = @id", param).SingleOrDefault();
+
+                if (result != null)
+                {
+                    // HACK: stored dates are utc, but are pulled out as local time - sqlite doesn't have dedicated datetime types, though
+                    result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
+
+                    var timings = conn.Query<Timing>("select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId", param).ToList();
+                    var sqlTimings = conn.Query<SqlTiming>("select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId", param).ToList();
+                    MapTimings(result, timings, sqlTimings);
+                }
+            }
+
+            return result;
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using MvcMiniProfiler.Data;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using System.Web.Script.Serialization;
 
 namespace MvcMiniProfiler
 {
@@ -38,20 +39,45 @@ namespace MvcMiniProfiler
         /// Offset from main MiniProfiler start that this sql began.
         /// </summary>
         [DataMember(Order = 4)]
-        public double StartMilliseconds { get; set; }
+        public decimal StartMilliseconds { get; set; }
 
         /// <summary>
         /// How long this sql statement took to execute.
         /// </summary>
         [DataMember(Order = 5)]
-        public double DurationMilliseconds { get; set; }
+        public decimal DurationMilliseconds { get; set; }
 
         /// <summary>
         /// When executing readers, how long it took to come back initially from the database, 
         /// before all records are fetched and reader is closed.
         /// </summary>
         [DataMember(Order = 6)]
-        public double FirstFetchDurationMilliseconds { get; set; }
+        public decimal FirstFetchDurationMilliseconds { get; set; }
+
+        /// <summary>
+        /// Id of the Timing this statement was executed in.
+        /// </summary>
+        /// <remarks>
+        /// Needed for database deserialization.
+        /// </remarks>
+        public Guid? ParentTimingId { get; set; }
+
+        private Timing _parentTiming;
+        /// <summary>
+        /// The Timing step that this sql execution occurred in.
+        /// </summary>
+        [ScriptIgnore]
+        public Timing ParentTiming
+        {
+            get { return _parentTiming; }
+            set
+            {
+                _parentTiming = value;
+
+                if (value != null && ParentTimingId != value.Id)
+                    ParentTimingId = value.Id;
+            }
+        }
 
         /// <summary>
         /// True when other identical sql statements have been executed during this MiniProfiler session.
@@ -108,7 +134,7 @@ namespace MvcMiniProfiler
             DurationMilliseconds = GetDurationMilliseconds();
         }
 
-        private double GetDurationMilliseconds()
+        private decimal GetDurationMilliseconds()
         {
             return MiniProfiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
         }

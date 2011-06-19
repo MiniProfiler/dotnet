@@ -8,13 +8,17 @@ using System.Web.Routing;
 using MvcMiniProfiler;
 using System.IO;
 using SampleWeb.Controllers;
-using Dapper;
 
 namespace SampleWeb
 {
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static string ConnectionString
+        {
+            get { return "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); }
+        }
+
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -71,7 +75,7 @@ namespace SampleWeb
             // (note: this method is more to test that the MiniProfiler can be serialized - a real database storage
             // scheme would put each property into its own column, so they could be queried independently of the MiniProfiler's UI)
 
-            MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage();
+            MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
         }
 
     }

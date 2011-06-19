@@ -51,7 +51,7 @@ namespace SampleWeb.Controllers
             }
 
             using (profiler.Step("FetchRouteHits"))
-            using (var conn = GetOpenConnection(profiler))
+            using (var conn = GetConnection(profiler))
             {
                 var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
                 return Json(result, JsonRequestBehavior.AllowGet);
@@ -61,7 +61,7 @@ namespace SampleWeb.Controllers
         public ActionResult MassiveNesting()
         {
             var i = 0;
-            using (var conn = GetOpenConnection())
+            using (var conn = GetConnection())
             {
                 RecursiveMethod(ref i, conn, MiniProfiler.Current);
             }
@@ -79,7 +79,7 @@ namespace SampleWeb.Controllers
 
         public ActionResult Duplicated()
         {
-            using (var conn = GetOpenConnection())
+            using (var conn = GetConnection())
             {
                 long total = 0;
                 for (int i = 0; i < 20; i++)
