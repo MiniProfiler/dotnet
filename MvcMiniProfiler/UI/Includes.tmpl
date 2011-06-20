@@ -80,7 +80,7 @@
 <script id="timingTemplate" type="text/x-jquery-tmpl">
 
   <tr class="{{if IsTrivial }}trivial{{/if}}" data-timing-id="${Id}">
-    <td class="label">
+    <td class="label" title="{{if Name && Name.length > 45 }}${Name}{{/if}}">
       <span class="indent">${MiniProfiler.renderIndent(Depth)}</span> ${Name}
     </td>
     <td class="duration" title="duration of this step without any children's durations">
