@@ -96,7 +96,9 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\jquery.1.6.1.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="UI\jquery.tmpl.beta1.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

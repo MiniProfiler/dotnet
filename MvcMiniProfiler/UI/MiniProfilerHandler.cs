@@ -21,7 +21,8 @@ namespace MvcMiniProfiler.UI
 <script type=""text/javascript"" src=""{path}mini-profiler-yepnope.1.0.1.js""></script>
 <script type=""text/javascript"">
     yepnope([
-        {{ test: window.jQuery, nope: '{path}mini-profiler-jquery.1.6.1.js' }}, 
+        {{ test: window.jQuery, nope: '{path}mini-profiler-jquery.1.6.1.js' }},
+        {{ test: window.jQuery && window.jQuery.tmpl, nope: '{path}mini-profiler-jquery.tmpl.beta1.js' }},
         {{ load: '{path}mini-profiler-includes.js?v={version}',
            complete: function() {{
                jQuery(function() {{
@@ -64,7 +65,8 @@ namespace MvcMiniProfiler.UI
             var urls = new[] 
             { 
                 "mini-profiler-yepnope.1.0.1.js", 
-                "mini-profiler-jquery.1.6.1.js", 
+                "mini-profiler-jquery.1.6.1.js",
+                "mini-profiler-jquery.tmpl.beta1.js",
                 "mini-profiler-includes.js", 
                 "mini-profiler-includes.less", 
                 "mini-profiler-includes.tmpl", 
@@ -122,9 +124,10 @@ namespace MvcMiniProfiler.UI
 
             switch (Path.GetFileNameWithoutExtension(path))
             {
-                case "mini-profiler-includes":
-                case "mini-profiler-jquery.1.6.1":
                 case "mini-profiler-yepnope.1.0.1":
+                case "mini-profiler-jquery.1.6.1":
+                case "mini-profiler-jquery.tmpl.beta1":
+                case "mini-profiler-includes":
                     output = Includes(context, path);
                     break;
 
