@@ -18,6 +18,9 @@ namespace MvcMiniProfiler.Storage
         /// will pass this Guid.
         /// </param>
         /// <param name="profiler">The results of a profiling session.</param>
+        /// <remarks>
+        /// Should be able to be called multiple times on the same profiler.
+        /// </remarks>
         void SaveMiniProfiler(Guid id, MiniProfiler profiler);
 
         /// <summary>

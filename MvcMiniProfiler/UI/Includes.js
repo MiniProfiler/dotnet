@@ -278,6 +278,38 @@
         bindDocumentEvents();
     };
 
+    var inlineSqlParameters = function(sqlTiming) {
+        if (!sqlTiming.Parameters) return sqlTiming;
+
+        var txt = sqlTiming.CommandString;
+
+        for (var i = 0, p; i < sqlTiming.Parameters.length; i++) {
+            p = sqlTiming.Parameters[i];
+            txt = txt.replace(new RegExp(p.Name, 'gi'), getParameterValue(p));
+        }
+
+        sqlTiming.CommandString = txt;
+    };
+
+    var getParameterValue = function(p) {
+        // TODO: ugh, figure out how to allow different db providers to specify how values are represented (e.g. bit in oracle)
+        var result = p.Value,
+            t = (p.DbType || '').toLowerCase();
+        
+        if (t.match(/string/)) {
+            result = "'" + result + "'";
+        }
+        else if (t.match(/boolean/)) {
+            result = result == "True" ? 1 : result == "False" ? 0 : null;
+        }
+
+        if (result === null) {
+            result = 'null';
+        }
+
+        return result + ' /* ' + p.Name + ' DbType.' + p.DbType + ' */'; 
+    };
+
     return {
 
         init: function(opt) {
@@ -331,8 +363,8 @@
                             sqlTiming = timing.SqlTimings[i];
 
                             // HACK: add info about the parent Timing to each SqlTiming so UI can render
-                            sqlTiming.TimingId = timing.Id;
-                            sqlTiming.TimingName = timing.Name;
+                            sqlTiming.ParentTimingName = timing.Name;
+                            inlineSqlParameters(sqlTiming);
 
                             result.push(sqlTiming);
                         }

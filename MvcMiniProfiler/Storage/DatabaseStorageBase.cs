@@ -27,7 +27,7 @@ namespace MvcMiniProfiler.Storage
         public virtual void SaveMiniProfiler(Guid id, MiniProfiler profiler)
         {
             const string sql =
-@"insert into MiniProfiler
+@"insert into MiniProfilers
             (Id,
              Name,
              Started,
@@ -54,7 +54,7 @@ select       @Id,
              @HasTrivialTimings,
              @HasAllTrivialTimings,
              @TrivialDurationThresholdMilliseconds
-where not exists (select 1 from MiniProfiler where Id = @Id)"; // this syntax works on both mssql and sqlite
+where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax works on both mssql and sqlite
 
             using (var conn = GetOpenConnection())
             {
@@ -76,11 +76,11 @@ where not exists (select 1 from MiniProfiler where Id = @Id)"; // this syntax wo
                 });
 
                 if (insertCount > 0)
-                    SaveTiming(conn, profiler.Root);
+                    SaveTiming(conn, profiler, profiler.Root);
             }
         }
 
-        protected virtual void SaveTiming(DbConnection conn, Timing t)
+        protected virtual void SaveTiming(DbConnection conn, MiniProfiler profiler, Timing t)
         {
             const string sql =
 @"insert into MiniProfilerTimings
@@ -144,7 +144,7 @@ values      (@Id,
             {
                 foreach (var st in t.SqlTimings)
                 {
-                    SaveSqlTiming(conn, st, t);
+                    SaveSqlTiming(conn, profiler, st);
                 }
             }
 
@@ -152,16 +152,17 @@ values      (@Id,
             {
                 foreach (var child in t.Children)
                 {
-                    SaveTiming(conn, child);
+                    SaveTiming(conn, profiler, child);
                 }
             }
         }
 
-        protected virtual void SaveSqlTiming(DbConnection conn, SqlTiming st, Timing parent)
+        protected virtual void SaveSqlTiming(DbConnection conn, MiniProfiler profiler, SqlTiming st)
         {
             const string sql =
 @"insert into MiniProfilerSqlTimings
-            (MiniProfilerId,
+            (Id,
+             MiniProfilerId,
              ParentTimingId,
              ExecuteType,
              StartMilliseconds,
@@ -170,7 +171,8 @@ values      (@Id,
              IsDuplicate,
              StackTraceSnippet,
              CommandString)
-values      (@MiniProfilerId,
+values      (@Id,
+             @MiniProfilerId,
              @ParentTimingId,
              @ExecuteType,
              @StartMilliseconds,
@@ -182,8 +184,9 @@ values      (@MiniProfilerId,
 
             conn.Execute(sql, new
             {
-                MiniProfilerId = parent.Profiler.Id,
-                ParentTimingId = parent.Id,
+                Id = st.Id,
+                MiniProfilerId = profiler.Id,
+                ParentTimingId = st.ParentTiming.Id,
                 ExecuteType = st.ExecuteType,
                 StartMilliseconds = st.StartMilliseconds,
                 DurationMilliseconds = st.DurationMilliseconds,
@@ -192,14 +195,51 @@ values      (@MiniProfilerId,
                 StackTraceSnippet = st.StackTraceSnippet,
                 CommandString = st.CommandString
             });
+
+            if (st.Parameters != null && st.Parameters.Count > 0)
+            {
+                SaveSqlTimingParameters(conn, profiler, st);
+            }
+        }
+
+        protected virtual void SaveSqlTimingParameters(DbConnection conn, MiniProfiler profiler, SqlTiming st)
+        {
+            const string sql =
+@"insert into MiniProfilerSqlTimingParameters
+            (MiniProfilerId,
+             ParentSqlTimingId,
+             Name,
+             DbType,
+             Size,
+             Value)
+values      (@MiniProfilerId,
+             @ParentSqlTimingId,
+             @Name,
+             @DbType,
+             @Size,
+             @Value)";
+
+            foreach (var p in st.Parameters)
+            {
+                conn.Execute(sql, new
+                {
+                    MiniProfilerId = profiler.Id,
+                    ParentSqlTimingId = st.Id,
+                    Name = p.Name,
+                    DbType = p.DbType,
+                    Size = p.Size,
+                    Value = p.Value
+                });
+            }
         }
 
         public virtual MiniProfiler LoadMiniProfiler(Guid id)
         {
             const string sql =
-@"select * from MiniProfiler where Id = @id
+@"select * from MiniProfilers where Id = @id
 select * from MiniProfilerTimings where  MiniProfilerId = @id order by RowId
-select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId";
+select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId
+select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
 
             MiniProfiler result = null;
 
@@ -215,7 +255,8 @@ select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId";
 
                     var timings = multi.Read<Timing>().ToList();
                     var sqlTimings = multi.Read<SqlTiming>().ToList();
-                    MapTimings(result, timings, sqlTimings);
+                    var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
+                    MapTimings(result, timings, sqlTimings, sqlParameters);
                 }
             }
 
@@ -226,7 +267,7 @@ select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId";
         /// Giving freshly selected 'timings' and 'sqlTimings', this method puts them in the correct
         /// hierarchy under the 'result' MiniProfiler.
         /// </summary>
-        protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings)
+        protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings, List<SqlTimingParameter> sqlParameters)
         {
             var stack = new Stack<Timing>();
             stack.Push(timings.First());
@@ -237,7 +278,15 @@ select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId";
                 foreach (var sqlTiming in sqlTimings)
                 {
                     if (sqlTiming.ParentTimingId == cur.Id)
+                    {
                         cur.AddSqlTiming(sqlTiming);
+
+                        var parameters = sqlParameters.Where(p => p.ParentSqlTimingId == sqlTiming.Id);
+                        if (parameters.Count() > 0)
+                        {
+                            sqlTiming.Parameters = parameters.ToList();
+                        }
+                    }
                 }
 
                 Timing head;
@@ -273,7 +322,7 @@ select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId";
         /// TODO: add indexes
         /// </remarks>
         public const string TableCreationScript =
-@"create table MiniProfiler
+@"create table MiniProfilers
   (
      Id                                   uniqueidentifier not null primary key,
      Name                                 nvarchar(200) not null,
@@ -315,6 +364,7 @@ create table MiniProfilerTimings
 create table MiniProfilerSqlTimings
   (
      RowId                          integer primary key identity, -- sqlite: replace identity with autoincrement
+     Id                             uniqueidentifier not null,
      MiniProfilerId                 uniqueidentifier not null,
      ParentTimingId                 uniqueidentifier not null,
      ExecuteType                    tinyint not null,
@@ -324,6 +374,16 @@ create table MiniProfilerSqlTimings
      IsDuplicate                    bit not null,
      StackTraceSnippet              nvarchar(200) not null,
      CommandString                  nvarchar(max) not null -- sqlite: remove (max)
+  )
+
+create table MiniProfilerSqlTimingParameters
+  (
+     MiniProfilerId    uniqueidentifier not null,
+     ParentSqlTimingId uniqueidentifier not null,
+     Name              varchar(130) not null,
+     DbType            varchar(50) null,
+     Size              int null,
+     Value             nvarchar(max) null -- sqlite: remove (max)
   )";
 
     }

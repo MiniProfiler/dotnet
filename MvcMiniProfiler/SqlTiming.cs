@@ -16,6 +16,11 @@ namespace MvcMiniProfiler
     [DataContract]
     public class SqlTiming
     {
+        /// <summary>
+        /// Unique identifier for this SqlTiming.
+        /// </summary>
+        [ScriptIgnore]
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Category of sql statement executed.
@@ -55,6 +60,12 @@ namespace MvcMiniProfiler
         public decimal FirstFetchDurationMilliseconds { get; set; }
 
         /// <summary>
+        /// Stores any parameter names and values used by the profiled DbCommand.
+        /// </summary>
+        [DataMember(Order = 7)]
+        public List<SqlTimingParameter> Parameters { get; set; }
+
+        /// <summary>
         /// Id of the Timing this statement was executed in.
         /// </summary>
         /// <remarks>
@@ -92,7 +103,10 @@ namespace MvcMiniProfiler
         /// </summary>
         public SqlTiming(DbCommand command, ExecuteType type, MiniProfiler profiler)
         {
+            Id = Guid.NewGuid();
+
             CommandString = AddSpacesToParameters(command.CommandText);
+            Parameters = GetCommandParameters(command);
             ExecuteType = type;
             StackTraceSnippet = Helpers.StackTraceSnippet.Get();
 
@@ -145,6 +159,27 @@ namespace MvcMiniProfiler
         private string AddSpacesToParameters(string commandString)
         {
             return Regex.Replace(commandString, @",([^\s])", ", $1");
+        }
+
+        private List<SqlTimingParameter> GetCommandParameters(DbCommand command)
+        {
+            if (command.Parameters == null || command.Parameters.Count == 0) return null;
+
+            var result = new List<SqlTimingParameter>();
+
+            foreach (DbParameter p in command.Parameters)
+            {
+                result.Add(new SqlTimingParameter
+                {
+                    ParentSqlTimingId = Id,
+                    Name = p.ParameterName,
+                    Value = (p.Value == null || p.Value is DBNull) ? null : p.Value.ToString(),
+                    DbType = p.DbType.ToString(),
+                    Size = p.Size
+                });
+            }
+
+            return result;
         }
 
     }

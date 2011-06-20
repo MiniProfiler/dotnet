@@ -28,7 +28,7 @@ namespace SampleWeb.Helpers
             using (var conn = GetOpenConnection())
             {
                 var param = new { id = id };
-                result = conn.Query<MiniProfiler>("select * from MiniProfiler where Id = @id", param).SingleOrDefault();
+                result = conn.Query<MiniProfiler>("select * from MiniProfilerS where Id = @id", param).SingleOrDefault();
 
                 if (result != null)
                 {
@@ -37,7 +37,8 @@ namespace SampleWeb.Helpers
 
                     var timings = conn.Query<Timing>("select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId", param).ToList();
                     var sqlTimings = conn.Query<SqlTiming>("select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId", param).ToList();
-                    MapTimings(result, timings, sqlTimings);
+                    var sqlParameters = conn.Query<SqlTimingParameter>("select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id", param).ToList();
+                    MapTimings(result, timings, sqlTimings, sqlParameters);
                 }
             }
 

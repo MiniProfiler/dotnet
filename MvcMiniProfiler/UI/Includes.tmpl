@@ -117,9 +117,9 @@
 
 <script id="sqlTimingTemplate" type="text/x-jquery-tmpl">
 
-  <tr class="{{if i % 2 == 1}}odd{{/if}}" data-timing-id="${s.TimingId}">
+  <tr class="{{if i % 2 == 1}}odd{{/if}}" data-timing-id="${s.ParentTimingId}">
     <td class="info">
-      <div>${s.TimingName}</div>
+      <div>${s.ParentTimingName}</div>
       <div class="number"><span class="unit">T+</span>${s.StartMilliseconds} <span class="unit">ms</span></div>
       <div>
         {{if s.IsDuplicate}}<span class="warning">DUPLICATE</span>{{/if}}
