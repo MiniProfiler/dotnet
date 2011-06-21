@@ -14,7 +14,7 @@ namespace MvcMiniProfiler.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false, int maxTracesToShow = 15)
         {
             const string format =
 @"<link rel=""stylesheet/less"" type=""text/css"" href=""{path}mini-profiler-includes.less?v={version}"">
@@ -32,7 +32,8 @@ namespace MvcMiniProfiler.UI
                        version: '{version}',
                        renderPosition: '{position}',
                        showTrivial: {showTrivial},
-                       showChildrenTime: {showChildren}
+                       showChildrenTime: {showChildren},
+                       maxTracesToShow: {maxTracesToShow}
                    }});
                }});
          }}
@@ -52,7 +53,8 @@ namespace MvcMiniProfiler.UI
                     id = profiler.Id,
                     position = pos.ToString().ToLower(),
                     showTrivial = showTrivial ? "true" : "false",
-                    showChildren = showTimeWithChildren ? "true" : "false"
+                    showChildren = showTimeWithChildren ? "true" : "false",
+                    maxTracesToShow = maxTracesToShow
                 });
             }
 

@@ -1,9 +1,9 @@
-﻿var MiniProfiler = (function($) {
+﻿var MiniProfiler = (function ($) {
 
     var options,
         container;
 
-    var hasLocalStorage = function() {
+    var hasLocalStorage = function () {
         try {
             return 'localStorage' in window && window['localStorage'] !== null;
         } catch (e) {
@@ -11,11 +11,11 @@
         }
     };
 
-    var getVersionedKey = function(keyPrefix) {
+    var getVersionedKey = function (keyPrefix) {
         return keyPrefix + '-' + options.version;
     }
 
-    var save = function(keyPrefix, value) {
+    var save = function (keyPrefix, value) {
         if (!hasLocalStorage()) { return; }
 
         // clear old keys with this prefix, if any
@@ -29,13 +29,13 @@
         localStorage[getVersionedKey(keyPrefix)] = value;
     };
 
-    var load = function(keyPrefix) {
+    var load = function (keyPrefix) {
         if (!hasLocalStorage()) { return null; }
 
         return localStorage[getVersionedKey(keyPrefix)];
     };
 
-    var fetchTemplates = function(success) {
+    var fetchTemplates = function (success) {
         var key = 'mini-profiler-templates',
             cached = load(key);
 
@@ -44,7 +44,7 @@
             success();
         }
         else {
-            $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function(data) {
+            $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function (data) {
                 if (data) {
                     save(key, data);
                     $('body').append(data);
@@ -54,38 +54,41 @@
         }
     };
 
-    var fetchResults = function(id) {
-        $.getJSON(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function(json) {
+    var fetchResults = function (id) {
+        $.getJSON(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function (json) {
             buttonShow(json);
         });
     };
 
-    var renderTemplate = function(json) {
+    var renderTemplate = function (json) {
         return $('#profilerTemplate').tmpl(json);
     };
 
-    var buttonShow = function(json) {
+    var buttonShow = function (json) {
         var result = renderTemplate(json).appendTo(container),
             button = result.find('.profiler-button'),
             popup = result.find('.profiler-popup');
 
         // button will appear in corner with the total profiling duration - click to show details
-        button.click(function() { buttonClick(button, popup); });
+        button.click(function () { buttonClick(button, popup); });
 
         // small duration steps and the column with aggregate durations are hidden by default; allow toggling
         toggleHidden(popup);
 
         // lightbox in the queries
-        popup.find('.queries-show').click(function() { queriesShow($(this), result); });
+        popup.find('.queries-show').click(function () { queriesShow($(this), result); });
 
+        // limit count
+        if (container.find('.profiler-result').length > options.maxTracesToShow)
+            container.find('.profiler-result').first().remove();
         button.show();
     };
 
-    var toggleHidden = function(popup) {
+    var toggleHidden = function (popup) {
         var trivial = popup.find('.toggle-trivial');
         var childrenTime = popup.find('.toggle-duration-with-children');
 
-        childrenTime.add(trivial).click(function() {
+        childrenTime.add(trivial).click(function () {
             var link = $(this),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
@@ -106,7 +109,7 @@
         }
     };
 
-    var buttonClick = function(button, popup) {
+    var buttonClick = function (button, popup) {
         // we're toggling this button/popup
         if (popup.is(':visible')) {
             popupHide(button, popup);
@@ -123,7 +126,7 @@
         }
     };
 
-    var popupShow = function(button, popup) {
+    var popupShow = function (button, popup) {
         button.addClass('profiler-button-active');
 
         popupSetDimensions(button, popup);
@@ -133,30 +136,30 @@
         popupPreventHorizontalScroll(popup);
     };
 
-    var popupSetDimensions = function(button, popup) {
+    var popupSetDimensions = function (button, popup) {
         var top = button.position().top - 1, // position next to the button we clicked
             windowHeight = $(window).height(),
             maxHeight = windowHeight - top - 40; // make sure the popup doesn't extend below the fold
 
         popup
-            .css({ 'top':top, 'max-height':maxHeight })
+            .css({ 'top': top, 'max-height': maxHeight })
             .css(options.renderPosition, button.outerWidth() - 3); // move left or right, based on config
     };
 
-    var popupPreventHorizontalScroll = function(popup) {
+    var popupPreventHorizontalScroll = function (popup) {
         var childrenHeight = 0;
 
-        popup.children().each(function() { childrenHeight += $(this).height(); });
+        popup.children().each(function () { childrenHeight += $(this).height(); });
 
-        popup.css({ 'padding-right':childrenHeight > popup.height() ? 40 : 10 });
+        popup.css({ 'padding-right': childrenHeight > popup.height() ? 40 : 10 });
     }
 
-    var popupHide = function(button, popup) {
+    var popupHide = function (button, popup) {
         button.removeClass('profiler-button-active');
         popup.hide();
     };
 
-    var queriesShow = function(link, result) {
+    var queriesShow = function (link, result) {
 
         var px = 30,
             win = $(window),
@@ -168,8 +171,8 @@
         $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
 
         // center the queries and ensure long content is scrolled
-        queries.css({ 'top':px, 'max-height':height, 'width':width }).css(options.renderPosition, px)
-            .find('table').css({ 'width':width });
+        queries.css({ 'top': px, 'max-height': height, 'width': width }).css(options.renderPosition, px)
+            .find('table').css({ 'width': width });
 
         // have to show everything before we can get a position for the first query
         queries.show();
@@ -180,7 +183,7 @@
         prettyPrint();
     };
 
-    var queriesScrollIntoView = function(link, queries, whatToScroll) {
+    var queriesScrollIntoView = function (link, queries, whatToScroll) {
         var id = link.closest('tr').attr('data-timing-id'),
             cells = queries.find('tr[data-timing-id="' + id + '"] td');
 
@@ -188,15 +191,15 @@
         whatToScroll.scrollTop(whatToScroll.scrollTop() + cells.first().position().top - 100);
 
         // highlight and then fade back to original bg color
-        cells.each(function() {
+        cells.each(function () {
             var td = $(this),
                 originalColor = td.css('background-color');
-            td.css('background-color', '#FFFFBB').animate({ backgroundColor:originalColor }, 2000);
+            td.css('background-color', '#FFFFBB').animate({ backgroundColor: originalColor }, 2000);
         });
     };
 
-    var bindDocumentEvents = function() {
-        $(document).bind('click keyup', function(e) {
+    var bindDocumentEvents = function () {
+        $(document).bind('click keyup', function (e) {
 
             var popup = $('.profiler-popup:visible');
 
@@ -230,10 +233,10 @@
         });
     };
 
-    var initFullView = function() {
+    var initFullView = function () {
 
         // first, get jquery tmpl, then render and bind handlers
-        fetchTemplates(function() {
+        fetchTemplates(function () {
 
             // profiler will be defined in the full page's head
             renderTemplate(profiler).appendTo(container);
@@ -245,13 +248,13 @@
             prettyPrint();
 
             // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
-            popup.find('.queries-show').click(function() {
+            popup.find('.queries-show').click(function () {
                 queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
             });
         });
     };
 
-    var initPopupView = function() {
+    var initPopupView = function () {
         // all fetched profilings will go in here
         container = $('<div class="profiler-results"/>').appendTo('body');
 
@@ -259,7 +262,7 @@
         container.addClass(options.renderPosition);
 
         // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
-        fetchTemplates(function() {
+        fetchTemplates(function () {
             // get master page profiler results
             fetchResults(options.id);
         });
@@ -323,9 +326,9 @@
 
     return {
 
-        init: function(opt) {
+        init: function (opt) {
 
-            options = opt || { };
+            options = opt || {};
 
             // when rendering a shared, full page, this div will exist
             container = $('.profiler-result-full');
@@ -338,13 +341,13 @@
             }
         },
 
-        renderDate: function(jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
+        renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
             if (jsonDate) {
-                return new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/",""), 10)).toUTCString();
+                return new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10)).toUTCString();
             }
         },
 
-        renderIndent: function(depth) {
+        renderIndent: function (depth) {
             var result = '';
             for (var i = 0; i < depth; i++) {
                 result += '&nbsp;';
@@ -352,7 +355,7 @@
             return result;
         },
 
-        renderExecuteType: function(typeId) {
+        renderExecuteType: function (typeId) {
             // see MvcMiniProfiler.ExecuteType enum
             switch (typeId) {
                 case 0: return 'None';
@@ -362,13 +365,13 @@
             }
         },
 
-        shareUrl: function(id) {
+        shareUrl: function (id) {
             return options.path + 'mini-profiler-results?id=' + id;
         },
 
-        getSqlTimings: function(root) {
+        getSqlTimings: function (root) {
             var result = [],
-                addToResults = function(timing) {
+                addToResults = function (timing) {
                     if (timing.SqlTimings) {
                         for (var i = 0, sqlTiming; i < timing.SqlTimings.length; i++) {
                             sqlTiming = timing.SqlTimings[i];
@@ -392,7 +395,7 @@
             addToResults(root);
 
             // sort results by time
-            result.sort(function(a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
+            result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
 
             return result;
         },
