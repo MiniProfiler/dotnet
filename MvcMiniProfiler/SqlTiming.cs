@@ -169,14 +169,17 @@ namespace MvcMiniProfiler
 
             foreach (DbParameter p in command.Parameters)
             {
-                result.Add(new SqlTimingParameter
+                if (!string.IsNullOrWhiteSpace(p.ParameterName))
                 {
-                    ParentSqlTimingId = Id,
-                    Name = p.ParameterName,
-                    Value = (p.Value == null || p.Value is DBNull) ? null : p.Value.ToString(),
-                    DbType = p.DbType.ToString(),
-                    Size = p.Size
-                });
+                    result.Add(new SqlTimingParameter
+                    {
+                        ParentSqlTimingId = Id,
+                        Name = p.ParameterName.Trim(),
+                        Value = (p.Value == null || p.Value is DBNull) ? null : p.Value.ToString(),
+                        DbType = p.DbType.ToString(),
+                        Size = p.Size
+                    });
+                }
             }
 
             return result;

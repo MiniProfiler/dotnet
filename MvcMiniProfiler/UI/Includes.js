@@ -285,10 +285,21 @@
 
         for (var i = 0, p; i < sqlTiming.Parameters.length; i++) {
             p = sqlTiming.Parameters[i];
+            ensureParameterName(txt, p);
             txt = txt.replace(new RegExp(p.Name, 'gi'), getParameterValue(p));
         }
 
         sqlTiming.CommandString = txt;
+    };
+
+    var ensureParameterName = function(txt, p) {
+        // DbParameters don't have to have a @ or : as prefix, so ensure the name we have matches what's used in the query
+        if (p.Name.match(/[@:?].+/)) { return; }
+
+        var matches = txt.match(/([@:?])\w+/);
+        if (matches) {
+            p.Name = matches[1] + p.Name;
+        }
     };
 
     var getParameterValue = function(p) {
