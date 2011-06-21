@@ -384,6 +384,10 @@
             result.sort(function(a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
 
             return result;
+        },
+
+        formatDuration: function(duration) {
+            return (duration || 0).toFixed(1);
         }
     };
 })(jQuery);

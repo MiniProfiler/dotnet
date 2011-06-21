@@ -5,14 +5,14 @@
     <div class="profiler-button {{if HasDuplicateSqlTimings}}warning{{/if}}">
     {{if HasDuplicateSqlTimings}}<span class="nuclear">!</span>{{/if}}
       <span class="number">
-        ${DurationMilliseconds} <span class="unit">ms</span>
+        ${MiniProfiler.formatDuration(DurationMilliseconds)} <span class="unit">ms</span>
       </span>
     </div>
 
     <div class="profiler-popup">
       <div class="info">
         <span class="name">
-          ${Name} <span class="overall-duration">(${DurationMilliseconds} ms)</span>
+          ${Name} <span class="overall-duration">(${MiniProfiler.formatDuration(DurationMilliseconds)} ms)</span>
         </span>
         <span class="server-time">${MachineName} on ${MiniProfiler.renderDate(Started)}</span>
       </div>
@@ -45,8 +45,8 @@
               </td>
             {{if HasSqlTimings}}
               <td colspan="2" class="number percent-in-sql" title="percentage of total time spent executing sql">
-                  ${Math.round(DurationMillisecondsInSql / DurationMilliseconds * 1000) / 10.0}
-                  <span class="unit">% in sql</span>
+                ${MiniProfiler.formatDuration(DurationMillisecondsInSql / DurationMilliseconds * 100)}
+                <span class="unit">% in sql</span>
               </td>
             {{/if}}
             </tr>
@@ -84,13 +84,13 @@
       <span class="indent">${MiniProfiler.renderIndent(Depth)}</span> ${Name}
     </td>
     <td class="duration" title="duration of this step without any children's durations">
-      ${DurationWithoutChildrenMilliseconds}
+      ${MiniProfiler.formatDuration(DurationWithoutChildrenMilliseconds)}
     </td>
     <td class="duration duration-with-children" title="duration of this step and its children">
-      ${DurationMilliseconds}
+      ${MiniProfiler.formatDuration(DurationMilliseconds)}
     </td>
     <td class="duration time-from-start" title="time ellapsed since profiling started">
-      <span class="unit">+</span>${StartMilliseconds}
+      <span class="unit">+</span>${MiniProfiler.formatDuration(StartMilliseconds)}
     </td>
 
   {{if HasSqlTimings}}
@@ -101,7 +101,7 @@
       </a>
     </td>
     <td class="duration" title="aggregate duration of all queries in this step (excludes children)">
-      ${SqlTimingsDurationMilliseconds}
+      ${MiniProfiler.formatDuration(SqlTimingsDurationMilliseconds)}
     </td>
   {{/if}}
 
@@ -120,12 +120,12 @@
   <tr class="{{if i % 2 == 1}}odd{{/if}}" data-timing-id="${s.ParentTimingId}">
     <td class="info">
       <div>${s.ParentTimingName}</div>
-      <div class="number"><span class="unit">T+</span>${s.StartMilliseconds} <span class="unit">ms</span></div>
+      <div class="number"><span class="unit">T+</span>${MiniProfiler.formatDuration(s.StartMilliseconds)} <span class="unit">ms</span></div>
       <div>
         {{if s.IsDuplicate}}<span class="warning">DUPLICATE</span>{{/if}}
         ${MiniProfiler.renderExecuteType(s.ExecuteType)}
       </div>
-      <div>${s.DurationMilliseconds} <span class="unit">ms</span></div>
+      <div>${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="unit">ms</span></div>
     </td>
     <td>
       <div class="query">
