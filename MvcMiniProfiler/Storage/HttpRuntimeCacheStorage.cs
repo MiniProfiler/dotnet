@@ -19,7 +19,7 @@ namespace MvcMiniProfiler.Storage
 
         /// <summary>
         /// How long to cache each <see cref="MiniProfiler"/> for (i.e. the absolute expiration parameter of 
-        /// <see cref="System.Web.Caching.Cache.Insert"/>)
+        /// <see cref="System.Web.Caching.Cache.Insert(string, object, System.Web.Caching.CacheDependency, System.DateTime, System.TimeSpan, System.Web.Caching.CacheItemUpdateCallback)"/>)
         /// </summary>
         public TimeSpan CacheDuration { get; set; }
 

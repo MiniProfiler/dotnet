@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading;
 using System.Text.RegularExpressions;
 
+#pragma warning disable 1591, 1573, 1711, 1712 // xml doc comments warnings
+
 namespace MvcMiniProfiler.Helpers
 {
     internal static partial class SqlMapper
@@ -1424,7 +1426,7 @@ IDataReader reader, int startBound = 0, int length = -1, bool returnNullIfFirstM
             }
         }
     }
-    public class DynamicParameters : SqlMapper.IDynamicParameters
+    internal class DynamicParameters : SqlMapper.IDynamicParameters
     {
         Dictionary<string, ParamInfo> parameters = new Dictionary<string, ParamInfo>();
 
@@ -1550,3 +1552,5 @@ string name, object value = null, DbType? dbType = null, ParameterDirection? dir
         }
     }
 }
+
+#pragma warning restore 1591 // xml doc comments warnings

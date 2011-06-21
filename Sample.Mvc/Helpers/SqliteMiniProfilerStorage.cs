@@ -8,7 +8,7 @@ using SampleWeb.Controllers;
 
 namespace SampleWeb.Helpers
 {
-    public class SqliteMiniProfilerStorage : MvcMiniProfiler.Storage.DatabaseStorageBase
+    public class SqliteMiniProfilerStorage : MvcMiniProfiler.Storage.SqlServerStorage
     {
         public SqliteMiniProfilerStorage(string connectionString)
             : base(connectionString)
