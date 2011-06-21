@@ -99,8 +99,20 @@ namespace SampleWeb.Controllers
             using (profiler.Step("Nested call " + i))
             {
                 // run some meaningless queries to illustrate formatting
-                conn.Query("select * from MiniProfilers where Name like @name or Name = @name or DurationMilliseconds >= @duration or HasSqlTimings = @hasSqlTimings",
-                    new { name = "Home/Index", duration = 100.5, hasSqlTimings = true });
+                conn.Query(
+@"select *
+from   MiniProfilers
+where  Name like @name
+        or Name = @name
+        or DurationMilliseconds >= @duration
+        or HasSqlTimings = @hasSqlTimings
+        or Started > @yesterday ", new 
+                                 { 
+                                     name = "Home/Index", 
+                                     duration = 100.5, 
+                                     hasSqlTimings = true,
+                                     yesterday = DateTime.UtcNow.AddDays(-1)
+                                 });
 
                 conn.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
 

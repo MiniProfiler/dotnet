@@ -307,7 +307,7 @@
         var result = p.Value,
             t = (p.DbType || '').toLowerCase();
         
-        if (t.match(/string/)) {
+        if (t.match(/(string|datetime)/)) {
             result = "'" + result + "'";
         }
         else if (t.match(/boolean/)) {
