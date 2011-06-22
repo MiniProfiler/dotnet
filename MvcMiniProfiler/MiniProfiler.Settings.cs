@@ -44,13 +44,6 @@ namespace MvcMiniProfiler
             public static decimal TrivialDurationThresholdMilliseconds { get; set; }
 
             /// <summary>
-            /// Dictates on which side of the page the profiler popup button is displayed; defaults to false (i.e. renders on left side).
-            /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
-            /// </summary>
-            [DefaultValue(false), Obsolete("Use Settings.PopupRenderPosition or .RenderIncludes(position: RenderPosition.Right) instead, this setting will be removed in a future version")]
-            public static bool RenderPopupButtonOnRight { get; set; }
-
-            /// <summary>
             /// Dictates if the "time with children" column is displayed by default, defaults to false.
             /// For a per-page override you can use .RenderIncludes(showTimeWithChildren: true/false)
             /// </summary>

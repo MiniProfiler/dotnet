@@ -43,15 +43,12 @@ namespace MvcMiniProfiler.UI
 
             if (profiler != null)
             {
-                // TODO: remove after a few versions
-                var pos = position ?? (MiniProfiler.Settings.RenderPopupButtonOnRight ? RenderPosition.Right : RenderPosition.Left);
-
                 result = format.Format(new
                 {
                     path = EnsureEndingSlash(HttpContext.Current.Request.ApplicationPath),
                     version = MiniProfiler.Settings.Version,
                     id = profiler.Id,
-                    position = pos.ToString().ToLower(),
+                    position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
                     showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
                     maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow
