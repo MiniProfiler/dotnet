@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+
+namespace MvcMiniProfiler.SqlFormatters
+{
+    public class SqlServerFormatter : ISqlFormatter
+    {
+
+        static Dictionary<DbType, Func<SqlTimingParameter, string>> paramTranslator;
+
+        static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
+        {
+            var capture = native;
+            return p => {
+                if (p.Size < 1) { return capture; } else { return capture + "(" + (p.Size > 8000 ? "max" : p.Size.ToString()) + ")"; }
+            };
+        }
+
+        static SqlServerFormatter()
+        {
+
+            
+            paramTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
+            {
+                {DbType.AnsiString, GetWithLenFormatter("varchar")},
+                {DbType.String, GetWithLenFormatter("nvarchar")},
+                {DbType.AnsiStringFixedLength, GetWithLenFormatter("char")},
+                {DbType.StringFixedLength, GetWithLenFormatter("nchar")},
+                {DbType.Byte, p => "tinyint"},
+                {DbType.Int16, p => "smallint"},
+                {DbType.Int32, p => "int"},
+                {DbType.Int64, p => "bigint"},
+                {DbType.DateTime, p => "datetime"},
+                {DbType.Guid, p => "uniqueidentifier"},
+                {DbType.Boolean, p => "bit"},
+            };
+
+        }
+
+        public string FormatSql(SqlTiming timing)
+        {
+            
+            if (timing.Parameters == null || timing.Parameters.Count == 0)
+            {
+                return timing.CommandString;
+            }
+
+            StringBuilder declares = new StringBuilder();
+            StringBuilder sets = new StringBuilder();
+
+            declares.Append("DECLARE ");
+            sets.Append("SELECT ");
+
+            bool first = true;
+            foreach (var p in timing.Parameters)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    declares.Append(", ");
+                    sets.Append(", "); 
+                }
+
+                DbType parsed;
+                string resolvedType = null;
+                if (!Enum.TryParse<DbType>(p.DbType, out parsed))
+                {
+                    resolvedType = p.DbType;
+                }
+                
+                if (resolvedType == null)
+                {
+                    Func<SqlTimingParameter, string> translator; 
+                    if (paramTranslator.TryGetValue(parsed, out translator))
+                    {
+                        resolvedType = translator(p);
+                    }
+                    resolvedType = resolvedType ?? p.DbType;
+                }
+
+                declares.Append(p.Name).Append(" ").Append(resolvedType);
+                sets.Append(p.Name).Append(" = ").Append(PrepareValue(p));
+            }
+
+            return declares
+                .AppendLine()
+                .AppendLine(sets.ToString())
+                .AppendLine()
+                .Append(timing.CommandString)
+                .ToString();
+        }
+
+        static readonly string[] dontQuote = new string[] {"Int16","Int32","Int64", "Boolean"};
+        private string PrepareValue(SqlTimingParameter p)
+        {
+            if (dontQuote.Contains(p.DbType))
+            {
+                return p.Value;
+            }
+
+            string prefix = "";
+            if (p.DbType == "String" || p.DbType == "StringFixedLength")
+            {
+                prefix = "N";
+            }
+
+            return prefix + "'" + p.Value + "'";
+        }
+    }
+}

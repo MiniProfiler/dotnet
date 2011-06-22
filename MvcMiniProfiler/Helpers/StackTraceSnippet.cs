@@ -50,7 +50,7 @@ namespace MvcMiniProfiler.Helpers
         public static string Get()
         {
             var frames = new StackTrace(true).GetFrames();
-            var methods = new Stack<string>();
+            var methods = new List<string>();
 
             for (int i = 0; i < frames.Length; i++)
             {
@@ -68,7 +68,7 @@ namespace MvcMiniProfiler.Helpers
                     !ShouldExcludeType(method) &&
                     !MethodsToExclude.Contains(method.Name))
                 {
-                    methods.Push(method.Name);
+                    methods.Add(method.Name);
                 }
             }
 
@@ -76,7 +76,13 @@ namespace MvcMiniProfiler.Helpers
 
             const int maxlen = 120;
             if (result.Length > maxlen)
-                result = result.Substring(result.Length - maxlen);
+            {
+                var index = result.IndexOf(" ", maxlen);
+                if (index >= maxlen)
+                {
+                    result = result.Substring(0, index);
+                }
+            }
 
             return result;
         }

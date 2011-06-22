@@ -64,10 +64,14 @@
     <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="Helpers\HaackFormatter.cs" />
+    <Compile Include="ISqlFormatter.cs" />
     <Compile Include="MiniProfiler.Settings.cs">
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniProfiler.cs" />
+    <Compile Include="SqlFormatters\InlineFormatter.cs" />
+    <Compile Include="SqlFormatters\OracleFormatter.cs" />
+    <Compile Include="SqlFormatters\SqlServerFormatter.cs" />
     <Compile Include="SqlTimingParameter.cs">
       <DependentUpon>SqlTiming.cs</DependentUpon>
     </Compile>
@@ -100,6 +104,7 @@
   <ItemGroup>
     <EmbeddedResource Include="UI\jquery.tmpl.beta1.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

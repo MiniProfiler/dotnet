@@ -56,7 +56,7 @@ namespace MvcMiniProfiler
         public List<SqlTiming> SqlTimings { get; set; }
 
         /// <summary>
-        /// Needed for database deserialization.
+        /// Needed for database deserialization and JSON serialization.
         /// </summary>
         public Guid? ParentTimingId { get; set; }
 
@@ -75,6 +75,25 @@ namespace MvcMiniProfiler
 
                 if (value != null && ParentTimingId != value.Id)
                     ParentTimingId = value.Id;
+            }
+        }
+
+        public void RebuildParentTimings() 
+        {
+            if (SqlTimings != null)
+            {
+                foreach (var timing in SqlTimings)
+                {
+                    timing.ParentTiming = this;
+                }
+            }
+            if (Children != null)
+            {
+                foreach (var child in Children)
+                {
+                    child.ParentTiming = this;
+                    child.RebuildParentTimings();
+                }
             }
         }
 

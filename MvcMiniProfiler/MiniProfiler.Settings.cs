@@ -82,6 +82,11 @@ namespace MvcMiniProfiler
             public static Storage.IStorage LongTermStorage { get; set; }
 
             /// <summary>
+            /// The formatter applied to the SQL being rendered (used only for UI)
+            /// </summary>
+            public static ISqlFormatter SqlFormatter { get; set; }
+
+            /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
             public static string Version { get; private set; }
