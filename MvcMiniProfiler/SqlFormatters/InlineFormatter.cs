@@ -19,6 +19,11 @@ namespace MvcMiniProfiler.SqlFormatters
             _includeTypeInfo = includeTypeInfo;
         }
 
+        /// <summary>
+        /// Formats the SQL in a generic frieldly format, including the parameter type information in a comment if it was specified in the InlineFormatter constructor
+        /// </summary>
+        /// <param name="timing">The SqlTiming to format</param>
+        /// <returns>A formatted SQL string</returns>
         public string FormatSql(SqlTiming timing)
         {
             var sql = timing.CommandString;

@@ -41,6 +41,11 @@ namespace MvcMiniProfiler.SqlFormatters
 
         }
 
+        /// <summary>
+        /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
+        /// </summary>
+        /// <param name="timing">The SqlTiming to format</param>
+        /// <returns>A formatted SQL string</returns>
         public string FormatSql(SqlTiming timing)
         {
             

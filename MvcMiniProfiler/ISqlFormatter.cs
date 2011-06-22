@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MvcMiniProfiler
+﻿namespace MvcMiniProfiler
 {
+    /// <summary>
+    /// Takes a SqlTiming and returns a formatted SQL string, for parameter replacement, etc.
+    /// </summary>
     public interface ISqlFormatter
     {
         /// <summary>
