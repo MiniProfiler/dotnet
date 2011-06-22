@@ -45,9 +45,39 @@ namespace MvcMiniProfiler
 
             /// <summary>
             /// Dictates on which side of the page the profiler popup button is displayed; defaults to false (i.e. renders on left side).
+            /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
             /// </summary>
-            [DefaultValue(false), Obsolete("Please use .RenderIncludes(position: RenderPosition.Left/Right)")]
+            [DefaultValue(false), Obsolete("Use Settings.PopupRenderPosition or .RenderIncludes(position: RenderPosition.Right) instead, this setting will be removed in a future version")]
             public static bool RenderPopupButtonOnRight { get; set; }
+
+            /// <summary>
+            /// Dictates if the "time with children" column is displayed by default, defaults to false.
+            /// For a per-page override you can use .RenderIncludes(showTimeWithChildren: true/false)
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool PopupShowTimeWithChildren { get; set; }
+
+            /// <summary>
+            /// Dictates if trivial timings are displayed by default, defaults to false.
+            /// For a per-page override you can use .RenderIncludes(showTrivial: true/false)
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool PopupShowTrivial { get; set; }
+
+            /// <summary>
+            /// Determines how many traces to show before removing the oldest; defaults to 15.
+            /// For a per-page override you can use .RenderIncludes(maxTracesToShow: 10)
+            /// </summary>
+            [DefaultValue(15)]
+            public static int PopupMaxTracesToShow { get; set; }
+
+            /// <summary>
+            /// Dictates on which side of the page the profiler popup button is displayed; defaults to left.
+            /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
+            /// </summary>
+            [DefaultValue(RenderPosition.Left)]
+            public static RenderPosition PopupRenderPosition { get; set; }
+
 
             /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
