@@ -84,8 +84,14 @@ namespace MvcMiniProfiler.SqlFormatters
                     resolvedType = resolvedType ?? p.DbType;
                 }
 
-                declares.Append(p.Name).Append(" ").Append(resolvedType);
-                sets.Append(p.Name).Append(" = ").Append(PrepareValue(p));
+                var niceName = p.Name;
+                if (!niceName.StartsWith("@"))
+                {
+                    niceName = "@" + niceName;
+                }
+
+                declares.Append(niceName).Append(" ").Append(resolvedType);
+                sets.Append(niceName).Append(" = ").Append(PrepareValue(p));
             }
 
             return declares
@@ -104,13 +110,18 @@ namespace MvcMiniProfiler.SqlFormatters
                 return p.Value;
             }
 
+            if (p.Value == null)
+            {
+                return "null";
+            }
+
             string prefix = "";
             if (p.DbType == "String" || p.DbType == "StringFixedLength")
             {
                 prefix = "N";
             }
 
-            return prefix + "'" + p.Value + "'";
+            return prefix + "'" + p.Value.Replace("'","''") + "'";
         }
     }
 }

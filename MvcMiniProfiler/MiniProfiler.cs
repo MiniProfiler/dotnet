@@ -122,18 +122,6 @@ namespace MvcMiniProfiler
         }
 
 
-        [OnDeserialized]
-        void OnDeserialized (StreamingContext ctx) 
-        {
-            HasSqlTimings = _root != null && _root.HasSqlTimings;
-            HasDuplicateSqlTimings = _root != null && _root.HasDuplicateSqlTimings;
-            if (_root != null)
-            {
-                _root.RebuildParentTimings();
-            }
-        }
-
-
         /// <summary>
         /// Returns true when we have profiled queries.
         /// </summary>
@@ -500,6 +488,17 @@ namespace MvcMiniProfiler
 
             var result = new JavaScriptSerializer().Deserialize<MiniProfiler>(json);
             return result;
+        }
+
+        [OnDeserialized]
+        void OnDeserialized(StreamingContext ctx)
+        {
+            HasSqlTimings = GetTimingHierarchy().Any(t => t.HasSqlTimings);
+            HasDuplicateSqlTimings = GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);
+            if (_root != null)
+            {
+                _root.RebuildParentTimings();
+            }
         }
 
         /// <summary>
