@@ -78,6 +78,17 @@ namespace SampleWeb
             MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
 
             MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
+			
+            // these settings are optional and all have defaults, any matching setting specified in .RenderIncludes() will
+            // override the application-wide defaults specified here, for example if you had both:
+            //    MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right;
+            //    and in the page:
+            //    @MiniProfiler.RenderIncludes(position: RenderPosition.Left)
+            // then the position would be on the left that that page, and on the right (the app default) for anywhere that doesn't
+            // specified position in the .RenderIncludes() call.
+
+            MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; //defaults to left
+            MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
         }
 
     }
