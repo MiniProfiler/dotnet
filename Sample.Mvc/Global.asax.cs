@@ -89,6 +89,7 @@ namespace SampleWeb
 
             MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; //defaults to left
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
+            MiniProfiler.Settings.RouteBasePath = "~/profiler";
         }
 
     }

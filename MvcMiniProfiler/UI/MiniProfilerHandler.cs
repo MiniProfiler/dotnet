@@ -45,7 +45,7 @@ namespace MvcMiniProfiler.UI
             {
                 result = format.Format(new
                 {
-                    path = EnsureEndingSlash(HttpContext.Current.Request.ApplicationPath),
+                    path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
                     version = MiniProfiler.Settings.Version,
                     id = profiler.Id,
                     position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
@@ -60,7 +60,6 @@ namespace MvcMiniProfiler.UI
 
         internal static void RegisterRoutes()
         {
-            // TODO: make a Setting to allow customization of these urls, e.g. RoutePrefix, defaults to "mini-profiler-"
             var urls = new[] 
             { 
                 "mini-profiler-yepnope.1.0.1.js", 
@@ -73,12 +72,13 @@ namespace MvcMiniProfiler.UI
             };
             var routes = RouteTable.Routes;
             var handler = new MiniProfilerHandler();
+            var prefix = (MiniProfiler.Settings.RouteBasePath ?? "").Replace("~/", "").EnsureTrailingSlash();
 
             using (routes.GetWriteLock())
             {
                 foreach (var url in urls)
                 {
-                    var route = new Route(url, handler)
+                    var route = new Route(prefix + url, handler)
                     {
                         // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
                         Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
@@ -88,13 +88,6 @@ namespace MvcMiniProfiler.UI
                     routes.Insert(0, route);
                 }
             }
-        }
-
-        internal static string EnsureEndingSlash(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input)) return "/";
-            if (!input.EndsWith("/")) input += "/";
-            return input;
         }
 
         /// <summary>

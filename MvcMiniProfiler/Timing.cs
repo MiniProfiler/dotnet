@@ -78,6 +78,9 @@ namespace MvcMiniProfiler
             }
         }
 
+        /// <summary>
+        /// Rebuilds all the parent timings on deserialization calls
+        /// </summary>
         public void RebuildParentTimings() 
         {
             if (SqlTimings != null)

@@ -80,6 +80,14 @@ namespace MvcMiniProfiler
             [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/" })]
             public static string[] IgnoredRootPaths { get; set; }
 
+            /// <summary>
+            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "myDirectory/" would yield
+            /// "myDirectory/mini-profiler-includes.js" rather than just "/mini-profiler-includes.js"
+            /// Any setting here is literally appended to "~/" for an app-relative path
+            /// </summary>
+            [DefaultValue("~/")]
+            public static string RouteBasePath { get; set; }
+
 
             /// <summary>
             /// Understands how to save and load MiniProfilers for a very limited time. Used for caching between when

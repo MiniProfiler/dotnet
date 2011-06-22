@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Web.Routing;
 using System.Web.Script.Serialization;
+using MvcMiniProfiler.Helpers;
 
 namespace MvcMiniProfiler
 {
@@ -304,12 +305,16 @@ namespace MvcMiniProfiler
             if (context == null) return null;
 
             var url = context.Request.Url;
-            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToLower();
+            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1);
 
             // don't profile /content or /scripts, either - happens in web.dev
             foreach (var ignored in Settings.IgnoredRootPaths ?? new string[0])
             {
                 if (path.StartsWith(ignored, StringComparison.OrdinalIgnoreCase))
+                    return null;
+
+                var routePath = (MiniProfiler.Settings.RouteBasePath ?? "").Replace("~", "").RemoveTrailingSlash();
+                if (path.StartsWith(routePath + ignored, StringComparison.OrdinalIgnoreCase))
                     return null;
             }
 
@@ -413,8 +418,9 @@ namespace MvcMiniProfiler
         /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
         /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
         /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>
+        /// <param name="maxTracesToShow">The maximum number of trace popups to show before removing the oldest (defaults to 15)</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool showTrivial = false, bool showTimeWithChildren = false, int maxTracesToShow = 15)
+        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null)
         {
             return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow);
         }

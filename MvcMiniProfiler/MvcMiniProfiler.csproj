@@ -61,6 +61,7 @@
     <Compile Include="Data\ProfiledDbProviderFactory.cs" />
     <Compile Include="Data\ProfiledDbProviderServices.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
+    <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="Helpers\HaackFormatter.cs" />
