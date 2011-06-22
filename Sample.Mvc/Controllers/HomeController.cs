@@ -82,6 +82,7 @@ namespace SampleWeb.Controllers
             using (var conn = GetConnection())
             {
                 long total = 0;
+
                 for (int i = 0; i < 20; i++)
                 {
                     total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();

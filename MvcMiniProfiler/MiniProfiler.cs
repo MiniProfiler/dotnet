@@ -241,11 +241,14 @@ namespace MvcMiniProfiler
         {
             int count;
 
-            stats.IsDuplicate = _sqlCounts.TryGetValue(stats.CommandString, out count);
-            _sqlCounts[stats.CommandString] = count + 1;
+            stats.IsDuplicate = _sqlCounts.TryGetValue(stats.RawCommandString, out count);
+            _sqlCounts[stats.RawCommandString] = count + 1;
 
             HasSqlTimings = true;
-            if (stats.IsDuplicate) HasDuplicateSqlTimings = true;
+            if (stats.IsDuplicate)
+            {
+                HasDuplicateSqlTimings = true;
+            }
 
             Head.AddSqlTiming(stats);
         }

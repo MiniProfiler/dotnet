@@ -35,6 +35,12 @@ namespace MvcMiniProfiler
         public string CommandString { get; set; }
 
         /// <summary>
+        /// The sql that was executed.
+        /// </summary>
+        [DataMember(Order = 8)]
+        public string RawCommandString { get; private set; }
+
+        /// <summary>
         /// Roughly where in the calling code that this sql was executed.
         /// </summary>
         [DataMember(Order = 3)]
@@ -93,6 +99,7 @@ namespace MvcMiniProfiler
         /// <summary>
         /// True when other identical sql statements have been executed during this MiniProfiler session.
         /// </summary>
+        [DataMember(Order = 9)]
         public bool IsDuplicate { get; set; }
 
         private long _startTicks;
@@ -105,7 +112,7 @@ namespace MvcMiniProfiler
         {
             Id = Guid.NewGuid();
 
-            CommandString = AddSpacesToParameters(command.CommandText);
+            RawCommandString = CommandString = AddSpacesToParameters(command.CommandText);
             Parameters = GetCommandParameters(command);
             ExecuteType = type;
             StackTraceSnippet = Helpers.StackTraceSnippet.Get();

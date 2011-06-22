@@ -76,6 +76,8 @@ namespace SampleWeb
             // scheme would put each property into its own column, so they could be queried independently of the MiniProfiler's UI)
 
             MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
+
+            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
         }
 
     }
