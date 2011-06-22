@@ -6,10 +6,13 @@ using System.Data;
 
 namespace MvcMiniProfiler.SqlFormatters
 {
+    /// <summary>
+    /// Formats SQL server queries with a DECLARE up top for parameter values
+    /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
 
-        static Dictionary<DbType, Func<SqlTimingParameter, string>> paramTranslator;
+        static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> paramTranslator;
 
         static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
@@ -20,9 +23,7 @@ namespace MvcMiniProfiler.SqlFormatters
         }
 
         static SqlServerFormatter()
-        {
-
-            
+        {   
             paramTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
             {
                 {DbType.AnsiString, GetWithLenFormatter("varchar")},

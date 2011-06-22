@@ -1,64 +1,87 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text.RegularExpressions;
 
 namespace MvcMiniProfiler.SqlFormatters
 {
+    /// <summary>
+    /// Formats any SQL query with inline parameters, optionally including the value type
+    /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
-        /* TODO: port this JS
-         
-         *     var inlineSqlParameters = function(sqlTiming) {
-        if (!sqlTiming.Parameters) return sqlTiming;
+        private static readonly Regex _paramPrefixes = new Regex(@"[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static bool _includeTypeInfo;
 
-        var txt = sqlTiming.CommandString;
-
-        for (var i = 0, p; i < sqlTiming.Parameters.length; i++) {
-            p = sqlTiming.Parameters[i];
-            ensureParameterName(txt, p);
-            txt = txt.replace(new RegExp(p.Name, 'gi'), getParameterValue(p));
+        /// <summary>
+        /// Creates a new Inline SQL Formatter, optionally including the parameter type info in comments beside the replaced value
+        /// </summary>
+        /// <param name="includeTypeInfo">whether to include a comment after the value, indicating the type, e.g. /* @myParam DbType.Int32 */</param>
+        public InlineFormatter(bool includeTypeInfo = false)
+        {
+            _includeTypeInfo = includeTypeInfo;
         }
-
-        sqlTiming.CommandString = txt;
-    };
-
-    var ensureParameterName = function(txt, p) {
-        // DbParameters don't have to have a @ or : as prefix, so ensure the name we have matches what's used in the query
-        if (p.Name.match(/[@:?].+/)) { return; }
-
-        var matches = txt.match(/([@:?])\w+/);
-        if (matches) {
-            p.Name = matches[1] + p.Name;
-        }
-    };
-
-    var getParameterValue = function(p) {
-        // TODO: ugh, figure out how to allow different db providers to specify how values are represented (e.g. bit in oracle)
-        var result = p.Value,
-            t = (p.DbType || '').toLowerCase();
-        
-        if (t.match(/(string|datetime)/)) {
-            result = "'" + result + "'";
-        }
-        else if (t.match(/boolean/)) {
-            result = result == "True" ? 1 : result == "False" ? 0 : null;
-        }
-
-        if (result === null) {
-            result = 'null';
-        }
-
-        return result + ' /* ' + p.Name + ' DbType.' + p.DbType + ' * /'; 
-    };
-         
-         
-         */
-
 
         public string FormatSql(SqlTiming timing)
         {
-            throw new NotImplementedException();
+            var sql = timing.CommandString;
+
+            if (timing.Parameters == null || timing.Parameters.Count == 0)
+            {
+                return sql;
+            }
+
+            foreach(var p in timing.Parameters)
+            {
+                // If the parameter doesn't have a prefix (@,:,etc), append one
+                var name = _paramPrefixes.IsMatch(p.Name) ? p.Name : Regex.Match(sql, "([@:?])" + p.Name).Value;
+                var value = GetParameterValue(p);
+                sql = Regex.Replace(sql, name, m => value, RegexOptions.IgnoreCase);
+            }
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Returns a string representation of the parameter's value, including the type
+        /// </summary>
+        /// <param name="p">The parameter to get a value for</param>
+        /// <returns></returns>
+        public string GetParameterValue(SqlTimingParameter p)
+        {
+            // TODO: ugh, figure out how to allow different db providers to specify how values are represented (e.g. bit in oracle)
+            var result = p.Value;
+            var type = p.DbType ?? "";
+
+            switch (type.ToLower())
+            {
+                case "string":
+                case "datetime":
+                    result = string.Format("'{0}'", result);
+                    break;
+                case "boolean":
+                    switch (result)
+                    {
+                        case "True":
+                            result = "1";
+                            break;
+                        case "False":
+                            result = "0";
+                            break;
+                        default:
+                            result = null;
+                            break;
+                    }
+                    break;
+            }
+
+            if (result == null)
+            {
+                result = "null";
+            }
+            if(_includeTypeInfo)
+            {
+                result += " /* " + p.Name + " DbType." + p.DbType + " */";
+            }
+            
+            return result;
         }
     }
 }
