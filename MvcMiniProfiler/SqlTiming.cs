@@ -43,6 +43,9 @@ namespace MvcMiniProfiler
         public string RawCommandString { get; private set; }
 
 
+        /// <summary>
+        /// The command string with special formatting applied based on MiniProfiler.Settings.SqlFormatter
+        /// </summary>
         public string FormattedCommandString { 
             get 
             {
