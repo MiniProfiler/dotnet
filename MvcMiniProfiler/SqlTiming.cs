@@ -178,11 +178,24 @@ namespace MvcMiniProfiler
             {
                 if (!string.IsNullOrWhiteSpace(p.ParameterName))
                 {
+                    string val = null;
+                    if (p.Value != DBNull.Value)
+                    {
+                        if (p.Value is DateTime)
+                        {
+                            val = ((DateTime)p.Value).ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            val = p.Value.ToString();
+                        }
+                    }
+
                     result.Add(new SqlTimingParameter
                     {
                         ParentSqlTimingId = Id,
                         Name = p.ParameterName.Trim(),
-                        Value = (p.Value == null || p.Value is DBNull) ? null : p.Value.ToString(),
+                        Value = val,
                         DbType = p.DbType.ToString(),
                         Size = p.Size
                     });
