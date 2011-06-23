@@ -217,12 +217,12 @@
 
             if (bg.is(':visible')) {
                 // ctrl-c will be hit on html target - let's not hide.
-                if (!(e.keyCode == 67 && e.ctrlKey)) {
+                if (!(e.keyCode == 17 && e.ctrlKey)) {
                     hideQueries = isEscPress || !$.contains(queries[0], e.target) && !$.contains(popup[0], e.target);
                 }
             }
             else if (popup.is(':visible')) {
-               hidePopup = isEscPress || (!$.contains(popup[0], e.target) && !$.contains(button[0], e.target) && button[0] != e.target); 
+                hidePopup = isEscPress || (!$.contains(popup[0], e.target) && !$.contains(button[0], e.target) && button[0] != e.target);
             }
 
             if (hideQueries) {
@@ -358,7 +358,7 @@
             return result;
         },
 
-        formatDuration: function(duration) {
+        formatDuration: function (duration) {
             return (duration || 0).toFixed(1);
         }
     };
