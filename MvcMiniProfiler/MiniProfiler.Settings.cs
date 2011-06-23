@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using System.Reflection;
 using System.Web;
@@ -81,9 +79,9 @@ namespace MvcMiniProfiler
             public static string[] IgnoredRootPaths { get; set; }
 
             /// <summary>
-            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "myDirectory/" would yield
-            /// "myDirectory/mini-profiler-includes.js" rather than just "/mini-profiler-includes.js"
-            /// Any setting here is literally appended to "~/" for an app-relative path
+            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
+            /// "/myDirectory/mini-profiler-includes.js" rather than just "/mini-profiler-includes.js"
+            /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
             /// </summary>
             [DefaultValue("~/")]
             public static string RouteBasePath { get; set; }
