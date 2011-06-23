@@ -31,14 +31,26 @@ namespace MvcMiniProfiler
         /// <summary>
         /// The sql that was executed.
         /// </summary>
+        [ScriptIgnore]
         [DataMember(Order = 2)]
         public string CommandString { get; set; }
 
         /// <summary>
         /// The sql that was executed.
         /// </summary>
+        [ScriptIgnore]
         [DataMember(Order = 8)]
         public string RawCommandString { get; private set; }
+
+
+        public string FormattedCommandString { 
+            get 
+            {
+                if (MiniProfiler.Settings.SqlFormatter == null) return CommandString;
+
+                return MiniProfiler.Settings.SqlFormatter.FormatSql(this);
+            }
+        }
 
         /// <summary>
         /// Roughly where in the calling code that this sql was executed.

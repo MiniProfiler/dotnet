@@ -205,7 +205,7 @@ namespace MvcMiniProfiler.UI
         private static string ResultsJson(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "application/json";
-            return MiniProfiler.ToFormattedSqlJson(profiler);
+            return MiniProfiler.ToJson(profiler);
         }
 
         private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
@@ -217,7 +217,7 @@ namespace MvcMiniProfiler.UI
                 .AppendLine()
                 .AppendLine("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>")
                 .Append("<script type='text/javascript'> var profiler = ")
-                .Append(MiniProfiler.ToFormattedSqlJson(profiler))
+                .Append(MiniProfiler.ToJson(profiler))
                 .AppendLine(";</script>")
                 .Append(RenderIncludes(profiler)) // figure out how to better pass display options
                 .AppendLine("</head><body><div class='profiler-result-full'></div></body></html>")

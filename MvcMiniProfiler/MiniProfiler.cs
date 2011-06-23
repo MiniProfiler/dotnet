@@ -468,27 +468,6 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Returns the profiler text as formatted SQL (with inline params etc. handled)
-        /// </summary>
-        /// <param name="profiler"></param>
-        /// <returns></returns>
-        public static string ToFormattedSqlJson(MiniProfiler profiler)
-        {
-            var formatter =  Settings.SqlFormatter;
-            MiniProfiler clone = null; 
-            if (formatter != null)
-            {
-                clone = profiler.Clone();
-                foreach (var timing in clone.GetSqlTimings())
-                {
-                    timing.CommandString = formatter.FormatSql(timing);
-                }
-            }
-
-            return MiniProfiler.ToJson(clone ?? profiler);
-        }
-
-        /// <summary>
         /// Deserializes the json string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
         public static MiniProfiler FromJson(string json)
