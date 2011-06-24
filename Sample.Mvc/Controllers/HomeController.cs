@@ -41,6 +41,11 @@ namespace SampleWeb.Controllers
             return View();
         }
 
+        public ActionResult ResultsAuthorization()
+        {
+            return View();
+        }
+
         public ActionResult FetchRouteHits()
         {
             var profiler = MiniProfiler.Current;
@@ -107,10 +112,10 @@ where  Name like @name
         or Name = @name
         or DurationMilliseconds >= @duration
         or HasSqlTimings = @hasSqlTimings
-        or Started > @yesterday ", new 
-                                 { 
-                                     name = "Home/Index", 
-                                     duration = 100.5, 
+        or Started > @yesterday ", new
+                                 {
+                                     name = "Home/Index",
+                                     duration = 100.5,
                                      hasSqlTimings = true,
                                      yesterday = DateTime.UtcNow.AddDays(-1)
                                  });

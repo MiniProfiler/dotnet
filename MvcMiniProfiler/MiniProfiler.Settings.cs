@@ -121,6 +121,16 @@ namespace MvcMiniProfiler
             public static string Version { get; private set; }
 
             /// <summary>
+            /// A function that determines who can access the MiniProfiler results url.  It should return true when
+            /// the request client has access, false for a 401 to be returned. HttpRequest parameter is the current request and
+            /// MiniProfiler parameter is the results that were profiled.
+            /// </summary>
+            /// <remarks>
+            /// Both the HttpRequest and MiniProfiler parameters that will be passed into this function should never be null.
+            /// </remarks>
+            public static Func<HttpRequest, MiniProfiler, bool> Results_Authorize { get; set; }
+
+            /// <summary>
             /// Ensures that <see cref="ShortTermStorage"/> and <see cref="LongTermStorage"/> objects are initialized. Null values will
             /// be initialized to use the default <see cref="Storage.HttpRuntimeCacheStorage"/> strategy.
             /// </summary>

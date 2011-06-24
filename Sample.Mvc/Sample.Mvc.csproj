@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Data\TestMiniProfiler.sqlite" />
+    <Content Include="Views\Home\ResultsAuthorization.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">

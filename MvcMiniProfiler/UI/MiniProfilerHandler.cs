@@ -178,7 +178,7 @@ namespace MvcMiniProfiler.UI
             // this guid is the MiniProfiler.Id property
             Guid id;
             if (!Guid.TryParse(context.Request.QueryString["id"], out id))
-                return isPopup ? NotFound(context) : NotFound(context, "text/html", "No Guid id specified on the query string");
+                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             MiniProfiler.Settings.EnsureStorageStrategies();
             var profiler = MiniProfiler.Settings.ShortTermStorage.LoadMiniProfiler(id);
@@ -187,7 +187,16 @@ namespace MvcMiniProfiler.UI
                 profiler = MiniProfiler.Settings.LongTermStorage.LoadMiniProfiler(id);
 
             if (profiler == null)
-                return isPopup ? NotFound(context) : NotFound(context, "text/html", "No MiniProfiler results found with Id=" + id.ToString());
+                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
+
+            // ensure that callers have access to these results
+            var authorize = MiniProfiler.Settings.Results_Authorize;
+            if (authorize != null && !authorize(context.Request, profiler))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "text/plain";
+                return "Unauthorized";
+            }
 
             if (isPopup)
             {

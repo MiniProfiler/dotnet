@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Results Authorization";
+}
+
+<h2>MiniProfiler Results Authorization</h2>
+<p>
+    This route will only display timings when we have <a href="?isAuthorized=1"><code>?isAuthorized=1</code></a> on the query string.
+</p>
+<p>
+    It shows how you can use <code>MiniProfiler.Settings.Results_Authorize</code> to ensure that certain request conditions are met
+    before serving sensitive profiler results.
+</p>
+<p>
+    We use it on <a href="http://stackoverflow.com">Stack Overflow</a> to ensure that the current request's cookies map to a developer.
+</p>

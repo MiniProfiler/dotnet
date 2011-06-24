@@ -78,7 +78,7 @@ namespace SampleWeb
             MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
 
             MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
-			
+
             // these settings are optional and all have defaults, any matching setting specified in .RenderIncludes() will
             // override the application-wide defaults specified here, for example if you had both:
             //    MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right;
@@ -89,7 +89,21 @@ namespace SampleWeb
 
             MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; //defaults to left
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
-            MiniProfiler.Settings.RouteBasePath = "~/profiler";
+            MiniProfiler.Settings.RouteBasePath = "~/profiler";               //e.g. /profiler/mini-profiler-includes.js
+
+            // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
+            // can define a function that will authorize clients to see the json or full page results.
+            // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
+            MiniProfiler.Settings.Results_Authorize = (request, profiler) =>
+            {
+                // we'll use it here to check that a specific page had a query parameter
+                if ("Home/ResultsAuthorization".Equals(profiler.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // root Timing's Name will always be the profiled request's full url
+                    return profiler.Root.Name.ToLower().Contains("isauthorized");
+                }
+                return true; // all other requests are kosher
+            };
         }
 
     }
