@@ -36,6 +36,9 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -88,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="UI\includes.less" />
+    <None Include="UI\includes.less" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\includes.js" />
@@ -106,10 +109,17 @@
     <EmbeddedResource Include="UI\jquery.tmpl.beta1.js" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="lib\dotless.Compiler.exe" />
+    <EmbeddedResource Include="UI\includes.css" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>$(ProjectDir)lib\dotless.Compiler.exe -m $(ProjectDir)UI\includes.less $(ProjectDir)UI\includes.css</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

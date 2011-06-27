@@ -17,7 +17,7 @@ namespace MvcMiniProfiler.UI
         internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null)
         {
             const string format =
-@"<link rel=""stylesheet/less"" type=""text/css"" href=""{path}mini-profiler-includes.less?v={version}"">
+@"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}"">
 <script type=""text/javascript"" src=""{path}mini-profiler-yepnope.1.0.1.js""></script>
 <script type=""text/javascript"">
     yepnope([
@@ -66,9 +66,9 @@ namespace MvcMiniProfiler.UI
                 "mini-profiler-jquery.1.6.1.js",
                 "mini-profiler-jquery.tmpl.beta1.js",
                 "mini-profiler-includes.js", 
-                "mini-profiler-includes.less", 
+                "mini-profiler-includes.css", 
                 "mini-profiler-includes.tmpl", 
-                "mini-profiler-results" 
+                "mini-profiler-results"
             };
             var routes = RouteTable.Routes;
             var handler = new MiniProfilerHandler();
@@ -136,7 +136,7 @@ namespace MvcMiniProfiler.UI
         }
 
         /// <summary>
-        /// Handles rendering our .js and .less static content files.
+        /// Handles rendering static content files.
         /// </summary>
         private static string Includes(HttpContext context, string path)
         {
@@ -147,8 +147,8 @@ namespace MvcMiniProfiler.UI
                 case ".js":
                     response.ContentType = "application/javascript";
                     break;
-                case ".less":
-                    response.ContentType = "text/plain";
+                case ".css":
+                    response.ContentType = "text/css";
                     break;
                 case ".tmpl":
                     response.ContentType = "text/x-jquery-tmpl";
