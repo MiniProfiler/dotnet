@@ -69,11 +69,10 @@ namespace MvcMiniProfiler
             [DefaultValue(RenderPosition.Left)]
             public static RenderPosition PopupRenderPosition { get; set; }
 
-
             /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
             /// no profiler will be instantiated and no results will be displayed.  
-            /// Default value is { "/mini-profiler-includes.js", "/mini-profiler-includes.less", "/mini-profiler-results", "/content/", "/scripts/" }.
+            /// Default value is { "/mini-profiler-", "/content/", "/scripts/" }.
             /// </summary>
             [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/" })]
             public static string[] IgnoredRootPaths { get; set; }
@@ -85,7 +84,6 @@ namespace MvcMiniProfiler
             /// </summary>
             [DefaultValue("~/")]
             public static string RouteBasePath { get; set; }
-
 
             /// <summary>
             /// Understands how to save and load MiniProfilers for a very limited time. Used for caching between when
