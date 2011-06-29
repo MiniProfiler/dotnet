@@ -354,9 +354,8 @@ namespace MvcMiniProfiler
             var request = context.Request;
             var response = context.Response;
 
-            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            Settings.EnsureStorageStrategies();
-            Settings.ShortTermStorage.SaveMiniProfiler(current.Id, current);
+            // also set the profiler name to Controller/Action or /url
+            EnsureName(current, request);
 
             try
             {
@@ -364,29 +363,6 @@ namespace MvcMiniProfiler
                 response.AppendHeader("X-MiniProfiler-Id", current.Id.ToString());
             }
             catch { } // headers blew up
-
-            // also set the profiler name to Controller/Action or /url
-            if (string.IsNullOrWhiteSpace(current.Name))
-            {
-                var rc = request.RequestContext;
-                RouteValueDictionary values;
-
-                if (rc != null && rc.RouteData != null && (values = rc.RouteData.Values).Count > 0)
-                {
-                    var controller = values["Controller"];
-                    var action = values["Action"];
-
-                    if (controller != null && action != null)
-                        current.Name = controller.ToString() + "/" + action.ToString();
-                }
-
-                if (string.IsNullOrWhiteSpace(current.Name))
-                {
-                    current.Name = request.Url.AbsolutePath ?? "";
-                    if (current.Name.Length > 50)
-                        current.Name = current.Name.Remove(50);
-                }
-            }
 
             // by default, we should be calling .Stop in HttpApplication.EndRequest
             if (Settings.WriteScriptsToResponseOnStop)
@@ -398,6 +374,39 @@ namespace MvcMiniProfiler
                     return;
 
                 response.Write(RenderIncludes());
+            }
+
+            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
+            Settings.EnsureStorageStrategies();
+            Settings.ShortTermStorage.SaveMiniProfiler(current.Id, current);
+        }
+
+        /// <summary>
+        /// Makes sure 'profiler' has a Name, pulling it from route data or url.
+        /// </summary>
+        private static void EnsureName(MiniProfiler profiler, HttpRequest request)
+        {
+            // also set the profiler name to Controller/Action or /url
+            if (string.IsNullOrWhiteSpace(profiler.Name))
+            {
+                var rc = request.RequestContext;
+                RouteValueDictionary values;
+
+                if (rc != null && rc.RouteData != null && (values = rc.RouteData.Values).Count > 0)
+                {
+                    var controller = values["Controller"];
+                    var action = values["Action"];
+
+                    if (controller != null && action != null)
+                        profiler.Name = controller.ToString() + "/" + action.ToString();
+                }
+
+                if (string.IsNullOrWhiteSpace(profiler.Name))
+                {
+                    profiler.Name = request.Url.AbsolutePath ?? "";
+                    if (profiler.Name.Length > 50)
+                        profiler.Name = profiler.Name.Remove(50);
+                }
             }
         }
 
