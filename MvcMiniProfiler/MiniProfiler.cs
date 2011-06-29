@@ -364,18 +364,6 @@ namespace MvcMiniProfiler
             }
             catch { } // headers blew up
 
-            // by default, we should be calling .Stop in HttpApplication.EndRequest
-            if (Settings.WriteScriptsToResponseOnStop)
-            {
-                if (string.IsNullOrWhiteSpace(response.ContentType) || !response.ContentType.ToLower().Contains("text/html"))
-                    return;
-
-                if (!string.IsNullOrWhiteSpace(context.Request.Headers["X-Requested-With"]))
-                    return;
-
-                response.Write(RenderIncludes());
-            }
-
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             Settings.EnsureStorageStrategies();
             Settings.ShortTermStorage.SaveMiniProfiler(current.Id, current);
