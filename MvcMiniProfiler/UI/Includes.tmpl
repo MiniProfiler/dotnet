@@ -35,7 +35,7 @@
           <tfoot>
             <tr>
               <td colspan="3">
-                <a href="${MiniProfiler.shareUrl(Id)}" target="_blank">share</a>
+                <a href="${MiniProfiler.shareUrl(Id)}" class="share-profiler-results" target="_blank">share</a>
               {{if HasTrivialTimings}}
                 <a class="toggle-trivial" data-show-on-load="${HasAllTrivialTimings}" title="toggles any rows with &lt; ${TrivialDurationThresholdMilliseconds} ms">
                    show trivial
