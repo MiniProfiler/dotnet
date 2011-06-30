@@ -9,14 +9,14 @@ namespace MvcMiniProfiler.Helpers
     /// <summary>
     /// Common extension methods to use only in this project
     /// </summary>
-    public static class ExtensionMethods
+    internal static class ExtensionMethods
     {
         /// <summary>
         /// Answers true if this String is either null or empty.
         /// </summary>
-        internal static bool IsNullOrEmpty(this string s)
+        internal static bool IsNullOrWhiteSpace(this string s)
         {
-            return string.IsNullOrEmpty(s);
+            return string.IsNullOrWhiteSpace(s);
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace MvcMiniProfiler.Helpers
         /// </summary>
         internal static bool HasValue(this string s)
         {
-            return !string.IsNullOrEmpty(s);
+            return !string.IsNullOrWhiteSpace(s);
         }
 
         /// <summary>

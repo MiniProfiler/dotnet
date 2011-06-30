@@ -115,6 +115,11 @@ namespace MvcMiniProfiler
             public static ISqlFormatter SqlFormatter { get; set; }
 
             /// <summary>
+            /// Provides user identification for a given profiling request.
+            /// </summary>
+            public static IUserProvider UserProvider { get; set; }
+
+            /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
             public static string Version { get; private set; }

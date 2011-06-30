@@ -50,6 +50,16 @@ namespace MvcMiniProfiler
         [DataMember(Order = 5)]
         public ProfileLevel Level { get; set; }
 
+        /// <summary>
+        /// A string identifying the user/client that is profiling this request.  Set <see cref="MiniProfiler.Settings.UserProvider"/>
+        /// with an <see cref="IUserProvider"/>-implementing class to provide a custom value.
+        /// </summary>
+        /// <remarks>
+        /// If this is not set manually at some point, 
+        /// </remarks>
+        [DataMember(Order = 6)]
+        public string User { get; set; }
+
 
         private Timing _root;
         /// <summary>
@@ -354,8 +364,11 @@ namespace MvcMiniProfiler
             var request = context.Request;
             var response = context.Response;
 
-            // also set the profiler name to Controller/Action or /url
+            // set the profiler name to Controller/Action or /url
             EnsureName(current, request);
+
+            // set the user identity of who is profiling this request
+            EnsureUser(current, request);
 
             try
             {
@@ -396,6 +409,16 @@ namespace MvcMiniProfiler
                         profiler.Name = profiler.Name.Remove(50);
                 }
             }
+        }
+
+        /// <summary>
+        /// Ensures that there's a <see cref="MiniProfiler.User"/> identity set on the parameter profiler.
+        /// </summary>
+        private static void EnsureUser(MiniProfiler profiler, HttpRequest request)
+        {
+            if (profiler.User.HasValue()) return;
+
+            profiler.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(request);
         }
 
         /// <summary>
