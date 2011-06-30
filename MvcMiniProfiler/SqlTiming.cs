@@ -46,8 +46,9 @@ namespace MvcMiniProfiler
         /// <summary>
         /// The command string with special formatting applied based on MiniProfiler.Settings.SqlFormatter
         /// </summary>
-        public string FormattedCommandString { 
-            get 
+        public string FormattedCommandString
+        {
+            get
             {
                 if (MiniProfiler.Settings.SqlFormatter == null) return CommandString;
 
@@ -130,7 +131,9 @@ namespace MvcMiniProfiler
             RawCommandString = CommandString = AddSpacesToParameters(command.CommandText);
             Parameters = GetCommandParameters(command);
             ExecuteType = type;
-            StackTraceSnippet = Helpers.StackTraceSnippet.Get();
+
+            if (!MiniProfiler.Settings.ExcludeStackTraceSnippetFromSqlTimings)
+                StackTraceSnippet = Helpers.StackTraceSnippet.Get();
 
             _profiler = profiler;
             _profiler.AddSqlTiming(this);

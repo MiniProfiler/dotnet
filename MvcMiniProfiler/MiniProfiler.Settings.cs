@@ -64,6 +64,13 @@ namespace MvcMiniProfiler
             public static RenderPosition PopupRenderPosition { get; set; }
 
             /// <summary>
+            /// By default, SqlTimings will grab a stack trace to help locate where queries are being executed.
+            /// When this setting is true, no stack trace will be collected, possibly improving profiler performance.
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool ExcludeStackTraceSnippetFromSqlTimings { get; set; }
+
+            /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
             /// no profiler will be instantiated and no results will be displayed.  
             /// Default value is { "/mini-profiler-", "/content/", "/scripts/" }.
