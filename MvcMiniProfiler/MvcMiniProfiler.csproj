@@ -70,7 +70,9 @@
     <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="Helpers\HaackFormatter.cs" />
-    <Compile Include="IpAddressProvider.cs" />
+    <Compile Include="IpAddressProvider.cs">
+      <DependentUpon>IUserProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="IUserProvider.cs">
       <SubType>Code</SubType>
     </Compile>
