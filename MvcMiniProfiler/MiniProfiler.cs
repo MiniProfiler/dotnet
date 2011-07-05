@@ -379,7 +379,7 @@ namespace MvcMiniProfiler
 
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             Settings.EnsureStorageStrategies();
-            Settings.ShortTermStorage.SaveMiniProfiler(current.Id, current);
+            Settings.ShortTermStorage.SaveMiniProfiler(current);
         }
 
         /// <summary>

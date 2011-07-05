@@ -26,9 +26,9 @@ namespace MvcMiniProfiler.Storage
         }
 
         /// <summary>
-        /// Saves 'profiler' to a database under 'id'.
+        /// Saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        public abstract void SaveMiniProfiler(Guid id, MiniProfiler profiler);
+        public abstract void SaveMiniProfiler(MiniProfiler profiler);
 
         /// <summary>
         /// Returns the MiniProfiler identified by 'id' from the database or null when no MiniProfiler exists under that 'id'.

@@ -23,9 +23,10 @@ namespace MvcMiniProfiler.Storage
         }
 
         /// <summary>
-        /// Stores 'profiler' to dbo.MiniProfilers under 'id'; stores all child Timings and SqlTimings to their respective tables.
+        /// Stores <param name="profiler"/> to dbo.MiniProfilers under its <see cref="MiniProfiler.Id"/>; 
+        /// stores all child Timings and SqlTimings to their respective tables.
         /// </summary>
-        public override void SaveMiniProfiler(Guid id, MiniProfiler profiler)
+        public override void SaveMiniProfiler(MiniProfiler profiler)
         {
             const string sql =
 @"insert into MiniProfilers

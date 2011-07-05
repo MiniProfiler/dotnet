@@ -11,20 +11,16 @@ namespace MvcMiniProfiler.Storage
     public interface IStorage
     {
         /// <summary>
-        /// Stores <paramref name="profiler"/> under <paramref name="id"/>, which is also its <see cref="MiniProfiler.Id"/>.
+        /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="id">
-        /// The Guid that identifies the MiniProfiler; subsequent calls to <see cref="LoadMiniProfiler"/>
-        /// will pass this Guid.
-        /// </param>
         /// <param name="profiler">The results of a profiling session.</param>
         /// <remarks>
         /// Should be able to be called multiple times on the same profiler.
         /// </remarks>
-        void SaveMiniProfiler(Guid id, MiniProfiler profiler);
+        void SaveMiniProfiler(MiniProfiler profiler);
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>.
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
         MiniProfiler LoadMiniProfiler(Guid id);
     }

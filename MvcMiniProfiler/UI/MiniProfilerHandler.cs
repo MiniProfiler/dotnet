@@ -206,7 +206,7 @@ namespace MvcMiniProfiler.UI
             {
                 // the first time we hit this route as a full results page, the prof won't be in long term cache, so put it there for sharing
                 // each subsequent time the full page is hit, just save again, so we act as a sliding expiration
-                MiniProfiler.Settings.LongTermStorage.SaveMiniProfiler(profiler.Id, profiler);
+                MiniProfiler.Settings.LongTermStorage.SaveMiniProfiler(profiler);
                 return ResultsFullPage(context, profiler);
             }
         }
