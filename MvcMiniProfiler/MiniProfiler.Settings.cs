@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
@@ -13,6 +14,10 @@ namespace MvcMiniProfiler
         /// </summary>
         public static class Settings
         {
+        	private static readonly HashSet<string> assembliesToExclude;
+        	private static readonly HashSet<string> typesToExclude;
+        	private static readonly HashSet<string> methodsToExclude;
+
             static Settings()
             {
                 var props = from p in typeof(Settings).GetProperties(BindingFlags.Public | BindingFlags.Static)
@@ -27,7 +32,92 @@ namespace MvcMiniProfiler
                 }
 
                 Version = System.Diagnostics.FileVersionInfo.GetVersionInfo(typeof(Settings).Assembly.Location).ProductVersion;
+
+                typesToExclude = new HashSet<string>
+                {
+                    // while we like our Dapper friend, we don't want to see him all the time
+                    "SqlMapper"
+                };
+
+                methodsToExclude = new HashSet<string>
+                {
+                    "lambda_method",
+                    ".ctor"
+                };
+
+                assembliesToExclude = new HashSet<string>
+                {
+                    // our assembly
+                    "MvcMiniProfiler",
+
+                    // reflection emit
+                    "Anonymously Hosted DynamicMethods Assembly",
+
+                    // the man
+                    "System.Core",
+                    "System.Data",
+                    "System.Data.Linq",
+                    "System.Web",
+                    "System.Web.Mvc",
+                };
             }
+
+        	/// <summary>
+            /// Assemblies to exclude from the stack trace report.
+            /// </summary>
+            public static IEnumerable<string> AssembliesToExclude
+            {
+                get { return assembliesToExclude; }
+            }
+
+        	/// <summary>
+        	/// Types to exclude from the stack trace report.
+        	/// </summary>
+        	public static IEnumerable<string> TypesToExclude
+        	{
+        		get { return typesToExclude; }
+        	}
+
+        	/// <summary>
+            /// Methods to exclude from the stack trace report.
+            /// </summary>
+            public static IEnumerable<string> MethodsToExclude
+            {
+                get { return methodsToExclude; }
+            }
+
+            /// <summary>
+            /// Excludes the specified assembly from the stack trace output.
+            /// </summary>
+            /// <param name="assemblyName">The short name of the assembly. AssemblyName.Name</param>
+            public static void ExcludeAssembly(string assemblyName)
+            {
+                assembliesToExclude.Add(assemblyName);
+            }
+
+        	/// <summary>
+        	/// Excludes the specified type from the stack trace output.
+        	/// </summary>
+        	/// <param name="typeToExclude">The System.Type name to exclude</param>
+        	public static void ExcludeType(string typeToExclude)
+        	{
+        		typesToExclude.Add(typeToExclude);
+        	}
+
+        	/// <summary>
+            /// Excludes the specified method name from the stack trace output.
+            /// </summary>
+            /// <param name="methodName">The name of the method</param>
+            public static void ExcludeMethod(string methodName)
+            {
+                methodsToExclude.Add(methodName);
+            }
+
+        	/// <summary>
+            /// The max length of the stack string to report back; defaults to 120 chars.
+            /// </summary>
+            [DefaultValue(120)]
+            public static int StackMaxLength { get; set; }
 
             /// <summary>
             /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.

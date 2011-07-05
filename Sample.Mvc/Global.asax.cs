@@ -91,6 +91,14 @@ namespace SampleWeb
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
             MiniProfiler.Settings.RouteBasePath = "~/profiler";               //e.g. /profiler/mini-profiler-includes.js
 
+            // optional settings to control the stack trace output in the details pane
+            // the exclude methods are not thread safe, so be sure to only call these once per appdomain
+
+            MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
+            MiniProfiler.Settings.ExcludeAssembly("NHibernate"); // Ignore any assembly named NHibernate
+            MiniProfiler.Settings.ExcludeMethod("Flush");        // Ignore any method with the name of Flush
+            MiniProfiler.Settings.StackMaxLength = 256;          // default is 120 characters
+
             // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
             // can define a function that will authorize clients to see the json or full page results.
             // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.

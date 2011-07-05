@@ -1,104 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MvcMiniProfiler.Data;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace MvcMiniProfiler.Helpers
 {
-    /// <summary>
-    /// Gets part of a stack trace containing only methods we care about.
-    /// </summary>
-    internal class StackTraceSnippet
-    {
+	/// <summary>
+	/// Gets part of a stack trace containing only methods we care about.
+	/// </summary>
+	public class StackTraceSnippet
+	{
+		private const string AspNetEntryPointMethodName = "System.Web.HttpApplication.IExecutionStep.Execute";
 
-        // TODO: make these MiniProfiler.Settings properties, so people can add their own
+		/// <summary>
+		/// Gets the current formatted and filted stack trace.
+		/// </summary>
+		/// <returns>Space separated list of methods</returns>
+		public static string Get()
+		{
+			var frames = new StackTrace(true).GetFrames();
+			if (frames == null)
+			{
+				return "";
+			}
 
-        public static readonly HashSet<string> AssembliesToExclude = new HashSet<string>
-        {
-            // our assembly
-            "MvcMiniProfiler",
+			var methods = new Stack<string>();
 
-            // reflection emit
-            "Anonymously Hosted DynamicMethods Assembly",
+			foreach (StackFrame t in frames)
+			{
+				var method = t.GetMethod();
 
-            // the man
-            "System.Core",
-            "System.Data",
-            "System.Data.Linq",
-            "System.Web",
-            "System.Web.Mvc",
-        };
+				// no need to continue up the chain
+				if (method.Name == AspNetEntryPointMethodName)
+					break;
 
-        /// <summary>
-        /// Contains the default list of full type names we don't want in any stack trace snippets.
-        /// </summary>
-        public static readonly HashSet<string> TypesToExclude = new HashSet<string>
-        {
-            // while we like our Dapper friend, we don't want to see him all the time
-            "SqlMapper",
-        };
+				var assembly = method.Module.Assembly.GetName().Name;
+				if (!MiniProfiler.Settings.AssembliesToExclude.Contains(assembly) &&
+					!ShouldExcludeType(method) &&
+					!MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
+				{
+					methods.Push(method.Name);
+				}
+			}
 
-        public static readonly HashSet<string> MethodsToExclude = new HashSet<string>
-        {
-            "lambda_method",
-            ".ctor",
-        };
+			var result = string.Join(" ", methods);
 
-        public static string Get()
-        {
-            var frames = new StackTrace(true).GetFrames();
-            var methods = new List<string>();
+			if (result.Length > MiniProfiler.Settings.StackMaxLength)
+				result = result.Substring(result.Length - MiniProfiler.Settings.StackMaxLength);
 
-            for (int i = 0; i < frames.Length; i++)
-            {
-                var method = frames[i].GetMethod();
-                var assembly = method.Module.Assembly.FullName;
+			return result;
+		}
 
-                // remove version info.. we just want the .dll name
-                assembly = assembly.Remove(assembly.IndexOf(","));
+		private static bool ShouldExcludeType(MethodBase method)
+		{
+			var t = method.DeclaringType;
 
-                // no need to continue up the chain
-                if (method.Name == "System.Web.HttpApplication.IExecutionStep.Execute")
-                    break;
+			while (t != null)
+			{
+				if (MiniProfiler.Settings.TypesToExclude.Contains(t.Name))
+					return true;
 
-                if (!AssembliesToExclude.Contains(assembly) &&
-                    !ShouldExcludeType(method) &&
-                    !MethodsToExclude.Contains(method.Name))
-                {
-                    methods.Add(method.Name);
-                }
-            }
-
-            var result = string.Join(" ", methods);
-
-            const int maxlen = 120;
-            if (result.Length > maxlen)
-            {
-                var index = result.IndexOf(" ", maxlen);
-                if (index >= maxlen)
-                {
-                    result = result.Substring(0, index);
-                }
-            }
-
-            return result;
-        }
-
-        private static bool ShouldExcludeType(MethodBase method)
-        {
-            var t = method.DeclaringType;
-
-            while (t != null)
-            {
-                if (TypesToExclude.Contains(t.Name))
-                    return true;
-
-                t = t.DeclaringType;
-            }
-            return false;
-        }
-    }
+				t = t.DeclaringType;
+			}
+			return false;
+		}
+	}
 }
