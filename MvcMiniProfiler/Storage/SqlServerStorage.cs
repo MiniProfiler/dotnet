@@ -43,7 +43,8 @@ namespace MvcMiniProfiler.Storage
              HasDuplicateSqlTimings,
              HasTrivialTimings,
              HasAllTrivialTimings,
-             TrivialDurationThresholdMilliseconds)
+             TrivialDurationThresholdMilliseconds,
+             HasUserViewed)
 select       @Id,
              @Name,
              @Started,
@@ -57,7 +58,8 @@ select       @Id,
              @HasDuplicateSqlTimings,
              @HasTrivialTimings,
              @HasAllTrivialTimings,
-             @TrivialDurationThresholdMilliseconds
+             @TrivialDurationThresholdMilliseconds,
+             @HasUserViewed
 where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax works on both mssql and sqlite
 
             using (var conn = GetOpenConnection())
@@ -77,7 +79,8 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                     HasDuplicateSqlTimings = profiler.HasDuplicateSqlTimings,
                     HasTrivialTimings = profiler.HasTrivialTimings,
                     HasAllTrivialTimings = profiler.HasAllTrivialTimings,
-                    TrivialDurationThresholdMilliseconds = profiler.TrivialDurationThresholdMilliseconds
+                    TrivialDurationThresholdMilliseconds = profiler.TrivialDurationThresholdMilliseconds,
+                    HasUserViewed = profiler.HasUserViewed
                 });
 
                 if (insertCount > 0)
@@ -311,7 +314,8 @@ select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
      HasDuplicateSqlTimings               bit not null,
      HasTrivialTimings                    bit not null,
      HasAllTrivialTimings                 bit not null,
-     TrivialDurationThresholdMilliseconds decimal(5, 1) null
+     TrivialDurationThresholdMilliseconds decimal(5, 1) null,
+     HasUserViewed                        bit not null
   )
 
 create table MiniProfilerTimings
