@@ -378,8 +378,8 @@ namespace MvcMiniProfiler
             catch { } // headers blew up
 
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            Settings.EnsureStorageStrategies();
-            Settings.ShortTermStorage.SaveMiniProfiler(current);
+            Settings.EnsureStorageStrategy();
+            Settings.Storage.SaveMiniProfiler(current);
         }
 
         /// <summary>

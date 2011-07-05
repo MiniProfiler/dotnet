@@ -73,9 +73,9 @@ namespace MvcMiniProfiler
             /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
             /// no profiler will be instantiated and no results will be displayed.  
-            /// Default value is { "/mini-profiler-", "/content/", "/scripts/" }.
+            /// Default value is { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" }.
             /// </summary>
-            [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/" })]
+            [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" })]
             public static string[] IgnoredRootPaths { get; set; }
 
             /// <summary>
@@ -87,8 +87,8 @@ namespace MvcMiniProfiler
             public static string RouteBasePath { get; set; }
 
             /// <summary>
-            /// Understands how to save and load MiniProfilers for a very limited time. Used for caching between when
-            /// a profiling session ends and results can be fetched to the client.
+            /// Understands how to save and load MiniProfilers. Used for caching between when
+            /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.
             /// </summary>
             /// <remarks>
             /// The normal profiling session life-cycle is as follows:
@@ -96,18 +96,12 @@ namespace MvcMiniProfiler
             /// 2) profiler is started
             /// 3) normal page/controller/request execution
             /// 4) profiler is stopped
-            /// 5) profiler is cached with <see cref="ShortTermStorage"/>'s implementation of <see cref="Storage.IStorage.SaveMiniProfiler"/>
+            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.SaveMiniProfiler"/>
             /// 6) request ends
             /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
-            ///    <see cref="ShortTermStorage"/>'s implementation of <see cref="Storage.IStorage.LoadMiniProfiler"/>
+            ///    <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.LoadMiniProfiler"/>
             /// </remarks>
-            public static Storage.IStorage ShortTermStorage { get; set; }
-
-            /// <summary>
-            /// Understands how to save and load MiniProfilers for an extended (even indefinite) time, allowing results to be
-            /// shared with other developers or even tracked over time.
-            /// </summary>
-            public static Storage.IStorage LongTermStorage { get; set; }
+            public static Storage.IStorage Storage { get; set; }
 
             /// <summary>
             /// The formatter applied to the SQL being rendered (used only for UI)
@@ -135,19 +129,13 @@ namespace MvcMiniProfiler
             public static Func<HttpRequest, MiniProfiler, bool> Results_Authorize { get; set; }
 
             /// <summary>
-            /// Ensures that <see cref="ShortTermStorage"/> and <see cref="LongTermStorage"/> objects are initialized. Null values will
-            /// be initialized to use the default <see cref="Storage.HttpRuntimeCacheStorage"/> strategy.
+            /// Make sure we can at least store profiler results to the http runtime cache.
             /// </summary>
-            internal static void EnsureStorageStrategies()
+            internal static void EnsureStorageStrategy()
             {
-                if (ShortTermStorage == null)
+                if (Storage == null)
                 {
-                    ShortTermStorage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromMinutes(20));
-                }
-
-                if (LongTermStorage == null)
-                {
-                    LongTermStorage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+                    Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
                 }
             }
 

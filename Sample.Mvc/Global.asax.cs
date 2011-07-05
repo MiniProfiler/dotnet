@@ -71,13 +71,12 @@ namespace SampleWeb
             // a powerful feature of the MiniProfiler is the ability to share links to results with other developers.
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
-            // let's rig up methods to json serialize our profiler results to a database, so they survive app restarts.
-            // (note: this method is more to test that the MiniProfiler can be serialized - a real database storage
-            // scheme would put each property into its own column, so they could be queried independently of the MiniProfiler's UI)
+            // let's rig up serialization of our profiler results to a database, so they survive app restarts.
+            MiniProfiler.Settings.Storage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
 
-            MiniProfiler.Settings.LongTermStorage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
-
-            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
+            // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
+            // by default, sql parameters won't be displayed
+            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.InlineFormatter();
 
             // these settings are optional and all have defaults, any matching setting specified in .RenderIncludes() will
             // override the application-wide defaults specified here, for example if you had both:
@@ -86,7 +85,6 @@ namespace SampleWeb
             //    @MiniProfiler.RenderIncludes(position: RenderPosition.Left)
             // then the position would be on the left that that page, and on the right (the app default) for anywhere that doesn't
             // specified position in the .RenderIncludes() call.
-
             MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; //defaults to left
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
             MiniProfiler.Settings.RouteBasePath = "~/profiler";               //e.g. /profiler/mini-profiler-includes.js
