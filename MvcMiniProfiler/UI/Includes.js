@@ -1,7 +1,8 @@
 ﻿var MiniProfiler = (function ($) {
 
     var options,
-        container;
+        container,
+        fetchedIds = []; // so we never pull down a profiler twice
 
     var hasLocalStorage = function () {
         try {
@@ -54,10 +55,16 @@
         }
     };
 
-    var fetchResults = function (id) {
-        $.getJSON(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function (json) {
-            buttonShow(json);
-        });
+    var fetchResults = function (ids) {
+        for (var i = 0, id; i < ids.length; i++) {
+            id = ids[i];
+            if ($.inArray(id, fetchedIds) < 0) {
+                $.getJSON(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function (json) {
+                    fetchedIds.push(id);
+                    buttonShow(json);
+                });
+            }
+        }
     };
 
     var renderTemplate = function (json) {
@@ -265,15 +272,17 @@
         // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
         fetchTemplates(function () {
             // get master page profiler results
-            fetchResults(options.id);
+            fetchResults(options.ids);
         });
 
         // fetch profile results for any ajax calls
         $(document).ajaxComplete(function (e, xhr, settings) {
             if (xhr) {
-                var id = xhr.getResponseHeader('X-MiniProfiler-Id');
-                if (id) {
-                    fetchResults(id);
+                // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
+                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
+                if (stringIds) {
+                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                    fetchResults(ids);
                 }
             }
         });

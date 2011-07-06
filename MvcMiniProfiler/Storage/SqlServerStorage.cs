@@ -26,7 +26,7 @@ namespace MvcMiniProfiler.Storage
         /// Stores <param name="profiler"/> to dbo.MiniProfilers under its <see cref="MiniProfiler.Id"/>; 
         /// stores all child Timings and SqlTimings to their respective tables.
         /// </summary>
-        public override void SaveMiniProfiler(MiniProfiler profiler)
+        public override void Save(MiniProfiler profiler)
         {
             const string sql =
 @"insert into MiniProfilers
@@ -253,7 +253,7 @@ values      (@MiniProfilerId,
         /// <summary>
         /// Loads the MiniProfiler identifed by 'id' from the database.
         /// </summary>
-        public override MiniProfiler LoadMiniProfiler(Guid id)
+        public override MiniProfiler Load(Guid id)
         {
             const string sql =
 @"select * from MiniProfilers where Id = @id
@@ -281,6 +281,15 @@ select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
+        /// </summary>
+        /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
+        public override List<Guid> GetUnviewedIds(string user)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

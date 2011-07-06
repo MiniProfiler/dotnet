@@ -96,10 +96,10 @@ namespace MvcMiniProfiler
             /// 2) profiler is started
             /// 3) normal page/controller/request execution
             /// 4) profiler is stopped
-            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.SaveMiniProfiler"/>
+            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.Save"/>
             /// 6) request ends
             /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
-            ///    <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.LoadMiniProfiler"/>
+            ///    <see cref="Storage"/>'s implementation of <see cref="MvcMiniProfiler.Storage.IStorage.Load"/>
             /// </remarks>
             public static Storage.IStorage Storage { get; set; }
 
@@ -137,18 +137,6 @@ namespace MvcMiniProfiler
                 {
                     Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
                 }
-            }
-
-            private static void SetProfilerIntoRuntimeCache(string key, MiniProfiler prof, DateTime expires)
-            {
-                HttpRuntime.Cache.Add(
-                    key: key,
-                    value: prof,
-                    dependencies: null,
-                    absoluteExpiration: expires,
-                    slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
-                    priority: System.Web.Caching.CacheItemPriority.Low,
-                    onRemoveCallback: null);
             }
 
         }

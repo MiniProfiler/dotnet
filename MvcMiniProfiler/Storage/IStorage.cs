@@ -17,7 +17,7 @@ namespace MvcMiniProfiler.Storage
         /// <remarks>
         /// Should also ensure the profiler is stored as being unviewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        void SaveMiniProfiler(MiniProfiler profiler);
+        void Save(MiniProfiler profiler);
 
         /// <summary>
         /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, which should map to <see cref="MiniProfiler.Id"/>.
@@ -25,7 +25,13 @@ namespace MvcMiniProfiler.Storage
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        MiniProfiler LoadMiniProfiler(Guid id);
+        MiniProfiler Load(Guid id);
+
+        /// <summary>
+        /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
+        /// </summary>
+        /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
+        List<Guid> GetUnviewedIds(string user);
 
     }
 }

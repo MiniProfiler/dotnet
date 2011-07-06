@@ -35,26 +35,67 @@ namespace MvcMiniProfiler.Storage
         /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concated with <see cref="CacheKeyPrefix"/>
         /// and the parameter's <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        public void SaveMiniProfiler(MiniProfiler profiler)
+        public void Save(MiniProfiler profiler)
         {
-            HttpRuntime.Cache.Insert(
-                    key: GetCacheKey(profiler.Id),
-                    value: profiler,
-                    dependencies: null,
-                    absoluteExpiration: DateTime.Now.Add(CacheDuration), // servers will cache based on local now
-                    slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
-                    priority: System.Web.Caching.CacheItemPriority.Low,
-                    onRemoveCallback: null);
+            InsertIntoCache(GetCacheKey(profiler.Id), profiler);
+
+            // so we can easily follow POST -> redirects, store ids for this user
+            var ids = GetPerUserUnviewedIds(profiler);
+            lock (ids)
+            {
+                if (!ids.Contains(profiler.Id))
+                {
+                    ids.Add(profiler.Id);
+                }
+            }
         }
 
         /// <summary>
-        /// Returns the originally-stored <see cref="MiniProfiler"/> 
+        /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
+        /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public MiniProfiler LoadMiniProfiler(Guid id)
+        public MiniProfiler Load(Guid id)
         {
-            return HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
+            var result = HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
+
+            if (result != null)
+            {
+                var ids = GetPerUserUnviewedIds(result);
+
+                lock (ids)
+                {
+                    ids.Remove(result.Id);
+                    result.HasUserViewed = true;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
+        /// </summary>
+        /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
+        public List<Guid> GetUnviewedIds(string user)
+        {
+            var ids = GetPerUserUnviewedIds(user);
+            lock (ids)
+            {
+                return new List<Guid>(ids);
+            }
+        }
+
+        private void InsertIntoCache(string key, object value)
+        {
+            // use insert instead of add; add fails if the item already exists
+            HttpRuntime.Cache.Insert(
+                key: key,
+                value: value,
+                dependencies: null,
+                absoluteExpiration: DateTime.Now.Add(CacheDuration), // servers will cache based on local now
+                slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
+                priority: System.Web.Caching.CacheItemPriority.Low,
+                onRemoveCallback: null);
         }
 
         private string GetCacheKey(Guid id)
@@ -62,5 +103,41 @@ namespace MvcMiniProfiler.Storage
             return CacheKeyPrefix + id;
         }
 
+        private string GetPerUserUnviewedCacheKey(string user)
+        {
+            return CacheKeyPrefix + "unviewed-for-user-" + user;
+        }
+
+        private List<Guid> GetPerUserUnviewedIds(MiniProfiler profiler)
+        {
+            return GetPerUserUnviewedIds(profiler.User);
+        }
+
+        private List<Guid> GetPerUserUnviewedIds(string user)
+        {
+            var key = GetPerUserUnviewedCacheKey(user);
+            var result = HttpRuntime.Cache[key] as List<Guid>;
+
+            if (result == null)
+            {
+                lock (AddPerUserUnviewedIdsLock)
+                {
+                    // check again, as we could have been waiting
+                    result = HttpRuntime.Cache[key] as List<Guid>;
+                    if (result == null)
+                    {
+                        result = new List<Guid>();
+                        InsertIntoCache(key, result);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Syncs access to runtime cache when adding a new list of ids for a user.
+        /// </summary>
+        private static readonly object AddPerUserUnviewedIdsLock = new object();
     }
 }

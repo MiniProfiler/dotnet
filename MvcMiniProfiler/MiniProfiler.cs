@@ -215,7 +215,6 @@ namespace MvcMiniProfiler
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
             _sqlCounts = new Dictionary<string, int>();
-
             Started = DateTime.UtcNow;
 
             // stopwatch must start before any child Timings are instantiated
@@ -342,6 +341,9 @@ namespace MvcMiniProfiler
             var result = new MiniProfiler(url.OriginalString, level);
             Current = result;
 
+            // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
+            result.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(context.Request);
+
             return result;
         }
 
@@ -378,19 +380,17 @@ namespace MvcMiniProfiler
             // set the profiler name to Controller/Action or /url
             EnsureName(current, request);
 
-            // set the user identity of who is profiling this request
-            EnsureUser(current, request);
+            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
+            Settings.EnsureStorageStrategy();
+            Settings.Storage.Save(current);
 
             try
             {
+                var arrayOfIds = Settings.Storage.GetUnviewedIds(current.User).ToJson();
                 // allow profiling of ajax requests
-                response.AppendHeader("X-MiniProfiler-Id", current.Id.ToString());
+                response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds);
             }
             catch { } // headers blew up
-
-            // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            Settings.EnsureStorageStrategy();
-            Settings.Storage.SaveMiniProfiler(current);
         }
 
         /// <summary>
@@ -420,16 +420,6 @@ namespace MvcMiniProfiler
                         profiler.Name = profiler.Name.Remove(50);
                 }
             }
-        }
-
-        /// <summary>
-        /// Ensures that there's a <see cref="MiniProfiler.User"/> identity set on the parameter profiler.
-        /// </summary>
-        private static void EnsureUser(MiniProfiler profiler, HttpRequest request)
-        {
-            if (profiler.User.HasValue()) return;
-
-            profiler.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(request);
         }
 
         /// <summary>

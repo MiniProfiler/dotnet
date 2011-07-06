@@ -20,7 +20,7 @@ namespace SampleWeb.Helpers
             return new System.Data.SQLite.SQLiteConnection(ConnectionString);
         }
 
-        public override MiniProfiler LoadMiniProfiler(Guid id)
+        public override MiniProfiler Load(Guid id)
         {
             // sqlite can't execute multiple result sets at once, so we need to override and run three queries
             MiniProfiler result = null;
