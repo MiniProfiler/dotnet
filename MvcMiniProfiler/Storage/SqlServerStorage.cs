@@ -34,7 +34,7 @@ namespace MvcMiniProfiler.Storage
              Name,
              Started,
              MachineName,
-             User,
+             [User],
              Level,
              RootTimingId,
              DurationMilliseconds,
