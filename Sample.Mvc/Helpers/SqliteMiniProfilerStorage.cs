@@ -39,6 +39,9 @@ namespace SampleWeb.Helpers
                     var sqlTimings = conn.Query<SqlTiming>("select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId", param).ToList();
                     var sqlParameters = conn.Query<SqlTimingParameter>("select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id", param).ToList();
                     MapTimings(result, timings, sqlTimings, sqlParameters);
+
+                    // loading a profiler means we've viewed it
+                    conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", param);
                 }
             }
 

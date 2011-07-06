@@ -257,26 +257,36 @@ values      (@MiniProfilerId,
         {
             const string sql =
 @"select * from MiniProfilers where Id = @id
-select * from MiniProfilerTimings where  MiniProfilerId = @id order by RowId
+select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId
 select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId
 select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
 
             MiniProfiler result = null;
 
             using (var conn = GetOpenConnection())
-            using (var multi = conn.QueryMultiple(sql, new { id = id }))
             {
-                result = multi.Read<MiniProfiler>().SingleOrDefault();
+                var param = new { id = id };
 
-                if (result != null)
+                using (var multi = conn.QueryMultiple(sql, param))
                 {
-                    // HACK: stored dates are utc, but are pulled out as local time - maybe use datetimeoffset data type?
-                    result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
+                    result = multi.Read<MiniProfiler>().SingleOrDefault();
 
-                    var timings = multi.Read<Timing>().ToList();
-                    var sqlTimings = multi.Read<SqlTiming>().ToList();
-                    var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
-                    MapTimings(result, timings, sqlTimings, sqlParameters);
+                    if (result != null)
+                    {
+                        // HACK: stored dates are utc, but are pulled out as local time - maybe use datetimeoffset data type?
+                        result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
+
+                        var timings = multi.Read<Timing>().ToList();
+                        var sqlTimings = multi.Read<SqlTiming>().ToList();
+                        var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
+                        MapTimings(result, timings, sqlTimings, sqlParameters);
+                    }
+                }
+
+                // loading a profiler means we've viewed it
+                if (result != null && !result.HasUserViewed)
+                {
+                    conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", param);
                 }
             }
 
@@ -289,7 +299,17 @@ select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
         /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
         public override List<Guid> GetUnviewedIds(string user)
         {
-            throw new NotImplementedException();
+            const string sql =
+@"select Id
+from   MiniProfilers
+where  [User] = @user
+and    HasUserViewed = 0
+order  by Started";
+
+            using (var conn = GetOpenConnection())
+            {
+                return conn.Query<Guid>(sql, new { user }).ToList();
+            }
         }
 
         /// <summary>
@@ -314,7 +334,7 @@ select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
      Name                                 nvarchar(200) not null,
      Started                              datetime not null,
      MachineName                          nvarchar(100) null,
-     User                                 nvarchar(100) null,
+     [User]                               nvarchar(100) null,
      Level                                tinyint null,
      RootTimingId                         uniqueidentifier null,
      DurationMilliseconds                 decimal(7, 1) not null,
