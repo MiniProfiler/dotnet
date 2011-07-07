@@ -18,7 +18,7 @@ namespace MvcMiniProfiler.Helpers
 		/// <returns>Space separated list of methods</returns>
 		public static string Get()
 		{
-			var frames = new StackTrace(true).GetFrames();
+			var frames = new StackTrace().GetFrames();
 			if (frames == null)
 			{
 				return "";
