@@ -50,28 +50,6 @@ namespace MvcMiniProfiler
         [DataMember(Order = 5)]
         public ProfileLevel Level { get; set; }
 
-        /// <summary>
-        /// A string identifying the user/client that is profiling this request.  Set <see cref="MiniProfiler.Settings.UserProvider"/>
-        /// with an <see cref="IUserProvider"/>-implementing class to provide a custom value.
-        /// </summary>
-        /// <remarks>
-        /// If this is not set manually at some point, the <see cref="MiniProfiler.Settings.UserProvider"/> implementation will be used;
-        /// by default, this will be the current request's ip address.
-        /// </remarks>
-        [DataMember(Order = 6)]
-        public string User { get; set; }
-
-        /// <summary>
-        /// Returns true when this MiniProfiler has been viewed by the <see cref="User"/> that recorded it.
-        /// </summary>
-        /// <remarks>
-        /// Allows POSTs that result in a redirect to be profiled. <see cref="MiniProfiler.Settings.Storage"/> implementation
-        /// will keep a list of all profilers that haven't been fetched down.
-        /// </remarks>
-        [DataMember(Order = 7)]
-        public bool HasUserViewed { get; set; }
-
-
         private Timing _root;
         /// <summary>
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
@@ -110,6 +88,27 @@ namespace MvcMiniProfiler
                 }
             }
         }
+
+        /// <summary>
+        /// A string identifying the user/client that is profiling this request.  Set <see cref="MiniProfiler.Settings.UserProvider"/>
+        /// with an <see cref="IUserProvider"/>-implementing class to provide a custom value.
+        /// </summary>
+        /// <remarks>
+        /// If this is not set manually at some point, the <see cref="MiniProfiler.Settings.UserProvider"/> implementation will be used;
+        /// by default, this will be the current request's ip address.
+        /// </remarks>
+        [DataMember(Order = 7)]
+        public string User { get; set; }
+
+        /// <summary>
+        /// Returns true when this MiniProfiler has been viewed by the <see cref="User"/> that recorded it.
+        /// </summary>
+        /// <remarks>
+        /// Allows POSTs that result in a redirect to be profiled. <see cref="MiniProfiler.Settings.Storage"/> implementation
+        /// will keep a list of all profilers that haven't been fetched down.
+        /// </remarks>
+        [DataMember(Order = 8)]
+        public bool HasUserViewed { get; set; }
 
         /// <summary>
         /// Contains information about queries executed during this profiling session.
