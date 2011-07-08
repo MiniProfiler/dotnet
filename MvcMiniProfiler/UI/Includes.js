@@ -287,15 +287,6 @@
             }
         });
 
-        // currently, saving to long-term storage is done when a full results page is displayed; this causes issues in web-farms when a 
-        // dev right-clicks a share link and copies... the results aren't pushed to a place that all other servers can reach
-        $('.share-profiler-results').live('mousedown', function(e) {
-            // so do a fetch when "share" is right-clicked
-            if (e.which == 3) {
-                $.get($(this).attr('href'));
-            }
-        });
-
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
