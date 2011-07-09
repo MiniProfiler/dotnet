@@ -327,13 +327,9 @@ namespace MvcMiniProfiler
             var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1);
 
             // don't profile /content or /scripts, either - happens in web.dev
-            foreach (var ignored in Settings.IgnoredRootPaths ?? new string[0])
+            foreach (var ignored in Settings.IgnoredPaths ?? new string[0])
             {
-                if (path.StartsWith(ignored, StringComparison.OrdinalIgnoreCase))
-                    return null;
-
-                var routePath = (MiniProfiler.Settings.RouteBasePath ?? "").Replace("~", "").RemoveTrailingSlash();
-                if (path.StartsWith(routePath + ignored, StringComparison.OrdinalIgnoreCase))
+                if (path.ToUpperInvariant().Contains((ignored ?? "").ToUpperInvariant()))
                     return null;
             }
 

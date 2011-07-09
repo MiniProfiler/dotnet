@@ -15,6 +15,13 @@ namespace Sample.WebForms
         {
             // Code that runs on application startup
 
+            // some things should never be seen
+            var ignored = MiniProfiler.Settings.IgnoredPaths.ToList();
+
+            ignored.Add("WebResource.axd");
+            ignored.Add("/Styles/");
+
+            MiniProfiler.Settings.IgnoredPaths = ignored.ToArray();
         }
 
         void Application_End(object sender, EventArgs e)

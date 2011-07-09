@@ -14,9 +14,9 @@ namespace MvcMiniProfiler
         /// </summary>
         public static class Settings
         {
-        	private static readonly HashSet<string> assembliesToExclude;
-        	private static readonly HashSet<string> typesToExclude;
-        	private static readonly HashSet<string> methodsToExclude;
+            private static readonly HashSet<string> assembliesToExclude;
+            private static readonly HashSet<string> typesToExclude;
+            private static readonly HashSet<string> methodsToExclude;
 
             static Settings()
             {
@@ -62,7 +62,7 @@ namespace MvcMiniProfiler
                 };
             }
 
-        	/// <summary>
+            /// <summary>
             /// Assemblies to exclude from the stack trace report.
             /// </summary>
             public static IEnumerable<string> AssembliesToExclude
@@ -70,15 +70,15 @@ namespace MvcMiniProfiler
                 get { return assembliesToExclude; }
             }
 
-        	/// <summary>
-        	/// Types to exclude from the stack trace report.
-        	/// </summary>
-        	public static IEnumerable<string> TypesToExclude
-        	{
-        		get { return typesToExclude; }
-        	}
+            /// <summary>
+            /// Types to exclude from the stack trace report.
+            /// </summary>
+            public static IEnumerable<string> TypesToExclude
+            {
+                get { return typesToExclude; }
+            }
 
-        	/// <summary>
+            /// <summary>
             /// Methods to exclude from the stack trace report.
             /// </summary>
             public static IEnumerable<string> MethodsToExclude
@@ -95,16 +95,16 @@ namespace MvcMiniProfiler
                 assembliesToExclude.Add(assemblyName);
             }
 
-        	/// <summary>
-        	/// Excludes the specified type from the stack trace output.
-        	/// </summary>
-        	/// <param name="typeToExclude">The System.Type name to exclude</param>
-        	public static void ExcludeType(string typeToExclude)
-        	{
-        		typesToExclude.Add(typeToExclude);
-        	}
+            /// <summary>
+            /// Excludes the specified type from the stack trace output.
+            /// </summary>
+            /// <param name="typeToExclude">The System.Type name to exclude</param>
+            public static void ExcludeType(string typeToExclude)
+            {
+                typesToExclude.Add(typeToExclude);
+            }
 
-        	/// <summary>
+            /// <summary>
             /// Excludes the specified method name from the stack trace output.
             /// </summary>
             /// <param name="methodName">The name of the method</param>
@@ -113,7 +113,7 @@ namespace MvcMiniProfiler
                 methodsToExclude.Add(methodName);
             }
 
-        	/// <summary>
+            /// <summary>
             /// The max length of the stack string to report back; defaults to 120 chars.
             /// </summary>
             [DefaultValue(120)]
@@ -161,12 +161,12 @@ namespace MvcMiniProfiler
             public static bool ExcludeStackTraceSnippetFromSqlTimings { get; set; }
 
             /// <summary>
-            /// When <see cref="MiniProfiler.Start"/> is called, if the current request url starts with this property,
-            /// no profiler will be instantiated and no results will be displayed.  
+            /// When <see cref="MiniProfiler.Start"/> is called, if the current request url contains any items in this property,
+            /// no profiler will be instantiated and no results will be displayed.
             /// Default value is { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" }.
             /// </summary>
             [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" })]
-            public static string[] IgnoredRootPaths { get; set; }
+            public static string[] IgnoredPaths { get; set; }
 
             /// <summary>
             /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
