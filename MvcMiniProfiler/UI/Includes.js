@@ -208,9 +208,6 @@
                     return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i]), 255), 0);
                 };
 
-            console.log(highlightRgb);
-            console.log(originalRgb);
-
             // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
                 .animate({ 'opacity': 1 }, { duration: 2000, step: function(now, fx) {
