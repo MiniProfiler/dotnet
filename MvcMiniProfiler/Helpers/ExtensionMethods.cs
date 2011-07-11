@@ -28,6 +28,11 @@ namespace MvcMiniProfiler.Helpers
             return !string.IsNullOrWhiteSpace(s);
         }
 
+        internal static string Truncate(this string s, int maxLength)
+        {
+            return s != null && s.Length > maxLength ? s.Substring(0, maxLength) : s;
+        }
+
         /// <summary>
         /// Removes trailing / characters from a path and leaves just one
         /// </summary>

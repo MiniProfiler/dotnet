@@ -67,10 +67,10 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 var insertCount = conn.Execute(sql, new
                 {
                     Id = profiler.Id,
-                    Name = profiler.Name,
+                    Name = profiler.Name.Truncate(200),
                     Started = profiler.Started,
-                    MachineName = profiler.MachineName,
-                    User = profiler.User,
+                    MachineName = profiler.MachineName.Truncate(100),
+                    User = profiler.User.Truncate(100),
                     Level = profiler.Level,
                     RootTimingId = profiler.Root.Id,
                     DurationMilliseconds = profiler.DurationMilliseconds,
@@ -135,7 +135,7 @@ values      (@Id,
                 Id = t.Id,
                 MiniProfilerId = t.Profiler.Id,
                 ParentTimingId = t.IsRoot ? (Guid?)null : t.ParentTiming.Id,
-                Name = t.Name,
+                Name = t.Name.Truncate(200),
                 Depth = t.Depth,
                 StartMilliseconds = t.StartMilliseconds,
                 DurationMilliseconds = t.DurationMilliseconds,
@@ -206,7 +206,7 @@ values      (@Id,
                 DurationMilliseconds = st.DurationMilliseconds,
                 FirstFetchDurationMilliseconds = st.FirstFetchDurationMilliseconds,
                 IsDuplicate = st.IsDuplicate,
-                StackTraceSnippet = st.StackTraceSnippet,
+                StackTraceSnippet = st.StackTraceSnippet.Truncate(200),
                 CommandString = st.CommandString
             });
 
@@ -242,8 +242,8 @@ values      (@MiniProfilerId,
                 {
                     MiniProfilerId = profiler.Id,
                     ParentSqlTimingId = st.Id,
-                    Name = p.Name,
-                    DbType = p.DbType,
+                    Name = p.Name.Truncate(130),
+                    DbType = p.DbType.Truncate(50),
                     Size = p.Size,
                     Value = p.Value
                 });
