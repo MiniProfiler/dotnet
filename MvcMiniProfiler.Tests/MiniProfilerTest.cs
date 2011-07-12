@@ -7,6 +7,9 @@ using System.Threading;
 
 using Assert = NUnit.Framework.Assert;
 using NUnit.Framework;
+using System.Data.Common;
+using System.Data;
+using MvcMiniProfiler.Data;
 
 namespace MvcMiniProfiler.Tests
 {
@@ -66,6 +69,30 @@ namespace MvcMiniProfiler.Tests
                 Assert.That(c.Root.HasChildren, Is.True);
                 Assert.That(c.Root.Children, Has.Count.EqualTo(1));
             }
+        }
+
+        [TestMethod]
+        public void TestDataAdapter()
+        {
+            var prof = new TestDbProfiler();
+            var factory = new ProfiledDbProviderFactory( prof, new System.Data.SqlServerCe.SqlCeProviderFactory());
+
+            using (var da = factory.CreateDataAdapter())
+            {
+                var cmd = factory.CreateCommand();
+                cmd.CommandText = "select 1 as A, 2 as B";
+                da.SelectCommand = cmd;
+                da.SelectCommand.Connection = connection;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                Assert.That(((int)ds.Tables[0].Rows[0][0]) == 1);
+            }
+
+            Assert.That(prof.ExecuteStartCount == 1);
+            Assert.That(prof.ReaderFinishCount == 1);
+            Assert.That(prof.ExecuteFinishCount == 1);
         }
     }
 }
