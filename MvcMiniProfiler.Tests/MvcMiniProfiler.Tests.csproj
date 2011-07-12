@@ -63,6 +63,7 @@
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MiniProfilerTest.cs" />
+    <Compile Include="Storage\SqlServerStorageTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
@@ -74,6 +75,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\TestSqlServer.sdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
