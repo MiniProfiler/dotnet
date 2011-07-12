@@ -30,7 +30,13 @@ namespace MvcMiniProfiler.Tests
                 Assert.That(c, Is.Not.Null);
                 Assert.That(c.DurationMilliseconds, Is.GreaterThan(8).And.LessThan(15)); // hopefully, we should hit this target
                 Assert.That(c.Name, Is.EqualTo("/Test.aspx"));
+
+                Assert.That(c.Root, Is.Not.Null);
+                Assert.That(c.Root.HasChildren, Is.False);
             }
+
+            var p = GetProfiler();
+            Assert.That(p.Root.HasChildren, Is.False);
         }
 
         [TestMethod]
@@ -50,32 +56,32 @@ namespace MvcMiniProfiler.Tests
         [TestMethod]
         public void SmallSteps()
         {
-            using (var req = SimulateRequest("http://localhost/Test.aspx"))
-            {
-                var c = MiniProfiler.Start();
+            var depth = 2;
+            var ms = 10;
+            var timeWithRoot = (depth + 1) * ms;
+            var fudgeFactor = 5;
 
-                using (c.Step("test step"))
-                {
-                    Thread.Sleep(10);
-                }
+            var p = GetProfiler(childDepth: depth, stepSleepMilliseconds: ms);
 
-                MiniProfiler.Stop();
+            Assert.That(p.DurationMilliseconds, Is.EqualTo(timeWithRoot).Within(fudgeFactor));
 
-                Assert.That(c.DurationMilliseconds, Is.GreaterThan(8).And.LessThan(15));
-                Assert.That(c.Name, Is.EqualTo("/Test.aspx"));
+            Assert.That(p.Root, Is.Not.Null);
+            Assert.That(p.Root.DurationMilliseconds, Is.EqualTo(timeWithRoot).Within(fudgeFactor));
+            Assert.That(p.Root.DurationWithoutChildrenMilliseconds, Is.EqualTo(ms).Within(fudgeFactor));
 
-                Assert.That(c.Root, Is.Not.Null);
-                Assert.That(c.Root.DurationMilliseconds, Is.EqualTo(c.DurationMilliseconds).Within(1));
-                Assert.That(c.Root.HasChildren, Is.True);
-                Assert.That(c.Root.Children, Has.Count.EqualTo(1));
-            }
+            Assert.That(p.GetTimingHierarchy().Count(), Is.EqualTo(3)); // root -> child -> child
+
+            Assert.That(p.Root.HasChildren, Is.True);
+            Assert.That(p.Root.Children, Has.Count.EqualTo(1));
+
+            Assert.That(p.Root.Children.Single().HasChildren, Is.True);
         }
 
         //[TestMethod]
         public void TestDataAdapter()
         {
             var prof = new TestDbProfiler();
-            var factory = new ProfiledDbProviderFactory( prof, new System.Data.SqlServerCe.SqlCeProviderFactory());
+            var factory = new ProfiledDbProviderFactory(prof, new System.Data.SqlServerCe.SqlCeProviderFactory());
 
             using (var da = factory.CreateDataAdapter())
             {
