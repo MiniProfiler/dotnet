@@ -26,10 +26,10 @@ namespace MvcMiniProfiler.Data
         /// providing query execution profiling.
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
-    //    public static DbConnection Get(DbConnection connection)
-    //    {
-    //        return Get(connection, MiniProfiler.Current);
-    //    }
+        public static DbConnection Get(DbConnection connection)
+        {
+            return Get(connection, MiniProfiler.Current);
+        }
 
         /// <summary>
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 

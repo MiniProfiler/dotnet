@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
+using MvcMiniProfiler.Data;
 
 namespace MvcMiniProfiler
 {

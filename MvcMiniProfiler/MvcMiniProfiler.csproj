@@ -78,6 +78,9 @@
     <Compile Include="IUserProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MiniProfiler.IDbProfiler.cs">
+      <DependentUpon>MiniProfiler.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniProfiler.Settings.cs">
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>

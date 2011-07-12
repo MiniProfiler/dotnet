@@ -166,7 +166,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Called when database reader is closed, ending profiling for <see cref="MvcMiniProfiler.ExecuteType.Reader"/> SqlTimings.
+        /// Called when database reader is closed, ending profiling for <see cref="MvcMiniProfiler.Data.ExecuteType.Reader"/> SqlTimings.
         /// </summary>
         public void ReaderFetchComplete()
         {

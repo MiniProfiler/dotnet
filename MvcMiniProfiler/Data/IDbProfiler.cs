@@ -6,11 +6,37 @@ using System.Data.Common;
 
 namespace MvcMiniProfiler.Data
 {
-    interface IDbProfiler
+    /// <summary>
+    /// A callback for ProfiledDbConnection and family
+    /// </summary>
+    public interface IDbProfiler
     {
+        /// <summary>
+        /// Called when a command starts executing
+        /// </summary>
+        /// <param name="profiledDbCommand"></param>
+        /// <param name="executeType"></param>
         void ExecuteStart(DbCommand profiledDbCommand, ExecuteType executeType);
+        
+        /// <summary>
+        /// Called when a reader finishes executing
+        /// </summary>
+        /// <param name="profiledDbCommand"></param>
+        /// <param name="executeType"></param>
+        /// <param name="reader"></param>
         void ExecuteFinish(DbCommand profiledDbCommand, ExecuteType executeType, DbDataReader reader);
+        
+        /// <summary>
+        /// Called when a command finishes executing
+        /// </summary>
+        /// <param name="profiledDbCommand"></param>
+        /// <param name="executeType"></param>
         void ExecuteFinish(DbCommand profiledDbCommand, ExecuteType executeType);
+
+        /// <summary>
+        /// Called when a reader is done iterating through the data 
+        /// </summary>
+        /// <param name="reader"></param>
         void ReaderFinish(DbDataReader reader);
     }
 }
