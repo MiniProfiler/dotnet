@@ -6,3 +6,5 @@ syntax: glob
 *.nupkg
 *.docstates
 _ReSharper*
+TestResults/*
+*.vsmdi
