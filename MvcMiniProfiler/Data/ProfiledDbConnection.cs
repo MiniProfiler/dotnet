@@ -12,8 +12,8 @@ namespace MvcMiniProfiler.Data
     {
 
         private DbConnection _conn;
-        private MiniProfiler _profiler;
-        private SqlProfiler _sqlProfiler;
+        private IDbProfiler _profiler;
+
         private DbProviderFactory _factory;
         private static readonly Func<DbConnection, DbProviderFactory> ripInnerProvider =
                 (Func<DbConnection, DbProviderFactory>)Delegate.CreateDelegate(typeof(Func<DbConnection, DbProviderFactory>),
@@ -26,10 +26,10 @@ namespace MvcMiniProfiler.Data
         /// providing query execution profiling.
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
-        public static DbConnection Get(DbConnection connection)
-        {
-            return Get(connection, MiniProfiler.Current);
-        }
+    //    public static DbConnection Get(DbConnection connection)
+    //    {
+    //        return Get(connection, MiniProfiler.Current);
+    //    }
 
         /// <summary>
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
@@ -37,7 +37,7 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
-        public static DbConnection Get(DbConnection connection, MiniProfiler profiler)
+        public static DbConnection Get(DbConnection connection, IDbProfiler profiler)
         {
             return new ProfiledDbConnection(connection, profiler);
         }
@@ -48,7 +48,7 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
-        protected ProfiledDbConnection(DbConnection connection, MiniProfiler profiler)
+        protected ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
         {
             if (connection == null) throw new ArgumentNullException("connection");
 
@@ -58,7 +58,6 @@ namespace MvcMiniProfiler.Data
             if (profiler != null)
             {
                 _profiler = profiler;
-                _sqlProfiler = profiler.SqlProfiler;
             }
         }
 

@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ExecuteType.cs" />
+    <Compile Include="Data\IDbProfiler.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs">
       <SubType>Code</SubType>
     </Compile>

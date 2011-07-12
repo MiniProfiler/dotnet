@@ -6,8 +6,8 @@ namespace MvcMiniProfiler.Data
     class ProfiledDbProviderServices : DbProviderServices
     {
         private DbProviderServices tail;
-        private MiniProfiler profiler;
-        public ProfiledDbProviderServices(DbProviderServices tail, MiniProfiler profiler)
+        private IDbProfiler profiler;
+        public ProfiledDbProviderServices(DbProviderServices tail, IDbProfiler profiler)
         {
             this.tail = tail;
             this.profiler = profiler;

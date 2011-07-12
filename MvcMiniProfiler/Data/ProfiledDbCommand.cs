@@ -15,8 +15,7 @@ namespace MvcMiniProfiler.Data
         private DbConnection _conn;
         private DbTransaction _tran;
 
-        private MiniProfiler _profiler;
-        private SqlProfiler _sqlProfiler;
+        private IDbProfiler _profiler;
 
         private bool bindByName;
         /// <summary>
@@ -72,7 +71,7 @@ namespace MvcMiniProfiler.Data
         }
 
 
-        public ProfiledDbCommand(DbCommand cmd, DbConnection conn, MiniProfiler profiler)
+        public ProfiledDbCommand(DbCommand cmd, DbConnection conn, IDbProfiler profiler)
         {
             if (cmd == null) throw new ArgumentNullException("cmd");
 
@@ -82,7 +81,6 @@ namespace MvcMiniProfiler.Data
             if (profiler != null)
             {
                 _profiler = profiler;
-                _sqlProfiler = profiler.SqlProfiler;
             }
         }
 
@@ -146,14 +144,14 @@ namespace MvcMiniProfiler.Data
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            _sqlProfiler.ExecuteStart(this, ExecuteType.Reader);
+            _profiler.ExecuteStart(this, ExecuteType.Reader);
 
             var result = _cmd.ExecuteReader(behavior);
 
-            if (_sqlProfiler != null)
+            if (_profiler != null)
             {
                 result = new ProfiledDbDataReader(result, _conn, _profiler);
-                _sqlProfiler.ExecuteFinish(this, ExecuteType.Reader, result);
+                _profiler.ExecuteFinish(this, ExecuteType.Reader, result);
             }
 
             return result;
@@ -161,17 +159,17 @@ namespace MvcMiniProfiler.Data
 
         public override int ExecuteNonQuery()
         {
-            _sqlProfiler.ExecuteStart(this, ExecuteType.NonQuery);
+            _profiler.ExecuteStart(this, ExecuteType.NonQuery);
             var result = _cmd.ExecuteNonQuery();
-            _sqlProfiler.ExecuteFinish(this, ExecuteType.NonQuery);
+            _profiler.ExecuteFinish(this, ExecuteType.NonQuery);
             return result;
         }
 
         public override object ExecuteScalar()
         {
-            _sqlProfiler.ExecuteStart(this, ExecuteType.Scalar);
+            _profiler.ExecuteStart(this, ExecuteType.Scalar);
             object result = _cmd.ExecuteScalar();
-            _sqlProfiler.ExecuteFinish(this, ExecuteType.Scalar);
+            _profiler.ExecuteFinish(this, ExecuteType.Scalar);
             return result;
         }
 

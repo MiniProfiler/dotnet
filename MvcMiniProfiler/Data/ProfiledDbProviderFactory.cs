@@ -6,9 +6,9 @@ namespace MvcMiniProfiler.Data
 {
     internal class ProfiledDbProviderFactory : DbProviderFactory, IServiceProvider
     {
-        private readonly MiniProfiler profiler;
+        private readonly IDbProfiler profiler;
         private readonly DbProviderFactory tail;
-        public ProfiledDbProviderFactory(MiniProfiler profiler, DbProviderFactory tail)
+        public ProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
         {
             this.profiler = profiler;
             this.tail = tail;

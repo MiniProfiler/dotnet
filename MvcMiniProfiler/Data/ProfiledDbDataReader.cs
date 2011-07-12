@@ -12,11 +12,10 @@ namespace MvcMiniProfiler.Data
 
         private DbConnection _conn;
         private DbDataReader _reader;
-        private MiniProfiler _profiler;
-        private SqlProfiler _sqlProfiler;
+        private IDbProfiler _profiler;
 
 
-        public ProfiledDbDataReader(DbDataReader reader, DbConnection connection, MiniProfiler profiler)
+        public ProfiledDbDataReader(DbDataReader reader, DbConnection connection, IDbProfiler profiler)
         {
             _reader = reader;
             _conn = connection;
@@ -24,7 +23,6 @@ namespace MvcMiniProfiler.Data
             if (profiler != null)
             {
                 _profiler = profiler;
-                _sqlProfiler = profiler.SqlProfiler;
             }
         }
 
@@ -68,7 +66,7 @@ namespace MvcMiniProfiler.Data
         public override void Close()
         {
             _reader.Close();
-            _sqlProfiler.ReaderFinish(this);
+            _profiler.ReaderFinish(this);
         }
 
         public override bool GetBoolean(int ordinal)
