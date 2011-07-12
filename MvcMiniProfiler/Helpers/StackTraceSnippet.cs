@@ -24,7 +24,7 @@ namespace MvcMiniProfiler.Helpers
 				return "";
 			}
 
-			var methods = new Stack<string>();
+			var methods = new List<string>();
 
 			foreach (StackFrame t in frames)
 			{
@@ -39,14 +39,20 @@ namespace MvcMiniProfiler.Helpers
 					!ShouldExcludeType(method) &&
 					!MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
 				{
-					methods.Push(method.Name);
+					methods.Add(method.Name);
 				}
 			}
 
 			var result = string.Join(" ", methods);
 
-			if (result.Length > MiniProfiler.Settings.StackMaxLength)
-				result = result.Substring(result.Length - MiniProfiler.Settings.StackMaxLength);
+            if (result.Length > MiniProfiler.Settings.StackMaxLength)
+            {
+                var index = result.IndexOf(" ", MiniProfiler.Settings.StackMaxLength);		
+	            if (index >= MiniProfiler.Settings.StackMaxLength)		
+	            {		
+	                result = result.Substring(0, index);		
+	            }		
+	        }		
 
 			return result;
 		}
