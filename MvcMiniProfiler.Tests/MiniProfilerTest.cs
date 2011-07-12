@@ -71,7 +71,7 @@ namespace MvcMiniProfiler.Tests
             }
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void TestDataAdapter()
         {
             var prof = new TestDbProfiler();
