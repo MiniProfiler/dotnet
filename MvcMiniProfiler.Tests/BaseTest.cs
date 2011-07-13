@@ -18,13 +18,13 @@ namespace MvcMiniProfiler.Tests
 
         public BaseTest()
         {
-            //if (File.Exists("Test.sdf"))
-            //    File.Delete("Test.sdf");
+            if (File.Exists("Test.sdf"))
+                File.Delete("Test.sdf");
 
-            //var engine = new SqlCeEngine(cnnStr);
-            //engine.CreateDatabase();
-            //connection = new SqlCeConnection(cnnStr);
-            //connection.Open();
+            var engine = new SqlCeEngine(cnnStr);
+            engine.CreateDatabase();
+            connection = new SqlCeConnection(cnnStr);
+            connection.Open();
         }
 
         public static IDisposable SimulateRequest(string url)

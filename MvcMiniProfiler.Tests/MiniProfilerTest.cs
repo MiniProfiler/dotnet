@@ -10,6 +10,7 @@ using NUnit.Framework;
 using System.Data.Common;
 using System.Data;
 using MvcMiniProfiler.Data;
+using System.Data.SqlServerCe;
 
 namespace MvcMiniProfiler.Tests
 {
@@ -77,7 +78,7 @@ namespace MvcMiniProfiler.Tests
             Assert.That(p.Root.Children.Single().HasChildren, Is.True);
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void TestDataAdapter()
         {
             var prof = new TestDbProfiler();
