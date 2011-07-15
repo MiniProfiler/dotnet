@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using MvcMiniProfiler.Data;
-
+using System.Linq;
 
 namespace MvcMiniProfiler
 {
@@ -39,7 +39,13 @@ namespace MvcMiniProfiler
 
             _inProgress[id] = sqlTiming;
         }
-
+        /// <summary>
+        /// Returns all currently open commands on this connection
+        /// </summary>
+        public SqlTiming[] GetInProgressCommands()
+        {
+            return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
+        }
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>

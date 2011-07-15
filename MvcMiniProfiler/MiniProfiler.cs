@@ -116,6 +116,13 @@ namespace MvcMiniProfiler
         internal SqlProfiler SqlProfiler { get; private set; }
 
         /// <summary>
+        /// Returns all currently open commands on this connection
+        /// </summary>
+        public SqlTiming[] GetInProgressCommands()
+        {
+            return SqlProfiler == null ? null : SqlProfiler.GetInProgressCommands();
+        }
+        /// <summary>
         /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
         /// their starting time.
         /// </summary>
