@@ -65,21 +65,6 @@ namespace SampleWeb
             {
                 File.Delete(efDb);
             }
-
-          //  var cnnStr = "Data Source = " + efDb + ";";
-          //  var engine = new SqlCeEngine(cnnStr);
-          //  engine.CreateDatabase();
-
-            /*
-            var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
-            var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
-            Database.DefaultConnectionFactory = profiled;
-            using (var ctx = new EFContext())
-            {
-                ctx.Database.
-                ctx.Database.Initialize(true);
-            }
-             */
           
         }
 
