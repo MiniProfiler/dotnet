@@ -19,7 +19,15 @@ namespace MvcMiniProfiler.Data
         }
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
-            return tail.GetProviderManifestToken(connection);
+            var wrapped = connection;
+
+            var profiled = connection as ProfiledDbConnection;
+            if (profiled != null)
+            {
+                wrapped = profiled.WrappedConnection;
+            }
+
+            return tail.GetProviderManifestToken(wrapped);
         }
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest providerManifest, System.Data.Common.CommandTrees.DbCommandTree commandTree)
         {

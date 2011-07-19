@@ -9,8 +9,35 @@ namespace MvcMiniProfiler.Data
     /// </summary>
     public class ProfiledDbProviderFactory : DbProviderFactory, IServiceProvider
     {
-        private readonly IDbProfiler profiler;
-        private readonly DbProviderFactory tail;
+
+        /// <summary>
+        /// Every provider factory must have an Instance public field
+        /// </summary>
+        public static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
+
+        private IDbProfiler profiler;
+        private DbProviderFactory tail;
+
+
+        /// <summary>
+        /// Used for db provider apis internally 
+        /// </summary>
+        private ProfiledDbProviderFactory ()
+	    {
+
+	    }
+
+        /// <summary>
+        /// Allow to re-init the provider factory.
+        /// </summary>
+        /// <param name="profiler"></param>
+        /// <param name="tail"></param>
+        public void InitProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
+        {
+            this.profiler = profiler;
+            this.tail = tail;
+        }
+
         /// <summary>
         /// proxy
         /// </summary>

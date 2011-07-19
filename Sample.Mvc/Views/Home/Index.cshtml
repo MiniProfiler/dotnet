@@ -26,8 +26,10 @@
 </div>
 
 <div style="width:50%; float:right;">
-    <a class="massive-nesting" href="javascript:void(0);">Massive Nesting</a><a class="massive-nesting" href="javascript:void(0);" style="padding-left:20px">Massive Nesting 2</a>
+    <a class="massive-nesting" href="javascript:void(0);">Massive Nesting</a>
+    <a class="massive-nesting" href="javascript:void(0);" style="padding-left:20px">Massive Nesting 2</a>
     <a class="duplicate" href="javascript:void(0);">Duplicated Queries (N+1)</a>
+    <a class="efcodefirst" href="javascript:void(0);">EF Code First</a>
 
     <script type="text/javascript">
         $(function() {
@@ -72,6 +74,12 @@
             $('.duplicate').click(function () {
                 var link = $(this);
                 $.get('Home/Duplicated', function (data) {
+                    link.parent().append('<p>' + data + '</p>');
+                });
+            });
+            $('.efcodefirst').click(function () {
+                var link = $(this);
+                $.get('Home/EFCodeFirst', function (data) {
                     link.parent().append('<p>' + data + '</p>');
                 });
             });

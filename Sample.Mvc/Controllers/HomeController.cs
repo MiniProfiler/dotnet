@@ -5,6 +5,9 @@ using System.Threading;
 using Dapper;
 using System.Linq;
 using System.Data.Common;
+using SampleWeb.MvcCodeFirst;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
@@ -61,6 +64,62 @@ namespace SampleWeb.Controllers
                 var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public ActionResult EFCodeFirst()
+        {
+            int count;
+            var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
+            var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
+
+
+            /*
+             * I used this to initialize ..
+            using (var cnn = profiled.CreateConnection("SampleWeb.MvcCodeFirst.EFContext"))
+            {
+                cnn.Open();
+                try { cnn.Execute("drop table People"); }
+                catch 
+                { 
+                 // don't care  
+                }
+                cnn.Execute("create table People (Id int identity, Name nvarchar(4000))");
+            }
+            */
+
+            Database.DefaultConnectionFactory = profiled;
+
+            EFContext context = null;
+            using (MiniProfiler.Current.Step("EF Stuff"))
+            {
+                try
+                {
+                    using (MiniProfiler.Current.Step("Create Context"))
+                        context = new EFContext();
+
+                    using (MiniProfiler.Current.Step("First count"))
+                        count = context.People.Count();
+
+                    using (MiniProfiler.Current.Step("Insertion"))
+                    {
+                        var p = new Person { Name = "sam" };
+                        context.People.Add(p);
+                        context.SaveChanges();
+                    }
+
+                    using (MiniProfiler.Current.Step("Second count"))
+                        count = context.People.Count();
+                }
+                finally
+                {
+                    if (context != null)
+                    {
+                        context.Dispose();
+                    }
+                }
+            }
+           
+            return Json(count, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult MassiveNesting()

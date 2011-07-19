@@ -70,7 +70,8 @@ namespace MvcMiniProfiler.Data
             {
                 if (_factory != null) return _factory;
                 DbProviderFactory tail = ripInnerProvider(_conn);
-                _factory = new ProfiledDbProviderFactory(_profiler, tail);
+                _factory = DbProviderFactories.GetFactory("MvcMiniProfiler.Data.ProfiledDbProvider");
+                ((ProfiledDbProviderFactory)_factory).InitProfiledDbProviderFactory(_profiler, tail);
                 return _factory;
             }
         }
