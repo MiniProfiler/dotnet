@@ -5,7 +5,7 @@ using System.Threading;
 using Dapper;
 using System.Linq;
 using System.Data.Common;
-using SampleWeb.MvcCodeFirst;
+using SampleWeb.EFCodeFirst;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 namespace SampleWeb.Controllers
@@ -71,21 +71,6 @@ namespace SampleWeb.Controllers
             int count;
             var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
             var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
-
-
-            /*
-             * I used this to initialize ..
-            using (var cnn = profiled.CreateConnection("SampleWeb.MvcCodeFirst.EFContext"))
-            {
-                cnn.Open();
-                try { cnn.Execute("drop table People"); }
-                catch 
-                { 
-                 // don't care  
-                }
-                cnn.Execute("create table People (Id int identity, Name nvarchar(4000))");
-            }
-            */
 
             Database.DefaultConnectionFactory = profiled;
 

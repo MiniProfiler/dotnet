@@ -35,6 +35,23 @@ namespace MvcMiniProfiler.Data
             var cmd = cmdDef.CreateCommand();
             return CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, profiler));
         }
+
+        private static DbConnection GetRealConnection(DbConnection cnn)
+        {
+            var real = cnn as ProfiledDbConnection;
+            if (real != null)
+            {
+                cnn = real.WrappedConnection;
+            }
+            return cnn;
+        }
+
+        protected override void DbCreateDatabase(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
+        {
+            connection = GetRealConnection(connection);
+            var method = tail.GetType().GetMethod("DbCreateDatabase", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method.Invoke(tail, new object[] { connection, commandTimeout, storeItemCollection });
+        }
     }
 }
 #endif

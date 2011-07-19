@@ -8,6 +8,13 @@ using System.Web.Routing;
 using MvcMiniProfiler;
 using System.IO;
 using SampleWeb.Controllers;
+using Dapper;
+using MvcMiniProfiler.Storage;
+using SampleWeb.Helpers;
+using System.Data.SqlServerCe;
+using SampleWeb.EFCodeFirst;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity;
 
 namespace SampleWeb
 {
@@ -35,6 +42,45 @@ namespace SampleWeb
             RegisterRoutes(RouteTable.Routes);
 
             InitProfilerSettings();
+
+            var dbFile = HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
+            if (System.IO.File.Exists(dbFile))
+            {
+                File.Delete(dbFile);
+            }
+
+            using (var cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString))
+            {
+                cnn.Open();
+                cnn.Execute("create table RouteHits(RouteName,HitCount)");
+                // we need some tiny mods to allow sqlite support 
+                foreach (var sql in SqliteMiniProfilerStorage.TableCreationSQL)
+                {
+                    cnn.Execute(sql);
+                }
+            }
+
+            var efDb = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
+            if (System.IO.File.Exists(efDb))
+            {
+                File.Delete(efDb);
+            }
+
+          //  var cnnStr = "Data Source = " + efDb + ";";
+          //  var engine = new SqlCeEngine(cnnStr);
+          //  engine.CreateDatabase();
+
+            /*
+            var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
+            var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
+            Database.DefaultConnectionFactory = profiled;
+            using (var ctx = new EFContext())
+            {
+                ctx.Database.
+                ctx.Database.Initialize(true);
+            }
+             */
+          
         }
 
         protected void Application_BeginRequest()

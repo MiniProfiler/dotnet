@@ -71,7 +71,7 @@ namespace SampleWeb.Controllers
 
                 using (profiler.Step("Insert RouteHits"))
                 {
-                    conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
+                   conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
                 }
                 using (profiler.Step("Update RouteHits"))
                 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 
-namespace SampleWeb.MvcCodeFirst
+namespace SampleWeb.EFCodeFirst
 {
     public class EFContext : DbContext
     {
