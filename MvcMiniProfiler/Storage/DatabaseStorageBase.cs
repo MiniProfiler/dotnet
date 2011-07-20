@@ -64,9 +64,8 @@ namespace MvcMiniProfiler.Storage
         protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings, List<SqlTimingParameter> sqlParameters)
         {
             var stack = new Stack<Timing>();
-            stack.Push(timings.First());
 
-            for (int i = 1; i < timings.Count; i++)
+            for (int i = 0; i < timings.Count; i++)
             {
                 var cur = timings[i];
                 foreach (var sqlTiming in sqlTimings)
@@ -83,14 +82,16 @@ namespace MvcMiniProfiler.Storage
                     }
                 }
 
-                Timing head;
-
-                while ((head = stack.Peek()).Id != cur.ParentTimingId)
+                if (stack.Count > 0)
                 {
-                    stack.Pop();
-                }
+                    Timing head;
+                    while ((head = stack.Peek()).Id != cur.ParentTimingId)
+                    {
+                        stack.Pop();
+                    }
 
-                head.AddChild(cur);
+                    head.AddChild(cur);
+                }
                 stack.Push(cur);
             }
 

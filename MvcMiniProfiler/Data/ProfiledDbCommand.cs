@@ -107,6 +107,12 @@ namespace MvcMiniProfiler.Data
             get { return _conn; }
             set
             {
+                // allow for command reuse ...
+                if (_profiler == null || !_profiler.IsActive)
+                {
+                    _profiler = MiniProfiler.Current;
+                }
+
                 _conn = value;
                 var awesomeConn = value as ProfiledDbConnection;
                 _cmd.Connection = awesomeConn == null ? value : awesomeConn.WrappedConnection;

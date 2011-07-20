@@ -80,5 +80,6 @@ namespace MvcMiniProfiler.Tests.Data
             ReaderFinishCount++;
         }
 
+        public bool IsActive { get; set; }
     }
 }

@@ -28,6 +28,9 @@ namespace MvcMiniProfiler
         {
             SqlProfiler.ReaderFinish(reader);
         }
+
+        bool _isActive;
+        bool IDbProfiler.IsActive { get { return _isActive; } }
  
     }
 }

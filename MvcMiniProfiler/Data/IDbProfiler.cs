@@ -38,5 +38,10 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         /// <param name="reader"></param>
         void ReaderFinish(DbDataReader reader);
+
+        /// <summary>
+        /// True if the profiler instance is active
+        /// </summary>
+        bool IsActive { get; }
     }
 }

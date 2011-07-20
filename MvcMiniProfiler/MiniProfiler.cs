@@ -346,6 +346,8 @@ namespace MvcMiniProfiler
             // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
             result.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(context.Request);
 
+            result._isActive = true;
+
             return result;
         }
 
@@ -369,6 +371,8 @@ namespace MvcMiniProfiler
             // stop our timings - when this is false, we've already called .Stop before on this session
             if (!current.StopImpl())
                 return;
+
+            current._isActive = false;
 
             if (discardResults)
             {
