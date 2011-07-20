@@ -12,3 +12,4 @@ glob:Sample.Mvc/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf
 glob:Sample.Mvc/App_Data/TestMiniProfiler.sqlite
 glob:*~
 glob:NuGet.exe
+glob:*.swp
