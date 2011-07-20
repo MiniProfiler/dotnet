@@ -5,33 +5,33 @@ namespace MvcMiniProfiler.Data
 {
     class ProfiledDbProviderServices : DbProviderServices
     {
-        private DbProviderServices tail;
+        private DbProviderServices wrapped;
         private IDbProfiler profiler;
         public ProfiledDbProviderServices(DbProviderServices tail, IDbProfiler profiler)
         {
-            this.tail = tail;
+            this.wrapped = tail;
             this.profiler = profiler;
         }
 
         protected override DbProviderManifest GetDbProviderManifest(string manifestToken)
         {
-            return tail.GetProviderManifest(manifestToken);
+            return wrapped.GetProviderManifest(manifestToken);
         }
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
-            var wrapped = connection;
+            var wrappedConnection = connection;
 
             var profiled = connection as ProfiledDbConnection;
             if (profiled != null)
             {
-                wrapped = profiled.WrappedConnection;
+                wrappedConnection = profiled.WrappedConnection;
             }
 
-            return tail.GetProviderManifestToken(wrapped);
+            return wrapped.GetProviderManifestToken(wrappedConnection);
         }
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest providerManifest, System.Data.Common.CommandTrees.DbCommandTree commandTree)
         {
-            var cmdDef = tail.CreateCommandDefinition(providerManifest, commandTree);
+            var cmdDef = wrapped.CreateCommandDefinition(providerManifest, commandTree);
             var cmd = cmdDef.CreateCommand();
             return CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, profiler));
         }
@@ -48,9 +48,32 @@ namespace MvcMiniProfiler.Data
 
         protected override void DbCreateDatabase(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
         {
-            connection = GetRealConnection(connection);
-            var method = tail.GetType().GetMethod("DbCreateDatabase", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            method.Invoke(tail, new object[] { connection, commandTimeout, storeItemCollection });
+            wrapped.CreateDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
+        }
+
+        protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
+        {
+            wrapped.DeleteDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
+        }
+
+        protected override string DbCreateDatabaseScript(string providerManifestToken, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
+        {
+            return wrapped.CreateDatabaseScript(providerManifestToken, storeItemCollection);
+        }
+
+        protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
+        {
+            return wrapped.DatabaseExists(GetRealConnection(connection), commandTimeout, storeItemCollection);
+        }
+
+        /// <summary>
+        /// Get DB command definition
+        /// </summary>
+        /// <param name="prototype"></param>
+        /// <returns></returns>
+        public override DbCommandDefinition CreateCommandDefinition(DbCommand prototype)
+        {
+            return wrapped.CreateCommandDefinition(prototype);
         }
     }
 }

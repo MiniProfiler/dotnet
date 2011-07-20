@@ -69,10 +69,17 @@ namespace SampleWeb.Controllers
         public ActionResult EFCodeFirst()
         {
             int count;
-            var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
-            var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
 
-            Database.DefaultConnectionFactory = profiled;
+            // this would usually go in Global.asax.cs in Application_Start
+            {
+                var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
+                // for sql server you could do ... 
+                //var factory = new SqlConnectionFactory("Data Source=.;Initial Catalog=tempdb;Integrated Security=True");
+                var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
+                Database.DefaultConnectionFactory = profiled;
+                Database.SetInitializer<EFContext>(new DropCreateDatabaseIfModelChanges<EFContext>());
+            }
+            // end 
 
             EFContext context = null;
             using (MiniProfiler.Current.Step("EF Stuff"))
@@ -103,7 +110,7 @@ namespace SampleWeb.Controllers
                     }
                 }
             }
-           
+
             return Json(count, JsonRequestBehavior.AllowGet);
         }
 
