@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Reflection;
 using System.Reflection.Emit;
 using MvcMiniProfiler.Data;
+using MvcMiniProfiler;
 
 #pragma warning disable 1591 // xml doc comments warnings
 
@@ -22,18 +23,32 @@ namespace System.Data.Linq
 #if ENTITY_FRAMEWORK
 namespace System.Data.Objects
 {
+  
+
     public static class ObjectContextUtils
     {
+        static class MetadataCache<U> where U : System.Data.Objects.ObjectContext
+        {
+            public static System.Data.Metadata.Edm.MetadataWorkspace workspace;
+
+            static MetadataCache()
+            {
+                workspace  = new System.Data.Metadata.Edm.MetadataWorkspace(
+                  new string[] { "res://*/" },
+                  new Assembly[] { typeof(U).Assembly });
+            }
+        }
+
+
         public static T CreateObjectContext<T>(this DbConnection connection) where T : System.Data.Objects.ObjectContext
         {
-            var workspace = new System.Data.Metadata.Edm.MetadataWorkspace(
-              new string[] { "res://*/" },
-              new Assembly[] { typeof(T).Assembly });
-
+            var workspace = MetadataCache<T>.workspace;
             var factory = DbProviderServices.GetProviderFactory(connection);
+
             var itemCollection = workspace.GetItemCollection(System.Data.Metadata.Edm.DataSpace.SSpace);
             itemCollection.GetType().GetField("_providerFactory", // <==== big fat ugly hack
-                BindingFlags.NonPublic | BindingFlags.Instance).SetValue(itemCollection, factory);
+                    BindingFlags.NonPublic | BindingFlags.Instance).SetValue(itemCollection, factory);
+
             var ec = new System.Data.EntityClient.EntityConnection(workspace, connection);
             return CtorCache<T, System.Data.EntityClient.EntityConnection>.Ctor(ec);
         }

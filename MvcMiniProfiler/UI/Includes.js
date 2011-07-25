@@ -2,7 +2,9 @@
 
     var options,
         container,
-        fetchedIds = []; // so we never pull down a profiler twice
+        fetchedIds = [],
+        fetchingIds = []  // so we never pull down a profiler twice
+        ;
 
     var hasLocalStorage = function () {
         try {
@@ -58,10 +60,19 @@
     var fetchResults = function (ids) {
         for (var i = 0, id; i < ids.length; i++) {
             id = ids[i];
-            if ($.inArray(id, fetchedIds) < 0) {
-                $.getJSON(options.path + 'mini-profiler-results?id=' + id + '&popup=1', function (json) {
-                    fetchedIds.push(id);
-                    buttonShow(json);
+            if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
+                var idx = fetchingIds.push(id) - 1;
+
+                $.ajax({
+                    url: options.path + 'mini-profiler-results?id=' + id + '&popup=1',
+                    dataType: 'json',
+                    success: function (json) {
+                        fetchedIds.push(id);
+                        buttonShow(json);
+                    },
+                    complete: function() {
+                        fetchingIds.splice(idx, 1);
+                    }
                 });
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MvcMiniProfiler.Data;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace MvcMiniProfiler
 {
@@ -13,8 +14,8 @@ namespace MvcMiniProfiler
     /// </summary>
     public class SqlProfiler
     {
-        Dictionary<Tuple<object, ExecuteType>, SqlTiming> _inProgress = new Dictionary<Tuple<object, ExecuteType>, SqlTiming>();
-        Dictionary<DbDataReader, SqlTiming> _inProgressReaders = new Dictionary<DbDataReader, SqlTiming>();
+        ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming> _inProgress = new ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming>();
+        ConcurrentDictionary<DbDataReader, SqlTiming> _inProgressReaders = new ConcurrentDictionary<DbDataReader, SqlTiming>();
 
         /// <summary>
         /// The profiling session this SqlProfiler is part of.
@@ -54,7 +55,8 @@ namespace MvcMiniProfiler
             var id = Tuple.Create((object)command, type);
             var current = _inProgress[id];
             current.ExecutionComplete(isReader: reader != null);
-            _inProgress.Remove(id);
+            SqlTiming ignore;
+            _inProgress.TryRemove(id, out ignore);
             if (reader != null)
             {
                 _inProgressReaders[reader] = current;
@@ -71,7 +73,8 @@ namespace MvcMiniProfiler
             if (_inProgressReaders.TryGetValue(reader, out stat))
             {
                 stat.ReaderFetchComplete();
-                _inProgressReaders.Remove(reader);
+                SqlTiming ignore;
+                _inProgressReaders.TryRemove(reader, out ignore);
             }
         }
     }
