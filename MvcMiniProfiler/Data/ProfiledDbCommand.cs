@@ -107,11 +107,8 @@ namespace MvcMiniProfiler.Data
             get { return _conn; }
             set
             {
-                // allow for command reuse ...
-                if (_profiler == null || !_profiler.IsActive)
-                {
-                    _profiler = MiniProfiler.Current;
-                }
+                // allow for command reuse, it is clear the connection is going to need to be reset
+                _profiler = MiniProfiler.Current;
 
                 _conn = value;
                 var awesomeConn = value as ProfiledDbConnection;

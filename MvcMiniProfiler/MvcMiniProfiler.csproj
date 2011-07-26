@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ENTITY_FRAMEWORK LINQ_TO_SQL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ENTITY_FRAMEWORK LINQ_TO_SQL ASP_NET_MVC3</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\MvcMiniProfiler.XML</DocumentationFile>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;ENTITY_FRAMEWORK LINQ_TO_SQL</DefineConstants>
+    <DefineConstants>TRACE;ENTITY_FRAMEWORK LINQ_TO_SQL ASP_NET_MVC3</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\MvcMiniProfiler.xml</DocumentationFile>
@@ -57,6 +57,9 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\StackOverflow\StackOverflow\lib\System.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +97,8 @@
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniProfiler.cs" />
+    <Compile Include="MVCHelpers\ProfilingActionFilter.cs" />
+    <Compile Include="MVCHelpers\ProfilingViewEngine.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />
     <Compile Include="SqlFormatters\ISqlFormatter.cs" />
     <Compile Include="SqlFormatters\OracleFormatter.cs" />
