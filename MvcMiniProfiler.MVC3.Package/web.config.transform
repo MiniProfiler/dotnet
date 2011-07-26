@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<configuration>
+  <system.data>
+    <DbProviderFactories>
+      <remove invariant="MvcMiniProfiler.Data.ProfiledDbProvider" />
+      <add name="MvcMiniProfiler.Data.ProfiledDbProvider" invariant="MvcMiniProfiler.Data.ProfiledDbProvider"
+        description="MvcMiniProfiler.Data.ProfiledDbProvider"
+        type="MvcMiniProfiler.Data.ProfiledDbProviderFactory, MvcMiniProfiler, Version=1.6.0.0, Culture=neutral, PublicKeyToken=b44f9351044011a3" />
+    </DbProviderFactories>
+  </system.data>
+</configuration>
