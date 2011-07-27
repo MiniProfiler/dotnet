@@ -27,6 +27,7 @@ namespace $rootnamespace$.App_Start {
 			//      For profiling to display in the UI you will have to include the line @MvcMiniProfiler.MiniProfiler.RenderIncludes() 
 			//      in your master layout
 
+			//TODO: Non SQL Server based installs can use other formatters like: new MvcMiniProfiler.SqlFormatters.InlineFormatter()
 			MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
 
 			//TODO: If you are using SqlServer, rather than SqlCe,

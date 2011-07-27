@@ -8,7 +8,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>http://code.google.com/p/mvc-mini-profiler/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>ASP.NET MVC3 specific package for the Lightweight mini-profiler. We attempt to auto-hooks up as much as possible.</description>
+    <description>ASP.NET MVC3 specific package for the Lightweight mini-profiler. We attempt to automatically hook up as much as possible. This package is optional.</description>
     <language>en-US</language>
     <tags>profiler sql mvc asp.net performance timing</tags>
     <dependencies>
@@ -20,9 +20,9 @@
   </frameworkAssemblies>
   </metadata>
   <files>
-	<file src="MvcMiniProfiler.MVC3.Package\*" target="Content"/>
-	<file src="MvcMiniProfiler.MVC3.Package\Views\Shared\*" target="Content\Views\Shared"/>
-	<file src="MvcMiniProfiler.MVC3.Package\App_Start\*" target="Content\App_Start"/>
-	<file src="MvcMiniProfiler.MVC3.Package\Controllers\*" target="Content\Controllers"/>
+	<file src="Content\*" target="Content"/>
+	<file src="Content\Views\Shared\*" target="Content\Views\Shared"/>
+	<file src="Content\App_Start\*" target="Content\App_Start"/>
+	<file src="Content\Controllers\*" target="Content\Controllers"/>
   </files>
 </package>
