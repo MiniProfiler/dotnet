@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Web;
+using System.Web.Mvc;
+using System.Linq;
 using MvcMiniProfiler;
+using MvcMiniProfiler.MVCHelpers;
 using Microsoft.Web.Infrastructure;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 //using System.Data;
@@ -9,6 +12,10 @@ using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
 [assembly: WebActivator.PreApplicationStartMethod(
     typeof($rootnamespace$.App_Start.MiniProfilerPackage), "PreStart")]
+
+[assembly: WebActivator.PostApplicationStartMethod(
+    typeof($rootnamespace$.App_Start.MiniProfilerPackage), "PostStart")]
+
 
 namespace $rootnamespace$.App_Start {
     public static class MiniProfilerPackage {
@@ -28,6 +35,17 @@ namespace $rootnamespace$.App_Start {
             
 			//Make sure the MiniProfiler handles BeginRequest and EndRequest
 			DynamicModuleUtility.RegisterModule(typeof(MiniProfilerStartupModule));
+			
+			//Setup profiler for Controllers via a Global ActionFilter
+            GlobalFilters.Filters.Add(new ProfilingActionFilter());
+        }
+        
+        public static void PostStart() {
+            var copy = ViewEngines.Engines.ToList();
+            ViewEngines.Engines.Clear();
+            foreach (var item in copy) {
+                ViewEngines.Engines.Add(new ProfilingViewEngine(item));
+            }
         }
     }
 
