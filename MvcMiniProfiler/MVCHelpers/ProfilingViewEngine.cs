@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using System.Web;
 
 namespace MvcMiniProfiler.MVCHelpers
 {
@@ -38,7 +39,7 @@ namespace MvcMiniProfiler.MVCHelpers
         IViewEngine wrapped;
 
         /// <summary>
-        /// Create a wrapped view engine, which will profile partials an non-partial views
+        /// Wrap your view engines with this to allow profiling
         /// </summary>
         /// <param name="wrapped"></param>
         public ProfilingViewEngine(IViewEngine wrapped)
@@ -46,34 +47,62 @@ namespace MvcMiniProfiler.MVCHelpers
             this.wrapped = wrapped;
         }
 
+
+        private ViewEngineResult Find(ControllerContext controllerContext, string name, Func<ViewEngineResult> finder, bool isPartial)
+        {
+            var profiler = MiniProfiler.Current;
+            IDisposable block = null;
+            var key = "find-view-or-partial";
+
+            if (profiler != null)
+            {
+                block = HttpContext.Current.Items[key] as IDisposable;
+                if (block == null)
+                {
+                    HttpContext.Current.Items[key] = block = profiler.Step("Find: " + name);
+                }
+            }
+
+            var found = finder();
+            if (found != null && found.View != null)
+            {
+                found = new ViewEngineResult(new WrappedView(found.View, name, isPartial: isPartial), this);
+
+                if (found != null && block != null)
+                {
+                    block.Dispose();
+                    HttpContext.Current.Items[key] = null;
+                }
+            }
+
+            if (found == null && block != null && this == ViewEngines.Engines.Last())
+            {
+                block.Dispose();
+                HttpContext.Current.Items[key] = null;
+            }
+
+            return found;
+        }
+
+
         /// <summary>
-        /// Find a partial view
+        /// Find a partial
         /// </summary>
         public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache)
         {
-            var found = wrapped.FindPartialView(controllerContext, partialViewName, useCache);
-            if (found != null && found.View != null)
-            {
-                found = new ViewEngineResult(new WrappedView(found.View, partialViewName, isPartial: true), this);
-            }
-            return found;
+            return Find(controllerContext, partialViewName, () => wrapped.FindPartialView(controllerContext, partialViewName, useCache), isPartial: true);
         }
 
         /// <summary>
-        /// Fined a view
+        /// Find a view
         /// </summary>
         public ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache)
         {
-            var found = wrapped.FindView(controllerContext, viewName, masterName, useCache);
-            if (found != null && found.View != null)
-            {
-                found = new ViewEngineResult(new WrappedView(found.View, viewName, isPartial: false), this);
-            }
-            return found;
+            return Find(controllerContext, viewName, () => wrapped.FindView(controllerContext, viewName, masterName, useCache), isPartial: false);
         }
 
         /// <summary>
-        /// Release view
+        /// Find a partial
         /// </summary>
         public void ReleaseView(ControllerContext controllerContext, IView view)
         {

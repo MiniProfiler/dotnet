@@ -32,8 +32,19 @@ namespace MvcMiniProfiler.MVCHelpers
                     HttpContext.Current.Items[stackKey] = stack;
                 }
 
-                var prof = MiniProfiler.Current.Step("Controller: " + filterContext.Controller.ToString() + "." + filterContext.ActionDescriptor.ActionName);
-                stack.Push(prof);
+                var profiler = MiniProfiler.Current;
+                if (profiler != null)
+                {
+                    var tokens = filterContext.RouteData.DataTokens;
+                    string area = tokens.ContainsKey("area") && !string.IsNullOrEmpty(tokens["area"].ToString()) ?
+                        tokens["area"] + "." :
+                        "";
+                    string controller = filterContext.Controller.ToString().Split('.').Last() + ".";
+                    string action = filterContext.ActionDescriptor.ActionName;
+
+                    stack.Push(profiler.Step("Controller: " + area + controller + action));
+                }
+
             
             }
             base.OnActionExecuting(filterContext);

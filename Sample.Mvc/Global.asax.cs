@@ -15,6 +15,7 @@ using System.Data.SqlServerCe;
 using SampleWeb.EFCodeFirst;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity;
+using MvcMiniProfiler.MVCHelpers;
 
 namespace SampleWeb
 {
@@ -64,6 +65,17 @@ namespace SampleWeb
             if (System.IO.File.Exists(efDb))
             {
                 File.Delete(efDb);
+            }
+
+            //Setup profiler for Controllers via a Global ActionFilter
+            GlobalFilters.Filters.Add(new ProfilingActionFilter());
+
+            // initialize automatic view profiling
+            var copy = ViewEngines.Engines.ToList();
+            ViewEngines.Engines.Clear();
+            foreach (var item in copy)
+            {
+                ViewEngines.Engines.Add(new ProfilingViewEngine(item));
             }
           
         }
