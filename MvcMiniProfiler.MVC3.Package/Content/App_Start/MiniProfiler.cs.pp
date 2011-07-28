@@ -59,32 +59,37 @@ namespace $rootnamespace$.App_Start {
 		}
 	}
 
-	public class MiniProfilerStartupModule : IHttpModule {
-		public void Init(HttpApplication context) {
-			context.BeginRequest += (sender, e) => {
-				var request = ((HttpApplication)sender).Request;
-				//TODO: By default only local requests are profiled, optionally you can set it up
-				//  so authenticated users are always profiled
-				if (request.IsLocal) { MiniProfiler.Start(); }
-			};
-		
-			
-			// TODO: You can control who sees the profiling information
-			/*
-			context.AuthenticateRequest += (sender, e) =>
-			{
-				if (!CurrentUserIsAllowedToSeeProfiler())
-				{
-					MvcMiniProfiler.MiniProfiler.Stop(discardResults: true);
-				}
-			};
-			*/
+        public class MiniProfilerStartupModule : IHttpModule
+        {
+            public void Init(HttpApplication context)
+            {
+                context.BeginRequest += (sender, e) =>
+                {
+                    var request = ((HttpApplication)sender).Request;
+                    //TODO: By default only local requests are profiled, optionally you can set it up
+                    //  so authenticated users are always profiled
+                    if (request.IsLocal) { MiniProfiler.Start(); }
+                };
 
-			context.EndRequest += (sender, e) => {
-				MiniProfiler.Stop();  
-			};
-		}
- 
-		public void Dispose() { }
+
+                // TODO: You can control who sees the profiling information
+                /*
+                context.AuthenticateRequest += (sender, e) =>
+                {
+                    if (!CurrentUserIsAllowedToSeeProfiler())
+                    {
+                        MvcMiniProfiler.MiniProfiler.Stop(discardResults: true);
+                    }
+                };
+                */
+
+                context.EndRequest += (sender, e) =>
+                {
+                    MiniProfiler.Stop();
+                };
+            }
+
+            public void Dispose() { }
+        }
 	}
 }
