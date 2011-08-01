@@ -128,9 +128,6 @@
     <EmbeddedResource Include="UI\includes.tmpl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\yepnope.1.0.1.js" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="UI\jquery.1.6.1.js" />
   </ItemGroup>
   <ItemGroup>
