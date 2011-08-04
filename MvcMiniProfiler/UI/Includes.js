@@ -258,7 +258,9 @@
     var bindDocumentEvents = function () {
         $(document).bind('click keyup', function (e) {
 
-            var popup = $('.profiler-popup:visible');
+            // this happens on every keystroke, and :visible is crazy expensive in IE <9
+            // and in this case, the display:none check is sufficient.
+            var popup = $('.profiler-popup').filter(function () { return $(this).css("display") !== "none"; });
 
             if (!popup.length) {
                 return;
