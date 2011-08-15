@@ -11,7 +11,7 @@ using System.Web.Configuration;
 #pragma warning disable 1591 // xml doc comments warnings
 
 #if LINQ_TO_SQL
-namespace MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data.Linq2Sql
 {
     public static class DataContextUtils
     {
@@ -23,7 +23,7 @@ namespace MvcMiniProfiler.Data
 }
 #endif
 #if ENTITY_FRAMEWORK
-namespace MvcMiniProfiler.Data
+namespace MvcMiniProfiler.Data.EntityFramework
 {
     public static class ObjectContextUtils
     {
