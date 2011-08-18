@@ -133,7 +133,7 @@ values      (@Id,
             conn.Execute(sql, new
             {
                 Id = t.Id,
-                MiniProfilerId = t.Profiler.Id,
+                MiniProfilerId = profiler.Id,
                 ParentTimingId = t.IsRoot ? (Guid?)null : t.ParentTiming.Id,
                 Name = t.Name.Truncate(200),
                 Depth = t.Depth,
