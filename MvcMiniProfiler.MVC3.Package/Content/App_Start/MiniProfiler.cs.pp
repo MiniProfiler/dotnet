@@ -9,6 +9,8 @@ using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 //using System.Data;
 //using System.Data.Entity;
 //using System.Data.Entity.Infrastructure;
+//using MvcMiniProfiler.Data.EntityFramework;
+//using MvcMiniProfiler.Data.Linq2Sql;
 
 [assembly: WebActivator.PreApplicationStartMethod(
 	typeof($rootnamespace$.App_Start.MiniProfilerPackage), "PreStart")]

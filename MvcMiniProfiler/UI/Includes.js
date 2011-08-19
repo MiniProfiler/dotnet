@@ -377,7 +377,7 @@
 
         renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
             if (jsonDate) {
-                return new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10)).toUTCString();
+                return (typeof jsonDate === 'string') ? new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10)).toUTCString() : jsonDate;
             }
         },
 
