@@ -1,29 +1,15 @@
 ﻿using System;
-using System.Data.Common;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Reflection;
+using System.Data.Common;
 using System.Reflection.Emit;
-using MvcMiniProfiler.Data;
-using MvcMiniProfiler;
-using System.Data;
 using System.Data.EntityClient;
 using System.Web.Configuration;
 
-#pragma warning disable 1591 // xml doc comments warnings
 
-#if LINQ_TO_SQL
-namespace MvcMiniProfiler.Data.Linq2Sql
-{
-    public static class DataContextUtils
-    {
-        public static T CreateDataContext<T>(this DbConnection connection) where T : System.Data.Linq.DataContext
-        {
-            return CtorCache<T, IDbConnection>.Ctor(connection);
-        }
-    }
-}
-#endif
-#if ENTITY_FRAMEWORK
-namespace MvcMiniProfiler.Data.EntityFramework
+namespace MvcMiniProfiler.Data
 {
     public static class ObjectContextUtils
     {
@@ -61,7 +47,7 @@ namespace MvcMiniProfiler.Data.EntityFramework
         /// </summary>
         public static T GetProfiledContext<T>() where T : System.Data.Objects.ObjectContext
         {
-            var conn = ProfiledDbConnection.Get(GetStoreConnection<T>());
+            var conn = new EFProfiledDbConnection(GetStoreConnection<T>(), MiniProfiler.Current);
             return ObjectContextUtils.CreateObjectContext<T>(conn);
         }
 
@@ -79,8 +65,8 @@ namespace MvcMiniProfiler.Data.EntityFramework
             object configName;
             if (builder.TryGetValue("name", out configName))
             {
-               var configEntry = WebConfigurationManager.ConnectionStrings[configName.ToString()];
-               builder = new EntityConnectionStringBuilder(configEntry.ConnectionString);
+                var configEntry = WebConfigurationManager.ConnectionStrings[configName.ToString()];
+                builder = new EntityConnectionStringBuilder(configEntry.ConnectionString);
             }
 
             // Find the proper factory for the underlying connection.
@@ -106,35 +92,28 @@ namespace MvcMiniProfiler.Data.EntityFramework
                 }
             }
         }
-    }
-}
-#endif
-#if LINQ_TO_SQL || ENTITY_FRAMEWORK
-namespace MvcMiniProfiler.Data
-{
-    internal static class CtorCache<TType, TArg> where TType : class
-    {
-        public static readonly Func<TArg, TType> Ctor;
-        static CtorCache()
+
+        internal static class CtorCache<TType, TArg> where TType : class
         {
-            Type[] argTypes = new Type[] { typeof(TArg) };
-            var ctor = typeof(TType).GetConstructor(argTypes);
-            if (ctor == null)
+            public static readonly Func<TArg, TType> Ctor;
+            static CtorCache()
             {
-                Ctor = x => { throw new InvalidOperationException("No suitable constructor defined"); };
-            }
-            else
-            {
-                var dm = new DynamicMethod("ctor", typeof(TType), argTypes);
-                var il = dm.GetILGenerator();
-                il.Emit(OpCodes.Ldarg_0);
-                il.Emit(OpCodes.Newobj, ctor);
-                il.Emit(OpCodes.Ret);
-                Ctor = (Func<TArg, TType>)dm.CreateDelegate(typeof(Func<TArg, TType>));
+                Type[] argTypes = new Type[] { typeof(TArg) };
+                var ctor = typeof(TType).GetConstructor(argTypes);
+                if (ctor == null)
+                {
+                    Ctor = x => { throw new InvalidOperationException("No suitable constructor defined"); };
+                }
+                else
+                {
+                    var dm = new DynamicMethod("ctor", typeof(TType), argTypes);
+                    var il = dm.GetILGenerator();
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Newobj, ctor);
+                    il.Emit(OpCodes.Ret);
+                    Ctor = (Func<TArg, TType>)dm.CreateDelegate(typeof(Func<TArg, TType>));
+                }
             }
         }
     }
 }
-#endif
-
-#pragma warning restore 1591 // xml doc comments warnings

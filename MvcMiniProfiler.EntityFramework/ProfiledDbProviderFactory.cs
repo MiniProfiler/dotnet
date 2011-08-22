@@ -77,7 +77,7 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         public override DbConnection CreateConnection()
         {
-            return ProfiledDbConnection.Get(tail.CreateConnection(), profiler);
+            return new EFProfiledDbConnection(tail.CreateConnection(), profiler);
         }
         /// <summary>
         /// proxy
@@ -126,12 +126,10 @@ namespace MvcMiniProfiler.Data
             var svc = tailProvider.GetService(serviceType);
             if (svc == null) return null;
 
-#if ENTITY_FRAMEWORK
             if (serviceType == typeof(DbProviderServices))
             {
                 svc = new ProfiledDbProviderServices((DbProviderServices)svc, profiler);
             }
-#endif
             return svc;
         }
     }

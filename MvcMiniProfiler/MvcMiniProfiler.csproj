@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ENTITY_FRAMEWORK LINQ_TO_SQL ASP_NET_MVC3</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ASP_NET_MVC3</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\MvcMiniProfiler.XML</DocumentationFile>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;ENTITY_FRAMEWORK LINQ_TO_SQL ASP_NET_MVC3</DefineConstants>
+    <DefineConstants>TRACE;ASP_NET_MVC3</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\MvcMiniProfiler.xml</DocumentationFile>
@@ -43,17 +43,10 @@
     <AssemblyOriginatorKeyFile>miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -66,11 +59,9 @@
   <ItemGroup>
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
-    <Compile Include="Data\ProfiledDbConnectionFactory.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\ContextUtils.cs" />
     <Compile Include="Data\Link.cs" />
     <Compile Include="Data\ProfiledDbCommand.cs">
       <SubType>Component</SubType>
@@ -79,8 +70,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Data\ProfiledDbDataReader.cs" />
-    <Compile Include="Data\ProfiledDbProviderFactory.cs" />
-    <Compile Include="Data\ProfiledDbProviderServices.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
     <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />

@@ -143,6 +143,10 @@
     <Content Include="Views\Home\ResultsAuthorization.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvcMiniProfiler.EntityFramework\MvcMiniProfiler.EntityFramework.csproj">
+      <Project>{7F18DC76-61A2-4E7D-BA5A-FE159E789362}</Project>
+      <Name>MvcMiniProfiler.EntityFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
       <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
       <Name>MvcMiniProfiler</Name>

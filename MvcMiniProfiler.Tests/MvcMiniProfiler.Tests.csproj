@@ -48,6 +48,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
@@ -68,6 +69,10 @@
     <Compile Include="Storage\SqlServerStorageTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvcMiniProfiler.EntityFramework\MvcMiniProfiler.EntityFramework.csproj">
+      <Project>{7F18DC76-61A2-4E7D-BA5A-FE159E789362}</Project>
+      <Name>MvcMiniProfiler.EntityFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
       <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
       <Name>MvcMiniProfiler</Name>

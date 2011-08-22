@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc", "Sample.Mvc\Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMiniProfiler.Tests", "MvcMiniProfiler.Tests\MvcMiniProfiler.Tests.csproj", "{B4CA8022-257B-4893-97D8-76E05EBBAAB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMiniProfiler.EntityFramework", "MvcMiniProfiler.EntityFramework\MvcMiniProfiler.EntityFramework.csproj", "{7F18DC76-61A2-4E7D-BA5A-FE159E789362}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MvcMiniProfiler.vsmdi
@@ -36,6 +38,10 @@ Global
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

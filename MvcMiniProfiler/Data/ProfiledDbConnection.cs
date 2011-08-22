@@ -10,37 +10,15 @@ namespace MvcMiniProfiler.Data
     /// </summary>
     public class ProfiledDbConnection : DbConnection, ICloneable
     {
-
-        private DbConnection _conn;
-        private IDbProfiler _profiler;
-
-        private DbProviderFactory _factory;
-        private static readonly Func<DbConnection, DbProviderFactory> ripInnerProvider =
-                (Func<DbConnection, DbProviderFactory>)Delegate.CreateDelegate(typeof(Func<DbConnection, DbProviderFactory>),
-                typeof(DbConnection).GetProperty("DbProviderFactory", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-                .GetGetMethod(true));
-
-
         /// <summary>
-        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
-        /// providing query execution profiling.
+        /// Current unwrapped connection
         /// </summary>
-        /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
-        public static DbConnection Get(DbConnection connection)
-        {
-            return Get(connection, MiniProfiler.Current);
-        }
-
+        protected DbConnection _conn;
         /// <summary>
-        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
-        /// providing query execution profiling.
+        /// The current profiler instance
         /// </summary>
-        /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
-        /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
-        public static DbConnection Get(DbConnection connection, IDbProfiler profiler)
-        {
-            return new ProfiledDbConnection(connection, profiler);
-        }
+        protected IDbProfiler _profiler;
+
 
         /// <summary>
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
@@ -48,7 +26,7 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         /// <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
-        protected ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
         {
             if (connection == null) throw new ArgumentNullException("connection");
 
@@ -64,19 +42,11 @@ namespace MvcMiniProfiler.Data
 
 #pragma warning disable 1591 // xml doc comments warnings
 
-        protected override DbProviderFactory DbProviderFactory
-        {
-            get
-            {
-                if (_factory != null) return _factory;
-                DbProviderFactory tail = ripInnerProvider(_conn);
-                _factory = DbProviderFactories.GetFactory("MvcMiniProfiler.Data.ProfiledDbProvider");
-                ((ProfiledDbProviderFactory)_factory).InitProfiledDbProviderFactory(_profiler, tail);
-                return _factory;
-            }
-        }
 
-        internal DbConnection WrappedConnection
+        /// <summary>
+        /// The raw connection this is wrapping
+        /// </summary>
+        public DbConnection WrappedConnection
         {
             get { return _conn; }
         }
@@ -169,7 +139,6 @@ namespace MvcMiniProfiler.Data
                 _conn.StateChange -= StateChangeHandler;
                 _conn.Dispose();
             }
-            _factory = null;
             _conn = null;
             _profiler = null;
             base.Dispose(disposing);

@@ -19,15 +19,17 @@ namespace SampleWeb.Controllers
         {
             using (profiler.Step("GetOpenConnection"))
             {
-                var cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString);
+                DbConnection cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString);
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
                 // when MiniProfiler.Current is null, this connection will not record any database timings
-                var result = MvcMiniProfiler.Data.ProfiledDbConnection.Get(cnn);
+                if (MiniProfiler.Current != null)
+                {
+                    cnn = new MvcMiniProfiler.Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
+                }
 
-                result.Open();
-
-                return result;
+                cnn.Open();
+                return cnn;
             }
         }
 
