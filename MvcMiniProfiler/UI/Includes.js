@@ -329,10 +329,13 @@
         $(document).ajaxComplete(function (e, xhr, settings) {
             if (xhr) {
                 // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
-                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
-                if (stringIds) {
-                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                    fetchResults(ids);
+                var response = args.get_response();
+                if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
+                    var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
+                    if (stringIds) {
+                        var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                        fetchResults(ids);
+                    }
                 }
             }
         });
