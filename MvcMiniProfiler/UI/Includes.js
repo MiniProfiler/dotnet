@@ -70,7 +70,7 @@
                         fetchedIds.push(id);
                         buttonShow(json);
                     },
-                    complete: function() {
+                    complete: function () {
                         fetchingIds.splice(idx, 1);
                     }
                 });
@@ -214,16 +214,17 @@
                 highlightHex = '#FFFFBB',
                 highlightRgb = getRGB(highlightHex),
                 originalRgb = getRGB(cell.css('background-color')),
-                getColorDiff = function(fx, i) {
+                getColorDiff = function (fx, i) {
                     // adapted from John Resig's color plugin: http://plugins.jquery.com/project/color
                     return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i]), 255), 0);
                 };
-            
+
             // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
-                .animate({ 'opacity': 1 }, { duration: 2000, step: function(now, fx) {
+                .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
                     fx.elem.style['backgroundColor'] = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
-                }});
+                } 
+                });
         });
     };
 
@@ -231,7 +232,7 @@
     // By Blair Mitchelmore
     // http://jquery.offput.ca/highlightFade/
     // Parse strings looking for color tuples [255,255,255]
-    var getRGB = function(color) {
+    var getRGB = function (color) {
         var result;
 
         // Check if we're already dealing with an array of colors
@@ -329,13 +330,10 @@
         $(document).ajaxComplete(function (e, xhr, settings) {
             if (xhr) {
                 // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
-                var response = args.get_response();
-                if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
-                    var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                    if (stringIds) {
-                        var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                        fetchResults(ids);
-                    }
+                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
+                if (stringIds) {
+                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                    fetchResults(ids);
                 }
             }
         });
@@ -343,18 +341,21 @@
 
         // fetch results after ASP Ajax calls
         if (typeof (Sys) != 'undefined' && typeof (Sys.WebForms) != 'undefined' && typeof (Sys.WebForms.PageRequestManager) != 'undefined') {
-        // Get the instance of PageRequestManager.
-        var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
+            // Get the instance of PageRequestManager.
+            var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
 
-        PageRequestManager.add_endRequest(function (sender, args) {
-            if (args) {
-                var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                if (stringIds) {
-                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                    fetchResults(ids);
+            PageRequestManager.add_endRequest(function (sender, args) {
+                if (args) {
+                    var response = args.get_response();
+                    if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
+                        var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
+                        if (stringIds) {
+                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                            fetchResults(ids);
+                        }
+                    }
                 }
-            }
-        });
+            });
         }
 
         // some elements want to be hidden on certain doc events
