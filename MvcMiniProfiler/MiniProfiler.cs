@@ -206,9 +206,9 @@ namespace MvcMiniProfiler
         internal long ElapsedTicks { get { return _watch.ElapsedTicks; } }
 
         /// <summary>
-        /// Points to the currently executing Timing.
+        /// Points to the currently executing Timing. 
         /// </summary>
-        internal Timing Head { get; set; }
+        public Timing Head { get; set; }
 
 
         /// <summary>
