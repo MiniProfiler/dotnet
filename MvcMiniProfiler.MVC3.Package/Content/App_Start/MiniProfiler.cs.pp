@@ -39,6 +39,7 @@ namespace $rootnamespace$.App_Start {
 			//TODO: You will need the System.Data.Entity, 
 			//      and System.Data.Entity.Infrastructure namspace
 			//	    and to umcomment these if you are using SQLCe
+      //      Make sure you pull the MiniProfiler.EF package for EF integration
 			//var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
 			//var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
 			//Database.DefaultConnectionFactory = profiled;
