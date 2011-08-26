@@ -339,7 +339,7 @@
 
 
         // fetch results after ASP Ajax calls
-        if (typeof (Sys) != "undefined") {
+        if (typeof (Sys) != 'undefined' && typeof (Sys.WebForms) != 'undefined' && typeof (Sys.WebForms.PageRequestManager) != 'undefined') {
         // Get the instance of PageRequestManager.
         var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
 
