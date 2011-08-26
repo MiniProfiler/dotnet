@@ -432,6 +432,10 @@
             return result;
         },
 
+        fetchResultsExposed: function (ids) {
+            return fetchResults(ids);
+        },
+
         formatDuration: function (duration) {
             return (duration || 0).toFixed(1);
         }
