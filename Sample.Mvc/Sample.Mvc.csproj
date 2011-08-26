@@ -141,6 +141,7 @@
   <ItemGroup>
     <None Include="App_Data\TestMiniProfiler.sqlite" />
     <Content Include="Views\Home\ResultsAuthorization.cshtml" />
+    <Content Include="Views\Home\XHTML.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MvcMiniProfiler.EntityFramework\MvcMiniProfiler.EntityFramework.csproj">

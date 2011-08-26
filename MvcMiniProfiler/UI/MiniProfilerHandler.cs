@@ -14,10 +14,10 @@ namespace MvcMiniProfiler.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool xhtml = false)
         {
             const string format =
-@"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}"">
+@"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}""{closeXHTML}>
 <script type=""text/javascript"">
     if (!window.jQuery) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.1.6.1.js' type='text/javascript'%3E%3C/script%3E""));
     if (window.jQuery && !window.jQuery.tmpl) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.tmpl.beta1.js' type='text/javascript'%3E%3C/script%3E""));
@@ -36,6 +36,7 @@ namespace MvcMiniProfiler.UI
         }});
     }});
 </script>";
+
             var result = "";
 
             if (profiler != null)
@@ -54,7 +55,8 @@ namespace MvcMiniProfiler.UI
                     position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
                     showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
-                    maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow
+                    maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
+                    closeXHTML = xhtml ? "/" : ""
                 });
             }
 

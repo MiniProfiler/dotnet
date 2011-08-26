@@ -67,6 +67,11 @@ namespace SampleWeb.Controllers
             }
         }
 
+        public ActionResult XHTML()
+        {
+            return View();
+        }
+
         public ActionResult EFCodeFirst()
         {
             int count;
