@@ -57,6 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs">
@@ -77,6 +80,7 @@
     <Compile Include="IpAddressProvider.cs">
       <DependentUpon>IUserProvider.cs</DependentUpon>
     </Compile>
+    <Compile Include="IProfilerProvider.cs" />
     <Compile Include="IUserProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,6 +109,10 @@
     <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="UI\MiniProfilerHandler.cs" />
+    <Compile Include="WebRequestProfilerProvider.cs" />
+    <Compile Include="WebRequestProfilerProvider.Settings.cs">
+      <DependentUpon>WebRequestProfilerProvider.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="miniprofiler.snk" />
