@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF</id>
-    <version>1.8.1</version>
+    <version>1.9</version>
     <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
     <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
     <description>MiniProfiler integration for Entity Framework</description>
@@ -10,11 +10,11 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance timing</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="1.8"/>
+      <dependency id="MiniProfiler" version="1.9"/>
     </dependencies>
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="MvcMiniProfiler.EntityFramework\bin\Release\MvcMiniProfiler.EntityFramework.*" target="lib" />
+    <file src="MvcMiniProfiler.EntityFramework\bin\Release\MvcMiniProfiler.EntityFramework.*" target="lib/net40" />
   </files>
 </package>

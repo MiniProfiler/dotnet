@@ -18,6 +18,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMiniProfiler.Tests", "Mv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMiniProfiler.EntityFramework", "MvcMiniProfiler.EntityFramework\MvcMiniProfiler.EntityFramework.csproj", "{7F18DC76-61A2-4E7D-BA5A-FE159E789362}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniProfiler.MVC3", "MiniProfiler.MVC3", "{EAE04FE1-268F-46EF-ACB5-290408478EBC}"
+	ProjectSection(SolutionItems) = preProject
+		MvcMiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml = MvcMiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml
+		MvcMiniProfiler.MVC3.Package\tools\install.ps1 = MvcMiniProfiler.MVC3.Package\tools\install.ps1
+		MvcMiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp = MvcMiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp
+		MvcMiniProfiler.MVC3.Package\Content\web.config.transform = MvcMiniProfiler.MVC3.Package\Content\web.config.transform
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MvcMiniProfiler.vsmdi
@@ -50,5 +58,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EAE04FE1-268F-46EF-ACB5-290408478EBC} = {CC40098D-04F2-4F43-B5CF-B74F74351761}
 	EndGlobalSection
 EndGlobal
