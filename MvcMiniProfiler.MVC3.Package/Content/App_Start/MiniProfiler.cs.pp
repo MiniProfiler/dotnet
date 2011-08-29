@@ -19,7 +19,7 @@ using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 	typeof($rootnamespace$.App_Start.MiniProfilerPackage), "PostStart")]
 
 
-namespace $rootnamespace$.App_Start {
+namespace $rootnamespace$.App_Start 
 {
     public static class MiniProfilerPackage
     {
