@@ -13,3 +13,4 @@ glob:Sample.Mvc/App_Data/TestMiniProfiler.sqlite
 glob:*~
 glob:NuGet.exe
 glob:*.swp
+glob:Sample.Wcf/App_Data/TestMiniProfiler.sqlite
