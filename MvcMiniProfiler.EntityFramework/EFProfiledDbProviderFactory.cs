@@ -1,53 +1,32 @@
 ﻿using System;
 using System.Data.Common;
 using MvcMiniProfiler;
+using System.Reflection;
 
 namespace MvcMiniProfiler.Data
 {
     /// <summary>
     /// Wrapper for a db provider factory to enable profiling
     /// </summary>
-    public class EFProfiledDbProviderFactory : DbProviderFactory, IServiceProvider
+    public class EFProfiledDbProviderFactory<T> : DbProviderFactory, IServiceProvider where T : DbProviderFactory
     {
-
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
-        public static EFProfiledDbProviderFactory Instance = new EFProfiledDbProviderFactory();
+        public static EFProfiledDbProviderFactory<T> Instance = new EFProfiledDbProviderFactory<T>();
 
-        private IDbProfiler profiler;
-        private DbProviderFactory tail;
-
+        private T tail;
 
         /// <summary>
         /// Used for db provider apis internally 
         /// </summary>
         private EFProfiledDbProviderFactory ()
 	    {
-
+            FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+            this.tail = (T)field.GetValue(null);
 	    }
 
-        /// <summary>
-        /// Allow to re-init the provider factory.
-        /// </summary>
-        /// <param name="profiler"></param>
-        /// <param name="tail"></param>
-        public void InitProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
-        {
-            this.profiler = profiler;
-            this.tail = tail;
-        }
 
-        /// <summary>
-        /// proxy
-        /// </summary>
-        /// <param name="profiler"></param>
-        /// <param name="tail"></param>
-        public EFProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
-        {
-            this.profiler = profiler;
-            this.tail = tail;
-        }
         /// <summary>
         /// proxy
         /// </summary>
@@ -70,14 +49,14 @@ namespace MvcMiniProfiler.Data
         /// </summary>
         public override DbCommand CreateCommand()
         {
-            return new ProfiledDbCommand(tail.CreateCommand(), null, profiler);
+            return new ProfiledDbCommand(tail.CreateCommand(), null, MiniProfiler.Current);
         }
         /// <summary>
         /// proxy
         /// </summary>
         public override DbConnection CreateConnection()
         {
-            return new EFProfiledDbConnection(tail.CreateConnection(), profiler);
+            return new EFProfiledDbConnection(tail.CreateConnection(), MiniProfiler.Current);
         }
         /// <summary>
         /// proxy
@@ -128,7 +107,7 @@ namespace MvcMiniProfiler.Data
 
             if (serviceType == typeof(DbProviderServices))
             {
-                svc = new ProfiledDbProviderServices((DbProviderServices)svc, profiler);
+                svc = new ProfiledDbProviderServices((DbProviderServices)svc, MiniProfiler.Current);
             }
             return svc;
         }

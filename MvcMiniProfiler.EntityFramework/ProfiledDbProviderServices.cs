@@ -6,6 +6,7 @@ namespace MvcMiniProfiler.Data
     {
         private DbProviderServices wrapped;
         private IDbProfiler profiler;
+
         public ProfiledDbProviderServices(DbProviderServices tail, IDbProfiler profiler)
         {
             this.wrapped = tail;

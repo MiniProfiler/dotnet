@@ -57,6 +57,7 @@
     <Compile Include="EFProfiledDbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MiniProfilerEF.cs" />
     <Compile Include="ObjectContextUtils.cs" />
     <Compile Include="ProfiledDbConnectionFactory.cs" />
     <Compile Include="EFProfiledDbProviderFactory.cs" />
