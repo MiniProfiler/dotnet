@@ -35,7 +35,7 @@ namespace MvcMiniProfiler.Tests.Data
         [TestMethod]
         public void TestDataAdapter()
         {
-            var factory = new EFProfiledDbProviderFactory(this, new System.Data.SqlServerCe.SqlCeProviderFactory());
+            var factory = EFProfiledDbProviderFactory<SqlCeProviderFactory>.Instance;
 
             using (var da = factory.CreateDataAdapter())
             {
