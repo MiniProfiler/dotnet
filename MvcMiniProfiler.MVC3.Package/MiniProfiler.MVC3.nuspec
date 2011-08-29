@@ -22,8 +22,8 @@
   </metadata>
   <files>
 	<file src="Content\*" target="Content"/>
-	<file src="Content\Views\Shared\*" target="Content\Views\Shared"/>
-	<file src="Content\App_Start\*" target="Content\App_Start"/>
+	<file src="Content\Views\Shared\*.cshtml" target="Content\Views\Shared"/>
+	<file src="Content\App_Start\MiniProfiler.cs.pp" target="Content\App_Start"/>
   <file src="tools\install.ps1" target="tools\install.ps1" />
   </files>
 </package>
