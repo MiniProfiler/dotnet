@@ -19,8 +19,8 @@ namespace MvcMiniProfiler.UI
             const string format =
 @"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}""{closeXHTML}>
 <script type=""text/javascript"">
-    if (!window.jQuery) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.1.6.1.js' type='text/javascript'%3E%3C/script%3E""));
-    if (window.jQuery && !window.jQuery.tmpl) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.tmpl.beta1.js' type='text/javascript'%3E%3C/script%3E""));
+    if (!window.jQuery) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.1.6.2.js' type='text/javascript'%3E%3C/script%3E""));
+    if (!window.jQuery || !window.jQuery.tmpl) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.tmpl.beta1.js' type='text/javascript'%3E%3C/script%3E""));
 </script>
 <script type=""text/javascript"" src=""{path}mini-profiler-includes.js?v={version}""></script>
 <script type=""text/javascript"">
@@ -67,7 +67,7 @@ namespace MvcMiniProfiler.UI
         {
             var urls = new[] 
             { 
-                "mini-profiler-jquery.1.6.1.js",
+                "mini-profiler-jquery.1.6.2.js",
                 "mini-profiler-jquery.tmpl.beta1.js",
                 "mini-profiler-includes.js", 
                 "mini-profiler-includes.css", 
@@ -120,7 +120,7 @@ namespace MvcMiniProfiler.UI
 
             switch (Path.GetFileNameWithoutExtension(path))
             {
-                case "mini-profiler-jquery.1.6.1":
+                case "mini-profiler-jquery.1.6.2":
                 case "mini-profiler-jquery.tmpl.beta1":
                 case "mini-profiler-includes":
                     output = Includes(context, path);
@@ -214,7 +214,7 @@ namespace MvcMiniProfiler.UI
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>{0} ({1} ms) - MvcMiniProfiler Results</title>", profiler.Name, profiler.DurationMilliseconds)
                 .AppendLine()
-                .AppendLine("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>")
+                .AppendLine("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>")
                 .Append("<script type='text/javascript'> var profiler = ")
                 .Append(MiniProfiler.ToJson(profiler))
                 .AppendLine(";</script>")

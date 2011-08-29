@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler</id>
-    <version>1.8</version>
+    <version>1.9</version>
     <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
     <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
     <description>Lightweight mini-profiler, in particular designed for ASP.NET MVC 3 and ASP.NET sites</description>
@@ -12,6 +12,6 @@
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="MvcMiniProfiler\bin\Release\MvcMiniProfiler.*" target="lib" />
+    <file src="MvcMiniProfiler\bin\Release\MvcMiniProfiler.*" target="lib\net40" />
   </files>
 </package>

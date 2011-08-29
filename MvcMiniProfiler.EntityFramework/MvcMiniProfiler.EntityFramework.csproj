@@ -59,7 +59,7 @@
     </Compile>
     <Compile Include="ObjectContextUtils.cs" />
     <Compile Include="ProfiledDbConnectionFactory.cs" />
-    <Compile Include="ProfiledDbProviderFactory.cs" />
+    <Compile Include="EFProfiledDbProviderFactory.cs" />
     <Compile Include="ProfiledDbProviderServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

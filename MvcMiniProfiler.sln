@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
+		MiniProfiler.EF.nuspec = MiniProfiler.EF.nuspec
+		MvcMiniProfiler.MVC3.Package\MiniProfiler.MVC3.nuspec = MvcMiniProfiler.MVC3.Package\MiniProfiler.MVC3.nuspec
 		MiniProfiler.nuspec = MiniProfiler.nuspec
 	EndProjectSection
 EndProject
