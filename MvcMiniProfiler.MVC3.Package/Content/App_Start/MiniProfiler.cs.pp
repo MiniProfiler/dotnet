@@ -35,17 +35,11 @@ namespace $rootnamespace$.App_Start
             //TODO: Non SQL Server based installs can use other formatters like: new MvcMiniProfiler.SqlFormatters.InlineFormatter()
             MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.SqlServerFormatter();
 
-            //TODO: If you are using SqlServer, rather than SqlCe,
-            // You'll want to change this line to use your connection string.
-            // var factory = new SqlConnectionFactory("Data Source=.\SQLEXPRESS;Initial Catalog=YourDatabase;Integrated Security=True");
+			//TODO: To profile a standard DbConnection: 
+			// var profiled = new ProfiledDbConnection(cnn, MiniProfiler.Current);
 
-            //TODO: You will need the System.Data.Entity, 
-            //      and System.Data.Entity.Infrastructure namspace
-            //	    and to umcomment these if you are using SQLCe
-            //      Make sure you pull the MiniProfiler.EF package for EF integration
-            //var factory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
-            //var profiled = new MvcMiniProfiler.Data.ProfiledDbConnectionFactory(factory);
-            //Database.DefaultConnectionFactory = profiled;
+            //TODO: If you are profiling EF code first try: 
+			// MiniProfilerEF.Initialize();
 
             //Make sure the MiniProfiler handles BeginRequest and EndRequest
             DynamicModuleUtility.RegisterModule(typeof(MiniProfilerStartupModule));

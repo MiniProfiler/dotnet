@@ -13,7 +13,6 @@
     <tags>profiler sql mvc asp.net performance timing</tags>
     <dependencies>
       <dependency id="MiniProfiler" version="1.9" />
-      <dependency id="MiniProfiler.EF" version="1.9" />
       <dependency id="WebActivator" version="1.4" />
     </dependencies>
     <frameworkAssemblies>
@@ -21,7 +20,6 @@
   </frameworkAssemblies>
   </metadata>
   <files>
-	<file src="Content\*" target="Content"/>
 	<file src="Content\Views\Shared\*.cshtml" target="Content\Views\Shared"/>
 	<file src="Content\App_Start\MiniProfiler.cs.pp" target="Content\App_Start"/>
   <file src="tools\install.ps1" target="tools\install.ps1" />
