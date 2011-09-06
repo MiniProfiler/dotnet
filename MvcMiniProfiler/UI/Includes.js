@@ -536,9 +536,6 @@
                 me.nextGap.topReason = determineGap(me.nextGap, root, null);
             }
 
-            console.log(result);
-            console.log(root);
-
             return result;
         },
 
