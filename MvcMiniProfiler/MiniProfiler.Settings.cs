@@ -31,7 +31,13 @@ namespace MvcMiniProfiler
                     pair.PropertyInfo.SetValue(null, Convert.ChangeType(pair.DefaultValue.Value, pair.PropertyInfo.PropertyType), null);
                 }
 
-                Version = System.Diagnostics.FileVersionInfo.GetVersionInfo(typeof(Settings).Assembly.Location).ProductVersion;
+                // this assists in debug and is also good for prd, the version is a hash of the main assembly 
+
+                byte[] contents = System.IO.File.ReadAllBytes(typeof(Settings).Assembly.Location);
+                var md5 = System.Security.Cryptography.MD5.Create();
+                Guid hash = new Guid(md5.ComputeHash(contents));
+
+                Version = hash.ToString();
 
                 typesToExclude = new HashSet<string>
                 {

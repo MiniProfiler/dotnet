@@ -105,13 +105,14 @@
     var toggleHidden = function (popup) {
         var trivial = popup.find('.toggle-trivial');
         var childrenTime = popup.find('.toggle-duration-with-children');
+        var trivialGaps = popup.parent().find('.toggle-trivial-gaps');
 
-        childrenTime.add(trivial).click(function () {
+        childrenTime.add(trivial).add(trivialGaps).click(function () {
             var link = $(this),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
 
-            popup.find('.' + klass).toggle(isHidden);
+            popup.parent().find('.' + klass).toggle(isHidden);
             link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
 
             popupPreventHorizontalScroll(popup);
@@ -223,7 +224,7 @@
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
                 .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
                     fx.elem.style['backgroundColor'] = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
-                } 
+                }
                 });
         });
     };
@@ -430,8 +431,113 @@
             // start adding at the root and recurse down
             addToResults(root);
 
+            var removeDuration = function (list, duration) {
+
+                var newList = [];
+                for (var i = 0; i < list.length; i++) {
+
+                    var item = list[i];
+                    if (duration.start > item.start) {
+                        if (duration.start > item.finish) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push({ start: item.start, finish: duration.start });
+                    }
+
+                    if (duration.finish < item.finish) {
+                        if (duration.finish < item.start) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push({ start: duration.finish, finish: item.finish });
+                    }
+                }
+
+                return newList;
+            }
+
+            var processTimes = function (elem, parent) {
+                var duration = { start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) };
+                elem.richTiming = [duration];
+                if (parent != null) {
+                    elem.parent = parent;
+                    elem.parent.richTiming = removeDuration(elem.parent.richTiming, duration);
+                }
+
+                if (elem.Children) {
+                    for (var i = 0; i < elem.Children.length; i++) {
+                        processTimes(elem.Children[i], elem);
+                    }
+                }
+            };
+
+            processTimes(root, null);
+
             // sort results by time
             result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
+
+            var determineOverlap = function (gap, node) {
+                var overlap = 0;
+                for (var i = 0; i < node.richTiming.length; i++) {
+                    var current = node.richTiming[i];
+                    if (current.start > gap.finish) {
+                        break;
+                    }
+                    if (current.finish < gap.start) {
+                        continue;
+                    }
+
+                    overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
+                }
+                return overlap;
+            }
+
+            var determineGap = function (gap, node, match) {
+                var overlap = determineOverlap(gap, node);
+                if (match == null || overlap > match.duration) {
+                    match = { name: node.Name, duration: overlap };
+                }
+                else if (match.name == node.Name) {
+                    match.duration += overlap;
+                }
+
+                if (node.Children) {
+                    for (var i = 0; i < node.Children.length; i++) {
+                        match = determineGap(gap, node.Children[i], match);
+                    }
+                }
+                return match;
+            };
+
+            var time = 0;
+            var prev = null;
+            $.each(result, function () {
+                this.prevGap = {
+                    duration: (this.StartMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: this.StartMilliseconds
+                };
+
+                this.prevGap.topReason = determineGap(this.prevGap, root, null);
+
+                time = this.StartMilliseconds + this.DurationMilliseconds;
+                prev = this;
+            });
+
+
+            if (result.length > 0) {
+                var me = result[result.length - 1];
+                me.nextGap = {
+                    duration: (root.DurationMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: root.DurationMilliseconds
+                };
+                me.nextGap.topReason = determineGap(me.nextGap, root, null);
+            }
+
+            console.log(result);
+            console.log(root);
 
             return result;
         },

@@ -66,10 +66,17 @@
       </thead>
       <tbody>
         {{each(i, s) MiniProfiler.getSqlTimings(Root)}}
+          {{tmpl({ g:s.prevGap }) "#sqlGapTemplate"}}
           {{tmpl({ i:i, s:s }) "#sqlTimingTemplate"}}
+          {{if s.nextGap}}
+            {{tmpl({ g:s.nextGap }) "#sqlGapTemplate"}}
+          {{/if}}
         {{/each}}
       </tbody>
       </table>
+      <p class="trivial-gap-container">
+        <a class="toggle-trivial-gaps" href="#">show trivial gaps</a>
+      </p>
     </div>
   {{/if}}
 
@@ -125,13 +132,26 @@
         {{if s.IsDuplicate}}<span class="warning">DUPLICATE</span>{{/if}}
         ${MiniProfiler.renderExecuteType(s.ExecuteType)}
       </div>
-      <div>${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="unit">ms</span></div>
+      <div title="{{if s.ExecuteType == 3}}first result fetched: ${s.FirstFetchDurationMilliseconds}ms{{/if}}">${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="unit">ms</span></div>
     </td>
     <td>
       <div class="query">
         <pre class="stack-trace">${s.StackTraceSnippet}</pre>
         <pre class="prettyprint lang-sql"><code>${s.FormattedCommandString}   </code></pre>
       </div>
+    </td>
+  </tr>
+
+</script>
+
+<script id="sqlGapTemplate" type="text/x-jquery-tmpl">
+
+  <tr class="gap-info{{if g.duration < 2}} trivial-gaps{{/if}}">
+    <td class="info">
+      ${g.duration} <span class="unit">ms</span>  
+    </td>
+    <td class="query">
+      <div>${g.topReason.name} &mdash; ${g.topReason.duration.toFixed(2)} <span class="unit">ms</span></div>
     </td>
   </tr>
 

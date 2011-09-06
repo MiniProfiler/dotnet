@@ -124,7 +124,9 @@
     <EmbeddedResource Include="UI\includes.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\includes.tmpl" />
+    <EmbeddedResource Include="UI\includes.tmpl">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\jquery.1.6.2.js" />
