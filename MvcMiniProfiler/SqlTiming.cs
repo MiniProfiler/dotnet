@@ -134,7 +134,10 @@ namespace MvcMiniProfiler
                 StackTraceSnippet = Helpers.StackTraceSnippet.Get();
 
             _profiler = profiler;
-            _profiler.AddSqlTiming(this);
+            if (_profiler != null)
+            {
+                _profiler.AddSqlTiming(this);
+            }
 
             _startTicks = _profiler.ElapsedTicks;
             StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
