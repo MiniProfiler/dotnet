@@ -137,10 +137,9 @@ namespace MvcMiniProfiler
             if (_profiler != null)
             {
                 _profiler.AddSqlTiming(this);
+                _startTicks = _profiler.ElapsedTicks;
+                StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
             }
-
-            _startTicks = _profiler.ElapsedTicks;
-            StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
         }
 
         /// <summary>
