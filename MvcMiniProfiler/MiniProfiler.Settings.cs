@@ -154,6 +154,13 @@ namespace MvcMiniProfiler
             public static RenderPosition PopupRenderPosition { get; set; }
 
             /// <summary>
+            /// Determines if min-max, clear, etc are rendered; defaults to false.
+            /// For a per-page override you can use .RenderIncludes(showControls: true/false)
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool ShowControls { get; set; }
+
+            /// <summary>
             /// By default, SqlTimings will grab a stack trace to help locate where queries are being executed.
             /// When this setting is true, no stack trace will be collected, possibly improving profiler performance.
             /// </summary>

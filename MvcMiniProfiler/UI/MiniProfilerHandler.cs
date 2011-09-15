@@ -14,7 +14,7 @@ namespace MvcMiniProfiler.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null)
         {
             const string format =
 @"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}"">
@@ -32,7 +32,8 @@ namespace MvcMiniProfiler.UI
             renderPosition: '{position}',
             showTrivial: {showTrivial},
             showChildrenTime: {showChildren},
-            maxTracesToShow: {maxTracesToShow}
+            maxTracesToShow: {maxTracesToShow},
+            showControls: {showControls}
         }});
     }});
 </script>";
@@ -54,7 +55,8 @@ namespace MvcMiniProfiler.UI
                     position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
                     showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
-                    maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow
+                    maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
+                    showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false"
                 });
             }
 

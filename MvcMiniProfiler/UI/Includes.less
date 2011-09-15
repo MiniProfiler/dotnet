@@ -215,13 +215,13 @@
     &.left {
         left:0px;
 
-        .profiler-result:last-child .profiler-button {
+        &.profiler-no-controls .profiler-result:last-child .profiler-button, .profiler-controls {
             -webkit-border-bottom-right-radius: @radius;
             -moz-border-radius-bottomright: @radius;
             border-bottom-right-radius: @radius;
         }
 
-        .profiler-button {
+        .profiler-button, .profiler-controls {
             border-right: 1px solid @buttonBorderColor;
         }
     }
@@ -229,18 +229,18 @@
     &.right {
         right:0px;
 
-        .profiler-result:last-child .profiler-button {
+        &.profiler-no-controls .profiler-result:last-child .profiler-button, .profiler-controls {
             -webkit-border-bottom-left-radius: @radius;
             -moz-border-radius-bottomleft: @radius;
             border-bottom-left-radius: @radius;
         }
 
-        .profiler-button {
+        .profiler-button, .profiler-controls {
             border-left: 1px solid @buttonBorderColor;
         }
     }
 
-    .profiler-button {
+    .profiler-button, .profiler-controls {
         display:none;
         z-index:@zindex;
         border-bottom: 1px solid @buttonBorderColor;
@@ -262,6 +262,25 @@
             }
         }
     }
+
+	.profiler-controls {
+		display: block;
+		font-size:12px;
+		font-family: @codeFonts;
+		cursor:default;
+		text-align: center;
+
+		span {
+			border-right: 1px solid @mutedColor;
+			padding-right: 5px;
+			margin-right: 5px;
+			cursor:pointer;
+		}
+
+		span:last-child {
+			border-right: none;
+		}		
+	}
 
     .profiler-popup {
         display:none;
@@ -323,6 +342,20 @@
             font-size:17px;
         }
     }
+
+	&.profiler-min .profiler-result {
+		display: none;
+	}
+
+	&.profiler-min .profiler-controls span {
+		display: none;
+	}
+
+	&.profiler-min .profiler-controls .profiler-min-max {
+		border-right: none;
+		padding: 0px;
+		margin: 0px;
+	}
 }
 
 // popup results' queries will be displayed in front of this

@@ -2,6 +2,7 @@
 
     var options,
         container,
+        controls,
         fetchedIds = [],
         fetchingIds = []  // so we never pull down a profiler twice
         ;
@@ -70,7 +71,7 @@
                         fetchedIds.push(id);
                         buttonShow(json);
                     },
-                    complete: function() {
+                    complete: function () {
                         fetchingIds.splice(idx, 1);
                     }
                 });
@@ -83,8 +84,14 @@
     };
 
     var buttonShow = function (json) {
-        var result = renderTemplate(json).appendTo(container),
-            button = result.find('.profiler-button'),
+        var result = renderTemplate(json);
+
+        if (controls)
+            result.insertBefore(controls);
+        else
+            result.appendTo(container);
+
+        var button = result.find('.profiler-button'),
             popup = result.find('.profiler-popup');
 
         // button will appear in corner with the total profiling duration - click to show details
@@ -214,16 +221,17 @@
                 highlightHex = '#FFFFBB',
                 highlightRgb = getRGB(highlightHex),
                 originalRgb = getRGB(cell.css('background-color')),
-                getColorDiff = function(fx, i) {
+                getColorDiff = function (fx, i) {
                     // adapted from John Resig's color plugin: http://plugins.jquery.com/project/color
                     return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i]), 255), 0);
                 };
-            
+
             // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
-                .animate({ 'opacity': 1 }, { duration: 2000, step: function(now, fx) {
+                .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
                     fx.elem.style['backgroundColor'] = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
-                }});
+                }
+                });
         });
     };
 
@@ -231,7 +239,7 @@
     // By Blair Mitchelmore
     // http://jquery.offput.ca/highlightFade/
     // Parse strings looking for color tuples [255,255,255]
-    var getRGB = function(color) {
+    var getRGB = function (color) {
         var result;
 
         // Check if we're already dealing with an array of colors
@@ -312,12 +320,43 @@
         });
     };
 
+    var initControls = function (container) {
+        if (options.showControls) {
+            controls = $('<div class="profiler-controls"><span class="profiler-min-max">m</span><span class="profiler-clear">c</span></div>').appendTo(container);
+
+            $('.profiler-controls .profiler-min-max').click(function () {
+                container.toggleClass('profiler-min');
+            });
+
+            container.hover(function () {
+                if ($(this).hasClass('profiler-min')) {
+                    $(this).find('.profiler-min-max').show();
+                }
+            },
+            function () {
+                if ($(this).hasClass('profiler-min')) {
+                    $(this).find('.profiler-min-max').hide();
+                }
+            });
+
+            $('.profiler-controls .profiler-clear').click(function () {
+                container.find('.profiler-result').remove();
+            });
+        }
+        else {
+            container.addClass('profiler-no-controls');
+        }
+    };
+
     var initPopupView = function () {
         // all fetched profilings will go in here
         container = $('<div class="profiler-results"/>').appendTo('body');
 
         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
         container.addClass(options.renderPosition);
+
+        //initialize the controls
+        initControls(container);
 
         // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
         fetchTemplates(function () {
@@ -340,18 +379,18 @@
 
         // fetch results after ASP Ajax calls
         if (typeof (Sys) != "undefined") {
-        // Get the instance of PageRequestManager.
-        var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
+            // Get the instance of PageRequestManager.
+            var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
 
-        PageRequestManager.add_endRequest(function (sender, args) {
-            if (args) {
-                var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                if (stringIds) {
-                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                    fetchResults(ids);
+            PageRequestManager.add_endRequest(function (sender, args) {
+                if (args) {
+                    var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
+                    if (stringIds) {
+                        var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                        fetchResults(ids);
+                    }
                 }
-            }
-        });
+            });
         }
 
         // some elements want to be hidden on certain doc events
