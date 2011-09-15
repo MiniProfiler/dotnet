@@ -2,6 +2,7 @@
 
     var options,
         container,
+        controls,
         fetchedIds = [],
         fetchingIds = []  // so we never pull down a profiler twice
         ;
@@ -83,8 +84,14 @@
     };
 
     var buttonShow = function (json) {
-        var result = renderTemplate(json).appendTo(container),
-            button = result.find('.profiler-button'),
+        var result = renderTemplate(json);
+
+        if (controls)
+            result.insertBefore(controls);
+        else
+            result.appendTo(container);
+
+        var button = result.find('.profiler-button'),
             popup = result.find('.profiler-popup');
 
         // button will appear in corner with the total profiling duration - click to show details
@@ -314,12 +321,43 @@
         });
     };
 
+    var initControls = function (container) {
+        if (options.showControls) {
+            controls = $('<div class="profiler-controls"><span class="profiler-min-max">m</span><span class="profiler-clear">c</span></div>').appendTo(container);
+
+            $('.profiler-controls .profiler-min-max').click(function () {
+                container.toggleClass('profiler-min');
+            });
+
+            container.hover(function () {
+                if ($(this).hasClass('profiler-min')) {
+                    $(this).find('.profiler-min-max').show();
+                }
+            },
+            function () {
+                if ($(this).hasClass('profiler-min')) {
+                    $(this).find('.profiler-min-max').hide();
+                }
+            });
+
+            $('.profiler-controls .profiler-clear').click(function () {
+                container.find('.profiler-result').remove();
+            });
+        }
+        else {
+            container.addClass('profiler-no-controls');
+        }
+    };
+
     var initPopupView = function () {
         // all fetched profilings will go in here
         container = $('<div class="profiler-results"/>').appendTo('body');
 
         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
         container.addClass(options.renderPosition);
+
+        //initialize the controls
+        initControls(container);
 
         // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
         fetchTemplates(function () {
@@ -349,13 +387,13 @@
                 if (args) {
                     var response = args.get_response();
                     if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
-                        var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                        if (stringIds) {
-                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                            fetchResults(ids);
-                        }
+                    var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
+                    if (stringIds) {
+                       var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                       fetchResults(ids);
                     }
                 }
+             }
             });
         }
 
