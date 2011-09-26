@@ -20,7 +20,7 @@ namespace MvcMiniProfiler.Data
         /// <summary>
         /// Used for db provider apis internally 
         /// </summary>
-        private EFProfiledDbProviderFactory ()
+        protected EFProfiledDbProviderFactory ()
 	    {
             FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
             this.tail = (T)field.GetValue(null);
