@@ -30,8 +30,7 @@ namespace MvcMiniProfiler.Data
             {
                 if (_factory != null) return _factory;
                 DbProviderFactory tail = ripInnerProvider(_conn);
-                _factory = (DbProviderFactory)typeof(EFProfiledDbProviderFactory<>)
-                                .MakeGenericType(tail.GetType())
+                _factory = (DbProviderFactory)EFProviderUtilities.ResolveFactoryTypeOrOriginal(tail.GetType())
                                 .GetField("Instance", BindingFlags.Public | BindingFlags.Static)
                                 .GetValue(null);
                 return _factory;

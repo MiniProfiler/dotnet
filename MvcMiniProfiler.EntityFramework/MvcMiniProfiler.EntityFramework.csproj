@@ -60,6 +60,7 @@
     <Compile Include="EFProfiledOdbcProviderFactory.cs" />
     <Compile Include="EFProfiledOleDbProviderFactory.cs" />
     <Compile Include="EFProfiledSqlClientDbProviderFactory.cs" />
+    <Compile Include="EFProviderUtilities.cs" />
     <Compile Include="MiniProfilerEF.cs" />
     <Compile Include="ObjectContextUtils.cs" />
     <Compile Include="ProfiledDbConnectionFactory.cs" />
