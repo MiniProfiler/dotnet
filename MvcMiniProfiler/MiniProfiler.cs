@@ -255,11 +255,17 @@ namespace MvcMiniProfiler
 
         internal void AddDataImpl(string key, string value)
         {
+            if (Head == null)
+                return;
+            
             Head.AddKeyValue(key, value);
         }
 
         internal void AddSqlTiming(SqlTiming stats)
         {
+            if (Head == null)
+                return;
+
             int count;
 
             stats.IsDuplicate = _sqlCounts.TryGetValue(stats.RawCommandString, out count);
@@ -510,7 +516,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public static void AddProfilerResults(this MiniProfiler profiler, MiniProfiler externalProfiler)
         {
-            if (profiler == null || externalProfiler == null) return;
+            if (profiler == null || profiler.Head == null || externalProfiler == null) return;
             profiler.Head.AddChild(externalProfiler.Root);
         }
 

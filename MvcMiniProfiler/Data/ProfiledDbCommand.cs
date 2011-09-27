@@ -150,7 +150,7 @@ namespace MvcMiniProfiler.Data
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            if (_profiler == null)
+            if (_profiler == null || !_profiler.IsActive)
             {
                 return _cmd.ExecuteReader(behavior);
             }
@@ -159,7 +159,7 @@ namespace MvcMiniProfiler.Data
 
             var result = _cmd.ExecuteReader(behavior);
 
-            if (_profiler != null)
+            if (_profiler != null && _profiler.IsActive)
             {
                 result = new ProfiledDbDataReader(result, _conn, _profiler);
                 _profiler.ExecuteFinish(this, ExecuteType.Reader, result);
@@ -170,7 +170,7 @@ namespace MvcMiniProfiler.Data
 
         public override int ExecuteNonQuery()
         {
-            if (_profiler == null)
+            if (_profiler == null || !_profiler.IsActive)
             {
                 return _cmd.ExecuteNonQuery();
             }
@@ -183,7 +183,7 @@ namespace MvcMiniProfiler.Data
 
         public override object ExecuteScalar()
         {
-            if (_profiler == null)
+            if (_profiler == null || !_profiler.IsActive)
             {
                 return _cmd.ExecuteScalar();
             }
