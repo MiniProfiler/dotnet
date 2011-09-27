@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Data.Common;
 using System.Data;
 using System.Reflection;
+using System.Diagnostics;
+using System.Security;
 
 namespace MvcMiniProfiler
 {
@@ -13,28 +13,45 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Called exactly once, to setup DbProviderFactory interception, so SQL is profiled
         /// </summary>
-        public static void Initialize()
+        /// <param name="supportExplicitConnectionStrings">
+        /// Temporary API. Related to the EF 4.1 hack, set this to false if you are wishing
+        /// to profile SqlCE and are not using any explicit connection strings for EF. Otherwise, leave this set to true (default)
+        /// </param>
+        public static void Initialize(bool supportExplicitConnectionStrings = true)
         {
-            InitializeDbProviderFactories(GetProfiledProviderFactoryType);
+            Initialize(false, supportExplicitConnectionStrings);
         }
 
-        
         /// <summary>
         /// Called exactly once, to setup DbProviderFactory interception, so SQL is profiled
         /// Use this version when using EF 4.1 Update 1, EF 4.2 or later
         /// See http://weblogs.asp.net/fbouma/archive/2011/07/28/entity-framework-v4-1-update-1-the-kill-the-tool-eco-system-version.aspx?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+FransBouma+%28Frans+Bouma%29
         /// </summary>
-        public static void Initialize_EF42()
+        /// <param name="supportExplicitConnectionStrings">
+        /// Temporary API. Related to the EF 4.1 hack, set this to false if you are wishing
+        /// to profile SqlCE and are not using any explicit connection strings for EF. Otherwise, leave this set to true (default)
+        /// </param>
+        public static void Initialize_EF42(bool supportExplicitConnectionStrings = true)
         {
-            InitializeDbProviderFactories(GetEF42ProfiledProviderFactoryType);
+            Initialize(true, supportExplicitConnectionStrings);
         }
 
-        private static void InitializeDbProviderFactories(Func<Type, Type> resolveProfilerTypeFunc)
+        private static void Initialize(bool applyEFHack, bool supportExplicitConnectionStrings)
+        {
+            if (supportExplicitConnectionStrings && (applyEFHack || IsEF41HackRequired()))
+            {
+                MvcMiniProfiler.Data.EFProviderUtilities.UseEF41Hack();
+            }
+
+            InitializeDbProviderFactories();
+        }
+
+        private static void InitializeDbProviderFactories()
         {
             try
             {
                 // ensure all the factories are loaded 
-                DbProviderFactories.GetFactory("...");
+                DbProviderFactories.GetFactoryClasses();
             }
             catch (ArgumentException)
             {
@@ -64,7 +81,7 @@ namespace MvcMiniProfiler
                     continue;
                 }
 
-                var profType = resolveProfilerTypeFunc(factory.GetType());
+                var profType = MvcMiniProfiler.Data.EFProviderUtilities.ResolveFactoryType(factory.GetType());
                 if (profType != null)
                 {
                     DataRow profiled = table.NewRow();
@@ -78,21 +95,29 @@ namespace MvcMiniProfiler
             }
         }
 
-        private static Type GetProfiledProviderFactoryType(Type factoryType)
+        /// <summary>
+        /// Returns true if the EF version is between 4.1.10331.0 and 4.2
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsEF41HackRequired()
         {
-            return typeof(Data.EFProfiledDbProviderFactory<>).MakeGenericType(factoryType);
-        }
-
-        private static Type GetEF42ProfiledProviderFactoryType(Type factoryType)
-        {
-            if (factoryType == typeof(System.Data.SqlClient.SqlClientFactory))
-                return typeof(Data.EFProfiledSqlClientDbProviderFactory);
-            else if (factoryType == typeof(System.Data.OleDb.OleDbFactory))
-                return typeof(Data.EFProfiledOleDbProviderFactory);
-            else if (factoryType == typeof(System.Data.Odbc.OdbcFactory))
-                return typeof(Data.EFProfiledOdbcProviderFactory);
-
-            return null;
+            try
+            {
+                var efAssembly = typeof(System.Data.Entity.DbContext).Assembly;
+                FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(efAssembly.Location);
+                if (fileVersion.FileMajorPart == 4
+                    && fileVersion.FileMinorPart == 1
+                    && fileVersion.FileBuildPart >= 10331)
+                {
+                    return true;
+                }
+            }
+            catch (SecurityException)
+            {
+                // As this method requires full trust
+                throw new ApplicationException("Could not read file version number of apply EF41 hack. Please try by calling Initialize_EF42() explicitly");
+            }
+            return false;
         }
     }
 }
