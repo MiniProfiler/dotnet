@@ -78,7 +78,7 @@ namespace SampleWeb
                 ViewEngines.Engines.Add(new ProfilingViewEngine(item));
             }
 
-            MiniProfilerEF.Initialize();
+            MiniProfilerEF.Initialize(false);
         }
 
         protected void Application_BeginRequest()
