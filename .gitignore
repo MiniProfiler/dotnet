@@ -1,3 +1,5 @@
 _ReSharper*
 bin
 obj
+*.suo
+*.sqlite
