@@ -22,6 +22,7 @@ namespace SampleWeb
 
     public class MvcApplication : System.Web.HttpApplication
     {
+
         public static string ConnectionString
         {
             get { return "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); }
@@ -44,25 +45,12 @@ namespace SampleWeb
 
             InitProfilerSettings();
 
-            var dbFile = HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
-            if (System.IO.File.Exists(dbFile))
-            {
-                File.Delete(dbFile);
-            }
-
-            using (var cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString))
-            {
-                cnn.Open();
-                cnn.Execute("create table RouteHits(RouteName,HitCount)");
-                // we need some tiny mods to allow sqlite support 
-                foreach (var sql in SqliteMiniProfilerStorage.TableCreationSQL)
-                {
-                    cnn.Execute(sql);
-                }
-            }
+            // this is only done for testing purposes so we don't check in the db to source control
+            // parameter table is only used in this project for sample queries
+            ((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount)");
 
             var efDb = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
-            if (System.IO.File.Exists(efDb))
+            if (File.Exists(efDb))
             {
                 File.Delete(efDb);
             }

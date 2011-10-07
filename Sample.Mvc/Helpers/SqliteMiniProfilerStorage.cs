@@ -5,6 +5,7 @@ using System.Web;
 using MvcMiniProfiler;
 using Dapper;
 using SampleWeb.Controllers;
+using System.IO;
 
 namespace SampleWeb.Helpers
 {
@@ -48,10 +49,36 @@ namespace SampleWeb.Helpers
             return result;
         }
 
+        /// <summary>
+        /// Used for testing purposes - destroys and recreates the sqlite file with needed tables.
+        /// </summary>
+        public void RecreateDatabase(params string[] extraTablesToCreate)
+        {
+            var path = ConnectionString.Replace("Data Source = ", ""); // hacky
 
-        public static readonly string[] TableCreationSQL = new string[] 
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using (var cnn = new System.Data.SQLite.SQLiteConnection(MvcApplication.ConnectionString))
+            {
+                cnn.Open();
+
+                // we need some tiny mods to allow sqlite support 
+                foreach (var sql in TableCreationSQL.Union(extraTablesToCreate))
+                {
+                    cnn.Execute(sql);
+                }
+            }
+        }
+
+        /// <summary>
+        /// MiniProfiler will serialize its profiling data to these tables.
+        /// </summary>
+        private static readonly string[] TableCreationSQL = new[] 
         { 
-            @"create table MiniProfilers
+@"create table MiniProfilers
   (
      Id                                   uniqueidentifier not null primary key,
      Name                                 nvarchar(200) not null,
@@ -90,8 +117,8 @@ namespace SampleWeb.Helpers
      ExecutedReaders                     smallint not null,
      ExecutedScalars                     smallint not null,
      ExecutedNonQueries                  smallint not null
-  )"
-,
+  )",
+
 @"create table MiniProfilerSqlTimings
   (
      RowId                          integer primary key autoincrement, -- sqlite: replace identity with autoincrement
@@ -105,8 +132,8 @@ namespace SampleWeb.Helpers
      IsDuplicate                    bit not null,
      StackTraceSnippet              nvarchar(200) not null,
      CommandString                  nvarchar not null -- sqlite: remove (max)
-  )"
-,
+  )",
+
 @"create table MiniProfilerSqlTimingParameters
   (
      MiniProfilerId    uniqueidentifier not null,
@@ -116,7 +143,6 @@ namespace SampleWeb.Helpers
      Size              int null,
      Value             nvarchar null -- sqlite: remove (max)
   )"
-        
         };
     }
 }

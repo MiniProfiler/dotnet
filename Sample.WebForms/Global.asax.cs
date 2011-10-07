@@ -13,42 +13,10 @@ namespace Sample.WebForms
 
         void Application_Start(object sender, EventArgs e)
         {
-            // Code that runs on application startup
+            InitProfilerSettings();
 
-            // some things should never be seen
-            var ignored = MiniProfiler.Settings.IgnoredPaths.ToList();
-
-            ignored.Add("WebResource.axd");
-            ignored.Add("/Styles/");
-
-            MiniProfiler.Settings.IgnoredPaths = ignored.ToArray();
-        }
-
-        void Application_End(object sender, EventArgs e)
-        {
-            //  Code that runs on application shutdown
-
-        }
-
-        void Application_Error(object sender, EventArgs e)
-        {
-            // Code that runs when an unhandled error occurs
-
-        }
-
-        void Session_Start(object sender, EventArgs e)
-        {
-            // Code that runs when a new session is started
-
-        }
-
-        void Session_End(object sender, EventArgs e)
-        {
-            // Code that runs when a session ends. 
-            // Note: The Session_End event is raised only when the sessionstate mode
-            // is set to InProc in the Web.config file. If session mode is set to StateServer 
-            // or SQLServer, the event is not raised.
-
+            // this is only done for testing purposes so we don't check in the db to source control
+            ((SampleWeb.Helpers.SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase();
         }
 
         protected void Application_BeginRequest()
@@ -73,8 +41,22 @@ namespace Sample.WebForms
 
         protected void Application_EndRequest()
         {
-            MvcMiniProfiler.MiniProfiler.Stop();
+            MiniProfiler.Stop();
         }
 
+        /// <summary>
+        /// Customize aspects of the MiniProfiler.
+        /// </summary>
+        private void InitProfilerSettings()
+        {
+            // some things should never be seen
+            var ignored = MiniProfiler.Settings.IgnoredPaths.ToList();
+            ignored.Add("WebResource.axd");
+            ignored.Add("/Styles/");
+            MiniProfiler.Settings.IgnoredPaths = ignored.ToArray();
+
+            MiniProfiler.Settings.Storage = new SampleWeb.Helpers.SqliteMiniProfilerStorage(SampleWeb.MvcApplication.ConnectionString);
+            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.InlineFormatter();
+        }
     }
 }
