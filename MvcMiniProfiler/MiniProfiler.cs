@@ -257,7 +257,7 @@ namespace MvcMiniProfiler
         {
             if (Head == null)
                 return;
-            
+
             Head.AddKeyValue(key, value);
         }
 
@@ -363,6 +363,7 @@ namespace MvcMiniProfiler
         /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>
         /// <param name="maxTracesToShow">The maximum number of trace popups to show before removing the oldest (defaults to 15)</param>
         /// <param name="xhtml">xhtml rendering mode, ensure script tag is closed ... etc</param>
+        /// <param name="showControls">when true, shows buttons to minimize and clear MiniProfiler results</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes(RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool xhtml = false, bool? showControls = null)
         {
