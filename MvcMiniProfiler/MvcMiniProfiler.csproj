@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Data\ProfiledDbDataReader.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
+    <Compile Include="Helpers\IStopwatch.cs" />
     <Compile Include="Helpers\SqlMapper.cs" />
     <Compile Include="Helpers\StackTraceSnippet.cs" />
     <Compile Include="Helpers\HaackFormatter.cs" />

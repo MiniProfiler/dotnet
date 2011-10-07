@@ -4,6 +4,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
 using System.Web;
+using MvcMiniProfiler.Helpers;
 
 namespace MvcMiniProfiler
 {
@@ -66,6 +67,9 @@ namespace MvcMiniProfiler
                     "System.Web",
                     "System.Web.Mvc",
                 };
+
+                // for normal usage, this will return a System.Diagnostics.Stopwatch to collect times - unit tests can explicitly set how much time elapses
+                StopwatchProvider = StopwatchWrapper.StartNew;
             }
 
             /// <summary>
@@ -267,6 +271,10 @@ namespace MvcMiniProfiler
                 }
             }
 
+            /// <summary>
+            /// Allows switching out stopwatches for unit testing.
+            /// </summary>
+            internal static Func<IStopwatch> StopwatchProvider { get; set; }
         }
     }
 }

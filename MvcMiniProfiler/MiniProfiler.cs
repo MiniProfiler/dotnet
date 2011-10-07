@@ -126,7 +126,7 @@ namespace MvcMiniProfiler
         /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
         /// their starting time.
         /// </summary>
-        private readonly Stopwatch _watch;
+        private readonly IStopwatch _watch;
 
         /// <summary>
         /// 
@@ -224,7 +224,7 @@ namespace MvcMiniProfiler
             Started = DateTime.UtcNow;
 
             // stopwatch must start before any child Timings are instantiated
-            _watch = Stopwatch.StartNew();
+            _watch = Settings.StopwatchProvider();
             Root = new Timing(this, parent: null, name: url);
         }
 
