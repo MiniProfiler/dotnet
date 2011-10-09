@@ -111,19 +111,6 @@ namespace MvcMiniProfiler
         public bool HasUserViewed { get; set; }
 
         /// <summary>
-        /// Contains information about queries executed during this profiling session.
-        /// </summary>
-        internal SqlProfiler SqlProfiler { get; private set; }
-
-        /// <summary>
-        /// Returns all currently open commands on this connection
-        /// </summary>
-        public SqlTiming[] GetInProgressCommands()
-        {
-            return SqlProfiler == null ? null : SqlProfiler.GetInProgressCommands();
-        }
-
-        /// <summary>
         /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
         /// their starting time.
         /// </summary>
@@ -134,36 +121,12 @@ namespace MvcMiniProfiler
         internal IStopwatch Stopwatch { get { return _sw; } }
 
         /// <summary>
-        /// Contains any sql statements that are executed, along with how many times those statements are executed.
-        /// </summary>
-        private readonly Dictionary<string, int> _sqlExecutionCounts = new Dictionary<string, int>();
-
-        /// <summary>
         /// Milliseconds, to one decimal place, that this MiniProfiler ran.
         /// </summary>
         public decimal DurationMilliseconds
         {
             get { return _root.DurationMilliseconds ?? GetRoundedMilliseconds(ElapsedTicks); }
         }
-
-        /// <summary>
-        /// Milliseconds, to one decimal place, that this MiniProfiler was executing sql.
-        /// </summary>
-        public decimal DurationMillisecondsInSql
-        {
-            get { return GetTimingHierarchy().Sum(t => t.HasSqlTimings ? t.SqlTimings.Sum(s => s.DurationMilliseconds) : 0); }
-        }
-
-
-        /// <summary>
-        /// Returns true when we have profiled queries.
-        /// </summary>
-        public bool HasSqlTimings { get; set; }
-
-        /// <summary>
-        /// Returns true when any child Timings have duplicate queries.
-        /// </summary>
-        public bool HasDuplicateSqlTimings { get; set; }
 
         /// <summary>
         /// Returns true when <see cref="Root"/> or any of its <see cref="Timing.Children"/> are <see cref="Timing.IsTrivial"/>.
@@ -265,25 +228,6 @@ namespace MvcMiniProfiler
             Head.AddKeyValue(key, value);
         }
 
-        internal void AddSqlTiming(SqlTiming stats)
-        {
-            if (Head == null)
-                return;
-
-            int count;
-
-            stats.IsDuplicate = _sqlExecutionCounts.TryGetValue(stats.RawCommandString, out count);
-            _sqlExecutionCounts[stats.RawCommandString] = count + 1;
-
-            HasSqlTimings = true;
-            if (stats.IsDuplicate)
-            {
-                HasDuplicateSqlTimings = true;
-            }
-
-            Head.AddSqlTiming(stats);
-        }
-
         /// <summary>
         /// Walks the <see cref="Timing"/> hierarchy contained in this profiler, starting with <see cref="Root"/>, and returns each Timing found.
         /// </summary>
@@ -305,14 +249,6 @@ namespace MvcMiniProfiler
                     for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns all <see cref="SqlTiming"/> results contained in all child <see cref="Timing"/> steps.
-        /// </summary>
-        public List<SqlTiming> GetSqlTimings()
-        {
-            return GetTimingHierarchy().Where(t => t.HasSqlTimings).SelectMany(t => t.SqlTimings).ToList();
         }
 
         /// <summary>
@@ -392,7 +328,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public static string ToJson()
         {
-            return ToJson(MiniProfiler.Current);
+            return ToJson(Current);
         }
 
         /// <summary>

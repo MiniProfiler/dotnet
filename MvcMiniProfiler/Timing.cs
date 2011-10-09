@@ -202,7 +202,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// How many sql data readers were executed in this Timing step.
+        /// How many sql data readers were executed in this Timing step. Does not include queries in any child Timings.
         /// </summary>
         public int ExecutedReaders
         {
@@ -210,7 +210,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// How many sql scalar queries were executed in this Timing step.
+        /// How many sql scalar queries were executed in this Timing step. Does not include queries in any child Timings.
         /// </summary>
         public int ExecutedScalars
         {
@@ -218,7 +218,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// How many sql non-query statements were executed in this Timing step.
+        /// How many sql non-query statements were executed in this Timing step. Does not include queries in any child Timings.
         /// </summary>
         public int ExecutedNonQueries
         {
