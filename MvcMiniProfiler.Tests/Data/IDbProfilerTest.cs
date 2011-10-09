@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MvcMiniProfiler.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
-
-using Assert = NUnit.Framework.Assert;
-using System.IO;
 using System.Data.Common;
 using System.Data.SqlServerCe;
+using System.IO;
+using MvcMiniProfiler.Data;
+using NUnit.Framework;
 
 namespace MvcMiniProfiler.Tests.Data
 {
-    [TestClass]
+    [TestFixture]
     public class IDbProfilerTest : IDbProfiler
     {
         const string cnnStr = "Data Source = Test.sdf;";
@@ -32,7 +27,7 @@ namespace MvcMiniProfiler.Tests.Data
             connection.Open();
         }
 
-        [TestMethod]
+        [Test]
         public void TestDataAdapter()
         {
             var factory = EFProfiledDbProviderFactory<SqlCeProviderFactory>.Instance;

@@ -1,13 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+﻿using NUnit.Framework;
 
 namespace MvcMiniProfiler.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class BaseTestTest : BaseTest
     {
-        [TestMethod]
+        [Test]
         public void GetProfiler_NoChildren()
         {
             // this won't create any child steps
@@ -18,7 +16,7 @@ namespace MvcMiniProfiler.Tests
             Assert.That(mp.Root.HasChildren, Is.False);
         }
 
-        [TestMethod]
+        [Test]
         public void GetProfiler_Children()
         {
             var depth = 5;

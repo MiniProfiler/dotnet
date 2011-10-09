@@ -1,12 +1,11 @@
 ﻿using System;
 
-
 namespace MvcMiniProfiler.Tests
 {
     public abstract class BaseTest
     {
         /// <summary>
-        /// Amount of time each <see cref="MiniProfilerExtensions.Step()"/> will take for unit tests.
+        /// Amount of time each <see cref="MiniProfilerExtensions.Step"/> will take for unit tests.
         /// </summary>
         public const int StepTimeMilliseconds = 1;
 

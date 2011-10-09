@@ -1,13 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
+﻿using NUnit.Framework;
 
 namespace MvcMiniProfiler.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class MiniProfilerTest : BaseTest
     {
-        [TestMethod]
+        [Test]
         public void Simple()
         {
             using (SimulateRequest("http://localhost/Test.aspx"))
@@ -27,7 +25,7 @@ namespace MvcMiniProfiler.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DiscardResults()
         {
             using (SimulateRequest("http://localhost/Test.aspx"))
