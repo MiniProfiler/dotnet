@@ -8,7 +8,7 @@ namespace MvcMiniProfiler.Tests
         [Test]
         public void Simple()
         {
-            using (SimulateRequest("http://localhost/Test.aspx"))
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
                 MiniProfiler.Start();
                 IncrementStopwatch(); // 1 ms
@@ -28,7 +28,7 @@ namespace MvcMiniProfiler.Tests
         [Test]
         public void DiscardResults()
         {
-            using (SimulateRequest("http://localhost/Test.aspx"))
+            using (GetRequest(startAndStopProfiler: false))
             {
                 MiniProfiler.Start();
                 MiniProfiler.Stop(discardResults: true);

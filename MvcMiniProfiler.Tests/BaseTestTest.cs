@@ -36,5 +36,19 @@ namespace MvcMiniProfiler.Tests
             Assert.That(children, Is.EqualTo(depth));
         }
 
+        [Test]
+        public void GetRequest_StartAndStopProfiler()
+        {
+            MiniProfiler mp;
+            using (GetRequest())
+            {
+                IncrementStopwatch();
+                mp = MiniProfiler.Current;
+            }
+
+            Assert.That(mp.DurationMilliseconds == 1);
+            Assert.That(mp.Stopwatch.IsRunning, Is.False);
+        }
+
     }
 }

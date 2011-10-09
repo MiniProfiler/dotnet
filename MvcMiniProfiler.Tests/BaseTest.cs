@@ -9,17 +9,31 @@ namespace MvcMiniProfiler.Tests
         /// </summary>
         public const int StepTimeMilliseconds = 1;
 
+        /// <summary>
+        /// Url that <see cref="GetRequest"/> and <see cref="GetProfiler"/> will hit.
+        /// </summary>
+        public const string DefaultRequestUrl = "http://localhost/Test.aspx";
+
         static BaseTest()
         {
             // allows us to manually set ticks during tests
             MiniProfiler.Settings.StopwatchProvider = () => new UnitTestStopwatch();
         }
 
-        public static IDisposable SimulateRequest(string url)
+        /// <summary>
+        /// Returns a simulated http request to <paramref name="url"/>.
+        /// </summary>
+        public static IDisposable GetRequest(string url = DefaultRequestUrl, bool startAndStopProfiler = true)
         {
             var result = new Subtext.TestLibrary.HttpSimulator();
 
             result.SimulateRequest(new Uri(url));
+
+            if (startAndStopProfiler)
+            {
+                MiniProfiler.Start();
+                result.OnBeforeDispose += () => MiniProfiler.Stop();
+            }
 
             return result;
         }
@@ -30,7 +44,7 @@ namespace MvcMiniProfiler.Tests
         /// </summary>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
-        public static MiniProfiler GetProfiler(string url = "http://localhost/Test.aspx", int childDepth = 0, int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+        public static MiniProfiler GetProfiler(string url = DefaultRequestUrl, int childDepth = 0, int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             MiniProfiler result = null;
             Action step = null;
@@ -49,7 +63,7 @@ namespace MvcMiniProfiler.Tests
                 }
             };
 
-            using (SimulateRequest(url))
+            using (GetRequest(url, startAndStopProfiler: false))
             {
                 result = MiniProfiler.Start();
                 step();
