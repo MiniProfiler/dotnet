@@ -66,6 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="BaseTestTest.cs">
+      <DependentUpon>BaseTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\IDbProfilerTest.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />

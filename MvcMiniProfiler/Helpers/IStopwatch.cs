@@ -9,6 +9,7 @@ namespace MvcMiniProfiler.Helpers
     internal interface IStopwatch
     {
         long ElapsedTicks { get; }
+        long Frequency { get; }
         bool IsRunning { get; }
 
         void Stop();
@@ -31,6 +32,11 @@ namespace MvcMiniProfiler.Helpers
         public long ElapsedTicks
         {
             get { return _sw.ElapsedTicks; }
+        }
+
+        public long Frequency
+        {
+            get { return Stopwatch.Frequency; }
         }
 
         public bool IsRunning

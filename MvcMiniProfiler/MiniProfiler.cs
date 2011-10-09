@@ -122,16 +122,21 @@ namespace MvcMiniProfiler
         {
             return SqlProfiler == null ? null : SqlProfiler.GetInProgressCommands();
         }
+
         /// <summary>
         /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
         /// their starting time.
         /// </summary>
-        private readonly IStopwatch _watch;
+        private readonly IStopwatch _sw;
+        /// <summary>
+        /// For unit testing, returns the timer.
+        /// </summary>
+        internal IStopwatch Stopwatch { get { return _sw; } }
 
         /// <summary>
-        /// 
+        /// Contains any sql statements that are executed, along with how many times those statements are executed.
         /// </summary>
-        private Dictionary<string, int> _sqlCounts;
+        private readonly Dictionary<string, int> _sqlExecutionCounts = new Dictionary<string, int>();
 
         /// <summary>
         /// Milliseconds, to one decimal place, that this MiniProfiler ran.
@@ -203,7 +208,7 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Ticks since this MiniProfiler was started.
         /// </summary>
-        internal long ElapsedTicks { get { return _watch.ElapsedTicks; } }
+        internal long ElapsedTicks { get { return _sw.ElapsedTicks; } }
 
         /// <summary>
         /// Points to the currently executing Timing. 
@@ -220,11 +225,10 @@ namespace MvcMiniProfiler
             Level = level;
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
-            _sqlCounts = new Dictionary<string, int>();
             Started = DateTime.UtcNow;
 
             // stopwatch must start before any child Timings are instantiated
-            _watch = Settings.StopwatchProvider();
+            _sw = Settings.StopwatchProvider();
             Root = new Timing(this, parent: null, name: url);
         }
 
@@ -244,10 +248,10 @@ namespace MvcMiniProfiler
 
         internal bool StopImpl()
         {
-            if (!_watch.IsRunning)
+            if (!_sw.IsRunning)
                 return false;
 
-            _watch.Stop();
+            _sw.Stop();
             foreach (var timing in GetTimingHierarchy()) timing.Stop();
 
             return true;
@@ -268,8 +272,8 @@ namespace MvcMiniProfiler
 
             int count;
 
-            stats.IsDuplicate = _sqlCounts.TryGetValue(stats.RawCommandString, out count);
-            _sqlCounts[stats.RawCommandString] = count + 1;
+            stats.IsDuplicate = _sqlExecutionCounts.TryGetValue(stats.RawCommandString, out count);
+            _sqlExecutionCounts[stats.RawCommandString] = count + 1;
 
             HasSqlTimings = true;
             if (stats.IsDuplicate)
@@ -314,10 +318,10 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency.
         /// </summary>
-        internal static decimal GetRoundedMilliseconds(long stopwatchElapsedTicks)
+        internal decimal GetRoundedMilliseconds(long stopwatchElapsedTicks)
         {
             long z = 10000 * stopwatchElapsedTicks;
-            decimal msTimesTen = (int)(z / Stopwatch.Frequency);
+            decimal msTimesTen = (int)(z / _sw.Frequency);
             return msTimesTen / 10;
         }
 

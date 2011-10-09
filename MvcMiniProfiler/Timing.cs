@@ -82,7 +82,7 @@ namespace MvcMiniProfiler
         /// <summary>
         /// Rebuilds all the parent timings on deserialization calls
         /// </summary>
-        public void RebuildParentTimings() 
+        public void RebuildParentTimings()
         {
             if (SqlTimings != null)
             {
@@ -102,7 +102,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Gets the ellapsed milliseconds in this step without any children's durations.
+        /// Gets the elapsed milliseconds in this step without any children's durations.
         /// </summary>
         public decimal DurationWithoutChildrenMilliseconds
         {
@@ -123,7 +123,7 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Gets the aggregate ellapsed milliseconds of all SqlTimings executed in this Timing, excluding Children Timings.
+        /// Gets the aggregate elapsed milliseconds of all SqlTimings executed in this Timing, excluding Children Timings.
         /// </summary>
         public decimal SqlTimingsDurationMilliseconds
         {
@@ -242,7 +242,7 @@ namespace MvcMiniProfiler
             Name = name;
 
             _startTicks = profiler.ElapsedTicks;
-            StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
+            StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
         }
         /// <summary>
         /// Obsolete - used for serialization.
@@ -278,7 +278,7 @@ namespace MvcMiniProfiler
         {
             if (DurationMilliseconds == null)
             {
-                DurationMilliseconds = MiniProfiler.GetRoundedMilliseconds(Profiler.ElapsedTicks - _startTicks);
+                DurationMilliseconds = Profiler.GetRoundedMilliseconds(Profiler.ElapsedTicks - _startTicks);
                 Profiler.Head = ParentTiming;
             }
         }

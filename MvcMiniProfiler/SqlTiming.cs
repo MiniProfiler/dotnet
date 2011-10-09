@@ -138,7 +138,7 @@ namespace MvcMiniProfiler
             {
                 _profiler.AddSqlTiming(this);
                 _startTicks = _profiler.ElapsedTicks;
-                StartMilliseconds = MiniProfiler.GetRoundedMilliseconds(_startTicks);
+                StartMilliseconds = _profiler.GetRoundedMilliseconds(_startTicks);
             }
         }
 
@@ -175,7 +175,7 @@ namespace MvcMiniProfiler
 
         private decimal GetDurationMilliseconds()
         {
-            return MiniProfiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
+            return _profiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
         }
 
         /// <summary>
