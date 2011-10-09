@@ -92,9 +92,6 @@
     <None Include="Properties\MiniProfiler.Tests.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\TestSqlServer.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

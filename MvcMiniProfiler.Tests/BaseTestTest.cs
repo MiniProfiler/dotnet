@@ -15,6 +15,7 @@ namespace MvcMiniProfiler.Tests
 
             // and shouldn't have any duration
             Assert.That(mp.DurationMilliseconds, Is.EqualTo(0));
+            Assert.That(mp.Root.HasChildren, Is.False);
         }
 
         [TestMethod]
@@ -25,6 +26,7 @@ namespace MvcMiniProfiler.Tests
             var mp = GetProfiler(childDepth: depth);
 
             Assert.That(mp.DurationMilliseconds, Is.EqualTo(depth));
+            Assert.That(mp.Root.HasChildren, Is.True);
 
             var children = 0;
             foreach (var t in mp.GetTimingHierarchy())
