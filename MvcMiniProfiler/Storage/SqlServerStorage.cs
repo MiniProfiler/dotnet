@@ -345,7 +345,7 @@ order  by Started";
      HasAllTrivialTimings                 bit not null,
      TrivialDurationThresholdMilliseconds decimal(5, 1) null,
      HasUserViewed                        bit not null
-  )
+  );
 
 create table MiniProfilerTimings
   (
@@ -367,7 +367,7 @@ create table MiniProfilerTimings
      ExecutedReaders                     smallint not null,
      ExecutedScalars                     smallint not null,
      ExecutedNonQueries                  smallint not null
-  )
+  );
 
 create table MiniProfilerSqlTimings
   (
@@ -381,17 +381,17 @@ create table MiniProfilerSqlTimings
      FirstFetchDurationMilliseconds decimal(7, 1) null,
      IsDuplicate                    bit not null,
      StackTraceSnippet              nvarchar(200) not null,
-     CommandString                  nvarchar(max) not null -- sqlite: remove (max)
-  )
+     CommandString                  nvarchar(max) not null -- sqlite: remove (max) -- sql server ce: replace with ntext
+  );
 
 create table MiniProfilerSqlTimingParameters
   (
      MiniProfilerId    uniqueidentifier not null,
      ParentSqlTimingId uniqueidentifier not null,
-     Name              varchar(130) not null,
-     DbType            varchar(50) null,
+     Name              nvarchar(130) not null,
+     DbType            nvarchar(50) null,
      Size              int null,
-     Value             nvarchar(max) null -- sqlite: remove (max)
-  )";
+     Value             nvarchar(max) null -- sqlite: remove (max) -- sql server ce: replace with ntext
+  );";
     }
 }
