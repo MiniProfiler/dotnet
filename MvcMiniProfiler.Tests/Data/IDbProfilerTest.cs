@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace MvcMiniProfiler.Tests.Data
 {
     [TestFixture]
-    public class IDbProfilerTest : IDbProfiler
+    public class IDbProfilerTest : BaseTest
     {
         const string cnnStr = "Data Source = Test.sdf;";
         public DbConnection connection;
@@ -30,8 +30,10 @@ namespace MvcMiniProfiler.Tests.Data
         [Test]
         public void TestDataAdapter()
         {
+            MiniProfiler mp;
             var factory = EFProfiledDbProviderFactory<SqlCeProviderFactory>.Instance;
 
+            using (GetRequest())
             using (var da = factory.CreateDataAdapter())
             {
                 var cmd = factory.CreateCommand();
@@ -43,38 +45,13 @@ namespace MvcMiniProfiler.Tests.Data
                 da.Fill(ds);
 
                 Assert.That(((int)ds.Tables[0].Rows[0][0]) == 1);
+                mp = MiniProfiler.Current;
             }
 
-            Assert.That(ExecuteStartCount == 1);
-            Assert.That(ReaderFinishCount == 1);
-            Assert.That(ExecuteFinishCount == 1);
+            Assert.That(mp.ExecutedReaders == 1);
+            Assert.That(mp.ExecutedScalars == 0);
+            Assert.That(mp.ExecutedNonQueries == 0);
         }
 
-        // IDbProfiler members
-        public int ExecuteStartCount { get; set; }
-        public int ExecuteFinishCount { get; set; }
-        public int ReaderFinishCount { get; set; }
-
-        public void ExecuteStart(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType)
-        {
-            ExecuteStartCount++;
-        }
-
-        public void ExecuteFinish(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType, System.Data.Common.DbDataReader reader)
-        {
-            ExecuteFinishCount++;
-        }
-
-        public void ExecuteFinish(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType)
-        {
-            ExecuteFinishCount++;
-        }
-
-        public void ReaderFinish(System.Data.Common.DbDataReader reader)
-        {
-            ReaderFinishCount++;
-        }
-
-        public bool IsActive { get; set; }
     }
 }

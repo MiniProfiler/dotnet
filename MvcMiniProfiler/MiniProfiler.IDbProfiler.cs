@@ -30,14 +30,6 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
-        /// Returns all <see cref="SqlTiming"/> results contained in all child <see cref="Timing"/> steps.
-        /// </summary>
-        public List<SqlTiming> GetSqlTimings()
-        {
-            return GetTimingHierarchy().Where(t => t.HasSqlTimings).SelectMany(t => t.SqlTimings).ToList();
-        }
-
-        /// <summary>
         /// Returns true when we have profiled queries.
         /// </summary>
         public bool HasSqlTimings { get; set; }
@@ -46,6 +38,38 @@ namespace MvcMiniProfiler
         /// Returns true when any child Timings have duplicate queries.
         /// </summary>
         public bool HasDuplicateSqlTimings { get; set; }
+
+        /// <summary>
+        /// How many sql data readers were executed in all <see cref="Timing"/> steps.
+        /// </summary>
+        public int ExecutedReaders
+        {
+            get { return GetExecutedCount(ExecuteType.Reader); }
+        }
+
+        /// <summary>
+        /// How many sql scalar queries were executed in all <see cref="Timing"/> steps.
+        /// </summary>
+        public int ExecutedScalars
+        {
+            get { return GetExecutedCount(ExecuteType.Scalar); }
+        }
+
+        /// <summary>
+        /// How many sql non-query statements were executed in all <see cref="Timing"/> steps.
+        /// </summary>
+        public int ExecutedNonQueries
+        {
+            get { return GetExecutedCount(ExecuteType.NonQuery); }
+        }
+
+        /// <summary>
+        /// Returns all <see cref="SqlTiming"/> results contained in all child <see cref="Timing"/> steps.
+        /// </summary>
+        public List<SqlTiming> GetSqlTimings()
+        {
+            return GetTimingHierarchy().Where(t => t.HasSqlTimings).SelectMany(t => t.SqlTimings).ToList();
+        }
 
         /// <summary>
         /// Contains any sql statements that are executed, along with how many times those statements are executed.
@@ -72,6 +96,14 @@ namespace MvcMiniProfiler
             }
 
             Head.AddSqlTiming(stats);
+        }
+
+        /// <summary>
+        /// Returns the number of sql statements of <paramref name="type"/> that were executed in all <see cref="Timing"/>s.
+        /// </summary>
+        private int GetExecutedCount(ExecuteType type)
+        {
+            return HasSqlTimings ? GetTimingHierarchy().Sum(t => t.GetExecutedCount(type)) : 0;
         }
 
 

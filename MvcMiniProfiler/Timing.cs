@@ -206,7 +206,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public int ExecutedReaders
         {
-            get { return ExecutedCount(ExecuteType.Reader); }
+            get { return GetExecutedCount(ExecuteType.Reader); }
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public int ExecutedScalars
         {
-            get { return ExecutedCount(ExecuteType.Scalar); }
+            get { return GetExecutedCount(ExecuteType.Scalar); }
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace MvcMiniProfiler
         /// </summary>
         public int ExecutedNonQueries
         {
-            get { return ExecutedCount(ExecuteType.NonQuery); }
+            get { return GetExecutedCount(ExecuteType.NonQuery); }
         }
 
         /// <summary>
@@ -319,7 +319,10 @@ namespace MvcMiniProfiler
             sqlTiming.ParentTiming = this;
         }
 
-        private int ExecutedCount(ExecuteType type)
+        /// <summary>
+        /// Returns the number of sql statements of <paramref name="type"/> that were executed in this <see cref="Timing"/>.
+        /// </summary>
+        internal int GetExecutedCount(ExecuteType type)
         {
             return HasSqlTimings ? SqlTimings.Count(s => s.ExecuteType == type) : 0;
         }
