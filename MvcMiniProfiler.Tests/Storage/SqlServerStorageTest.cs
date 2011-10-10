@@ -37,24 +37,27 @@ namespace MvcMiniProfiler.Tests.Storage
         {
             CreateDatabase();
             MiniProfiler.Settings.Storage = new SqlCeStorage(ConnectionString);
+            _conn = GetOpenConnection();
         }
 
         private void CreateDatabase()
         {
+            // NOTE: if schema changes (hopefully not), then you'll have to delete this manually
             if (File.Exists(Filename))
-                File.Delete(Filename);
+                return;
 
             var engine = new SqlCeEngine(ConnectionString);
             engine.CreateDatabase();
 
-            _conn = GetOpenConnection();
-
-            foreach (var sql in SqlServerStorage.TableCreationScript.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)))
+            using (var conn = GetOpenConnection())
             {
-                using (var cmd = _conn.CreateCommand())
+                foreach (var sql in SqlServerStorage.TableCreationScript.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)))
                 {
-                    cmd.CommandText = sql.Replace("nvarchar(max)", "ntext");
-                    cmd.ExecuteNonQuery();
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = sql.Replace("nvarchar(max)", "ntext");
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -66,7 +69,7 @@ namespace MvcMiniProfiler.Tests.Storage
         }
 
         [Test]
-        public void SaveResults_NoChildTimings()
+        public void Save_NoChildTimings()
         {
             var mp = GetProfiler();
             AssertMiniProfilerExists(mp);
@@ -74,7 +77,7 @@ namespace MvcMiniProfiler.Tests.Storage
         }
 
         [Test]
-        public void SaveResults_WithChildTimings()
+        public void Save_WithChildTimings()
         {
             var mp = GetProfiler(childDepth: 5);
             AssertMiniProfilerExists(mp);
@@ -82,7 +85,7 @@ namespace MvcMiniProfiler.Tests.Storage
         }
 
         [Test]
-        public void SaveResults_WithSqlTimings()
+        public void Save_WithSqlTimings()
         {
             MiniProfiler mp;
 
@@ -102,6 +105,13 @@ namespace MvcMiniProfiler.Tests.Storage
 
             AssertSqlTimingsExistOnTiming(mp.Root, 1);
             AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
+        }
+
+        [Test]
+        public void Load_NoChildTimings()
+        {
+            var mp = GetProfiler();
+            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
         }
 
         private void AssertMiniProfilerExists(MiniProfiler mp)
@@ -127,6 +137,14 @@ namespace MvcMiniProfiler.Tests.Storage
         protected override System.Data.Common.DbConnection GetConnection()
         {
             return new SqlCeConnection(ConnectionString);
+        }
+
+        /// <summary>
+        /// CE doesn't support multiple result sets in one query.
+        /// </summary>
+        public override bool EnableBatchSelects
+        {
+            get { return false; }
         }
     }
 

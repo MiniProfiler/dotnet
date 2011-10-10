@@ -23,6 +23,12 @@ namespace MvcMiniProfiler.Storage
         }
 
         /// <summary>
+        /// A full install of Sql Server can return multiple result sets in one query, allowing the use of <see cref="SqlMapper.QueryMultiple"/>.
+        /// However, Sql Server CE and Sqlite cannot do this, so inheritors for those providers can return false here.
+        /// </summary>
+        public virtual bool EnableBatchSelects { get { return true; } }
+
+        /// <summary>
         /// Stores <param name="profiler"/> to dbo.MiniProfilers under its <see cref="MiniProfiler.Id"/>; 
         /// stores all child Timings and SqlTimings to their respective tables.
         /// </summary>
@@ -250,48 +256,82 @@ values      (@MiniProfilerId,
             }
         }
 
+        private static readonly Dictionary<Type, string> LoadSqlStatements = new Dictionary<Type, string>
+        {
+            { typeof(MiniProfiler), "select * from MiniProfilers where Id = @id" },
+            { typeof(Timing), "select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId" },
+            { typeof(SqlTiming), "select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId" },
+            { typeof(SqlTimingParameter), "select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id" }
+        };
+
+        private static readonly string LoadSqlBatch = string.Join("\n", LoadSqlStatements.Select(pair => pair.Value));
+
         /// <summary>
         /// Loads the MiniProfiler identifed by 'id' from the database.
         /// </summary>
         public override MiniProfiler Load(Guid id)
         {
-            const string sql =
-@"select * from MiniProfilers where Id = @id
-select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId
-select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId
-select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id";
-
-            MiniProfiler result = null;
-
             using (var conn = GetOpenConnection())
             {
-                var param = new { id = id };
+                var idParameter = new { id };
+                var result = EnableBatchSelects ? LoadInBatch(conn, idParameter) : LoadIndividually(conn, idParameter);
 
-                using (var multi = conn.QueryMultiple(sql, param))
+                if (result != null)
                 {
-                    result = multi.Read<MiniProfiler>().SingleOrDefault();
+                    // HACK: stored dates are utc, but are pulled out as local time
+                    result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
 
-                    if (result != null)
+                    // loading a profiler means we've viewed it
+                    if (!result.HasUserViewed)
                     {
-                        // HACK: stored dates are utc, but are pulled out as local time - maybe use datetimeoffset data type?
-                        result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
-
-                        var timings = multi.Read<Timing>().ToList();
-                        var sqlTimings = multi.Read<SqlTiming>().ToList();
-                        var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
-                        MapTimings(result, timings, sqlTimings, sqlParameters);
+                        conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", idParameter);
                     }
                 }
 
-                // loading a profiler means we've viewed it
-                if (result != null && !result.HasUserViewed)
+                return result;
+            }
+        }
+
+        private MiniProfiler LoadInBatch(DbConnection conn, object idParameter)
+        {
+            MiniProfiler result;
+
+            using (var multi = conn.QueryMultiple(LoadSqlBatch, idParameter))
+            {
+                result = multi.Read<MiniProfiler>().SingleOrDefault();
+
+                if (result != null)
                 {
-                    conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", param);
+                    var timings = multi.Read<Timing>().ToList();
+                    var sqlTimings = multi.Read<SqlTiming>().ToList();
+                    var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
+                    MapTimings(result, timings, sqlTimings, sqlParameters);
                 }
             }
 
             return result;
         }
+
+        private MiniProfiler LoadIndividually(DbConnection conn, object idParameter)
+        {
+            var result = LoadFor<MiniProfiler>(conn, idParameter).SingleOrDefault();
+
+            if (result != null)
+            {
+                var timings = LoadFor<Timing>(conn, idParameter);
+                var sqlTimings = LoadFor<SqlTiming>(conn, idParameter);
+                var sqlParameters = LoadFor<SqlTimingParameter>(conn, idParameter);
+                MapTimings(result, timings, sqlTimings, sqlParameters);
+            }
+
+            return result;
+        }
+
+        private List<T> LoadFor<T>(DbConnection conn, object idParameter)
+        {
+            return conn.Query<T>(LoadSqlStatements[typeof(T)], idParameter).ToList();
+        }
+
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
