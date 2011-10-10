@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.IO;
 using System.Data.SqlServerCe;
 using MvcMiniProfiler.Helpers;
+using MvcMiniProfiler.Data;
 
 namespace MvcMiniProfiler.Tests.Storage
 {
@@ -17,11 +18,18 @@ namespace MvcMiniProfiler.Tests.Storage
         static string Filename = typeof(SqlServerStorageTest).FullName + ".sdf";
         static string ConnectionString = "Data Source = " + Filename;
 
+        private SqlCeConnection _conn;
+
         public static SqlCeConnection GetOpenConnection()
         {
             var result = new SqlCeConnection(ConnectionString);
             result.Open();
             return result;
+        }
+
+        public static ProfiledDbConnection GetProfiledConnection()
+        {
+            return new ProfiledDbConnection(GetOpenConnection(), MiniProfiler.Current);
         }
 
         [TestFixtureSetUp]
@@ -39,15 +47,14 @@ namespace MvcMiniProfiler.Tests.Storage
             var engine = new SqlCeEngine(ConnectionString);
             engine.CreateDatabase();
 
-            using (var conn = GetOpenConnection())
+            _conn = GetOpenConnection();
+
+            foreach (var sql in SqlServerStorage.TableCreationScript.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)))
             {
-                foreach (var sql in SqlServerStorage.TableCreationScript.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)))
+                using (var cmd = _conn.CreateCommand())
                 {
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = sql.Replace("nvarchar(max)", "ntext");
-                        cmd.ExecuteNonQuery();
-                    }
+                    cmd.CommandText = sql.Replace("nvarchar(max)", "ntext");
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
@@ -59,15 +66,57 @@ namespace MvcMiniProfiler.Tests.Storage
         }
 
         [Test]
-        public void SaveResults()
+        public void SaveResults_NoChildTimings()
         {
             var mp = GetProfiler();
+            AssertMiniProfilerExists(mp);
+            AssertTimingsExist(mp, 1);
+        }
 
-            using (var conn = GetOpenConnection())
+        [Test]
+        public void SaveResults_WithChildTimings()
+        {
+            var mp = GetProfiler(childDepth: 5);
+            AssertMiniProfilerExists(mp);
+            AssertTimingsExist(mp, 6);
+        }
+
+        [Test]
+        public void SaveResults_WithSqlTimings()
+        {
+            MiniProfiler mp;
+
+            using (GetRequest())
+            using (var conn = GetProfiledConnection())
             {
-                Assert.That(conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { mp.Id }).Single() == 1);
-                Assert.That(conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { mp.Id }).Single() == 1);
+                mp = MiniProfiler.Current;
+
+                // one sql in the root timing
+                conn.Query("select 1");
+
+                using (mp.Step("Child step"))
+                {
+                    conn.Query("select 2");
+                }
             }
+
+            AssertSqlTimingsExistOnTiming(mp.Root, 1);
+            AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
+        }
+
+        private void AssertMiniProfilerExists(MiniProfiler mp)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { mp.Id }).Single() == 1);
+        }
+
+        private void AssertTimingsExist(MiniProfiler mp, int count)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { mp.Id }).Single() == count);
+        }
+
+        private void AssertSqlTimingsExistOnTiming(Timing t, int count)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { t.Id }).Single() == count);
         }
     }
 
@@ -80,4 +129,6 @@ namespace MvcMiniProfiler.Tests.Storage
             return new SqlCeConnection(ConnectionString);
         }
     }
+
+
 }
