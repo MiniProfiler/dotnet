@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using NUnit.Framework;
 
 namespace MvcMiniProfiler.Tests
 {
@@ -81,6 +84,80 @@ namespace MvcMiniProfiler.Tests
         {
             var sw = (UnitTestStopwatch)MiniProfiler.Current.Stopwatch;
             sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
+        }
+
+        public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
+        {
+            Assert.AreEqual(mp1, mp2);
+            AssertPublicPropertiesAreEqual(mp1, mp2);
+
+            var timings1 = mp1.GetTimingHierarchy().ToList();
+            var timings2 = mp2.GetTimingHierarchy().ToList();
+
+            Assert.That(timings1.Count == timings2.Count);
+            for (int i = 0; i < timings1.Count; i++)
+            {
+                var t1 = timings1[i];
+                var t2 = timings2[i];
+                Assert.AreEqual(t1, t2);
+                AssertPublicPropertiesAreEqual(t1, t2);
+
+                if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
+
+                Assert.NotNull(t1.SqlTimings);
+                Assert.NotNull(t2.SqlTimings);
+
+                for (int j = 0; j < t1.SqlTimings.Count; j++)
+                {
+                    var s1 = t1.SqlTimings[j];
+                    var s2 = t2.SqlTimings[j];
+                    Assert.AreEqual(s1, s2);
+                    AssertPublicPropertiesAreEqual(s1, s2);
+
+                    if (s1.Parameters == null && s2.Parameters == null) continue;
+
+                    Assert.NotNull(s1.Parameters);
+                    Assert.NotNull(s2.Parameters);
+
+                    for (int k = 0; k < s1.Parameters.Count; k++)
+                    {
+                        var p1 = s1.Parameters[k];
+                        var p2 = s2.Parameters[k];
+                        Assert.AreEqual(p1, p2);
+                        AssertPublicPropertiesAreEqual(p1, p2);
+                    }
+                }
+            }
+        }
+
+        protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2)
+        {
+            Assert.NotNull(t1);
+            Assert.NotNull(t2);
+
+            // check public properties
+            var props = from p in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        select p;
+
+            foreach (var p in props)
+            {
+                var val1 = p.GetValue(t1, null);
+                var val2 = p.GetValue(t2, null);
+
+                // datetimes are sometimes serialized with different precisions - just look care about the 10th of a second
+                if (p.PropertyType == typeof(DateTime))
+                {
+                    val1 = TrimToDecisecond((DateTime)val1);
+                    val2 = TrimToDecisecond((DateTime)val2);
+                }
+
+                Assert.AreEqual(val1, val2, typeof(T).Name + "." + p.Name + " have different values");
+            }
+        }
+
+        private DateTime TrimToDecisecond(DateTime d)
+        {
+            return new DateTime(d.Ticks - (d.Ticks % (TimeSpan.TicksPerSecond / 10)));
         }
     }
 

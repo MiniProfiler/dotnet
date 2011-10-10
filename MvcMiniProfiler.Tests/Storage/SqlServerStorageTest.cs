@@ -69,23 +69,29 @@ namespace MvcMiniProfiler.Tests.Storage
         }
 
         [Test]
-        public void Save_NoChildTimings()
+        public void NoChildTimings()
         {
             var mp = GetProfiler();
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 1);
+
+            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         [Test]
-        public void Save_WithChildTimings()
+        public void WithChildTimings()
         {
             var mp = GetProfiler(childDepth: 5);
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 6);
+
+            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         [Test]
-        public void Save_WithSqlTimings()
+        public void WithSqlTimings()
         {
             MiniProfiler mp;
 
@@ -105,13 +111,9 @@ namespace MvcMiniProfiler.Tests.Storage
 
             AssertSqlTimingsExistOnTiming(mp.Root, 1);
             AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
-        }
 
-        [Test]
-        public void Load_NoChildTimings()
-        {
-            var mp = GetProfiler();
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         private void AssertMiniProfilerExists(MiniProfiler mp)
