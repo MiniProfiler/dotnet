@@ -42,5 +42,22 @@ namespace MvcMiniProfiler
         /// </summary>
         [DataMember(Order = 4)]
         public int Size { get; set; }
+
+        /// <summary>
+        /// Returns true if this has the same parent <see cref="SqlTiming.Id"/>, <see cref="Name"/> and <see cref="Value"/> as <paramref name="obj"/>.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            var other = obj as SqlTimingParameter;
+            return other != null && ParentSqlTimingId.Equals(other.ParentSqlTimingId) && string.Equals(Name, other.Name) && string.Equals(Value, other.Value);
+        }
+
+        /// <summary>
+        /// Returns the XOR of certain properties.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return ParentSqlTimingId.GetHashCode() ^ Name.GetHashCode() ^ Value.GetHashCode();
+        }
     }
 }

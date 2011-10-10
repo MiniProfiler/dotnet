@@ -195,6 +195,31 @@ namespace MvcMiniProfiler
             Root = new Timing(this, parent: null, name: url);
         }
 
+
+        /// <summary>
+        /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
+        /// </summary>
+        public override string ToString()
+        {
+            return Root != null ? Root.Name + " (" + DurationMilliseconds + " ms)" : "";
+        }
+
+        /// <summary>
+        /// Returns true if Ids match.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            return obj != null && obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
+        }
+
+        /// <summary>
+        /// Returns hashcode of Id.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
         /// <summary>
         /// Obsolete - used for serialization.
         /// </summary>

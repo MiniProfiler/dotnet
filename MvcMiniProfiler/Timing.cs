@@ -261,6 +261,22 @@ namespace MvcMiniProfiler
         }
 
         /// <summary>
+        /// Returns true if Ids match.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            return obj != null && obj is Timing && Id.Equals(((Timing)obj).Id);
+        }
+
+        /// <summary>
+        /// Returns hashcode of Id.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        /// <summary>
         /// Adds arbitrary string 'value' under 'key', allowing custom properties to be stored in this Timing step.
         /// </summary>
         public void AddKeyValue(string key, string value)

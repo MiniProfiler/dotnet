@@ -86,8 +86,8 @@ namespace MvcMiniProfiler
 
             int count;
 
-            stats.IsDuplicate = _sqlExecutionCounts.TryGetValue(stats.RawCommandString, out count);
-            _sqlExecutionCounts[stats.RawCommandString] = count + 1;
+            stats.IsDuplicate = _sqlExecutionCounts.TryGetValue(stats.CommandString, out count);
+            _sqlExecutionCounts[stats.CommandString] = count + 1;
 
             HasSqlTimings = true;
             if (stats.IsDuplicate)

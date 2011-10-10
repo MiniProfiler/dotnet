@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
 
+using MvcMiniProfiler.Helpers;
+
 namespace MvcMiniProfiler
 {
     /// <summary>
@@ -32,14 +34,6 @@ namespace MvcMiniProfiler
         [ScriptIgnore]
         [DataMember(Order = 2)]
         public string CommandString { get; set; }
-
-        /// <summary>
-        /// The sql that was executed.
-        /// </summary>
-        [ScriptIgnore]
-        [DataMember(Order = 8)]
-        public string RawCommandString { get; private set; }
-
 
         /// <summary>
         /// The command string with special formatting applied based on MiniProfiler.Settings.SqlFormatter
@@ -126,7 +120,7 @@ namespace MvcMiniProfiler
         {
             Id = Guid.NewGuid();
 
-            RawCommandString = CommandString = AddSpacesToParameters(command.CommandText);
+            CommandString = AddSpacesToParameters(command.CommandText);
             Parameters = GetCommandParameters(command);
             ExecuteType = type;
 
@@ -148,6 +142,30 @@ namespace MvcMiniProfiler
         [Obsolete("Used for serialization")]
         public SqlTiming()
         {
+        }
+
+        /// <summary>
+        /// Returns a snippet of the sql command and the duration.
+        /// </summary>
+        public override string ToString()
+        {
+            return CommandString.Truncate(30) + " (" + DurationMilliseconds + " ms)";
+        }
+
+        /// <summary>
+        /// Returns true if Ids match.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            return obj != null && obj is SqlTiming && Id.Equals(((SqlTiming)obj).Id);
+        }
+
+        /// <summary>
+        /// Returns hashcode of Id.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
 
         /// <summary>
