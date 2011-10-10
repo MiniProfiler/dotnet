@@ -100,6 +100,8 @@ namespace MvcMiniProfiler.Tests
                 var t1 = timings1[i];
                 var t2 = timings2[i];
                 Assert.AreEqual(t1, t2);
+
+                Console.WriteLine();
                 AssertPublicPropertiesAreEqual(t1, t2);
 
                 if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
@@ -112,6 +114,8 @@ namespace MvcMiniProfiler.Tests
                     var s1 = t1.SqlTimings[j];
                     var s2 = t2.SqlTimings[j];
                     Assert.AreEqual(s1, s2);
+
+                    Console.WriteLine();
                     AssertPublicPropertiesAreEqual(s1, s2);
 
                     if (s1.Parameters == null && s2.Parameters == null) continue;
@@ -124,6 +128,8 @@ namespace MvcMiniProfiler.Tests
                         var p1 = s1.Parameters[k];
                         var p2 = s2.Parameters[k];
                         Assert.AreEqual(p1, p2);
+
+                        Console.WriteLine();
                         AssertPublicPropertiesAreEqual(p1, p2);
                     }
                 }
@@ -151,7 +157,9 @@ namespace MvcMiniProfiler.Tests
                     val2 = TrimToDecisecond((DateTime)val2);
                 }
 
-                Assert.AreEqual(val1, val2, typeof(T).Name + "." + p.Name + " have different values");
+                var name = typeof(T).Name + "." + p.Name;
+                Assert.AreEqual(val1, val2, name + " have different values");
+                Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
             }
         }
 

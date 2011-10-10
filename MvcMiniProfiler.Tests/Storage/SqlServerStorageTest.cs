@@ -109,6 +109,36 @@ namespace MvcMiniProfiler.Tests.Storage
                 }
             }
 
+            Assert.IsFalse(mp.HasDuplicateSqlTimings);
+
+            AssertSqlTimingsExistOnTiming(mp.Root, 1);
+            AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
+
+            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            AssertProfilersAreEqual(mp, mp2);
+        }
+
+        [Test]
+        public void WithDuplicateSqlTimings()
+        {
+            MiniProfiler mp;
+
+            using (GetRequest())
+            using (var conn = GetProfiledConnection())
+            {
+                mp = MiniProfiler.Current;
+
+                // one sql in the root timing
+                conn.Query("select 1");
+
+                using (mp.Step("Child step"))
+                {
+                    conn.Query("select 1");
+                }
+            }
+
+            Assert.IsTrue(mp.HasDuplicateSqlTimings);
+
             AssertSqlTimingsExistOnTiming(mp.Root, 1);
             AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
 
