@@ -105,14 +105,16 @@ namespace MvcMiniProfiler.Tests.Storage
 
                 using (mp.Step("Child step"))
                 {
-                    conn.Query("select 2");
+                    conn.Query("select 2 where 1 = @one", new { one = 1 });
                 }
             }
 
             Assert.IsFalse(mp.HasDuplicateSqlTimings);
 
-            AssertSqlTimingsExistOnTiming(mp.Root, 1);
-            AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
+            AssertSqlTimingsExist(mp.Root, 1);
+            var t = mp.Root.Children.Single();
+            AssertSqlTimingsExist(t, 1);
+            AssertSqlParametersExist(t.SqlTimings.Single(), 1);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
             AssertProfilersAreEqual(mp, mp2);
@@ -139,8 +141,8 @@ namespace MvcMiniProfiler.Tests.Storage
 
             Assert.IsTrue(mp.HasDuplicateSqlTimings);
 
-            AssertSqlTimingsExistOnTiming(mp.Root, 1);
-            AssertSqlTimingsExistOnTiming(mp.Root.Children.Single(), 1);
+            AssertSqlTimingsExist(mp.Root, 1);
+            AssertSqlTimingsExist(mp.Root.Children.Single(), 1);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
             AssertProfilersAreEqual(mp, mp2);
@@ -156,10 +158,16 @@ namespace MvcMiniProfiler.Tests.Storage
             Assert.That(_conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { mp.Id }).Single() == count);
         }
 
-        private void AssertSqlTimingsExistOnTiming(Timing t, int count)
+        private void AssertSqlTimingsExist(Timing t, int count)
         {
             Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { t.Id }).Single() == count);
         }
+
+        private void AssertSqlParametersExist(SqlTiming s, int count)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { s.Id }).Single() == count);
+        }
+
     }
 
     class SqlCeStorage : SqlServerStorage
