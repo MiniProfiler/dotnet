@@ -11,14 +11,28 @@ namespace MvcMiniProfiler.Data
     public class ProfiledDbConnection : DbConnection, ICloneable
     {
         /// <summary>
-        /// Current unwrapped connection
+        /// This will be made private; use <see cref="InnerConnection"/>
         /// </summary>
-        protected DbConnection _conn;
+        protected DbConnection _conn; // TODO: in MiniProfiler 2.0, make private
         /// <summary>
-        /// The current profiler instance
+        /// The underlying, real database connection to your db provider.
         /// </summary>
-        protected IDbProfiler _profiler;
+        public DbConnection InnerConnection
+        {
+            get { return _conn; }
+        }
 
+        /// <summary>
+        /// This will be made private; use <see cref="Profiler"/>
+        /// </summary>
+        protected IDbProfiler _profiler; // TODO: in MiniProfiler 2.0, make private
+        /// <summary>
+        /// The current profiler instance; could be null.
+        /// </summary>
+        public IDbProfiler Profiler
+        {
+            get { return _profiler; }
+        }
 
         /// <summary>
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 

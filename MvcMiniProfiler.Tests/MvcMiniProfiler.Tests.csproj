@@ -66,6 +66,7 @@
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\IDbProfilerTest.cs" />
+    <Compile Include="Data\ProfiledInheritanceTest.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />
