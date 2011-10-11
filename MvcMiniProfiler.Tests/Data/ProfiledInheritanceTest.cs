@@ -97,7 +97,6 @@ namespace MvcMiniProfiler.Tests.Data
                 Assert.That(conn.IsExecutionDurationValid);
             }
 
-            // TODO: fix this test after conferring with Sam on how best to procede
             // no MiniProfiler
             using (var conn = GetChildConnection())
             using (var cmd = conn.CreateCommand())

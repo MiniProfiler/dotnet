@@ -65,8 +65,16 @@ namespace MvcMiniProfiler.Data
 
         public override void Close()
         {
-            _reader.Close();
-            _profiler.ReaderFinish(this);
+            // this can occur when we're not profiling, but we've inherited from ProfiledDbCommand and are returning a
+            // an unwrapped reader from the base command
+            if (_reader != null)
+            {
+                _reader.Close();
+            }
+            if (_profiler != null)
+            {
+                _profiler.ReaderFinish(this);
+            }
         }
 
         public override bool GetBoolean(int ordinal)
