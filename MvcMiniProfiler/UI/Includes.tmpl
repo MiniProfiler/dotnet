@@ -44,7 +44,7 @@
                 <a class="toggle-duration-with-children" title="toggles column with aggregate child durations">show time with children</a>
               </td>
             {{if HasSqlTimings}}
-              <td colspan="2" class="number percent-in-sql" title="${MiniProfiler.formatDuration(DurationMillisecondsInSql)} ms of total request time in sql">
+              <td colspan="2" class="number percent-in-sql" title="${MiniProfiler.getSqlTimingsCount(Root)} queries spent ${MiniProfiler.formatDuration(DurationMillisecondsInSql)} ms of total request time">
                 ${MiniProfiler.formatDuration(DurationMillisecondsInSql / DurationMilliseconds * 100)}
                 <span class="unit">% in sql</span>
               </td>

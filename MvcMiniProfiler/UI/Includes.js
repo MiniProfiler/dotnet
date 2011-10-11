@@ -577,6 +577,23 @@
             return result;
         },
 
+        getSqlTimingsCount: function (root) {
+            var result = 0,
+                countSql = function (timing) {
+                    if (timing.SqlTimings) {
+                        result += timing.SqlTimings.length;
+                    }
+
+                    if (timing.Children) {
+                        for (var i = 0; i < timing.Children.length; i++) {
+                            countSql(timing.Children[i]);
+                        }
+                    }
+                };
+            countSql(root);
+            return result;
+        },
+        
         fetchResultsExposed: function (ids) {
             return fetchResults(ids);
         },
