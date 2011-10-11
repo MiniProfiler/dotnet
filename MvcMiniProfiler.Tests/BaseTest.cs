@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
+using System.Data.SqlServerCe;
+using System.IO;
+using System.Collections.Generic;
 
 namespace MvcMiniProfiler.Tests
 {
@@ -166,6 +169,68 @@ namespace MvcMiniProfiler.Tests
         private DateTime TrimToDecisecond(DateTime d)
         {
             return new DateTime(d.Ticks - (d.Ticks % (TimeSpan.TicksPerSecond / 10)));
+        }
+
+        /// <summary>
+        /// Creates a SqlCe file database named after <typeparamref name="T"/>, returning the connection string to the database.
+        /// </summary>
+        public static string CreateSqlCeDatabase<T>(bool deleteIfExists = false, IEnumerable<string> sqlToExecute = null)
+        {
+            var filename = GetSqlCeFileNameFor<T>();
+            var connString = GetSqlCeConnectionStringFor<T>();
+
+            if (File.Exists(filename))
+            {
+                if (deleteIfExists)
+                {
+                    File.Delete(filename);
+                }
+                else
+                {
+                    return connString;
+                }
+            }
+
+            var engine = new SqlCeEngine(connString);
+            engine.CreateDatabase();
+
+            if (sqlToExecute != null)
+            {
+                using (var conn = GetOpenSqlCeConnection<T>())
+                {
+                    foreach (var sql in sqlToExecute)
+                    {
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = sql;
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+
+            return connString;
+        }
+
+        /// <summary>
+        /// Returns an open connection to the SqlCe database identified by <typeparamref name="T"/>. This database should have been
+        /// created in <see cref="CreateSqlCeDatabase{T}"/>.
+        /// </summary>
+        public static SqlCeConnection GetOpenSqlCeConnection<T>()
+        {
+            var result = new SqlCeConnection(GetSqlCeConnectionStringFor<T>());
+            result.Open();
+            return result;
+        }
+
+        private static string GetSqlCeFileNameFor<T>()
+        {
+            return typeof(T).FullName + ".sdf";
+        }
+
+        private static string GetSqlCeConnectionStringFor<T>()
+        {
+            return "Data Source = " + GetSqlCeFileNameFor<T>();
         }
     }
 

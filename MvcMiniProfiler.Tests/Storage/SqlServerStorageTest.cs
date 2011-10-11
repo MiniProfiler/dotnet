@@ -15,51 +15,14 @@ namespace MvcMiniProfiler.Tests.Storage
     [TestFixture]
     public class SqlServerStorageTest : BaseTest
     {
-        static string Filename = typeof(SqlServerStorageTest).FullName + ".sdf";
-        static string ConnectionString = "Data Source = " + Filename;
-
-        private SqlCeConnection _conn;
-
-        public static SqlCeConnection GetOpenConnection()
-        {
-            var result = new SqlCeConnection(ConnectionString);
-            result.Open();
-            return result;
-        }
-
-        public static ProfiledDbConnection GetProfiledConnection()
-        {
-            return new ProfiledDbConnection(GetOpenConnection(), MiniProfiler.Current);
-        }
-
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            CreateDatabase();
-            MiniProfiler.Settings.Storage = new SqlCeStorage(ConnectionString);
-            _conn = GetOpenConnection();
-        }
+            var sqlToExecute = SqlServerStorage.TableCreationScript.Replace("nvarchar(max)", "ntext").Split(';').Where(s => !string.IsNullOrWhiteSpace(s));
+            var connStr = CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
 
-        private void CreateDatabase()
-        {
-            // NOTE: if schema changes (hopefully not), then you'll have to delete this manually
-            if (File.Exists(Filename))
-                return;
-
-            var engine = new SqlCeEngine(ConnectionString);
-            engine.CreateDatabase();
-
-            using (var conn = GetOpenConnection())
-            {
-                foreach (var sql in SqlServerStorage.TableCreationScript.Split(';').Where(s => !string.IsNullOrWhiteSpace(s)))
-                {
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = sql.Replace("nvarchar(max)", "ntext");
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
+            MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
+            _conn = GetOpenSqlCeConnection<SqlServerStorageTest>();
         }
 
         [TestFixtureTearDown]
@@ -148,6 +111,13 @@ namespace MvcMiniProfiler.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
 
+        private SqlCeConnection _conn;
+
+        private ProfiledDbConnection GetProfiledConnection()
+        {
+            return new ProfiledDbConnection(GetOpenSqlCeConnection<SqlServerStorageTest>(), MiniProfiler.Current);
+        }
+
         private void AssertMiniProfilerExists(MiniProfiler mp)
         {
             Assert.That(_conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { mp.Id }).Single() == 1);
@@ -167,10 +137,9 @@ namespace MvcMiniProfiler.Tests.Storage
         {
             Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { s.Id }).Single() == count);
         }
-
     }
 
-    class SqlCeStorage : SqlServerStorage
+    internal class SqlCeStorage : SqlServerStorage
     {
         public SqlCeStorage(string connectionString) : base(connectionString) { }
 
@@ -187,6 +156,5 @@ namespace MvcMiniProfiler.Tests.Storage
             get { return false; }
         }
     }
-
 
 }
