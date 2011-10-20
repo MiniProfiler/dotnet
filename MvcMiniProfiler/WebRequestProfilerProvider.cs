@@ -44,10 +44,10 @@ namespace MvcMiniProfiler
             var result = new MiniProfiler(url.OriginalString, level);
             Current = result;
 
+            SetProfilerActive(result);
+
             // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
             result.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(context.Request);
-
-            SetProfilerActive(result);
 
             return result;
         }

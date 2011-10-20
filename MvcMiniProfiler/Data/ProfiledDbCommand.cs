@@ -11,11 +11,10 @@ namespace MvcMiniProfiler.Data
 {
     public class ProfiledDbCommand : DbCommand, ICloneable
     {
-        private DbCommand _cmd;
-        private DbConnection _conn;
-        private DbTransaction _tran;
-
-        private IDbProfiler _profiler;
+        protected DbCommand _cmd;
+        protected DbConnection _conn;
+        protected DbTransaction _tran;
+        protected IDbProfiler _profiler;
 
         private bool bindByName;
         /// <summary>
@@ -107,6 +106,7 @@ namespace MvcMiniProfiler.Data
             get { return _conn; }
             set
             {
+                // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
                 // allow for command reuse, it is clear the connection is going to need to be reset
                 if (MiniProfiler.Current != null)
                 {

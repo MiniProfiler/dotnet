@@ -62,7 +62,6 @@ namespace MvcMiniProfiler.Data
             get { return _reader[ordinal]; }
         }
 
-
         public override void Close()
         {
             // this can occur when we're not profiling, but we've inherited from ProfiledDbCommand and are returning a
@@ -71,6 +70,7 @@ namespace MvcMiniProfiler.Data
             {
                 _reader.Close();
             }
+
             if (_profiler != null)
             {
                 _profiler.ReaderFinish(this);
