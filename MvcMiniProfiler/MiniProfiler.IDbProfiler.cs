@@ -117,7 +117,7 @@ namespace MvcMiniProfiler
 
         void IDbProfiler.ExecuteFinish(DbCommand profiledDbCommand, ExecuteType executeType, DbDataReader reader)
         {
-            if (reader == null)
+            if (reader != null)
             {
                 SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
             }
