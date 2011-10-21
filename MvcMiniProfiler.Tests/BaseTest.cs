@@ -234,7 +234,7 @@ namespace MvcMiniProfiler.Tests
         }
     }
 
-    public class UnitTestStopwatch : Helpers.IStopwatch
+    public class UnitTestStopwatch : MvcMiniProfiler.Helpers.IStopwatch
     {
         bool _isRunning = true;
 

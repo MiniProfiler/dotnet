@@ -6,12 +6,12 @@ using System.Diagnostics;
 
 namespace MvcMiniProfiler.Helpers
 {
+
     internal interface IStopwatch
     {
         long ElapsedTicks { get; }
         long Frequency { get; }
         bool IsRunning { get; }
-
         void Stop();
     }
 

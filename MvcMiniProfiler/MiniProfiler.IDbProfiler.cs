@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MvcMiniProfiler.Data;
+using System.Data.Common;
 
 namespace MvcMiniProfiler
 {
@@ -109,25 +110,33 @@ namespace MvcMiniProfiler
 
         // IDbProfiler methods
 
-        void IDbProfiler.ExecuteStart(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType)
+        void IDbProfiler.ExecuteStart(DbCommand profiledDbCommand, ExecuteType executeType)
         {
             SqlProfiler.ExecuteStart(profiledDbCommand, executeType);
         }
 
-        void IDbProfiler.ExecuteFinish(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType, System.Data.Common.DbDataReader reader)
+        void IDbProfiler.ExecuteFinish(DbCommand profiledDbCommand, ExecuteType executeType, DbDataReader reader)
         {
-            SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
+            if (reader == null)
+            {
+                SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
+            }
+            else
+            {
+                SqlProfiler.ExecuteFinish(profiledDbCommand, executeType);
+            }
         }
 
-        void IDbProfiler.ExecuteFinish(System.Data.Common.DbCommand profiledDbCommand, ExecuteType executeType)
-        {
-            SqlProfiler.ExecuteFinish(profiledDbCommand, executeType);
-        }
-
-        void IDbProfiler.ReaderFinish(System.Data.Common.DbDataReader reader)
+        void IDbProfiler.ReaderFinish(DbDataReader reader)
         {
             SqlProfiler.ReaderFinish(reader);
         }
+
+        void IDbProfiler.OnError(DbCommand profiledDbCommand, ExecuteType executeType, Exception exception)
+        {
+            // TODO: implement errors aggregation and presentation
+        }
+
 
         bool _isActive;
         bool IDbProfiler.IsActive { get { return _isActive; } }

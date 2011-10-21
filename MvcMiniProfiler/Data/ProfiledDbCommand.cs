@@ -155,16 +155,22 @@ namespace MvcMiniProfiler.Data
                 return _cmd.ExecuteReader(behavior);
             }
 
+            DbDataReader result = null;
             _profiler.ExecuteStart(this, ExecuteType.Reader);
-
-            var result = _cmd.ExecuteReader(behavior);
-
-            if (_profiler != null && _profiler.IsActive)
+            try
             {
+                result = _cmd.ExecuteReader(behavior);
                 result = new ProfiledDbDataReader(result, _conn, _profiler);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, ExecuteType.Reader, e);
+                throw;
+            }
+            finally
+            {
                 _profiler.ExecuteFinish(this, ExecuteType.Reader, result);
             }
-
             return result;
         }
 
@@ -175,9 +181,22 @@ namespace MvcMiniProfiler.Data
                 return _cmd.ExecuteNonQuery();
             }
 
+            int result;
+
             _profiler.ExecuteStart(this, ExecuteType.NonQuery);
-            var result = _cmd.ExecuteNonQuery();
-            _profiler.ExecuteFinish(this, ExecuteType.NonQuery);
+            try
+            {
+                result = _cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, ExecuteType.NonQuery, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, ExecuteType.NonQuery, null);
+            }
             return result;
         }
 
@@ -188,9 +207,21 @@ namespace MvcMiniProfiler.Data
                 return _cmd.ExecuteScalar();
             }
 
+            object result;
             _profiler.ExecuteStart(this, ExecuteType.Scalar);
-            object result = _cmd.ExecuteScalar();
-            _profiler.ExecuteFinish(this, ExecuteType.Scalar);
+            try
+            {
+                result = _cmd.ExecuteScalar();
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, ExecuteType.Scalar, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, ExecuteType.Scalar, null);
+            }
             return result;
         }
 

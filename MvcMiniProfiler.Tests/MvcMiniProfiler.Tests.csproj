@@ -39,6 +39,7 @@
     <AssemblyOriginatorKeyFile>Properties\MiniProfiler.Tests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -65,8 +66,9 @@
     <Compile Include="BaseTestTest.cs">
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Data\IDbProfilerTest.cs" />
-    <Compile Include="Data\ProfiledInheritanceTest.cs" />
+    <Compile Include="Helpers\TestDbProfiler.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />
