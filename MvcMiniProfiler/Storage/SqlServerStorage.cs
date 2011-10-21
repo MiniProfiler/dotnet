@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data.Common;
 
 using MvcMiniProfiler.Helpers;
+using MvcMiniProfiler.Helpers.Dapper;
 
 namespace MvcMiniProfiler.Storage
 {

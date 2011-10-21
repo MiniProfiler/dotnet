@@ -7,7 +7,7 @@ using MvcMiniProfiler.Storage;
 using NUnit.Framework;
 using System.IO;
 using System.Data.SqlServerCe;
-using MvcMiniProfiler.Helpers;
+using MvcMiniProfiler.Helpers.Dapper;
 using MvcMiniProfiler.Data;
 
 namespace MvcMiniProfiler.Tests.Storage

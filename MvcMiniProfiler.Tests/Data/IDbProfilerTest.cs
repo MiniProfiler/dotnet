@@ -5,7 +5,7 @@ using System.Data.SqlServerCe;
 using System.IO;
 using MvcMiniProfiler.Data;
 using NUnit.Framework;
-using Dapper;
+using MvcMiniProfiler.Helpers.Dapper;
 
 namespace MvcMiniProfiler.Tests.Data
 {

@@ -66,7 +66,6 @@
     <Compile Include="BaseTestTest.cs">
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Data\IDbProfilerTest.cs" />
     <Compile Include="Data\CountingDbProfiler.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
