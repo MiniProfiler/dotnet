@@ -68,7 +68,7 @@
     </Compile>
     <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Data\IDbProfilerTest.cs" />
-    <Compile Include="Helpers\TestDbProfiler.cs" />
+    <Compile Include="Data\CountingDbProfiler.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />

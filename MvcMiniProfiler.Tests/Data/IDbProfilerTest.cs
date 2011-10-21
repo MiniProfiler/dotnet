@@ -5,7 +5,6 @@ using System.Data.SqlServerCe;
 using System.IO;
 using MvcMiniProfiler.Data;
 using NUnit.Framework;
-using MvcMiniProfiler.Tests.Helpers;
 using Dapper;
 
 namespace MvcMiniProfiler.Tests.Data
@@ -13,36 +12,35 @@ namespace MvcMiniProfiler.Tests.Data
     [TestFixture]
     public class IDbProfilerTest : BaseTest
     {
-        class TestConnection : ProfiledDbConnection
+        class CountingConnection : ProfiledDbConnection
         {
-            public TestDbProfiler TestProfiler {get; set;}
+            public CountingDbProfiler CountingProfiler { get; set; }
 
-            public TestConnection(DbConnection connection, IDbProfiler profiler) : base(connection, profiler)
+            public CountingConnection(DbConnection connection, IDbProfiler profiler)
+                : base(connection, profiler)
             {
-                TestProfiler = (TestDbProfiler)profiler;
-            } 
+                CountingProfiler = (CountingDbProfiler)profiler;
+            }
         }
-        string connectionString;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            connectionString = CreateSqlCeDatabase<IDbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
+            CreateSqlCeDatabase<IDbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
         }
 
-        TestConnection GetConnection()
+        private CountingConnection GetConnection()
         {
-            var connection = new SqlCeConnection(connectionString);
-            connection.Open();
-            return new TestConnection(connection, new TestDbProfiler());
+            var connection = GetOpenSqlCeConnection<IDbProfilerTest>();
+            return new CountingConnection(connection, new CountingDbProfiler());
         }
 
         [Test]
-        public void ExecuteNonQuery()
+        public void NonQuery()
         {
             using (var conn = GetConnection())
             {
-                var profiler = conn.TestProfiler;
+                var profiler = conn.CountingProfiler;
 
                 conn.Execute("insert into TestTable values (1)");
                 Assert.That(profiler.ExecuteStartCount == 1);
@@ -56,14 +54,13 @@ namespace MvcMiniProfiler.Tests.Data
             }
         }
 
-
         [Test]
-        public void ExecuteScalar()
+        public void Scalar()
         {
             using (var conn = GetConnection())
             using (var cmd = conn.CreateCommand())
             {
-                var profiler = conn.TestProfiler;
+                var profiler = conn.CountingProfiler;
 
                 cmd.CommandText = "select 1";
                 cmd.ExecuteScalar();
@@ -74,14 +71,13 @@ namespace MvcMiniProfiler.Tests.Data
             }
         }
 
-
         [Test]
-        public void ExecuteDataReader()
+        public void DataReader()
         {
             using (var conn = GetConnection())
             using (var cmd = conn.CreateCommand())
             {
-                var profiler = conn.TestProfiler;
+                var profiler = conn.CountingProfiler;
 
                 cmd.CommandText = "select 1";
 
@@ -97,19 +93,19 @@ namespace MvcMiniProfiler.Tests.Data
         }
 
         [Test]
-        public void TestErrors()
-        { 
+        public void Errors()
+        {
             using (var conn = GetConnection())
             {
                 string badSql = "TROGDOR BURNINATE";
 
-                try 
+                try
                 {
                     conn.Execute(badSql);
                 }
-                catch(DbException) { /**/ }
+                catch (DbException) { /**/ }
 
-                var profiler = conn.TestProfiler;
+                var profiler = conn.CountingProfiler;
 
                 Assert.That(profiler.ErrorCount == 1);
                 Assert.That(profiler.ExecuteStartCount == 1);
@@ -145,7 +141,7 @@ namespace MvcMiniProfiler.Tests.Data
         }
 
         [Test]
-        public void TestDataAdapter()
+        public void DataAdapter()
         {
             MiniProfiler mp;
             var factory = EFProfiledDbProviderFactory<SqlCeProviderFactory>.Instance;
@@ -169,7 +165,6 @@ namespace MvcMiniProfiler.Tests.Data
             Assert.That(mp.ExecutedScalars == 0);
             Assert.That(mp.ExecutedNonQueries == 0);
         }
-
 
     }
 }
