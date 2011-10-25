@@ -114,8 +114,8 @@
         var childrenTime = popup.find('.toggle-duration-with-children');
         var trivialGaps = popup.parent().find('.toggle-trivial-gaps');
 
-        childrenTime.add(trivial).add(trivialGaps).click(function () {
-            var link = $(this),
+        var toggleIt = function (node) {
+            var link = $(node),
                 klass = link.attr('class').substr('toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
 
@@ -123,15 +123,19 @@
             link.text(link.text().replace(isHidden ? 'show' : 'hide', isHidden ? 'hide' : 'show'));
 
             popupPreventHorizontalScroll(popup);
+        };
+
+        childrenTime.add(trivial).add(trivialGaps).click(function () {
+            toggleIt(this);
         });
 
         // if option is set or all our timings are trivial, go ahead and show them
         if (options.showTrivial || trivial.data('show-on-load')) {
-            trivial.click();
+            toggleIt(trivial);
         }
         // if option is set, go ahead and show time with children
         if (options.showChildrenTime) {
-            childrenTime.click();
+            toggleIt(childrenTime);
         }
     };
 
@@ -387,13 +391,13 @@
                 if (args) {
                     var response = args.get_response();
                     if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
-                    var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                    if (stringIds) {
-                       var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                       fetchResults(ids);
+                        var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
+                        if (stringIds) {
+                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                            fetchResults(ids);
+                        }
                     }
                 }
-             }
             });
         }
 
@@ -593,7 +597,7 @@
             countSql(root);
             return result;
         },
-        
+
         fetchResultsExposed: function (ids) {
             return fetchResults(ids);
         },
