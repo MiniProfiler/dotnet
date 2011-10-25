@@ -88,7 +88,7 @@
 
   <tr class="{{if IsTrivial }}trivial{{/if}}" data-timing-id="${Id}">
     <td class="label" title="{{if Name && Name.length > 45 }}${Name}{{/if}}">
-      <span class="indent">${MiniProfiler.renderIndent(Depth)}</span> ${Name}
+      <span class="indent">${MiniProfiler.renderIndent(Depth)}</span> ${Name.slice(0,45)}{{if Name && Name.length > 45 }}...{{/if}}
     </td>
     <td class="duration" title="duration of this step without any children's durations">
       ${MiniProfiler.formatDuration(DurationWithoutChildrenMilliseconds)}
