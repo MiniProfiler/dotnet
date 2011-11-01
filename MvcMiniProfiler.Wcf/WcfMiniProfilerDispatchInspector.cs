@@ -19,6 +19,7 @@ namespace MvcMiniProfiler.Wcf
                 var requestHeader = request.Headers.GetHeader<MiniProfilerRequestHeader>(headerIndex);
                 if (requestHeader != null)
                 {
+                    MiniProfiler.Settings.ProfilerProvider = new WcfRequestProfilerProvider();
                     MiniProfiler.Start();
                     return requestHeader;
                 }
