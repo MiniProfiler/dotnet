@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
 
 using MvcMiniProfiler.Helpers;
+using System.Data.SqlTypes;
 
 namespace MvcMiniProfiler
 {
@@ -221,12 +222,25 @@ namespace MvcMiniProfiler
                         Name = dbParameter.ParameterName.Trim(),
                         Value = formattedParameterValue,
                         DbType = dbParameter.DbType.ToString(),
-                        Size = dbParameter.Size
+                        Size = GetParameterSize(dbParameter)
                     });
                 }
             }
 
             return result;
+        }
+
+        private static int GetParameterSize(DbParameter dbParameter)
+        {
+            if (dbParameter.Value is INullable)
+            {
+                var nullable = ((INullable)dbParameter.Value);
+                if (nullable.IsNull)
+                {
+                    return 0;
+                }
+            }
+            return dbParameter.Size;
         }
 
         private static string GetFormattedParameterValue(DbParameter dbParameter)
