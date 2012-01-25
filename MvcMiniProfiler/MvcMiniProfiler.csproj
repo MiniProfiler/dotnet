@@ -61,6 +61,7 @@
     <Compile Include="BaseProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientTimings.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
     <Compile Include="Data\ProfiledDbProviderFactory.cs" />

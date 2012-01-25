@@ -7,6 +7,7 @@ using System.Data.Common;
 
 using MvcMiniProfiler.Helpers;
 using MvcMiniProfiler.Helpers.Dapper;
+using System.Runtime.Serialization;
 
 namespace MvcMiniProfiler.Storage
 {
@@ -91,8 +92,40 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 });
 
                 if (insertCount > 0)
+                {
+                    if (profiler.ClientTimings != null)
+                    {
+                        SaveClientTiming(conn, profiler);
+                    }
+
                     SaveTiming(conn, profiler, profiler.Root);
+                }
             }
+        }
+
+        static string insertClientTimingSql = null;
+        protected virtual void SaveClientTiming(DbConnection conn, MiniProfiler profiler)
+        {
+            if (profiler.ClientTimings == null) return;
+
+            if (insertClientTimingSql == null)
+            {
+                string[] cols = typeof(ClientTimings).GetProperties().Where(p =>
+                {
+                    var attr = p.GetCustomAttributes(typeof(DataMemberAttribute), false);
+                    return attr != null && attr.Length == 1;
+                })
+                .Select(p => p.Name)
+                .ToArray();
+
+                insertClientTimingSql = "insert MiniProfilerClientTimings(MiniProfilerId," + string.Join(",", cols) + ") values (" +
+                    string.Join(",", cols.Select(c => "@" + c)) + ")";
+            }
+
+            var dp = new DynamicParameters(profiler.ClientTimings);
+            dp.Add("@MiniProfilerId", profiler.Id);
+
+            conn.Execute(insertClientTimingSql, dp);
         }
 
         /// <summary>
@@ -262,7 +295,8 @@ values      (@MiniProfilerId,
             { typeof(MiniProfiler), "select * from MiniProfilers where Id = @id" },
             { typeof(Timing), "select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId" },
             { typeof(SqlTiming), "select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId" },
-            { typeof(SqlTimingParameter), "select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id" }
+            { typeof(SqlTimingParameter), "select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id" },
+            { typeof(ClientTimings), "select * from MiniProfilerClientTimings where MiniProfilerId = @id"}
         };
 
         private static readonly string LoadSqlBatch = string.Join("\n", LoadSqlStatements.Select(pair => pair.Value));
@@ -306,7 +340,8 @@ values      (@MiniProfilerId,
                     var timings = multi.Read<Timing>().ToList();
                     var sqlTimings = multi.Read<SqlTiming>().ToList();
                     var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
-                    MapTimings(result, timings, sqlTimings, sqlParameters);
+                    var clientTimings = multi.Read<ClientTimings>().ToList();
+                    MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
                 }
             }
 
@@ -322,7 +357,8 @@ values      (@MiniProfilerId,
                 var timings = LoadFor<Timing>(conn, idParameter);
                 var sqlTimings = LoadFor<SqlTiming>(conn, idParameter);
                 var sqlParameters = LoadFor<SqlTimingParameter>(conn, idParameter);
-                MapTimings(result, timings, sqlTimings, sqlParameters);
+                var clientTimings = LoadFor<ClientTimings>(conn, idParameter);
+                MapTimings(result, timings, sqlTimings, sqlParameters,clientTimings);
             }
 
             return result;
@@ -433,6 +469,34 @@ create table MiniProfilerSqlTimingParameters
      DbType            nvarchar(50) null,
      Size              int null,
      Value             nvarchar(max) null -- sqlite: remove (max) -- sql server ce: replace with ntext
-  );";
+  );
+
+create table MiniProfilerClientTimings
+(
+  MiniProfilerId    uniqueidentifier not null,
+  NavigationStart decimal(7,1),
+  UnloadEventStart decimal(7,1),
+  UnloadEventEnd decimal(7,1),
+  RedirectStart decimal(7,1),
+  RedirectEnd decimal(7,1),
+  FetchStart decimal(7,1),
+  DomainLookupStart decimal(7,1),
+  DomainLookupEnd decimal(7,1),
+  ConnectStart decimal(7,1),
+  ConnectEnd decimal(7,1),
+  SecureConnectionStart decimal(7,1),
+  RequestStart decimal(7,1),
+  ResponseStart decimal(7,1),
+  ResponseEnd decimal(7,1),
+  DomLoading decimal(7,1),
+  DomInteractive decimal(7,1),
+  DomContentLoadedEventStart decimal(7,1),
+  DomContentLoadedEventEnd decimal(7,1),
+  DomComplete decimal(7,1),
+  LoadEventStart decimal(7,1),
+  LoadEventEnd decimal(7,1)     
+)
+
+";
     }
 }

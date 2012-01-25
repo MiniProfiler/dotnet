@@ -17,6 +17,26 @@
         <span class="server-time">${MachineName} on ${MiniProfiler.renderDate(Started)}</span>
       </div>
       <div class="profiler-output">
+        {{if ClientTimings}}
+          <table class="timings client-timings">
+            <thead>
+              <tr>
+                <th>client event</th>
+                <th>time from start (ms)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>response start</td>
+                <td class="duration"><span class="unit">+</span>${MiniProfiler.formatDuration(ClientTimings.ResponseStart)}</td>
+              </tr>
+              <tr>
+                <td>dom complete</td>
+                <td class="duration"><span class="unit">+</span>${MiniProfiler.formatDuration(ClientTimings.DomComplete)}</td>
+              </tr>
+            </tbody>
+          </table>
+        {{/if}}
         <table class="timings">
           <thead>
             <tr>

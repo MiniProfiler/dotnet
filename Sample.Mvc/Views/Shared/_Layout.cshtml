@@ -5,14 +5,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
 @using (profiler.Step("<head> rendering"))
 { 
     <title>@ViewBag.Title - MVC MiniProfiler Demo</title>
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-    
-    @* renders our UI's css and javascript *@
-    @MiniProfiler.RenderIncludes(position: RenderPosition.Left, showTrivial: false, showTimeWithChildren: false)
-
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />    
 }
 </head>
 <body>
@@ -39,5 +38,9 @@
         <div id="footer">
         </div>
     </div>
+
+    @* renders our UI's css and javascript - best put it in the bottom so it does not effect perf *@
+    @MiniProfiler.RenderIncludes(position: RenderPosition.Left, showTrivial: false, showTimeWithChildren: false)
+
 </body>
 </html>

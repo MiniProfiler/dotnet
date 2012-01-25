@@ -33,7 +33,8 @@ namespace MvcMiniProfiler.UI
             showTrivial: {showTrivial},
             showChildrenTime: {showChildren},
             maxTracesToShow: {maxTracesToShow},
-            showControls: {showControls}
+            showControls: {showControls},
+            currentId: '{currentId}'
         }});
     }});
 </script>";
@@ -58,7 +59,8 @@ namespace MvcMiniProfiler.UI
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
                     maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
                     closeXHTML = xhtml ? "/" : "",
-                    showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false"
+                    showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
+                    currentId = profiler.Id
                 });
             }
 
@@ -178,11 +180,11 @@ namespace MvcMiniProfiler.UI
         {
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
-            var isPopup = !string.IsNullOrWhiteSpace(context.Request.QueryString["popup"]);
+            var isPopup = !string.IsNullOrWhiteSpace(context.Request["popup"]);
 
             // this guid is the MiniProfiler.Id property
             Guid id;
-            if (!Guid.TryParse(context.Request.QueryString["id"], out id))
+            if (!Guid.TryParse(context.Request["id"], out id))
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
@@ -190,6 +192,15 @@ namespace MvcMiniProfiler.UI
 
             if (profiler == null)
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
+
+            if (profiler.ClientTimings == null)
+            {
+                profiler.ClientTimings = ClientTimings.FromRequest(context.Request);
+                if (profiler.ClientTimings != null)
+                {
+                    MiniProfiler.Settings.Storage.Save(profiler);
+                }
+            }
 
             // ensure that callers have access to these results
             var authorize = MiniProfiler.Settings.Results_Authorize;

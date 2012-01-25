@@ -58,15 +58,38 @@
         }
     };
 
+    var getClientPerformance = function () {
+        return window.performance == null ? null : window.performance;
+    }
+
+    var waitedForEnd = 0;
     var fetchResults = function (ids) {
         for (var i = 0, id; i < ids.length; i++) {
             id = ids[i];
+
+            var clientPerformance = null;
+
+            if (id == options.currentId) {
+                clientPerformance = getClientPerformance();
+                if (clientPerformance != null) {
+                    // we may need to wait a bit for loadEventEnd
+                    if (clientPerformance.timing && clientPerformance.timing.loadEventEnd === 0 && waitedForEnd < 10000) {
+                        // defer up to 10 seconds
+                        waitedForEnd += 50;
+                        setTimeout(function () { fetchResults([id]); }, 50);
+                        continue;
+                    }
+                }
+            }
+
             if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
                 var idx = fetchingIds.push(id) - 1;
 
                 $.ajax({
-                    url: options.path + 'mini-profiler-results?id=' + id + '&popup=1',
+                    url: options.path + 'mini-profiler-results',
+                    data: { id: id, clientPerformance: clientPerformance, popup: 1 },
                     dataType: 'json',
+                    type: 'POST',
                     success: function (json) {
                         fetchedIds.push(id);
                         buttonShow(json);

@@ -110,6 +110,13 @@ namespace MvcMiniProfiler
         [DataMember(Order = 8)]
         public bool HasUserViewed { get; set; }
 
+
+        /// <summary>
+        /// Timings collected from the client
+        /// </summary>
+        [DataMember(Order = 9)]
+        public ClientTimings ClientTimings { get; set; }
+
         /// <summary>
         /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
         /// their starting time.
@@ -403,6 +410,7 @@ namespace MvcMiniProfiler
                 return (MiniProfiler)serializer.ReadObject(ms);
             }
         }
+        
     }
 
     /// <summary>

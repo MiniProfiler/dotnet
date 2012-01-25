@@ -37,7 +37,8 @@ namespace SampleWcf.Helpers
                     var timings = conn.Query<Timing>("select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId", param).ToList();
                     var sqlTimings = conn.Query<SqlTiming>("select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId", param).ToList();
                     var sqlParameters = conn.Query<SqlTimingParameter>("select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id", param).ToList();
-                    MapTimings(result, timings, sqlTimings, sqlParameters);
+                    var clientTimings = conn.Query<ClientTimings>("select * from MiniProfilerClientTimings where MiniProfilerId = @id", param).ToList();
+                    MapTimings(result, timings, sqlTimings, sqlParameters,clientTimings);
 
                     // loading a profiler means we've viewed it
                     conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", param);

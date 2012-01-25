@@ -122,7 +122,35 @@ namespace SampleWeb.Helpers
      DbType            varchar(50) null,
      Size              int null,
      Value             nvarchar null -- sqlite: remove (max)
-  )"
+  )",
+    @"
+
+create table MiniProfilerClientTimings
+(
+  MiniProfilerId    uniqueidentifier not null,
+  NavigationStart decimal(7,1),
+  UnloadEventStart decimal(7,1),
+  UnloadEventEnd decimal(7,1),
+  RedirectStart decimal(7,1),
+  RedirectEnd decimal(7,1),
+  FetchStart decimal(7,1),
+  DomainLookupStart decimal(7,1),
+  DomainLookupEnd decimal(7,1),
+  ConnectStart decimal(7,1),
+  ConnectEnd decimal(7,1),
+  SecureConnectionStart decimal(7,1),
+  RequestStart decimal(7,1),
+  ResponseStart decimal(7,1),
+  ResponseEnd decimal(7,1),
+  DomLoading decimal(7,1),
+  DomInteractive decimal(7,1),
+  DomContentLoadedEventStart decimal(7,1),
+  DomContentLoadedEventEnd decimal(7,1),
+  DomComplete decimal(7,1),
+  LoadEventStart decimal(7,1),
+  LoadEventEnd decimal(7,1)     
+)
+"
         };
     }
 }
