@@ -26,14 +26,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>response start</td>
-                <td class="duration"><span class="unit">+</span>${MiniProfiler.formatDuration(ClientTimings.ResponseStart)}</td>
+              {{each MiniProfiler.getClientTimings(ClientTimings)}}
+              <tr class="{{if $value.isTrivial }}trivial{{/if}}">
+                <td class="label">${$value.name}</td>
+                <td class="duration">
+                  <span class="unit">+</span>${MiniProfiler.formatDuration($value.duration)}
+                </td>
               </tr>
-              <tr>
-                <td>dom complete</td>
-                <td class="duration"><span class="unit">+</span>${MiniProfiler.formatDuration(ClientTimings.DomComplete)}</td>
-              </tr>
+              {{/each}}
             </tbody>
           </table>
         {{/if}}

@@ -128,6 +128,7 @@ namespace SampleWeb.Helpers
 create table MiniProfilerClientTimings
 (
   MiniProfilerId    uniqueidentifier not null,
+  RedirectCount int,
   NavigationStart decimal(7,1),
   UnloadEventStart decimal(7,1),
   UnloadEventEnd decimal(7,1),

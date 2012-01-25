@@ -93,12 +93,14 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
 
                 if (insertCount > 0)
                 {
-                    if (profiler.ClientTimings != null)
-                    {
-                        SaveClientTiming(conn, profiler);
-                    }
-
                     SaveTiming(conn, profiler, profiler.Root);
+                }
+
+                // we may have a missing client timing - re save
+                if (profiler.ClientTimings != null)
+                {
+                    conn.Execute("delete from MiniProfilerClientTimings where MiniProfilerId = @Id", new { profiler.Id });
+                    SaveClientTiming(conn, profiler);
                 }
             }
         }
@@ -118,7 +120,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 .Select(p => p.Name)
                 .ToArray();
 
-                insertClientTimingSql = "insert MiniProfilerClientTimings(MiniProfilerId," + string.Join(",", cols) + ") values (" +
+                insertClientTimingSql = "insert into MiniProfilerClientTimings(MiniProfilerId," + string.Join(",", cols) + ") values (@MiniProfilerId, " +
                     string.Join(",", cols.Select(c => "@" + c)) + ")";
             }
 
@@ -474,6 +476,7 @@ create table MiniProfilerSqlTimingParameters
 create table MiniProfilerClientTimings
 (
   MiniProfilerId    uniqueidentifier not null,
+  RedirectCount int,
   NavigationStart decimal(7,1),
   UnloadEventStart decimal(7,1),
   UnloadEventEnd decimal(7,1),

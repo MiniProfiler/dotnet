@@ -438,11 +438,15 @@
             container = $('.profiler-result-full');
 
             if (container.length) {
+                if (window.location.href.indexOf("&trivial=1") > 0) {
+                    options.showTrivial = true
+                }
                 initFullView();
             }
             else {
                 initPopupView();
             }
+
         },
 
         renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
@@ -471,6 +475,23 @@
 
         shareUrl: function (id) {
             return options.path + 'mini-profiler-results?id=' + id;
+        },
+
+        getClientTimings: function (clientTimings) {
+
+            var list = [];
+            for (p in clientTimings) {
+                if (clientTimings.hasOwnProperty(p) && p != "RedirectCount" && clientTimings[p] > 0) {
+                    list.push(
+                    {
+                        isTrivial: !(p == "DomComplete" || p == "ResponseStart"),
+                        name: p.replace(/([A-Z])/g, function ($1) { return " " + $1; }),
+                        duration: clientTimings[p]
+                    });
+                }
+            }
+            list.sort(function (a, b) { return a.duration - b.duration; });
+            return list;
         },
 
         getSqlTimings: function (root) {
