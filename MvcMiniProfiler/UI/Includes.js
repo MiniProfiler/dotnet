@@ -80,6 +80,22 @@
                         continue;
                     }
                 }
+
+                // ie is buggy strip out functions
+                var copy = { navigation: {}, timing: {} };
+
+                var timing = $.extend({},clientPerformance.timing);
+                var p; 
+                for (p in timing) {
+                    if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
+                        copy.timing[p] = timing[p];
+                    }
+                }
+                if (clientPerformance.navigation) {
+                    copy.navigation.redirectCount = clientPerformance.navigation.redirectCount;
+                }
+
+                clientPerformance = copy;
             }
 
             if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
@@ -480,6 +496,7 @@
         getClientTimings: function (clientTimings) {
 
             var list = [];
+            var p;
             for (p in clientTimings) {
                 if (clientTimings.hasOwnProperty(p) && p != "RedirectCount" && clientTimings[p] > 0) {
                     list.push(
