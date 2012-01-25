@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 
 namespace MvcMiniProfiler
 {
+    [DataContract]
     public class ClientTimings
     {
         const string clientTimingPrefix = "clientPerformance[timing][";
