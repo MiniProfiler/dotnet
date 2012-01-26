@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
     CodeBehind="Default.aspx.cs" Inherits="Sample.WebForms._Default" %>
-<%@ Import Namespace="MvcMiniProfiler" %>
+<%@ Import Namespace="StackExchange.Profiling" %>
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
 
 <% using (MiniProfiler.Current.Step("Default's <head>"))

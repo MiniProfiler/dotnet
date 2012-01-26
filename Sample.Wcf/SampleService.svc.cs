@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using MvcMiniProfiler.Wcf;
+using StackExchange.Profiling.Wcf;
 using System.Data.Common;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using System.Threading;
 using Dapper;
 
@@ -31,7 +31,7 @@ namespace Sample.Wcf
                 // when MiniProfiler.Current is null, this connection will not record any database timings
                 if (MiniProfiler.Current != null)
                 {
-                    cnn = new MvcMiniProfiler.Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
+                    cnn = new StackExchange.Profiling.Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
                 }
 
                 cnn.Open();

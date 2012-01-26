@@ -4,12 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
-using MvcMiniProfiler;
-using MvcMiniProfiler.Wcf.Storage;
+using StackExchange.Profiling;
+using StackExchange.Profiling.Wcf.Storage;
 using System.IO;
 using SampleWcf.Helpers;
 using Dapper;
-using MvcMiniProfiler.Wcf;
+using StackExchange.Profiling.Wcf;
 
 namespace Sample.Wcf
 {
@@ -32,7 +32,7 @@ namespace Sample.Wcf
 
             // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
             // by default, sql parameters won't be displayed
-            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.InlineFormatter();
+            MiniProfiler.Settings.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 
             // Ignore the following as we're not displaying anything through this currently
             //// these settings are optional and all have defaults, any matching setting specified in .RenderIncludes() will

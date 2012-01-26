@@ -85,15 +85,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WcfCommon.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\MvcMiniProfiler.Wcf\MvcMiniProfiler.Wcf.csproj">
-      <Project>{673CD2D3-816D-4769-83F1-A5BB381067FB}</Project>
-      <Name>MvcMiniProfiler.Wcf</Name>
+    <ProjectReference Include="..\StackExchange.Profiling.Wcf\StackExchange.Profiling.Wcf.csproj">
+      <Project>{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}</Project>
+      <Name>StackExchange.Profiling.Wcf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
+    <ProjectReference Include="..\StackExchange.Profiling\StackExchange.Profiling.csproj">
       <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
-      <Name>MvcMiniProfiler</Name>
+      <Name>StackExchange.Profiling</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

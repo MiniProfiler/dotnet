@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using Dapper;
 using SampleWeb.Controllers;
 using System.IO;
 
 namespace SampleWeb.Helpers
 {
-    public class SqliteMiniProfilerStorage : MvcMiniProfiler.Storage.SqlServerStorage
+    public class SqliteMiniProfilerStorage : StackExchange.Profiling.Storage.SqlServerStorage
     {
         public SqliteMiniProfilerStorage(string connectionString)
             : base(connectionString)

@@ -133,13 +133,13 @@
     <Content Include="Site.Master" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MvcMiniProfiler\MvcMiniProfiler.csproj">
-      <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
-      <Name>MvcMiniProfiler</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sample.Mvc\Sample.Mvc.csproj">
       <Project>{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}</Project>
       <Name>Sample.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StackExchange.Profiling\StackExchange.Profiling.csproj">
+      <Project>{386222BD-6B6E-480F-A342-8DE1AB516E2C}</Project>
+      <Name>StackExchange.Profiling</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -5,17 +5,17 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using System.IO;
 using SampleWeb.Controllers;
 using Dapper;
-using MvcMiniProfiler.Storage;
+using StackExchange.Profiling.Storage;
 using SampleWeb.Helpers;
 using System.Data.SqlServerCe;
 using SampleWeb.EFCodeFirst;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity;
-using MvcMiniProfiler.MVCHelpers;
+using StackExchange.Profiling.MVCHelpers;
 
 namespace SampleWeb
 {
@@ -80,7 +80,7 @@ namespace SampleWeb
             // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                profiler = MvcMiniProfiler.MiniProfiler.Start();
+                profiler = StackExchange.Profiling.MiniProfiler.Start();
             }
 
             using (profiler.Step("Application_BeginRequest"))
@@ -91,7 +91,7 @@ namespace SampleWeb
 
         protected void Application_EndRequest()
         {
-            MvcMiniProfiler.MiniProfiler.Stop();
+            StackExchange.Profiling.MiniProfiler.Stop();
         }
 
 
@@ -108,7 +108,7 @@ namespace SampleWeb
 
             // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
             // by default, sql parameters won't be displayed
-            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.InlineFormatter();
+            MiniProfiler.Settings.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 
             // these settings are optional and all have defaults, any matching setting specified in .RenderIncludes() will
             // override the application-wide defaults specified here, for example if you had both:

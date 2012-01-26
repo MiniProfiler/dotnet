@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using System.Threading;
 using Dapper;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Data.Common;
 using SampleWeb.EFCodeFirst;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using MvcMiniProfiler.Data;
+using StackExchange.Profiling.Data;
 namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController

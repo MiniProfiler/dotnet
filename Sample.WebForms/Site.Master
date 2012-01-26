@@ -8,7 +8,7 @@
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
 
-    <%= MvcMiniProfiler.MiniProfiler.RenderIncludes() %>
+    <%= StackExchange.Profiling.MiniProfiler.RenderIncludes() %>
 
 </head>
 <body>
@@ -32,7 +32,7 @@
                 </asp:LoginView>
             </div>
             <div class="clear hideSkiplink">
-            <% using (MvcMiniProfiler.MiniProfiler.StepStatic("Navigation rendering")) 
+            <% using (StackExchange.Profiling.MiniProfiler.StepStatic("Navigation rendering")) 
                { 
                    System.Threading.Thread.Sleep(20); 
             %>

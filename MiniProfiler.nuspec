@@ -12,6 +12,6 @@
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="MvcMiniProfiler\bin\Release\MvcMiniProfiler.*" target="lib\net40" />
+    <file src="StackExchange.Profiling\bin\Release\StackExchange.Profiling.*" target="lib\net40" />
   </files>
 </package>

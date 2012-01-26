@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 
 namespace Sample.WebForms
 {
@@ -56,7 +56,7 @@ namespace Sample.WebForms
             MiniProfiler.Settings.IgnoredPaths = ignored.ToArray();
 
             MiniProfiler.Settings.Storage = new SampleWeb.Helpers.SqliteMiniProfilerStorage(SampleWeb.MvcApplication.ConnectionString);
-            MiniProfiler.Settings.SqlFormatter = new MvcMiniProfiler.SqlFormatters.InlineFormatter();
+            MiniProfiler.Settings.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
         }
     }
 }

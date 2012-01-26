@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>MiniProfiler.MVC3.Sample</id>
+    <version>1.7.1</version>
+    <authors>Marc Gravell,Sam Saffron,Jarrod Dixon</authors>
+    <owners>Marc Gravell,Sam Saffron,Jarrod Dixon,Scott Hanselman</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://code.google.com/p/mvc-mini-profiler/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ASP.NET MVC3 specific package with a BASIC sample profiled controller and view. This package is optional.</description>
+    <language>en-US</language>
+    <tags>profiler sql mvc asp.net performance timing</tags>
+    <dependencies>
+      <dependency id="MiniProfiler.MVC3" version="1.7" />
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="Content\*" target="Content"/>
+	<file src="Content\Controllers\*" target="Content\Controllers"/>
+	<file src="Content\Views\MvcExampleProfiled\*" target="Content\Views\MvcExampleProfiled"/>
+  </files>
+</package>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using System.Data.Common;
 
 using Dapper;
@@ -25,7 +25,7 @@ namespace SampleWeb.Controllers
                 // when MiniProfiler.Current is null, this connection will not record any database timings
                 if (MiniProfiler.Current != null)
                 {
-                    cnn = new MvcMiniProfiler.Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
+                    cnn = new StackExchange.Profiling.Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
                 }
 
                 cnn.Open();

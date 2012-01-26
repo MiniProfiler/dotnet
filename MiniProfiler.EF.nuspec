@@ -15,6 +15,6 @@
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="MvcMiniProfiler.EntityFramework\bin\Release\MvcMiniProfiler.EntityFramework.*" target="lib/net40" />
+    <file src="StackExchange.Profiling.EntityFramework\bin\Release\StackExchange.Profiling.EntityFramework.*" target="lib/net40" />
   </files>
 </package>

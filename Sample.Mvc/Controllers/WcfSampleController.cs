@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MvcMiniProfiler;
+using StackExchange.Profiling;
 using System.Threading;
 using SampleWeb.SampleService;
 using System.Data.Entity.Infrastructure;
