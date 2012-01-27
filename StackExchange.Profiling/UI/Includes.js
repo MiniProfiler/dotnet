@@ -71,21 +71,12 @@
 
             if (id == options.currentId) {
                 clientPerformance = getClientPerformance();
-                if (clientPerformance != null) {
-                    // we may need to wait a bit for loadEventEnd
-                    if (clientPerformance.timing && clientPerformance.timing.loadEventEnd === 0 && waitedForEnd < 10000) {
-                        // defer up to 10 seconds
-                        waitedForEnd += 50;
-                        setTimeout(function () { fetchResults([id]); }, 50);
-                        continue;
-                    }
-                }
 
                 // ie is buggy strip out functions
                 var copy = { navigation: {}, timing: {} };
 
-                var timing = $.extend({},clientPerformance.timing);
-                var p; 
+                var timing = $.extend({}, clientPerformance.timing);
+                var p;
                 for (p in timing) {
                     if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
                         copy.timing[p] = timing[p];
@@ -450,19 +441,42 @@
 
             options = opt || {};
 
-            // when rendering a shared, full page, this div will exist
-            container = $('.profiler-result-full');
+            var doInit = function () {
+                // when rendering a shared, full page, this div will exist
+                container = $('.profiler-result-full');
 
-            if (container.length) {
-                if (window.location.href.indexOf("&trivial=1") > 0) {
-                    options.showTrivial = true
+                if (container.length) {
+                    if (window.location.href.indexOf("&trivial=1") > 0) {
+                        options.showTrivial = true
+                    }
+                    initFullView();
                 }
-                initFullView();
-            }
-            else {
-                initPopupView();
-            }
+                else {
+                    initPopupView();
+                }
+            };
 
+            // this preserves debugging
+            var load = function(s,f){
+                    var sc = document.createElement("script");
+                    sc.async = "async";
+                    sc.type = "text/javascript";
+                    sc.src = s;
+                    sc.onload = sc.onreadystatechange  = function(_, abort) {
+                        if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {
+                            if (!abort) f();
+                        }
+                    };
+                    document.getElementsByTagName('head')[0].appendChild(sc);
+                };
+
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', options.path + "mini-profiler-includes.css?v=" + options.version));  
+
+            if (!$.tmpl) {
+                load(options.path + 'mini-profiler-jquery.tmpl.beta1.js', doInit);
+            } else {
+                doInit();
+            }
         },
 
         renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/

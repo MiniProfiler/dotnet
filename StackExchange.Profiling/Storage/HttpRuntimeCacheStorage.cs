@@ -38,15 +38,31 @@ namespace StackExchange.Profiling.Storage
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
+        }
 
-            // so we can easily follow POST -> redirects, store ids for this user
-            var ids = GetPerUserUnviewedIds(profiler);
+        /// <summary>
+        /// remembers we did not view the profile
+        /// </summary>
+        public void SetUnviewed(string user, MiniProfiler profiler)
+        { 
+            var ids = GetPerUserUnviewedIds(user);
             lock (ids)
             {
                 if (!ids.Contains(profiler.Id))
                 {
                     ids.Add(profiler.Id);
                 }
+            }
+        }
+
+        public void SetViewed(string user, MiniProfiler profiler)
+        {
+            var ids = GetPerUserUnviewedIds(user);
+
+            lock (ids)
+            {
+                ids.Remove(profiler.Id);
+                profiler.HasUserViewed = true;
             }
         }
 
@@ -57,18 +73,6 @@ namespace StackExchange.Profiling.Storage
         public MiniProfiler Load(Guid id)
         {
             var result = HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
-
-            if (result != null)
-            {
-                var ids = GetPerUserUnviewedIds(result);
-
-                lock (ids)
-                {
-                    ids.Remove(result.Id);
-                    result.HasUserViewed = true;
-                }
-            }
-
             return result;
         }
 

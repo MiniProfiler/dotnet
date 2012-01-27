@@ -317,15 +317,31 @@ values      (@MiniProfilerId,
                 {
                     // HACK: stored dates are utc, but are pulled out as local time
                     result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
-
-                    // loading a profiler means we've viewed it
-                    if (!result.HasUserViewed)
-                    {
-                        conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", idParameter);
-                    }
                 }
 
                 return result;
+            }
+        }
+
+        /// <summary>
+        /// sets the session to unviewed 
+        /// </summary>
+        public override void SetUnviewed(string user, MiniProfiler profiler)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                conn.Execute("update MiniProfilers set HasUserViewed = 0 where Id = @id", new { profiler.Id });
+            }
+        }
+
+        /// <summary>
+        /// sets the session to viewed
+        /// </summary>
+        public override void SetViewed(string user, MiniProfiler profiler)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", new {  profiler.Id });
             }
         }
 

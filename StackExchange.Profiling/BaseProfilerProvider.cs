@@ -72,8 +72,9 @@ namespace StackExchange.Profiling
         protected static void SaveProfiler(MiniProfiler current)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            StackExchange.Profiling.MiniProfiler.Settings.EnsureStorageStrategy();
-            StackExchange.Profiling.MiniProfiler.Settings.Storage.Save(current);
+            MiniProfiler.Settings.EnsureStorageStrategy();
+            MiniProfiler.Settings.Storage.Save(current);
+            MiniProfiler.Settings.Storage.SetUnviewed(current.User, current);
         }
     }
 }

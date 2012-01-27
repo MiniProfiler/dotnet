@@ -61,5 +61,22 @@ namespace StackExchange.Profiling.Wcf.Storage
         {
             return new List<Guid>();
         }
+
+
+        /// <summary>
+        /// trivial implementation 
+        /// </summary>
+        public void SetUnviewed(string user, MiniProfiler profiler)
+        {
+            profiler.HasUserViewed = false;
+        }
+
+        /// <summary>
+        /// trivial implementation
+        /// </summary>
+        public void SetViewed(string user, MiniProfiler profiler)
+        {
+            profiler.HasUserViewed = true;
+        }
     }
 }

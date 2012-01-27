@@ -17,26 +17,57 @@ namespace StackExchange.Profiling.UI
         internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool xhtml = false, bool? showControls = null)
         {
             const string format =
-@"<link rel=""stylesheet"" type=""text/css"" href=""{path}mini-profiler-includes.css?v={version}""{closeXHTML}>
-<script type=""text/javascript"">
-    if (!window.jQuery) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.1.6.2.js' type='text/javascript'%3E%3C/script%3E""));
-    if (!window.jQuery || !window.jQuery.tmpl) document.write(unescape(""%3Cscript src='{path}mini-profiler-jquery.tmpl.beta1.js' type='text/javascript'%3E%3C/script%3E""));
-</script>
-<script type=""text/javascript"" src=""{path}mini-profiler-includes.js?v={version}""></script>
-<script type=""text/javascript"">
-    jQuery(function() {{
-        MiniProfiler.init({{
-            ids: {ids},
-            path: '{path}',
-            version: '{version}',
-            renderPosition: '{position}',
-            showTrivial: {showTrivial},
-            showChildrenTime: {showChildren},
-            maxTracesToShow: {maxTracesToShow},
-            showControls: {showControls},
-            currentId: '{currentId}'
-        }});
-    }});
+@"<script type=""text/javascript"">    
+    (function(){{
+        var init = function() {{        
+                var load = function(s,f){{
+                    var sc = document.createElement(""script"");
+                    sc.async = ""async"";
+                    sc.type = ""text/javascript"";
+                    sc.src = s;
+                    sc.onload = sc.onreadystatechange  = function(_, abort) {{
+                        if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {{
+                            if (!abort) f();
+                        }}
+                    }};
+
+                    document.getElementsByTagName('head')[0].appendChild(sc);
+                }};                
+                
+                var initMp = function(){{
+                    load(""{path}mini-profiler-includes.js?v={version}"",function(){{
+                        MiniProfiler.init({{
+                            ids: {ids},
+                            path: '{path}',
+                            version: '{version}',
+                            renderPosition: '{position}',
+                            showTrivial: {showTrivial},
+                            showChildrenTime: {showChildren},
+                            maxTracesToShow: {maxTracesToShow},
+                            showControls: {showControls},
+                            currentId: '{currentId}'
+                        }});
+                    }});
+                }};
+
+                if (!window.jQuery) {{
+                    load('{path}mini-profiler-jquery.1.6.2.js', initMp);
+                }} else {{
+                    initMp();
+                }}
+        }};
+
+        var w = 0;        
+        var deferInit = function(){{ 
+            if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && w < 10000){{
+                setTimeout(deferInit, 100);
+                w += 100;
+            }} else {{
+                init();
+            }}
+        }};
+        deferInit(); 
+    }})();
 </script>";
 
             var result = "";
@@ -189,6 +220,7 @@ namespace StackExchange.Profiling.UI
 
             MiniProfiler.Settings.EnsureStorageStrategy();
             var profiler = MiniProfiler.Settings.Storage.Load(id);
+            MiniProfiler.Settings.Storage.SetViewed(profiler.User,profiler);
 
             if (profiler == null)
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
