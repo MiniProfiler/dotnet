@@ -43,26 +43,28 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// remembers we did not view the profile
         /// </summary>
-        public void SetUnviewed(string user, MiniProfiler profiler)
+        public void SetUnviewed(string user, Guid id)
         { 
             var ids = GetPerUserUnviewedIds(user);
             lock (ids)
             {
-                if (!ids.Contains(profiler.Id))
+                if (!ids.Contains(id))
                 {
-                    ids.Add(profiler.Id);
+                    ids.Add(id);
                 }
             }
         }
 
-        public void SetViewed(string user, MiniProfiler profiler)
+        /// <summary>
+        /// Set the profile to viewed for this user
+        /// </summary>
+        public void SetViewed(string user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
 
             lock (ids)
             {
-                ids.Remove(profiler.Id);
-                profiler.HasUserViewed = true;
+                ids.Remove(id);
             }
         }
 

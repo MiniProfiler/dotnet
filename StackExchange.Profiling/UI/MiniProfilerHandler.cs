@@ -220,19 +220,38 @@ namespace StackExchange.Profiling.UI
 
             MiniProfiler.Settings.EnsureStorageStrategy();
             var profiler = MiniProfiler.Settings.Storage.Load(id);
-            MiniProfiler.Settings.Storage.SetViewed(profiler.User,profiler);
+
+            var provider = WebRequestProfilerProvider.Settings.UserProvider;
+            string user = null;
+            if (provider != null)
+            {
+                user = provider.GetUser(context.Request);
+            }
+
+            MiniProfiler.Settings.Storage.SetViewed(user, id);
 
             if (profiler == null)
+            {
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
+            }
 
+            bool needsSave = false;
             if (profiler.ClientTimings == null)
             {
                 profiler.ClientTimings = ClientTimings.FromRequest(context.Request);
                 if (profiler.ClientTimings != null)
                 {
-                    MiniProfiler.Settings.Storage.Save(profiler);
+                    needsSave = true;
                 }
             }
+
+            if (profiler.HasUserViewed == false) 
+            {
+                profiler.HasUserViewed = true;
+                needsSave = true;
+            }
+
+            if (needsSave) MiniProfiler.Settings.Storage.Save(profiler);
 
             // ensure that callers have access to these results
             var authorize = MiniProfiler.Settings.Results_Authorize;

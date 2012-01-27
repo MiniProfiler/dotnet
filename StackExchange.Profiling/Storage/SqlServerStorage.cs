@@ -326,22 +326,22 @@ values      (@MiniProfilerId,
         /// <summary>
         /// sets the session to unviewed 
         /// </summary>
-        public override void SetUnviewed(string user, MiniProfiler profiler)
+        public override void SetUnviewed(string user, Guid id)
         {
             using (var conn = GetOpenConnection())
             {
-                conn.Execute("update MiniProfilers set HasUserViewed = 0 where Id = @id", new { profiler.Id });
+                conn.Execute("update MiniProfilers set HasUserViewed = 0 where Id = @id", new { id });
             }
         }
 
         /// <summary>
         /// sets the session to viewed
         /// </summary>
-        public override void SetViewed(string user, MiniProfiler profiler)
+        public override void SetViewed(string user, Guid id)
         {
             using (var conn = GetOpenConnection())
             {
-                conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", new {  profiler.Id });
+                conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", new { id });
             }
         }
 

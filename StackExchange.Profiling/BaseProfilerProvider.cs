@@ -74,7 +74,10 @@ namespace StackExchange.Profiling
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             MiniProfiler.Settings.EnsureStorageStrategy();
             MiniProfiler.Settings.Storage.Save(current);
-            MiniProfiler.Settings.Storage.SetUnviewed(current.User, current);
+            if (current.HasUserViewed == false)
+            {
+                MiniProfiler.Settings.Storage.SetUnviewed(current.User, current.Id);
+            }
         }
     }
 }

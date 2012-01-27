@@ -17,26 +17,6 @@
         <span class="server-time">${MachineName} on ${MiniProfiler.renderDate(Started)}</span>
       </div>
       <div class="profiler-output">
-        {{if ClientTimings}}
-          <table class="timings client-timings">
-            <thead>
-              <tr>
-                <th>client event</th>
-                <th>time from start (ms)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{each MiniProfiler.getClientTimings(ClientTimings)}}
-              <tr class="{{if $value.isTrivial }}trivial{{/if}}">
-                <td class="label">${$value.name}</td>
-                <td class="duration">
-                  <span class="unit">+</span>${MiniProfiler.formatDuration($value.duration)}
-                </td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        {{/if}}
         <table class="timings">
           <thead>
             <tr>
@@ -55,12 +35,9 @@
           <tfoot>
             <tr>
               <td colspan="3">
-                <a href="${MiniProfiler.shareUrl(Id)}" class="share-profiler-results" target="_blank">share</a>
-              {{if HasTrivialTimings}}
-                <a class="toggle-trivial" data-show-on-load="${HasAllTrivialTimings}" title="toggles any rows with &lt; ${TrivialDurationThresholdMilliseconds} ms">
-                   show trivial
-                 </a>
-              {{/if}}
+                {{if !ClientTimings}}
+                {{tmpl "#linksTemplate"}}
+                {{/if}}
                 <a class="toggle-duration-with-children" title="toggles column with aggregate child durations">show time with children</a>
               </td>
             {{if HasSqlTimings}}
@@ -72,6 +49,31 @@
             </tr>
           </tfoot>
         </table>
+        {{if ClientTimings}}
+        <table class="timings client-timings">
+          <thead>
+            <tr>
+              <th>client event</th>
+              <th>time from start (ms)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{each MiniProfiler.getClientTimings(ClientTimings)}}
+            <tr class="{{if $value.isTrivial }}trivial{{/if}}">
+              <td class="label">${$value.name}</td>
+              <td class="duration">
+                <span class="unit">+</span>${MiniProfiler.formatDuration($value.duration)}
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+          <tfoot>
+            <td colspan="3">
+              {{tmpl "#linksTemplate"}}
+            </td>
+          </tfoot>
+        </table>
+        {{/if}}
       </div>
     </div>
 
@@ -102,6 +104,15 @@
 
   </div>
 
+</script>
+
+<script id="linksTemplate" type="text/x-jquery-tmpl">
+  <a href="${MiniProfiler.shareUrl(Id)}" class="share-profiler-results" target="_blank">share</a>
+  {{if HasTrivialTimings}}
+  <a class="toggle-trivial" data-show-on-load="${HasAllTrivialTimings}" title="toggles any rows with &lt; ${TrivialDurationThresholdMilliseconds} ms">
+    show trivial
+  </a>
+  {{/if}}
 </script>
 
 <script id="timingTemplate" type="text/x-jquery-tmpl">

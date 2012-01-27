@@ -30,12 +30,12 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
-        void SetUnviewed(string user, MiniProfiler profiler);
+        void SetUnviewed(string user, Guid id);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
-        void SetViewed(string user, MiniProfiler profiler);
+        void SetViewed(string user, Guid id);
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.

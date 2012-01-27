@@ -64,19 +64,17 @@ namespace StackExchange.Profiling.Wcf.Storage
 
 
         /// <summary>
-        /// trivial implementation 
+        /// trivial implementation - we do not do any per user stuff ... so skip
         /// </summary>
-        public void SetUnviewed(string user, MiniProfiler profiler)
+        public void SetUnviewed(string user, Guid id)
         {
-            profiler.HasUserViewed = false;
         }
 
         /// <summary>
         /// trivial implementation
         /// </summary>
-        public void SetViewed(string user, MiniProfiler profiler)
+        public void SetViewed(string user, Guid id)
         {
-            profiler.HasUserViewed = true;
         }
     }
 }
