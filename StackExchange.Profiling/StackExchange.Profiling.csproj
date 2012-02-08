@@ -122,6 +122,7 @@
     <None Include="miniprofiler.snk" />
     <None Include="packages.config" />
     <None Include="UI\includes.less" />
+    <EmbeddedResource Include="UI\list.tmpl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\includes.js" />
@@ -140,6 +141,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="lib\dotless.Compiler.exe" />
+    <EmbeddedResource Include="UI\list.js" />
     <EmbeddedResource Include="UI\includes.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

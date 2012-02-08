@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool xhtml = false, bool? showControls = null)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null)
         {
             const string format =
 @"<script type=""text/javascript"">    
@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.UI
                 }};                
                 
                 var initMp = function(){{
-                    load(""{path}mini-profiler-includes.js?v={version}"",function(){{
+                    load(""{path}includes.js?v={version}"",function(){{
                         MiniProfiler.init({{
                             ids: {ids},
                             path: '{path}',
@@ -45,13 +45,14 @@ namespace StackExchange.Profiling.UI
                             showChildrenTime: {showChildren},
                             maxTracesToShow: {maxTracesToShow},
                             showControls: {showControls},
-                            currentId: '{currentId}'
+                            currentId: '{currentId}',
+                            authorized: {authorized}
                         }});
                     }});
                 }};
 
                 if (!window.jQuery) {{
-                    load('{path}mini-profiler-jquery.1.6.2.js', initMp);
+                    load('{path}jquery.1.6.2.js', initMp);
                 }} else {{
                     initMp();
                 }}
@@ -77,8 +78,21 @@ namespace StackExchange.Profiling.UI
                 // HACK: unviewed ids are added to this list during Storage.Save, but we know we haven't see the current one yet,
                 // so go ahead and add it to the end - it's usually the only id, but if there was a redirect somewhere, it'll be there, too
                 MiniProfiler.Settings.EnsureStorageStrategy();
-                var ids = MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User);
-                ids.Add(profiler.Id);
+                
+                var authorized = 
+                    MiniProfiler.Settings.Results_Authorize == null || 
+                    MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
+
+                List<Guid> ids;
+                if (authorized)
+                {
+                    ids = MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User);
+                    ids.Add(profiler.Id);
+                }
+                else
+                {
+                    ids = new List<Guid> { profiler.Id };
+                }
 
                 result = format.Format(new
                 {
@@ -89,10 +103,11 @@ namespace StackExchange.Profiling.UI
                     showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
                     maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
-                    closeXHTML = xhtml ? "/" : "",
                     showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
-                    currentId = profiler.Id
+                    currentId = profiler.Id,
+                    authorized = authorized ? "true" : "false"
                 });
+                
             }
 
             return new HtmlString(result);
@@ -100,32 +115,21 @@ namespace StackExchange.Profiling.UI
 
         internal static void RegisterRoutes()
         {
-            var urls = new[] 
-            { 
-                "mini-profiler-jquery.1.6.2.js",
-                "mini-profiler-jquery.tmpl.beta1.js",
-                "mini-profiler-includes.js", 
-                "mini-profiler-includes.css", 
-                "mini-profiler-includes.tmpl", 
-                "mini-profiler-results"
-            };
+           
             var routes = RouteTable.Routes;
             var handler = new MiniProfilerHandler();
-            var prefix = (MiniProfiler.Settings.RouteBasePath ?? "").Replace("~/", "").EnsureTrailingSlash();
+            var prefix = MiniProfiler.Settings.RouteBasePath.Replace("~/", "").EnsureTrailingSlash();
 
             using (routes.GetWriteLock())
             {
-                foreach (var url in urls)
+                var route = new Route(prefix + "{filename}", handler)
                 {
-                    var route = new Route(prefix + url, handler)
-                    {
-                        // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
-                        Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
-                    };
+                    // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
+                    Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
+                };
 
-                    // put our routes at the beginning, like a boss
-                    routes.Insert(0, route);
-                }
+                // put our routes at the beginning, like a boss
+                routes.Insert(0, route);   
             }
         }
 
@@ -155,13 +159,18 @@ namespace StackExchange.Profiling.UI
 
             switch (Path.GetFileNameWithoutExtension(path))
             {
-                case "mini-profiler-jquery.1.6.2":
-                case "mini-profiler-jquery.tmpl.beta1":
-                case "mini-profiler-includes":
+                case "jquery.1.6.2":
+                case "jquery.tmpl.beta1":
+                case "includes":
+                case "list":
                     output = Includes(context, path);
                     break;
 
-                case "mini-profiler-results":
+                case "results-list":
+                    output = List(context);
+                    break;
+
+                case "results":
                     output = Results(context);
                     break;
 
@@ -171,6 +180,30 @@ namespace StackExchange.Profiling.UI
             }
 
             context.Response.Write(output);
+        }
+
+        private static string List(HttpContext context)
+        {
+            string message;
+            if (!AuthorizeRequest(context, out message))
+            {
+                return message;
+            }
+
+            context.Response.ContentType = "text/html";
+
+            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(); 
+
+            return new StringBuilder()
+                .AppendLine("<html><head>")
+                .AppendFormat("<title>List of profiling sessions</title>")
+                .AppendLine()
+                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js" + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.beta1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script type='text/javascript'>MiniProfiler.list.init({path: '" + path + "', version: '" + MiniProfiler.Settings.Version + "'})</script>")
+                .AppendLine("</head><body></body></html>")
+                .ToString();
         }
 
         /// <summary>
@@ -200,7 +233,7 @@ namespace StackExchange.Profiling.UI
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
 
-            var embeddedFile = Path.GetFileName(path).Replace("mini-profiler-", "");
+            var embeddedFile = Path.GetFileName(path);
             return GetResource(embeddedFile);
         }
 
@@ -253,16 +286,27 @@ namespace StackExchange.Profiling.UI
 
             if (needsSave) MiniProfiler.Settings.Storage.Save(profiler);
 
-            // ensure that callers have access to these results
-            var authorize = MiniProfiler.Settings.Results_Authorize;
-            if (authorize != null && !authorize(context.Request, profiler))
+            string message;
+            if (!AuthorizeRequest(context, out message))
             {
-                context.Response.StatusCode = 401;
-                context.Response.ContentType = "text/plain";
-                return "Unauthorized";
+                return message;
             }
 
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
+        }
+
+        private static bool AuthorizeRequest(HttpContext context, out string message)
+        {
+            message = null;
+            var authorize = MiniProfiler.Settings.Results_Authorize;
+            if (authorize != null && !authorize(context.Request))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "text/plain";
+                message = "unauthorized";
+                return false;
+            }
+            return true;
         }
 
         private static string ResultsJson(HttpContext context, MiniProfiler profiler)

@@ -180,17 +180,17 @@ namespace StackExchange.Profiling
             /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url contains any items in this property,
             /// no profiler will be instantiated and no results will be displayed.
-            /// Default value is { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" }.
+            /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
             /// </summary>
-            [DefaultValue(new string[] { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" })]
+            [DefaultValue(new string[] { "/content/", "/scripts/", "/favicon.ico" })]
             public static string[] IgnoredPaths { get; set; }
 
             /// <summary>
             /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
-            /// "/myDirectory/mini-profiler-includes.js" rather than just "/mini-profiler-includes.js"
+            /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
             /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
             /// </summary>
-            [DefaultValue("~/")]
+            [DefaultValue("~/mini-profiler-resources")]
             public static string RouteBasePath { get; set; }
 
             /// <summary>
@@ -243,14 +243,13 @@ namespace StackExchange.Profiling
             public static IProfilerProvider ProfilerProvider { get; set; }
 
             /// <summary>
-            /// A function that determines who can access the MiniProfiler results url.  It should return true when
-            /// the request client has access, false for a 401 to be returned. HttpRequest parameter is the current request and
-            /// MiniProfiler parameter is the results that were profiled.
+            /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
+            /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
             /// </summary>
             /// <remarks>
-            /// Both the HttpRequest and MiniProfiler parameters that will be passed into this function should never be null.
+            /// The HttpRequest parameter that will be passed into this function should never be null.
             /// </remarks>
-            public static Func<HttpRequest, MiniProfiler, bool> Results_Authorize { get; set; }
+            public static Func<HttpRequest, bool> Results_Authorize { get; set; }
 
             /// <summary>
             /// Make sure we can at least store profiler results to the http runtime cache.

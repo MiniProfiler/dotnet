@@ -132,15 +132,10 @@ namespace SampleWeb
             // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
             // can define a function that will authorize clients to see the json or full page results.
             // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
-            MiniProfiler.Settings.Results_Authorize = (request, profiler) =>
+            MiniProfiler.Settings.Results_Authorize = (request) =>
             {
-                // we'll use it here to check that a specific page had a query parameter
-                if ("Home/ResultsAuthorization".Equals(profiler.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    // root Timing's Name will always be the profiled request's full url
-                    return profiler.Root.Name.ToLower().Contains("isauthorized");
-                }
-                return true; // all other requests are kosher
+                // you may implement this if you need to restrict visibility of profiling on a per request basis 
+                return true; // all requests are kosher
             };
         }
 

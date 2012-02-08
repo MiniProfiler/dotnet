@@ -40,7 +40,7 @@
     };
 
     var fetchTemplates = function (success) {
-        var key = 'mini-profiler-templates',
+        var key = 'templates',
             cached = load(key);
 
         if (cached) {
@@ -48,7 +48,7 @@
             success();
         }
         else {
-            $.get(options.path + 'mini-profiler-includes.tmpl?v=' + options.version, function (data) {
+            $.get(options.path + 'includes.tmpl?v=' + options.version, function (data) {
                 if (data) {
                     save(key, data);
                     $('body').append(data);
@@ -94,7 +94,7 @@
                 var idx = fetchingIds.push(id) - 1;
 
                 $.ajax({
-                    url: options.path + 'mini-profiler-results',
+                    url: options.path + 'results',
                     data: { id: id, clientPerformance: clientPerformance, popup: 1 },
                     dataType: 'json',
                     type: 'POST',
@@ -471,7 +471,7 @@
                 document.getElementsByTagName('head')[0].appendChild(sc);
             };
 
-            var url = options.path + "mini-profiler-includes.css?v=" + options.version;
+            var url = options.path + "includes.css?v=" + options.version;
             if (document.createStyleSheet) {
                 document.createStyleSheet(url);
             } else {
@@ -479,7 +479,7 @@
             }
 
             if (!$.tmpl) {
-                load(options.path + 'mini-profiler-jquery.tmpl.beta1.js', doInit);
+                load(options.path + 'jquery.tmpl.beta1.js', doInit);
             } else {
                 doInit();
             }
@@ -510,7 +510,7 @@
         },
 
         shareUrl: function (id) {
-            return options.path + 'mini-profiler-results?id=' + id;
+            return options.path + 'results?id=' + id;
         },
 
         getClientTimings: function (clientTimings) {

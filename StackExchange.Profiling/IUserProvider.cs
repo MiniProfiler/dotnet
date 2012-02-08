@@ -16,5 +16,6 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="request">The current HttpRequest being profiled.</param>
         string GetUser(HttpRequest request);
+
     }
 }

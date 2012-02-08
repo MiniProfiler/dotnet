@@ -32,13 +32,18 @@ namespace StackExchange.Profiling
             if (context == null) return null;
 
             var url = context.Request.Url;
-            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1);
+            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();
 
             // don't profile /content or /scripts, either - happens in web.dev
             foreach (var ignored in StackExchange.Profiling.MiniProfiler.Settings.IgnoredPaths ?? new string[0])
             {
-                if (path.ToUpperInvariant().Contains((ignored ?? "").ToUpperInvariant()))
+                if (path.Contains((ignored ?? "").ToUpperInvariant()))
                     return null;
+            }
+
+            if (path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).ToUpperInvariant()))
+            {
+                return null;
             }
 
             var result = new MiniProfiler(url.OriginalString, level);
