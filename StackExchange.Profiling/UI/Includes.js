@@ -72,21 +72,22 @@
             if (id == options.currentId) {
                 clientPerformance = getClientPerformance();
 
-                // ie is buggy strip out functions
-                var copy = { navigation: {}, timing: {} };
+                if (clientPerformance != null) {
+                    // ie is buggy strip out functions
+                    var copy = { navigation: {}, timing: {} };
 
-                var timing = $.extend({}, clientPerformance.timing);
-                var p;
-                for (p in timing) {
-                    if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
-                        copy.timing[p] = timing[p];
+                    var timing = $.extend({}, clientPerformance.timing);
+                    var p;
+                    for (p in timing) {
+                        if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
+                            copy.timing[p] = timing[p];
+                        }
                     }
+                    if (clientPerformance.navigation) {
+                        copy.navigation.redirectCount = clientPerformance.navigation.redirectCount;
+                    }
+                    clientPerformance = copy;
                 }
-                if (clientPerformance.navigation) {
-                    copy.navigation.redirectCount = clientPerformance.navigation.redirectCount;
-                }
-
-                clientPerformance = copy;
             }
 
             if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
@@ -457,20 +458,25 @@
             };
 
             // this preserves debugging
-            var load = function(s,f){
-                    var sc = document.createElement("script");
-                    sc.async = "async";
-                    sc.type = "text/javascript";
-                    sc.src = s;
-                    sc.onload = sc.onreadystatechange  = function(_, abort) {
-                        if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {
-                            if (!abort) f();
-                        }
-                    };
-                    document.getElementsByTagName('head')[0].appendChild(sc);
+            var load = function (s, f) {
+                var sc = document.createElement("script");
+                sc.async = "async";
+                sc.type = "text/javascript";
+                sc.src = s;
+                sc.onload = sc.onreadystatechange = function (_, abort) {
+                    if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {
+                        if (!abort) f();
+                    }
                 };
+                document.getElementsByTagName('head')[0].appendChild(sc);
+            };
 
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', options.path + "mini-profiler-includes.css?v=" + options.version));  
+            var url = options.path + "mini-profiler-includes.css?v=" + options.version;
+            if (document.createStyleSheet) {
+                document.createStyleSheet(url);
+            } else {
+                $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
+            }
 
             if (!$.tmpl) {
                 load(options.path + 'mini-profiler-jquery.tmpl.beta1.js', doInit);
