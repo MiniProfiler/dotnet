@@ -142,7 +142,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="lib\dotless.Compiler.exe" />
-    <Content Include="UI\list.css" />
+    <EmbeddedResource Include="UI\list.css" />
     <EmbeddedResource Include="UI\list.js" />
     <EmbeddedResource Include="UI\includes.css" />
   </ItemGroup>

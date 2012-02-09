@@ -253,7 +253,8 @@ namespace StackExchange.Profiling
 
 
             /// <summary>
-            /// Special authorization function that is called for the list results (listing all the profiling sessions), we also test for results authorize always
+            /// Special authorization function that is called for the list results (listing all the profiling sessions), 
+            /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
             /// </summary>
             public static Func<HttpRequest, bool> Results_List_Authorize { get; set; }
 
