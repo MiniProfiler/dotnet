@@ -74,6 +74,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MiniProfilerTest.cs" />
     <Compile Include="Storage\SqlServerStorageTest.cs" />
+    <Compile Include="Storage\TestHttpRuntimeCacheStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

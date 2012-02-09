@@ -57,12 +57,16 @@ namespace StackExchange.Profiling.Storage
             
             lock (profiles)
             {
-                profiles.Add(new ProfileInfo { Id = profiler.Id, Started = profiler.Started }, null);
+                var profileInfo = new ProfileInfo { Id = profiler.Id, Started = profiler.Started };
+                if (profiles.IndexOfKey(profileInfo) < 0) 
+                {
+                    profiles.Add(profileInfo, null);
+                }
 
                 while (profiles.Count > 0)
                 {
                     var first = profiles.Keys[0];
-                    if (first.Started < DateTime.Now.Add(-CacheDuration))
+                    if (first.Started < DateTime.UtcNow.Add(-CacheDuration))
                     {
                         profiles.RemoveAt(0);
                     }
@@ -182,24 +186,32 @@ namespace StackExchange.Profiling.Storage
             lock (profiles)
             {
                 int idxStart = 0;
-                int idxFinish = 0;
+                int idxFinish = profiles.Count - 1;
                 if (start != null) idxStart = BinaryClosestSearch(start.Value);
                 if (finish != null) idxFinish = BinaryClosestSearch(finish.Value);
 
-                int delta = 1;
-                if (orderBy == ListResultsOrder.Decending)
-                {
-                    delta = -1;
-                    int tmp = idxStart;
-                    idxStart = idxFinish;
-                    idxFinish = idxStart;
-                }
+                if (idxStart < 0) idxStart = 0;
+                if (idxFinish >= profiles.Count) idxFinish = profiles.Count - 1;
+
                 var keys = profiles.Keys;
 
-                for (int i = idxStart; i < idxFinish; i+=delta)
+                if (orderBy == ListResultsOrder.Ascending)
                 {
-                    guids.Add(keys[i].Id);
+                    for (int i = idxStart; i <= idxFinish; i++)
+                    {
+                        guids.Add(keys[i].Id);
+                        if (guids.Count == maxResults) break;
+                    }
                 }
+                else
+                {
+                    for (int i = idxFinish; i >= idxStart; i--)
+                    {
+                        guids.Add(keys[i].Id);
+                        if (guids.Count == maxResults) break;
+                    }
+                }
+               
             }
             return guids;
         }
