@@ -137,6 +137,13 @@ namespace SampleWeb
                 // you may implement this if you need to restrict visibility of profiling on a per request basis 
                 return true; // all requests are kosher
             };
+
+            // the list of all sessions in the store is restricted by default, you must return true to alllow it
+            MiniProfiler.Settings.Results_List_Authorize = (request) =>
+            {
+                // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
+                return true; // all requests are kosher
+            };
         }
 
     }
