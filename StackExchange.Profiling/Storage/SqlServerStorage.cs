@@ -407,6 +407,30 @@ order  by Started";
             }
         }
 
+
+        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        {
+            var builder = new SqlBuilder();
+            var t = builder.AddTemplate("select top " + maxResults + " Id from MiniProfilers /**where**/ /**orderby**/");
+
+            if (start != null) { builder.Where("Started > @start", new { start }); };
+            if (finish != null) { builder.Where("Started < @finish", new { finish }); };
+
+            if (orderBy == ListResultsOrder.Decending)
+            {
+                builder.OrderBy("Started desc");
+            }
+            else 
+            {
+                builder.OrderBy("Started asc");
+            }
+
+            using (var conn = GetOpenConnection())
+            {
+                return conn.Query<Guid>(t.RawSql, t.Parameters).ToList();
+            }
+        }
+
         /// <summary>
         /// Returns a connection to Sql Server.
         /// </summary>
@@ -517,5 +541,6 @@ create table MiniProfilerClientTimings
 )
 
 ";
+
     }
 }

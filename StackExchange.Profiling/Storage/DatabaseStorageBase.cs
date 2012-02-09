@@ -52,6 +52,17 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
         public abstract List<Guid> GetUnviewedIds(string user);
 
+
+        /// <summary>
+        /// Implement a basic list search here
+        /// </summary>
+        /// <param name="maxResults"></param>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
+        public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending);
+
         /// <summary>
         /// Returns a DbConnection for your specific provider.
         /// </summary>

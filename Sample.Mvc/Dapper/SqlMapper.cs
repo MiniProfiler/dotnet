@@ -22,7 +22,7 @@ namespace Dapper
     /// <summary>
     /// Dapper, a light weight object mapper for ADO.NET
     /// </summary>
-    public static partial class SqlMapper
+    internal static partial class SqlMapper
     {
         /// <summary>
         /// Implement this interface to pass an arbitrary db specific set of parameters to Dapper

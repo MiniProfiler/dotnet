@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Routing;
+using System.Linq;
 
 using StackExchange.Profiling.Helpers;
 using System.Text;
@@ -166,8 +167,12 @@ namespace StackExchange.Profiling.UI
                     output = Includes(context, path);
                     break;
 
+                case "results-index":
+                    output = Index(context);
+                    break;
+                
                 case "results-list":
-                    output = List(context);
+                    output = ResultList(context);
                     break;
 
                 case "results":
@@ -182,10 +187,51 @@ namespace StackExchange.Profiling.UI
             context.Response.Write(output);
         }
 
-        private static string List(HttpContext context)
+        private static string ResultList(HttpContext context)
         {
             string message;
-            if (!AuthorizeRequest(context, out message))
+            if (!AuthorizeRequest(context, isList: true, message: out message))
+            {
+                return message;
+            }
+
+            var lastId = context.Request["last-id"];
+            Guid lastGuid = Guid.Empty;
+
+            if (!lastId.IsNullOrWhiteSpace()) {
+                Guid.TryParse(lastId, out lastGuid);
+            }
+            
+            var guids = MiniProfiler.Settings.Storage.List(100);
+
+            if (lastGuid != Guid.Empty)
+            {
+                guids = guids.TakeWhile(g => g != lastGuid);
+            }
+
+            guids = guids.Reverse();
+
+            return guids.Select(g => 
+            {
+                var profiler = MiniProfiler.Settings.Storage.Load(g);
+                return new 
+                {
+                    profiler.Id, 
+                    profiler.Name, 
+                    profiler.DurationMilliseconds,
+                    profiler.DurationMillisecondsInSql,
+                    profiler.ClientTimings,
+                    profiler.Started
+                };
+            }
+            
+           ).ToJson();
+        }
+
+        private static string Index(HttpContext context)
+        {
+            string message;
+            if (!AuthorizeRequest(context, isList: true, message: out message))
             {
                 return message;
             }
@@ -200,7 +246,9 @@ namespace StackExchange.Profiling.UI
                 .AppendLine()
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js" + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.beta1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<link href='" + path +"list.css?v=" + MiniProfiler.Settings.Version +  "' rel='stylesheet' type='text/css'>")
                 .AppendLine("<script type='text/javascript'>MiniProfiler.list.init({path: '" + path + "', version: '" + MiniProfiler.Settings.Version + "'})</script>")
                 .AppendLine("</head><body></body></html>")
                 .ToString();
@@ -228,10 +276,13 @@ namespace StackExchange.Profiling.UI
                     return NotFound(context);
             }
 
+#if !DEBUG
             var cache = response.Cache;
             cache.SetCacheability(System.Web.HttpCacheability.Public);
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
+#endif
+            
 
             var embeddedFile = Path.GetFileName(path);
             return GetResource(embeddedFile);
@@ -287,7 +338,7 @@ namespace StackExchange.Profiling.UI
             if (needsSave) MiniProfiler.Settings.Storage.Save(profiler);
 
             string message;
-            if (!AuthorizeRequest(context, out message))
+            if (!AuthorizeRequest(context, isList: false, message: out message))
             {
                 return message;
             }
@@ -295,11 +346,13 @@ namespace StackExchange.Profiling.UI
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
         }
 
-        private static bool AuthorizeRequest(HttpContext context, out string message)
+        private static bool AuthorizeRequest(HttpContext context, bool isList, out string message)
         {
             message = null;
             var authorize = MiniProfiler.Settings.Results_Authorize;
-            if (authorize != null && !authorize(context.Request))
+            var authorizeList = MiniProfiler.Settings.Results_List_Authorize;
+
+            if (authorize != null && !authorize(context.Request) || (isList && authorizeList != null && !authorizeList(context.Request)))
             {
                 context.Response.StatusCode = 401;
                 context.Response.ContentType = "text/plain";
@@ -331,10 +384,30 @@ namespace StackExchange.Profiling.UI
                 .ToString();
         }
 
+        private static bool bypassLocalLoad = false; 
         private static string GetResource(string filename)
         {
             filename = filename.ToLower();
             string result;
+
+#if DEBUG 
+            // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
+            if (!bypassLocalLoad)
+            {
+
+                var trace = new System.Diagnostics.StackTrace(true);
+                var path = System.IO.Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\..\\UI\\" + filename;
+                try
+                {
+                    return File.ReadAllText(path);
+                }
+                catch 
+                {
+                    bypassLocalLoad = true;
+                }
+            }
+            
+#endif
 
             if (!_ResourceCache.TryGetValue(filename, out result))
             {

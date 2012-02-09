@@ -251,6 +251,12 @@ namespace StackExchange.Profiling
             /// </remarks>
             public static Func<HttpRequest, bool> Results_Authorize { get; set; }
 
+
+            /// <summary>
+            /// Special authorization function that is called for the list results (listing all the profiling sessions), we also test for results authorize always
+            /// </summary>
+            public static Func<HttpRequest, bool> Results_List_Authorize { get; set; }
+
             /// <summary>
             /// Make sure we can at least store profiler results to the http runtime cache.
             /// </summary>

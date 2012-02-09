@@ -76,5 +76,13 @@ namespace StackExchange.Profiling.Wcf.Storage
         public void SetViewed(string user, Guid id)
         {
         }
+
+
+
+        public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        {
+            // some brave soul that know WCF needs to implement this
+            throw new NotImplementedException("Looking for a dev who can support the WCF bits in Mini Profiler");
+        }
     }
 }

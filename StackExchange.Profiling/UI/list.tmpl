@@ -2,19 +2,33 @@
   <table>
     <thead>
       <tr>
-        <th>Col 1</th>
-        <th>Col 2</th>
-        <th>Col 3</th>
-        <th>Col 4</th>
+        <th>Name</th>
+        <th>Started</th>
+        <th>Sql Duration</th>
+        <th>Total Duration</th>
+        <th>Request Start</th>
+        <th>Response Start</th>
+        <th>Dom Complete</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>col 1</td>
-        <td>col 2</td>
-        <td>col 3</td>
-        <td>col 4</td>
-      </tr>
+      
     </tbody>
   </table>
+</script>
+<script id="rowTemplate" type="text/x-jquery-tmpl">
+  <tr>
+    <td>
+      <a href="${MiniProfiler.path}results?id=${Id}">${Name}</a></td>
+    <td class="date">${MiniProfiler.renderDate(Started)}</td>
+    <td class="time">${DurationMillisecondsInSql}</td>
+    <td class="time">${DurationMilliseconds}</td>
+    {{if ClientTimings}}
+    <td class="time">${ClientTimings.RequestStart}</td>
+    <td class="time">${ClientTimings.ResponseStart}</td>
+    <td class="time">${ClientTimings.DomComplete}</td>
+    {{else}}
+    <td colspan="3"></td>
+    {{/if}}
+  </tr>
 </script>

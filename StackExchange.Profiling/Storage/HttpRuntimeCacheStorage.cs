@@ -11,6 +11,22 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class HttpRuntimeCacheStorage : IStorage
     {
+        // FYI: SortedList on uses the comparer for both key lookups and insertion
+        class ProfileInfo : IComparable<ProfileInfo>
+        {
+            public DateTime Started { get; set; }
+            public Guid Id { get; set; }
+
+            public int CompareTo(ProfileInfo other)
+            {
+                var comp = Started.CompareTo(other.Started);
+                if (comp == 0) comp = Id.CompareTo(other.Id);
+                return comp;
+            }
+        }
+
+        SortedList<ProfileInfo, object> profiles = new SortedList<ProfileInfo, object>();
+
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.
         /// "mini-profiler-ecfb0050-7ce8-4bf1-bf82-2cb38e90e31e".
@@ -38,6 +54,24 @@ namespace StackExchange.Profiling.Storage
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
+            
+            lock (profiles)
+            {
+                profiles.Add(new ProfileInfo { Id = profiler.Id, Started = profiler.Started }, null);
+
+                while (profiles.Count > 0)
+                {
+                    var first = profiles.Keys[0];
+                    if (first.Started < DateTime.Now.Add(-CacheDuration))
+                    {
+                        profiles.RemoveAt(0);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -93,12 +127,13 @@ namespace StackExchange.Profiling.Storage
 
         private void InsertIntoCache(string key, object value)
         {
+            var expiration = DateTime.Now.Add(CacheDuration);
             // use insert instead of add; add fails if the item already exists
             HttpRuntime.Cache.Insert(
                 key: key,
                 value: value,
                 dependencies: null,
-                absoluteExpiration: DateTime.Now.Add(CacheDuration), // servers will cache based on local now
+                absoluteExpiration: expiration, // servers will cache based on local now
                 slidingExpiration: System.Web.Caching.Cache.NoSlidingExpiration,
                 priority: System.Web.Caching.CacheItemPriority.Low,
                 onRemoveCallback: null);
@@ -141,9 +176,57 @@ namespace StackExchange.Profiling.Storage
             return result;
         }
 
+        public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        {
+            List<Guid> guids = new List<Guid>(); 
+            lock (profiles)
+            {
+                int idxStart = 0;
+                int idxFinish = 0;
+                if (start != null) idxStart = BinaryClosestSearch(start.Value);
+                if (finish != null) idxFinish = BinaryClosestSearch(finish.Value);
+
+                int delta = 1;
+                if (orderBy == ListResultsOrder.Decending)
+                {
+                    delta = -1;
+                    int tmp = idxStart;
+                    idxStart = idxFinish;
+                    idxFinish = idxStart;
+                }
+                var keys = profiles.Keys;
+
+                for (int i = idxStart; i < idxFinish; i+=delta)
+                {
+                    guids.Add(keys[i].Id);
+                }
+            }
+            return guids;
+        }
+
+        private int BinaryClosestSearch(DateTime date)
+        {
+            int lower = 0;
+            int upper = profiles.Count - 1;
+
+            while (lower <= upper) {
+                int adjustedIndex = lower + ((upper - lower) >> 1);
+                int comparison = profiles.Keys[adjustedIndex].Started.CompareTo(date);
+                if (comparison == 0)
+                    return adjustedIndex;
+                else if (comparison < 0)
+                    lower = adjustedIndex + 1;
+                else
+                    upper = adjustedIndex - 1;
+            }
+            return lower;
+        }
+
         /// <summary>
         /// Syncs access to runtime cache when adding a new list of ids for a user.
         /// </summary>
         private static readonly object AddPerUserUnviewedIdsLock = new object();
+
+        
     }
 }

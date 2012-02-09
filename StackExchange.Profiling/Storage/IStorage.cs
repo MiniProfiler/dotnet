@@ -5,11 +5,38 @@ using System.Text;
 
 namespace StackExchange.Profiling.Storage
 {
+    public enum ListResultsOrder
+    { 
+        Ascending,
+        Decending
+    }
+
+    /*
+     * Maybe ... to cut down on deserializtion 
+    public class ProfileSummary
+    {
+
+        DateTime Started { get; set; }
+        int TotalDurationMilliseconds { get; set; }
+        int SqlDurationMilliseconds { get; set; }
+    }
+    */
     /// <summary>
     /// Provides saving and loading <see cref="MiniProfiler"/>s to a storage medium.
     /// </summary>
     public interface IStorage
     {
+
+        /// <summary>
+        /// Returns a list of profile guids (optionally in a particular date range)
+        /// </summary>
+        /// <param name="maxResults"></param>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="orderBy">defaults to decending</param>
+        /// <returns></returns>
+        IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending);
+
         /// <summary>
         /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>

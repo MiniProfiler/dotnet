@@ -94,6 +94,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\WcfSampleController.cs" />
+    <Compile Include="Dapper\SqlBuilder.cs" />
     <Compile Include="Dapper\SqlMapper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

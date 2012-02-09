@@ -6,6 +6,7 @@ using StackExchange.Profiling;
 using Dapper;
 using SampleWeb.Controllers;
 using System.IO;
+using StackExchange.Profiling.Storage;
 
 namespace SampleWeb.Helpers
 {
@@ -50,6 +51,30 @@ namespace SampleWeb.Helpers
                 {
                     cnn.Execute(sql);
                 }
+            }
+        }
+
+
+        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        {
+            var builder = new SqlBuilder();
+            var t = builder.AddTemplate("select Id from MiniProfilers /**where**/ /**orderby**/ LIMIT(" + maxResults + ")");
+
+            if (start != null) { builder.Where("Started > @start", new { start }); };
+            if (finish != null) { builder.Where("Started < @finish", new { finish }); };
+
+            if (orderBy == ListResultsOrder.Decending)
+            {
+                builder.OrderBy("Started desc");
+            }
+            else
+            {
+                builder.OrderBy("Started asc");
+            }
+
+            using (var conn = GetOpenConnection())
+            {
+                return conn.Query<Guid>(t.RawSql, t.Parameters).ToList();
             }
         }
 
