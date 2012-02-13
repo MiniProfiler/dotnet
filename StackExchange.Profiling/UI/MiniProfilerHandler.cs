@@ -114,7 +114,10 @@ namespace StackExchange.Profiling.UI
             return new HtmlString(result);
         }
 
-        internal static void RegisterRoutes()
+        /// <summary>
+        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, if you do that call this to bring back mp
+        /// </summary>
+        public static void RegisterRoutes()
         {
            
             var routes = RouteTable.Routes;
