@@ -52,7 +52,7 @@ namespace StackExchange.Profiling
             SetProfilerActive(result);
 
             // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
-            result.User = (Settings.UserProvider ?? new IpAddressIdentity()).GetUser(context.Request);
+            result.User = Settings.UserProvider.GetUser(context.Request);
 
             return result;
         }
