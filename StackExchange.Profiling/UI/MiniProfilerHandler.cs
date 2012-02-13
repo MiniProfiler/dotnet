@@ -164,7 +164,7 @@ namespace StackExchange.Profiling.UI
             switch (Path.GetFileNameWithoutExtension(path))
             {
                 case "jquery.1.6.2":
-                case "jquery.tmpl.beta1":
+                case "jquery.tmpl":
                 case "includes":
                 case "list":
                     output = Includes(context, path);
@@ -248,7 +248,7 @@ namespace StackExchange.Profiling.UI
                 .AppendFormat("<title>List of profiling sessions</title>")
                 .AppendLine()
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js" + "'></script>")
-                .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.beta1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<link href='" + path +"list.css?v=" + MiniProfiler.Settings.Version +  "' rel='stylesheet' type='text/css'>")

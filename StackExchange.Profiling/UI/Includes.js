@@ -113,7 +113,7 @@
     };
 
     var renderTemplate = function (json) {
-        return $('#profilerTemplate').tmpl(json);
+        return $('#profilerTemplate').tmpl997(json);
     };
 
     var buttonShow = function (json) {
@@ -487,8 +487,8 @@
                     $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
                 }
 
-                if (!$.tmpl) {
-                    load(options.path + 'jquery.tmpl.beta1.js', doInit);
+                if (!$.tmpl997) {
+                    load(options.path + 'jquery.tmpl.js', doInit);
                 } else {
                     doInit();
                 }

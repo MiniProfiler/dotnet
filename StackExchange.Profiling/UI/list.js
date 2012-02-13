@@ -11,7 +11,7 @@ MiniProfiler.list = {
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
-                        $('table tbody').append($("#rowTemplate").tmpl(data));
+                        $('table tbody').append($("#rowTemplate").tmpl997(data));
                         var oldId = id;
                         var oldData = data;
                         setTimeout(function () {
@@ -29,7 +29,7 @@ MiniProfiler.list = {
             $.get(options.path + 'list.tmpl?v=' + options.version, function (data) {
                 if (data) {
                     $('body').append(data);
-                    $('body').append($('#tableTemplate').tmpl());
+                    $('body').append($('#tableTemplate').tmpl997());
                     updateGrid();
                 }
             });
