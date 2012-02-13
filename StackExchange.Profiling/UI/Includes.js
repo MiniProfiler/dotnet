@@ -100,7 +100,9 @@
                     type: 'POST',
                     success: function (json) {
                         fetchedIds.push(id);
-                        buttonShow(json);
+                        if (json != "hidden") {
+                            buttonShow(json);
+                        }
                     },
                     complete: function () {
                         fetchingIds.splice(idx, 1);
@@ -385,20 +387,26 @@
     };
 
     var initPopupView = function () {
-        // all fetched profilings will go in here
-        container = $('<div class="profiler-results"/>').appendTo('body');
 
-        // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-        container.addClass(options.renderPosition);
+        if (options.authorized) {
+            // all fetched profilings will go in here
+            container = $('<div class="profiler-results"/>').appendTo('body');
 
-        //initialize the controls
-        initControls(container);
+            // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
+            container.addClass(options.renderPosition);
 
-        // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
-        fetchTemplates(function () {
-            // get master page profiler results
+            //initialize the controls
+            initControls(container);
+
+            // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
+            fetchTemplates(function () {
+                // get master page profiler results
+                fetchResults(options.ids);
+            });
+        }
+        else {
             fetchResults(options.ids);
-        });
+        }
 
         // fetch profile results for any ajax calls
         $(document).ajaxComplete(function (e, xhr, settings) {
@@ -471,18 +479,24 @@
                 document.getElementsByTagName('head')[0].appendChild(sc);
             };
 
-            var url = options.path + "includes.css?v=" + options.version;
-            if (document.createStyleSheet) {
-                document.createStyleSheet(url);
-            } else {
-                $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
-            }
+            if (options.authorized) {
+                var url = options.path + "includes.css?v=" + options.version;
+                if (document.createStyleSheet) {
+                    document.createStyleSheet(url);
+                } else {
+                    $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
+                }
 
-            if (!$.tmpl) {
-                load(options.path + 'jquery.tmpl.beta1.js', doInit);
-            } else {
+                if (!$.tmpl) {
+                    load(options.path + 'jquery.tmpl.beta1.js', doInit);
+                } else {
+                    doInit();
+                }
+            }
+            else {
                 doInit();
             }
+
         },
 
         renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/

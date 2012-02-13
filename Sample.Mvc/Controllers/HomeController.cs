@@ -13,6 +13,18 @@ namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
     {
+        public ActionResult EnableProfilingUI()
+        {
+            SampleWeb.MvcApplication.DisableProfilingResults = false;
+            return Redirect("/");
+        }
+
+        public ActionResult DisableProfilingUI() 
+        {
+            SampleWeb.MvcApplication.DisableProfilingResults = true;
+            return Redirect("/");
+        }
+
         public ActionResult Index()
         {
             var profiler = MiniProfiler.Current;

@@ -26,6 +26,14 @@
 
     <p>
         <a href="/profiler/results-index">Show all profiling sessions</a>
+        @if (SampleWeb.MvcApplication.DisableProfilingResults)
+        {
+            <a href="/Home/EnableProfilingUI">Enable profiling UI (disabled)</a>
+        }
+        else
+        { 
+            <a href="/Home/DisableProfilingUI">Disable profiling UI</a>
+        }
     </p>
 </div>
 

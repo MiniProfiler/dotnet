@@ -337,10 +337,14 @@ namespace StackExchange.Profiling.UI
 
             if (needsSave) MiniProfiler.Settings.Storage.Save(profiler);
 
-            string message;
-            if (!AuthorizeRequest(context, isList: false, message: out message))
+
+            var authorize = MiniProfiler.Settings.Results_Authorize;
+
+
+            if (authorize != null && !authorize(context.Request))
             {
-                return message;
+                context.Response.ContentType = "application/json";
+                return "hidden".ToJson();
             }
 
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);

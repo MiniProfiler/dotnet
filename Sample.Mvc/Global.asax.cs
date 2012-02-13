@@ -95,6 +95,8 @@ namespace SampleWeb
         }
 
 
+        public static bool DisableProfilingResults { get; set; }
+
         /// <summary>
         /// Customize aspects of the MiniProfiler.
         /// </summary>
@@ -135,7 +137,7 @@ namespace SampleWeb
             MiniProfiler.Settings.Results_Authorize = (request) =>
             {
                 // you may implement this if you need to restrict visibility of profiling on a per request basis 
-                return true; // all requests are kosher
+                return !DisableProfilingResults; 
             };
 
             // the list of all sessions in the store is restricted by default, you must return true to alllow it
