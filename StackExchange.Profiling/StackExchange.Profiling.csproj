@@ -69,12 +69,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\Link.cs" />
-    <Compile Include="Data\ProfiledDbCommand.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Data\ProfiledDbConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Data\ProfiledDbCommand.cs" />
+    <Compile Include="Data\ProfiledDbConnection.cs" />
     <Compile Include="Data\ProfiledDbDataReader.cs" />
     <Compile Include="Data\ProfiledDbTransaction.cs" />
     <Compile Include="Helpers\IStopwatch.cs" />
