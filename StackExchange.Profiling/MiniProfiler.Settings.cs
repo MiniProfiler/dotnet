@@ -36,8 +36,8 @@ namespace StackExchange.Profiling
 
                 // sha256 is FIPS BABY - FIPS 
                 byte[] contents = System.IO.File.ReadAllBytes(typeof(Settings).Assembly.Location);
-                var sha256 = System.Security.Cryptography.SHA256.Create();
-                Version = System.Convert.ToBase64String(sha256.ComputeHash(contents));
+                using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                    Version = System.Convert.ToBase64String(sha256.ComputeHash(contents));
 
                 typesToExclude = new HashSet<string>
                 {
