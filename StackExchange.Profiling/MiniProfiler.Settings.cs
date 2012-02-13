@@ -34,11 +34,10 @@ namespace StackExchange.Profiling
 
                 // this assists in debug and is also good for prd, the version is a hash of the main assembly 
 
+                // sha256 is FIPS BABY - FIPS 
                 byte[] contents = System.IO.File.ReadAllBytes(typeof(Settings).Assembly.Location);
-                var md5 = System.Security.Cryptography.MD5.Create();
-                Guid hash = new Guid(md5.ComputeHash(contents));
-
-                Version = hash.ToString();
+                var sha256 = System.Security.Cryptography.SHA256.Create();
+                Version = System.Convert.ToBase64String(sha256.ComputeHash(contents));
 
                 typesToExclude = new HashSet<string>
                 {
