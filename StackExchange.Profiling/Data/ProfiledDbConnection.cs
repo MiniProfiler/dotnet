@@ -8,6 +8,7 @@ namespace StackExchange.Profiling.Data
     /// <summary>
     /// Wraps a database connection, allowing sql execution timings to be collected when a <see cref="MiniProfiler"/> session is started.
     /// </summary>
+    [System.ComponentModel.DesignerCategory("")]
     public class ProfiledDbConnection : DbConnection, ICloneable
     {
         /// <summary>
