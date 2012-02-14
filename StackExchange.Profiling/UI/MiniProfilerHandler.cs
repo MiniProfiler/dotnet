@@ -129,7 +129,8 @@ namespace StackExchange.Profiling.UI
                 var route = new Route(prefix + "{filename}", handler)
                 {
                     // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
-                    Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
+                    Defaults = new RouteValueDictionary( new { controller = "MiniProfilerHandler", action = "ProcessRequest" }),
+                    Constraints = new RouteValueDictionary( new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
                 };
 
                 // put our routes at the beginning, like a boss
