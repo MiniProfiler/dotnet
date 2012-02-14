@@ -123,6 +123,12 @@ namespace StackExchange.Profiling
             }
 
             /// <summary>
+            /// The maximum number of unviewed profiler sessions (set this low cause we don't want to blow up headers)
+            /// </summary>
+            [DefaultValue(20)]
+            public static int MaxUnviewedProfiles { get; set; }
+
+            /// <summary>
             /// The max length of the stack string to report back; defaults to 120 chars.
             /// </summary>
             [DefaultValue(120)]

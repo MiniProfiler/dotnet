@@ -96,9 +96,18 @@ namespace StackExchange.Profiling
 
             try
             {
-                var arrayOfIds = StackExchange.Profiling.MiniProfiler.Settings.Storage.GetUnviewedIds(current.User).ToJson();
+                var arrayOfIds = StackExchange.Profiling.MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
+
+                if (arrayOfIds != null && arrayOfIds.Count > MiniProfiler.Settings.MaxUnviewedProfiles) 
+                {
+                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles)) 
+                    {
+                        StackExchange.Profiling.MiniProfiler.Settings.Storage.SetViewed(current.User, id);
+                    }
+                }
+
                 // allow profiling of ajax requests
-                response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds);
+                response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
             }
             catch { } // headers blew up
         }
