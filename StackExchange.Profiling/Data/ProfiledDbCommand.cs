@@ -251,6 +251,8 @@ namespace StackExchange.Profiling.Data
             base.Dispose(disposing);
         }
 
+        public DbCommand InternalCommand { get { return _cmd; } }
+
 
         public ProfiledDbCommand Clone()
         { // EF expects ICloneable

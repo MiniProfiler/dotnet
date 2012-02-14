@@ -54,9 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EFProfiledDbConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="EFProfiledDbConnection.cs" />
     <Compile Include="EFProfiledOdbcProviderFactory.cs" />
     <Compile Include="EFProfiledOleDbProviderFactory.cs" />
     <Compile Include="EFProfiledSqlClientDbProviderFactory.cs" />
