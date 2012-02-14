@@ -36,6 +36,7 @@ namespace StackExchange.Profiling.UI
                 }};                
                 
                 var initMp = function(){{
+                    window.jQueryMP = $.noConflict();
                     load(""{path}includes.js?v={version}"",function(){{
                         MiniProfiler.init({{
                             ids: {ids},
@@ -52,11 +53,8 @@ namespace StackExchange.Profiling.UI
                     }});
                 }};
 
-                if (!window.jQuery) {{
-                    load('{path}jquery.1.6.2.js', initMp);
-                }} else {{
-                    initMp();
-                }}
+                 load('{path}jquery.1.6.2.js', initMp);
+                
         }};
 
         var w = 0;        

@@ -701,7 +701,7 @@
             return (duration || 0).toFixed(1);
         }
     };
-})(jQuery);
+})(jQueryMP);
 
 // prettify.js
 // http://code.google.com/p/google-code-prettify/
