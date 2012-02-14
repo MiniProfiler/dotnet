@@ -113,6 +113,11 @@ namespace StackExchange.Profiling.SqlFormatters
 
             if (dontQuote.Contains(p.DbType))
             {
+                if (p.DbType == "Boolean")
+                {
+                    return p.Value == "True" ? "1" : "0";
+                }
+
                 return p.Value;
             }
 
