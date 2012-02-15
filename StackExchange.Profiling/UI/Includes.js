@@ -113,7 +113,7 @@
     };
 
     var renderTemplate = function (json) {
-        return $('#profilerTemplate').tmpl997(json);
+        return $('#profilerTemplate').tmpl(json);
     };
 
     var buttonShow = function (json) {
@@ -471,9 +471,10 @@
                 sc.async = "async";
                 sc.type = "text/javascript";
                 sc.src = s;
+                var done = false;
                 sc.onload = sc.onreadystatechange = function (_, abort) {
                     if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {
-                        if (!abort) f();
+                        if (!abort && !done) { done = true; f(); }
                     }
                 };
                 document.getElementsByTagName('head')[0].appendChild(sc);
@@ -487,8 +488,8 @@
                     $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
                 }
 
-                if (!$.tmpl997) {
-                    load(options.path + 'jquery.tmpl.js', doInit);
+                if (!$.tmpl) {
+                    load(options.path + 'jquery.tmpl.js?v=' + options.version, doInit);
                 } else {
                     doInit();
                 }

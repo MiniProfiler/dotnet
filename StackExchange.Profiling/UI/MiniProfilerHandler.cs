@@ -26,9 +26,10 @@ namespace StackExchange.Profiling.UI
                     sc.async = ""async"";
                     sc.type = ""text/javascript"";
                     sc.src = s;
+                    var l = false;
                     sc.onload = sc.onreadystatechange  = function(_, abort) {{
-                        if (!sc.readyState || /loaded|complete/.test(sc.readyState)) {{
-                            if (!abort) f();
+                        if (!l && (!sc.readyState || /loaded|complete/.test(sc.readyState))) {{
+                            if (!abort){{l=true; f();}}
                         }}
                     }};
 
@@ -36,7 +37,6 @@ namespace StackExchange.Profiling.UI
                 }};                
                 
                 var initMp = function(){{
-                    window.jQueryMP = $.noConflict();
                     load(""{path}includes.js?v={version}"",function(){{
                         MiniProfiler.init({{
                             ids: {ids},
@@ -53,20 +53,27 @@ namespace StackExchange.Profiling.UI
                     }});
                 }};
 
-                 load('{path}jquery.1.6.2.js', initMp);
+                 load('{path}jquery.1.6.2.js?v={version}', initMp);
                 
         }};
 
         var w = 0;        
+        var f = false;
         var deferInit = function(){{ 
+            if (f) return;
             if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && w < 10000){{
                 setTimeout(deferInit, 100);
                 w += 100;
             }} else {{
+                f = true;
                 init();
             }}
         }};
-        deferInit(); 
+        if (document.addEventListener) {{
+            document.addEventListener('DOMContentLoaded',deferInit);
+        }}
+        var o = window.onload;
+        window.onload = function(){{if(o)o; deferInit()}};
     }})();
 </script>";
 
@@ -246,7 +253,7 @@ namespace StackExchange.Profiling.UI
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>List of profiling sessions</title>")
                 .AppendLine()
-                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js" + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version + "'></script>")
