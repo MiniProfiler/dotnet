@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using StackExchange.Profiling.Data;
@@ -243,12 +243,31 @@ namespace StackExchange.Profiling
             return dbParameter.Size;
         }
 
+        /// <summary>Holds the maximum size that will be stored for byte[] parameters</summary>
+        const int MaxByteParameterSize = 512;
+
         private static string GetFormattedParameterValue(DbParameter dbParameter)
         {
             object rawValue = dbParameter.Value;
             if (rawValue == null || rawValue == DBNull.Value)
             {
                 return null;
+            }
+            
+            // This assumes that all SQL variants use the same parameter format, it works for T-SQL
+            if (dbParameter.DbType == System.Data.DbType.Binary)
+            {
+                var bytes = rawValue as byte[];
+                if (bytes != null &&
+                    bytes.Length <= MaxByteParameterSize)
+                {
+                    return "0x" + BitConverter.ToString(bytes).Replace("-", "");
+                }
+                else
+                {
+                    // Parameter is too long, so blank it instead
+                    return null;
+                }
             }
 
             return rawValue is DateTime
