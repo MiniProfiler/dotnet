@@ -440,6 +440,25 @@
             });
         }
 
+        // more Asp.Net callbacks 
+        if (typeof (WebForm_ExecuteCallback) == "function") {
+            WebForm_ExecuteCallback = (function (callbackObject) {
+                // Store original function
+                var original = WebForm_ExecuteCallback;
+
+                return function (callbackObject) {
+                    original(callbackObject);
+
+                    var stringIds = callbackObject.xmlRequest.getResponseHeader('X-MiniProfiler-Ids');
+                    if (stringIds) {
+                        var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                        fetchResults(ids);
+                    }
+                }
+
+            })();
+        }
+
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
