@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +37,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 {DbType.DateTime, p => "datetime"},
                 {DbType.Guid, p => "uniqueidentifier"},
                 {DbType.Boolean, p => "bit"},
+                {DbType.Binary, GetWithLenFormatter("varbinary")},
             };
 
         }
@@ -103,7 +104,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 .ToString();
         }
 
-        static readonly string[] dontQuote = new string[] {"Int16","Int32","Int64", "Boolean"};
+        static readonly string[] dontQuote = new string[] {"Int16","Int32","Int64", "Boolean", "Byte[]"};
         private string PrepareValue(SqlTimingParameter p)
         {
             if (p.Value == null)
