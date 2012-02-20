@@ -42,12 +42,28 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// To be used inline in razor pages
+        /// To be used inline in razor pages - times a script be sure to call InitClientTimings first
         /// </summary>
-        public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> stuff)
+        public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> html)
         {
-            var result = stuff(null).ToHtmlString();
+            var result = html(null).ToHtmlString();
             return new HtmlString(TimeScript(name, result));
+        }
+
+        /// <summary>
+        /// To be used inline in razor pages - times a script be sure to call InitClientTimings first
+        /// </summary>
+        public static IHtmlString TimeScript(this WebPageBase page, string name, IHtmlString html)
+        {
+            return new HtmlString(TimeScript(name, html.ToHtmlString()));
+        }
+
+        /// <summary>
+        /// To be used inline in razor pages - times a script be sure to call InitClientTimings first
+        /// </summary>
+        public static IHtmlString TimeScript(this WebPageBase page, string name, string html)
+        {
+            return new HtmlString(TimeScript(name, html));
         }
     }
 }
