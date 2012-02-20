@@ -408,8 +408,7 @@
             fetchResults(options.ids);
         }
 
-        // fetch profile results for any ajax calls
-        $(document).ajaxComplete(function (e, xhr, settings) {
+        var jQueryAjaxComplete = function (e, xhr, settings) {
             if (xhr) {
                 // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
                 var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
@@ -418,8 +417,12 @@
                     fetchResults(ids);
                 }
             }
-        });
+        };
 
+        // fetch profile results for any ajax calls
+        if (jQuery && jQuery(document) && jQuery(document).ajaxComplete) {
+            jQuery(document).ajaxComplete(jQueryAjaxComplete);
+        }
 
         // fetch results after ASP Ajax calls
         if (typeof (Sys) != 'undefined' && typeof (Sys.WebForms) != 'undefined' && typeof (Sys.WebForms.PageRequestManager) != 'undefined') {

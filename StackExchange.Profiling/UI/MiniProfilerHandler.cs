@@ -53,7 +53,7 @@ namespace StackExchange.Profiling.UI
                     }});
                 }};
 
-                 load('{path}jquery.1.6.2.js?v={version}', initMp);
+                 load('{path}jquery.1.7.1.js?v={version}', initMp);
                 
         }};
 
@@ -169,7 +169,7 @@ namespace StackExchange.Profiling.UI
 
             switch (Path.GetFileNameWithoutExtension(path))
             {
-                case "jquery.1.6.2":
+                case "jquery.1.7.1":
                 case "jquery.tmpl":
                 case "includes":
                 case "list":
@@ -253,7 +253,7 @@ namespace StackExchange.Profiling.UI
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>List of profiling sessions</title>")
                 .AppendLine()
-                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.6.2.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.7.1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version + "'></script>")
@@ -388,7 +388,7 @@ namespace StackExchange.Profiling.UI
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>{0} ({1} ms) - StackExchange.Profiling Results</title>", profiler.Name, profiler.DurationMilliseconds)
                 .AppendLine()
-                .AppendLine("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>")
+                .AppendLine("<script type='text/javascript' src='" +  VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash() + "jquery.1.7.1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .Append("<script type='text/javascript'> var profiler = ")
                 .Append(MiniProfiler.ToJson(profiler))
                 .AppendLine(";</script>")

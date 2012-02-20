@@ -133,7 +133,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\jquery.1.6.2.js" />
+    <EmbeddedResource Include="UI\jquery.1.7.1.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\jquery.tmpl.js" />
