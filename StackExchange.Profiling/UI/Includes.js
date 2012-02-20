@@ -72,7 +72,7 @@
 
             if (id == options.currentId) {
 
-                if (mPt != null) {
+                if (window.mPt) {
                     clientProbes = mPt.t;
                     for (var i = 0; i < clientProbes.length; i++) {
                         clientProbes[i].d = clientProbes[i].d.getTime();
