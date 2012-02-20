@@ -105,29 +105,12 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
             }
         }
 
-        static string insertClientTimingSql = null;
         protected virtual void SaveClientTiming(DbConnection conn, MiniProfiler profiler)
         {
-            if (profiler.ClientTimings == null) return;
+            if (profiler.ClientTimings == null || profiler.ClientTimings.Timings == null || profiler.ClientTimings.Timings.Count == 0 ) return;
 
-            if (insertClientTimingSql == null)
-            {
-                string[] cols = typeof(ClientTimings).GetProperties().Where(p =>
-                {
-                    var attr = p.GetCustomAttributes(typeof(DataMemberAttribute), false);
-                    return attr != null && attr.Length == 1;
-                })
-                .Select(p => p.Name)
-                .ToArray();
-
-                insertClientTimingSql = "insert into MiniProfilerClientTimings(MiniProfilerId," + string.Join(",", cols) + ") values (@MiniProfilerId, " +
-                    string.Join(",", cols.Select(c => "@" + c)) + ")";
-            }
-
-            var dp = new DynamicParameters(profiler.ClientTimings);
-            dp.Add("@MiniProfilerId", profiler.Id);
-
-            conn.Execute(insertClientTimingSql, dp);
+            conn.Execute("insert into MiniProfilerClientTimings(MiniProfilerId,Name,Start,Duration) values (@Id, @Name, @Start, @Duration)",
+                profiler.ClientTimings.Timings.Select(t => new { Id = profiler.Id, t.Name, t.Start, t.Duration }));
         }
 
         /// <summary>
@@ -298,7 +281,7 @@ values      (@MiniProfilerId,
             { typeof(Timing), "select * from MiniProfilerTimings where MiniProfilerId = @id order by RowId" },
             { typeof(SqlTiming), "select * from MiniProfilerSqlTimings where MiniProfilerId = @id order by RowId" },
             { typeof(SqlTimingParameter), "select * from MiniProfilerSqlTimingParameters where MiniProfilerId = @id" },
-            { typeof(ClientTimings), "select * from MiniProfilerClientTimings where MiniProfilerId = @id"}
+            { typeof(ClientTimings.ClientTiming), "select * from MiniProfilerClientTimings where MiniProfilerId = @id"}
         };
 
         private static readonly string LoadSqlBatch = string.Join("\n", LoadSqlStatements.Select(pair => pair.Value));
@@ -358,7 +341,12 @@ values      (@MiniProfilerId,
                     var timings = multi.Read<Timing>().ToList();
                     var sqlTimings = multi.Read<SqlTiming>().ToList();
                     var sqlParameters = multi.Read<SqlTimingParameter>().ToList();
-                    var clientTimings = multi.Read<ClientTimings>().ToList();
+                    var clientTimingList = multi.Read<ClientTimings.ClientTiming>().ToList();
+                    ClientTimings clientTimings = null;
+                    if (clientTimingList.Count > 0)
+                    {
+                        clientTimings.Timings = clientTimingList;
+                    }
                     MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
                 }
             }
@@ -375,7 +363,13 @@ values      (@MiniProfilerId,
                 var timings = LoadFor<Timing>(conn, idParameter);
                 var sqlTimings = LoadFor<SqlTiming>(conn, idParameter);
                 var sqlParameters = LoadFor<SqlTimingParameter>(conn, idParameter);
-                var clientTimings = LoadFor<ClientTimings>(conn, idParameter);
+                var clientTimingList = LoadFor<ClientTimings.ClientTiming>(conn, idParameter).ToList();
+                ClientTimings clientTimings = null;
+                if (clientTimingList.Count > 0)
+                {
+                    clientTimings = new ClientTimings();
+                    clientTimings.Timings = clientTimingList;
+                }
                 MapTimings(result, timings, sqlTimings, sqlParameters,clientTimings);
             }
 
@@ -516,28 +510,9 @@ create table MiniProfilerSqlTimingParameters
 create table MiniProfilerClientTimings
 (
   MiniProfilerId    uniqueidentifier not null,
-  RedirectCount int,
-  NavigationStart decimal(7,1),
-  UnloadEventStart decimal(7,1),
-  UnloadEventEnd decimal(7,1),
-  RedirectStart decimal(7,1),
-  RedirectEnd decimal(7,1),
-  FetchStart decimal(7,1),
-  DomainLookupStart decimal(7,1),
-  DomainLookupEnd decimal(7,1),
-  ConnectStart decimal(7,1),
-  ConnectEnd decimal(7,1),
-  SecureConnectionStart decimal(7,1),
-  RequestStart decimal(7,1),
-  ResponseStart decimal(7,1),
-  ResponseEnd decimal(7,1),
-  DomLoading decimal(7,1),
-  DomInteractive decimal(7,1),
-  DomContentLoadedEventStart decimal(7,1),
-  DomContentLoadedEventEnd decimal(7,1),
-  DomComplete decimal(7,1),
-  LoadEventStart decimal(7,1),
-  LoadEventEnd decimal(7,1)     
+  Name nvarchar(200) not null,
+  Start decimal(7,1),
+  Duration decimal(7,1)    
 )
 
 ";

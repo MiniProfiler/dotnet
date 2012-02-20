@@ -54,6 +54,7 @@
           <thead>
             <tr>
               <th>client event</th>
+              <th>duration (ms)</th>
               <th>time from start (ms)</th>
             </tr>
           </thead>
@@ -62,7 +63,12 @@
             <tr class="{{if $value.isTrivial }}trivial{{/if}}">
               <td class="label">${$value.name}</td>
               <td class="duration">
-                <span class="unit">+</span>${MiniProfiler.formatDuration($value.duration)}
+                {{if $value.duration >= 0}}
+                <span class="unit"></span>${MiniProfiler.formatDuration($value.duration)}
+                {{/if}}
+              </td>
+              <td class="start">
+                <span class="unit">+</span>${MiniProfiler.formatDuration($value.start)}
               </td>
             </tr>
             {{/each}}

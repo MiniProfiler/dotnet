@@ -55,6 +55,7 @@
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\StackOverflow\StackOverflow\lib\System.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +96,7 @@
       <DependentUpon>MiniProfiler.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniProfiler.cs" />
+    <Compile Include="ClientTimingHelper.cs" />
     <Compile Include="MVCHelpers\ProfilingActionFilter.cs" />
     <Compile Include="MVCHelpers\ProfilingViewEngine.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />

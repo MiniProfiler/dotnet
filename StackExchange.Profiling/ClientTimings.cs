@@ -7,10 +7,39 @@ using System.Runtime.Serialization;
 
 namespace StackExchange.Profiling
 {
+    /// <summary>
+    /// Times collected from the client
+    /// </summary>
     [DataContract]
     public class ClientTimings
     {
+        /// <summary>
+        /// A client timing probe
+        /// </summary>
+        [DataContract]
+        public class ClientTiming
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember(Order = 1)]
+            public string Name { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember(Order = 2)]
+            public Decimal Start { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember(Order = 3)]
+            public Decimal Duration { get; set; }
+        }
+
         const string clientTimingPrefix = "clientPerformance[timing][";
+        const string clientProbesPrefix = "clientProbes[";
 
         /// <summary>
         /// Returns null if there is not client timing stuff
@@ -19,18 +48,24 @@ namespace StackExchange.Profiling
         /// <returns></returns>
         public static ClientTimings FromRequest(HttpRequest request)
         {
+
             ClientTimings timing = null;
             long navigationStart = 0;
             long.TryParse(request[clientTimingPrefix + "navigationStart]"], out navigationStart);
             if (navigationStart > 0)
             {
+                List<ClientTiming> timings = new List<ClientTiming>();
+
                 timing = new ClientTimings();
 
                 int redirectCount = 0;
                 int.TryParse(request["clientPerformance[navigation][redirectCount]"], out redirectCount);
                 timing.RedirectCount = redirectCount;
 
-                foreach (string key in request.Form.Keys)
+                Dictionary<string, ClientTiming> clientPerf = new Dictionary<string, ClientTiming>();
+                Dictionary<int, ClientTiming> clientProbes = new Dictionary<int, ClientTiming>(); 
+
+                foreach (string key in request.Form.Keys.Cast<string>().OrderBy(i => i.IndexOf("Start]") > 0 ? "_" + i : i ))
                 {
                     if (key.StartsWith(clientTimingPrefix))
                     {
@@ -39,87 +74,115 @@ namespace StackExchange.Profiling
                         val -= navigationStart;
 
                         string parsedName = key.Substring(clientTimingPrefix.Length, (key.Length-1) - clientTimingPrefix.Length);
-
                         // just ignore stuff that is negative ... not relevant
                         if (val > 0)
                         {
-                            switch (parsedName)
+                            if (parsedName.EndsWith("Start"))
                             {
-                                case "unloadEventStart" :
-                                    timing.UnloadEventStart = val;
-                                    break;
-                                case "unloadEventEnd":
-                                    timing.UnloadEventEnd = val;
-                                    break;
-                                case "redirectStart":
-                                    timing.RedirectStart = val;
-                                    break;
-                                case "redirectEnd":
-                                    timing.RedirectEnd = val;
-                                    break;
-                                case "fetchStart":
-                                    timing.FetchStart = val;
-                                    break;
-                                case "domainLookupStart":
-                                    timing.DomainLookupStart = val;
-                                    break;
-                                case "domainLookupEnd":
-                                    timing.DomainLookupEnd = val;
-                                    break;
-                                case "connectStart":
-                                    timing.ConnectStart = val;
-                                    break;
-                                case "connectEnd":
-                                    timing.ConnectEnd = val;
-                                    break;
-                                case "secureConnectionStart":
-                                    timing.SecureConnectionStart = val;
-                                    break;
-                                case "requestStart":
-                                    timing.RequestStart = val;
-                                    break;
-                                case "responseStart":
-                                    timing.ResponseStart = val;
-                                    break;
-                                case "responseEnd":
-                                    timing.ResponseEnd = val;
-                                    break;
-                                case "domLoading":
-                                    timing.DomLoading = val;
-                                    break;
-                                case "domInteractive":
-                                    timing.DomInteractive = val;
-                                    break;
-                                case "domContentLoadedEventStart":
-                                    timing.DomContentLoadedEventStart = val;
-                                    break;
-                                case "domContentLoadedEventEnd":
-                                    timing.DomContentLoadedEventEnd = val;
-                                    break;
-                                case "domComplete":
-                                    timing.DomComplete = val;
-                                    break;
-                                case "loadEventStart":
-                                    timing.LoadEventStart = val;
-                                    break;
-                                case "loadEventEnd":
-                                    timing.LoadEventEnd = val;
-                                    break;
-                                default:
-                                    break;
+                                var shortName = parsedName.Substring(0, parsedName.Length - 5);
+                                clientPerf[shortName] = new ClientTiming {Duration = -1, Name = parsedName, Start = val};
+                            }
+                            else if (parsedName.EndsWith("End"))
+                            {
+                                var shortName = parsedName.Substring(0, parsedName.Length - 3);
+                                ClientTiming t;
+                                if (clientPerf.TryGetValue(shortName, out t))
+                                {
+                                    t.Duration = val - t.Start;
+                                    t.Name = shortName;
+                                }
+                            }
+                            else
+                            {
+                                clientPerf[parsedName] = new ClientTiming { Name = parsedName, Start = val, Duration = -1 };
                             }
                         }
+                    }
 
-                        
+                    if (key.StartsWith(clientProbesPrefix))
+                    { 
+                        int probeId;
+                        if (key.IndexOf("]") > 0 && int.TryParse(key.Substring(clientProbesPrefix.Length, key.IndexOf("]") - clientProbesPrefix.Length), out probeId))
+                        {
+                            ClientTiming t;
+                            if (!clientProbes.TryGetValue(probeId, out t))
+                            {
+                                t = new ClientTiming();
+                                clientProbes.Add(probeId, t);
+                            }
+
+                            if (key.EndsWith("[n]"))
+                            {
+                                t.Name = request[key];
+                            }
+                            if (key.EndsWith("[d]")) 
+                            {
+                                long val = 0;
+                                long.TryParse(request[key], out val);
+                                if (val > 0)
+                                {
+                                    t.Start = val - navigationStart;
+                                }
+                            }
+                        }
                     }
                 }
+
+                foreach (var group in clientProbes
+                          .Values.OrderBy(p => p.Name)
+                          .GroupBy(p => p.Name))
+                {
+                    ClientTiming current = null;
+                    foreach (var item in group)
+                    {
+                        if (current == null)
+                        {
+                            current = item;
+                        }
+                        else
+                        {
+                            current.Duration = item.Start - current.Start;
+                            timings.Add(current);
+                            current = null;
+                        }
+                    }
+                }
+
+                foreach (var item in clientPerf.Values)
+                {
+                    item.Name = SentenceCase(item.Name);
+                }
+                timings.AddRange(clientPerf.Values);
+                timing.Timings = timings.OrderBy(t => t.Start).ToList();
             }
             return timing;
+
         }
 
-        private ClientTimings()
+        private static string SentenceCase(string s)
         {
-
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (i == 0)
+                {
+                    sb.Append(Char.ToUpper(s[0]));
+                    continue;
+                }
+                else if (s[i] == char.ToUpper(s[i])) 
+                {
+                    sb.Append(' ');
+                }
+                sb.Append(s[i]);
+            }
+            return sb.ToString();
+        }
+        
+        /// <summary>
+        /// Stores information about client perf
+        /// </summary>
+        public ClientTimings()
+        {
         }
 
         /// <summary>
@@ -129,130 +192,10 @@ namespace StackExchange.Profiling
         public int RedirectCount { get; set; }
 
         /// <summary>
-        /// 
+        /// List of client side timings
         /// </summary>
         [DataMember(Order = 2)]
-        public Decimal NavigationStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 3)]
-        public Decimal UnloadEventStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 4)]
-        public Decimal UnloadEventEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 5)]
-        public Decimal RedirectStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 6)]
-        public Decimal RedirectEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 7)]
-        public Decimal FetchStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 8)]
-        public Decimal DomainLookupStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 9)]
-        public Decimal DomainLookupEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 10)]
-        public Decimal ConnectStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 11)]
-        public Decimal ConnectEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 12)]
-        public Decimal SecureConnectionStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 13)]
-        public Decimal RequestStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 14)]
-        public Decimal ResponseStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 15)]
-        public Decimal ResponseEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 16)]
-        public Decimal DomLoading { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 17)]
-        public Decimal DomInteractive { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 18)]
-        public Decimal DomContentLoadedEventStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 19)]
-        public Decimal DomContentLoadedEventEnd { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 20)]
-        public Decimal DomComplete { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 21)]
-        public Decimal LoadEventStart { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(Order = 22)]
-        public Decimal LoadEventEnd { get; set; }
+        public List<ClientTiming> Timings { get; set; }
 
     }
 }

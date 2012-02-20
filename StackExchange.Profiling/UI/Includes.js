@@ -68,8 +68,19 @@
             id = ids[i];
 
             var clientPerformance = null;
+            var clientProbes = null;
 
             if (id == options.currentId) {
+
+                if (mPt != null) {
+                    clientProbes = mPt.t;
+                    for (var i = 0; i < clientProbes.length; i++) {
+                        clientProbes[i].d = clientProbes[i].d.getTime();
+                    }
+
+                    mPt.t = [];
+                }
+
                 clientPerformance = getClientPerformance();
 
                 if (clientPerformance != null) {
@@ -95,7 +106,7 @@
 
                 $.ajax({
                     url: options.path + 'results',
-                    data: { id: id, clientPerformance: clientPerformance, popup: 1 },
+                    data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes, popup: 1 },
                     dataType: 'json',
                     type: 'POST',
                     success: function (json) {
@@ -522,6 +533,16 @@
 
         },
 
+        getClientTimingByName: function (clientTiming, name) {
+
+            for (var i = 0; i < clientTiming.Timings.length; i++) {
+                if (clientTiming.Timings[i].Name == name) {
+                    return clientTiming.Timings[i];
+                }
+            }
+            return { Name: name, Duration: "", Start: "" };
+        },
+
         renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
             if (jsonDate) {
                 return (typeof jsonDate === 'string') ? new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10)).toUTCString() : jsonDate;
@@ -551,20 +572,22 @@
         },
 
         getClientTimings: function (clientTimings) {
-
             var list = [];
-            var p;
-            for (p in clientTimings) {
-                if (clientTimings.hasOwnProperty(p) && p != "RedirectCount" && clientTimings[p] > 0) {
-                    list.push(
-                    {
-                        isTrivial: !(p == "DomComplete" || p == "ResponseStart"),
-                        name: p.replace(/([A-Z])/g, function ($1) { return " " + $1; }),
-                        duration: clientTimings[p]
-                    });
-                }
+            var t;
+            for (var i = 0; i < clientTimings.Timings.length; i++) {
+                t = clientTimings.Timings[i];
+                var trivial = t.Name != "Dom Complete" && t.Name != "Response";
+                trivial = t.Duration < 2 ? trivial : false;
+                list.push(
+                {
+                    isTrivial: trivial,
+                    name: t.Name,
+                    duration: t.Duration,
+                    start: t.Start
+                });
             }
-            list.sort(function (a, b) { return a.duration - b.duration; });
+
+            list.sort(function (a, b) { return a.start - b.start; });
             return list;
         },
 

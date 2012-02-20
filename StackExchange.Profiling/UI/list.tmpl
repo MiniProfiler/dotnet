@@ -24,9 +24,9 @@
     <td class="time">${DurationMillisecondsInSql}</td>
     <td class="time">${DurationMilliseconds}</td>
     {{if ClientTimings}}
-    <td class="time">${ClientTimings.RequestStart}</td>
-    <td class="time">${ClientTimings.ResponseStart}</td>
-    <td class="time">${ClientTimings.DomComplete}</td>
+    <td class="time">${MiniProfiler.getClientTimingByName(ClientTimings,"Request").Start}</td>
+    <td class="time">${MiniProfiler.getClientTimingByName(ClientTimings,"Response").Start}</td>
+    <td class="time">${MiniProfiler.getClientTimingByName(ClientTimings,"Dom Complete").Start}</td>
     {{else}}
     <td colspan="3"></td>
     {{/if}}

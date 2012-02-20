@@ -83,7 +83,7 @@ namespace StackExchange.Profiling.Storage
         /// Giving freshly selected collections, this method puts them in the correct
         /// hierarchy under the 'result' MiniProfiler.
         /// </summary>
-        protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings, List<SqlTimingParameter> sqlParameters, List<ClientTimings> clientTimings)
+        protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings, List<SqlTimingParameter> sqlParameters, ClientTimings clientTimings)
         {
             var stack = new Stack<Timing>();
 
@@ -117,7 +117,7 @@ namespace StackExchange.Profiling.Storage
                 stack.Push(cur);
             }
 
-            result.ClientTimings = clientTimings.FirstOrDefault();
+            result.ClientTimings = clientTimings;
 
             // TODO: .Root does all the above work again, but it's used after [DataContract] deserialization; refactor it out somehow
             result.Root = timings.First();
