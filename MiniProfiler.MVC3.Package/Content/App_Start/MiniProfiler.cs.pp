@@ -46,6 +46,20 @@ namespace $rootnamespace$.App_Start
 
             //Setup profiler for Controllers via a Global ActionFilter
             GlobalFilters.Filters.Add(new ProfilingActionFilter());
+
+			// You can use this to check if a request is allowed to view results
+            //MiniProfiler.Settings.Results_Authorize = (request) =>
+            //{
+                // you should implement this if you need to restrict visibility of profiling on a per request basis 
+            //    return !DisableProfilingResults; 
+            //};
+
+            // the list of all sessions in the store is restricted by default, you must return true to alllow it
+            //MiniProfiler.Settings.Results_List_Authorize = (request) =>
+            //{
+                // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
+                //return true; // all requests are kosher
+            //};
         }
 
         public static void PostStart()
