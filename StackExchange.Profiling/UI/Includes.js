@@ -1,4 +1,5 @@
-﻿var MiniProfiler = (function ($) {
+﻿"use strict";
+var MiniProfiler = (function ($) {
 
     var options,
         container,
@@ -64,20 +65,21 @@
 
     var waitedForEnd = 0;
     var fetchResults = function (ids) {
-        for (var i = 0, id; i < ids.length; i++) {
+        var clientPerformance, clientProbes, i, j, p, id, idx;
+
+        for (i = 0; i < ids.length; i++) {
             id = ids[i];
 
-            var clientPerformance = null;
-            var clientProbes = null;
+            clientPerformance = null;
+            clientProbes = null;
 
             if (id == options.currentId) {
 
                 if (window.mPt) {
                     clientProbes = mPt.t;
-                    for (var i = 0; i < clientProbes.length; i++) {
-                        clientProbes[i].d = clientProbes[i].d.getTime();
+                    for (j = 0; j < clientProbes.length; j++) {
+                        clientProbes[j].d = clientProbes[j].d.getTime();
                     }
-
                     mPt.t = [];
                 }
 
@@ -88,7 +90,7 @@
                     var copy = { navigation: {}, timing: {} };
 
                     var timing = $.extend({}, clientPerformance.timing);
-                    var p;
+                    
                     for (p in timing) {
                         if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
                             copy.timing[p] = timing[p];
@@ -102,7 +104,7 @@
             }
 
             if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
-                var idx = fetchingIds.push(id) - 1;
+                idx = fetchingIds.push(id) - 1;
 
                 $.ajax({
                     url: options.path + 'results',
