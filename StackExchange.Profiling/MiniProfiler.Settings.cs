@@ -199,6 +199,12 @@ namespace StackExchange.Profiling
             public static string RouteBasePath { get; set; }
 
             /// <summary>
+            /// Maximum payload size for json responses in bytes defaults to 2097152 characters, which is equivalent to 4 MB of Unicode string data.
+            /// </summary>
+            [DefaultValue(2097152)]
+            public static int MaxJsonResponseSize { get; set; }
+
+            /// <summary>
             /// Understands how to save and load MiniProfilers. Used for caching between when
             /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.
             /// </summary>
@@ -270,6 +276,7 @@ namespace StackExchange.Profiling
             /// Allows switching out stopwatches for unit testing.
             /// </summary>
             internal static Func<IStopwatch> StopwatchProvider { get; set; }
+           
         }
     }
 }

@@ -369,7 +369,7 @@ namespace StackExchange.Profiling
         {
             if (profiler == null) return null;
 
-            var result = new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.Serialize(profiler);
+            var result = new JavaScriptSerializer { MaxJsonLength = MiniProfiler.Settings.MaxJsonResponseSize }.Serialize(profiler);
             return result;
         }
 
@@ -380,7 +380,7 @@ namespace StackExchange.Profiling
         {
             if (string.IsNullOrWhiteSpace(json)) return null;
 
-            var result = new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.Deserialize<MiniProfiler>(json);
+            var result = new JavaScriptSerializer { MaxJsonLength = MiniProfiler.Settings.MaxJsonResponseSize }.Deserialize<MiniProfiler>(json);
             return result;
         }
 
