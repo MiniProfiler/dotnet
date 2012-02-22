@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>MiniProfiler.MVC3</id>
-    <version>2.0-beta</version>
+    <version>2.0.0-rc1</version>
     <authors>Marc Gravell,Sam Saffron,Jarrod Dixon</authors>
     <owners>Marc Gravell,Sam Saffron,Jarrod Dixon,Scott Hanselman</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
@@ -12,7 +12,7 @@
     <language>en-US</language>
     <tags>profiler sql mvc asp.net performance timing</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="2.0-beta" />
+      <dependency id="MiniProfiler" version="2.0.0-rc1" />
       <dependency id="WebActivator" version="1.4" />
     </dependencies>
     <frameworkAssemblies>
@@ -20,8 +20,8 @@
   </frameworkAssemblies>
   </metadata>
   <files>
-	<file src="Content\Views\Shared\*.cshtml" target="Content\Views\Shared"/>
-	<file src="Content\App_Start\MiniProfiler.cs.pp" target="Content\App_Start"/>
-  <file src="tools\install.ps1" target="tools\install.ps1" />
+	<file src="MiniProfiler.MVC3.Package\Content\Views\Shared\*.cshtml" target="Content\Views\Shared"/>
+	<file src="MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp" target="Content\App_Start"/>
+  <file src="MiniProfiler.MVC3.Package\tools\install.ps1" target="tools\install.ps1" />
   </files>
 </package>

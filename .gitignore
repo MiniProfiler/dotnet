@@ -5,3 +5,5 @@ obj
 *.sqlite
 *.user
 *.sdf
+*.nupkg
+nuget.exe

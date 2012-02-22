@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler</id>
-    <version>2.0-beta</version>
+    <version>2.0.0-rc1</version>
     <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
     <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
     <description>Lightweight mini-profiler, in particular designed for ASP.NET MVC 3 and ASP.NET sites</description>
@@ -12,6 +12,6 @@
     <language>en-US</language>
   </metadata>
   <files>
-    <file src="StackExchange.Profiling\bin\Release\StackExchange.Profiling.*" target="lib\net40" />
+    <file src="StackExchange.Profiling\bin\Release\MiniProfiler.*" target="lib\net40" />
   </files>
 </package>
