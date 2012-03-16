@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
@@ -34,10 +34,27 @@ namespace StackExchange.Profiling
 
                 // this assists in debug and is also good for prd, the version is a hash of the main assembly 
 
-                // sha256 is FIPS BABY - FIPS 
-                byte[] contents = System.IO.File.ReadAllBytes(typeof(Settings).Assembly.Location);
-                using (var sha256 = System.Security.Cryptography.SHA256.Create())
-                    Version = System.Convert.ToBase64String(sha256.ComputeHash(contents));
+                string location;
+                try
+                {
+                    location = typeof (Settings).Assembly.Location;
+                }
+                catch
+                {
+                    location = HttpContext.Current.Server.MapPath("~/bin/MiniProfiler.dll");
+                }
+
+                try
+                {
+                    // sha256 is FIPS BABY - FIPS 
+                    byte[] contents = System.IO.File.ReadAllBytes(location);
+                    using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                        Version = System.Convert.ToBase64String(sha256.ComputeHash(contents));
+                }
+                catch
+                {
+                    Version = Guid.NewGuid().ToString();
+                }
 
                 typesToExclude = new HashSet<string>
                 {
