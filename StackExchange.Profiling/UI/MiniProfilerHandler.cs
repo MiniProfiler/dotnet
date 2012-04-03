@@ -167,7 +167,7 @@ namespace StackExchange.Profiling.UI
             string output;
             string path = context.Request.AppRelativeCurrentExecutionFilePath;
 
-            switch (Path.GetFileNameWithoutExtension(path))
+            switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
             {
                 case "jquery.1.7.1":
                 case "jquery.tmpl":
