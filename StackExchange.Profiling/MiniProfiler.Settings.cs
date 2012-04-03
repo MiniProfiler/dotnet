@@ -71,7 +71,7 @@ namespace StackExchange.Profiling
                 assembliesToExclude = new HashSet<string>
                 {
                     // our assembly
-                    "StackExchange.Profiling",
+                    typeof(Settings).Assembly.GetName().Name,
 
                     // reflection emit
                     "Anonymously Hosted DynamicMethods Assembly",
@@ -90,6 +90,7 @@ namespace StackExchange.Profiling
 
             /// <summary>
             /// Assemblies to exclude from the stack trace report.
+            /// Add to this using the <see cref="ExcludeAssembly"/> method.
             /// </summary>
             public static IEnumerable<string> AssembliesToExclude
             {
@@ -98,6 +99,7 @@ namespace StackExchange.Profiling
 
             /// <summary>
             /// Types to exclude from the stack trace report.
+            /// Add to this using the <see cref="ExcludeType"/> method.
             /// </summary>
             public static IEnumerable<string> TypesToExclude
             {
@@ -106,6 +108,7 @@ namespace StackExchange.Profiling
 
             /// <summary>
             /// Methods to exclude from the stack trace report.
+            /// Add to this using the <see cref="ExcludeMethod"/> method.
             /// </summary>
             public static IEnumerable<string> MethodsToExclude
             {
