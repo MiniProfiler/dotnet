@@ -147,7 +147,7 @@ var MiniProfiler = (function ($) {
         toggleHidden(popup);
 
         // lightbox in the queries
-        popup.find('.queries-show').click(function () { queriesShow($(this), result); });
+        popup.find('.profiler-queries-show').click(function () { queriesShow($(this), result); });
 
         // limit count
         if (container.find('.profiler-result').length > options.maxTracesToShow)
@@ -156,13 +156,13 @@ var MiniProfiler = (function ($) {
     };
 
     var toggleHidden = function (popup) {
-        var trivial = popup.find('.toggle-trivial');
-        var childrenTime = popup.find('.toggle-duration-with-children');
-        var trivialGaps = popup.parent().find('.toggle-trivial-gaps');
+        var trivial = popup.find('.profiler-toggle-trivial');
+        var childrenTime = popup.find('.profiler-toggle-duration-with-children');
+        var trivialGaps = popup.parent().find('.profiler-toggle-trivial-gaps');
 
         var toggleIt = function (node) {
             var link = $(node),
-                klass = link.attr('class').substr('toggle-'.length),
+                klass = "profiler-" + link.attr('class').substr('profiler-toggle-'.length),
                 isHidden = link.text().indexOf('show') > -1;
 
             popup.parent().find('.' + klass).toggle(isHidden);
@@ -365,7 +365,7 @@ var MiniProfiler = (function ($) {
             prettyPrint();
 
             // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
-            popup.find('.queries-show').click(function () {
+            popup.find('.profiler-queries-show').click(function () {
                 queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
             });
         });
