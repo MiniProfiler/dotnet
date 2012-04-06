@@ -7,3 +7,5 @@ obj
 *.sdf
 *.nupkg
 nuget.exe
+Ruby/lib/html
+Ruby/*.gem
