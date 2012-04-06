@@ -41,7 +41,7 @@ namespace StackExchange.Profiling
                     return null;
             }
 
-            if (path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).ToUpperInvariant()))
+            if (context.Request.Path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.InvariantCultureIgnoreCase))
             {
                 return null;
             }
