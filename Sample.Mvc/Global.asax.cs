@@ -129,6 +129,7 @@ namespace SampleWeb
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
             MiniProfiler.Settings.ExcludeAssembly("NHibernate"); // Ignore any assembly named NHibernate
             MiniProfiler.Settings.ExcludeMethod("Flush");        // Ignore any method with the name of Flush
+           // MiniProfiler.Settings.ShowControls = true;
             MiniProfiler.Settings.StackMaxLength = 256;          // default is 120 characters
 
             // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we

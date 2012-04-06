@@ -406,7 +406,7 @@ var MiniProfiler = (function ($) {
             container = $('<div class="profiler-results"/>').appendTo('body');
 
             // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-            container.addClass(options.renderPosition);
+            container.addClass("profiler-" + options.renderPosition);
 
             //initialize the controls
             initControls(container);
