@@ -320,7 +320,6 @@ module Rack
 			end
 			env['profiler.mini.private']['page_struct']['Root'].record_benchmark tms
 
-			debugger
 			# inject headers, script
 			if status == 200
 				add_to_timer_cache(env['profiler.mini.private']['page_struct'])
