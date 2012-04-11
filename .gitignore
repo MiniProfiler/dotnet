@@ -11,3 +11,4 @@ Ruby/lib/html
 Ruby/*.gem
 *.*~
 *.swp
+.DS_Store
