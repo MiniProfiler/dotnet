@@ -1,7 +1,7 @@
-This is a clone of MVC Mini Profiler
+This official clone of Mini Profiler
 
 We accept patches and pull requests here. 
 
-About: http://code.google.com/p/mvc-mini-profiler/
+See the home page at: http://miniprofiler.github.com
 
 For bugs and feature requests go to: http://code.google.com/p/mvc-mini-profiler/issues/list
