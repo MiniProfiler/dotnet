@@ -36,9 +36,9 @@ namespace StackExchange.Profiling.SqlFormatters
             foreach(var p in timing.Parameters)
             {
                 // If the parameter doesn't have a prefix (@,:,etc), append one
-                var name = _paramPrefixes.IsMatch(p.Name) ? p.Name : Regex.Match(sql, "([@:?])" + p.Name).Value;
+                var name = _paramPrefixes.IsMatch(p.Name) ? p.Name : Regex.Match(sql, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
                 var value = GetParameterValue(p);
-                sql = Regex.Replace(sql, "(" + name + ")([^0-9]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                sql = Regex.Replace(sql, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
             }
 
             return sql;
