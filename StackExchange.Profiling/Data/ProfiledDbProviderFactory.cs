@@ -105,7 +105,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override DbDataAdapter CreateDataAdapter()
         {
-            return tail.CreateDataAdapter();
+            return new ProfiledDbDataAdapter(tail.CreateDataAdapter(), profiler);
         }
         /// <summary>
         /// proxy
