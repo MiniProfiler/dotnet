@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.UI
     /// </summary>
     public class MiniProfilerHandler : IRouteHandler, IHttpHandler
     {
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null, bool? useExistingjQuery = null)
         {
             const string format =
 @"<script type=""text/javascript"">    
@@ -52,8 +52,12 @@ namespace StackExchange.Profiling.UI
                         }});
                     }});
                 }};
-
-                 load('{path}jquery.1.7.1.js?v={version}', initMp);
+                if ({useExistingjQuery}) {{
+                    jQueryMP = jQuery;
+                    initMp();
+                }} else {{
+                    load('{path}jquery.1.7.1.js?v={version}', initMp);
+                }}
                 
         }};
 
@@ -111,7 +115,8 @@ namespace StackExchange.Profiling.UI
                     maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
                     showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
                     currentId = profiler.Id,
-                    authorized = authorized ? "true" : "false"
+                    authorized = authorized ? "true" : "false",
+                    seExistingjQuery = useExistingjQuery ?? MiniProfiler.Settings.UseExistingjQuery ? "true" : "false"
                 });
                 
             }

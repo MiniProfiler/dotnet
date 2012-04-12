@@ -335,10 +335,11 @@ namespace StackExchange.Profiling
         /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>
         /// <param name="maxTracesToShow">The maximum number of trace popups to show before removing the oldest (defaults to 15)</param>
         /// <param name="showControls">when true, shows buttons to minimize and clear MiniProfiler results</param>
+        /// <param name="useExistingjQuery">Whether MiniProfiler should attempt to load its own version of jQuery, or rely on a version previously loaded on the page</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null, bool samplingOnly = false)
+        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null, bool? useExistingjQuery = null, bool samplingOnly = false)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls);
+            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls, useExistingjQuery);
         }
 
         /// <summary>

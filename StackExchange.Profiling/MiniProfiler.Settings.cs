@@ -195,6 +195,12 @@ namespace StackExchange.Profiling
             [DefaultValue(false)]
             public static bool ShowControls { get; set; }
 
+            /// Determines if Miniprofiler relies on jQuery already loaded on the page; defaults to false.
+            /// For a per-page override you can use .RenderIncludes(useExistingjQuery: true/false)
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool UseExistingjQuery { get; set; }
+
             /// <summary>
             /// By default, SqlTimings will grab a stack trace to help locate where queries are being executed.
             /// When this setting is true, no stack trace will be collected, possibly improving profiler performance.
