@@ -576,6 +576,9 @@ var MiniProfiler = (function ($) {
         getClientTimings: function (clientTimings) {
             var list = [];
             var t;
+            
+            if (!clientTimings.Timings) return [];
+
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
                 var trivial = t.Name != "Dom Complete" && t.Name != "Response";
