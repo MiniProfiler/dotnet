@@ -116,7 +116,7 @@ namespace StackExchange.Profiling.UI
                     showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
                     currentId = profiler.Id,
                     authorized = authorized ? "true" : "false",
-                    seExistingjQuery = useExistingjQuery ?? MiniProfiler.Settings.UseExistingjQuery ? "true" : "false"
+                    useExistingjQuery = useExistingjQuery ?? MiniProfiler.Settings.UseExistingjQuery ? "true" : "false"
                 });
                 
             }
