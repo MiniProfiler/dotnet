@@ -107,7 +107,10 @@ namespace StackExchange.Profiling
                 }
 
                 // allow profiling of ajax requests
-                response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                if (arrayOfIds != null && arrayOfIds.Count > 0)
+                {
+                    response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                }
             }
             catch { } // headers blew up
         }
