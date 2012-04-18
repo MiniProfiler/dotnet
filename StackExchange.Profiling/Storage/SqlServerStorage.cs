@@ -345,6 +345,7 @@ values      (@MiniProfilerId,
                     ClientTimings clientTimings = null;
                     if (clientTimingList.Count > 0)
                     {
+                        clientTimings = new ClientTimings();
                         clientTimings.Timings = clientTimingList;
                     }
                     MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
