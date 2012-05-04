@@ -1,0 +1,62 @@
+﻿<script type="text/javascript">    
+    (function(){{
+        var init = function() {{        
+                var load = function(s,f){{
+                    var sc = document.createElement('script');
+                    sc.async = 'async';
+                    sc.type = 'text/javascript';
+                    sc.src = s;
+                    var l = false;
+                    sc.onload = sc.onreadystatechange  = function(_, abort) {{
+                        if (!l && (!sc.readyState || /loaded|complete/.test(sc.readyState))) {{
+                            if (!abort){{l=true; f();}}
+                        }}
+                    }};
+
+                    document.getElementsByTagName('head')[0].appendChild(sc);
+                }};                
+                
+                var initMp = function(){{
+                    load('{path}includes.js?v={version}',function(){{
+                        MiniProfiler.init({{
+                            ids: {ids},
+                            path: '{path}',
+                            version: '{version}',
+                            renderPosition: '{position}',
+                            showTrivial: {showTrivial},
+                            showChildrenTime: {showChildren},
+                            maxTracesToShow: {maxTracesToShow},
+                            showControls: {showControls},
+                            currentId: '{currentId}',
+                            authorized: {authorized}
+                        }});
+                    }});
+                }};
+                if ({useExistingjQuery}) {{
+                    jQueryMP = jQuery;
+                    initMp();
+                }} else {{
+                    load('{path}jquery.1.7.1.js?v={version}', initMp);
+                }}
+                
+        }};
+
+        var w = 0;        
+        var f = false;
+        var deferInit = function(){{ 
+            if (f) return;
+            if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && w < 10000){{
+                setTimeout(deferInit, 100);
+                w += 100;
+            }} else {{
+                f = true;
+                init();
+            }}
+        }};
+        if (document.addEventListener) {{
+            document.addEventListener('DOMContentLoaded',deferInit);
+        }}
+        var o = window.onload;
+        window.onload = function(){{if(o)o; deferInit()}};
+    }})();
+</script>

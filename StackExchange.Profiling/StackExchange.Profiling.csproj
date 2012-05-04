@@ -123,6 +123,7 @@
   <ItemGroup>
     <None Include="miniprofiler.snk" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="UI\include.partial.html" />
     <None Include="UI\includes.less" />
     <EmbeddedResource Include="UI\list.tmpl" />
   </ItemGroup>
@@ -143,6 +144,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="lib\dotless.Compiler.exe" />
+    <EmbeddedResource Include="UI\share.html" />
     <EmbeddedResource Include="UI\list.css" />
     <EmbeddedResource Include="UI\list.js" />
     <EmbeddedResource Include="UI\includes.css" />
