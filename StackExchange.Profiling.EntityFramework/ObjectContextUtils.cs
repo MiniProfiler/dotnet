@@ -65,8 +65,14 @@ namespace StackExchange.Profiling.Data
             object configName;
             if (builder.TryGetValue("name", out configName))
             {
-                var configEntry = WebConfigurationManager.ConnectionStrings[configName.ToString()];
-                builder = new EntityConnectionStringBuilder(configEntry.ConnectionString);
+                //  As of EF 4.1, it appears that TryGetValue("name") returns a blank
+                //  string if there is no name key.  Added test to confirm that 
+                //  something has been returned.
+                if (!String.IsNullOrEmpty(configName.ToString()))
+                {
+                    var configEntry = WebConfigurationManager.ConnectionStrings[configName.ToString()];
+                    builder = new EntityConnectionStringBuilder(configEntry.ConnectionString);
+                }
             }
 
             // Find the proper factory for the underlying connection.
