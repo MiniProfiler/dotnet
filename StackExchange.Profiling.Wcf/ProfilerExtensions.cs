@@ -39,6 +39,13 @@ namespace StackExchange.Profiling.Wcf
                     UpdateStartMillisecondTimingsByDelta(child, deltaMilliseconds);
                 }
             }
+            if (timing.SqlTimings != null)
+            {
+                foreach (var child in timing.SqlTimings)
+                {
+                    child.StartMilliseconds += deltaMilliseconds;                    
+                }
+            }
         }
 
         /// <summary>
