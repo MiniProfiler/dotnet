@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF</id>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
     <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
     <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
     <description>MiniProfiler integration for Entity Framework</description>
