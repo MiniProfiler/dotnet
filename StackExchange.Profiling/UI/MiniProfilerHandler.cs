@@ -7,6 +7,7 @@ using System.Linq;
 
 using StackExchange.Profiling.Helpers;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace StackExchange.Profiling.UI
 {
@@ -382,7 +383,7 @@ namespace StackExchange.Profiling.UI
         /// <summary>
         /// Embedded resource contents keyed by filename.
         /// </summary>
-        private static readonly Dictionary<string, string> _ResourceCache = new Dictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> _ResourceCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Helper method that sets a proper 404 response code.
