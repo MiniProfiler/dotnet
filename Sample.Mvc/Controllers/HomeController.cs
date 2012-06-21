@@ -116,10 +116,10 @@ namespace SampleWeb.Controllers
                 }
             }
 
-            return Json(count, JsonRequestBehavior.AllowGet);
+            return Content("EF Code First complete - count: " + count);
         }
 
-        public ActionResult Duplicated()
+        public ActionResult DuplicatedQueries()
         {
             using (var conn = GetConnection())
             {
@@ -129,7 +129,7 @@ namespace SampleWeb.Controllers
                 {
                     total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
                 }
-                return Content("Duplicate queries completed");
+                return Content("Duplicated Queries (N+1) completed");
             }
         }
 
@@ -140,7 +140,7 @@ namespace SampleWeb.Controllers
             {
                 RecursiveMethod(ref i, conn, MiniProfiler.Current);
             }
-            return Content("MassiveNesting completed");
+            return Content("Massive Nesting completed");
         }
 
         public ActionResult MassiveNesting2()
@@ -149,7 +149,7 @@ namespace SampleWeb.Controllers
             {
                 MassiveNesting();
             }
-            return Content("MassiveNesting2 completed");
+            return Content("Massive Nesting 2 completed");
         }
 
         private void RecursiveMethod(ref int i, DbConnection conn, MiniProfiler profiler)

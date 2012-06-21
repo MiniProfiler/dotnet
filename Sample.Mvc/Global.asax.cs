@@ -47,7 +47,7 @@ namespace SampleWeb
 
             // this is only done for testing purposes so we don't check in the db to source control
             // parameter table is only used in this project for sample queries
-            ((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount)");
+            ((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
 
             var efDb = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
             if (File.Exists(efDb))
