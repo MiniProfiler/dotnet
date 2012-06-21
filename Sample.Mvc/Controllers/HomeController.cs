@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Web.Mvc;
-using StackExchange.Profiling;
-using System.Threading;
-using Dapper;
-using System.Linq;
 using System.Data.Common;
+using System.Linq;
+using System.Threading;
+using System.Web.Mvc;
+using Dapper;
 using SampleWeb.EFCodeFirst;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using StackExchange.Profiling.Data;
+using StackExchange.Profiling;
+
 namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
@@ -121,6 +119,20 @@ namespace SampleWeb.Controllers
             return Json(count, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Duplicated()
+        {
+            using (var conn = GetConnection())
+            {
+                long total = 0;
+
+                for (int i = 0; i < 20; i++)
+                {
+                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+                }
+                return Content("Duplicate queries completed");
+            }
+        }
+
         public ActionResult MassiveNesting()
         {
             var i = 0;
@@ -138,20 +150,6 @@ namespace SampleWeb.Controllers
                 MassiveNesting();
             }
             return Content("MassiveNesting2 completed");
-        }
-
-        public ActionResult Duplicated()
-        {
-            using (var conn = GetConnection())
-            {
-                long total = 0;
-
-                for (int i = 0; i < 20; i++)
-                {
-                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
-                }
-                return Content("Duplicate queries completed");
-            }
         }
 
         private void RecursiveMethod(ref int i, DbConnection conn, MiniProfiler profiler)
