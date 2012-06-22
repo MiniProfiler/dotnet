@@ -49,17 +49,14 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <returns>A formatted SQL string</returns>
         public string FormatSql(SqlTiming timing)
         {
-            
             if (timing.Parameters == null || timing.Parameters.Count == 0)
             {
                 return timing.CommandString;
             }
 
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder("DECLARE ");
+            var first = true;
 
-            buffer.Append("DECLARE ");
-
-            bool first = true;
             foreach (var p in timing.Parameters)
             {
                 if (first)
@@ -98,6 +95,7 @@ namespace StackExchange.Profiling.SqlFormatters
             }
 
             return buffer
+                .Append(";")
                 .AppendLine()
                 .AppendLine()
                 .Append(timing.CommandString)
