@@ -59,5 +59,10 @@ namespace StackExchange.Profiling
         {
             return ParentSqlTimingId.GetHashCode() ^ Name.GetHashCode() ^ Value.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} = {1} ({2})", Name, Value, DbType);
+        }
     }
 }

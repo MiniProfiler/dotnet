@@ -215,12 +215,11 @@ namespace StackExchange.Profiling
             {
                 if (!string.IsNullOrWhiteSpace(dbParameter.ParameterName))
                 {
-                    var formattedParameterValue = GetFormattedParameterValue(dbParameter);
                     result.Add(new SqlTimingParameter
                     {
                         ParentSqlTimingId = Id,
                         Name = dbParameter.ParameterName.Trim(),
-                        Value = formattedParameterValue,
+                        Value = GetValue(dbParameter),
                         DbType = dbParameter.DbType.ToString(),
                         Size = GetParameterSize(dbParameter)
                     });
@@ -243,36 +242,49 @@ namespace StackExchange.Profiling
             return dbParameter.Size;
         }
 
-        /// <summary>Holds the maximum size that will be stored for byte[] parameters</summary>
+        /// <summary>
+        /// Holds the maximum size that will be stored for byte[] parameters
+        /// </summary>
         const int MaxByteParameterSize = 512;
 
-        private static string GetFormattedParameterValue(DbParameter dbParameter)
+        /// <summary>
+        /// Returns the value of <paramref name="dbParameter"/> suitable for storage/display.
+        /// </summary>
+        private static string GetValue(DbParameter dbParameter)
         {
             object rawValue = dbParameter.Value;
             if (rawValue == null || rawValue == DBNull.Value)
             {
                 return null;
             }
-            
+
             // This assumes that all SQL variants use the same parameter format, it works for T-SQL
             if (dbParameter.DbType == System.Data.DbType.Binary)
             {
                 var bytes = rawValue as byte[];
-                if (bytes != null &&
-                    bytes.Length <= MaxByteParameterSize)
+                if (bytes != null && bytes.Length <= MaxByteParameterSize)
                 {
                     return "0x" + BitConverter.ToString(bytes).Replace("-", "");
                 }
-                else
-                {
-                    // Parameter is too long, so blank it instead
-                    return null;
-                }
+
+                // Parameter is too long, so blank it instead
+                return null;
             }
 
-            return rawValue is DateTime
-                    ? ((DateTime)rawValue).ToString("s", System.Globalization.CultureInfo.InvariantCulture)
-                    : rawValue.ToString();
+            if (rawValue is DateTime)
+            {
+                return ((DateTime)rawValue).ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            // we want the integral value of an enum, not its string representation
+            var rawType = rawValue.GetType();
+            if (rawType.IsEnum)
+            {
+                // use ChangeType, as we can't cast - http://msdn.microsoft.com/en-us/library/exx3b86w(v=vs.80).aspx
+                return Convert.ChangeType(rawValue, Enum.GetUnderlyingType(rawType)).ToString();
+            }
+
+            return rawValue.ToString();
         }
     }
 }

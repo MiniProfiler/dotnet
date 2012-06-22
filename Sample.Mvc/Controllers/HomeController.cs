@@ -250,5 +250,14 @@ order  by RouteName");
             public string RouteName { get; set; }
             public Int64 HitCount { get; set; }
         }
+
+        public ActionResult ParameterizedSqlWithEnums()
+        {
+            using (var conn = GetConnection())
+            {
+                var shouldBeOne = conn.Query<Int64>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
+                return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
+            }
+        }
     }
 }
