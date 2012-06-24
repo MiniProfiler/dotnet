@@ -174,7 +174,17 @@ namespace StackExchange.Profiling.UI
                     profiler.DurationMilliseconds,
                     profiler.DurationMillisecondsInSql,
                     profiler.ClientTimings,
-                    profiler.Started
+                    profiler.Started,
+                    profiler.ExecutedNonQueries,
+                    profiler.ExecutedReaders,
+                    profiler.ExecutedScalars,
+                    profiler.HasAllTrivialTimings,
+                    profiler.HasDuplicateSqlTimings,
+                    profiler.HasSqlTimings,
+                    profiler.HasTrivialTimings,
+                    profiler.HasUserViewed,
+                    profiler.MachineName,
+                    profiler.User
                 };
             }
             
@@ -368,12 +378,21 @@ namespace StackExchange.Profiling.UI
 
             if (!_ResourceCache.TryGetValue(filename, out result))
             {
-                using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.UI." + filename))
-                using (var reader = new StreamReader(stream))
-                {
-                    result = reader.ReadToEnd();
-                }
+                string customTemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
+                string customTemplateFile = System.IO.Path.Combine(customTemplatesPath, filename);
 
+                if (System.IO.File.Exists(customTemplateFile))
+                {
+                    result = File.ReadAllText(customTemplateFile);
+                }
+                else
+                {
+                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.UI." + filename))
+                    using (var reader = new StreamReader(stream))
+                    {
+                        result = reader.ReadToEnd();
+                    }
+                }
                 _ResourceCache[filename] = result;
             }
 
