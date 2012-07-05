@@ -475,6 +475,18 @@ var MiniProfiler = (function ($) {
             })();
         }
 
+        // also fetch results after ExtJS requests, in case it is being used
+        if (typeof (Ext) != 'undefined' && typeof (Ext.Ajax) != 'undefined' && typeof (Ext.Ajax.on) != 'undefined') {
+            // Ext.Ajax is a singleton, so we just have to attach to its 'requestcomplete' event
+            Ext.Ajax.on('requestcomplete', function(e, xhr, settings) {
+                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
+                if (stringIds) {
+                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                    fetchResults(ids);
+                }
+            });
+        }
+
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
