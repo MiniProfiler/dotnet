@@ -49,7 +49,9 @@ namespace StackExchange.Profiling
                     List<string> files = new List<string>();
                     files.Add(location);
 
-                    string customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
+                    string customUITemplatesPath = "";
+                    if (HttpContext.Current != null)
+                        customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
 
                     if (System.IO.Directory.Exists(customUITemplatesPath))
                     {
