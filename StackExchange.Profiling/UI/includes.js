@@ -100,6 +100,18 @@ var MiniProfiler = (function ($) {
                         copy.navigation.redirectCount = clientPerformance.navigation.redirectCount;
                     }
                     clientPerformance = copy;
+
+                    // hack to add chrome timings 
+                    if (window.chrome && window.chrome.loadTimes) {
+                      var chromeTimes = window.chrome.loadTimes(); 
+                      if (chromeTimes.firstPaintTime) {
+                        clientPerformance.timing["First Paint Time"] = Math.round(chromeTimes.firstPaintTime * 1000);
+                      }
+                      if (chromeTimes.firstPaintTime) {
+                        clientPerformance.timing["First Paint After Load Time"] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
+                      }
+
+                    }
                 }
             }
 
@@ -593,7 +605,7 @@ var MiniProfiler = (function ($) {
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
-                var trivial = t.Name != "Dom Complete" && t.Name != "Response";
+                var trivial = t.Name != "Dom Complete" && t.Name != "Response" && t.Name != "First Paint Time";
                 trivial = t.Duration < 2 ? trivial : false;
                 list.push(
                 {
