@@ -1,6 +1,6 @@
-﻿<script type="text/javascript">    
+﻿<script type="text/javascript">
     (function(){{
-        var init = function() {{        
+        var init = function() {{
                 var load = function(s,f){{
                     var sc = document.createElement('script');
                     sc.async = 'async';
@@ -14,8 +14,8 @@
                     }};
 
                     document.getElementsByTagName('head')[0].appendChild(sc);
-                }};                
-                
+                }};
+
                 var initMp = function(){{
                     load('{path}includes.js?v={version}',function(){{
                         MiniProfiler.init({{
@@ -32,18 +32,18 @@
                         }});
                     }});
                 }};
-                if ({useExistingjQuery}) {{
+                if ({useExistingjQuery} && typeof(jQuery) === 'function') {{
                     jQueryMP = jQuery;
                     initMp();
                 }} else {{
                     load('{path}jquery.1.7.1.js?v={version}', initMp);
                 }}
-                
+
         }};
 
-        var w = 0;        
+        var w = 0;
         var f = false;
-        var deferInit = function(){{ 
+        var deferInit = function(){{
             if (f) return;
             if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && w < 10000){{
                 setTimeout(deferInit, 100);
