@@ -43,7 +43,7 @@
             {{if HasSqlTimings}}
               <td colspan="2" class="profiler-number profiler-percent-in-sql" title="${MiniProfiler.getSqlTimingsCount(Root)} queries spent ${MiniProfiler.formatDuration(DurationMillisecondsInSql)} ms of total request time">
                 ${MiniProfiler.formatDuration(DurationMillisecondsInSql / DurationMilliseconds * 100)}
-                <span class="profiler-unit">% in sql</span>
+                <span class="profiler-unit">% in qry</span>
               </td>
             {{/if}}
             </tr>
@@ -141,7 +141,7 @@
     <td class="profiler-duration {{if HasDuplicateSqlTimings}}profiler-warning{{/if}}" title="{{if HasDuplicateSqlTimings}}duplicate queries detected - {{/if}}${ExecutedReaders} reader, ${ExecutedScalars} scalar, ${ExecutedNonQueries} non-query statements executed">
       <a class="profiler-queries-show">
         {{if HasDuplicateSqlTimings}}<span class="profiler-nuclear">!</span>{{/if}}
-        ${SqlTimings.length} <span class="profiler-unit">sql</span>
+        ${SqlTimings.length} <span class="profiler-unit">qry</span>
       </a>
     </td>
     <td class="profiler-duration" title="aggregate duration of all queries in this step (excludes children)">
