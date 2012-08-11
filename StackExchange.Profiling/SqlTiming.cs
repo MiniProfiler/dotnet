@@ -1,6 +1,7 @@
  using System;
 using System.Collections.Generic;
-using System.Data.Common;
+ using System.Data;
+ using System.Data.Common;
 using StackExchange.Profiling.Data;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
@@ -111,13 +112,13 @@ namespace StackExchange.Profiling
         [DataMember(Order = 9)]
         public bool IsDuplicate { get; set; }
 
-        private long _startTicks;
-        private MiniProfiler _profiler;
+        private readonly long _startTicks;
+        private readonly MiniProfiler _profiler;
 
         /// <summary>
         /// Creates a new SqlTiming to profile 'command'.
         /// </summary>
-        public SqlTiming(DbCommand command, ExecuteType type, MiniProfiler profiler)
+        public SqlTiming(IDbCommand command, ExecuteType type, MiniProfiler profiler)
         {
             Id = Guid.NewGuid();
 
@@ -205,7 +206,7 @@ namespace StackExchange.Profiling
             return Regex.Replace(commandString, @",([^\s])", ", $1");
         }
 
-        private List<SqlTimingParameter> GetCommandParameters(DbCommand command)
+        private List<SqlTimingParameter> GetCommandParameters(IDbCommand command)
         {
             if (command.Parameters == null || command.Parameters.Count == 0) return null;
 
@@ -229,7 +230,7 @@ namespace StackExchange.Profiling
             return result;
         }
 
-        private static int GetParameterSize(DbParameter dbParameter)
+        private static int GetParameterSize(IDbDataParameter dbParameter)
         {
             if (dbParameter.Value is INullable)
             {
@@ -250,7 +251,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the value of <paramref name="dbParameter"/> suitable for storage/display.
         /// </summary>
-        private static string GetValue(DbParameter dbParameter)
+        private static string GetValue(IDataParameter dbParameter)
         {
             object rawValue = dbParameter.Value;
             if (rawValue == null || rawValue == DBNull.Value)
@@ -259,7 +260,7 @@ namespace StackExchange.Profiling
             }
 
             // This assumes that all SQL variants use the same parameter format, it works for T-SQL
-            if (dbParameter.DbType == System.Data.DbType.Binary)
+            if (dbParameter.DbType == DbType.Binary)
             {
                 var bytes = rawValue as byte[];
                 if (bytes != null && bytes.Length <= MaxByteParameterSize)
