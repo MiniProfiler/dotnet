@@ -65,10 +65,14 @@
     <Compile Include="ClientTimings.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
+    <Compile Include="Data\SimpleProfiledCommand.cs" />
+    <Compile Include="Data\SimpleProfiledConnection.cs" />
+    <Compile Include="Data\SimpleProfiledDataReader.cs" />
     <Compile Include="Data\ProfiledDbDataAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Data\ProfiledDbProviderFactory.cs" />
+    <Compile Include="Data\SimpleProfiledTransaction.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs">
       <SubType>Code</SubType>
     </Compile>
