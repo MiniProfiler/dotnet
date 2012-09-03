@@ -55,11 +55,15 @@
                 type: 'GET',
                 url: $clicked[0].href,
                 success: function(data) {
+                    if (window.mPt) mPt.probe("Processing ajax response.");
+
                     var $p = $('<p class="ajax-result">'),
                         transform = $clicked.data('transform');
 
                     $p.append(transform ? window[transform](data) : data);
                     $results.append($p);
+                    
+                    if (window.mPt) mPt.probe("Processing ajax response.");
                 },
                 error: function() { $results.append('ERROR!'); },
                 complete: function() { $spinner.remove(); }

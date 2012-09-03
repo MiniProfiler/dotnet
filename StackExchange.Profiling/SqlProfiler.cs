@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using StackExchange.Profiling.Data;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace StackExchange.Profiling
     public class SqlProfiler
     {
         ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming> _inProgress = new ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming>();
-        ConcurrentDictionary<DbDataReader, SqlTiming> _inProgressReaders = new ConcurrentDictionary<DbDataReader, SqlTiming>();
+        ConcurrentDictionary<IDataReader, SqlTiming> _inProgressReaders = new ConcurrentDictionary<IDataReader, SqlTiming>();
 
         /// <summary>
         /// The profiling session this SqlProfiler is part of.
@@ -33,7 +34,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
-        public void ExecuteStartImpl(DbCommand command, ExecuteType type)
+        public void ExecuteStartImpl(IDbCommand command, ExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
             var sqlTiming = new SqlTiming(command, type, Profiler);
@@ -50,7 +51,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        public void ExecuteFinishImpl(DbCommand command, ExecuteType type, DbDataReader reader = null)
+        public void ExecuteFinishImpl(IDbCommand command, ExecuteType type, DbDataReader reader = null)
         {
             var id = Tuple.Create((object)command, type);
             var current = _inProgress[id];
@@ -66,7 +67,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
-        public void ReaderFinishedImpl(DbDataReader reader)
+        public void ReaderFinishedImpl(IDataReader reader)
         {
             SqlTiming stat;
             // this reader may have been disposed/closed by reader code, not by our using()
@@ -87,7 +88,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
-        public static void ExecuteStart(this SqlProfiler sqlProfiler, DbCommand command, ExecuteType type)
+        public static void ExecuteStart(this SqlProfiler sqlProfiler, IDbCommand command, ExecuteType type)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ExecuteStartImpl(command, type);
@@ -96,7 +97,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        public static void ExecuteFinish(this SqlProfiler sqlProfiler, DbCommand command, ExecuteType type, DbDataReader reader = null)
+        public static void ExecuteFinish(this SqlProfiler sqlProfiler, IDbCommand command, ExecuteType type, DbDataReader reader = null)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ExecuteFinishImpl(command, type, reader);
@@ -105,7 +106,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
-        public static void ReaderFinish(this SqlProfiler sqlProfiler, DbDataReader reader)
+        public static void ReaderFinish(this SqlProfiler sqlProfiler, IDataReader reader)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ReaderFinishedImpl(reader);

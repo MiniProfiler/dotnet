@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// This code needs to be inserted in the page before client timings work
         /// </summary>
-        public const string InitScript = "<script type='text/javascript'>mPt=function(){var t=[];return{t:t,probe:function(n){t.push({d:new Date(),n:n})}}}()</script>";
+        public const string InitScript = "<script type='text/javascript'>mPt=function(){var t=[];return{results:function(){return t},probe:function(n){t.push({d:new Date(),n:n})},flush:function(){t=[]}}}()</script>";
 
         /// <summary>
         /// You can wrap an html block with timing wrappers using this helper
