@@ -114,7 +114,7 @@ var MiniProfiler = (function ($) {
 
                     }
                 }
-            } else if (ajaxStartTime != null && clientProbes.length > 0) {
+            } else if (ajaxStartTime != null && clientProbes && clientProbes.length > 0) {
                 clientPerformance = { timing: { navigationStart: ajaxStartTime.getTime() } };
                 ajaxStartTime = null;
             }
