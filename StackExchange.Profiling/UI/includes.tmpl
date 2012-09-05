@@ -138,7 +138,7 @@
     </td>
 
   {{if HasSqlTimings}}
-    <td class="profiler-duration {{if HasDuplicateSqlTimings}}profiler-warning{{/if}}" title="{{if HasDuplicateSqlTimings}}duplicate queries detected - {{/if}}${ExecutedReaders} reader, ${ExecutedScalars} scalar, ${ExecutedNonQueries} non-query statements executed">
+    <td class="profiler-duration {{if HasDuplicateSqlTimings}}profiler-warning{{/if}}" title="{{if HasDuplicateSqlTimings}}duplicate queries detected - {{/if}}{{if ExecutedReaders > 0 || ExecutedScalars > 0 || ExecutedNonQueries > 0}}${ExecutedReaders} reader, ${ExecutedScalars} scalar, ${ExecutedNonQueries} non-query statements executed{{/if}}">
       <a class="profiler-queries-show">
         {{if HasDuplicateSqlTimings}}<span class="profiler-nuclear">!</span>{{/if}}
         ${SqlTimings.length} <span class="profiler-unit">sql</span>
