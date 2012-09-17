@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
 	s.homepage = "http://miniprofiler.com"
 	s.files = [
 		'rack-mini-profiler.gemspec',
-	].concat( Dir.glob('lib/**/*').reject {|f| File.directory?(f) || f =~ /~$/ } )
+	].concat( Dir.glob('Ruby/lib/**/*').reject {|f| File.directory?(f) || f =~ /~$/ } )
 	s.extra_rdoc_files = [
-		"README.md",
-    "CHANGELOG"
+		"Ruby/README.md",
+    "Ruby/CHANGELOG"
 	]
 	s.add_runtime_dependency 'rack', '>= 1.1.3'
   if RUBY_VERSION < "1.9"

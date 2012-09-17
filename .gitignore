@@ -8,7 +8,6 @@ obj
 *.nupkg
 nuget.exe
 Ruby/Gemfile.lock
-Ruby/lib/html
 Ruby/*.gem
 *.*~
 *.swp
