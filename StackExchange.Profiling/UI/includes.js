@@ -449,11 +449,12 @@ var MiniProfiler = (function ($) {
         };
 
         // fetch profile results for any ajax calls
+        // note, this does not use $ cause we want to hook into the main jQuery
         if (jQuery && jQuery(document) && jQuery(document).ajaxComplete) {
             jQuery(document).ajaxComplete(jQueryAjaxComplete);
         }
 
-        if (jQuery(document).ajaxStart)
+        if (jQuery && jQuery(document).ajaxStart)
             jQuery(document).ajaxStart(function () { ajaxStartTime = new Date(); });
         
         // fetch results after ASP Ajax calls
