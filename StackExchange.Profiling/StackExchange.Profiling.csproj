@@ -103,6 +103,7 @@
     <Compile Include="ClientTimingHelper.cs" />
     <Compile Include="MVCHelpers\ProfilingActionFilter.cs" />
     <Compile Include="MVCHelpers\ProfilingViewEngine.cs" />
+    <Compile Include="MVCHelpers\WrappedView.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />
     <Compile Include="SqlFormatters\ISqlFormatter.cs" />
     <Compile Include="SqlFormatters\OracleFormatter.cs" />
