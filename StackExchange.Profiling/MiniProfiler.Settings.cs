@@ -58,12 +58,12 @@ namespace StackExchange.Profiling
                         files.AddRange(System.IO.Directory.EnumerateFiles(customUITemplatesPath));
                     }
 
-                    using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                    using (var sha256 = new System.Security.Cryptography.SHA256CryptoServiceProvider())
                     {
                         byte[] hash = new byte[sha256.HashSize / 8];
                         foreach (string file in files)
                         {
-                            // sha256 is FIPS BABY - FIPS 
+                            // sha256 can throw a FIPS exception, but SHA256CryptoServiceProvider is FIPS BABY - FIPS 
                             byte[] contents = System.IO.File.ReadAllBytes(file);
                             byte[] hashfile = sha256.ComputeHash(contents);
                             for (int i = 0; i < (sha256.HashSize / 8); i++)
