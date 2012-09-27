@@ -386,7 +386,7 @@ namespace StackExchange.Profiling
         }
 
         [OnDeserialized]
-        void OnDeserialized(StreamingContext ctx)
+        public void OnDeserialized()
         {
             HasSqlTimings = GetTimingHierarchy().Any(t => t.HasSqlTimings);
             HasDuplicateSqlTimings = GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);

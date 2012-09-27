@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using StackExchange.Profiling.Data;
 using System.Data.Common;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace StackExchange.Profiling
 {
@@ -13,6 +14,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Contains information about queries executed during this profiling session.
         /// </summary>
+        [BsonIgnore]
         internal SqlProfiler SqlProfiler { get; private set; }
 
         /// <summary>

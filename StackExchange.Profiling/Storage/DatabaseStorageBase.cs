@@ -35,7 +35,6 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public abstract MiniProfiler Load(Guid id);
 
-
         /// <summary>
         /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
@@ -52,7 +51,6 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">User identified by the current <see cref="MiniProfiler.Settings.UserProvider"/>.</param>
         public abstract List<Guid> GetUnviewedIds(string user);
 
-
         /// <summary>
         /// Implement a basic list search here
         /// </summary>
@@ -62,22 +60,6 @@ namespace StackExchange.Profiling.Storage
         /// <param name="orderBy"></param>
         /// <returns></returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending);
-
-        /// <summary>
-        /// Returns a DbConnection for your specific provider.
-        /// </summary>
-        protected abstract DbConnection GetConnection();
-
-        /// <summary>
-        /// Returns a DbConnection already opened for execution.
-        /// </summary>
-        protected DbConnection GetOpenConnection()
-        {
-            var result = GetConnection();
-            if (result.State != System.Data.ConnectionState.Open)
-                result.Open();
-            return result;
-        }
 
         /// <summary>
         /// Giving freshly selected collections, this method puts them in the correct

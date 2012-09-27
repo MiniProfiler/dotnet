@@ -429,9 +429,20 @@ order  by Started";
         /// <summary>
         /// Returns a connection to Sql Server.
         /// </summary>
-        protected override DbConnection GetConnection()
+        protected virtual DbConnection GetConnection()
         {
             return new SqlConnection(ConnectionString);
+        }
+
+        /// <summary>
+        /// Returns a DbConnection already opened for execution.
+        /// </summary>
+        protected DbConnection GetOpenConnection()
+        {
+            var result = GetConnection();
+            if (result.State != System.Data.ConnectionState.Open)
+                result.Open();
+            return result;
         }
 
         /// <summary>
