@@ -160,9 +160,7 @@
 
   {{each CustomTimingNames}}
     <td class="profiler-duration">
-      <a class="profiler-queries-show">
-        ${CustomTimings[$value].length} <span class="profiler-unit">${$value}</span>
-      </a>
+      ${CustomTimings[$value].length} <span class="profiler-unit">${$value}</span>
     </td>
     <td class="profiler-duration" title="aggregate duration of all ${$value} in this step (excludes children)">
       ${MiniProfiler.formatDuration(CustomTimings[$value])}
