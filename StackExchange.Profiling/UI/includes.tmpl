@@ -27,6 +27,9 @@
             {{if HasSqlTimings}}
               <th colspan="2">query time (ms)</th>
             {{/if}}
+            {{each CustomTimingNames}}
+              <th colspan="2">${$value} time (ms)</th>
+            {{/each}}
             </tr>
           </thead>
           <tbody>
@@ -46,6 +49,12 @@
                 <span class="profiler-unit">% in sql</span>
               </td>
             {{/if}}
+            {{each CustomTimingNames}}
+              <td colspan="2" class="profiler-number profiler-percentage-in-sql" title="${CustomTimings[$value].Count} $value spent ${MiniProfiler.formatDuration(CustomTimings[$value].Duration)} ms of total request time">
+                ${MiniProfiler.formatDuration(CustomTimings[$value].Duration / DurationMilliseconds * 100)}
+                <span class="profiler-unit">% in ${$value}</span>
+              </td>
+            {{/each}}
             </tr>
           </tfoot>
         </table>
@@ -148,6 +157,17 @@
       ${MiniProfiler.formatDuration(SqlTimingsDurationMilliseconds)}
     </td>
   {{/if}}
+
+  {{each CustomTimingNames}}
+    <td class="profiler-duration">
+      <a class="profiler-queries-show">
+        ${CustomTimings[$value].length} <span class="profiler-unit">${$value}</span>
+      </a>
+    </td>
+    <td class="profiler-duration" title="aggregate duration of all ${$value} in this step (excludes children)">
+      ${MiniProfiler.formatDuration(CustomTimings[$value])}
+    </td>
+  {{/each}}
 
   </tr>
 
