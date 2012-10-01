@@ -412,7 +412,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// NOT IMPLEMENTED 
+        /// Sets the profiler as unviewed
         /// </summary>
         public override void SetUnviewed(string user, Guid id)
         {
@@ -426,7 +426,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// NOT IMPLEMENTED
+        /// Sets the profiler as view
         /// </summary>
         public override void SetViewed(string user, Guid id)
         {
@@ -452,9 +452,6 @@ namespace StackExchange.Profiling.Storage
             return guids;
         }
 
-        /// <summary>
-        /// NOT IMPLEMENTED
-        /// </summary>
         public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
         {
             IMongoQuery query = null;
