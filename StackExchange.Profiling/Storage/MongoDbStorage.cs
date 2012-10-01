@@ -145,7 +145,7 @@ namespace StackExchange.Profiling.Storage
                 HasUserViewed = profiler.HasUserViewed
             };
 
-            var result = Profilers.Save(profilerPoco);
+            var result = Profilers.Save(profilerPoco, SafeMode.True);
 
             if (result.UpdatedExisting == false)
             {
