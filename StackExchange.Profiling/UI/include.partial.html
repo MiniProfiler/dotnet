@@ -57,6 +57,6 @@
             document.addEventListener('DOMContentLoaded',deferInit);
         }}
         var o = window.onload;
-        window.onload = function(){{if(o)o; deferInit()}};
+        window.onload = function(){{if(o)o(); deferInit()}};
     }})();
 </script>
