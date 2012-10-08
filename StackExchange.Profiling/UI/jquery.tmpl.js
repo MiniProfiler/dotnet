@@ -483,4 +483,4 @@
         jQuery.tmpl(null, null, null, this).insertBefore(coll[0]);
         jQuery(coll).remove();
     }
-})(jQueryMP);
+})(MiniProfiler.jQuery);

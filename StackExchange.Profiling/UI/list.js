@@ -2,16 +2,17 @@
 MiniProfiler.list = {
     init:
         function (options) {
+            var $ = MiniProfiler.jQuery;
             var opt = options || {};
 
             var updateGrid = function (id) {
-                jQueryMP.ajax({
+                $.ajax({
                     url: options.path + 'results-list',
                     data: { "last-id": id },
                     dataType: 'json',
                     type: 'GET',
                     success: function (data) {
-                        jQueryMP('table tbody').append(jQueryMP("#rowTemplate").tmpl(data));
+                        $('table tbody').append($("#rowTemplate").tmpl(data));
                         var oldId = id;
                         var oldData = data;
                         setTimeout(function () {
@@ -26,10 +27,10 @@ MiniProfiler.list = {
             }
 
             MiniProfiler.path = options.path;
-            jQueryMP.get(options.path + 'list.tmpl?v=' + options.version, function (data) {
+            $.get(options.path + 'list.tmpl?v=' + options.version, function (data) {
                 if (data) {
-                    jQueryMP('body').append(data);
-                    jQueryMP('body').append(jQueryMP('#tableTemplate').tmpl());
+                    $('body').append(data);
+                    $('body').append($('#tableTemplate').tmpl());
                     updateGrid();
                 }
             });

@@ -1,5 +1,6 @@
 ﻿"use strict";
-var MiniProfiler = (function ($) {
+var MiniProfiler = (function () {
+    var $;
 
     var options,
         container,
@@ -547,24 +548,47 @@ var MiniProfiler = (function ($) {
                 document.getElementsByTagName('head')[0].appendChild(sc);
             };
 
-            if (options.authorized) {
-                var url = options.path + "includes.css?v=" + options.version;
-                if (document.createStyleSheet) {
-                    document.createStyleSheet(url);
+            var wait = 0;
+            var finish = false;
+            var deferInit = function() {
+                if (finish) return;
+                if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && wait < 10000) {
+                    setTimeout(deferInit, 100);
+                    wait += 100;
                 } else {
-                    $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
+                    finish = true;
+                    init();
                 }
+            };
 
-                if (!$.tmpl) {
-                    load(options.path + 'jquery.tmpl.js?v=' + options.version, doInit);
-                } else {
+            var init = function() {
+                if (options.authorized) {
+                    var url = options.path + "includes.css?v=" + options.version;
+                    if (document.createStyleSheet) {
+                        document.createStyleSheet(url);
+                    } else {
+                        $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
+                    }
+                    if (!$.tmpl) {
+                        load(options.path + 'jquery.tmpl.js?v=' + options.version, doInit);
+                    } else {
+                        doInit();
+                    }
+                }
+                else {
                     doInit();
                 }
             }
-            else {
-                doInit();
-            }
 
+            if (options.useExistingjQuery && typeof(jQuery) === 'function') {
+                MiniProfiler.jQuery = $ = jQuery;
+                $(deferInit);
+            } else {
+                load(options.path + "jquery.1.7.1.js?v=" + options.version, function() {
+                    MiniProfiler.jQuery = $ = jQuery.noConflict(true);
+                    $(deferInit);
+                });
+            }
         },
 
         getClientTimingByName: function (clientTiming, name) {
@@ -784,7 +808,7 @@ var MiniProfiler = (function ($) {
             return (duration || 0).toFixed(1);
         }
     };
-})(jQueryMP);
+})();
 
 // prettify.js
 // http://code.google.com/p/google-code-prettify/
