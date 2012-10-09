@@ -514,9 +514,42 @@ var MiniProfiler = (function () {
 
     return {
 
-        init: function (opt) {
+        init: function () {
+            var script = document.getElementById('mini-profiler');
+            if (!script || !script.getAttribute) return;
 
-            options = opt || {};
+            options = (function () {
+                var version = script.getAttribute('data-version');
+                var path = script.getAttribute('data-path');
+
+                var currentId = script.getAttribute('data-current-id');
+
+                var ids = script.getAttribute('data-ids');
+                if (ids)  ids = ids.split(',');
+
+                var position = script.getAttribute('data-position');
+
+                if (script.getAttribute('data-max-traces'))
+                    var maxTraces = parseInt(script.getAttribute('data-max-traces'));
+
+                if (script.getAttribute('data-trivial') === 'true') var trivial = true;
+                if (script.getAttribute('data-children') == 'true') var children = true;
+                if (script.getAttribute('data-controls') == 'true') var controls = true;
+                if (script.getAttribute('data-authorized') == 'true') var authorized = true;
+
+                return {
+                    ids: ids,
+                    path: path,
+                    version: version,
+                    renderPosition: position,
+                    showTrivial: trivial,
+                    showChildrenTime: children,
+                    maxTracesToShow: maxTraces,
+                    showControls: controls,
+                    currentId: currentId,
+                    authorized: authorized
+                }
+            })();
 
             var doInit = function () {
                 // when rendering a shared, full page, this div will exist
@@ -812,6 +845,9 @@ var MiniProfiler = (function () {
         }
     };
 })();
+
+MiniProfiler.init();
+
 
 // prettify.js
 // http://code.google.com/p/google-code-prettify/
