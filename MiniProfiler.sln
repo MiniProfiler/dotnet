@@ -1,11 +1,18 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
 		MiniProfiler.EF.nuspec = MiniProfiler.EF.nuspec
 		MiniProfiler.MVC3.nuspec = MiniProfiler.MVC3.nuspec
 		MiniProfiler.nuspec = MiniProfiler.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniProfiler.MVC3", "MiniProfiler.MVC3", "{EAE04FE1-268F-46EF-ACB5-290408478EBC}"
+	ProjectSection(SolutionItems) = preProject
+		MiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml = MiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml
+		MiniProfiler.MVC3.Package\tools\install.ps1 = MiniProfiler.MVC3.Package\tools\install.ps1
+		MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp = MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling", "StackExchange.Profiling\StackExchange.Profiling.csproj", "{386222BD-6B6E-480F-A342-8DE1AB516E2C}"
@@ -20,13 +27,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Tests", "StackExchange.Profiling.Tests\StackExchange.Profiling.Tests.csproj", "{B4CA8022-257B-4893-97D8-76E05EBBAAB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.EntityFramework", "StackExchange.Profiling.EntityFramework\StackExchange.Profiling.EntityFramework.csproj", "{7F18DC76-61A2-4E7D-BA5A-FE159E789362}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniProfiler.MVC3", "MiniProfiler.MVC3", "{EAE04FE1-268F-46EF-ACB5-290408478EBC}"
-	ProjectSection(SolutionItems) = preProject
-		MiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml = MiniProfiler.MVC3.Package\Content\Views\Shared\_MINIPROFILER UPDATED Layout.cshtml
-		MiniProfiler.MVC3.Package\tools\install.ps1 = MiniProfiler.MVC3.Package\tools\install.ps1
-		MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp = MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Wcf", "StackExchange.Profiling.Wcf\StackExchange.Profiling.Wcf.csproj", "{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}"
 EndProject

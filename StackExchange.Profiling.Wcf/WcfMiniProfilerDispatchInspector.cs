@@ -8,22 +8,49 @@ using System.ServiceModel.Channels;
 
 namespace StackExchange.Profiling.Wcf
 {
+    using System.ServiceModel.Web;
+
     public class WcfMiniProfilerDispatchInspector : IDispatchMessageInspector
     {
+        private bool _http;
+
         public object AfterReceiveRequest(ref System.ServiceModel.Channels.Message request, System.ServiceModel.IClientChannel channel, System.ServiceModel.InstanceContext instanceContext)
         {
-            // Check to see if we have a request as part of this message
-            var headerIndex = request.Headers.FindHeader(MiniProfilerRequestHeader.HeaderName, MiniProfilerRequestHeader.HeaderNamespace);
-            if (headerIndex >= 0)
+            if (request.Headers.MessageVersion != MessageVersion.None)
             {
-                var requestHeader = request.Headers.GetHeader<MiniProfilerRequestHeader>(headerIndex);
-                if (requestHeader != null)
+                // Check to see if we have a request as part of this message
+                var headerIndex = request.Headers.FindHeader(MiniProfilerRequestHeader.HeaderName, MiniProfilerRequestHeader.HeaderNamespace);
+                if (headerIndex >= 0)
                 {
-                    MiniProfiler.Settings.ProfilerProvider = new WcfRequestProfilerProvider();
-                    MiniProfiler.Start();
-                    return requestHeader;
+                    var requestHeader = request.Headers.GetHeader<MiniProfilerRequestHeader>(headerIndex);
+                    if (requestHeader != null)
+                    {
+                    	MiniProfiler.Settings.ProfilerProvider = new WcfRequestProfilerProvider();
+                        MiniProfiler.Start();
+                        return requestHeader;
+                    }
                 }
             }
+            else if (_http || WebOperationContext.Current != null || channel.Via.Scheme == "http" | channel.Via.Scheme == "https")
+            {
+                _http = true;
+
+                if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
+                {
+                    var property = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+
+                    var text = property.Headers[MiniProfilerRequestHeader.HeaderName];
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        var header = MiniProfilerRequestHeader.FromHeaderText(text);
+                    	MiniProfiler.Settings.ProfilerProvider = new WcfRequestProfilerProvider();
+                        MiniProfiler.Start();
+                        return header;
+                    }
+                }
+            }
+            else
+                throw new InvalidOperationException("MVC Mini Profiler does not support EnvelopeNone unless HTTP is the transport mechanism");
 
             return null;
         }
@@ -41,13 +68,28 @@ namespace StackExchange.Profiling.Wcf
                     miniProfiler.Root.RemoveTrivialTimings();
                 }
 
-                var untypedHeader = new MessageHeader<MiniProfilerResultsHeader>(new MiniProfilerResultsHeader
+                var header = new MiniProfilerResultsHeader
                 {
                     ProfilerResults = miniProfiler
-                })
-                .GetUntypedHeader(MiniProfilerResultsHeader.HeaderName, MiniProfilerResultsHeader.HeaderNamespace);
+                };
 
-                reply.Headers.Add(untypedHeader);
+                if (reply.Headers.MessageVersion != MessageVersion.None)
+                {
+                    var untypedHeader = new MessageHeader<MiniProfilerResultsHeader>(header)
+                    .GetUntypedHeader(MiniProfilerResultsHeader.HeaderName, MiniProfilerResultsHeader.HeaderNamespace);
+
+                    reply.Headers.Add(untypedHeader);
+                }
+                else if (_http || reply.Properties.ContainsKey(HttpResponseMessageProperty.Name))
+                {
+                    _http = true;
+
+                    HttpResponseMessageProperty property = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
+                    string text = header.ToHeaderText();
+                    property.Headers.Add(MiniProfilerResultsHeader.HeaderName, text);
+                }
+                else
+                    throw new InvalidOperationException("MVC Mini Profiler does not support EnvelopeNone unless HTTP is the transport mechanism");
             }
 
             //try
