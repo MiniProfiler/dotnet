@@ -263,8 +263,13 @@ namespace StackExchange.Profiling.UI
             var isPopup = !string.IsNullOrWhiteSpace(context.Request["popup"]);
 
             // this guid is the MiniProfiler.Id property
+            // if this guid is not supplied, the last set of results needs to be
+            // displayed. The home page doesn't have profiling otherwise.
             Guid id;
             if (!Guid.TryParse(context.Request["id"], out id))
+                id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
+
+            if (id == default(Guid))
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             MiniProfiler.Settings.EnsureStorageStrategy();

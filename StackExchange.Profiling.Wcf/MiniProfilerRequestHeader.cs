@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +25,28 @@ namespace StackExchange.Profiling.Wcf
 
         [DataMember]
         public decimal? TrivialDurationThresholdMilliseconds { get; set; }
+
+        public string ToHeaderText()
+        {
+            var text = ParentProfilerId.ToString() + "&" + User + "&" + (ExcludeTrivialMethods ? "y" : "n") + (TrivialDurationThresholdMilliseconds.HasValue ? "&" + TrivialDurationThresholdMilliseconds.Value.ToString() : string.Empty);
+
+            return text;
+        }
+
+        public static MiniProfilerRequestHeader FromHeaderText(string text)
+        {
+            var parts = text.Split('&');
+            var header = new MiniProfilerRequestHeader
+            {
+                ParentProfilerId = Guid.Parse(parts[0]),
+                User = parts[1],
+                ExcludeTrivialMethods = parts[2] == "y"
+            };
+
+            if (parts.Length > 3)
+                header.TrivialDurationThresholdMilliseconds = decimal.Parse(parts[3]);
+
+            return header;
+        }
     }
 }
