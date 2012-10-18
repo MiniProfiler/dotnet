@@ -7,22 +7,116 @@ using System.Data.Common;
 using System.Reflection.Emit;
 using System.Data.EntityClient;
 using System.Web.Configuration;
+using System.Data.Metadata.Edm;
 
 
 namespace StackExchange.Profiling.Data
 {
     public static class ObjectContextUtils
     {
-        static class MetadataCache<U> where U : System.Data.Objects.ObjectContext
-        {
-            public static System.Data.Metadata.Edm.MetadataWorkspace workspace;
+			  
+			  /// <summary>
+			  /// Allow caching more than one workspace, depending upon assemblies and paths specified
+			  /// </summary>
+			  public class MetadataCacheKey
+				{
+					protected Assembly[] _assemblies;
+					protected string [] _paths;
+					protected int _hashCode;
 
+					/// <summary>
+					/// Create a cache key with the assemblies and paths provided
+					/// </summary>
+					/// <param name="assemblies">Array of assemblies to search for edmx resources</param>
+					/// <param name="paths">Resource paths to search inside of assemblies</param>
+					public MetadataCacheKey(Assembly[] assemblies, string[] paths)
+					{
+						if(assemblies == null)
+							throw new ArgumentNullException("assemblies");
+						if(paths == null)
+							throw new ArgumentNullException("paths");
+						
+						_assemblies = assemblies;
+ 						_paths = paths;
+						CreateHashCode();
+					}
+
+					/// <summary>
+					/// Create a cache key for one assembly and the name of the edmx.  It will create the resource paths
+					/// </summary>
+					/// <param name="assembly">Assembly that edmx is located in</param>
+					/// <param name="edmxName">Name of edmx file</param>
+					public MetadataCacheKey(Assembly assembly, string edmxName)
+					{
+						var assemblyName = assembly.FullName;
+						_assemblies = new Assembly[] { assembly};
+						_paths = new string[3];
+						string pattern = "res://{0}/{1}.{2}";
+						_paths[0] = string.Format(pattern, assemblyName, edmxName, "ssdl");
+						_paths[1] = string.Format(pattern, assemblyName, edmxName, "msl");
+						_paths[2] = string.Format(pattern, assemblyName, edmxName, "csdl");
+						CreateHashCode();
+					}
+
+					private void CreateHashCode() {
+						_hashCode = 19;
+						foreach(var assembly in _assemblies)
+							_hashCode = (3* _hashCode) ^ assembly.GetHashCode();
+						foreach(var path in _paths)
+							_hashCode = (3 * _hashCode) ^ path.GetHashCode();
+					}
+
+					public Assembly[] Assemblies { get { return _assemblies; }	}
+					public string[] Paths { get { return _paths; } }
+
+					public override int  GetHashCode()
+					{
+ 						 return _hashCode;
+					}
+
+					public override bool  Equals(object obj)
+					{	
+						
+						if(obj == null)
+								return false;
+						var cacheKey = obj as MetadataCacheKey;
+						if(cacheKey == null)
+							return false;
+							if(_assemblies.Count() != cacheKey._assemblies.Count() || _paths.Count() != cacheKey._paths.Count())
+								return false;
+						int i = 0;
+						for(i = 0; i < _assemblies.Count(); i++){
+							if(_assemblies[i] != cacheKey._assemblies[i])
+								return false;
+						}
+						for(i = 0; i < _paths.Count(); i++){
+							if(_paths[i] != cacheKey._paths[i])
+								return false;
+						}
+						return true;
+					}
+
+				}
+
+			  
+        /// <summary>
+        /// static class for caching MetadataWorkspaces.  Supports multiple workspaces
+        /// </summary>
+			  static class MetadataCache
+        {
+						private static Dictionary<MetadataCacheKey, MetadataWorkspace> _workspaces;
             static MetadataCache()
             {
-                workspace = new System.Data.Metadata.Edm.MetadataWorkspace(
-                  new string[] { "res://*/" },
-                  new Assembly[] { typeof(U).Assembly });
+							_workspaces = new Dictionary<MetadataCacheKey, MetadataWorkspace>();
             }
+
+						public static MetadataWorkspace GetWorkspace(MetadataCacheKey key)
+						{
+							if (_workspaces.ContainsKey(key))
+								return _workspaces[key];
+							_workspaces[key] = new MetadataWorkspace(key.Paths, key.Assemblies);
+							return _workspaces[key];
+						}
         }
 
         /// <summary>
@@ -30,16 +124,39 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public static T CreateObjectContext<T>(this DbConnection connection) where T : System.Data.Objects.ObjectContext
         {
-            var workspace = MetadataCache<T>.workspace;
-            var factory = DbProviderServices.GetProviderFactory(connection);
-
-            var itemCollection = workspace.GetItemCollection(System.Data.Metadata.Edm.DataSpace.SSpace);
-            itemCollection.GetType().GetField("_providerFactory", // <==== big fat ugly hack
-                    BindingFlags.NonPublic | BindingFlags.Instance).SetValue(itemCollection, factory);
-
-            var ec = new System.Data.EntityClient.EntityConnection(workspace, connection);
-            return CtorCache<T, System.Data.EntityClient.EntityConnection>.Ctor(ec);
+            return CreateObjectContext<T>(connection,new MetadataCacheKey( new Assembly[] { typeof(T).Assembly}, new string[] { "res://*/"}));
         }
+        /// <summary>
+        /// Another method, can pass in the edmx resource name.
+        /// </summary>
+				public static T CreateObjectContext<T>(this DbConnection connection, string edmxName) where T : System.Data.Objects.ObjectContext
+				{
+					return CreateObjectContext<T>(connection, new MetadataCacheKey(typeof(T).Assembly,edmxName));
+				}
+				/// <summary>
+				/// Another method, can pass in resource paths to search.
+				/// </summary>
+				public static T CreateObjectContext<T>(this DbConnection connection, string[] paths) where T : System.Data.Objects.ObjectContext
+				{
+					return CreateObjectContext<T>(connection,new MetadataCacheKey( new Assembly[] { typeof(T).Assembly }, paths));
+				}
+			  /// <summary>
+			  /// Another method, can pass in the MetadataCacheKey
+			  /// </summary>
+				public static T CreateObjectContext<T>(this DbConnection connection, MetadataCacheKey cacheKey) where T : System.Data.Objects.ObjectContext
+				{
+					var workspace = MetadataCache.GetWorkspace(cacheKey);
+					var factory = DbProviderServices.GetProviderFactory(connection);
+
+					var itemCollection = workspace.GetItemCollection(System.Data.Metadata.Edm.DataSpace.SSpace);
+					itemCollection.GetType().GetField("_providerFactory", // <==== big fat ugly hack
+									BindingFlags.NonPublic | BindingFlags.Instance).SetValue(itemCollection, factory);
+
+					var ec = new System.Data.EntityClient.EntityConnection(workspace, connection);
+					return CtorCache<T, System.Data.EntityClient.EntityConnection>.Ctor(ec);
+
+				}
+
 
 
         /// <summary>
