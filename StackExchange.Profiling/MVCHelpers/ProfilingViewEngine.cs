@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.MVCHelpers
             var found = finder();
             if (found != null && found.View != null)
             {
-                found = new ViewEngineResult(new WrappedView(found.View, name, isPartial: isPartial), this);
+                //found = new ViewEngineResult(new WrappedView(found.View, name, isPartial: isPartial), this);
 
                 if (found != null && block != null)
                 {
