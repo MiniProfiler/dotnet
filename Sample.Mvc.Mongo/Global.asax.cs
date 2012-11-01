@@ -10,13 +10,13 @@ using System.IO;
 using SampleWeb.Controllers;
 using Dapper;
 using StackExchange.Profiling.Storage;
+using SampleWeb.Helpers;
 using System.Data.SqlServerCe;
 using SampleWeb.EFCodeFirst;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity;
 using StackExchange.Profiling.MVCHelpers;
 using SampleWeb.SampleService;
-using SampleWeb.Helpers;
 
 namespace SampleWeb
 {

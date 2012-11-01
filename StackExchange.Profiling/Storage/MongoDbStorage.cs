@@ -129,10 +129,10 @@ namespace StackExchange.Profiling.Storage
             var profilerPoco = new MiniProfilerPoco
             {
                 Id = profiler.Id.ToString(),
-                Name = Truncate(profiler.Name, 200),
+                Name = profiler.Name.Truncate(200),
                 Started = profiler.Started,
-                MachineName = Truncate(profiler.MachineName, 100),
-                User = Truncate(profiler.User, 100),
+                MachineName = profiler.MachineName.Truncate(100),
+                User = profiler.User.Truncate(100),
                 Level = profiler.Level,
                 RootTimingId = profiler.Root.Id,
                 DurationMilliseconds = (double)profiler.DurationMilliseconds,
@@ -161,11 +161,6 @@ namespace StackExchange.Profiling.Storage
             
         }
 
-        private string Truncate(string s, int maxLength)
-        {
-            return s != null && s.Length > maxLength ? s.Substring(0, maxLength) : s;
-        }
-
         private void SaveClientTiming(MiniProfiler profiler)
         {
             if (profiler.ClientTimings == null || profiler.ClientTimings.Timings == null || profiler.ClientTimings.Timings.Count == 0) return;
@@ -192,7 +187,7 @@ namespace StackExchange.Profiling.Storage
                 Id = t.Id.ToString(),
                 MiniProfilerId = profiler.Id.ToString(),
                 ParentTimingId =  t.IsRoot ? (string)null : t.ParentTiming.Id.ToString(),
-                Name = Truncate(t.Name, 200),
+                Name = t.Name.Truncate(200),
                 Depth = t.Depth,
                 StartMilliseconds = (double)t.StartMilliseconds,
                 DurationMilliseconds = (double)t.DurationMilliseconds,
@@ -242,7 +237,7 @@ namespace StackExchange.Profiling.Storage
                 DurationMilliseconds = (double)s.DurationMilliseconds,
                 FirstFetchDurationMilliseconds = (double)s.FirstFetchDurationMilliseconds,
                 IsDuplicate = s.IsDuplicate,
-                StackTraceSnippet = Truncate(s.StackTraceSnippet, 200),
+                StackTraceSnippet = s.StackTraceSnippet.Truncate(200),
                 CommandString = s.CommandString
             };
 
@@ -265,8 +260,8 @@ namespace StackExchange.Profiling.Storage
                 {
                     MiniProfilerId = profiler.Id.ToString(),
                     ParentSqlTimingId = s.Id.ToString(),
-                    Name = Truncate(p.Name, 150),
-                    DbType = Truncate(p.DbType, 50),
+                    Name = p.Name.Truncate(150),
+                    DbType = p.DbType.Truncate(50),
                     Size = p.Size,
                     Value = p.Value
                 };
