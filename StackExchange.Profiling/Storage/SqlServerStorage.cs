@@ -442,9 +442,10 @@ order  by Started";
         /// TODO: add indexes
         /// </remarks>
         public const string TableCreationScript =
-@"create table MiniProfilers
+@"
+create table MiniProfilers
   (
-     Id                                   uniqueidentifier not null primary key,
+     Id                                   uniqueidentifier not null constraint PK_MiniProfilers primary key nonclustered, -- don't cluster on a guid
      Name                                 nvarchar(200) not null,
      Started                              datetime not null,
      MachineName                          nvarchar(100) null,
@@ -461,9 +462,11 @@ order  by Started";
      HasUserViewed                        bit not null
   );
 
+-- RowIds here are used to enforce an ordering and storage locality - really, the only id that matters for our querying is the MiniProfilerId
+
 create table MiniProfilerTimings
   (
-     RowId                               integer primary key identity, -- sqlite: replace identity with autoincrement
+     RowId                               integer not null identity constraint PK_MiniProfilerTimings primary key clustered,
      Id                                  uniqueidentifier not null,
      MiniProfilerId                      uniqueidentifier not null,
      ParentTimingId                      uniqueidentifier null,
@@ -485,7 +488,7 @@ create table MiniProfilerTimings
 
 create table MiniProfilerSqlTimings
   (
-     RowId                          integer primary key identity, -- sqlite: replace identity with autoincrement
+     RowId                          integer not null identity constraint PK_MiniProfilerSqlTimings primary key clustered,
      Id                             uniqueidentifier not null,
      MiniProfilerId                 uniqueidentifier not null,
      ParentTimingId                 uniqueidentifier not null,
@@ -495,26 +498,37 @@ create table MiniProfilerSqlTimings
      FirstFetchDurationMilliseconds decimal(7, 1) null,
      IsDuplicate                    bit not null,
      StackTraceSnippet              nvarchar(200) not null,
-     CommandString                  nvarchar(max) not null -- sqlite: remove (max) -- sql server ce: replace with ntext
+     CommandString                  nvarchar(max) not null
   );
 
 create table MiniProfilerSqlTimingParameters
   (
+	 RowId             integer not null identity constraint PK_MiniProfilerSqlTimingParameters primary key clustered,
      MiniProfilerId    uniqueidentifier not null,
      ParentSqlTimingId uniqueidentifier not null,
      Name              nvarchar(130) not null,
      DbType            nvarchar(50) null,
      Size              int null,
-     Value             nvarchar(max) null -- sqlite: remove (max) -- sql server ce: replace with ntext
+     Value             nvarchar(max) null
   );
 
 create table MiniProfilerClientTimings
 (
+  RowId             integer not null identity constraint PK_MiniProfilerClientTimings primary key clustered,
   MiniProfilerId    uniqueidentifier not null,
-  Name nvarchar(200) not null,
-  Start decimal(7,1),
-  Duration decimal(7,1)    
-)
+  Name				nvarchar(200) not null,
+  Start				decimal(7,1),
+  Duration			decimal(7,1)    
+);
+
+-- displaying results selects everything based on the main MiniProfilers.Id column
+create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId)
+create nonclustered index IX_MiniProfilerSqlTimings_MiniProfilerId on MiniProfilerSqlTimings (MiniProfilerId)
+create nonclustered index IX_MiniProfilerSqlTimingParameters_MiniProfilerId on MiniProfilerSqlTimingParameters (MiniProfilerId)
+create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId)
+
+-- speeds up a query that is called on every .Stop()
+create nonclustered index IX_MiniProfilers_User_HasUserViewed_Includes on MiniProfilers ([User], HasUserViewed) include (Id, [Started])
 
 ";
 
