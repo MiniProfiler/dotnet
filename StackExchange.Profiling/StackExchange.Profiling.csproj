@@ -111,6 +111,9 @@
     <Compile Include="SqlTimingParameter.cs">
       <DependentUpon>SqlTiming.cs</DependentUpon>
     </Compile>
+    <Compile Include="SingletonProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="Storage\HttpRuntimeCacheStorage.cs" />
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -120,9 +123,11 @@
     <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="UI\MiniProfilerHandler.cs" />
-    <Compile Include="WebRequestProfilerProvider.cs" />
+    <Compile Include="WebRequestProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="WebRequestProfilerProvider.Settings.cs">
-      <DependentUpon>WebRequestProfilerProvider.cs</DependentUpon>
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

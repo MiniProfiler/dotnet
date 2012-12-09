@@ -216,7 +216,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public override bool Equals(object obj)
         {
-            return obj != null && obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
+            return obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
         }
 
         /// <summary>
@@ -502,26 +502,54 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         public static IHtmlString Render(this MiniProfiler profiler)
         {
-            if (profiler == null) return new HtmlString("");
+            return new HtmlString(RenderImpl(profiler, true));
+        }
+
+        /// <summary>
+        /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from 
+        /// <see cref="Console"/>, log, or unit test output.
+        /// </summary>
+        /// <param name="profiler">A profiling session with child <see cref="Timing"/> instances.</param>
+        public static string RenderPlainText(this MiniProfiler profiler)
+        {
+            return RenderImpl(profiler, false);
+        }
+
+        private static string RenderImpl(MiniProfiler profiler, bool htmlEncode)
+        {
+            if (profiler == null) return "";
 
             var text = new StringBuilder()
-                .Append(HttpUtility.HtmlEncode(Environment.MachineName)).Append(" at ").Append(DateTime.UtcNow).AppendLine();
+                .Append(htmlEncode ? HttpUtility.HtmlEncode(Environment.MachineName) : Environment.MachineName)
+                .Append(" at ")
+                .Append(DateTime.UtcNow)
+                .AppendLine();
 
-            Stack<Timing> timings = new Stack<Timing>();
+            var timings = new Stack<Timing>();
             timings.Push(profiler.Root);
+
             while (timings.Count > 0)
             {
                 var timing = timings.Pop();
-                string name = HttpUtility.HtmlEncode(timing.Name);
-                text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.DurationMilliseconds, new string('>', timing.Depth)).AppendLine();
+                var name = htmlEncode ? HttpUtility.HtmlEncode(timing.Name) : timing.Name;
+
+                text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.DurationMilliseconds, new string('>', timing.Depth));
+
+                if (timing.HasSqlTimings)
+                {
+                    text.AppendFormat(" ({0:###,##0.##}ms in {1} sql quer{2})", timing.SqlTimingsDurationMilliseconds, timing.SqlTimings.Count, timing.SqlTimings.Count == 1 ? "y" : "ies");
+                }
+
+                text.AppendLine();
+                
                 if (timing.HasChildren)
                 {
-                    IList<Timing> children = timing.Children;
-                    for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
+                    var children = timing.Children;
+                    for (var i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }
-            return new HtmlString(text.ToString());
-        }
 
+            return text.ToString();
+        }
     }
 }
