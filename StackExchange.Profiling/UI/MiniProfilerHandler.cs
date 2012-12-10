@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.UI
                 {
                     path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
                     version = MiniProfiler.Settings.Version,
-                    ids = ids.ToJson(),
+                    ids = string.Join(",", ids.Select(guid => guid.ToString())),
                     position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
                     showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
                     showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
