@@ -1,33 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-
-using StackExchange.Profiling;
-using System.IO;
-using SampleWeb.Controllers;
-using Dapper;
-using StackExchange.Profiling.Storage;
-using SampleWeb.Helpers;
-using System.Data.SqlServerCe;
-using SampleWeb.EFCodeFirst;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity;
-using StackExchange.Profiling.MVCHelpers;
-
-namespace SampleWeb
+﻿namespace SampleWeb
 {
+    using System.IO;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Mvc;
+    using System.Web.Routing;
 
-    public class MvcApplication : System.Web.HttpApplication
+    using SampleWeb.Helpers;
+
+    using StackExchange.Profiling;
+    using StackExchange.Profiling.MVCHelpers;
+
+    /// <summary>
+    /// The MVC application.
+    /// </summary>
+    public class MvcApplication : HttpApplication
     {
-
+        /// <summary>
+        /// Gets the connection string.
+        /// </summary>
         public static string ConnectionString
         {
             get { return "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); }
         }
 
+        /// <summary>
+        /// register the routes.
+        /// </summary>
+        /// <param name="routes">The routes.</param>
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -35,27 +35,29 @@ namespace SampleWeb
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-            );
+                new { controller = "Home", action = "Index", id = UrlParameter.Optional });
         }
 
+        /// <summary>
+        /// The application start event.
+        /// </summary>
         protected void Application_Start()
         {
             RegisterRoutes(RouteTable.Routes);
 
-            InitProfilerSettings();
+            this.InitProfilerSettings();
 
             // this is only done for testing purposes so we don't check in the db to source control
             // parameter table is only used in this project for sample queries
             ((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
 
-            var efDb = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
-            if (File.Exists(efDb))
+            var entityFrameworkDataPath = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
+            if (File.Exists(entityFrameworkDataPath))
             {
-                File.Delete(efDb);
+                File.Delete(entityFrameworkDataPath);
             }
 
-            //Setup profiler for Controllers via a Global ActionFilter
+            // Setup profiler for Controllers via a Global ActionFilter
             GlobalFilters.Filters.Add(new ProfilingActionFilter());
 
             // initialize automatic view profiling
@@ -69,6 +71,9 @@ namespace SampleWeb
             MiniProfilerEF.Initialize(false);
         }
 
+        /// <summary>
+        /// The application begin request event.
+        /// </summary>
         protected void Application_BeginRequest()
         {
             MiniProfiler profiler = null;
@@ -80,7 +85,7 @@ namespace SampleWeb
             // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                profiler = StackExchange.Profiling.MiniProfiler.Start();
+                profiler = MiniProfiler.Start();
             }
 
             using (profiler.Step("Application_BeginRequest"))
@@ -89,12 +94,17 @@ namespace SampleWeb
             }
         }
 
+        /// <summary>
+        /// The application end request.
+        /// </summary>
         protected void Application_EndRequest()
         {
-            StackExchange.Profiling.MiniProfiler.Stop();
+            MiniProfiler.Stop();
         }
 
-
+        /// <summary>
+        /// Gets or sets a value indicating whether disable profiling results.
+        /// </summary>
         public static bool DisableProfilingResults { get; set; }
 
         /// <summary>
@@ -119,13 +129,12 @@ namespace SampleWeb
             //    @MiniProfiler.RenderIncludes(position: RenderPosition.Left)
             // then the position would be on the left that that page, and on the right (the app default) for anywhere that doesn't
             // specified position in the .RenderIncludes() call.
-            MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; //defaults to left
-            MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  //defaults to 15
-            MiniProfiler.Settings.RouteBasePath = "~/profiler";               //e.g. /profiler/mini-profiler-includes.js
+            MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right; // defaults to left
+            MiniProfiler.Settings.PopupMaxTracesToShow = 10;                  // defaults to 15
+            MiniProfiler.Settings.RouteBasePath = "~/profiler";               // e.g. /profiler/mini-profiler-includes.js
 
             // optional settings to control the stack trace output in the details pane
             // the exclude methods are not thread safe, so be sure to only call these once per appdomain
-
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
             MiniProfiler.Settings.ExcludeAssembly("NHibernate"); // Ignore any assembly named NHibernate
             MiniProfiler.Settings.ExcludeMethod("Flush");        // Ignore any method with the name of Flush
@@ -135,14 +144,14 @@ namespace SampleWeb
             // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
             // can define a function that will authorize clients to see the json or full page results.
             // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
-            MiniProfiler.Settings.Results_Authorize = (request) =>
+            MiniProfiler.Settings.Results_Authorize = request =>
             {
                 // you may implement this if you need to restrict visibility of profiling on a per request basis 
                 return !DisableProfilingResults; 
             };
 
             // the list of all sessions in the store is restricted by default, you must return true to alllow it
-            MiniProfiler.Settings.Results_List_Authorize = (request) =>
+            MiniProfiler.Settings.Results_List_Authorize = request =>
             {
                 // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
                 return true; // all requests are kosher

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace StackExchange.Profiling.Wcf
+﻿namespace StackExchange.Profiling.Wcf
 {
+    using System.Diagnostics;
+
+    /// <summary>
+    /// The profiler extensions.
+    /// </summary>
     internal static class ProfilerExtensions
     {
         /// <summary>
         /// We don't actually know the start milliseconds, but lets 
         /// take it as zero being the start of the current head
         /// </summary>
-        /// <param name="timing"></param>
+        /// <param name="timing">the timing data</param>
+        /// <param name="newStartMilliseconds">new Start Milliseconds.</param>
         public static void UpdateStartMillisecondTimingsToAbsolute(this Timing timing, decimal newStartMilliseconds)
         {
             if (timing == null)
@@ -24,8 +25,8 @@ namespace StackExchange.Profiling.Wcf
         /// Delta is added to the existing StartMillisecondsValue
         /// Recursive method
         /// </summary>
-        /// <param name="timing"></param>
-        /// <param name="deltaMilliseconds"></param>
+        /// <param name="timing">The timing.</param>
+        /// <param name="deltaMilliseconds">The delta Milliseconds.</param>
         public static void UpdateStartMillisecondTimingsByDelta(this Timing timing, decimal deltaMilliseconds)
         {
             if (timing == null)
@@ -39,6 +40,7 @@ namespace StackExchange.Profiling.Wcf
                     UpdateStartMillisecondTimingsByDelta(child, deltaMilliseconds);
                 }
             }
+
             if (timing.SqlTimings != null)
             {
                 foreach (var child in timing.SqlTimings)
@@ -51,7 +53,7 @@ namespace StackExchange.Profiling.Wcf
         /// <summary>
         /// Removes trivial items from the current profiler results
         /// </summary>
-        /// <param name="timing"></param>
+        /// <param name="timing">The timing.</param>
         public static void RemoveTrivialTimings(this Timing timing)
         {
             if (timing.Children != null)
@@ -60,6 +62,7 @@ namespace StackExchange.Profiling.Wcf
                 timing.Children.RemoveAll(child => child.IsTrivial);
             }
 
+            Debug.Assert(timing.Children != null, "timing.Children != null");
             timing.Children.ForEach(child => child.RemoveTrivialTimings());
         }
     }

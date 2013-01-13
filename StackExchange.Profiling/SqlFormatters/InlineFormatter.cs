@@ -1,28 +1,36 @@
-﻿using System.Text.RegularExpressions;
-
-namespace StackExchange.Profiling.SqlFormatters
+﻿namespace StackExchange.Profiling.SqlFormatters
 {
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// Formats any SQL query with inline parameters, optionally including the value type
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
-        private static readonly Regex _paramPrefixes = new Regex(@"[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static bool _includeTypeInfo;
+        /// <summary>
+        /// The parameter prefixes.
+        /// </summary>
+        private static readonly Regex ParamPrefixes = new Regex(@"[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary>
+        /// The include type info.
+        /// </summary>
+        private static bool includeTypeInfo;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="InlineFormatter"/> class. 
         /// Creates a new Inline SQL Formatter, optionally including the parameter type info in comments beside the replaced value
         /// </summary>
-        /// <param name="includeTypeInfo">whether to include a comment after the value, indicating the type, e.g. /* @myParam DbType.Int32 */</param>
+        /// <param name="includeTypeInfo">whether to include a comment after the value, indicating the type<c>, e.g. /* @myParam DbType.Int32 */</c></param>
         public InlineFormatter(bool includeTypeInfo = false)
         {
-            _includeTypeInfo = includeTypeInfo;
+            InlineFormatter.includeTypeInfo = includeTypeInfo;
         }
 
         /// <summary>
-        /// Formats the SQL in a generic frieldly format, including the parameter type information in a comment if it was specified in the InlineFormatter constructor
+        /// Formats the SQL in a generic friendly format, including the parameter type information in a comment if it was specified in the InlineFormatter constructor
         /// </summary>
-        /// <param name="timing">The SqlTiming to format</param>
+        /// <param name="timing">The <c>SqlTiming</c> to format</param>
         /// <returns>A formatted SQL string</returns>
         public string FormatSql(SqlTiming timing)
         {
@@ -33,10 +41,10 @@ namespace StackExchange.Profiling.SqlFormatters
                 return sql;
             }
 
-            foreach(var p in timing.Parameters)
+            foreach (var p in timing.Parameters)
             {
                 // If the parameter doesn't have a prefix (@,:,etc), append one
-                var name = _paramPrefixes.IsMatch(p.Name) ? p.Name : Regex.Match(sql, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
+                var name = ParamPrefixes.IsMatch(p.Name) ? p.Name : Regex.Match(sql, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
                 var value = GetParameterValue(p);
                 sql = Regex.Replace(sql, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
             }
@@ -48,12 +56,12 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Returns a string representation of the parameter's value, including the type
         /// </summary>
         /// <param name="p">The parameter to get a value for</param>
-        /// <returns></returns>
+        /// <returns>a string containing the parameter value.</returns>
         public string GetParameterValue(SqlTimingParameter p)
         {
             // TODO: ugh, figure out how to allow different db providers to specify how values are represented (e.g. bit in oracle)
             var result = p.Value;
-            var type = p.DbType ?? "";
+            var type = p.DbType ?? string.Empty;
 
             switch (type.ToLower())
             {
@@ -81,11 +89,10 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 result = "null";
             }
-            if(_includeTypeInfo)
+            if (includeTypeInfo)
             {
                 result += " /* " + p.Name + " DbType." + p.DbType + " */";
             }
-            
             return result;
         }
     }

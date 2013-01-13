@@ -11,39 +11,51 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// MVC IView that is wrapped by the ProfilingViewEngine
         /// </summary>
-        public IView wrapped;
-        /// <summary>
-        /// ViewName of wrapped View
-        /// </summary>
-        public string name;
-        /// <summary>
-        /// Flag as to whether wrapped is a PartialView
-        /// </summary>
-        public bool isPartial;
+        private readonly IView _wrapped;
 
         /// <summary>
-        /// Ctor
+        /// Gets or sets the wrapped view name.
         /// </summary>
-        /// <param name="wrapped">IView to wrap</param>
-        /// <param name="name">Name/Path to view</param>
-        /// <param name="isPartial">Whether view is Partial</param>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the wrapped view is partial.
+        /// </summary>
+        public bool IsPartial { get; set; }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="WrappedView"/> class. 
+        /// </summary>
+        /// <param name="wrapped">
+        /// IView to wrap
+        /// </param>
+        /// <param name="name">
+        /// Name/Path to view
+        /// </param>
+        /// <param name="isPartial">
+        /// Whether view is Partial
+        /// </param>
         public WrappedView(IView wrapped, string name, bool isPartial)
         {
-            this.wrapped = wrapped;
-            this.name = name;
-            this.isPartial = isPartial;
+            this._wrapped = wrapped;
+            this.Name = name;
+            this.IsPartial = isPartial;
         }
 
         /// <summary>
         /// Renders the WrappedView and logs profiling data
         /// </summary>
-        /// <param name="viewContext"></param>
-        /// <param name="writer"></param>
+        /// <param name="viewContext">
+        /// The view Context.
+        /// </param>
+        /// <param name="writer">
+        /// The writer.
+        /// </param>
         public void Render(ViewContext viewContext, System.IO.TextWriter writer)
         {
-            using (MiniProfiler.Current.Step("Render " + (isPartial ? "partial" : "") + ": " + name))
+            using (MiniProfiler.Current.Step("Render " + (this.IsPartial ? "partial" : string.Empty) + ": " + this.Name))
             {
-                wrapped.Render(viewContext, writer);
+                this._wrapped.Render(viewContext, writer);
             }
         }
     }

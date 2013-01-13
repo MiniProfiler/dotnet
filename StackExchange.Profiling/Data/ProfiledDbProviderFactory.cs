@@ -1,11 +1,11 @@
-﻿using System;
-using System.Data.Common;
-using StackExchange.Profiling;
-
-namespace StackExchange.Profiling.Data
+﻿namespace StackExchange.Profiling.Data
 {
+    using System.Data.Common;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Security;
+
     /// <summary>
-    /// Wrapper for a db provider factory to enable profiling
+    /// Wrapper for a database provider factory to enable profiling
     /// </summary>
     public class ProfiledDbProviderFactory : DbProviderFactory
     {
@@ -13,106 +13,138 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "This does not appear to be used anywhere, we need to refactor it.")]
         public static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
 
-        private IDbProfiler profiler;
-        private DbProviderFactory tail;
-
+        /// <summary>
+        /// The profiler.
+        /// </summary>
+        private IDbProfiler _profiler;
 
         /// <summary>
-        /// Used for db provider apis internally 
+        /// The tail.
         /// </summary>
-        private ProfiledDbProviderFactory ()
-	    {
-
-	    }
+        private DbProviderFactory _tail;
 
         /// <summary>
-        /// Allow to re-init the provider factory.
+        /// Prevents a default instance of the <see cref="ProfiledDbProviderFactory"/> class from being created. 
+        /// Used for database provider APIS internally 
         /// </summary>
-        /// <param name="profiler"></param>
-        /// <param name="tail"></param>
+        private ProfiledDbProviderFactory()
+        {
+        }
+
+        /// <summary>
+        /// Allow to re-initialise the provider factory.
+        /// </summary>
+        /// <param name="profiler">The profiler.</param>
+        /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
         {
-            this.profiler = profiler;
-            this.tail = tail;
+            this._profiler = profiler;
+            this._tail = tail;
         }
 
         /// <summary>
-        /// proxy
+        /// Initialises a new instance of the <see cref="ProfiledDbProviderFactory"/> class. 
+        /// proxy provider factory
         /// </summary>
-        /// <param name="profiler"></param>
-        /// <param name="tail"></param>
+        /// <param name="profiler">The profiler.</param>
+        /// <param name="tail">The tail.</param>
         public ProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
         {
-            this.profiler = profiler;
-            this.tail = tail;
+            this._profiler = profiler;
+            this._tail = tail;
         }
+
         /// <summary>
-        /// proxy
+        /// Gets a value indicating whether a data source enumerator can be created.
         /// </summary>
         public override bool CanCreateDataSourceEnumerator
         {
             get
             {
-                return tail.CanCreateDataSourceEnumerator;
+                return this._tail.CanCreateDataSourceEnumerator;
             }
         }
+
         /// <summary>
-        /// proxy
+        /// create the data source enumerator.
         /// </summary>
+        /// <returns>The <see cref="DbDataSourceEnumerator"/>.</returns>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
         {
-            return tail.CreateDataSourceEnumerator();
+            return this._tail.CreateDataSourceEnumerator();
         }
+
         /// <summary>
-        /// proxy
+        /// create the command.
         /// </summary>
+        /// <returns>The <see cref="DbCommand"/>.</returns>
         public override DbCommand CreateCommand()
         {
-            return new ProfiledDbCommand(tail.CreateCommand(), null, profiler);
+            return new ProfiledDbCommand(this._tail.CreateCommand(), null, this._profiler);
         }
+
         /// <summary>
-        /// proxy
+        /// create the connection.
         /// </summary>
+        /// <returns>The <see cref="DbConnection"/>.</returns>
         public override DbConnection CreateConnection()
         {
-            return new ProfiledDbConnection(tail.CreateConnection(), profiler);
+            return new ProfiledDbConnection(this._tail.CreateConnection(), this._profiler);
         }
+
         /// <summary>
-        /// proxy
+        /// create the parameter.
         /// </summary>
+        /// <returns>The <see cref="DbParameter"/>.</returns>
         public override DbParameter CreateParameter()
         {
-            return tail.CreateParameter();
+            return this._tail.CreateParameter();
         }
+
         /// <summary>
-        /// proxy
+        /// create the connection string builder.
         /// </summary>
+        /// <returns>
+        /// The <see cref="DbConnectionStringBuilder"/>.
+        /// </returns>
         public override DbConnectionStringBuilder CreateConnectionStringBuilder()
         {
-            return tail.CreateConnectionStringBuilder();
+            return this._tail.CreateConnectionStringBuilder();
         }
+
         /// <summary>
-        /// proxy
+        /// create the command builder.
         /// </summary>
+        /// <returns>
+        /// The <see cref="DbCommandBuilder"/>.
+        /// </returns>
         public override DbCommandBuilder CreateCommandBuilder()
         {
-            return tail.CreateCommandBuilder();
+            return this._tail.CreateCommandBuilder();
         }
+
         /// <summary>
-        /// proxy
+        /// create the data adapter.
         /// </summary>
+        /// <returns>
+        /// The <see cref="DbDataAdapter"/>.
+        /// </returns>
         public override DbDataAdapter CreateDataAdapter()
         {
-            return new ProfiledDbDataAdapter(tail.CreateDataAdapter(), profiler);
+            return new ProfiledDbDataAdapter(this._tail.CreateDataAdapter(), this._profiler);
         }
+
         /// <summary>
-        /// proxy
+        /// create the permission.
         /// </summary>
-        public override System.Security.CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
+        /// <param name="state">The state.</param>
+        /// <returns>The <see cref="CodeAccessPermission"/>.</returns>
+        public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
         {
-            return tail.CreatePermission(state);
+            return this._tail.CreatePermission(state);
         }
 
     }

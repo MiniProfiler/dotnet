@@ -8,6 +8,8 @@ using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling
 {
+    using StackExchange.Profiling.SqlFormatters;
+
     partial class MiniProfiler
     {
         /// <summary>

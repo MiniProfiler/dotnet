@@ -1,60 +1,92 @@
-﻿using System;
-using System.Data.Common;
-using System.Data;
-
-#pragma warning disable 1591 // xml doc comments warnings
+﻿#pragma warning disable 1591 // xml doc comments warnings
 
 namespace StackExchange.Profiling.Data
 {
+    using System;
+    using System.Data;
+    using System.Data.Common;
+
+    /// <summary>
+    /// The profiled database transaction.
+    /// </summary>
     public class ProfiledDbTransaction : DbTransaction
     {
-        private ProfiledDbConnection _conn;
-        private DbTransaction _trans;
+        /// <summary>
+        /// The connection.
+        /// </summary>
+        private ProfiledDbConnection _connection;
 
+        /// <summary>
+        /// The transaction.
+        /// </summary>
+        private DbTransaction _transaction;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="ProfiledDbTransaction"/> class.
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="connection">The connection.</param>
         public ProfiledDbTransaction(DbTransaction transaction, ProfiledDbConnection connection)
         {
             if (transaction == null) throw new ArgumentNullException("transaction");
             if (connection == null) throw new ArgumentNullException("connection");
-            this._trans = transaction;
-            this._conn = connection;
+            this._transaction = transaction;
+            this._connection = connection;
         }
 
+        /// <summary>
+        /// Gets the database connection.
+        /// </summary>
         protected override DbConnection DbConnection
         {
-            get { return _conn; }
+            get { return this._connection; }
         }
 
+        /// <summary>
+        /// Gets the wrapped transaction.
+        /// </summary>
         public DbTransaction WrappedTransaction
         {
-            get { return _trans; }
+            get { return this._transaction; }
         }
 
+        /// <summary>
+        /// Gets the isolation level.
+        /// </summary>
         public override IsolationLevel IsolationLevel
         {
-            get { return _trans.IsolationLevel; }
+            get { return this._transaction.IsolationLevel; }
         }
 
+        /// <summary>
+        /// commit the transaction.
+        /// </summary>
         public override void Commit()
         {
-            _trans.Commit();
+            this._transaction.Commit();
         }
 
+        /// <summary>
+        /// rollback the transaction
+        /// </summary>
         public override void Rollback()
         {
-            _trans.Rollback();
+            this._transaction.Rollback();
         }
 
+        /// <summary>
+        /// dispose the transaction and connection.
+        /// </summary>
+        /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _trans != null)
+            if (disposing && this._transaction != null)
             {
-                _trans.Dispose();
+                this._transaction.Dispose();
             }
-            _trans = null;
-            _conn = null;
+            this._transaction = null;
+            this._connection = null;
             base.Dispose(disposing);
         }
     }
 }
-
-#pragma warning restore 1591 // xml doc comments warnings
