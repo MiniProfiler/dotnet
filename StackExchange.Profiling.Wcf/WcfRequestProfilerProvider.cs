@@ -60,7 +60,7 @@
 
             var result = new MiniProfiler(GetProfilerName(operationContext, instanceContext), level);
 
-            this.SetCurrentProfiler(result);
+            SetCurrentProfiler(result);
 
             // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
             result.User = (Settings.UserProvider ?? new EmptyUserProvider()).GetUser(/*context.Request*/);
@@ -76,7 +76,7 @@
         /// <param name="discardResults">The discard results.</param>
         public override void Stop(bool discardResults)
         {
-            var current = this.GetCurrentProfiler();
+            var current = GetCurrentProfiler();
 
             if (current == null)
                 return;
@@ -87,7 +87,7 @@
 
             if (discardResults)
             {
-                this.SetCurrentProfiler(null);
+                SetCurrentProfiler(null);
                 return;
             }
 

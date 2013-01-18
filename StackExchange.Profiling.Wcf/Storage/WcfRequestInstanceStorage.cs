@@ -32,7 +32,7 @@
             if (context == null)
                 return;
 
-            context.Items[this.GetCacheKey(profiler.Id)] = profiler;
+            context.Items[GetCacheKey(profiler.Id)] = profiler;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@
             if (context == null)
                 return null;
 
-            var profiler = context.Items[this.GetCacheKey(id)] as MiniProfiler;
+            var profiler = context.Items[GetCacheKey(id)] as MiniProfiler;
             if (profiler != null)
             {
                 profiler.HasUserViewed = true;

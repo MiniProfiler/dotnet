@@ -56,21 +56,21 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The profiler.</param>
         public SqlTiming(IDbCommand command, ExecuteType type, MiniProfiler profiler)
         {
-            this.Id = Guid.NewGuid();
+            Id = Guid.NewGuid();
 
-            this.CommandString = this.AddSpacesToParameters(command.CommandText);
-            this.Parameters = this.GetCommandParameters(command);
-            this.ExecuteType = type;
+            CommandString = AddSpacesToParameters(command.CommandText);
+            Parameters = GetCommandParameters(command);
+            ExecuteType = type;
 
             if (!MiniProfiler.Settings.ExcludeStackTraceSnippetFromSqlTimings)
-                this.StackTraceSnippet = Helpers.StackTraceSnippet.Get();
+                StackTraceSnippet = Helpers.StackTraceSnippet.Get();
 
-            this._profiler = profiler;
-            if (this._profiler != null)
+            _profiler = profiler;
+            if (_profiler != null)
             {
-                this._profiler.AddSqlTiming(this);
-                this._startTicks = this._profiler.ElapsedTicks;
-                this.StartMilliseconds = this._profiler.GetRoundedMilliseconds(this._startTicks);
+                _profiler.AddSqlTiming(this);
+                _startTicks = _profiler.ElapsedTicks;
+                StartMilliseconds = _profiler.GetRoundedMilliseconds(_startTicks);
             }
         }
 
@@ -101,7 +101,7 @@ namespace StackExchange.Profiling
             get
             {
                 if (MiniProfiler.Settings.SqlFormatter == null) 
-                    return this.CommandString;
+                    return CommandString;
 
                 return MiniProfiler.Settings.SqlFormatter.FormatSql(this);
             }
@@ -154,15 +154,15 @@ namespace StackExchange.Profiling
         {
             get
             {
-                return this._parentTiming;
+                return _parentTiming;
             }
 
             set
             {
-                this._parentTiming = value;
+                _parentTiming = value;
 
-                if (value != null && this.ParentTimingId != value.Id)
-                    this.ParentTimingId = value.Id;
+                if (value != null && ParentTimingId != value.Id)
+                    ParentTimingId = value.Id;
             }
         }
 
@@ -178,7 +178,7 @@ namespace StackExchange.Profiling
         /// <returns>the string representation</returns>
         public override string ToString()
         {
-            return this.CommandString.Truncate(30) + " (" + this.DurationMilliseconds + " ms)";
+            return CommandString.Truncate(30) + " (" + DurationMilliseconds + " ms)";
         }
 
         /// <summary>
@@ -187,10 +187,10 @@ namespace StackExchange.Profiling
         /// <param name="rValue">
         /// The rValue.
         /// </param>
-        /// <returns>true if rValue is equal to this.</returns>
+        /// <returns>true if rValue is equal to </returns>
         public override bool Equals(object rValue)
         {
-            return rValue is SqlTiming && this.Id.Equals(((SqlTiming)rValue).Id);
+            return rValue is SqlTiming && Id.Equals(((SqlTiming)rValue).Id);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace StackExchange.Profiling
         /// <returns>the hash code value.</returns>
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return Id.GetHashCode();
         }
 
         /// <summary>
@@ -210,11 +210,11 @@ namespace StackExchange.Profiling
         {
             if (isReader)
             {
-                this.FirstFetchDurationMilliseconds = this.GetDurationMilliseconds();
+                FirstFetchDurationMilliseconds = GetDurationMilliseconds();
             }
             else
             {
-                this.DurationMilliseconds = this.GetDurationMilliseconds();
+                DurationMilliseconds = GetDurationMilliseconds();
             }
         }
 
@@ -223,7 +223,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public void ReaderFetchComplete()
         {
-            this.DurationMilliseconds = this.GetDurationMilliseconds();
+            DurationMilliseconds = GetDurationMilliseconds();
         }
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace StackExchange.Profiling
         /// <returns>return the duration in milliseconds</returns>
         private decimal GetDurationMilliseconds()
         {
-            return this._profiler.GetRoundedMilliseconds(this._profiler.ElapsedTicks - this._startTicks);
+            return _profiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace StackExchange.Profiling
                 {
                     result.Add(new SqlTimingParameter
                     {
-                        ParentSqlTimingId = this.Id,
+                        ParentSqlTimingId = Id,
                         Name = parameter.ParameterName.Trim(),
                         Value = GetValue(parameter),
                         DbType = parameter.DbType.ToString(),

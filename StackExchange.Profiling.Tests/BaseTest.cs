@@ -167,7 +167,7 @@
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
             Assert.AreEqual(mp1, mp2);
-            this.AssertPublicPropertiesAreEqual(mp1, mp2);
+            AssertPublicPropertiesAreEqual(mp1, mp2);
 
             var timings1 = mp1.GetTimingHierarchy().ToList();
             var timings2 = mp2.GetTimingHierarchy().ToList();
@@ -180,7 +180,7 @@
                 Assert.AreEqual(t1, t2);
 
                 Console.WriteLine();
-                this.AssertPublicPropertiesAreEqual(t1, t2);
+                AssertPublicPropertiesAreEqual(t1, t2);
 
                 if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
 
@@ -194,7 +194,7 @@
                     Assert.AreEqual(s1, s2);
 
                     Console.WriteLine();
-                    this.AssertPublicPropertiesAreEqual(s1, s2);
+                    AssertPublicPropertiesAreEqual(s1, s2);
 
                     if (s1.Parameters == null && s2.Parameters == null) continue;
 
@@ -208,7 +208,7 @@
                         Assert.AreEqual(p1, p2);
 
                         Console.WriteLine();
-                        this.AssertPublicPropertiesAreEqual(p1, p2);
+                        AssertPublicPropertiesAreEqual(p1, p2);
                     }
                 }
             }
@@ -237,8 +237,8 @@
                 // datetimes are sometimes serialized with different precisions - just look care about the 10th of a second
                 if (p.PropertyType == typeof(DateTime))
                 {
-                    val1 = this.TrimToDecisecond((DateTime)val1);
-                    val2 = this.TrimToDecisecond((DateTime)val2);
+                    val1 = TrimToDecisecond((DateTime)val1);
+                    val2 = TrimToDecisecond((DateTime)val2);
                 }
 
                 var name = typeof(T).Name + "." + p.Name;

@@ -120,7 +120,7 @@
         /// <param name="type">The type of execution.</param>
         /// <param name="func">a function to execute against against the profile result</param>
         /// <typeparam name="TResult">the type of result to return.</typeparam>
-        /// <returns>The <see cref="TResult"/>.</returns>
+        /// <returns>The <see cref="TResult"/>return the profiled result.</returns>
         private TResult ProfileWith<TResult>(ExecuteType type, Func<TResult> func)
         {
             if (_profiler == null || !_profiler.IsActive)

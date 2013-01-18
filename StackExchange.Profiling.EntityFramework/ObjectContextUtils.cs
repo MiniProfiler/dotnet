@@ -52,9 +52,9 @@
                 if (paths == null)
                     throw new ArgumentNullException("paths");
 
-                this._assemblies = assemblies;
-                this._paths = paths;
-                this.CreateHashCode();
+                _assemblies = assemblies;
+                _paths = paths;
+                CreateHashCode();
             }
 
             /// <summary>
@@ -70,13 +70,13 @@
             public MetadataCacheKey(Assembly assembly, string edmxName)
             {
                 var assemblyName = assembly.FullName;
-                this._assemblies = new[] { assembly };
-                this._paths = new string[3];
+                _assemblies = new[] { assembly };
+                _paths = new string[3];
                 const string Pattern = "res://{0}/{1}.{2}";
-                this._paths[0] = string.Format(Pattern, assemblyName, edmxName, "ssdl");
-                this._paths[1] = string.Format(Pattern, assemblyName, edmxName, "msl");
-                this._paths[2] = string.Format(Pattern, assemblyName, edmxName, "csdl");
-                this.CreateHashCode();
+                _paths[0] = string.Format(Pattern, assemblyName, edmxName, "ssdl");
+                _paths[1] = string.Format(Pattern, assemblyName, edmxName, "msl");
+                _paths[2] = string.Format(Pattern, assemblyName, edmxName, "csdl");
+                CreateHashCode();
             }
 
             /// <summary>
@@ -86,7 +86,7 @@
             {
                 get
                 {
-                    return this._assemblies;
+                    return _assemblies;
                 }
             }
 
@@ -97,7 +97,7 @@
             {
                 get
                 {
-                    return this._paths;
+                    return _paths;
                 }
             }
 
@@ -107,14 +107,14 @@
             /// <returns>the hash code value.</returns>
             public override int GetHashCode()
             {
-                return this._hashCode;
+                return _hashCode;
             }
 
             /// <summary>
             /// The equals.
             /// </summary>
             /// <param name="value">The value.</param>
-            /// <returns>true if the supplied instance is equal to this.</returns>
+            /// <returns>true if the supplied instance is equal to </returns>
             public override bool Equals(object value)
             {
                 if (value == null)
@@ -122,18 +122,18 @@
                 var cacheKey = value as MetadataCacheKey;
                 if (cacheKey == null)
                     return false;
-                if (this._assemblies.Count() != cacheKey._assemblies.Count() || this._paths.Count() != cacheKey._paths.Count())
+                if (_assemblies.Count() != cacheKey._assemblies.Count() || _paths.Count() != cacheKey._paths.Count())
                     return false;
                 int i = 0;
-                for (i = 0; i < this._assemblies.Count(); i++)
+                for (i = 0; i < _assemblies.Count(); i++)
                 {
-                    if (this._assemblies[i] != cacheKey._assemblies[i])
+                    if (_assemblies[i] != cacheKey._assemblies[i])
                         return false;
                 }
 
-                for (i = 0; i < this._paths.Count(); i++)
+                for (i = 0; i < _paths.Count(); i++)
                 {
-                    if (this._paths[i] != cacheKey._paths[i])
+                    if (_paths[i] != cacheKey._paths[i])
                         return false;
                 }
 
@@ -145,11 +145,11 @@
             /// </summary>
             private void CreateHashCode()
             {
-                this._hashCode = 19;
-                foreach (var assembly in this._assemblies)
-                    this._hashCode = (3 * this._hashCode) ^ assembly.GetHashCode();
-                foreach (var path in this._paths)
-                    this._hashCode = (3 * this._hashCode) ^ path.GetHashCode();
+                _hashCode = 19;
+                foreach (var assembly in _assemblies)
+                    _hashCode = (3 * _hashCode) ^ assembly.GetHashCode();
+                foreach (var path in _paths)
+                    _hashCode = (3 * _hashCode) ^ path.GetHashCode();
             }
         }
 

@@ -52,7 +52,7 @@
 
             using (profiler.Step("OnActionExecuting"))
             {
-                this.UpsertRouteHit(filterContext.ActionDescriptor, profiler);
+                UpsertRouteHit(filterContext.ActionDescriptor, profiler);
                 base.OnActionExecuting(filterContext);
             }
         }
@@ -64,7 +64,7 @@
         /// <param name="filterContext">The filter context.</param>
         protected override void OnResultExecuting(ResultExecutingContext filterContext)
         {
-            this._resultExecutingToExecuted = MiniProfiler.Current.Step("OnResultExecuting");
+            _resultExecutingToExecuted = MiniProfiler.Current.Step("OnResultExecuting");
 
             base.OnResultExecuting(filterContext);
         }
@@ -76,8 +76,8 @@
         /// <param name="filterContext">The filter context.</param>
         protected override void OnResultExecuted(ResultExecutedContext filterContext)
         {
-            if (this._resultExecutingToExecuted != null)
-                this._resultExecutingToExecuted.Dispose();
+            if (_resultExecutingToExecuted != null)
+                _resultExecutingToExecuted.Dispose();
 
             base.OnResultExecuted(filterContext);
         }

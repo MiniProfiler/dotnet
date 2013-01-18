@@ -49,7 +49,7 @@
         /// </summary>
         public IDbDataAdapter InternalAdapter
         {
-            get { return this._adapter; }
+            get { return _adapter; }
         }
 
         /// <summary>
@@ -64,8 +64,8 @@
                 throw new ArgumentNullException("wrappedAdapter");
             }
 
-            this._adapter = wrappedAdapter;
-            this._profiler = profiler ?? MiniProfiler.Current;
+            _adapter = wrappedAdapter;
+            _profiler = profiler ?? MiniProfiler.Current;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@
         /// </returns>
         public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType)
         {
-            return this._adapter.FillSchema(dataSet, schemaType);
+            return _adapter.FillSchema(dataSet, schemaType);
         }
 
         /// <summary>
@@ -100,26 +100,26 @@
              * SqlDataAdapter type and would thus work fine with this workaround.
              */
 
-            if (this._profiler == null || !this._profiler.IsActive || !(this._selectCommand is DbCommand))
+            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
             {
-                return this._adapter.Fill(dataSet);
+                return _adapter.Fill(dataSet);
             }
 
             int result;
-            var cmd = (DbCommand)this._selectCommand;
-            this._profiler.ExecuteStart(cmd, ExecuteType.Reader);
+            var cmd = (DbCommand)_selectCommand;
+            _profiler.ExecuteStart(cmd, ExecuteType.Reader);
             try
             {
-                result = this._adapter.Fill(dataSet);
+                result = _adapter.Fill(dataSet);
             }
             catch (Exception e)
             {
-                this._profiler.OnError(cmd, ExecuteType.Reader, e);
+                _profiler.OnError(cmd, ExecuteType.Reader, e);
                 throw;
             }
             finally
             {
-                this._profiler.ExecuteFinish(cmd, ExecuteType.Reader, TokenReader);
+                _profiler.ExecuteFinish(cmd, ExecuteType.Reader, TokenReader);
             }
 
             return result;
@@ -133,7 +133,7 @@
         /// </returns>
         public new IDataParameter[] GetFillParameters()
         {
-            return this._adapter.GetFillParameters();
+            return _adapter.GetFillParameters();
         }
 
         /// <summary>
@@ -158,8 +158,8 @@
         /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is Passthrough.</returns>
         public new MissingMappingAction MissingMappingAction
         {
-            get { return this._adapter.MissingMappingAction; }
-            set { this._adapter.MissingMappingAction = value; }
+            get { return _adapter.MissingMappingAction; }
+            set { _adapter.MissingMappingAction = value; }
         }
 
         /// <summary>
@@ -169,8 +169,8 @@
         /// <exception cref="T:System.ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values. </exception>
         public new MissingSchemaAction MissingSchemaAction
         {
-            get { return this._adapter.MissingSchemaAction; }
-            set { this._adapter.MissingSchemaAction = value; }
+            get { return _adapter.MissingSchemaAction; }
+            set { _adapter.MissingSchemaAction = value; }
         }
 
         /// <summary>
@@ -179,7 +179,7 @@
         /// <returns>A collection that provides the master mapping between the returned records and the <see cref="T:System.Data.DataSet"/>. The default value is an empty collection.</returns>
         public new ITableMappingCollection TableMappings
         {
-            get { return this._adapter.TableMappings; }
+            get { return _adapter.TableMappings; }
         }
 
         /// <summary>
@@ -190,14 +190,14 @@
         {
             get
             {
-                return this._selectCommand;
+                return _selectCommand;
             }
             set
             {
-                this._selectCommand = value;
+                _selectCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                this._adapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
+                _adapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -209,14 +209,14 @@
         {
             get
             {
-                return this._insertCommand;
+                return _insertCommand;
             }
             set
             {
-                this._insertCommand = value;
+                _insertCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                this._adapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
+                _adapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -228,14 +228,14 @@
         {
             get
             {
-                return this._updateCommand;
+                return _updateCommand;
             }
             set
             {
-                this._updateCommand = value;
+                _updateCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                this._adapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
+                _adapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -247,14 +247,14 @@
         {
             get
             {
-                return this._deleteCommand;
+                return _deleteCommand;
             }
             set
             {
-                this._deleteCommand = value;
+                _deleteCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                this._adapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
+                _adapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
     }

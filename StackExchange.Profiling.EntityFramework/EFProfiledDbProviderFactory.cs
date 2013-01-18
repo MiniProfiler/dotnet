@@ -31,7 +31,7 @@
         {
             FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
             if (field != null)
-                this._tail = (T)field.GetValue(null);
+                _tail = (T)field.GetValue(null);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@
         {
             get
             {
-                return this._tail.CanCreateDataSourceEnumerator;
+                return _tail.CanCreateDataSourceEnumerator;
             }
         }
 
@@ -51,7 +51,7 @@
         /// <returns>the data source enumerator.</returns>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
         {
-            return this._tail.CreateDataSourceEnumerator();
+            return _tail.CreateDataSourceEnumerator();
         }
 
         /// <summary>
@@ -60,7 +60,7 @@
         /// <returns>the command.</returns>
         public override DbCommand CreateCommand()
         {
-            return new ProfiledDbCommand(this._tail.CreateCommand(), null, MiniProfiler.Current);
+            return new ProfiledDbCommand(_tail.CreateCommand(), null, MiniProfiler.Current);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@
         /// </returns>
         public override DbConnection CreateConnection()
         {
-            return new EFProfiledDbConnection(this._tail.CreateConnection(), MiniProfiler.Current);
+            return new EFProfiledDbConnection(_tail.CreateConnection(), MiniProfiler.Current);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
         /// <returns>the parameter</returns>
         public override DbParameter CreateParameter()
         {
-            return this._tail.CreateParameter();
+            return _tail.CreateParameter();
         }
 
         /// <summary>
@@ -91,7 +91,7 @@
         /// </returns>
         public override DbConnectionStringBuilder CreateConnectionStringBuilder()
         {
-            return this._tail.CreateConnectionStringBuilder();
+            return _tail.CreateConnectionStringBuilder();
         }
 
         /// <summary>
@@ -100,7 +100,7 @@
         /// <returns>the command builder</returns>
         public override DbCommandBuilder CreateCommandBuilder()
         {
-            return this._tail.CreateCommandBuilder();
+            return _tail.CreateCommandBuilder();
         }
 
         /// <summary>
@@ -109,7 +109,7 @@
         /// <returns>the data adapter.</returns>
         public override DbDataAdapter CreateDataAdapter()
         {
-            return this._tail.CreateDataAdapter();
+            return _tail.CreateDataAdapter();
         }
 
         /// <summary>
@@ -123,7 +123,7 @@
         /// </returns>
         public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
         {
-            return this._tail.CreatePermission(state);
+            return _tail.CreatePermission(state);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@
         /// <returns>requested service provider or null.</returns>
         object IServiceProvider.GetService(Type serviceType)
         {
-            var tailProvider = this._tail as IServiceProvider;
+            var tailProvider = _tail as IServiceProvider;
             if (tailProvider == null) return null;
             var svc = tailProvider.GetService(serviceType);
             if (svc == null) return null;

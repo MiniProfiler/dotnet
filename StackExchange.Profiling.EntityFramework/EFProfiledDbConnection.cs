@@ -44,15 +44,15 @@
         {
             get
             {
-                if (this._factory != null) 
-                    return this._factory;
-                DbProviderFactory tail = RipInnerProvider(this._connection);
+                if (_factory != null) 
+                    return _factory;
+                DbProviderFactory tail = RipInnerProvider(_connection);
                
                 var field = EFProviderUtilities.ResolveFactoryTypeOrOriginal(tail.GetType()).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
                 if (field != null)
-                    this._factory = (DbProviderFactory)field.GetValue(null);
+                    _factory = (DbProviderFactory)field.GetValue(null);
                 
-                return this._factory;
+                return _factory;
             }
         }
 
@@ -62,7 +62,7 @@
         /// <param name="disposing">false if called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            this._factory = null;
+            _factory = null;
             base.Dispose(disposing);
         }
     }

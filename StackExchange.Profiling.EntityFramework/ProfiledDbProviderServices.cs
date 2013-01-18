@@ -25,8 +25,8 @@
         /// <param name="profiler">The profiler.</param>
         public ProfiledDbProviderServices(DbProviderServices tail, IDbProfiler profiler)
         {
-            this._wrapped = tail;
-            this._profiler = profiler;
+            _wrapped = tail;
+            _profiler = profiler;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@
         /// <returns>the command definition.</returns>
         public override DbCommandDefinition CreateCommandDefinition(DbCommand prototype)
         {
-            return this._wrapped.CreateCommandDefinition(prototype);
+            return _wrapped.CreateCommandDefinition(prototype);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@
         /// <returns>the provider manifest.</returns>
         protected override DbProviderManifest GetDbProviderManifest(string manifestToken)
         {
-            return this._wrapped.GetProviderManifest(manifestToken);
+            return _wrapped.GetProviderManifest(manifestToken);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
                 wrappedConnection = profiled.WrappedConnection;
             }
 
-            return this._wrapped.GetProviderManifestToken(wrappedConnection);
+            return _wrapped.GetProviderManifestToken(wrappedConnection);
         }
 
         /// <summary>
@@ -75,10 +75,10 @@
         /// <returns>the command definition.</returns>
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest providerManifest, System.Data.Common.CommandTrees.DbCommandTree commandTree)
         {
-            var cmdDef = this._wrapped.CreateCommandDefinition(providerManifest, commandTree);
+            var cmdDef = _wrapped.CreateCommandDefinition(providerManifest, commandTree);
             var cmd = cmdDef.CreateCommand();
             Debug.Assert(cmd != null, "cmd != null");
-            return this.CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, this._profiler));
+            return CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, _profiler));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@
         /// <param name="storeItemCollection">The store item collection.</param>
         protected override void DbCreateDatabase(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
         {
-            this._wrapped.CreateDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
+            _wrapped.CreateDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@
         /// <param name="storeItemCollection">The store item collection.</param>
         protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
         {
-            this._wrapped.DeleteDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
+            _wrapped.DeleteDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@
         /// <returns>a string containing the database script.</returns>
         protected override string DbCreateDatabaseScript(string providerManifestToken, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
         {
-            return this._wrapped.CreateDatabaseScript(providerManifestToken, storeItemCollection);
+            return _wrapped.CreateDatabaseScript(providerManifestToken, storeItemCollection);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@
         /// <returns>true if the database exists.</returns>
         protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, System.Data.Metadata.Edm.StoreItemCollection storeItemCollection)
         {
-            return this._wrapped.DatabaseExists(GetRealConnection(connection), commandTimeout, storeItemCollection);
+            return _wrapped.DatabaseExists(GetRealConnection(connection), commandTimeout, storeItemCollection);
         }
 
         /// <summary>

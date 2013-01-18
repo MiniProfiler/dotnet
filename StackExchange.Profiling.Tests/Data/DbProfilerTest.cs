@@ -30,7 +30,7 @@
         [Test]
         public void NonQuery()
         {
-            using (var conn = this.GetConnection())
+            using (var conn = GetConnection())
             {
                 var profiler = conn.CountingProfiler;
 
@@ -52,7 +52,7 @@
         [Test]
         public void Scalar()
         {
-            using (var conn = this.GetConnection())
+            using (var conn = GetConnection())
             using (var cmd = conn.CreateCommand())
             {
                 var profiler = conn.CountingProfiler;
@@ -72,7 +72,7 @@
         [Test]
         public void DataReader()
         {
-            using (var conn = this.GetConnection())
+            using (var conn = GetConnection())
             using (var cmd = conn.CreateCommand())
             {
                 var profiler = conn.CountingProfiler;
@@ -96,7 +96,7 @@
         [Test]
         public void Errors()
         {
-            using (var conn = this.GetConnection())
+            using (var conn = GetConnection())
             {
                 const string BadSql = "TROGDOR BURNINATE";
 
@@ -164,7 +164,7 @@
                 cmd.CommandText = "select 1 as A, 2 as B";
                 Debug.Assert(da != null, "da != null");
                 da.SelectCommand = cmd;
-                da.SelectCommand.Connection = this.GetConnection();
+                da.SelectCommand.Connection = GetConnection();
 
                 var ds = new DataSet();
                 da.Fill(ds);
@@ -205,7 +205,7 @@
             public CountingConnection(DbConnection connection, IDbProfiler profiler)
                 : base(connection, profiler)
             {
-                this.CountingProfiler = (CountingDbProfiler)profiler;
+                CountingProfiler = (CountingDbProfiler)profiler;
             }
 
             /// <summary>

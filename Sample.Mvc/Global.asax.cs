@@ -45,7 +45,7 @@
         {
             RegisterRoutes(RouteTable.Routes);
 
-            this.InitProfilerSettings();
+            InitProfilerSettings();
 
             // this is only done for testing purposes so we don't check in the db to source control
             // parameter table is only used in this project for sample queries

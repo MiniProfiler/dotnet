@@ -31,7 +31,7 @@
             var connStr = CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
 
             MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
-            this._conn = BaseTest.GetOpenSqlCeConnection<SqlServerStorageTest>();
+            _conn = BaseTest.GetOpenSqlCeConnection<SqlServerStorageTest>();
         }
 
         /// <summary>
@@ -50,11 +50,11 @@
         public void NoChildTimings()
         {
             var mp = GetProfiler();
-            this.AssertMiniProfilerExists(mp);
-            this.AssertTimingsExist(mp, 1);
+            AssertMiniProfilerExists(mp);
+            AssertTimingsExist(mp, 1);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
-            this.AssertProfilersAreEqual(mp, mp2);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         /// <summary>
@@ -64,11 +64,11 @@
         public void WithChildTimings()
         {
             var mp = GetProfiler(childDepth: 5);
-            this.AssertMiniProfilerExists(mp);
-            this.AssertTimingsExist(mp, 6);
+            AssertMiniProfilerExists(mp);
+            AssertTimingsExist(mp, 6);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
-            this.AssertProfilersAreEqual(mp, mp2);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
             MiniProfiler mp;
 
             using (BaseTest.GetRequest())
-            using (var conn = this.GetProfiledConnection())
+            using (var conn = GetProfiledConnection())
             {
                 mp = MiniProfiler.Current;
 
@@ -95,13 +95,13 @@
 
             Assert.IsFalse(mp.HasDuplicateSqlTimings);
 
-            this.AssertSqlTimingsExist(mp.Root, 1);
+            AssertSqlTimingsExist(mp.Root, 1);
             var t = mp.Root.Children.Single();
-            this.AssertSqlTimingsExist(t, 1);
-            this.AssertSqlParametersExist(t.SqlTimings.Single(), 1);
+            AssertSqlTimingsExist(t, 1);
+            AssertSqlParametersExist(t.SqlTimings.Single(), 1);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
-            this.AssertProfilersAreEqual(mp, mp2);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@
             MiniProfiler mp;
 
             using (BaseTest.GetRequest())
-            using (var conn = this.GetProfiledConnection())
+            using (var conn = GetProfiledConnection())
             {
                 mp = MiniProfiler.Current;
 
@@ -128,11 +128,11 @@
 
             Assert.IsTrue(mp.HasDuplicateSqlTimings);
 
-            this.AssertSqlTimingsExist(mp.Root, 1);
-            this.AssertSqlTimingsExist(mp.Root.Children.Single(), 1);
+            AssertSqlTimingsExist(mp.Root, 1);
+            AssertSqlTimingsExist(mp.Root.Children.Single(), 1);
 
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
-            this.AssertProfilersAreEqual(mp, mp2);
+            AssertProfilersAreEqual(mp, mp2);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@
         /// <param name="miniProfiler">The mini Profiler.</param>
         private void AssertMiniProfilerExists(MiniProfiler miniProfiler)
         {
-            Assert.That(this._conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id }).Single() == 1);
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id }).Single() == 1);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@
         /// <param name="count">The count.</param>
         private void AssertTimingsExist(MiniProfiler profiler, int count)
         {
-            Assert.That(this._conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id }).Single() == count);
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id }).Single() == count);
         }
 
         /// <summary>
@@ -170,7 +170,7 @@
         /// <param name="count">The count.</param>
         private void AssertSqlTimingsExist(Timing timing, int count)
         {
-            Assert.That(this._conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { timing.Id }).Single() == count);
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { timing.Id }).Single() == count);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@
         /// <param name="count">The count.</param>
         private void AssertSqlParametersExist(SqlTiming sqlTiming, int count)
         {
-            Assert.That(this._conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { sqlTiming.Id }).Single() == count);
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { sqlTiming.Id }).Single() == count);
         }
     }
 }

@@ -48,9 +48,9 @@
         /// </param>
         public Timing(MiniProfiler profiler, Timing parent, string name)
         {
-            this.Id = Guid.NewGuid();
-            this.Profiler = profiler;
-            this.Profiler.Head = this;
+            Id = Guid.NewGuid();
+            Profiler = profiler;
+            Profiler.Head = this;
 
             if (parent != null)
             {
@@ -58,10 +58,10 @@
                 parent.AddChild(this);
             }
 
-            this.Name = name;
+            Name = name;
 
-            this._startTicks = profiler.ElapsedTicks;
-            this.StartMilliseconds = profiler.GetRoundedMilliseconds(this._startTicks);
+            _startTicks = profiler.ElapsedTicks;
+            StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
         }
 
         /// <summary>
@@ -120,15 +120,15 @@
         {
             get
             {
-                return this._parentTiming;
+                return _parentTiming;
             }
             
             set
             {
-                this._parentTiming = value;
+                _parentTiming = value;
 
-                if (value != null && this.ParentTimingId != value.Id)
-                    this.ParentTimingId = value.Id;
+                if (value != null && ParentTimingId != value.Id)
+                    ParentTimingId = value.Id;
             }
         }
 
@@ -139,11 +139,11 @@
         {
             get
             {
-                var result = this.DurationMilliseconds.GetValueOrDefault();
+                var result = DurationMilliseconds.GetValueOrDefault();
 
-                if (this.HasChildren)
+                if (HasChildren)
                 {
-                    foreach (var child in this.Children)
+                    foreach (var child in Children)
                     {
                         result -= child.DurationMilliseconds.GetValueOrDefault();
                     }
@@ -158,7 +158,7 @@
         /// </summary>
         public decimal SqlTimingsDurationMilliseconds
         {
-            get { return this.HasSqlTimings ? Math.Round(this.SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
+            get { return HasSqlTimings ? Math.Round(SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
         }
 
         /// <summary>
@@ -167,7 +167,7 @@
         /// </summary>
         public bool IsTrivial
         {
-            get { return this.DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds; }
+            get { return DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds; }
         }
 
         /// <summary>
@@ -175,7 +175,7 @@
         /// </summary>
         public bool HasChildren
         {
-            get { return this.Children != null && this.Children.Count > 0; }
+            get { return Children != null && Children.Count > 0; }
         }
 
         /// <summary>
@@ -183,7 +183,7 @@
         /// </summary>
         public bool HasSqlTimings
         {
-            get { return this.SqlTimings != null && this.SqlTimings.Count > 0; }
+            get { return SqlTimings != null && SqlTimings.Count > 0; }
         }
 
         /// <summary>
@@ -192,7 +192,7 @@
         /// </summary>
         public bool HasDuplicateSqlTimings
         {
-            get { return this.HasSqlTimings && this.SqlTimings.Any(s => s.IsDuplicate); }
+            get { return HasSqlTimings && SqlTimings.Any(s => s.IsDuplicate); }
         }
 
         /// <summary>
@@ -200,7 +200,7 @@
         /// </summary>
         public bool IsRoot
         {
-            get { return this.ParentTiming == null; }
+            get { return ParentTiming == null; }
         }
 
         /// <summary>
@@ -211,7 +211,7 @@
             get
             {
                 short result = 0;
-                var parent = this.ParentTiming;
+                var parent = ParentTiming;
 
                 while (parent != null)
                 {
@@ -228,7 +228,7 @@
         /// </summary>
         public int ExecutedReaders
         {
-            get { return this.GetExecutedCount(ExecuteType.Reader); }
+            get { return GetExecutedCount(ExecuteType.Reader); }
         }
 
         /// <summary>
@@ -236,7 +236,7 @@
         /// </summary>
         public int ExecutedScalars
         {
-            get { return this.GetExecutedCount(ExecuteType.Scalar); }
+            get { return GetExecutedCount(ExecuteType.Scalar); }
         }
 
         /// <summary>
@@ -244,7 +244,7 @@
         /// </summary>
         public int ExecutedNonQueries
         {
-            get { return this.GetExecutedCount(ExecuteType.NonQuery); }
+            get { return GetExecutedCount(ExecuteType.NonQuery); }
         }
 
         /// <summary>
@@ -257,17 +257,17 @@
         /// </summary>
         public void RebuildParentTimings()
         {
-            if (this.SqlTimings != null)
+            if (SqlTimings != null)
             {
-                foreach (var timing in this.SqlTimings)
+                foreach (var timing in SqlTimings)
                 {
                     timing.ParentTiming = this;
                 }
             }
 
-            if (this.Children != null)
+            if (Children != null)
             {
-                foreach (var child in this.Children)
+                foreach (var child in Children)
                 {
                     child.ParentTiming = this;
                     child.RebuildParentTimings();
@@ -281,17 +281,17 @@
         /// <returns>a string containing the name.</returns>
         public override string ToString()
         {
-            return this.Name;
+            return Name;
         }
 
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="rValue">The rValue.</param>
-        /// <returns>true if the supplied value is the same as this.</returns>
+        /// <returns>true if the supplied value is the same as </returns>
         public override bool Equals(object rValue)
         {
-            return rValue is Timing && this.Id.Equals(((Timing)rValue).Id);
+            return rValue is Timing && Id.Equals(((Timing)rValue).Id);
         }
 
         /// <summary>
@@ -300,7 +300,7 @@
         /// <returns>the hash code value.</returns>
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return Id.GetHashCode();
         }
 
         /// <summary>
@@ -310,10 +310,10 @@
         /// <param name="value">The value.</param>
         public void AddKeyValue(string key, string value)
         {
-            if (this.KeyValues == null)
-                this.KeyValues = new Dictionary<string, string>();
+            if (KeyValues == null)
+                KeyValues = new Dictionary<string, string>();
 
-            this.KeyValues[key] = value;
+            KeyValues[key] = value;
         }
 
         /// <summary>
@@ -321,10 +321,10 @@
         /// </summary>
         public void Stop()
         {
-            if (this.DurationMilliseconds == null)
+            if (DurationMilliseconds == null)
             {
-                this.DurationMilliseconds = this.Profiler.GetRoundedMilliseconds(this.Profiler.ElapsedTicks - this._startTicks);
-                this.Profiler.Head = this.ParentTiming;
+                DurationMilliseconds = Profiler.GetRoundedMilliseconds(Profiler.ElapsedTicks - _startTicks);
+                Profiler.Head = ParentTiming;
             }
         }
 
@@ -333,7 +333,7 @@
         /// </summary>
         void IDisposable.Dispose()
         {
-            this.Stop();
+            Stop();
         }
 
         /// <summary>
@@ -343,10 +343,10 @@
         /// <remarks>Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.</remarks>
         public void AddChild(Timing timing)
         {
-            if (this.Children == null)
-                this.Children = new List<Timing>();
+            if (Children == null)
+                Children = new List<Timing>();
 
-            this.Children.Add(timing);
+            Children.Add(timing);
             timing.ParentTiming = this;
         }
 
@@ -357,10 +357,10 @@
         /// <remarks>Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.</remarks>
         public void AddSqlTiming(SqlTiming sqlTiming)
         {
-            if (this.SqlTimings == null)
-                this.SqlTimings = new List<SqlTiming>();
+            if (SqlTimings == null)
+                SqlTimings = new List<SqlTiming>();
 
-            this.SqlTimings.Add(sqlTiming);
+            SqlTimings.Add(sqlTiming);
             sqlTiming.ParentTiming = this;
         }
 
@@ -371,7 +371,7 @@
         /// <returns>the execution count.</returns>
         internal int GetExecutedCount(ExecuteType type)
         {
-            return this.HasSqlTimings ? this.SqlTimings.Count(s => s.ExecuteType == type) : 0;
+            return HasSqlTimings ? SqlTimings.Count(s => s.ExecuteType == type) : 0;
         }
     }
 }

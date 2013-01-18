@@ -48,15 +48,15 @@
         /// </param>
         public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info)
         {
-            this.Id = Guid.NewGuid();
-            this.Level = level;
-            this.SqlProfiler = new SqlProfiler(this);
-            this.MachineName = Environment.MachineName;
-            this.Started = DateTime.UtcNow;
+            Id = Guid.NewGuid();
+            Level = level;
+            SqlProfiler = new SqlProfiler(this);
+            MachineName = Environment.MachineName;
+            Started = DateTime.UtcNow;
 
             // stopwatch must start before any child Timings are instantiated
-            this._sw = Settings.StopwatchProvider();
-            this.Root = new Timing(this, null, url);
+            _sw = Settings.StopwatchProvider();
+            Root = new Timing(this, null, url);
         }
 
         /// <summary>
@@ -113,19 +113,19 @@
         {
             get
             {
-                return this._root;
+                return _root;
             }
 
             set
             {
-                this._root = value;
+                _root = value;
 
                 // when being deserialized, we need to go through and set all child timings' parents
-                if (this._root.HasChildren)
+                if (_root.HasChildren)
                 {
                     var timings = new Stack<Timing>();
 
-                    timings.Push(this._root);
+                    timings.Push(_root);
 
                     while (timings.Count > 0)
                     {
@@ -179,7 +179,7 @@
         /// </summary>
         public decimal DurationMilliseconds
         {
-            get { return this._root.DurationMilliseconds ?? this.GetRoundedMilliseconds(this.ElapsedTicks); }
+            get { return _root.DurationMilliseconds ?? GetRoundedMilliseconds(ElapsedTicks); }
         }
 
         /// <summary>
@@ -189,7 +189,7 @@
         {
             get
             {
-                return this.GetTimingHierarchy().Any(t => t.IsTrivial);
+                return GetTimingHierarchy().Any(t => t.IsTrivial);
             }
         }
 
@@ -201,7 +201,7 @@
         {
             get
             {
-                return this.GetTimingHierarchy().All(t => t.IsTrivial);
+                return GetTimingHierarchy().All(t => t.IsTrivial);
             }
         }
 
@@ -225,7 +225,7 @@
         {
             get
             {
-                return this._sw.ElapsedTicks;
+                return _sw.ElapsedTicks;
             }
         }
 
@@ -236,7 +236,7 @@
         {
             get
             {
-                return this._sw;
+                return _sw;
             }
         }
 
@@ -334,7 +334,7 @@
         /// <returns>a string containing the recording information</returns>
         public override string ToString()
         {
-            return this.Root != null ? this.Root.Name + " (" + this.DurationMilliseconds + " ms)" : string.Empty;
+            return Root != null ? Root.Name + " (" + DurationMilliseconds + " ms)" : string.Empty;
         }
 
         /// <summary>
@@ -344,7 +344,7 @@
         /// <returns>true if the profilers are equal.</returns>
         public override bool Equals(object rValue)
         {
-            return rValue is MiniProfiler && this.Id.Equals(((MiniProfiler)rValue).Id);
+            return rValue is MiniProfiler && Id.Equals(((MiniProfiler)rValue).Id);
         }
 
         /// <summary>
@@ -353,7 +353,7 @@
         /// <returns>an integer containing the hash code.</returns>
         public override int GetHashCode()
         {
-            return this.Id.GetHashCode();
+            return Id.GetHashCode();
         }
 
         /// <summary>
@@ -364,7 +364,7 @@
         {
             var timings = new Stack<Timing>();
 
-            timings.Push(this._root);
+            timings.Push(_root);
 
             while (timings.Count > 0)
             {
@@ -403,8 +403,8 @@
         /// <returns>the step.</returns>
         internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
-            if (level > this.Level) return null;
-            return new Timing(this, this.Head, name);
+            if (level > Level) return null;
+            return new Timing(this, Head, name);
         }
 
         /// <summary>
@@ -413,11 +413,11 @@
         /// <returns>true if the profile is stopped.</returns>
         internal bool StopImpl()
         {
-            if (!this._sw.IsRunning)
+            if (!_sw.IsRunning)
                 return false;
 
-            this._sw.Stop();
-            foreach (var timing in this.GetTimingHierarchy()) timing.Stop();
+            _sw.Stop();
+            foreach (var timing in GetTimingHierarchy()) timing.Stop();
 
             return true;
         }
@@ -429,10 +429,10 @@
         /// <param name="value">The value.</param>
         internal void AddDataImpl(string key, string value)
         {
-            if (this.Head == null)
+            if (Head == null)
                 return;
 
-            this.Head.AddKeyValue(key, value);
+            Head.AddKeyValue(key, value);
         }
 
         /// <summary>
@@ -443,7 +443,7 @@
         internal decimal GetRoundedMilliseconds(long stopwatchElapsedTicks)
         {
             long z = 10000 * stopwatchElapsedTicks;
-            decimal timesTen = (int)(z / this._sw.Frequency);
+            decimal timesTen = (int)(z / _sw.Frequency);
             return timesTen / 10;
         }
 
@@ -454,11 +454,11 @@
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            this.HasSqlTimings = this.GetTimingHierarchy().Any(t => t.HasSqlTimings);
-            this.HasDuplicateSqlTimings = this.GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);
-            if (this._root != null)
+            HasSqlTimings = GetTimingHierarchy().Any(t => t.HasSqlTimings);
+            HasDuplicateSqlTimings = GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);
+            if (_root != null)
             {
-                this._root.RebuildParentTimings();
+                _root.RebuildParentTimings();
             }
         }
     }

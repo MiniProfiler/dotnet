@@ -46,8 +46,8 @@ namespace Subtext.TestLibrary
 
         public HttpSimulator(string applicationPath, string physicalApplicationPath)
         {
-            this.ApplicationPath = applicationPath;
-            this.PhysicalApplicationPath = physicalApplicationPath;
+            ApplicationPath = applicationPath;
+            PhysicalApplicationPath = physicalApplicationPath;
         }
 
         /// <summary>
@@ -125,10 +125,10 @@ namespace Subtext.TestLibrary
 
             ParseRequestUrl(url);
 
-            if (this.responseWriter == null)
+            if (responseWriter == null)
             {
-                this.builder = new StringBuilder();
-                this.responseWriter = new StringWriter(builder);
+                builder = new StringBuilder();
+                responseWriter = new StringWriter(builder);
             }
 
             SetHttpRuntimeInternals();
@@ -139,18 +139,18 @@ namespace Subtext.TestLibrary
                 _formVars.Add(formVariables);
 
             if (_formVars.Count > 0)
-                httpVerb = HttpVerb.POST; //Need to enforce this.
+                httpVerb = HttpVerb.POST; //Need to enforce 
 
             if (headers != null)
                 _headers.Add(headers);
 
-            this.workerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, this.responseWriter, host, port, httpVerb.ToString());
+            workerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, responseWriter, host, port, httpVerb.ToString());
 
-            this.workerRequest.Form.Add(_formVars);
-            this.workerRequest.Headers.Add(_headers);
+            workerRequest.Form.Add(_formVars);
+            workerRequest.Headers.Add(_headers);
 
             if (_referer != null)
-                this.workerRequest.SetReferer(_referer);
+                workerRequest.SetReferer(_referer);
 
             InitializeSession();
 
@@ -478,9 +478,9 @@ namespace Subtext.TestLibrary
         /// <returns></returns>
         public HttpSimulator SetReferer(Uri referer)
         {
-            if (this.workerRequest != null)
-                this.workerRequest.SetReferer(referer);
-            this._referer = referer;
+            if (workerRequest != null)
+                workerRequest.SetReferer(referer);
+            _referer = referer;
             return this;
         }
 
@@ -493,7 +493,7 @@ namespace Subtext.TestLibrary
         public HttpSimulator SetFormVariable(string name, string value)
         {
             //TODO: Change this ordering requirement.
-            if (this.workerRequest != null)
+            if (workerRequest != null)
                 throw new InvalidOperationException("Cannot set form variables after calling Simulate().");
 
             _formVars.Add(name, value);
@@ -510,7 +510,7 @@ namespace Subtext.TestLibrary
         public HttpSimulator SetHeader(string name, string value)
         {
             //TODO: Change this ordering requirement.
-            if (this.workerRequest != null)
+            if (workerRequest != null)
                 throw new InvalidOperationException("Cannot set headers after calling Simulate().");
 
             _headers.Add(name, value);
@@ -522,11 +522,11 @@ namespace Subtext.TestLibrary
         {
             if (url == null)
                 return;
-            this.host = url.Host;
-            this.port = url.Port;
-            this.localPath = url.LocalPath;
-            this._page = StripPrecedingSlashes(RightAfter(url.LocalPath, ApplicationPath));
-            this.physicalPath = Path.Combine(this.physicalApplicationPath, this._page.Replace("/", @"\"));
+            host = url.Host;
+            port = url.Port;
+            localPath = url.LocalPath;
+            _page = StripPrecedingSlashes(RightAfter(url.LocalPath, ApplicationPath));
+            physicalPath = Path.Combine(physicalApplicationPath, _page.Replace("/", @"\"));
         }
 
         static string RightAfter(string original, string search)
@@ -544,21 +544,21 @@ namespace Subtext.TestLibrary
 
         public string Host
         {
-            get { return this.host; }
+            get { return host; }
         }
 
         private string host;
 
         public string LocalPath
         {
-            get { return this.localPath; }
+            get { return localPath; }
         }
 
         private string localPath;
 
         public int Port
         {
-            get { return this.port; }
+            get { return port; }
         }
 
         private int port;
@@ -568,7 +568,7 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string Page
         {
-            get { return this._page; }
+            get { return _page; }
         }
 
         private string _page;
@@ -579,11 +579,11 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string ApplicationPath
         {
-            get { return this.applicationPath; }
+            get { return applicationPath; }
             set
             {
-                this.applicationPath = value ?? "/";
-                this.applicationPath = NormalizeSlashes(this.applicationPath);
+                applicationPath = value ?? "/";
+                applicationPath = NormalizeSlashes(applicationPath);
             }
         }
         private string applicationPath = "/";
@@ -593,12 +593,12 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string PhysicalApplicationPath
         {
-            get { return this.physicalApplicationPath; }
+            get { return physicalApplicationPath; }
             set
             {
-                this.physicalApplicationPath = value ?? defaultPhysicalAppPath;
+                physicalApplicationPath = value ?? defaultPhysicalAppPath;
                 //strip trailing backslashes.
-                this.physicalApplicationPath = StripTrailingBackSlashes(this.physicalApplicationPath) + @"\";
+                physicalApplicationPath = StripTrailingBackSlashes(physicalApplicationPath) + @"\";
             }
         }
 
@@ -609,15 +609,15 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string PhysicalPath
         {
-            get { return this.physicalPath; }
+            get { return physicalPath; }
         }
 
         private string physicalPath = defaultPhysicalAppPath;
 
         public TextWriter ResponseWriter
         {
-            get { return this.responseWriter; }
-            set { this.responseWriter = value; }
+            get { return responseWriter; }
+            set { responseWriter = value; }
         }
 
         /// <summary>
@@ -635,7 +635,7 @@ namespace Subtext.TestLibrary
 
         public SimulatedHttpRequest WorkerRequest
         {
-            get { return this.workerRequest; }
+            get { return workerRequest; }
         }
 
         private SimulatedHttpRequest workerRequest;

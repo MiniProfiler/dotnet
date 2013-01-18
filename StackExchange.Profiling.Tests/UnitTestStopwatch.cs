@@ -40,7 +40,7 @@
         /// </summary>
         public bool IsRunning
         {
-            get { return this._isRunning; }
+            get { return _isRunning; }
         }
 
         /// <summary>
@@ -48,7 +48,7 @@
         /// </summary>
         public void Stop()
         {
-            this._isRunning = false;
+            _isRunning = false;
         }
     }
 }

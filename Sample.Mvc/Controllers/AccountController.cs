@@ -17,7 +17,7 @@
         /// <returns>the login view</returns>
         public ActionResult LogOn()
         {
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -37,15 +37,15 @@
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                         && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                     {
-                        return this.Redirect(returnUrl);
+                        return Redirect(returnUrl);
                     }
-                    return this.RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
-                this.ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
+                ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
             }
 
             // If we got this far, something failed, redisplay form
-            return this.View(model);
+            return View(model);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-            return this.RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         /// <returns>the registration view.</returns>
         public ActionResult Register()
         {
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -84,13 +84,13 @@
                 if (createStatus == MembershipCreateStatus.Success)
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
-                    return this.RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
-                this.ModelState.AddModelError(string.Empty, ErrorCodeToString(createStatus));
+                ModelState.AddModelError(string.Empty, ErrorCodeToString(createStatus));
             }
 
             // If we got this far, something failed, redisplay form
-            return this.View(model);
+            return View(model);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@
         [Authorize]
         public ActionResult ChangePassword()
         {
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -132,13 +132,13 @@
 
                 if (changePasswordSucceeded)
                 {
-                    return this.RedirectToAction("ChangePasswordSuccess");
+                    return RedirectToAction("ChangePasswordSuccess");
                 }
-                this.ModelState.AddModelError(string.Empty, "The current password is incorrect or the new password is invalid.");
+                ModelState.AddModelError(string.Empty, "The current password is incorrect or the new password is invalid.");
             }
 
             // If we got this far, something failed, redisplay form
-            return this.View(model);
+            return View(model);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@
         /// <returns>the view</returns>
         public ActionResult ChangePasswordSuccess()
         {
-            return this.View();
+            return View();
         }
 
         #region Status Codes

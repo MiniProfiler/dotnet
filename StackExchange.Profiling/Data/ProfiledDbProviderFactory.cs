@@ -41,8 +41,8 @@
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
         {
-            this._profiler = profiler;
-            this._tail = tail;
+            _profiler = profiler;
+            _tail = tail;
         }
 
         /// <summary>
@@ -53,8 +53,8 @@
         /// <param name="tail">The tail.</param>
         public ProfiledDbProviderFactory(IDbProfiler profiler, DbProviderFactory tail)
         {
-            this._profiler = profiler;
-            this._tail = tail;
+            _profiler = profiler;
+            _tail = tail;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         {
             get
             {
-                return this._tail.CanCreateDataSourceEnumerator;
+                return _tail.CanCreateDataSourceEnumerator;
             }
         }
 
@@ -74,7 +74,7 @@
         /// <returns>The <see cref="DbDataSourceEnumerator"/>.</returns>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
         {
-            return this._tail.CreateDataSourceEnumerator();
+            return _tail.CreateDataSourceEnumerator();
         }
 
         /// <summary>
@@ -83,7 +83,7 @@
         /// <returns>The <see cref="DbCommand"/>.</returns>
         public override DbCommand CreateCommand()
         {
-            return new ProfiledDbCommand(this._tail.CreateCommand(), null, this._profiler);
+            return new ProfiledDbCommand(_tail.CreateCommand(), null, _profiler);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@
         /// <returns>The <see cref="DbConnection"/>.</returns>
         public override DbConnection CreateConnection()
         {
-            return new ProfiledDbConnection(this._tail.CreateConnection(), this._profiler);
+            return new ProfiledDbConnection(_tail.CreateConnection(), _profiler);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@
         /// <returns>The <see cref="DbParameter"/>.</returns>
         public override DbParameter CreateParameter()
         {
-            return this._tail.CreateParameter();
+            return _tail.CreateParameter();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@
         /// </returns>
         public override DbConnectionStringBuilder CreateConnectionStringBuilder()
         {
-            return this._tail.CreateConnectionStringBuilder();
+            return _tail.CreateConnectionStringBuilder();
         }
 
         /// <summary>
@@ -123,7 +123,7 @@
         /// </returns>
         public override DbCommandBuilder CreateCommandBuilder()
         {
-            return this._tail.CreateCommandBuilder();
+            return _tail.CreateCommandBuilder();
         }
 
         /// <summary>
@@ -134,7 +134,7 @@
         /// </returns>
         public override DbDataAdapter CreateDataAdapter()
         {
-            return new ProfiledDbDataAdapter(this._tail.CreateDataAdapter(), this._profiler);
+            return new ProfiledDbDataAdapter(_tail.CreateDataAdapter(), _profiler);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@
         /// <returns>The <see cref="CodeAccessPermission"/>.</returns>
         public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
         {
-            return this._tail.CreatePermission(state);
+            return _tail.CreatePermission(state);
         }
 
     }

@@ -54,7 +54,7 @@
         /// </summary>
         private StopwatchWrapper()
         {
-            this._stopwatch = Stopwatch.StartNew();
+            _stopwatch = Stopwatch.StartNew();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@
         /// </summary>
         public long ElapsedTicks
         {
-            get { return this._stopwatch.ElapsedTicks; }
+            get { return _stopwatch.ElapsedTicks; }
         }
 
         /// <summary>
@@ -78,7 +78,7 @@
         /// </summary>
         public bool IsRunning
         {
-            get { return this._stopwatch.IsRunning; }
+            get { return _stopwatch.IsRunning; }
         }
 
         /// <summary>
@@ -86,8 +86,7 @@
         /// </summary>
         public void Stop()
         {
-            this._stopwatch.Stop();
+            _stopwatch.Stop();
         }
     }
-
 }

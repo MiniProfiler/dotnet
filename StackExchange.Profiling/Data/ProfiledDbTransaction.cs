@@ -30,8 +30,8 @@ namespace StackExchange.Profiling.Data
         {
             if (transaction == null) throw new ArgumentNullException("transaction");
             if (connection == null) throw new ArgumentNullException("connection");
-            this._transaction = transaction;
-            this._connection = connection;
+            _transaction = transaction;
+            _connection = connection;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected override DbConnection DbConnection
         {
-            get { return this._connection; }
+            get { return _connection; }
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public DbTransaction WrappedTransaction
         {
-            get { return this._transaction; }
+            get { return _transaction; }
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override IsolationLevel IsolationLevel
         {
-            get { return this._transaction.IsolationLevel; }
+            get { return _transaction.IsolationLevel; }
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override void Commit()
         {
-            this._transaction.Commit();
+            _transaction.Commit();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override void Rollback()
         {
-            this._transaction.Rollback();
+            _transaction.Rollback();
         }
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace StackExchange.Profiling.Data
         /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && this._transaction != null)
+            if (disposing && _transaction != null)
             {
-                this._transaction.Dispose();
+                _transaction.Dispose();
             }
-            this._transaction = null;
-            this._connection = null;
+            _transaction = null;
+            _connection = null;
             base.Dispose(disposing);
         }
     }

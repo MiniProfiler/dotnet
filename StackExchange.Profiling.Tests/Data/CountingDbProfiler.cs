@@ -56,7 +56,7 @@
         {
             get
             {
-                return !this._watch.IsRunning && this._watch.ElapsedTicks > 0;
+                return !_watch.IsRunning && _watch.ElapsedTicks > 0;
             }
         }
 
@@ -67,9 +67,9 @@
         /// <param name="executeType">The execute type.</param>
         void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, ExecuteType executeType)
         {
-            this._watch.Start();
-            this.ExecuteStartCount++;
-            this.ErrorSql = null;
+            _watch.Start();
+            ExecuteStartCount++;
+            ErrorSql = null;
         }
 
         /// <summary>
@@ -82,10 +82,10 @@
         {
             if (reader == null)
             {
-                this._watch.Stop();
+                _watch.Stop();
             }
 
-            this.ExecuteFinishCount++;
+            ExecuteFinishCount++;
         }
 
         /// <summary>
@@ -96,8 +96,8 @@
         /// </param>
         void IDbProfiler.ReaderFinish(IDataReader reader)
         {
-            this._watch.Stop();
-            this.ReaderFinishCount++;
+            _watch.Stop();
+            ReaderFinishCount++;
         }
 
         /// <summary>
@@ -114,8 +114,8 @@
         /// </param>
         void IDbProfiler.OnError(IDbCommand profiledDbCommand, ExecuteType executeType, Exception exception)
         {
-            this.ErrorCount++;
-            this.ErrorSql = profiledDbCommand.CommandText;
+            ErrorCount++;
+            ErrorSql = profiledDbCommand.CommandText;
         }
     }
 }

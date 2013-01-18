@@ -37,9 +37,9 @@ namespace StackExchange.Profiling.MVCHelpers
         /// </param>
         public WrappedView(IView wrapped, string name, bool isPartial)
         {
-            this._wrapped = wrapped;
-            this.Name = name;
-            this.IsPartial = isPartial;
+            _wrapped = wrapped;
+            Name = name;
+            IsPartial = isPartial;
         }
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace StackExchange.Profiling.MVCHelpers
         /// </param>
         public void Render(ViewContext viewContext, System.IO.TextWriter writer)
         {
-            using (MiniProfiler.Current.Step("Render " + (this.IsPartial ? "partial" : string.Empty) + ": " + this.Name))
+            using (MiniProfiler.Current.Step("Render " + (IsPartial ? "partial" : string.Empty) + ": " + Name))
             {
-                this._wrapped.Render(viewContext, writer);
+                _wrapped.Render(viewContext, writer);
             }
         }
     }

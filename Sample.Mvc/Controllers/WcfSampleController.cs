@@ -41,7 +41,7 @@
                 }
             }
 
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -57,10 +57,10 @@
 
             using (MiniProfiler.Current.Step("WCF Call"))
             {
-                this.MakeSampleServiceCall(proxy => proxy.ServiceMethodThatIsNotProfiled());
+                MakeSampleServiceCall(proxy => proxy.ServiceMethodThatIsNotProfiled());
             }
 
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -74,7 +74,7 @@
             using (profiler.Step("WCF Call"))
             {
                 var result = MakeSampleServiceCall(proxy => proxy.FetchRouteHits());
-                return this.Json(result, JsonRequestBehavior.AllowGet);
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -86,9 +86,9 @@
         /// </returns>
         public ActionResult MassiveNesting()
         {
-            this.MakeSampleServiceCall(proxy => proxy.MassiveNesting());
+            MakeSampleServiceCall(proxy => proxy.MassiveNesting());
 
-            return this.Content("MassiveNesting completed");
+            return Content("MassiveNesting completed");
         }
 
         /// <summary>
@@ -99,9 +99,9 @@
         /// </returns>
         public ActionResult MassiveNesting2()
         {
-            this.MakeSampleServiceCall(proxy => proxy.MassiveNesting2());
+            MakeSampleServiceCall(proxy => proxy.MassiveNesting2());
 
-            return this.Content("MassiveNesting2 completed");
+            return Content("MassiveNesting2 completed");
         }
 
         /// <summary>
@@ -110,9 +110,9 @@
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult Duplicated()
         {
-            this.MakeSampleServiceCall(proxy => proxy.Duplicated());
+            MakeSampleServiceCall(proxy => proxy.Duplicated());
 
-            return this.Content("Duplicate queries completed");
+            return Content("Duplicate queries completed");
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult EFCodeFirst()
         {
-            return this.Content("Not implemented in this sample");
+            return Content("Not implemented in this sample");
         }
 
         /// <summary>

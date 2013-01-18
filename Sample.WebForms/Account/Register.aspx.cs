@@ -15,7 +15,7 @@
         /// <param name="eventArguments">The event arguments.</param>
         protected void Page_Load(object sender, EventArgs eventArguments)
         {
-            this.RegisterUser.ContinueDestinationPageUrl = Request.QueryString["ReturnUrl"];
+            RegisterUser.ContinueDestinationPageUrl = Request.QueryString["ReturnUrl"];
         }
 
         /// <summary>
@@ -25,9 +25,9 @@
         /// <param name="eventArguments">The event arguments.</param>
         protected void RegisterUser_CreatedUser(object sender, EventArgs eventArguments)
         {
-            FormsAuthentication.SetAuthCookie(this.RegisterUser.UserName, false /* createPersistentCookie */);
+            FormsAuthentication.SetAuthCookie(RegisterUser.UserName, false /* createPersistentCookie */);
 
-            string continueUrl = this.RegisterUser.ContinueDestinationPageUrl;
+            string continueUrl = RegisterUser.ContinueDestinationPageUrl;
             if (string.IsNullOrEmpty(continueUrl))
             {
                 continueUrl = "~/";

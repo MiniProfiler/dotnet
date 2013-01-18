@@ -19,7 +19,7 @@
         /// </summary>
         private WcfInstanceContext()
         {
-            this._items = new Hashtable();
+            _items = new Hashtable();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@
             {
                 Contract.Ensures(Contract.Result<IDictionary>() != null);
 
-                return this._items;
+                return _items;
             }
         }
 

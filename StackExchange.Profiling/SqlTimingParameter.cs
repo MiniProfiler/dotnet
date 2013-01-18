@@ -60,6 +60,12 @@ namespace StackExchange.Profiling
             return ParentSqlTimingId.GetHashCode() ^ Name.GetHashCode() ^ Value.GetHashCode();
         }
 
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
             return string.Format("{0} = {1} ({2})", Name, Value, DbType);

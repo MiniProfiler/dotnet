@@ -21,7 +21,7 @@
         /// </param>
         public ProfiledDbConnectionFactory(IDbConnectionFactory wrapped)
         {
-            this._wrapped = wrapped;
+            _wrapped = wrapped;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// <returns>the connection</returns>
         public System.Data.Common.DbConnection CreateConnection(string nameOrConnectionString)
         {
-            return new EFProfiledDbConnection(this._wrapped.CreateConnection(nameOrConnectionString), MiniProfiler.Current);
+            return new EFProfiledDbConnection(_wrapped.CreateConnection(nameOrConnectionString), MiniProfiler.Current);
         }
     }
 }

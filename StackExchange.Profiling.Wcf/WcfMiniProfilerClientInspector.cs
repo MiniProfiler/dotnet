@@ -55,9 +55,9 @@
                     .GetUntypedHeader(MiniProfilerRequestHeader.HeaderName, MiniProfilerRequestHeader.HeaderNamespace);
                     request.Headers.Add(untypedHeader);
                 }
-                else if (this._http || WebOperationContext.Current != null || channel.Via.Scheme == "http" | channel.Via.Scheme == "https")
+                else if (_http || WebOperationContext.Current != null || channel.Via.Scheme == "http" | channel.Via.Scheme == "https")
                 {
-                    this._http = true;
+                    _http = true;
 
                     HttpRequestMessageProperty property = null;
                     if (!request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
@@ -98,9 +98,9 @@
                     if (headerIndex >= 0)
                         resultsHeader = reply.Headers.GetHeader<MiniProfilerResultsHeader>(headerIndex);
                 }
-                else if (this._http || reply.Properties.ContainsKey(HttpResponseMessageProperty.Name))
+                else if (_http || reply.Properties.ContainsKey(HttpResponseMessageProperty.Name))
                 {
-                    this._http = true;
+                    _http = true;
 
                     var property = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
 

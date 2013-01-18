@@ -28,11 +28,11 @@
         /// <param name="profiler">The profiler.</param>
         public ProfiledDbDataReader(DbDataReader reader, DbConnection connection, IDbProfiler profiler)
         {
-            this._reader = reader;
+            _reader = reader;
 
             if (profiler != null)
             {
-                this._profiler = profiler;
+                _profiler = profiler;
             }
         }
 
@@ -41,7 +41,7 @@
         /// </summary>
         public override int Depth
         {
-            get { return this._reader.Depth; }
+            get { return _reader.Depth; }
         }
 
         /// <summary>
@@ -49,7 +49,7 @@
         /// </summary>
         public override int FieldCount
         {
-            get { return this._reader.FieldCount; }
+            get { return _reader.FieldCount; }
         }
 
         /// <summary>
@@ -57,7 +57,7 @@
         /// </summary>
         public override bool HasRows
         {
-            get { return this._reader.HasRows; }
+            get { return _reader.HasRows; }
         }
 
         /// <summary>
@@ -65,7 +65,7 @@
         /// </summary>
         public override bool IsClosed
         {
-            get { return this._reader.IsClosed; }
+            get { return _reader.IsClosed; }
         }
 
         /// <summary>
@@ -73,11 +73,11 @@
         /// </summary>
         public override int RecordsAffected
         {
-            get { return this._reader.RecordsAffected; }
+            get { return _reader.RecordsAffected; }
         }
 
         /// <summary>
-        /// The this.
+        /// The 
         /// </summary>
         /// <param name="name">
         /// The name.
@@ -87,11 +87,11 @@
         /// </returns>
         public override object this[string name]
         {
-            get { return this._reader[name]; }
+            get { return _reader[name]; }
         }
 
         /// <summary>
-        /// The this.
+        /// The 
         /// </summary>
         /// <param name="ordinal">
         /// The ordinal.
@@ -101,7 +101,7 @@
         /// </returns>
         public override object this[int ordinal]
         {
-            get { return this._reader[ordinal]; }
+            get { return _reader[ordinal]; }
         }
 
         /// <summary>
@@ -111,14 +111,14 @@
         {
             // this can occur when we're not profiling, but we've inherited from ProfiledDbCommand and are returning a
             // an unwrapped reader from the base command
-            if (this._reader != null)
+            if (_reader != null)
             {
-                this._reader.Close();
+                _reader.Close();
             }
 
-            if (this._profiler != null)
+            if (_profiler != null)
             {
-                this._profiler.ReaderFinish(this);
+                _profiler.ReaderFinish(this);
             }
         }
 
@@ -133,7 +133,7 @@
         /// </returns>
         public override bool GetBoolean(int ordinal)
         {
-            return this._reader.GetBoolean(ordinal);
+            return _reader.GetBoolean(ordinal);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@
         /// </returns>
         public override byte GetByte(int ordinal)
         {
-            return this._reader.GetByte(ordinal);
+            return _reader.GetByte(ordinal);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@
         /// </returns>
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
-            return this._reader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
+            return _reader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@
         /// </returns>
         public override char GetChar(int ordinal)
         {
-            return this._reader.GetChar(ordinal);
+            return _reader.GetChar(ordinal);
         }
 
         /// <summary>
@@ -213,7 +213,7 @@
         /// </returns>
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
-            return this._reader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
+            return _reader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@
         /// </returns>
         public override string GetDataTypeName(int ordinal)
         {
-            return this._reader.GetDataTypeName(ordinal);
+            return _reader.GetDataTypeName(ordinal);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@
         /// </returns>
         public override DateTime GetDateTime(int ordinal)
         {
-            return this._reader.GetDateTime(ordinal);
+            return _reader.GetDateTime(ordinal);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@
         /// </returns>
         public override decimal GetDecimal(int ordinal)
         {
-            return this._reader.GetDecimal(ordinal);
+            return _reader.GetDecimal(ordinal);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@
         /// </returns>
         public override double GetDouble(int ordinal)
         {
-            return this._reader.GetDouble(ordinal);
+            return _reader.GetDouble(ordinal);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@
         /// </returns>
         public override System.Collections.IEnumerator GetEnumerator()
         {
-            return ((System.Collections.IEnumerable)this._reader).GetEnumerator();
+            return ((System.Collections.IEnumerable)_reader).GetEnumerator();
         }
 
         /// <summary>
@@ -294,7 +294,7 @@
         /// </returns>
         public override Type GetFieldType(int ordinal)
         {
-            return this._reader.GetFieldType(ordinal);
+            return _reader.GetFieldType(ordinal);
         }
 
         /// <summary>
@@ -308,7 +308,7 @@
         /// </returns>
         public override float GetFloat(int ordinal)
         {
-            return this._reader.GetFloat(ordinal);
+            return _reader.GetFloat(ordinal);
         }
 
         /// <summary>
@@ -322,7 +322,7 @@
         /// </returns>
         public override Guid GetGuid(int ordinal)
         {
-            return this._reader.GetGuid(ordinal);
+            return _reader.GetGuid(ordinal);
         }
 
         /// <summary>
@@ -332,7 +332,7 @@
         /// <returns>The <see cref="short"/>.</returns>
         public override short GetInt16(int ordinal)
         {
-            return this._reader.GetInt16(ordinal);
+            return _reader.GetInt16(ordinal);
         }
 
         /// <summary>
@@ -344,7 +344,7 @@
         /// </returns>
         public override int GetInt32(int ordinal)
         {
-            return this._reader.GetInt32(ordinal);
+            return _reader.GetInt32(ordinal);
         }
 
         /// <summary>
@@ -358,7 +358,7 @@
         /// </returns>
         public override long GetInt64(int ordinal)
         {
-            return this._reader.GetInt64(ordinal);
+            return _reader.GetInt64(ordinal);
         }
 
         /// <summary>
@@ -372,7 +372,7 @@
         /// </returns>
         public override string GetName(int ordinal)
         {
-            return this._reader.GetName(ordinal);
+            return _reader.GetName(ordinal);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@
         /// </returns>
         public override int GetOrdinal(string name)
         {
-            return this._reader.GetOrdinal(name);
+            return _reader.GetOrdinal(name);
         }
 
         /// <summary>
@@ -397,7 +397,7 @@
         /// </returns>
         public override DataTable GetSchemaTable()
         {
-            return this._reader.GetSchemaTable();
+            return _reader.GetSchemaTable();
         }
 
         /// <summary>
@@ -411,7 +411,7 @@
         /// </returns>
         public override string GetString(int ordinal)
         {
-            return this._reader.GetString(ordinal);
+            return _reader.GetString(ordinal);
         }
 
         /// <summary>
@@ -425,7 +425,7 @@
         /// </returns>
         public override object GetValue(int ordinal)
         {
-            return this._reader.GetValue(ordinal);
+            return _reader.GetValue(ordinal);
         }
 
         /// <summary>
@@ -439,7 +439,7 @@
         /// </returns>
         public override int GetValues(object[] values)
         {
-            return this._reader.GetValues(values);
+            return _reader.GetValues(values);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@
         /// </returns>
         public override bool IsDBNull(int ordinal)
         {
-            return this._reader.IsDBNull(ordinal);
+            return _reader.IsDBNull(ordinal);
         }
 
         /// <summary>
@@ -464,7 +464,7 @@
         /// </returns>
         public override bool NextResult()
         {
-            return this._reader.NextResult();
+            return _reader.NextResult();
         }
 
         /// <summary>
@@ -475,7 +475,7 @@
         /// </returns>
         public override bool Read()
         {
-            return this._reader.Read();
+            return _reader.Read();
         }
     }
 }

@@ -32,7 +32,7 @@
         /// </param>
         public SqlProfiler(MiniProfiler profiler)
         {
-            this.Profiler = profiler;
+            Profiler = profiler;
         }
 
         /// <summary>
@@ -48,9 +48,9 @@
         public void ExecuteStartImpl(IDbCommand command, ExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
-            var sqlTiming = new SqlTiming(command, type, this.Profiler);
+            var sqlTiming = new SqlTiming(command, type, Profiler);
 
-            this._inProgress[id] = sqlTiming;
+            _inProgress[id] = sqlTiming;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@
         /// <returns>the set of SQL timings.</returns>
         public SqlTiming[] GetInProgressCommands()
         {
-            return this._inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
+            return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
         }
 
         /// <summary>
@@ -71,13 +71,13 @@
         public void ExecuteFinishImpl(IDbCommand command, ExecuteType type, DbDataReader reader = null)
         {
             var id = Tuple.Create((object)command, type);
-            var current = this._inProgress[id];
+            var current = _inProgress[id];
             current.ExecutionComplete(reader != null);
             SqlTiming ignore;
-            this._inProgress.TryRemove(id, out ignore);
+            _inProgress.TryRemove(id, out ignore);
             if (reader != null)
             {
-                this._inProgressReaders[reader] = current;
+                _inProgressReaders[reader] = current;
             }
         }
 
@@ -90,11 +90,11 @@
             SqlTiming stat;
 
             // this reader may have been disposed/closed by reader code, not by our using()
-            if (this._inProgressReaders.TryGetValue(reader, out stat))
+            if (_inProgressReaders.TryGetValue(reader, out stat))
             {
                 stat.ReaderFetchComplete();
                 SqlTiming ignore;
-                this._inProgressReaders.TryRemove(reader, out ignore);
+                _inProgressReaders.TryRemove(reader, out ignore);
             }
         }
     }

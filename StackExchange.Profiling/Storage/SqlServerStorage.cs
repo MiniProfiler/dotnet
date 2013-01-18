@@ -123,14 +123,14 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
 
                 if (insertCount > 0)
                 {
-                    this.SaveTiming(conn, profiler, profiler.Root);
+                    SaveTiming(conn, profiler, profiler.Root);
                 }
 
                 // we may have a missing client timing - re save
                 if (profiler.ClientTimings != null)
                 {
                     conn.Execute("delete from MiniProfilerClientTimings where MiniProfilerId = @Id", new { profiler.Id });
-                    this.SaveClientTiming(conn, profiler);
+                    SaveClientTiming(conn, profiler);
                 }
             }
         }
@@ -142,10 +142,10 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         /// <returns>the mini profiler.</returns>
         public override MiniProfiler Load(Guid id)
         {
-            using (var conn = this.GetOpenConnection())
+            using (var conn = GetOpenConnection())
             {
                 var idParameter = new { id };
-                var result = this.EnableBatchSelects ? this.LoadInBatch(conn, idParameter) : this.LoadIndividually(conn, idParameter);
+                var result = EnableBatchSelects ? LoadInBatch(conn, idParameter) : LoadIndividually(conn, idParameter);
 
                 if (result != null)
                 {
@@ -197,7 +197,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 and    HasUserViewed = 0
                 order  by Started";
 
-            using (var conn = this.GetOpenConnection())
+            using (var conn = GetOpenConnection())
             {
                 return conn.Query<Guid>(Sql, new { user }).ToList();
             }
@@ -228,7 +228,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
 
             builder.OrderBy(orderBy == ListResultsOrder.Descending ? "Started desc" : "Started asc");
 
-            using (var conn = this.GetOpenConnection())
+            using (var conn = GetOpenConnection())
             {
                 return conn.Query<Guid>(t.RawSql, t.Parameters).ToList();
             }
@@ -321,7 +321,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
             {
                 foreach (var st in timing.SqlTimings)
                 {
-                    this.SaveSqlTiming(connection, profiler, st);
+                    SaveSqlTiming(connection, profiler, st);
                 }
             }
 
@@ -329,7 +329,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
             {
                 foreach (var child in timing.Children)
                 {
-                    this.SaveTiming(connection, profiler, child);
+                    SaveTiming(connection, profiler, child);
                 }
             }
         }
@@ -383,7 +383,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
 
             if (sqlTiming.Parameters != null && sqlTiming.Parameters.Count > 0)
             {
-                this.SaveSqlTimingParameters(connection, profiler, sqlTiming);
+                SaveSqlTimingParameters(connection, profiler, sqlTiming);
             }
         }
 
@@ -432,7 +432,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         /// <returns>the database connection</returns>
         protected override DbConnection GetConnection()
         {
-            return new SqlConnection(this.ConnectionString);
+            return new SqlConnection(ConnectionString);
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                         clientTimings = new ClientTimings { Timings = clientTimingList };
                     }
 
-                    this.MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
+                    MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
                 }
             }
 
@@ -476,21 +476,21 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         /// <returns>the mini profiler.</returns>
         private MiniProfiler LoadIndividually(DbConnection connection, object keyParameter)
         {
-            var result = this.LoadFor<MiniProfiler>(connection, keyParameter).SingleOrDefault();
+            var result = LoadFor<MiniProfiler>(connection, keyParameter).SingleOrDefault();
 
             if (result != null)
             {
-                var timings = this.LoadFor<Timing>(connection, keyParameter);
-                var sqlTimings = this.LoadFor<SqlTiming>(connection, keyParameter);
-                var sqlParameters = this.LoadFor<SqlTimingParameter>(connection, keyParameter);
-                var clientTimingList = this.LoadFor<ClientTimings.ClientTiming>(connection, keyParameter).ToList();
+                var timings = LoadFor<Timing>(connection, keyParameter);
+                var sqlTimings = LoadFor<SqlTiming>(connection, keyParameter);
+                var sqlParameters = LoadFor<SqlTimingParameter>(connection, keyParameter);
+                var clientTimingList = LoadFor<ClientTimings.ClientTiming>(connection, keyParameter).ToList();
                 ClientTimings clientTimings = null;
                 if (clientTimingList.Count > 0)
                 {
                     clientTimings = new ClientTimings { Timings = clientTimingList };
                 }
 
-                this.MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
+                MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
             }
 
             return result;

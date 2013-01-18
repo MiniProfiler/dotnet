@@ -53,18 +53,20 @@
         {
             get
             {
-                return this._bindByName;
+                return _bindByName;
             }
+
             set
             {
-                if (this._bindByName != value)
+                if (_bindByName != value)
                 {
-                    if (this._command != null)
+                    if (_command != null)
                     {
-                        var inner = GetBindByName(this._command.GetType());
-                        if (inner != null) inner(this._command, value);
+                        var inner = GetBindByName(_command.GetType());
+                        if (inner != null) inner(_command, value);
                     }
-                    this._bindByName = value;
+
+                    _bindByName = value;
                 }
             }
         }
@@ -79,12 +81,12 @@
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            this._command = command;
-            this._connection = connection;
+            _command = command;
+            _connection = connection;
 
             if (profiler != null)
             {
-                this._profiler = profiler;
+                _profiler = profiler;
             }
         }
 
@@ -101,6 +103,7 @@
             {
                 return action;
             }
+
             var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
             action = null;
             ParameterInfo[] indexers;
@@ -129,8 +132,8 @@
         /// </summary>
         public override string CommandText
         {
-            get { return this._command.CommandText; }
-            set { this._command.CommandText = value; }
+            get { return _command.CommandText; }
+            set { _command.CommandText = value; }
         }
 
         /// <summary>
@@ -138,8 +141,8 @@
         /// </summary>
         public override int CommandTimeout
         {
-            get { return this._command.CommandTimeout; }
-            set { this._command.CommandTimeout = value; }
+            get { return _command.CommandTimeout; }
+            set { _command.CommandTimeout = value; }
         }
 
         /// <summary>
@@ -147,8 +150,8 @@
         /// </summary>
         public override CommandType CommandType
         {
-            get { return this._command.CommandType; }
-            set { this._command.CommandType = value; }
+            get { return _command.CommandType; }
+            set { _command.CommandType = value; }
         }
 
         /// <summary>
@@ -158,20 +161,21 @@
         {
             get
             {
-                return this._connection;
+                return _connection;
             }
+
             set
             {
                 // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
                 // allow for command reuse, it is clear the connection is going to need to be reset
                 if (MiniProfiler.Current != null)
                 {
-                    this._profiler = MiniProfiler.Current;
+                    _profiler = MiniProfiler.Current;
                 }
 
-                this._connection = value;
+                _connection = value;
                 var awesomeConn = value as ProfiledDbConnection;
-                this._command.Connection = awesomeConn == null ? value : awesomeConn.WrappedConnection;
+                _command.Connection = awesomeConn == null ? value : awesomeConn.WrappedConnection;
             }
         }
 
@@ -180,7 +184,7 @@
         /// </summary>
         protected override DbParameterCollection DbParameterCollection
         {
-            get { return this._command.Parameters; }
+            get { return _command.Parameters; }
         }
 
         /// <summary>
@@ -190,13 +194,14 @@
         {
             get
             {
-                return this._transaction;
+                return _transaction;
             }
+
             set
             {
-                this._transaction = value;
+                _transaction = value;
                 var awesomeTran = value as ProfiledDbTransaction;
-                this._command.Transaction = awesomeTran == null ? value : awesomeTran.WrappedTransaction;
+                _command.Transaction = awesomeTran == null ? value : awesomeTran.WrappedTransaction;
             }
         }
 
@@ -205,8 +210,8 @@
         /// </summary>
         public override bool DesignTimeVisible
         {
-            get { return this._command.DesignTimeVisible; }
-            set { this._command.DesignTimeVisible = value; }
+            get { return _command.DesignTimeVisible; }
+            set { _command.DesignTimeVisible = value; }
         }
 
         /// <summary>
@@ -214,8 +219,8 @@
         /// </summary>
         public override UpdateRowSource UpdatedRowSource
         {
-            get { return this._command.UpdatedRowSource; }
-            set { this._command.UpdatedRowSource = value; }
+            get { return _command.UpdatedRowSource; }
+            set { _command.UpdatedRowSource = value; }
         }
 
         /// <summary>
@@ -225,27 +230,28 @@
         /// <returns>the resulting <see cref="DbDataReader"/>.</returns>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            if (this._profiler == null || !this._profiler.IsActive)
+            if (_profiler == null || !_profiler.IsActive)
             {
-                return this._command.ExecuteReader(behavior);
+                return _command.ExecuteReader(behavior);
             }
 
             DbDataReader result = null;
-            this._profiler.ExecuteStart(this, ExecuteType.Reader);
+            _profiler.ExecuteStart(this, ExecuteType.Reader);
             try
             {
-                result = this._command.ExecuteReader(behavior);
-                result = new ProfiledDbDataReader(result, this._connection, this._profiler);
+                result = _command.ExecuteReader(behavior);
+                result = new ProfiledDbDataReader(result, _connection, _profiler);
             }
             catch (Exception e)
             {
-                this._profiler.OnError(this, ExecuteType.Reader, e);
+                _profiler.OnError(this, ExecuteType.Reader, e);
                 throw;
             }
             finally
             {
-                this._profiler.ExecuteFinish(this, ExecuteType.Reader, result);
+                _profiler.ExecuteFinish(this, ExecuteType.Reader, result);
             }
+
             return result;
         }
 
@@ -255,27 +261,28 @@
         /// <returns>the number of affected records.</returns>
         public override int ExecuteNonQuery()
         {
-            if (this._profiler == null || !this._profiler.IsActive)
+            if (_profiler == null || !_profiler.IsActive)
             {
-                return this._command.ExecuteNonQuery();
+                return _command.ExecuteNonQuery();
             }
 
             int result;
 
-            this._profiler.ExecuteStart(this, ExecuteType.NonQuery);
+            _profiler.ExecuteStart(this, ExecuteType.NonQuery);
             try
             {
-                result = this._command.ExecuteNonQuery();
+                result = _command.ExecuteNonQuery();
             }
             catch (Exception e)
             {
-                this._profiler.OnError(this, ExecuteType.NonQuery, e);
+                _profiler.OnError(this, ExecuteType.NonQuery, e);
                 throw;
             }
             finally
             {
-                this._profiler.ExecuteFinish(this, ExecuteType.NonQuery, null);
+                _profiler.ExecuteFinish(this, ExecuteType.NonQuery, null);
             }
+
             return result;
         }
 
@@ -287,26 +294,27 @@
         /// </returns>
         public override object ExecuteScalar()
         {
-            if (this._profiler == null || !this._profiler.IsActive)
+            if (_profiler == null || !_profiler.IsActive)
             {
-                return this._command.ExecuteScalar();
+                return _command.ExecuteScalar();
             }
 
             object result;
-            this._profiler.ExecuteStart(this, ExecuteType.Scalar);
+            _profiler.ExecuteStart(this, ExecuteType.Scalar);
             try
             {
-                result = this._command.ExecuteScalar();
+                result = _command.ExecuteScalar();
             }
             catch (Exception e)
             {
-                this._profiler.OnError(this, ExecuteType.Scalar, e);
+                _profiler.OnError(this, ExecuteType.Scalar, e);
                 throw;
             }
             finally
             {
-                this._profiler.ExecuteFinish(this, ExecuteType.Scalar, null);
+                _profiler.ExecuteFinish(this, ExecuteType.Scalar, null);
             }
+
             return result;
         }
 
@@ -315,7 +323,7 @@
         /// </summary>
         public override void Cancel()
         {
-            this._command.Cancel();
+            _command.Cancel();
         }
 
         /// <summary>
@@ -323,7 +331,7 @@
         /// </summary>
         public override void Prepare()
         {
-            this._command.Prepare();
+            _command.Prepare();
         }
 
         /// <summary>
@@ -332,7 +340,7 @@
         /// <returns>The <see cref="DbParameter"/>.</returns>
         protected override DbParameter CreateDbParameter()
         {
-            return this._command.CreateParameter();
+            return _command.CreateParameter();
         }
 
         /// <summary>
@@ -341,11 +349,11 @@
         /// <param name="disposing">false if this is being disposed in a <c>finalizer</c>.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && this._command != null)
+            if (disposing && _command != null)
             {
-                this._command.Dispose();
+                _command.Dispose();
             }
-            this._command = null;
+            _command = null;
             base.Dispose(disposing);
         }
 
@@ -356,7 +364,7 @@
         {
             get
             {
-                return this._command;
+                return _command;
             }
         }
 
@@ -366,9 +374,9 @@
         /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
         public ProfiledDbCommand Clone()
         { // EF expects ICloneable
-            var tail = this._command as ICloneable;
-            if (tail == null) throw new NotSupportedException("Underlying " + this._command.GetType().Name + " is not cloneable");
-            return new ProfiledDbCommand((DbCommand)tail.Clone(), this._connection, this._profiler);
+            var tail = _command as ICloneable;
+            if (tail == null) throw new NotSupportedException("Underlying " + _command.GetType().Name + " is not cloneable");
+            return new ProfiledDbCommand((DbCommand)tail.Clone(), _connection, _profiler);
         }
 
         /// <summary>
@@ -379,7 +387,7 @@
         /// </returns>
         object ICloneable.Clone()
         {
-            return this.Clone();
+            return Clone();
         }
     }
 }

@@ -10,6 +10,11 @@
     public interface IDbProfiler
     {
         /// <summary>
+        /// Gets a value indicating whether or not the profiler instance is active
+        /// </summary>
+        bool IsActive { get; }
+
+        /// <summary>
         /// Called when a command starts executing
         /// </summary>
         /// <param name="profiledDbCommand">
@@ -19,7 +24,7 @@
         /// The execute Type.
         /// </param>
         void ExecuteStart(IDbCommand profiledDbCommand, ExecuteType executeType);
-        
+
         /// <summary>
         /// Called when a reader finishes executing
         /// </summary>
@@ -41,10 +46,5 @@
         /// <param name="executeType">The execute Type.</param>
         /// <param name="exception">The exception.</param>
         void OnError(IDbCommand profiledDbCommand, ExecuteType executeType, Exception exception);
-
-        /// <summary>
-        /// Gets a value indicating whether or not the profiler instance is active
-        /// </summary>
-        bool IsActive { get; }
     }
 }

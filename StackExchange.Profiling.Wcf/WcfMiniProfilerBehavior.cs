@@ -14,7 +14,7 @@
         /// </summary>
         public override Type BehaviorType
         {
-            get { return this.GetType(); }
+            get { return GetType(); }
         }
 
         /// <summary>

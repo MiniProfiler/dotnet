@@ -64,7 +64,7 @@
         protected void Application_Start(object sender, EventArgs eventArgs)
         {
 
-            this.InitProfilerSettings();
+            InitProfilerSettings();
 
             var dataFile = HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
             if (File.Exists(dataFile))

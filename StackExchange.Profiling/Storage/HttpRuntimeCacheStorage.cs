@@ -81,20 +81,20 @@
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
             
-            lock (this._profiles)
+            lock (_profiles)
             {
                 var profileInfo = new ProfileInfo { Id = profiler.Id, Started = profiler.Started };
-                if (this._profiles.IndexOfKey(profileInfo) < 0) 
+                if (_profiles.IndexOfKey(profileInfo) < 0) 
                 {
-                    this._profiles.Add(profileInfo, null);
+                    _profiles.Add(profileInfo, null);
                 }
 
-                while (this._profiles.Count > 0)
+                while (_profiles.Count > 0)
                 {
-                    var first = this._profiles.Keys[0];
+                    var first = _profiles.Keys[0];
                     if (first.Started < DateTime.UtcNow.Add(-CacheDuration))
                     {
-                        this._profiles.RemoveAt(0);
+                        _profiles.RemoveAt(0);
                     }
                     else
                     {
@@ -252,17 +252,17 @@
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var guids = new List<Guid>(); 
-            lock (this._profiles)
+            lock (_profiles)
             {
                 int idxStart = 0;
-                int idxFinish = this._profiles.Count - 1;
+                int idxFinish = _profiles.Count - 1;
                 if (start != null) idxStart = BinaryClosestSearch(start.Value);
                 if (finish != null) idxFinish = BinaryClosestSearch(finish.Value);
 
                 if (idxStart < 0) idxStart = 0;
-                if (idxFinish >= this._profiles.Count) idxFinish = this._profiles.Count - 1;
+                if (idxFinish >= _profiles.Count) idxFinish = _profiles.Count - 1;
 
-                var keys = this._profiles.Keys;
+                var keys = _profiles.Keys;
 
                 if (orderBy == ListResultsOrder.Ascending)
                 {
@@ -293,12 +293,12 @@
         private int BinaryClosestSearch(DateTime date)
         {
             int lower = 0;
-            int upper = this._profiles.Count - 1;
+            int upper = _profiles.Count - 1;
 
             while (lower <= upper)
             {
                 int adjustedIndex = lower + ((upper - lower) >> 1);
-                int comparison = this._profiles.Keys[adjustedIndex].Started.CompareTo(date);
+                int comparison = _profiles.Keys[adjustedIndex].Started.CompareTo(date);
                 if (comparison == 0)
                 {
                     return adjustedIndex;

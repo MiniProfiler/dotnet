@@ -23,7 +23,7 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <param name="wrapped">the wrapped view engine.</param>
         public ProfilingViewEngine(IViewEngine wrapped)
         {
-            this._wrapped = wrapped;
+            _wrapped = wrapped;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <returns>the view engine result.</returns>
         public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache)
         {
-            return Find(controllerContext, partialViewName, () => this._wrapped.FindPartialView(controllerContext, partialViewName, useCache), isPartial: true);
+            return Find(controllerContext, partialViewName, () => _wrapped.FindPartialView(controllerContext, partialViewName, useCache), isPartial: true);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <returns>the view engine result.</returns>
         public ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache)
         {
-            return Find(controllerContext, viewName, () => this._wrapped.FindView(controllerContext, viewName, masterName, useCache), isPartial: false);
+            return Find(controllerContext, viewName, () => _wrapped.FindView(controllerContext, viewName, masterName, useCache), isPartial: false);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <param name="view">The view.</param>
         public void ReleaseView(ControllerContext controllerContext, IView view)
         {
-            this._wrapped.ReleaseView(controllerContext, view);
+            _wrapped.ReleaseView(controllerContext, view);
         }
     }
 }

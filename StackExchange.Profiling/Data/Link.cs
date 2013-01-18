@@ -12,21 +12,6 @@
     public class Link<TKey, TValue> where TKey : class
     {
         /// <summary>
-        /// Gets the key.
-        /// </summary>
-        public TKey Key { get; private set; }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public TValue Value { get; private set; }
-
-        /// <summary>
-        /// Gets the tail.
-        /// </summary>
-        public Link<TKey, TValue> Tail { get; private set; }
-        
-        /// <summary>
         /// Initialises a new instance of the <see cref="Link{TKey,TValue}"/> class.
         /// </summary>
         /// <param name="key">
@@ -46,6 +31,21 @@
         }
 
         /// <summary>
+        /// Gets the key.
+        /// </summary>
+        public TKey Key { get; private set; }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public TValue Value { get; private set; }
+
+        /// <summary>
+        /// Gets the tail.
+        /// </summary>
+        public Link<TKey, TValue> Tail { get; private set; }
+
+        /// <summary>
         /// try and return a value from the cache based on the key.
         /// the default value is returned if no match is found.
         /// An exception is not thrown.
@@ -63,8 +63,10 @@
                     value = link.Value;
                     return true;
                 }
+
                 link = link.Tail;
             }
+
             value = default(TValue);
             return false;
         }
@@ -91,14 +93,15 @@
                     value = found;
                     return false;
                 }
+
                 var newNode = new Link<TKey, TValue>(key, value, snapshot);
 
                 // did somebody move our cheese?
                 tryAgain = Interlocked.CompareExchange(ref head, newNode, snapshot) != snapshot;
             }
+            
             while (tryAgain);
             return true;
         }
-
     }
 }

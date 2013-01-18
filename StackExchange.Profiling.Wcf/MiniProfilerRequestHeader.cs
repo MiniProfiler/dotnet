@@ -72,10 +72,10 @@
         public string ToHeaderText()
         {
             var text = 
-                Convert.ToString(this.ParentProfilerId) + "&" + 
-                this.User + "&" 
-                + (this.ExcludeTrivialMethods ? "y" : "n") 
-                + (this.TrivialDurationThresholdMilliseconds.HasValue ? "&" + Convert.ToString(this.TrivialDurationThresholdMilliseconds.Value) : string.Empty);
+                Convert.ToString(ParentProfilerId) + "&" + 
+                User + "&" 
+                + (ExcludeTrivialMethods ? "y" : "n") 
+                + (TrivialDurationThresholdMilliseconds.HasValue ? "&" + Convert.ToString(TrivialDurationThresholdMilliseconds.Value) : string.Empty);
 
             return text;
         }

@@ -220,6 +220,7 @@ namespace StackExchange.Profiling
             [DefaultValue(false)]
             public static bool ShowControls { get; set; }
 
+            /// <summary>
             /// Determines if Miniprofiler relies on jQuery already loaded on the page; defaults to false.
             /// For a per-page override you can use .RenderIncludes(useExistingjQuery: true/false)
             /// </summary>

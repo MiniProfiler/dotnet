@@ -27,7 +27,7 @@
         /// <returns>the abstracted connection instance.</returns>
         protected override System.Data.Common.DbConnection GetConnection()
         {
-            return new System.Data.SQLite.SQLiteConnection(this.ConnectionString);
+            return new System.Data.SQLite.SQLiteConnection(ConnectionString);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@
             // sqlite can't execute multiple result sets at once, so we need to override and run three queries
             MiniProfiler result;
 
-            using (var conn = this.GetOpenConnection())
+            using (var conn = GetOpenConnection())
             {
                 var param = new { id };
                 result = conn.Query<MiniProfiler>("select * from MiniProfilerS where Id = @id", param).SingleOrDefault();
@@ -61,7 +61,7 @@
                     {
                         clientTimings.Timings = clientTimingList;
                     }
-                    this.MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
+                    MapTimings(result, timings, sqlTimings, sqlParameters, clientTimings);
 
                     // loading a profiler means we've viewed it
                     conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id", param);

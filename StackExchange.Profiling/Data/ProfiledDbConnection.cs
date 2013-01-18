@@ -24,7 +24,7 @@
         /// </summary>
         public DbConnection InnerConnection
         {
-            get { return this._connection; }
+            get { return _connection; }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@
         /// </summary>
         public IDbProfiler Profiler
         {
-            get { return this._profiler; }
+            get { return _profiler; }
         }
 
         /// <summary>
@@ -58,12 +58,12 @@
         {
             if (connection == null) throw new ArgumentNullException("connection");
 
-            this._connection = connection;
-            this._connection.StateChange += this.StateChangeHandler;
+            _connection = connection;
+            _connection.StateChange += StateChangeHandler;
 
             if (profiler != null)
             {
-                this._profiler = profiler;
+                _profiler = profiler;
             }
         }
 
@@ -72,7 +72,7 @@
         /// </summary>
         public DbConnection WrappedConnection
         {
-            get { return this._connection; }
+            get { return _connection; }
         }
 
         /// <summary>
@@ -88,8 +88,8 @@
         /// </summary>
         public override string ConnectionString
         {
-            get { return this._connection.ConnectionString; }
-            set { this._connection.ConnectionString = value; }
+            get { return _connection.ConnectionString; }
+            set { _connection.ConnectionString = value; }
         }
 
         /// <summary>
@@ -97,7 +97,7 @@
         /// </summary>
         public override int ConnectionTimeout
         {
-            get { return this._connection.ConnectionTimeout; }
+            get { return _connection.ConnectionTimeout; }
         }
 
         /// <summary>
@@ -105,7 +105,7 @@
         /// </summary>
         public override string Database
         {
-            get { return this._connection.Database; }
+            get { return _connection.Database; }
         }
 
         /// <summary>
@@ -113,7 +113,7 @@
         /// </summary>
         public override string DataSource
         {
-            get { return this._connection.DataSource; }
+            get { return _connection.DataSource; }
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// </summary>
         public override string ServerVersion
         {
-            get { return this._connection.ServerVersion; }
+            get { return _connection.ServerVersion; }
         }
 
         /// <summary>
@@ -129,7 +129,7 @@
         /// </summary>
         public override ConnectionState State
         {
-            get { return this._connection.State; }
+            get { return _connection.State; }
         }
 
         /// <summary>
@@ -138,7 +138,7 @@
         /// <param name="databaseName">The new database name.</param>
         public override void ChangeDatabase(string databaseName)
         {
-            this._connection.ChangeDatabase(databaseName);
+            _connection.ChangeDatabase(databaseName);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@
         /// </summary>
         public override void Close()
         {
-            this._connection.Close();
+            _connection.Close();
         }
 
         /// <summary>
@@ -155,7 +155,7 @@
         /// <param name="transaction">The transaction.</param>
         public override void EnlistTransaction(System.Transactions.Transaction transaction)
         {
-            this._connection.EnlistTransaction(transaction);
+            _connection.EnlistTransaction(transaction);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema()
         {
-            return this._connection.GetSchema();
+            return _connection.GetSchema();
         }
 
         /// <summary>
@@ -174,7 +174,7 @@
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName)
         {
-            return this._connection.GetSchema(collectionName);
+            return _connection.GetSchema(collectionName);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName, string[] restrictionValues)
         {
-            return this._connection.GetSchema(collectionName, restrictionValues);
+            return _connection.GetSchema(collectionName, restrictionValues);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@
         /// </summary>
         public override void Open()
         {
-            this._connection.Open();
+            _connection.Open();
         }
 
         /// <summary>
@@ -203,7 +203,7 @@
         /// <returns>The <see cref="DbTransaction"/>.</returns>
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
-            return new ProfiledDbTransaction(this._connection.BeginTransaction(isolationLevel), this);
+            return new ProfiledDbTransaction(_connection.BeginTransaction(isolationLevel), this);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@
         /// <returns>The <see cref="DbCommand"/>.</returns>
         protected override DbCommand CreateDbCommand()
         {
-            return new ProfiledDbCommand(this._connection.CreateCommand(), this, this._profiler);
+            return new ProfiledDbCommand(_connection.CreateCommand(), this, _profiler);
         }
 
         /// <summary>
@@ -221,13 +221,13 @@
         /// <param name="disposing">false if pre-empted from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && this._connection != null)
+            if (disposing && _connection != null)
             {
-                this._connection.StateChange -= this.StateChangeHandler;
-                this._connection.Dispose();
+                _connection.StateChange -= StateChangeHandler;
+                _connection.Dispose();
             }
-            this._connection = null;
-            this._profiler = null;
+            _connection = null;
+            _profiler = null;
             base.Dispose(disposing);
         }
 
@@ -238,7 +238,7 @@
         /// <param name="stateChangeEventArguments">The state change event arguments.</param>
         private void StateChangeHandler(object sender, StateChangeEventArgs stateChangeEventArguments)
         {
-            this.OnStateChange(stateChangeEventArguments);
+            OnStateChange(stateChangeEventArguments);
         }
 
         /// <summary>
@@ -247,9 +247,9 @@
         /// <returns>The <see cref="ProfiledDbConnection"/>.</returns>
         public ProfiledDbConnection Clone()
         {
-            var tail = this._connection as ICloneable;
-            if (tail == null) throw new NotSupportedException("Underlying " + this._connection.GetType().Name + " is not cloneable");
-            return new ProfiledDbConnection((DbConnection)tail.Clone(), this._profiler);
+            var tail = _connection as ICloneable;
+            if (tail == null) throw new NotSupportedException("Underlying " + _connection.GetType().Name + " is not cloneable");
+            return new ProfiledDbConnection((DbConnection)tail.Clone(), _profiler);
         }
 
         /// <summary>
@@ -258,7 +258,7 @@
         /// <returns>The <see cref="object"/>.</returns>
         object ICloneable.Clone()
         {
-            return this.Clone();
+            return Clone();
         }
     }
 }

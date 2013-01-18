@@ -20,7 +20,6 @@
         /// <returns>The <see cref="string"/>.</returns>
         public static string Format(this string format, object source)
         {
-
             if (format == null)
             {
                 throw new ArgumentNullException("format");
@@ -51,6 +50,7 @@
                     {
                         yield return new LiteralFormat(format.Substring(exprEndIndex + 1));
                     }
+
                     break;
                 }
 
@@ -134,6 +134,7 @@
                     break;
                 }
             }
+
             if (braceCount % 2 == 1)
             {
                 return IndexOfExpressionEnd(format, endBraceIndex + braceCount + 1);
@@ -211,12 +212,14 @@
                 {
                     throw new FormatException("Invalid expression");
                 }
+
                 try
                 {
                     if (string.IsNullOrEmpty(Format))
                     {
                         return (DataBinder.Eval(o, Expression) ?? string.Empty).ToString();
                     }
+
                     return (DataBinder.Eval(o, Expression, "{0:" + Format + "}") ?? string.Empty).ToString();
                 }
                 catch (ArgumentException)

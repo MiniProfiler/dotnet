@@ -24,7 +24,7 @@
         public ActionResult EnableProfilingUI()
         {
             MvcApplication.DisableProfilingResults = false;
-            return this.Redirect("/");
+            return Redirect("/");
         }
 
         /// <summary>
@@ -34,7 +34,7 @@
         public ActionResult DisableProfilingUI() 
         {
             MvcApplication.DisableProfilingResults = true;
-            return this.Redirect("/");
+            return Redirect("/");
         }
 
         /// <summary>
@@ -62,7 +62,7 @@
                 }
             }
 
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -75,7 +75,7 @@
             // prevent this specific route from being profiled
             MiniProfiler.Stop(discardResults: true);
 
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -84,7 +84,7 @@
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult ResultsAuthorization()
         {
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -104,7 +104,7 @@
             using (var conn = GetConnection(profiler))
             {
                 var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
-                return this.Json(result, JsonRequestBehavior.AllowGet);
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -116,7 +116,7 @@
         /// </returns>
         public ActionResult Xhtml()
         {
-            return this.View();
+            return View();
         }
 
         /// <summary>
@@ -159,7 +159,7 @@
                 }
             }
 
-            return this.Content("EF Code First complete - count: " + count);
+            return Content("EF Code First complete - count: " + count);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@
                 {
                     total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
                 }
-                return this.Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+                return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
         }
 
@@ -189,9 +189,9 @@
             var i = 0;
             using (var conn = GetConnection())
             {
-                this.RecursiveMethod(ref i, conn, MiniProfiler.Current);
+                RecursiveMethod(ref i, conn, MiniProfiler.Current);
             }
-            return this.Content("Massive Nesting completed");
+            return Content("Massive Nesting completed");
         }
 
         /// <summary>
@@ -202,9 +202,9 @@
         {
             for (int i = 0; i < 6; i++)
             {
-                this.MassiveNesting();
+                MassiveNesting();
             }
-            return this.Content("Massive Nesting 2 completed");
+            return Content("Massive Nesting 2 completed");
         }
 
         /// <summary>
@@ -304,7 +304,7 @@
                 {
                     depth++;
                 }
-                this.RecursiveMethod(ref depth, connection, profiler);
+                RecursiveMethod(ref depth, connection, profiler);
             }
         }
 
@@ -333,7 +333,7 @@
             using (var conn = GetConnection())
             {
                 var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
-                return this.Content("Parameterized SQL with Enums completed: " + shouldBeOne);
+                return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
             }
         }
     }

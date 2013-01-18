@@ -37,7 +37,7 @@
         /// </returns>
         protected override DbConnection GetConnection()
         {
-            return new SqlCeConnection(this.ConnectionString);
+            return new SqlCeConnection(ConnectionString);
         }
     }
 }
