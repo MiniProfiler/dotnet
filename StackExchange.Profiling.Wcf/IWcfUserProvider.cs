@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace StackExchange.Profiling.Wcf
+﻿namespace StackExchange.Profiling.Wcf
 {
+    /// <summary>
+    /// The <c>WcfUserProvider</c> interface.
+    /// </summary>
     public interface IWcfUserProvider
     {
         /// <summary>
         /// Returns a string to identify the user profiling the current 'request'.
         /// </summary>
-        /// <param name="request">The current HttpRequest being profiled.</param>
+        /// <returns>a string containing the user</returns>
         string GetUser(/*HttpRequest request*/);
     }
 }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace StackExchange.Profiling
+﻿namespace StackExchange.Profiling
 {
+    using System;
+
     /// <summary>
     /// BaseProfilerProvider.  This providers some helper methods which provide access to
     /// internals not otherwise available.
@@ -17,6 +14,12 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
+        /// <param name="level">
+        /// The level.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MiniProfiler"/>.
+        /// </returns>
         public abstract MiniProfiler Start(ProfileLevel level);
 
         /// <summary>
@@ -29,7 +32,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>mini profiler.</returns>
         public abstract MiniProfiler GetCurrentProfiler();
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace StackExchange.Profiling
         /// Calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
         /// profiler using the current storage settings
         /// </summary>
-        /// <param name="current"></param>
+        /// <param name="current">mini profiler</param>
         protected static void SaveProfiler(MiniProfiler current)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime

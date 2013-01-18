@@ -66,15 +66,17 @@
     <Compile Include="BaseTestTest.cs">
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Data\IDbProfilerTest.cs" />
+    <Compile Include="Data\DbProfilerTest.cs" />
     <Compile Include="Data\CountingDbProfiler.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MiniProfilerTest.cs" />
+    <Compile Include="Storage\SqlCeStorage.cs" />
     <Compile Include="Storage\SqlServerStorageTest.cs" />
     <Compile Include="Storage\TestHttpRuntimeCacheStorage.cs" />
+    <Compile Include="UnitTestStopwatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

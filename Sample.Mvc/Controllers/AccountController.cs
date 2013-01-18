@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Web.Security;
-using SampleWeb.Models;
-
-namespace SampleWeb.Controllers
+﻿namespace SampleWeb.Controllers
 {
+    using System;
+    using System.Web.Mvc;
+    using System.Web.Security;
+
+    using SampleWeb.Models;
+
+    /// <summary>
+    /// The account controller.
+    /// </summary>
     public class AccountController : BaseController
     {
-
-        //
-        // GET: /Account/LogOn
-
+        /// <summary>
+        /// log on.
+        /// </summary>
+        /// <returns>the login view</returns>
         public ActionResult LogOn()
         {
             return View();
         }
 
-        //
-        // POST: /Account/LogOn
-
+        /// <summary>
+        /// perform the log in.
+        /// </summary>
+        /// <param name="model">the login details.</param>
+        /// <param name="returnUrl">The return url.</param>
+        /// <returns>the logged in view.</returns>
         [HttpPost]
         public ActionResult LogOn(LogOnModel model, string returnUrl)
         {
@@ -36,42 +39,39 @@ namespace SampleWeb.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
-                }
+                ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
-        //
-        // GET: /Account/LogOff
-
+        /// <summary>
+        /// log off.
+        /// </summary>
+        /// <returns>log off</returns>
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-
             return RedirectToAction("Index", "Home");
         }
 
-        //
-        // GET: /Account/Register
-
+        /// <summary>
+        /// register a new user.
+        /// </summary>
+        /// <returns>the registration view.</returns>
         public ActionResult Register()
         {
             return View();
         }
 
-        //
-        // POST: /Account/Register
-
+        /// <summary>
+        /// register the supplied user.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>the new user registration view.</returns>
         [HttpPost]
         public ActionResult Register(RegisterModel model)
         {
@@ -86,28 +86,28 @@ namespace SampleWeb.Controllers
                     FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
                     return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("", ErrorCodeToString(createStatus));
-                }
+                ModelState.AddModelError(string.Empty, ErrorCodeToString(createStatus));
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
-        //
-        // GET: /Account/ChangePassword
-
+        /// <summary>
+        /// change the password.
+        /// </summary>
+        /// <returns>the password change view.</returns>
         [Authorize]
         public ActionResult ChangePassword()
         {
             return View();
         }
 
-        //
-        // POST: /Account/ChangePassword
-
+        /// <summary>
+        /// change the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>the changed password view</returns>
         [Authorize]
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordModel model)
@@ -121,6 +121,8 @@ namespace SampleWeb.Controllers
                 try
                 {
                     MembershipUser currentUser = Membership.GetUser(User.Identity.Name, true /* userIsOnline */);
+                    if (null == currentUser)
+                        throw new NullReferenceException("the current user is null.");
                     changePasswordSucceeded = currentUser.ChangePassword(model.OldPassword, model.NewPassword);
                 }
                 catch (Exception)
@@ -132,25 +134,29 @@ namespace SampleWeb.Controllers
                 {
                     return RedirectToAction("ChangePasswordSuccess");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-                }
+                ModelState.AddModelError(string.Empty, "The current password is incorrect or the new password is invalid.");
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
-        //
-        // GET: /Account/ChangePasswordSuccess
-
+        /// <summary>
+        /// change password success.
+        /// </summary>
+        /// <returns>the view</returns>
         public ActionResult ChangePasswordSuccess()
         {
             return View();
         }
 
         #region Status Codes
+
+        /// <summary>
+        /// error code to string.
+        /// </summary>
+        /// <param name="createStatus">The create status.</param>
+        /// <returns>the error message, based on the supplied status.</returns>
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {
             // See http://go.microsoft.com/fwlink/?LinkID=177550 for

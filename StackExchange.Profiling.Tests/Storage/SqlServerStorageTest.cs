@@ -1,20 +1,29 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using StackExchange.Profiling.Storage;
-using NUnit.Framework;
-using System.IO;
-using System.Data.SqlServerCe;
-using StackExchange.Profiling.Helpers.Dapper;
-using StackExchange.Profiling.Data;
-
-namespace StackExchange.Profiling.Tests.Storage
+﻿namespace StackExchange.Profiling.Tests.Storage
 {
+    using System.Data.SqlServerCe;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+
+    using NUnit.Framework;
+
+    using StackExchange.Profiling.Data;
+    using StackExchange.Profiling.Helpers.Dapper;
+    using StackExchange.Profiling.Storage;
+
+    /// <summary>
+    /// The SQL server storage test.
+    /// </summary>
     [TestFixture]
     public class SqlServerStorageTest : BaseTest
     {
+        /// <summary>
+        /// The connection.
+        /// </summary>
+        private SqlCeConnection _conn;
+
+        /// <summary>
+        /// The test fixture set up.
+        /// </summary>
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
@@ -22,15 +31,21 @@ namespace StackExchange.Profiling.Tests.Storage
             var connStr = CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
 
             MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
-            _conn = GetOpenSqlCeConnection<SqlServerStorageTest>();
+            _conn = BaseTest.GetOpenSqlCeConnection<SqlServerStorageTest>();
         }
 
+        /// <summary>
+        /// The test fixture tear down.
+        /// </summary>
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
             MiniProfiler.Settings.Storage = null;
         }
 
+        /// <summary>
+        /// The no child timings.
+        /// </summary>
         [Test]
         public void NoChildTimings()
         {
@@ -42,6 +57,9 @@ namespace StackExchange.Profiling.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
 
+        /// <summary>
+        /// with child timings.
+        /// </summary>
         [Test]
         public void WithChildTimings()
         {
@@ -53,12 +71,15 @@ namespace StackExchange.Profiling.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
 
+        /// <summary>
+        /// with SQL timings.
+        /// </summary>
         [Test]
         public void WithSqlTimings()
         {
             MiniProfiler mp;
 
-            using (GetRequest())
+            using (BaseTest.GetRequest())
             using (var conn = GetProfiledConnection())
             {
                 mp = MiniProfiler.Current;
@@ -83,12 +104,15 @@ namespace StackExchange.Profiling.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
 
+        /// <summary>
+        /// The with duplicate SQL timings.
+        /// </summary>
         [Test]
         public void WithDuplicateSqlTimings()
         {
             MiniProfiler mp;
 
-            using (GetRequest())
+            using (BaseTest.GetRequest())
             using (var conn = GetProfiledConnection())
             {
                 mp = MiniProfiler.Current;
@@ -111,50 +135,52 @@ namespace StackExchange.Profiling.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
 
-        private SqlCeConnection _conn;
-
+        /// <summary>
+        /// get the profiled connection.
+        /// </summary>
+        /// <returns>the profiled database connection</returns>
         private ProfiledDbConnection GetProfiledConnection()
         {
             return new ProfiledDbConnection(GetOpenSqlCeConnection<SqlServerStorageTest>(), MiniProfiler.Current);
         }
 
-        private void AssertMiniProfilerExists(MiniProfiler mp)
+        /// <summary>
+        /// The assert mini profiler exists.
+        /// </summary>
+        /// <param name="miniProfiler">The mini Profiler.</param>
+        private void AssertMiniProfilerExists(MiniProfiler miniProfiler)
         {
-            Assert.That(_conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { mp.Id }).Single() == 1);
-        }
-
-        private void AssertTimingsExist(MiniProfiler mp, int count)
-        {
-            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { mp.Id }).Single() == count);
-        }
-
-        private void AssertSqlTimingsExist(Timing t, int count)
-        {
-            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { t.Id }).Single() == count);
-        }
-
-        private void AssertSqlParametersExist(SqlTiming s, int count)
-        {
-            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { s.Id }).Single() == count);
-        }
-    }
-
-    internal class SqlCeStorage : SqlServerStorage
-    {
-        public SqlCeStorage(string connectionString) : base(connectionString) { }
-
-        protected override System.Data.Common.DbConnection GetConnection()
-        {
-            return new SqlCeConnection(ConnectionString);
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id }).Single() == 1);
         }
 
         /// <summary>
-        /// CE doesn't support multiple result sets in one query.
+        /// The assert timings exist.
         /// </summary>
-        public override bool EnableBatchSelects
+        /// <param name="profiler">The profiler.</param>
+        /// <param name="count">The count.</param>
+        private void AssertTimingsExist(MiniProfiler profiler, int count)
         {
-            get { return false; }
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id }).Single() == count);
+        }
+
+        /// <summary>
+        /// The assert SQL timings exist.
+        /// </summary>
+        /// <param name="timing">The timing.</param>
+        /// <param name="count">The count.</param>
+        private void AssertSqlTimingsExist(Timing timing, int count)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimings where ParentTimingId = @Id ", new { timing.Id }).Single() == count);
+        }
+
+        /// <summary>
+        /// The assert SQL parameters exist.
+        /// </summary>
+        /// <param name="sqlTiming">The SQL Timing.</param>
+        /// <param name="count">The count.</param>
+        private void AssertSqlParametersExist(SqlTiming sqlTiming, int count)
+        {
+            Assert.That(_conn.Query<int>("select count(*) from MiniProfilerSqlTimingParameters where ParentSqlTimingId = @Id ", new { sqlTiming.Id }).Single() == count);
         }
     }
-
 }

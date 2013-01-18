@@ -1,34 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Dispatcher;
-using System.ServiceModel;
-
-namespace StackExchange.Profiling.Wcf
+﻿namespace StackExchange.Profiling.Wcf
 {
+    using System;
+    using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.ServiceModel.Dispatcher;
     using System.ServiceModel.Web;
 
+    /// <summary>
+    /// The WCF mini profiler client inspector.
+    /// </summary>
     public class WcfMiniProfilerClientInspector : IClientMessageInspector
     {
+        /// <summary>
+        /// true if the binding is using http.
+        /// </summary>
         private bool _http;
 
+        /// <summary>
+        /// Initialises static members of the <see cref="WcfMiniProfilerClientInspector"/> class.
+        /// </summary>
         static WcfMiniProfilerClientInspector()
         {
-            GetCurrentProfiler = () =>
-            {
-                return MiniProfiler.Current;
-            };
+            GetCurrentProfiler = () => MiniProfiler.Current;
         }
 
-        public static Func<MiniProfiler> GetCurrentProfiler
-        {
-            get;
-            set;
-        }
+        /// <summary>
+        /// Gets or sets the get current profiler.
+        /// </summary>
+        public static Func<MiniProfiler> GetCurrentProfiler { get; set; }
 
-        public object BeforeSendRequest(ref System.ServiceModel.Channels.Message request, System.ServiceModel.IClientChannel channel)
+        /// <summary>
+        /// before the send request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="channel">The channel.</param>
+        /// <returns>the mini profiler start</returns>
+        public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
             // If we currently are running inside a MiniProfiler context, then add a request onto this request
             var miniProfiler = GetCurrentProfiler();
@@ -40,7 +47,9 @@ namespace StackExchange.Profiling.Wcf
                     ParentProfilerId = miniProfiler.Id
                 };
 
+                // ReSharper disable PossibleUnintendedReferenceComparison
                 if (request.Headers.MessageVersion != MessageVersion.None)
+                // ReSharper restore PossibleUnintendedReferenceComparison
                 {
                     var untypedHeader = new MessageHeader<MiniProfilerRequestHeader>(header)
                     .GetUntypedHeader(MiniProfilerRequestHeader.HeaderName, MiniProfilerRequestHeader.HeaderNamespace);
@@ -66,16 +75,24 @@ namespace StackExchange.Profiling.Wcf
             return null;
         }
 
-        public void AfterReceiveReply(ref System.ServiceModel.Channels.Message reply, object correlationState)
+        /// <summary>
+        /// after the reply is received.
+        /// </summary>
+        /// <param name="reply">The reply.</param>
+        /// <param name="correlationState">The correlation state.</param>
+        public void AfterReceiveReply(ref Message reply, object correlationState)
         {
             var profilerStart = correlationState as MiniProfilerStart;
+
             // Check to see if there are any results here
             var profiler = GetCurrentProfiler();
             if (profiler != null)
             {
                 // Check to see if we have a request as part of this message
                 MiniProfilerResultsHeader resultsHeader = null;
+                // ReSharper disable PossibleUnintendedReferenceComparison
                 if (reply.Headers.MessageVersion != MessageVersion.None)
+                // ReSharper restore PossibleUnintendedReferenceComparison
                 {
                     var headerIndex = reply.Headers.FindHeader(MiniProfilerResultsHeader.HeaderName, MiniProfilerResultsHeader.HeaderNamespace);
                     if (headerIndex >= 0)
@@ -101,14 +118,20 @@ namespace StackExchange.Profiling.Wcf
                         resultsHeader.ProfilerResults.Root.UpdateStartMillisecondTimingsToAbsolute(profilerStart.StartTime);
 
                     profiler.AddProfilerResults(resultsHeader.ProfilerResults);
-                    //if (resultsHeader.ProfilerResults.HasSqlTimings)
-                        //profiler.HasSqlTimings = true;
+                    //// if (resultsHeader.ProfilerResults.HasSqlTimings)
+                        //// profiler.HasSqlTimings = true;
                 }
             }
         }
 
+        /// <summary>
+        /// The mini profiler start.
+        /// </summary>
         private class MiniProfilerStart
         {
+            /// <summary>
+            /// Gets or sets the start time.
+            /// </summary>
             public decimal StartTime { get; set; }
         }
     }
