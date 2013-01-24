@@ -408,6 +408,15 @@
         }
 
         /// <summary>
+        /// The ignore implementation.
+        /// </summary>
+        /// <returns>the step.</returns>
+        internal IDisposable IgnoreImpl()
+        {
+            return new Suppression(this);
+        }
+
+        /// <summary>
         /// The stop implementation
         /// </summary>
         /// <returns>true if the profile is stopped.</returns>
