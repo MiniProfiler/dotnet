@@ -41,6 +41,20 @@
         }
 
         /// <summary>
+        /// Returns an <see cref="IDisposable"/> that will ignore profiling between its creation and disposal.
+        /// </summary>
+        /// <remarks>
+        /// This is mainly useful in situations where you want to ignore database profiling for known hot spots,
+        /// but it is safe to use in a nested step such that you can ignore sub-sections of a profiled step.
+        /// </remarks>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <returns>the profile step</returns>
+        public static IDisposable Ignore(this MiniProfiler profiler)
+        {
+            return profiler == null ? null : profiler.IgnoreImpl();
+        }
+        
+        /// <summary>
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
         /// allowing other threads, remote calls, etc. to be profiled and joined into this profiling session.
         /// </summary>
