@@ -508,6 +508,18 @@ var MiniProfiler = (function () {
             });
         }
 
+        if (typeof (MooTools) != 'undefined' && typeof (Request) != 'undefined') {
+          Request.prototype.addEvents({
+            onComplete: function() {
+              var stringIds = this.xhr.getResponseHeader('X-MiniProfiler-Ids');
+              if (stringIds) {
+                var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                fetchResults(ids);
+              }
+            }
+          });
+        }
+
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
