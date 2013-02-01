@@ -520,6 +520,29 @@ var MiniProfiler = (function () {
           });
         }
 
+        // add support for AngularJS, which use the basic XMLHttpRequest object.
+        if (window.angular && typeof (XMLHttpRequest) != 'undefined') {
+          var _send = XMLHttpRequest.prototype.send;
+
+          XMLHttpRequest.prototype.send = function sendReplacement(data) {
+            this._onreadystatechange = this.onreadystatechange;
+
+            this.onreadystatechange = function onReadyStateChangeReplacement() {
+              if (this.readyState == 4) {
+                var stringIds = this.getResponseHeader('X-MiniProfiler-Ids');
+                if (stringIds) {
+                  var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                  fetchResults(ids);
+                }
+              }
+
+              return this._onreadystatechange.apply(this, arguments);
+            }
+
+            return _send.apply(this, arguments);
+          }
+        }
+
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
