@@ -61,11 +61,10 @@ var MiniProfiler = (function () {
         }
     };
 
-    var getClientPerformance = function () {
+    var getClientPerformance = function() {
         return window.performance == null ? null : window.performance;
-    }
+    };
 
-    var waitedForEnd = 0;
     var fetchResults = function (ids) {
         var clientPerformance, clientProbes, i, j, p, id, idx;
 
@@ -650,11 +649,10 @@ var MiniProfiler = (function () {
                     } else {
                         doInit();
                     }
-                }
-                else {
+                } else {
                     doInit();
                 }
-            }
+            };
 
             if (typeof(jQuery) == 'function') {
                 var jQueryVersion = jQuery.fn.jquery.split('.');
@@ -754,7 +752,7 @@ var MiniProfiler = (function () {
             // start adding at the root and recurse down
             addToResults(root);
 
-            var removeDuration = function (list, duration) {
+            var removeDuration = function(list, duration) {
 
                 var newList = [];
                 for (var i = 0; i < list.length; i++) {
@@ -778,7 +776,7 @@ var MiniProfiler = (function () {
                 }
 
                 return newList;
-            }
+            };
 
             var processTimes = function (elem, parent) {
                 var duration = { start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) };
@@ -800,7 +798,7 @@ var MiniProfiler = (function () {
             // sort results by time
             result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
 
-            var determineOverlap = function (gap, node) {
+            var determineOverlap = function(gap, node) {
                 var overlap = 0;
                 for (var i = 0; i < node.richTiming.length; i++) {
                     var current = node.richTiming[i];
@@ -814,7 +812,7 @@ var MiniProfiler = (function () {
                     overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
                 }
                 return overlap;
-            }
+            };
 
             var determineGap = function (gap, node, match) {
                 var overlap = determineOverlap(gap, node);

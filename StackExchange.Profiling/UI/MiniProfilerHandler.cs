@@ -117,9 +117,8 @@
         /// <param name="showTimeWithChildren">show the time with children.</param>
         /// <param name="maxTracesToShow">max traces to show.</param>
         /// <param name="showControls">show the controls.</param>
-        /// <param name="useExistingjQuery">use the existing <c>jquery</c>.</param>
         /// <returns>a string containing the html.</returns>
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null, bool? useExistingjQuery = null)
+        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null)
         {
             string format = GetResource("include.partial.html");
 
@@ -158,7 +157,8 @@
                                                showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
                                                currentId = profiler.Id,
                                                authorized = authorized ? "true" : "false",
-                                               useExistingjQuery = useExistingjQuery ?? MiniProfiler.Settings.UseExistingjQuery ? "true" : "false"
+                                               toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
+                                               startHidden = MiniProfiler.Settings.PopupStartHidden
                                            });
             }
 
