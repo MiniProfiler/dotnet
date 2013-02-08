@@ -520,7 +520,8 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 @"
                 create table MiniProfilers
                   (
-                     Id                                   uniqueidentifier not null constraint PK_MiniProfilers primary key nonclustered, -- don't cluster on a guid
+                     RowId                                integer not null identity constraint PK_MiniProfilers primary key clustered, -- Need a clustered primary key for SQL Azure
+                     Id                                   uniqueidentifier not null, -- don't cluster on a guid
                      Name                                 nvarchar(200) not null,
                      Started                              datetime not null,
                      MachineName                          nvarchar(100) null,
@@ -597,6 +598,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 );
                 
                 -- displaying results selects everything based on the main MiniProfilers.Id column
+                create unique nonclustered index IX_MiniProfilers_Id on MiniProfilers (Id)
                 create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId)
                 create nonclustered index IX_MiniProfilerSqlTimings_MiniProfilerId on MiniProfilerSqlTimings (MiniProfilerId)
                 create nonclustered index IX_MiniProfilerSqlTimingParameters_MiniProfilerId on MiniProfilerSqlTimingParameters (MiniProfilerId)
