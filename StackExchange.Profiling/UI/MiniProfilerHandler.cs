@@ -249,8 +249,8 @@
                 .AppendFormat("<title>List of profiling sessions</title>")
                 .AppendLine()
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.7.1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
+                .AppendLine("<script id='mini-profiler' data-ids='' type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.js?v=" + MiniProfiler.Settings.Version + "'></script>")
-                .AppendLine("<script type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine(
                     "<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version
                     + "'></script>")
