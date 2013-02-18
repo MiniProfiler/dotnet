@@ -54,7 +54,7 @@
                                 };
 
                 // put our routes at the beginning, like a boss
-                routes.Insert(0, route);   
+                routes.Insert(0, route);
             }
         }
 
@@ -91,7 +91,7 @@
                 case "results-index":
                     output = Index(context);
                     break;
-                
+
                 case "results-list":
                     output = ResultList(context);
                     break;
@@ -109,58 +109,43 @@
         }
 
         /// <summary>
-        /// render the includes.
+        /// Renders script tag found in "include.partial.html" - this is shared with all other language implementations, so if you change it, you MUST
+        /// provide changes for those other implementations, e.g. ruby.
         /// </summary>
-        /// <param name="profiler">The profiler.</param>
-        /// <param name="position">The position.</param>
-        /// <param name="showTrivial">show trivial.</param>
-        /// <param name="showTimeWithChildren">show the time with children.</param>
-        /// <param name="maxTracesToShow">max traces to show.</param>
-        /// <param name="showControls">show the controls.</param>
-        /// <returns>a string containing the html.</returns>
-        internal static HtmlString RenderIncludes(MiniProfiler profiler, RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null)
+        internal static HtmlString RenderIncludes(
+            MiniProfiler profiler,
+            RenderPosition? position = null,
+            bool? showTrivial = null,
+            bool? showTimeWithChildren = null,
+            int? maxTracesToShow = null,
+            bool? showControls = null,
+            bool? startHidden = null)
         {
-            string format = GetResource("include.partial.html");
+            if (profiler == null) return new HtmlString("");
 
-            var result = string.Empty;
+            MiniProfiler.Settings.EnsureStorageStrategy();
+            var authorized = MiniProfiler.Settings.Results_Authorize == null || MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
 
-            if (profiler != null)
+            // unviewed ids are added to this list during Storage.Save, but we know we haven't see the current one yet, so go ahead and add it to the end 
+            var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
+            ids.Add(profiler.Id);
+
+            var format = GetResource("include.partial.html");
+            var result = format.Format(new
             {
-                // HACK: unviewed ids are added to this list during Storage.Save, but we know we haven't see the current one yet,
-                // so go ahead and add it to the end - it's usually the only id, but if there was a redirect somewhere, it'll be there, too
-                MiniProfiler.Settings.EnsureStorageStrategy();
-                
-                var authorized = 
-                    MiniProfiler.Settings.Results_Authorize == null || 
-                    MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
-
-                List<Guid> ids;
-                if (authorized)
-                {
-                    ids = MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User);
-                    ids.Add(profiler.Id);
-                }
-                else
-                {
-                    ids = new List<Guid> { profiler.Id };
-                }
-
-                result = format.Format(new
-                                           {
-                                               path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
-                                               version = MiniProfiler.Settings.Version,
-                                               ids = string.Join(",", ids.Select(guid => guid.ToString())),
-                                               position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
-                                               showTrivial = showTrivial ?? MiniProfiler.Settings.PopupShowTrivial ? "true" : "false",
-                                               showChildren = showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren ? "true" : "false",
-                                               maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
-                                               showControls = showControls ?? MiniProfiler.Settings.ShowControls ? "true" : "false",
-                                               currentId = profiler.Id,
-                                               authorized = authorized ? "true" : "false",
-                                               toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
-                                               startHidden = MiniProfiler.Settings.PopupStartHidden
-                                           });
-            }
+                path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
+                version = MiniProfiler.Settings.Version,
+                ids = string.Join(",", ids.Select(guid => guid.ToString())),
+                position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
+                showTrivial = (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial).ToJs(),
+                showChildren = (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren).ToJs(),
+                maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
+                showControls = (showControls ?? MiniProfiler.Settings.ShowControls).ToJs(),
+                currentId = profiler.Id,
+                authorized = authorized.ToJs(),
+                toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
+                startHidden = (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs()
+            });
 
             return new HtmlString(result);
         }
@@ -191,7 +176,7 @@
             {
                 MiniProfiler.Settings.EnsureStorageStrategy();
             }
-            
+
             var guids = MiniProfiler.Settings.Storage.List(100);
 
             if (lastGuid != Guid.Empty)
@@ -203,29 +188,29 @@
 
             return guids.Select(
                 g =>
-                    {
-                        var profiler = MiniProfiler.Settings.Storage.Load(g);
-                        return
-                            new
-                                {
-                                    profiler.Id,
-                                    profiler.Name,
-                                    profiler.DurationMilliseconds,
-                                    profiler.DurationMillisecondsInSql,
-                                    profiler.ClientTimings,
-                                    profiler.Started,
-                                    profiler.ExecutedNonQueries,
-                                    profiler.ExecutedReaders,
-                                    profiler.ExecutedScalars,
-                                    profiler.HasAllTrivialTimings,
-                                    profiler.HasDuplicateSqlTimings,
-                                    profiler.HasSqlTimings,
-                                    profiler.HasTrivialTimings,
-                                    profiler.HasUserViewed,
-                                    profiler.MachineName,
-                                    profiler.User
-                                };
-                    }).ToJson();
+                {
+                    var profiler = MiniProfiler.Settings.Storage.Load(g);
+                    return
+                        new
+                            {
+                                profiler.Id,
+                                profiler.Name,
+                                profiler.DurationMilliseconds,
+                                profiler.DurationMillisecondsInSql,
+                                profiler.ClientTimings,
+                                profiler.Started,
+                                profiler.ExecutedNonQueries,
+                                profiler.ExecutedReaders,
+                                profiler.ExecutedScalars,
+                                profiler.HasAllTrivialTimings,
+                                profiler.HasDuplicateSqlTimings,
+                                profiler.HasSqlTimings,
+                                profiler.HasTrivialTimings,
+                                profiler.HasUserViewed,
+                                profiler.MachineName,
+                                profiler.User
+                            };
+                }).ToJson();
         }
 
         /// <summary>
@@ -243,7 +228,7 @@
 
             context.Response.ContentType = "text/html";
 
-            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(); 
+            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
             return new StringBuilder()
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>List of profiling sessions</title>")
@@ -287,13 +272,13 @@
                 default:
                     return NotFound(context);
             }
-            #if !DEBUG
+#if !DEBUG
             var cache = response.Cache;
             cache.SetCacheability(System.Web.HttpCacheability.Public);
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
-            #endif
-            
+#endif
+
             var embeddedFile = Path.GetFileName(path);
             return GetResource(embeddedFile);
         }
@@ -346,7 +331,7 @@
                 }
             }
 
-            if (profiler.HasUserViewed == false) 
+            if (profiler.HasUserViewed == false)
             {
                 profiler.HasUserViewed = true;
                 needsSave = true;
@@ -412,7 +397,7 @@
             context.Response.ContentType = "text/html";
 
             var template = GetResource("share.html");
-            return template.Format(new 
+            return template.Format(new
             {
                 name = profiler.Name,
                 duration = profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture),
@@ -433,7 +418,7 @@
             filename = filename.ToLower();
             string result;
 
-            #if DEBUG 
+#if DEBUG 
             // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
             if (!bypassLocalLoad)
             {
@@ -449,7 +434,7 @@
                     bypassLocalLoad = true;
                 }
             }
-            #endif
+#endif
 
             if (!ResourceCache.TryGetValue(filename, out result))
             {
