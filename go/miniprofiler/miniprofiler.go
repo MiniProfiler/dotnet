@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 var (
@@ -141,7 +142,7 @@ func getClientTimings(r *http.Request) *ClientTimings {
 	}
 	for _, v := range clientPerf {
 		ct.Timings = append(ct.Timings, &ClientTiming{
-			Name:     strings.Title(v.Name),
+			Name:     sentenceCase(v.Name),
 			Start:    v.Start,
 			Duration: v.Duration,
 		})
@@ -149,6 +150,21 @@ func getClientTimings(r *http.Request) *ClientTimings {
 	sort.Sort(ct)
 
 	return ct
+}
+
+func sentenceCase(s string) string {
+	var buf bytes.Buffer
+	for k, v := range s {
+		if k == 0 {
+			buf.WriteRune(unicode.ToUpper(v))
+			continue
+		}
+		if unicode.IsUpper(v) {
+			buf.WriteString(" ")
+		}
+		buf.WriteRune(v)
+	}
+	return buf.String()
 }
 
 func Static(w http.ResponseWriter, r *http.Request) {
