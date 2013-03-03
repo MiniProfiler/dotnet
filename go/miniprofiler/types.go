@@ -120,12 +120,16 @@ type SqlTimingParameter struct {
 }
 
 type ClientTimings struct {
-	RedirectCount int
+	RedirectCount int64
 	Timings       []*ClientTiming
 }
 
+func (c *ClientTimings) Len() int           { return len(c.Timings) }
+func (c *ClientTimings) Less(i, j int) bool { return c.Timings[i].Start < c.Timings[j].Start }
+func (c *ClientTimings) Swap(i, j int)      { c.Timings[i], c.Timings[j] = c.Timings[j], c.Timings[i] }
+
 type ClientTiming struct {
 	Name     string
-	Start    float64
-	Duration float64
+	Start    int64
+	Duration int64
 }

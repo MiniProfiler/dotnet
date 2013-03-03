@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -32,6 +34,8 @@ var (
 const (
 	PATH         = "/mini-profiler-resources/"
 	PATH_RESULTS = PATH + "results"
+
+	ClientTimingsPrefix = "clientPerformance[timing]["
 )
 
 func init() {
@@ -65,11 +69,86 @@ func Results(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	needsSave := false
+	if p.ClientTimings == nil {
+		p.ClientTimings = getClientTimings(r)
+		if p.ClientTimings != nil {
+			needsSave = true
+		}
+	}
+
+	if needsSave {
+		Store(r, p)
+	}
+
 	if isPopup {
 		if j, err := json.Marshal(p); err == nil {
 			w.Write(j)
 		}
 	}
+}
+
+func getClientTimings(r *http.Request) *ClientTimings {
+	var navigationStart int64
+	if i, err := strconv.ParseInt(r.FormValue(ClientTimingsPrefix+"navigationStart]"), 10, 64); err != nil {
+		return nil
+	} else {
+		navigationStart = i
+	}
+	ct := new(ClientTimings)
+
+	if i, err := strconv.ParseInt(r.FormValue("clientPerformance[navigation][redirectCount]"), 10, 64); err == nil {
+		ct.RedirectCount = i
+	}
+
+	r.ParseForm()
+	clientPerf := make(map[string]ClientTiming)
+	for k, v := range r.Form {
+		if len(v) < 1 || !strings.HasPrefix(k, ClientTimingsPrefix) {
+			continue
+		}
+
+		if i, err := strconv.ParseInt(v[0], 10, 64); err == nil && i > navigationStart {
+			i -= navigationStart
+			name := k[len(ClientTimingsPrefix) : len(k)-1]
+
+			if strings.HasSuffix(name, "Start") {
+				shortName := name[:len(name)-5]
+				if c, present := clientPerf[shortName]; !present {
+					clientPerf[shortName] = ClientTiming{
+						Name:     shortName,
+						Duration: -1,
+						Start:    i,
+					}
+				} else {
+					c.Start = i
+					c.Duration -= i
+					clientPerf[shortName] = c
+				}
+			} else if strings.HasSuffix(name, "End") {
+				shortName := name[:len(name)-3]
+				if c, present := clientPerf[shortName]; !present {
+					clientPerf[shortName] = ClientTiming{
+						Duration: i,
+						Name:     shortName,
+					}
+				} else {
+					c.Duration = i - c.Start
+					clientPerf[shortName] = c
+				}
+			}
+		}
+	}
+	for _, v := range clientPerf {
+		ct.Timings = append(ct.Timings, &ClientTiming{
+			Name:     strings.Title(v.Name),
+			Start:    v.Start,
+			Duration: v.Duration,
+		})
+	}
+	sort.Sort(ct)
+
+	return ct
 }
 
 func Static(w http.ResponseWriter, r *http.Request) {
