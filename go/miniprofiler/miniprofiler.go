@@ -286,6 +286,9 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				IsRoot: true,
 			},
 		}
+
+		w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", h.p.Id))
+
 		h.f(h.p, w, r)
 
 		fp := reflect.ValueOf(h.f).Pointer()
