@@ -41,6 +41,12 @@ type Profile struct {
 	HasAllTrivialTimings                 bool
 	TrivialDurationThresholdMilliseconds float64
 	Head                                 *Timing
+	DurationMillisecondsInSql            float64
+	ExecutedNonQueries                   int
+	ExecutedReaders                      int
+	ExecutedScalars                      int
+	HasDuplicateSqlTimings               bool
+	HasSqlTimings                        bool
 
 	w http.ResponseWriter
 	r *http.Request
@@ -82,6 +88,28 @@ func (p *Profile) Finalize() {
 	p.DurationMilliseconds = Since(p.start)
 	p.Root.DurationMilliseconds = p.DurationMilliseconds
 
+	timings := []*Timing{p.Root}
+	for i := 0; i < len(timings); i++ {
+		t := timings[i]
+		timings = append(timings, t.Children...)
+
+		if t.HasSqlTimings {
+			p.HasSqlTimings = true
+		}
+
+		for _, r := range t.SqlTimings {
+			p.DurationMillisecondsInSql += r.DurationMilliseconds
+			switch r.ExecuteType {
+			case ExecuteType_NonQuery:
+				p.ExecutedNonQueries++
+			case ExecuteType_Scalar:
+				p.ExecutedScalars++
+			case ExecuteType_Reader:
+				p.ExecutedReaders++
+			}
+		}
+	}
+
 	Store(p.r, p)
 }
 
@@ -116,6 +144,12 @@ type Timing struct {
 	ExecutedReaders                     int
 	ExecutedScalars                     int
 	ExecutedNonQueries                  int
+}
+
+func (t *Timing) AddSqlTiming(s *SqlTiming) {
+	s.ParentTimingId = t.Id
+	t.SqlTimings = append(t.SqlTimings, s)
+	t.HasSqlTimings = true
 }
 
 type SqlTiming struct {
