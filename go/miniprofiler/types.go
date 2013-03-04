@@ -3,6 +3,8 @@ package miniprofiler
 import (
 	"code.google.com/p/tcgl/identifier"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -39,30 +41,49 @@ type Profile struct {
 	HasAllTrivialTimings                 bool
 	TrivialDurationThresholdMilliseconds float64
 	Head                                 *Timing
+
+	w http.ResponseWriter
+	r *http.Request
 }
 
-/* todo: figure out why this is broken
-func ProfileFromGob(b []byte) *Profile {
-	p := Profile{}
-	fmt.Println("B", len(b))
-	buf := bytes.NewBuffer(b)
-	gob.NewDecoder(buf).Decode(&p)
-	if err := gob.NewDecoder(bytes.NewBuffer(b)).Decode(&p); err != nil {
-		fmt.Println("GOB ERR", err)
-		return nil
+func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
+	p := &Profile{
+		Id:          NewGuid(),
+		Name:        name,
+		start:       time.Now(),
+		MachineName: Hostname(),
+		Root: &Timing{
+			Id:     NewGuid(),
+			IsRoot: true,
+		},
+
+		w: w,
+		r: r,
 	}
-	fmt.Println("PROFILE:", p)
-	return &p
+
+	w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", p.Id))
+
+	return p
 }
 
-func (p *Profile) Gob() []byte {
-	var buf bytes.Buffer
-	if err := gob.NewEncoder(&buf).Encode(p); err != nil {
-		return nil
+func (p *Profile) Finalize() {
+	u := p.r.URL
+	if !u.IsAbs() {
+		u.Host = p.r.Host
+		if p.r.TLS == nil {
+			u.Scheme = "http"
+		} else {
+			u.Scheme = "https"
+		}
 	}
-	return buf.Bytes()
+	p.Root.Name = u.String()
+
+	p.Started = fmt.Sprintf("/Date(%d)/", p.start.Unix()*1000)
+	p.DurationMilliseconds = Since(p.start)
+	p.Root.DurationMilliseconds = p.DurationMilliseconds
+
+	Store(p.r, p)
 }
-*/
 
 func ProfileFromJson(b []byte) *Profile {
 	p := Profile{}

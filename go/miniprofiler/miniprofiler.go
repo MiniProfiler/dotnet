@@ -3,7 +3,6 @@ package miniprofiler
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -21,7 +20,7 @@ var (
 	Enable      func(*http.Request) bool
 	Store       func(*http.Request, *Profile)
 	Get         func(*http.Request, string) *Profile
-	MachineName func(*http.Request) string = Hostname
+	MachineName func() string = Hostname
 
 	Position        = "left"
 	ShowTrivial     = false
@@ -216,7 +215,7 @@ func Static(w http.ResponseWriter, r *http.Request) {
 }
 
 func Includes(r *http.Request, p *Profile) template.HTML {
-	if !enable(r) {
+	if !Enabled(r) {
 		return ""
 	}
 
@@ -256,7 +255,7 @@ func Includes(r *http.Request, p *Profile) template.HTML {
 	return template.HTML(w.String())
 }
 
-func enable(r *http.Request) bool {
+func Enabled(r *http.Request) bool {
 	if Enable == nil || Get == nil || Store == nil {
 		return false
 	}
@@ -276,42 +275,10 @@ func NewHandler(f func(*Profile, http.ResponseWriter, *http.Request)) Handler {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if enable(r) {
-		h.p = &Profile{
-			Id:          NewGuid(),
-			start:       time.Now(),
-			MachineName: Hostname(r),
-			Root: &Timing{
-				Id:     NewGuid(),
-				IsRoot: true,
-			},
-		}
-
-		w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", h.p.Id))
-
+	if Enabled(r) {
+		h.p = NewProfile(w, r, FuncName(h.f))
 		h.f(h.p, w, r)
-
-		fp := reflect.ValueOf(h.f).Pointer()
-		if fn := runtime.FuncForPC(fp); fn != nil {
-			h.p.Name = fn.Name()
-		}
-
-		u := r.URL
-		if !u.IsAbs() {
-			u.Host = r.Host
-			if r.TLS == nil {
-				u.Scheme = "http"
-			} else {
-				u.Scheme = "https"
-			}
-		}
-		h.p.Root.Name = u.String()
-
-		h.p.Started = fmt.Sprintf("/Date(%d)/", h.p.start.Unix()*1000)
-		h.p.DurationMilliseconds = Since(h.p.start)
-		h.p.Root.DurationMilliseconds = h.p.DurationMilliseconds
-
-		Store(r, h.p)
+		h.p.Finalize()
 	} else {
 		h.f(nil, w, r)
 	}
@@ -322,10 +289,23 @@ func Since(t time.Time) float64 {
 	return float64(d.Nanoseconds()) / 1000000
 }
 
-func Hostname(r *http.Request) string {
+func Hostname() string {
 	name, err := os.Hostname()
 	if err != nil {
 		return ""
 	}
 	return name
+}
+
+// FuncName returns the name of the function f, or "" if f is not a function.
+func FuncName(f interface{}) string {
+	v := reflect.ValueOf(f)
+	if v.Kind() != reflect.Func {
+		return ""
+	}
+	fp := v.Pointer()
+	if fn := runtime.FuncForPC(fp); fn != nil {
+		return fn.Name()
+	}
+	return ""
 }
