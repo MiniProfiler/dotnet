@@ -46,6 +46,7 @@ func init() {
 	staticFiles = map[string][]byte{
 		"includes.css":    includes_css,
 		"includes.js":     includes_js,
+		"includes.tmpl":   includes_tmpl,
 		"jquery.1.7.1.js": jquery_1_7_1_js,
 		"jquery.tmpl.js":  jquery_tmpl_js,
 	}
