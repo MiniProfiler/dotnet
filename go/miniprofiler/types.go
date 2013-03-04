@@ -1,9 +1,8 @@
 package miniprofiler
 
 import (
+	"code.google.com/p/tcgl/identifier"
 	"encoding/json"
-	"math/big"
-	"math/rand"
 	"time"
 )
 
@@ -20,7 +19,8 @@ const (
 type Guid string
 
 func NewGuid() Guid {
-	return Guid(big.NewInt(rand.Int63()).String())
+	u := identifier.NewUUID()
+	return Guid(u.String())
 }
 
 type Profile struct {
