@@ -45,10 +45,10 @@ func init() {
 	http.HandleFunc(PATH, MiniProfilerHandler)
 
 	staticFiles = map[string][]byte{
-		"includes.css":   includes_css,
-		"includes.js":    includes_js,
-		"includes.tmpl":  includes_tmpl,
-		"jquery.tmpl.js": jquery_tmpl_js,
+		"includes.css":    includes_css,
+		"includes.js":     includes_js,
+		"jquery.1.7.1.js": jquery_1_7_1_js,
+		"jquery.tmpl.js":  jquery_tmpl_js,
 	}
 }
 
@@ -79,15 +79,42 @@ func Results(w http.ResponseWriter, r *http.Request) {
 			needsSave = true
 		}
 	}
+	if !p.HasUserViewed {
+		p.HasUserViewed = true
+		needsSave = true
+	}
 
 	if needsSave {
 		Store(r, p)
 	}
 
+	var j []byte
+	j, err := json.Marshal(p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if isPopup {
-		if j, err := json.Marshal(p); err == nil {
-			w.Write(j)
+		w.Write(j)
+	} else {
+		v := struct {
+			Name     string
+			Duration float64
+			Path     string
+			Json     template.JS
+			Includes template.HTML
+			Version  string
+		}{
+			Name:     p.Name,
+			Duration: p.DurationMilliseconds,
+			Path:     PATH,
+			Json:     template.JS(j),
+			Includes: Includes(r, p),
+			Version:  Version,
 		}
+
+		shareHtml.Execute(w, v)
 	}
 }
 
