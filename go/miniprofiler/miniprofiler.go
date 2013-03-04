@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -259,6 +261,11 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 		h.f(h.p, w, r)
+
+		fp := reflect.ValueOf(h.f).Pointer()
+		if fn := runtime.FuncForPC(fp); fn != nil {
+			h.p.Name = fn.Name()
+		}
 
 		h.p.Started = fmt.Sprintf("/Date(%d)/", h.p.start.Unix()*1000)
 		h.p.DurationMilliseconds = Since(h.p.start)
