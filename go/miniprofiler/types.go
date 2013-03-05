@@ -49,6 +49,8 @@ type Profile struct {
 	HasSqlTimings                        bool
 	CustomTimingStats                    map[string]*CustomTimingStat
 	CustomTimingNames                    []string
+	CustomLink                           string
+	CustomLinkName                       string
 
 	w http.ResponseWriter
 	r *http.Request

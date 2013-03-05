@@ -70,6 +70,8 @@ func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Ha
 				})
 			}
 
+			pc.P.CustomLink = pc.URL()
+			pc.P.CustomLinkName = "appstats"
 			pc.P.Finalize()
 		} else {
 			f(pc, w, r)
