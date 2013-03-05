@@ -99,6 +99,7 @@ func (p *Profile) Finalize() {
 
 		for _, r := range t.SqlTimings {
 			p.DurationMillisecondsInSql += r.DurationMilliseconds
+			t.SqlTimingsDurationMilliseconds += r.DurationMilliseconds
 			switch r.ExecuteType {
 			case ExecuteType_NonQuery:
 				p.ExecutedNonQueries++
