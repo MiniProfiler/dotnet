@@ -61,7 +61,7 @@ func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 		Id:          NewGuid(),
 		Name:        name,
 		start:       time.Now(),
-		MachineName: Hostname(),
+		MachineName: MachineName(),
 		Root: &Timing{
 			Id:     NewGuid(),
 			IsRoot: true,
