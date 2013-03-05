@@ -4,12 +4,10 @@ import (
 	"appengine"
 	"appengine/memcache"
 	"appengine/user"
-	"bytes"
 	"fmt"
 	"github.com/mjibson/MiniProfiler/go/miniprofiler"
 	"github.com/mjibson/appstats"
 	"net/http"
-	"strings"
 )
 
 func init() {
