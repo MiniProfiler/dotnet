@@ -27,7 +27,10 @@ func EnableIfAdminOrDev(r *http.Request) bool {
 }
 
 func Instance() string {
-	return appengine.InstanceID()
+	if i := appengine.InstanceID(); i != "" {
+		return i[len(i)-8:]
+	}
+	return miniprofiler.Hostname()
 }
 
 func StoreMemcache(r *http.Request, p *miniprofiler.Profile) {
