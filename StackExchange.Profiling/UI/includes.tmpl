@@ -156,8 +156,6 @@
     <td class="profiler-duration" title="aggregate duration of all queries in this step (excludes children)">
       ${MiniProfiler.formatDuration(timing.SqlTimingsDurationMilliseconds)}
     </td>
-  {{else}}
-    <td colspan='2'></td>
   {{/if}}
 
   {{each page.CustomTimingNames}}
