@@ -103,10 +103,13 @@ func (p *Profile) Finalize() {
 			switch r.ExecuteType {
 			case ExecuteType_NonQuery:
 				p.ExecutedNonQueries++
+				t.ExecutedNonQueries++
 			case ExecuteType_Scalar:
 				p.ExecutedScalars++
+				t.ExecutedScalars++
 			case ExecuteType_Reader:
 				p.ExecutedReaders++
+				t.ExecutedReaders++
 			}
 		}
 	}
