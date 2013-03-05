@@ -123,6 +123,9 @@
 
 <script id="linksTemplate" type="text/x-jquery-tmpl">
   <a href="${MiniProfiler.shareUrl(Id)}" class="profiler-share-profiler-results" target="_blank">share</a>
+  {{if CustomLink}}
+  <a href="${CustomLink}" class="profiler-custom-link" target="_blank">${CustomLinkName}</a>
+  {{/if}}
   {{if HasTrivialTimings}}
   <a class="profiler-toggle-trivial" data-show-on-load="${HasAllTrivialTimings}" title="toggles any rows with &lt; ${TrivialDurationThresholdMilliseconds} ms">
     show trivial
