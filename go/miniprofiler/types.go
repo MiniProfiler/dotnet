@@ -47,6 +47,8 @@ type Profile struct {
 	ExecutedScalars                      int
 	HasDuplicateSqlTimings               bool
 	HasSqlTimings                        bool
+	CustomTimingStats                    map[string]*CustomTimingStat
+	CustomTimingNames                    []string
 
 	w http.ResponseWriter
 	r *http.Request
@@ -88,6 +90,7 @@ func (p *Profile) Finalize() {
 	p.DurationMilliseconds = Since(p.start)
 	p.Root.DurationMilliseconds = p.DurationMilliseconds
 
+	customNames := make(map[string]bool)
 	timings := []*Timing{p.Root}
 	for i := 0; i < len(timings); i++ {
 		t := timings[i]
@@ -112,6 +115,24 @@ func (p *Profile) Finalize() {
 				t.ExecutedReaders++
 			}
 		}
+
+		for n, c := range t.CustomTimingStats {
+			customNames[n] = true
+			if p.CustomTimingStats == nil {
+				p.CustomTimingStats = make(map[string]*CustomTimingStat)
+			}
+			pc := p.CustomTimingStats[n]
+			if pc == nil {
+				pc = new(CustomTimingStat)
+				p.CustomTimingStats[n] = pc
+			}
+			pc.Count += c.Count
+			pc.Duration += c.Duration
+		}
+	}
+
+	for n := range customNames {
+		p.CustomTimingNames = append(p.CustomTimingNames, n)
 	}
 
 	Store(p.r, p)
@@ -148,12 +169,31 @@ type Timing struct {
 	ExecutedReaders                     int
 	ExecutedScalars                     int
 	ExecutedNonQueries                  int
+	CustomTimingStats                   map[string]*CustomTimingStat
+	CustomTimings                       map[string][]*CustomTiming
 }
 
 func (t *Timing) AddSqlTiming(s *SqlTiming) {
 	s.ParentTimingId = t.Id
 	t.SqlTimings = append(t.SqlTimings, s)
 	t.HasSqlTimings = true
+}
+
+func (t *Timing) AddCustomTiming(Type string, s *CustomTiming) {
+	if t.CustomTimings == nil {
+		t.CustomTimings = make(map[string][]*CustomTiming)
+		t.CustomTimingStats = make(map[string]*CustomTimingStat)
+	}
+
+	s.ParentTimingId = t.Id
+	t.CustomTimings[Type] = append(t.CustomTimings[Type], s)
+	c := t.CustomTimingStats[Type]
+	if c == nil {
+		c = new(CustomTimingStat)
+		t.CustomTimingStats[Type] = c
+	}
+	c.Count++
+	c.Duration += s.DurationMilliseconds
 }
 
 type SqlTiming struct {
@@ -191,4 +231,15 @@ type ClientTiming struct {
 	Name     string
 	Start    int64
 	Duration int64
+}
+
+type CustomTiming struct {
+	ParentTimingId       Guid
+	StartMilliseconds    float64
+	DurationMilliseconds float64
+}
+
+type CustomTimingStat struct {
+	Duration float64
+	Count    int
 }
