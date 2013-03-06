@@ -34,6 +34,8 @@ func init() {
 	miniprofiler.MachineName = Instance
 }
 
+// EnableIfAdminOrDev returns true if this is the dev server or the current
+// user is an admin. This is the default for miniprofiler.Enable.
 func EnableIfAdminOrDev(r *http.Request) bool {
 	if appengine.IsDevAppServer() {
 		return true
@@ -43,6 +45,8 @@ func EnableIfAdminOrDev(r *http.Request) bool {
 	return u.Admin
 }
 
+// Instance returns the app engine instance id, or the hostname on dev.
+// This is the default for miniprofiler.MachineName.
 func Instance() string {
 	if i := appengine.InstanceID(); i != "" {
 		return i[len(i)-8:]
@@ -50,6 +54,8 @@ func Instance() string {
 	return miniprofiler.Hostname()
 }
 
+// StoreMemcache stores the Profile in memcache. This is the default for
+// miniprofiler.Store.
 func StoreMemcache(r *http.Request, p *miniprofiler.Profile) {
 	item := &memcache.Item{
 		Key:   mp_key(string(p.Id)),
@@ -59,6 +65,8 @@ func StoreMemcache(r *http.Request, p *miniprofiler.Profile) {
 	memcache.Set(c, item)
 }
 
+// GetMemcache gets the Profile from memcache. This is the default for
+// miniprofiler.Get.
 func GetMemcache(r *http.Request, id string) *miniprofiler.Profile {
 	c := appengine.NewContext(r)
 	item, err := memcache.Get(c, mp_key(id))
@@ -83,6 +91,7 @@ func (c Context) Call(service, method string, in, out appengine_internal.ProtoMe
 	return err
 }
 
+// NewHandler returns a profiled, appstats-aware appengine.Context.
 func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Handler {
 	return appstats.NewHandler(func(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		pc := Context{
