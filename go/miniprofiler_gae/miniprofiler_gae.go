@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/memcache"
 	"appengine/user"
+	"appengine_internal"
 	"fmt"
 	"github.com/mjibson/MiniProfiler/go/miniprofiler"
 	"github.com/mjibson/appstats"
@@ -56,6 +57,16 @@ type Context struct {
 	P *miniprofiler.Profile
 }
 
+func (c Context) Call(service, method string, in, out appengine_internal.ProtoMessage, opts *appengine_internal.CallOptions) error {
+	err := c.Context.Call(service, method, in, out, opts)
+	v := c.Context.Stats.RPCStats[len(c.Context.Stats.RPCStats)-1]
+	c.P.AddCustomTiming("RPC", &miniprofiler.CustomTiming{
+		StartMilliseconds:    float64(v.Offset.Nanoseconds()) / 1000000,
+		DurationMilliseconds: float64(v.Duration.Nanoseconds()) / 1000000,
+	})
+	return err
+}
+
 func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Handler {
 	return appstats.NewHandler(func(c appengine.Context, w http.ResponseWriter, r *http.Request) {
 		pc := Context{
@@ -65,14 +76,6 @@ func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Ha
 		if miniprofiler.Enabled(r) {
 			pc.P = miniprofiler.NewProfile(w, r, miniprofiler.FuncName(f))
 			f(pc, w, r)
-
-			for _, v := range pc.Context.Stats.RPCStats {
-				pc.P.Root.AddCustomTiming("RPC", &miniprofiler.CustomTiming{
-					StartMilliseconds:    float64(v.Offset.Nanoseconds()) / 1000000,
-					DurationMilliseconds: float64(v.Duration.Nanoseconds()) / 1000000,
-				})
-			}
-
 			pc.P.CustomLink = pc.URL()
 			pc.P.CustomLinkName = "appstats"
 			pc.P.Finalize()
