@@ -98,6 +98,11 @@ func (p *Profile) Finalize() {
 		t := timings[i]
 		timings = append(timings, t.Children...)
 
+		t.DurationWithoutChildrenMilliseconds = t.DurationMilliseconds
+		for _, c := range t.Children {
+			t.DurationWithoutChildrenMilliseconds -= c.DurationMilliseconds
+		}
+
 		if t.HasSqlTimings {
 			p.HasSqlTimings = true
 		}
