@@ -89,7 +89,7 @@ func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Ha
 			Context: c.(appstats.Context),
 		}
 
-		if miniprofiler.Enabled(r) {
+		if miniprofiler.Enable(r) {
 			pc.P = miniprofiler.NewProfile(w, r, miniprofiler.FuncName(f))
 			f(pc, w, r)
 			pc.P.CustomLink = pc.URL()

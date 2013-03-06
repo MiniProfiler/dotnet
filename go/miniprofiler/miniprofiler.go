@@ -232,7 +232,7 @@ func Static(w http.ResponseWriter, r *http.Request) {
 }
 
 func Includes(r *http.Request, p *Profile) template.HTML {
-	if !Enabled(r) {
+	if !Enable(r) {
 		return ""
 	}
 
@@ -272,14 +272,6 @@ func Includes(r *http.Request, p *Profile) template.HTML {
 	return template.HTML(w.String())
 }
 
-func Enabled(r *http.Request) bool {
-	if Enable == nil || Get == nil || Store == nil {
-		return false
-	}
-
-	return Enable(r)
-}
-
 type Handler struct {
 	f func(*Profile, http.ResponseWriter, *http.Request)
 	p *Profile
@@ -292,7 +284,7 @@ func NewHandler(f func(*Profile, http.ResponseWriter, *http.Request)) Handler {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if Enabled(r) {
+	if Enable(r) {
 		h.p = NewProfile(w, r, FuncName(h.f))
 		h.f(h.p, w, r)
 		h.p.Finalize()
