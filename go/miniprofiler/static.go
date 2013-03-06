@@ -1,4 +1,5 @@
 // Automatically generated with bin2go: http://github.com/chsc/bin2go
+
 package miniprofiler
 
 var includes_js = []byte{
