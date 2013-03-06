@@ -162,7 +162,7 @@
   {{/if}}
 
   {{each page.CustomTimingNames}}
-    {{if timing.CustomTimings[$value]}}
+    {{if timing.CustomTimings && timing.CustomTimings[$value]}}
       <td class="profiler-duration" title="aggregate number of all ${$value.toLowerCase()} invocations in this step (excludes children)">
         ${timing.CustomTimings[$value].length} ${$value.toLowerCase()}
       </td>
