@@ -123,6 +123,9 @@
 
 <script id="linksTemplate" type="text/x-jquery-tmpl">
   <a href="${MiniProfiler.shareUrl(Id)}" class="profiler-share-profiler-results" target="_blank">share</a>
+  {{if CustomLink}}
+  <a href="${CustomLink}" class="profiler-custom-link" target="_blank">${CustomLinkName}</a>
+  {{/if}}
   {{if HasTrivialTimings}}
   <a class="profiler-toggle-trivial" data-show-on-load="${HasAllTrivialTimings}" title="toggles any rows with &lt; ${TrivialDurationThresholdMilliseconds} ms">
     show trivial
@@ -156,12 +159,10 @@
     <td class="profiler-duration" title="aggregate duration of all queries in this step (excludes children)">
       ${MiniProfiler.formatDuration(timing.SqlTimingsDurationMilliseconds)}
     </td>
-  {{else}}
-    <td colspan='2'></td>
   {{/if}}
 
   {{each page.CustomTimingNames}}
-    {{if timing.CustomTimings[$value]}}
+    {{if timing.CustomTimings && timing.CustomTimings[$value]}}
       <td class="profiler-duration" title="aggregate number of all ${$value.toLowerCase()} invocations in this step (excludes children)">
         ${timing.CustomTimings[$value].length} ${$value.toLowerCase()}
       </td>
