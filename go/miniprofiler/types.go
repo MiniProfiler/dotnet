@@ -54,6 +54,8 @@ type Profile struct {
 
 	w http.ResponseWriter
 	r *http.Request
+
+	current *Timing
 }
 
 func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
@@ -70,6 +72,7 @@ func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 		w: w,
 		r: r,
 	}
+	p.current = p.Root
 
 	w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", p.Id))
 
@@ -156,6 +159,50 @@ func (p *Profile) Json() []byte {
 	return b
 }
 
+func (p *Profile) Step(name string, f func()) {
+	t := &Timing{
+		Id:             NewGuid(),
+		Name:           name,
+		ParentTimingId: p.current.Id,
+		Depth:          p.current.Depth + 1,
+		StartMilliseconds: Since(p.start),
+	}
+	p.current.HasChildren = true
+	p.current.Children = append(p.current.Children, t)
+	t.parent = p.current
+	p.current = t
+
+	f()
+
+	t.DurationMilliseconds = Since(p.start) - t.StartMilliseconds
+	p.current = p.current.parent
+}
+
+func (p *Profile) AddSqlTiming(s *SqlTiming) {
+	t := p.current
+	s.ParentTimingId = t.Id
+	t.SqlTimings = append(t.SqlTimings, s)
+	t.HasSqlTimings = true
+}
+
+func (p *Profile) AddCustomTiming(Type string, s *CustomTiming) {
+	t := p.current
+	if t.CustomTimings == nil {
+		t.CustomTimings = make(map[string][]*CustomTiming)
+		t.CustomTimingStats = make(map[string]*CustomTimingStat)
+	}
+
+	s.ParentTimingId = t.Id
+	t.CustomTimings[Type] = append(t.CustomTimings[Type], s)
+	c := t.CustomTimingStats[Type]
+	if c == nil {
+		c = new(CustomTimingStat)
+		t.CustomTimingStats[Type] = c
+	}
+	c.Count++
+	c.Duration += s.DurationMilliseconds
+}
+
 type Timing struct {
 	Id                                  Guid
 	Name                                string
@@ -178,29 +225,8 @@ type Timing struct {
 	ExecutedNonQueries                  int
 	CustomTimingStats                   map[string]*CustomTimingStat
 	CustomTimings                       map[string][]*CustomTiming
-}
 
-func (t *Timing) AddSqlTiming(s *SqlTiming) {
-	s.ParentTimingId = t.Id
-	t.SqlTimings = append(t.SqlTimings, s)
-	t.HasSqlTimings = true
-}
-
-func (t *Timing) AddCustomTiming(Type string, s *CustomTiming) {
-	if t.CustomTimings == nil {
-		t.CustomTimings = make(map[string][]*CustomTiming)
-		t.CustomTimingStats = make(map[string]*CustomTimingStat)
-	}
-
-	s.ParentTimingId = t.Id
-	t.CustomTimings[Type] = append(t.CustomTimings[Type], s)
-	c := t.CustomTimingStats[Type]
-	if c == nil {
-		c = new(CustomTimingStat)
-		t.CustomTimingStats[Type] = c
-	}
-	c.Count++
-	c.Duration += s.DurationMilliseconds
+	parent *Timing
 }
 
 type SqlTiming struct {
