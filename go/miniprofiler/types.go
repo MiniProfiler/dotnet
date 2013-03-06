@@ -25,24 +25,18 @@ import (
 )
 
 const (
-	ProfileLevel_Info    = 0
-	ProfileLevel_Verbose = 1
-
 	ExecuteType_None     = 0
 	ExecuteType_NonQuery = 1
 	ExecuteType_Scalar   = 2
 	ExecuteType_Reader   = 3
 )
 
-type Guid string
-
-func NewGuid() Guid {
-	u := identifier.NewUUID()
-	return Guid(u.String())
+func newGuid() string {
+	return identifier.NewUUID().String()
 }
 
 type Profile struct {
-	Id                                   Guid
+	Id                                   string
 	Name                                 string
 	start                                time.Time
 	Started                              string
@@ -74,14 +68,16 @@ type Profile struct {
 	current *Timing
 }
 
+// NewProfile creates a new Profile with given name.
+// For use only by miniprofiler extensions.
 func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 	p := &Profile{
-		Id:          NewGuid(),
+		Id:          newGuid(),
 		Name:        name,
 		start:       time.Now(),
 		MachineName: MachineName(),
 		Root: &Timing{
-			Id:     NewGuid(),
+			Id:     newGuid(),
 			IsRoot: true,
 		},
 
@@ -95,6 +91,8 @@ func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 	return p
 }
 
+// Finalize finalizes a Profile and Store()s it.
+// For use only by miniprofiler extensions.
 func (p *Profile) Finalize() {
 	u := p.r.URL
 	if !u.IsAbs() {
@@ -164,23 +162,27 @@ func (p *Profile) Finalize() {
 	Store(p.r, p)
 }
 
+// ProfileFromJson returns a Profile from JSON data.
 func ProfileFromJson(b []byte) *Profile {
 	p := Profile{}
 	json.Unmarshal(b, &p)
 	return &p
 }
 
+// Json converts a profile to JSON.
 func (p *Profile) Json() []byte {
 	b, _ := json.Marshal(p)
 	return b
 }
 
+// Step adds a new child node with given name.
+// f should generally be in a closure.
 func (p *Profile) Step(name string, f func()) {
 	t := &Timing{
-		Id:             NewGuid(),
-		Name:           name,
-		ParentTimingId: p.current.Id,
-		Depth:          p.current.Depth + 1,
+		Id:                newGuid(),
+		Name:              name,
+		ParentTimingId:    p.current.Id,
+		Depth:             p.current.Depth + 1,
 		StartMilliseconds: Since(p.start),
 	}
 	p.current.HasChildren = true
@@ -194,6 +196,7 @@ func (p *Profile) Step(name string, f func()) {
 	p.current = p.current.parent
 }
 
+// AddSqlTiming adds a new SqlTiming to the current node.
 func (p *Profile) AddSqlTiming(s *SqlTiming) {
 	t := p.current
 	s.ParentTimingId = t.Id
@@ -201,6 +204,7 @@ func (p *Profile) AddSqlTiming(s *SqlTiming) {
 	t.HasSqlTimings = true
 }
 
+// AddCustomTiming adds a new CustomTiming with given type to the current node.
 func (p *Profile) AddCustomTiming(Type string, s *CustomTiming) {
 	t := p.current
 	if t.CustomTimings == nil {
@@ -220,14 +224,14 @@ func (p *Profile) AddCustomTiming(Type string, s *CustomTiming) {
 }
 
 type Timing struct {
-	Id                                  Guid
+	Id                                  string
 	Name                                string
 	DurationMilliseconds                float64
 	StartMilliseconds                   float64
 	Children                            []*Timing
 	KeyValues                           map[string]string
 	SqlTimings                          []*SqlTiming
-	ParentTimingId                      Guid
+	ParentTimingId                      string
 	DurationWithoutChildrenMilliseconds float64
 	SqlTimingsDurationMilliseconds      float64
 	IsTrivial                           bool
@@ -246,7 +250,7 @@ type Timing struct {
 }
 
 type SqlTiming struct {
-	Id                             Guid
+	Id                             string
 	ExecuteType                    int
 	CommandString                  string
 	FormattedCommandString         string
@@ -255,12 +259,12 @@ type SqlTiming struct {
 	DurationMilliseconds           float64
 	FirstFetchDurationMilliseconds float64
 	Parameters                     []*SqlTimingParameter
-	ParentTimingId                 Guid
+	ParentTimingId                 string
 	IsDuplicate                    bool
 }
 
 type SqlTimingParameter struct {
-	ParentSqlTimingId Guid
+	ParentSqlTimingId string
 	Name              string
 	Value             string
 	DbType            string
@@ -283,7 +287,7 @@ type ClientTiming struct {
 }
 
 type CustomTiming struct {
-	ParentTimingId       Guid
+	ParentTimingId       string
 	StartMilliseconds    float64
 	DurationMilliseconds float64
 }

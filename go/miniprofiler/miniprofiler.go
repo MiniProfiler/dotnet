@@ -33,9 +33,17 @@ import (
 )
 
 var (
-	Enable      func(*http.Request) bool
-	Store       func(*http.Request, *Profile)
-	Get         func(*http.Request, string) *Profile
+	// Enable returns true if the request should be profiled.
+	Enable func(*http.Request) bool
+
+	// Store stores the Profile by its Id field.
+	Store func(*http.Request, *Profile)
+
+	// Get retrieves a Profile by its Id field.
+	Get func(*http.Request, string) *Profile
+
+	// MachineName returns the machine name to display.
+	// The default is to use the machine's hostname.
 	MachineName func() string = Hostname
 
 	Position        = "left"
@@ -53,13 +61,13 @@ var (
 
 const (
 	PATH         = "/mini-profiler-resources/"
-	PATH_RESULTS = PATH + "results"
+	path_results = PATH + "results"
 
-	ClientTimingsPrefix = "clientPerformance[timing]["
+	clientTimingsPrefix = "clientPerformance[timing]["
 )
 
 func init() {
-	http.HandleFunc(PATH, MiniProfilerHandler)
+	http.HandleFunc(PATH, miniProfilerHandler)
 
 	staticFiles = map[string][]byte{
 		"includes.css":    includes_css,
@@ -70,18 +78,18 @@ func init() {
 	}
 }
 
-func MiniProfilerHandler(w http.ResponseWriter, r *http.Request) {
+func miniProfilerHandler(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
 	if staticFiles[path] != nil {
-		Static(w, r)
-	} else if PATH_RESULTS == r.URL.Path {
-		Results(w, r)
+		static(w, r)
+	} else if path_results == r.URL.Path {
+		results(w, r)
 	} else {
 		http.Error(w, "", http.StatusNotFound)
 	}
 }
 
-func Results(w http.ResponseWriter, r *http.Request) {
+func results(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	isPopup := r.FormValue("popup") == "1"
 	p := Get(r, id)
@@ -138,7 +146,7 @@ func Results(w http.ResponseWriter, r *http.Request) {
 
 func getClientTimings(r *http.Request) *ClientTimings {
 	var navigationStart int64
-	if i, err := strconv.ParseInt(r.FormValue(ClientTimingsPrefix+"navigationStart]"), 10, 64); err != nil {
+	if i, err := strconv.ParseInt(r.FormValue(clientTimingsPrefix+"navigationStart]"), 10, 64); err != nil {
 		return nil
 	} else {
 		navigationStart = i
@@ -152,13 +160,13 @@ func getClientTimings(r *http.Request) *ClientTimings {
 	r.ParseForm()
 	clientPerf := make(map[string]ClientTiming)
 	for k, v := range r.Form {
-		if len(v) < 1 || !strings.HasPrefix(k, ClientTimingsPrefix) {
+		if len(v) < 1 || !strings.HasPrefix(k, clientTimingsPrefix) {
 			continue
 		}
 
 		if i, err := strconv.ParseInt(v[0], 10, 64); err == nil && i > navigationStart {
 			i -= navigationStart
-			name := k[len(ClientTimingsPrefix) : len(k)-1]
+			name := k[len(clientTimingsPrefix) : len(k)-1]
 
 			if strings.HasSuffix(name, "Start") {
 				shortName := name[:len(name)-5]
@@ -214,7 +222,7 @@ func sentenceCase(s string) string {
 	return buf.String()
 }
 
-func Static(w http.ResponseWriter, r *http.Request) {
+func static(w http.ResponseWriter, r *http.Request) {
 	fname := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
 	if v, present := staticFiles[fname]; present {
 		h := w.Header()
@@ -233,6 +241,7 @@ func Static(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Includes renders the JavaScript includes for this request, if enabled.
 func Includes(r *http.Request, p *Profile) template.HTML {
 	if !Enable(r) {
 		return ""
@@ -242,12 +251,12 @@ func Includes(r *http.Request, p *Profile) template.HTML {
 	authorized := true
 
 	v := struct {
-		Ids                       Guid
+		Ids                       string
 		Path, Version, Position   string
 		ShowTrivial, ShowChildren bool
 		MaxTracesToShow           int
 		ShowControls              bool
-		CurrentId                 Guid
+		CurrentId                 string
 		Authorized                bool
 		ToggleShortcut            string
 		StartHidden               bool
@@ -279,6 +288,7 @@ type Handler struct {
 	p *Profile
 }
 
+// NewHandler returns a new profiled handler.
 func NewHandler(f func(*Profile, http.ResponseWriter, *http.Request)) Handler {
 	return Handler{
 		f: f,
@@ -295,11 +305,14 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Since returns the number of milliseconds since t.
 func Since(t time.Time) float64 {
 	d := time.Since(t)
 	return float64(d.Nanoseconds()) / 1000000
 }
 
+// Hostname returns the os.Hostname() of the current machine,
+// or "" if unavailable.
 func Hostname() string {
 	name, err := os.Hostname()
 	if err != nil {
