@@ -46,6 +46,8 @@ var (
 	ToggleShortcut  = "Alt+P"
 	StartHidden     = false
 
+	Version = "0.1"
+
 	staticFiles map[string][]byte
 )
 
