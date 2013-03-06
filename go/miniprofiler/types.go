@@ -86,7 +86,7 @@ func (p *Profile) Finalize() {
 			u.Scheme = "https"
 		}
 	}
-	p.Root.Name = u.String()
+	p.Root.Name = p.r.Method + " " + u.String()
 
 	p.Started = fmt.Sprintf("/Date(%d)/", p.start.Unix()*1000)
 	p.DurationMilliseconds = Since(p.start)
