@@ -15,7 +15,7 @@ All you have to do is include the Gem and you're good to go in development.
 
 rack-mini-profiler is designed with production profiling in mind. To enable that just run `Rack::MiniProfiler.authorize_request` once you know a request is allowed to profile.
 
-For example: 
+Using Rails:
 
 ```ruby
 # A hook in your ApplicationController
@@ -47,23 +47,37 @@ class MyApp < Sinatra::Base
 end
 ```
 
+## Database profiling
+
+Currently supports Mysql2, Postgres, and Mongoid3 (with fallback support to ActiveRecord)
+
 ## Storage
 
-By default, rack-mini-profiler stores its results in a memory store: 
+rack-mini-profiler stores it's results so they can be shared later and aren't lost at the end of the request.
+
+There are 4 storage options: `MemoryStore`, `RedisStore`, `MemcacheStore`, and `FileStore`.
+
+`FileStore` is the default in Rails environments and will write files to `tmp/miniprofiler/*`.  `MemoryStore` is the default otherwise.
+
+To change the default you can create a file in `config/initializers/mini_profiler.rb`
 
 ```ruby 
-# our default
+# set MemoryStore
 Rack::MiniProfiler.config.storage = Rack::MiniProfiler::MemoryStore
+
+# set RedisStore
+if Rails.env.production?
+  uri = URI.parse(ENV["REDIS_SERVER_URL"])
+  Rack::MiniProfiler.config.storage_options = { :host => uri.host, :port => uri.port, :password => uri.password }
+  Rack::MiniProfiler.config.storage = Rack::MiniProfiler::RedisStore
+end
 ```
 
-There are 2 other available storage engines, `RedisStore`, `MemcacheStore`, and `FileStore`.
-
-MemoryStore is stores results in a processes heap - something that does not work well in a multi process environment. 
+MemoryStore stores results in a processes heap - something that does not work well in a multi process environment. 
 FileStore stores results in the file system - something that may not work well in a multi machine environment. 
+RedisStore/MemcacheStore work in multi process and multi machine environments (RedisStore only saves results for up to 24 hours so it won't continue to fill up Redis).
 
 Additionally you may implement an AbstractStore for your own provider. 
-
-Rails hooks up a FileStore for all environments. 
 
 ## Running the Specs
 
@@ -120,9 +134,10 @@ end
 * pre_authorize_cb - A lambda callback you can set to determine whether or not mini_profiler should be visible on a given request. Default in a Rails environment is only on in development mode. If in a Rack app, the default is always on.
 * position - Can either be 'right' or 'left'. Default is 'left'.
 * skip_schema_queries - Whether or not you want to log the queries about the schema of your tables. Default is 'false', 'true' in rails development.
-* use_existing_jquery - Use the version of jQuery on the page as opposed to the self contained one
 * auto_inject (default true) - when false the miniprofiler script is not injected in the page
 * backtrace_filter - a regex you can use to filter out unwanted lines from the backtraces
+* toggle_shortcut (default Alt+P) - a jquery.hotkeys.js-style keyboard shortcut, used to toggle the mini_profiler's visibility. See http://code.google.com/p/js-hotkeys/ for more info.
+* start_hidden (default false) - Whether or not you want the mini_profiler to be visible when loading a page
 
 ## Special query strings 
 

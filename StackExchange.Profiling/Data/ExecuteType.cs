@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace StackExchange.Profiling.Data
+﻿namespace StackExchange.Profiling.Data
 {
     /// <summary>
-    /// Categories of sql statements.
+    /// Categories of SQL statements.
     /// </summary>
     public enum ExecuteType : byte
     {
         /// <summary>
-        /// Unknown
+        /// Unknown type
         /// </summary>
         None = 0,
 

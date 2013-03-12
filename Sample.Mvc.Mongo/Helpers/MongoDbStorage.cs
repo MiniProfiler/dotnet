@@ -457,7 +457,7 @@ namespace StackExchange.Profiling.Storage
             return guids;
         }
 
-        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             IMongoQuery query = null;
 
@@ -470,7 +470,7 @@ namespace StackExchange.Profiling.Storage
 
             var profilers = Profilers.Find(query).Take(maxResults);
 
-            if (orderBy == ListResultsOrder.Decending)
+            if (orderBy == ListResultsOrder.Descending)
             {
                 profilers = profilers.OrderByDescending(p => p.Started);
             }

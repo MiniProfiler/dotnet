@@ -141,7 +141,10 @@ namespace StackExchange.Profiling
 
         bool _isActive;
         bool IDbProfiler.IsActive { get { return _isActive; } }
-        internal bool IsActive { set { _isActive = value; } }
-
+        internal bool IsActive
+        {
+            get { return _isActive; }
+            set { _isActive = value; }
+        }
     }
 }

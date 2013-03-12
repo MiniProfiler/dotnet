@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.Routing;
-using StackExchange.Profiling.Helpers;
-
-namespace StackExchange.Profiling
+﻿namespace StackExchange.Profiling
 {
+    using System;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Routing;
+
+    using StackExchange.Profiling.Helpers;
+
     /// <summary>
     /// HttpContext based profiler provider.  This is the default provider to use in a web context.
     /// The current profiler is associated with a HttpContext.Current ensuring that profilers are 
@@ -16,6 +15,7 @@ namespace StackExchange.Profiling
     public partial class WebRequestProfilerProvider : BaseProfilerProvider
     {
         /// <summary>
+        /// Initialises a new instance of the <see cref="WebRequestProfilerProvider"/> class. 
         /// Public constructor.  This also registers any UI routes needed to display results
         /// </summary>
         public WebRequestProfilerProvider()
@@ -26,6 +26,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
+        /// <param name="level">
+        /// The level.
+        /// </param>
+        /// <returns>the profiler.</returns>
         public override MiniProfiler Start(ProfileLevel level)
         {
             var context = HttpContext.Current;
@@ -37,7 +41,7 @@ namespace StackExchange.Profiling
             // don't profile /content or /scripts, either - happens in web.dev
             foreach (var ignored in StackExchange.Profiling.MiniProfiler.Settings.IgnoredPaths ?? new string[0])
             {
-                if (path.Contains((ignored ?? "").ToUpperInvariant()))
+                if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
                     return null;
             }
 
@@ -56,7 +60,6 @@ namespace StackExchange.Profiling
 
             return result;
         }
-
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
@@ -96,13 +99,13 @@ namespace StackExchange.Profiling
 
             try
             {
-                var arrayOfIds = StackExchange.Profiling.MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
+                var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
 
                 if (arrayOfIds != null && arrayOfIds.Count > MiniProfiler.Settings.MaxUnviewedProfiles) 
                 {
                     foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles)) 
                     {
-                        StackExchange.Profiling.MiniProfiler.Settings.Storage.SetViewed(current.User, id);
+                        MiniProfiler.Settings.Storage.SetViewed(current.User, id);
                     }
                 }
 
@@ -112,9 +115,10 @@ namespace StackExchange.Profiling
                     response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
                 }
             }
-            catch { } // headers blew up
+            catch
+            {
+            } // headers blew up
         }
-
 
         /// <summary>
         /// Makes sure 'profiler' has a Name, pulling it from route data or url.
@@ -138,7 +142,7 @@ namespace StackExchange.Profiling
 
                 if (string.IsNullOrWhiteSpace(profiler.Name))
                 {
-                    profiler.Name = request.Url.AbsolutePath ?? "";
+                    profiler.Name = request.Url.AbsolutePath ?? string.Empty;
                     if (profiler.Name.Length > 50)
                         profiler.Name = profiler.Name.Remove(50);
                 }

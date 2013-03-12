@@ -89,7 +89,7 @@ namespace Subtext.TestLibrary
 	    
 	    public override int GetLocalPort()
 	    {
-            return this._port;
+            return _port;
 	    }
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace Subtext.TestLibrary
 		{
 			get
 			{
-				return this.headers;
+				return headers;
 			}
 		}
 
@@ -125,16 +125,16 @@ namespace Subtext.TestLibrary
 		/// <returns>An array of header name-value pairs.</returns>
 		public override string[][] GetUnknownRequestHeaders()
 		{
-			if(this.headers == null || this.headers.Count == 0)
+			if(headers == null || headers.Count == 0)
 			{
 				return null;
 			}
-			string[][] headersArray = new string[this.headers.Count][];
-			for(int i = 0; i < this.headers.Count; i++)
+			string[][] headersArray = new string[headers.Count][];
+			for(int i = 0; i < headers.Count; i++)
 			{
 				headersArray[i] = new string[2];
-				headersArray[i][0] = this.headers.Keys[i];
-				headersArray[i][1] = this.headers[i];
+				headersArray[i][0] = headers.Keys[i];
+				headersArray[i][1] = headers[i];
 			}
 			return headersArray;
 		}
@@ -144,7 +144,7 @@ namespace Subtext.TestLibrary
             if (index == 0x24)
 				return _referer == null ? string.Empty : _referer.ToString();
 
-            if (index == 12 && this._verb == "POST")
+            if (index == 12 && _verb == "POST")
                 return "application/x-www-form-urlencoded";
             
             return base.GetKnownRequestHeader(index);
@@ -188,9 +188,9 @@ namespace Subtext.TestLibrary
 		{
 			string formText = string.Empty;
 			
-			foreach(string key in this.formVariables.Keys)
+			foreach(string key in formVariables.Keys)
 			{
-				formText += string.Format("{0}={1}&", key, this.formVariables[key]);
+				formText += string.Format("{0}={1}&", key, formVariables[key]);
 			}
 			
 			return Encoding.UTF8.GetBytes(formText);

@@ -55,7 +55,7 @@ namespace SampleWeb.Helpers
         }
 
 
-        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Decending)
+        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var builder = new SqlBuilder();
             var t = builder.AddTemplate("select Id from MiniProfilers /**where**/ /**orderby**/ LIMIT(" + maxResults + ")");
@@ -63,7 +63,7 @@ namespace SampleWeb.Helpers
             if (start != null) { builder.Where("Started > @start", new { start }); };
             if (finish != null) { builder.Where("Started < @finish", new { finish }); };
 
-            if (orderBy == ListResultsOrder.Decending)
+            if (orderBy == ListResultsOrder.Descending)
             {
                 builder.OrderBy("Started desc");
             }

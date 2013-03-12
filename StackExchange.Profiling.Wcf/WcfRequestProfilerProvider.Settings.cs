@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using StackExchange.Profiling.Wcf.Storage;
-
-namespace StackExchange.Profiling.Wcf
+﻿namespace StackExchange.Profiling.Wcf
 {
-    partial class WcfRequestProfilerProvider
+    using StackExchange.Profiling.Wcf.Storage;
+
+    /// <summary>
+    /// The WCF request profiler provider.
+    /// </summary>
+    public partial class WcfRequestProfilerProvider
     {
+        /// <summary>
+        /// The settings.
+        /// </summary>
         public static class Settings
         {
+            /// <summary>
+            /// Gets or sets the user provider.
+            /// </summary>
             public static IWcfUserProvider UserProvider { get; set; }
 
+            /// <summary>
+            /// ensure the storage strategy.
+            /// </summary>
             internal static void EnsureStorageStrategy()
             {
-                if (StackExchange.Profiling.MiniProfiler.Settings.Storage == null)
-                {
-                    StackExchange.Profiling.MiniProfiler.Settings.Storage = new WcfRequestInstanceStorage();
-                }
+                if (MiniProfiler.Settings.Storage == null)
+                    MiniProfiler.Settings.Storage = new WcfRequestInstanceStorage();
             }
         }
     }

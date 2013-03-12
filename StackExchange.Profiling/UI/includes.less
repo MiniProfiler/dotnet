@@ -49,7 +49,7 @@
 // styles shared between popup view and full view
 .profiler-result 
 {
- 
+
     .profiler-toggle-duration-with-children
     {
         float: right;
@@ -143,6 +143,9 @@
                         float:left;
                         margin-left:0px;
                     }
+                    &.profiler-custom-link {
+                        float:left;
+                    }
                 }
             }
         }
@@ -189,15 +192,15 @@
             text-align:right;
             margin-bottom:5px;
         }
-        
+
         .profiler-gap-info, .profiler-gap-info td { background-color: #ccc;}
         .profiler-gap-info  {
             .profiler-unit {color: #777;}
             .profiler-info {text-align: right}
             &.profiler-trivial-gaps {display: none}
-         }
-         
-         .profiler-trivial-gap-container { text-align: center;}
+        }
+
+        .profiler-trivial-gap-container { text-align: center;}
 
         // prettify colors
         .str{color:maroon}
@@ -287,24 +290,24 @@
         }
     }
 
-	.profiler-controls {
-		display: block;
-		font-size:12px;
-		font-family: @codeFonts;
-		cursor:default;
-		text-align: center;
+    .profiler-controls {
+        display: block;
+        font-size:12px;
+        font-family: @codeFonts;
+        cursor:default;
+        text-align: center;
 
-		span {
-			border-right: 1px solid @mutedColor;
-			padding-right: 5px;
-			margin-right: 5px;
-			cursor:pointer;
-		}
+        span {
+            border-right: 1px solid @mutedColor;
+            padding-right: 5px;
+            margin-right: 5px;
+            cursor:pointer;
+        }
 
-		span:last-child {
-			border-right: none;
-		}		
-	}
+        span:last-child {
+            border-right: none;
+        }
+    }
 
     .profiler-popup {
         display:none;
@@ -367,19 +370,19 @@
         }
     }
 
-	&.profiler-min .profiler-result {
-		display: none;
-	}
+    &.profiler-min .profiler-result {
+        display: none;
+    }
 
-	&.profiler-min .profiler-controls span {
-		display: none;
-	}
+    &.profiler-min .profiler-controls span {
+        display: none;
+    }
 
-	&.profiler-min .profiler-controls .profiler-min-max {
-		border-right: none;
-		padding: 0px;
-		margin: 0px;
-	}
+    &.profiler-min .profiler-controls .profiler-min-max {
+        border-right: none;
+        padding: 0px;
+        margin: 0px;
+    }
 }
 
 // popup results' queries will be displayed in front of this

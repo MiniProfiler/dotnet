@@ -31,22 +31,22 @@ namespace SampleWeb.SampleService {
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
             get {
-                return this.extensionDataField;
+                return extensionDataField;
             }
             set {
-                this.extensionDataField = value;
+                extensionDataField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public long HitCount {
             get {
-                return this.HitCountField;
+                return HitCountField;
             }
             set {
-                if ((this.HitCountField.Equals(value) != true)) {
-                    this.HitCountField = value;
-                    this.RaisePropertyChanged("HitCount");
+                if ((HitCountField.Equals(value) != true)) {
+                    HitCountField = value;
+                    RaisePropertyChanged("HitCount");
                 }
             }
         }
@@ -54,12 +54,12 @@ namespace SampleWeb.SampleService {
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string RouteName {
             get {
-                return this.RouteNameField;
+                return RouteNameField;
             }
             set {
-                if ((object.ReferenceEquals(this.RouteNameField, value) != true)) {
-                    this.RouteNameField = value;
-                    this.RaisePropertyChanged("RouteName");
+                if ((object.ReferenceEquals(RouteNameField, value) != true)) {
+                    RouteNameField = value;
+                    RaisePropertyChanged("RouteName");
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace SampleWeb.SampleService {
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
         protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null)) {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }

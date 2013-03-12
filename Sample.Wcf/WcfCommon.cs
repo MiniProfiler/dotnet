@@ -1,21 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Sample.Wcf
+﻿namespace Sample.Wcf
 {
+    using System.Web;
+
+    /// <summary>
+    /// The WCF common.
+    /// </summary>
     public static class WcfCommon
     {
-        private static string _connectionString;
+        /// <summary>
+        /// The _connection string.
+        /// </summary>
+        private static string connectionString;
+
+        /// <summary>
+        /// Gets the connection string.
+        /// </summary>
         public static string ConnectionString
         {
-            get {
-                if (_connectionString == null)
-                {
-                    _connectionString = "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); 
-                }
-                return _connectionString;
+            get
+            {
+                if (connectionString == null)
+                    connectionString = "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
+                
+                return connectionString;
             }
         }
     }

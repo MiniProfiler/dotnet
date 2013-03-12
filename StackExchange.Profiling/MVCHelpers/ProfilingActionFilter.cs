@@ -1,35 +1,36 @@
 ﻿#if ASP_NET_MVC3
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using System.Web;
-
 namespace StackExchange.Profiling.MVCHelpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Mvc;
+
     /// <summary>
     /// This filter can be applied globally to hook up automatic action profiling
     /// </summary>
     public class ProfilingActionFilter : ActionFilterAttribute
     {
-
-        const string stackKey = "ProfilingActionFilterStack";
+        /// <summary>
+        /// The stack key.
+        /// </summary>
+        private const string StackKey = "ProfilingActionFilterStack";
 
         /// <summary>
         /// Happens before the action starts running
         /// </summary>
+        /// <param name="filterContext">The filter Context.</param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var mp = MiniProfiler.Current;
             if (mp != null)
             {
-                var stack = HttpContext.Current.Items[stackKey] as Stack<IDisposable>;
+                var stack = HttpContext.Current.Items[StackKey] as Stack<IDisposable>;
                 if (stack == null)
                 {
                     stack = new Stack<IDisposable>();
-                    HttpContext.Current.Items[stackKey] = stack;
+                    HttpContext.Current.Items[StackKey] = stack;
                 }
 
                 var profiler = MiniProfiler.Current;
@@ -37,14 +38,12 @@ namespace StackExchange.Profiling.MVCHelpers
                 {
                     var tokens = filterContext.RouteData.DataTokens;
                     string area = tokens.ContainsKey("area") && !string.IsNullOrEmpty(tokens["area"].ToString()) ?
-                        tokens["area"] + "." :
-                        "";
+                        tokens["area"] + "." : string.Empty;
                     string controller = filterContext.Controller.ToString().Split('.').Last() + ".";
                     string action = filterContext.ActionDescriptor.ActionName;
 
                     stack.Push(profiler.Step("Controller: " + area + controller + action));
                 }
-
             
             }
             base.OnActionExecuting(filterContext);
@@ -53,10 +52,11 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Happens after the action executes
         /// </summary>
+        /// <param name="filterContext">The filter Context.</param>
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             base.OnActionExecuted(filterContext);
-            var stack = HttpContext.Current.Items[stackKey] as Stack<IDisposable>;
+            var stack = HttpContext.Current.Items[StackKey] as Stack<IDisposable>;
             if (stack != null && stack.Count > 0)
             {
                 stack.Pop().Dispose();
@@ -64,5 +64,4 @@ namespace StackExchange.Profiling.MVCHelpers
         }
     }
 }
-
 #endif

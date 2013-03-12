@@ -1,13 +1,16 @@
-﻿using System;
-using System.Data.Common;
-using StackExchange.Profiling;
-using System.Reflection;
-
-namespace StackExchange.Profiling.Data
+﻿namespace StackExchange.Profiling.Data
 {
+    using System;
+    using System.Data.Common;
+    using System.Reflection;
+    using System.Security;
+
+    using StackExchange.Profiling;
+
     /// <summary>
-    /// Wrapper for a db provider factory to enable profiling
+    /// Wrapper for a database provider factory to enable profiling
     /// </summary>
+    /// <typeparam name="T">the factory type.</typeparam>
     public class EFProfiledDbProviderFactory<T> : DbProviderFactory, IServiceProvider where T : DbProviderFactory
     {
         /// <summary>
@@ -15,92 +18,122 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public static EFProfiledDbProviderFactory<T> Instance = new EFProfiledDbProviderFactory<T>();
 
-        private T tail;
-
         /// <summary>
-        /// Used for db provider apis internally 
+        /// The tail.
         /// </summary>
-        protected EFProfiledDbProviderFactory ()
-	    {
-            FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
-            this.tail = (T)field.GetValue(null);
-	    }
-
+        private readonly T _tail;
 
         /// <summary>
-        /// proxy
+        /// Initialises a new instance of the <see cref="EFProfiledDbProviderFactory{T}"/> class. 
+        /// Used for DB provider APIS internally 
+        /// </summary>
+        protected EFProfiledDbProviderFactory()
+        {
+            FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+            if (field != null)
+                _tail = (T)field.GetValue(null);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether can create data source enumerator.
         /// </summary>
         public override bool CanCreateDataSourceEnumerator
         {
             get
             {
-                return tail.CanCreateDataSourceEnumerator;
+                return _tail.CanCreateDataSourceEnumerator;
             }
         }
+
         /// <summary>
-        /// proxy
+        /// The create data source enumerator.
         /// </summary>
+        /// <returns>the data source enumerator.</returns>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
         {
-            return tail.CreateDataSourceEnumerator();
+            return _tail.CreateDataSourceEnumerator();
         }
+
         /// <summary>
-        /// proxy
+        /// The create command.
         /// </summary>
+        /// <returns>the command.</returns>
         public override DbCommand CreateCommand()
         {
-            return new ProfiledDbCommand(tail.CreateCommand(), null, MiniProfiler.Current);
+            return new ProfiledDbCommand(_tail.CreateCommand(), null, MiniProfiler.Current);
         }
+
         /// <summary>
-        /// proxy
+        /// The create connection.
         /// </summary>
+        /// <returns>
+        /// The <see cref="DbConnection"/>.
+        /// </returns>
         public override DbConnection CreateConnection()
         {
-            return new EFProfiledDbConnection(tail.CreateConnection(), MiniProfiler.Current);
+            return new EFProfiledDbConnection(_tail.CreateConnection(), MiniProfiler.Current);
         }
+
         /// <summary>
-        /// proxy
+        /// The create parameter.
         /// </summary>
+        /// <returns>the parameter</returns>
         public override DbParameter CreateParameter()
         {
-            return tail.CreateParameter();
+            return _tail.CreateParameter();
         }
+
         /// <summary>
-        /// proxy
+        /// The create connection string builder.
         /// </summary>
+        /// <returns>
+        /// The <see cref="DbConnectionStringBuilder"/>.
+        /// </returns>
         public override DbConnectionStringBuilder CreateConnectionStringBuilder()
         {
-            return tail.CreateConnectionStringBuilder();
+            return _tail.CreateConnectionStringBuilder();
         }
+
         /// <summary>
-        /// proxy
+        /// The create command builder.
         /// </summary>
+        /// <returns>the command builder</returns>
         public override DbCommandBuilder CreateCommandBuilder()
         {
-            return tail.CreateCommandBuilder();
+            return _tail.CreateCommandBuilder();
         }
+
         /// <summary>
-        /// proxy
+        /// The create data adapter.
         /// </summary>
+        /// <returns>the data adapter.</returns>
         public override DbDataAdapter CreateDataAdapter()
         {
-            return tail.CreateDataAdapter();
+            return _tail.CreateDataAdapter();
         }
+
         /// <summary>
-        /// proxy
+        /// The create permission.
         /// </summary>
-        public override System.Security.CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
+        /// <param name="state">
+        /// The state.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CodeAccessPermission"/>.
+        /// </returns>
+        public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
         {
-            return tail.CreatePermission(state);
+            return _tail.CreatePermission(state);
         }
 
         /// <summary>
         /// Extension mechanism for additional services;  
         /// </summary>
+        /// <param name="serviceType">The service Type.</param>
         /// <returns>requested service provider or null.</returns>
         object IServiceProvider.GetService(Type serviceType)
         {
-            IServiceProvider tailProvider = tail as IServiceProvider;
+            var tailProvider = _tail as IServiceProvider;
             if (tailProvider == null) return null;
             var svc = tailProvider.GetService(serviceType);
             if (svc == null) return null;
@@ -109,6 +142,7 @@ namespace StackExchange.Profiling.Data
             {
                 svc = new ProfiledDbProviderServices((DbProviderServices)svc, MiniProfiler.Current);
             }
+
             return svc;
         }
     }

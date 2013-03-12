@@ -63,6 +63,7 @@
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
     <Compile Include="ClientTimings.cs" />
+    <Compile Include="Suppression.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
     <Compile Include="Data\SimpleProfiledCommand.cs" />
@@ -101,14 +102,21 @@
     </Compile>
     <Compile Include="MiniProfiler.cs" />
     <Compile Include="ClientTimingHelper.cs" />
+    <Compile Include="MiniProfilerExtensions.cs" />
     <Compile Include="MVCHelpers\ProfilingActionFilter.cs" />
     <Compile Include="MVCHelpers\ProfilingViewEngine.cs" />
+    <Compile Include="MVCHelpers\WrappedView.cs" />
+    <Compile Include="ProfileLevel.cs" />
+    <Compile Include="RenderPosition.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />
     <Compile Include="SqlFormatters\ISqlFormatter.cs" />
     <Compile Include="SqlFormatters\OracleFormatter.cs" />
     <Compile Include="SqlFormatters\SqlServerFormatter.cs" />
     <Compile Include="SqlTimingParameter.cs">
       <DependentUpon>SqlTiming.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SingletonProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
     <Compile Include="Storage\HttpRuntimeCacheStorage.cs" />
     <Compile Include="Storage\IStorage.cs" />
@@ -119,9 +127,11 @@
     <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="UI\MiniProfilerHandler.cs" />
-    <Compile Include="WebRequestProfilerProvider.cs" />
+    <Compile Include="WebRequestProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="WebRequestProfilerProvider.Settings.cs">
-      <DependentUpon>WebRequestProfilerProvider.cs</DependentUpon>
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
