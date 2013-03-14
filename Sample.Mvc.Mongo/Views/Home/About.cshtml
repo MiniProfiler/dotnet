@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "About Us";
+}
+
+<h2>About</h2>
+<p>
+     We explictly stopped profiling on this route:
+
+     <pre style="font-size:130%">
+     <code>
+        public ActionResult About()
+        {
+            // prevent this specific route from being profiled
+            MiniProfiler.Stop(discardResults: true);
+
+            return View();
+        }
+     </code>
+     </pre>
+</p>

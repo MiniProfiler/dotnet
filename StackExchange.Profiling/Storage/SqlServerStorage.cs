@@ -425,16 +425,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                         });
             }
         }
-
-        /// <summary>
-        /// Returns a connection to SQL Server.
-        /// </summary>
-        /// <returns>the database connection</returns>
-        protected override DbConnection GetConnection()
-        {
-            return new SqlConnection(ConnectionString);
-        }
-
+        
         /// <summary>
         /// load the profiler in a batch.
         /// </summary>
@@ -506,6 +497,25 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         private List<T> LoadFor<T>(DbConnection connection, object keyParameter)
         {
             return connection.Query<T>(LoadSqlStatements[typeof(T)], keyParameter).ToList();
+        }
+
+        /// <summary>
+        /// Returns a connection to Sql Server.
+        /// </summary>
+        protected virtual DbConnection GetConnection()
+        {
+            return new SqlConnection(ConnectionString);
+        }
+
+        /// <summary>
+        /// Returns a DbConnection already opened for execution.
+        /// </summary>
+        protected DbConnection GetOpenConnection()
+        {
+            var result = GetConnection();
+            if (result.State != System.Data.ConnectionState.Open)
+                result.Open();
+            return result;
         }
 
         /// <summary>
