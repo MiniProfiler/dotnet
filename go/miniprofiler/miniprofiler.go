@@ -136,7 +136,7 @@ func results(w http.ResponseWriter, r *http.Request) {
 			Duration: p.DurationMilliseconds,
 			Path:     PATH,
 			Json:     template.JS(j),
-			Includes: Includes(r, p),
+			Includes: p.Includes(),
 			Version:  Version,
 		}
 
@@ -242,8 +242,8 @@ func static(w http.ResponseWriter, r *http.Request) {
 }
 
 // Includes renders the JavaScript includes for this request, if enabled.
-func Includes(r *http.Request, p *Profile) template.HTML {
-	if !Enable(r) {
+func (p *Profile) Includes() template.HTML {
+	if !Enable(p.r) {
 		return ""
 	}
 
