@@ -44,9 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="protobuf-net">
@@ -65,6 +65,7 @@
       <HintPath>..\packages\EntityFramework.SqlServerCompact.4.1.8482.2\lib\System.Data.SqlServerCe.Entity.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -106,6 +107,24 @@
     <Compile Include="Controllers\WcfSampleController.cs" />
     <Compile Include="Dapper\SqlBuilder.cs" />
     <Compile Include="Dapper\SqlMapper.cs" />
+    <Compile Include="EfModelFirst\EfModelFirstContext.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EfModelFirstContext.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EfModelFirst\EfModelFirstContext.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EfModelFirstContext.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EfModelFirst\EfModelFirstContext.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="EfModelFirst\ModelPerson.cs">
+      <DependentUpon>EfModelFirstContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
       <SubType>Code</SubType>
@@ -124,10 +143,31 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\SampleEfModelFirst.mdf" />
+    <Content Include="App_Data\SampleEfModelFirst_log.ldf">
+      <DependentUpon>SampleEfModelFirst.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\progress-dots.gif" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\jquery-1.5.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.5.1.min.js" />
+    <EntityDeploy Include="EfModelFirst\EfModelFirstContext.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EfModelFirstContext.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="EfModelFirst\EfModelFirstContext.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
+      <LastGenOutput>EfModelFirstContext.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="EfModelFirst\EfModelFirstContext.edmx.diagram">
+      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
+    </Content>
+    <Content Include="EfModelFirst\EfModelFirstContext.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
+      <LastGenOutput>EfModelFirstContext.cs</LastGenOutput>
+    </Content>
     <None Include="Service References\SampleService\SampleService.disco" />
     <None Include="Service References\SampleService\configuration91.svcinfo" />
     <None Include="Service References\SampleService\configuration.svcinfo" />
@@ -205,6 +245,9 @@
       <Project>{386222bd-6b6e-480f-a342-8de1ab516e2c}</Project>
       <Name>StackExchange.Profiling</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
