@@ -296,13 +296,9 @@ func NewHandler(f func(*Profile, http.ResponseWriter, *http.Request)) Handler {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if Enable(r) {
-		h.p = NewProfile(w, r, FuncName(h.f))
-		h.f(h.p, w, r)
-		h.p.Finalize()
-	} else {
-		h.f(nil, w, r)
-	}
+	h.p = NewProfile(w, r, FuncName(h.f))
+	h.f(h.p, w, r)
+	h.p.Finalize()
 }
 
 // Since returns the number of milliseconds since t.

@@ -72,21 +72,23 @@ type Profile struct {
 // For use only by miniprofiler extensions.
 func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 	p := &Profile{
-		Id:          newGuid(),
-		Name:        name,
-		start:       time.Now(),
-		MachineName: MachineName(),
-		Root: &Timing{
-			Id:     newGuid(),
-			IsRoot: true,
-		},
-
 		w: w,
 		r: r,
 	}
-	p.current = p.Root
 
-	w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", p.Id))
+	if Enable(r) {
+		p.Id=          newGuid()
+		p.Name=        name
+		p.start=       time.Now()
+		p.MachineName= MachineName()
+		p.Root= &Timing{
+			Id:     newGuid(),
+			IsRoot: true,
+		}
+		p.current = p.Root
+
+		w.Header().Add("X-MiniProfiler-Ids", fmt.Sprintf("[\"%s\"]", p.Id))
+	}
 
 	return p
 }
@@ -94,6 +96,10 @@ func NewProfile(w http.ResponseWriter, r *http.Request, name string) *Profile {
 // Finalize finalizes a Profile and Store()s it.
 // For use only by miniprofiler extensions.
 func (p *Profile) Finalize() {
+	if p.Root == nil {
+		return
+	}
+
 	u := p.r.URL
 	if !u.IsAbs() {
 		u.Host = p.r.Host
@@ -178,26 +184,33 @@ func (p *Profile) Json() []byte {
 // Step adds a new child node with given name.
 // f should generally be in a closure.
 func (p *Profile) Step(name string, f func()) {
-	t := &Timing{
-		Id:                newGuid(),
-		Name:              name,
-		ParentTimingId:    p.current.Id,
-		Depth:             p.current.Depth + 1,
-		StartMilliseconds: Since(p.start),
+	if p.Root != nil {
+		t := &Timing{
+			Id:                newGuid(),
+			Name:              name,
+			ParentTimingId:    p.current.Id,
+			Depth:             p.current.Depth + 1,
+			StartMilliseconds: Since(p.start),
+		}
+		p.current.HasChildren = true
+		p.current.Children = append(p.current.Children, t)
+		t.parent = p.current
+		p.current = t
+
+		f()
+
+		t.DurationMilliseconds = Since(p.start) - t.StartMilliseconds
+		p.current = p.current.parent
+	} else {
+		f()
 	}
-	p.current.HasChildren = true
-	p.current.Children = append(p.current.Children, t)
-	t.parent = p.current
-	p.current = t
-
-	f()
-
-	t.DurationMilliseconds = Since(p.start) - t.StartMilliseconds
-	p.current = p.current.parent
 }
 
 // AddSqlTiming adds a new SqlTiming to the current node.
 func (p *Profile) AddSqlTiming(s *SqlTiming) {
+	if p.Root == nil {
+		return
+	}
 	t := p.current
 	s.ParentTimingId = t.Id
 	t.SqlTimings = append(t.SqlTimings, s)
@@ -206,6 +219,9 @@ func (p *Profile) AddSqlTiming(s *SqlTiming) {
 
 // AddCustomTiming adds a new CustomTiming with given type to the current node.
 func (p *Profile) AddCustomTiming(Type string, s *CustomTiming) {
+	if p.Root == nil {
+		return
+	}
 	t := p.current
 	if t.CustomTimings == nil {
 		t.CustomTimings = make(map[string][]*CustomTiming)
