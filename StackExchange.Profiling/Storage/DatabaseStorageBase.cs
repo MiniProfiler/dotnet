@@ -75,24 +75,6 @@
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
 
         /// <summary>
-        /// Returns a <c>DbConnection</c> for your specific provider.
-        /// </summary>
-        /// <returns>the database connection</returns>
-        protected abstract DbConnection GetConnection();
-
-        /// <summary>
-        /// Returns a <c>DbConnection</c> already opened for execution.
-        /// </summary>
-        /// <returns>the database connection</returns>
-        protected DbConnection GetOpenConnection()
-        {
-            var result = GetConnection();
-            if (result.State != System.Data.ConnectionState.Open)
-                result.Open();
-            return result;
-        }
-
-        /// <summary>
         /// Giving freshly selected collections, this method puts them in the correct
         /// hierarchy under the 'result' MiniProfiler.
         /// </summary>
