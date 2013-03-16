@@ -44,7 +44,7 @@ Set miniprofiler.Enable to a function that returns true if profiling is enabled:
 Set miniprofiler.Store and miniprofiler.Get to functions that can get and store
 Profile data, perhaps in memory, redis, or a database. Get key is Profile.Id.
 
-Send output of miniprofiler.Includes to your HTML (it is empty in Enable returns
+Send output of p.Includes to your HTML (it is empty if Enable returns
 false).
 
 Step
@@ -82,7 +82,7 @@ Here's a full application:
                 DurationMilliseconds: 5.2,
             })
         })
-        fmt.Fprintf(w, "<html><body>%v</body></html>", miniprofiler.Includes(r, p))
+        fmt.Fprintf(w, "<html><body>%v</body></html>", p.Includes())
     }
 
     func main() {

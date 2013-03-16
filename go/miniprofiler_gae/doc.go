@@ -34,7 +34,7 @@ Wrap all calls to those functions in the miniprofiler.NewHandler wrapper:
 
     http.Handle("/", mpg.NewHandler(Main))
 
-Send output of miniprofiler.Includes to your HTML (it is empty in Enable returns
+Send output of miniprofiler.Includes to your HTML (it is empty if Enable returns
 false).
 
 By default, miniprofiler is enabled on dev for all and on prod for admins.

@@ -41,8 +41,10 @@ func EnableIfAdminOrDev(r *http.Request) bool {
 		return true
 	}
 	c := appengine.NewContext(r)
-	u := user.Current(c)
-	return u.Admin
+	if u := user.Current(c); u != nil {
+		return u.Admin
+	}
+	return false
 }
 
 // Instance returns the app engine instance id, or the hostname on dev.
@@ -97,15 +99,13 @@ func NewHandler(f func(Context, http.ResponseWriter, *http.Request)) appstats.Ha
 		pc := Context{
 			Context: c.(appstats.Context),
 		}
+		pc.P = miniprofiler.NewProfile(w, r, miniprofiler.FuncName(f))
+		f(pc, w, r)
 
-		if miniprofiler.Enable(r) {
-			pc.P = miniprofiler.NewProfile(w, r, miniprofiler.FuncName(f))
-			f(pc, w, r)
+		if pc.P.Root != nil {
 			pc.P.CustomLink = pc.URL()
 			pc.P.CustomLinkName = "appstats"
 			pc.P.Finalize()
-		} else {
-			f(pc, w, r)
 		}
 	})
 }
