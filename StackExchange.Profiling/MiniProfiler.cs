@@ -323,9 +323,17 @@
         /// <param name="useExistingjQuery">Whether MiniProfiler should attempt to load its own version of jQuery, or rely on a version previously loaded on the page</param>
         /// <param name="samplingOnly">The sampling Only.</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(RenderPosition? position = null, bool? showTrivial = null, bool? showTimeWithChildren = null, int? maxTracesToShow = null, bool? showControls = null, bool? useExistingjQuery = null, bool samplingOnly = false)
+        public static IHtmlString RenderIncludes(
+            RenderPosition? position = null, 
+            bool? showTrivial = null, 
+            bool? showTimeWithChildren = null, 
+            int? maxTracesToShow = null, 
+            bool? showControls = null,
+            bool? useExistingjQuery = null, // TODO: we need to deprecate this
+            bool samplingOnly = false,      // TODO: can we remove this?
+            bool? startHidden = null)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls);
+            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls, startHidden);
         }
 
         /// <summary>
@@ -461,7 +469,7 @@
         /// </summary>
         /// <param name="context">The context.</param>
         [OnDeserialized]
-        protected void OnDeserialized(StreamingContext context)
+        public void OnDeserialized()
         {
             HasSqlTimings = GetTimingHierarchy().Any(t => t.HasSqlTimings);
             HasDuplicateSqlTimings = GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);

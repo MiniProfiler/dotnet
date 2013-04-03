@@ -9,7 +9,7 @@ module Rack
         end
 
         def [](key)
-          begin 
+          begin
             data = ::File.open(path(key),"rb") {|f| f.read}
             return Marshal.load data
           rescue => e
@@ -27,10 +27,12 @@ module Rack
         end
       end
 
-      EXPIRE_TIMER_CACHE = 3600 * 24
-     
-      def initialize(args)
+      EXPIRES_IN_SECONDS = 60 * 60 * 24
+
+      def initialize(args = nil)
+        args ||= {}
         @path = args[:path]
+        @expires_in_seconds = args[:expires_in] || EXPIRES_IN_SECONDS
         raise ArgumentError.new :path unless @path
         @timer_struct_cache = FileCache.new(@path, "mp_timers")
         @timer_struct_lock = Mutex.new
@@ -39,26 +41,26 @@ module Rack
 
         me = self
         Thread.new do
-          begin 
+          begin
             while true do
               # TODO: a sane retry count before bailing
               me.cleanup_cache
               sleep(3600)
             end
           rescue
-            # don't crash the thread, we can clean up next time 
+            # don't crash the thread, we can clean up next time
           end
         end
       end
 
       def save(page_struct)
-		  	@timer_struct_lock.synchronize {
-			  	@timer_struct_cache[page_struct['Id']] = page_struct
-			  }
+        @timer_struct_lock.synchronize {
+          @timer_struct_cache[page_struct['Id']] = page_struct
+        }
       end
 
       def load(id)
-			  @timer_struct_lock.synchronize {
+        @timer_struct_lock.synchronize {
           @timer_struct_cache[id]
         }
       end
@@ -87,23 +89,23 @@ module Rack
           @user_view_cache[user]
         }
       end
-      
+
       def cleanup_cache
         files = Dir.entries(@path)
         @timer_struct_lock.synchronize {
           files.each do |f|
             f = @path + '/' + f
-            File.delete f if f =~ /^mp_timers/ and (Time.now - File.mtime(f)) > EXPIRE_TIMER_CACHE
+            ::File.delete f if ::File.basename(f) =~ /^mp_timers/ and (Time.now - ::File.mtime(f)) > @expires_in_seconds
           end
         }
         @user_view_lock.synchronize {
           files.each do |f|
             f = @path + '/' + f
-            File.delete f if f =~ /^mp_views/ and (Time.now - File.mtime(f)) > EXPIRE_TIMER_CACHE
+            ::File.delete f if ::File.basename(f) =~ /^mp_views/ and (Time.now - ::File.mtime(f)) > @expires_in_seconds
           end
         }
       end
-    
+
     end
   end
 end

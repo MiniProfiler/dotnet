@@ -1,12 +1,12 @@
 module Rack
   class MiniProfiler
-    module ProfilingMethods 
-     
-		  def record_sql(query, elapsed_ms)
+    module ProfilingMethods
+
+      def record_sql(query, elapsed_ms)
         c = current
         return unless c
-			  c.current_timer.add_sql(query, elapsed_ms, c.page_struct, c.skip_backtrace, c.full_backtrace) if (c && c.current_timer)
-		  end
+        c.current_timer.add_sql(query, elapsed_ms, c.page_struct, c.skip_backtrace, c.full_backtrace) if (c && c.current_timer)
+      end
 
       def start_step(name)
         if current
@@ -29,8 +29,8 @@ module Rack
         if current
           parent_timer = current.current_timer
           result = nil
-          current.current_timer = current_timer = current.current_timer.add_child(name) 
-          begin 
+          current.current_timer = current_timer = current.current_timer.add_child(name)
+          begin
             result = yield if block_given?
           ensure
             current_timer.record_time
@@ -47,7 +47,7 @@ module Rack
 
         with_profiling = ("#{clean}_with_mini_profiler").intern
         without_profiling = ("#{clean}_without_mini_profiler").intern
-        
+
         if klass.send :method_defined?, with_profiling
           klass.send :alias_method, method, without_profiling
           klass.send :remove_method, with_profiling
@@ -61,16 +61,16 @@ module Rack
 
         with_profiling =  ("#{clean}_with_mini_profiler").intern
         without_profiling = ("#{clean}_without_mini_profiler").intern
-        
+
         if klass.send :method_defined?, with_profiling
           return # dont double profile
         end
-          
+
         klass.send :alias_method, without_profiling, method
         klass.send :define_method, with_profiling do |*args, &orig|
           return self.send without_profiling, *args, &orig unless Rack::MiniProfiler.current
 
-          name = default_name 
+          name = default_name
           if blk
             name =
               if respond_to?(:instance_exec)
@@ -85,16 +85,39 @@ module Rack
           page_struct = Rack::MiniProfiler.current.page_struct
           result = nil
 
-          Rack::MiniProfiler.current.current_timer = current_timer = parent_timer.add_child(name) 
-          begin 
+          Rack::MiniProfiler.current.current_timer = current_timer = parent_timer.add_child(name)
+          begin
             result = self.send without_profiling, *args, &orig
           ensure
             current_timer.record_time
             Rack::MiniProfiler.current.current_timer = parent_timer
-          end 
-          result 
+          end
+          result
         end
         klass.send :alias_method, method, with_profiling
+      end
+      
+      # Add a custom timing. These are displayed similar to SQL/query time in
+      # columns expanding to the right.
+      #
+      # type        - String counter type. Each distinct type gets its own column.
+      # duration_ms - Duration of the call in ms. Either this or a block must be
+      #               given but not both.
+      #
+      # When a block is given, calculate the duration by yielding to the block
+      # and keeping a record of its run time.
+      #
+      # Returns the result of the block, or nil when no block is given.
+      def counter(type, duration_ms=nil)
+        result = nil
+        if block_given?
+          start = Time.now
+          result = yield
+          duration_ms = (Time.now - start).to_f * 1000
+        end
+        return result if current.nil? || !request_authorized?
+        current.current_timer.add_custom(type, duration_ms, current.page_struct)
+        result
       end
 
       private

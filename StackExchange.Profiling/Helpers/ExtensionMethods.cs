@@ -83,8 +83,16 @@
         /// <returns>the resulting JSON object as a string</returns>
         internal static string ToJson(this object o)
         {
-            if (o == null) return null;
-            return new JavaScriptSerializer().Serialize(o);
+            return o == null ? null : new JavaScriptSerializer().Serialize(o);
         }
+
+        /// <summary>
+        /// Returns a lowercase string of <paramref name="b"/> suitable for use in javascript.
+        /// </summary>
+        internal static string ToJs(this bool b)
+        {
+            return b ? "true" : "false";
+        }
+
     }
 }
