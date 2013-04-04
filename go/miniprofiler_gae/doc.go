@@ -45,7 +45,7 @@ Step
 The Step function can be used to profile more specific parts of your code. It
 should be called with the name of the step and a closure:
 
-    c.P.Step("something", func() {
+    c.Step("something", func() {
         // do some work
     })
 
