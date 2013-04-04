@@ -296,6 +296,13 @@ func NewHandler(f func(*Profile, http.ResponseWriter, *http.Request)) Handler {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Query().Get("pp") {
+	default:
+		h.ProfileRequest(w, r)
+	}
+}
+
+func (h Handler) ProfileRequest(w http.ResponseWriter, r *http.Request) {
 	h.p = NewProfile(w, r, FuncName(h.f))
 	h.f(h.p, w, r)
 	h.p.Finalize()
