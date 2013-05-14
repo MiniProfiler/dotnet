@@ -168,15 +168,21 @@ Array.prototype.getUnique = function() {
     return a
 }
 
-var samplePercent = function(samples){
-  return "(" + samples + 
+var samplePercent = function(samples, exclusive){
+  var info = " (" + samples + 
     " sample" + (samples == 1 ? "" : "s") + " - " + 
-    ((samples / maxX) * 100).toFixed(2) + "%)";
+    ((samples / maxX) * 100).toFixed(2) + "%) ";
+  if (exclusive) {
+    info += " (" + exclusive + 
+      " exclusive - " +
+    ((exclusive / maxX) * 100).toFixed(2) + "%) ";
+  }
+  return info;
 }
 
 var mouseover =  function(d) {
   var i = info[d.frame];
-  $('.info').text( d.frame + " " + samplePercent(i.samples.length));
+  $('.info').text( d.frame + " " + samplePercent(i.samples.length, d.topFrame ? d.topFrame.exclusiveCount : 0));
   d3.selectAll(i.nodes)
      .attr('opacity',0.5);
 };
@@ -212,6 +218,8 @@ var rainbow = function(numOfSteps, step) {
 
 // assign some colors, analyze samples per gem 
 var gemStats = {} 
+var topFrames = {}
+var lastFrame = {frame: 'd52e04d-df28-41ed-a215-b6ec840a8ea5', x: -1}
 
 $.each(data, function(){
 
@@ -226,7 +234,25 @@ $.each(data, function(){
   for(var j=0; j < this.width; j++){
     stat.samples.push(this.x + j);
   }
+  // This assumes the traversal is in order
+  if (lastFrame.x != this.x) {
+    var topFrame = topFrames[lastFrame.frame]
+    if (!topFrame) {
+      topFrames[lastFrame.frame] = topFrame = {exclusiveCount: 0}
+    }
+    topFrame.exclusiveCount += 1;
+    lastFrame.topFrame = topFrame;
+  }
+  lastFrame = this;
+  
 });
+
+var topFrame = topFrames[lastFrame.frame]
+if (!topFrame) {
+  topFrames[lastFrame.frame] = topFrame = {exclusiveCount: 0}
+}
+topFrame.exclusiveCount += 1;
+lastFrame.topFrame = topFrame;
 
 var totalGems = 0;
 $.each(gemStats, function(){totalGems++;});
