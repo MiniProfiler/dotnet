@@ -37,7 +37,7 @@ namespace StackExchange.Profiling.MVCHelpers
                 if (profiler != null)
                 {
                     var tokens = filterContext.RouteData.DataTokens;
-                    string area = tokens.ContainsKey("area") && !string.IsNullOrEmpty(tokens["area"].ToString()) ?
+                    string area = tokens.ContainsKey("area") && !string.IsNullOrEmpty((string)tokens["area"]) ?
                         tokens["area"] + "." : string.Empty;
                     string controller = filterContext.Controller.ToString().Split('.').Last() + ".";
                     string action = filterContext.ActionDescriptor.ActionName;
