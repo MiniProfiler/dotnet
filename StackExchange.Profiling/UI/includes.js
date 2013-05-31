@@ -126,6 +126,7 @@ var MiniProfiler = (function () {
                     url: options.path + 'results',
                     data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes, popup: 1 },
                     dataType: 'json',
+                    global: false,
                     type: 'POST',
                     success: function (json) {
                         fetchedIds.push(id);
