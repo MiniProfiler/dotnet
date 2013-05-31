@@ -17,14 +17,37 @@
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="selector">Method to execute and profile.</param>
         /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
         /// <returns>the profiled result.</returns>
-        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
+        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level = ProfileLevel.Info)
         {
             if (selector == null) throw new ArgumentNullException("selector");
             if (profiler == null) return selector();
-            using (profiler.StepImpl(name))
+            using (profiler.StepImpl(name, level))
             {
                 return selector();
+            }
+        }
+
+        /// <summary>
+        /// Wraps <paramref name="selector"/> in a <see cref="Step"/> call and executes it, returning its result.
+        /// </summary>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <param name="selector">Method to execute and profile.</param>
+        /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
+        /// <returns>the profiled result.</returns>
+        public static void Inline(this MiniProfiler profiler, Action selector, string name, ProfileLevel level = ProfileLevel.Info)
+        {
+            if (selector == null) throw new ArgumentNullException("selector");
+            if (profiler == null)
+            {
+                selector();
+                return;
+            }
+            using (profiler.StepImpl(name, level))
+            {
+                selector();
             }
         }
 
