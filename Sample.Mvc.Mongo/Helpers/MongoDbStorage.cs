@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Data;
+using System.Runtime.Serialization;
 
 namespace StackExchange.Profiling.Storage
 {
@@ -314,7 +315,7 @@ namespace StackExchange.Profiling.Storage
                     MapTimings(profiler, timings, sqlTimings, sqlParams, clientTimings);
                 }
 
-                profiler.OnDeserialized();
+                profiler.OnDeserialized(new StreamingContext());
 
                 return profiler;
             }
