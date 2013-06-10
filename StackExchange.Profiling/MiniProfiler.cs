@@ -469,7 +469,7 @@
         /// </summary>
         /// <param name="context">The context.</param>
         [OnDeserialized]
-        public void OnDeserialized()
+        public void OnDeserialized(StreamingContext ctx)
         {
             HasSqlTimings = GetTimingHierarchy().Any(t => t.HasSqlTimings);
             HasDuplicateSqlTimings = GetTimingHierarchy().Any(t => t.HasDuplicateSqlTimings);
