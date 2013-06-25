@@ -126,7 +126,6 @@ var MiniProfiler = (function () {
                     url: options.path + 'results',
                     data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes, popup: 1 },
                     dataType: 'json',
-                    global: false,
                     type: 'POST',
                     success: function (json) {
                         fetchedIds.push(id);
@@ -658,7 +657,7 @@ var MiniProfiler = (function () {
             if (typeof(jQuery) == 'function') {
                 var jQueryVersion = jQuery.fn.jquery.split('.');
             }
-            if (jQueryVersion && (parseInt(jQueryVersion[0]) == 2) || (parseInt(jQueryVersion[0]) < 2 && parseInt(jQueryVersion[1]) >= 7)) {
+            if (jQueryVersion && parseInt(jQueryVersion[0]) < 2 && parseInt(jQueryVersion[1]) >= 7) {
                 MiniProfiler.jQuery = $ = jQuery;
                 $(deferInit);
             } else {

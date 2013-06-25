@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>MiniProfiler.WCF</id>
+    <version>2.1.0</version>
+    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
+    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
+    <description>MiniProfiler integration for WCF</description>
+    <projectUrl>http://miniprofiler.com</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>profiler sql mvc wcf asp.net performance profiling timing</tags>
+    <dependencies>
+      <dependency id="MiniProfiler" version="2.1.0"/>
+    </dependencies>
+    <language>en-US</language>
+  </metadata>
+  <files>
+    <file src="StackExchange.Profiling.Wcf\bin\Release\MiniProfiler.Wcf.*" target="lib/net40" />
+  </files>
+</package>
