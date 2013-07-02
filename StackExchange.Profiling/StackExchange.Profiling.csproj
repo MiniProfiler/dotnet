@@ -62,6 +62,7 @@
     <Compile Include="BaseProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientTimingHelper.MVC.cs" />
     <Compile Include="ClientTimings.cs" />
     <Compile Include="Suppression.cs" />
     <Compile Include="Data\ExecuteType.cs" />
