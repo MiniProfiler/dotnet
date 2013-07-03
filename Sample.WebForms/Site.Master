@@ -7,9 +7,7 @@
     <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
-
-    <%= StackExchange.Profiling.MiniProfiler.RenderIncludes() %>
-
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 </head>
 <body>
     <form runat="server">
@@ -55,5 +53,7 @@
         
     </div>
     </form>
+    
+        <%= StackExchange.Profiling.MiniProfiler.RenderIncludes(useExistingjQuery:false) %>
 </body>
 </html>
