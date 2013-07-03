@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "Sample.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Console", "dotnet\Sample.Console\Sample.Console.csproj", "{58DA79DE-F30B-4068-BEE9-013C9360CD74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.EntityFramework6", "StackExchange.Profiling.EntityFramework6\StackExchange.Profiling.EntityFramework6.csproj", "{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
@@ -81,6 +83,10 @@ Global
 		{58DA79DE-F30B-4068-BEE9-013C9360CD74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58DA79DE-F30B-4068-BEE9-013C9360CD74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58DA79DE-F30B-4068-BEE9-013C9360CD74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
