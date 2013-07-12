@@ -657,7 +657,7 @@ var MiniProfiler = (function () {
             if (typeof(jQuery) == 'function') {
                 var jQueryVersion = jQuery.fn.jquery.split('.');
             }
-            if (jQueryVersion && (parseInt(jQueryVersion[0]) == 2) || (parseInt(jQueryVersion[0]) < 2 && parseInt(jQueryVersion[1]) >= 7)) {
+            if (jQueryVersion && ((parseInt(jQueryVersion[0]) == 2) || (parseInt(jQueryVersion[0]) < 2 && parseInt(jQueryVersion[1]) >= 7))) {
                 MiniProfiler.jQuery = $ = jQuery;
                 $(deferInit);
             } else {
