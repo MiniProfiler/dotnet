@@ -24,6 +24,18 @@ namespace StackExchange.Profiling.MVCHelpers
         public bool IsPartial { get; set; }
 
         /// <summary>
+        /// Gets the wrapped view path.
+        /// </summary>
+        public string ViewPath
+        {
+            get
+            {
+                var view = _wrapped as RazorView;
+                return view != null ? view.ViewPath : null;
+            }
+        }
+
+        /// <summary>
         /// Initialises a new instance of the <see cref="WrappedView"/> class. 
         /// </summary>
         /// <param name="wrapped">
