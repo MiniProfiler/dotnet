@@ -81,7 +81,7 @@ var MiniProfiler = (function () {
                 }
                 mPt.flush();
             }
-            
+
             if (id == options.currentId) {
 
                 clientPerformance = getClientPerformance();
@@ -91,7 +91,7 @@ var MiniProfiler = (function () {
                     var copy = { navigation: {}, timing: {} };
 
                     var timing = $.extend({}, clientPerformance.timing);
-                    
+
                     for (p in timing) {
                         if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
                             copy.timing[p] = timing[p];
@@ -102,9 +102,9 @@ var MiniProfiler = (function () {
                     }
                     clientPerformance = copy;
 
-                    // hack to add chrome timings 
+                    // hack to add chrome timings
                     if (window.chrome && window.chrome.loadTimes) {
-                      var chromeTimes = window.chrome.loadTimes(); 
+                      var chromeTimes = window.chrome.loadTimes();
                       if (chromeTimes.firstPaintTime) {
                         clientPerformance.timing["First Paint Time"] = Math.round(chromeTimes.firstPaintTime * 1000);
                       }
@@ -245,7 +245,7 @@ var MiniProfiler = (function () {
         popup.children().each(function () { childrenHeight += $(this).height(); });
 
         popup.css({ 'padding-right': childrenHeight > popup.height() ? 40 : 10 });
-    }
+    };
 
     var popupHide = function (button, popup) {
         button.removeClass('profiler-button-active');
@@ -291,13 +291,13 @@ var MiniProfiler = (function () {
                 originalRgb = getRGB(cell.css('background-color')),
                 getColorDiff = function (fx, i) {
                     // adapted from John Resig's color plugin: http://plugins.jquery.com/project/color
-                    return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i]), 255), 0);
+                    return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i], 10), 255), 0);
                 };
 
             // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
                 .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
-                    fx.elem.style['backgroundColor'] = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
+                    fx.elem.style.backgroundColor = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
                 }
                 });
         });
@@ -461,7 +461,7 @@ var MiniProfiler = (function () {
 
         if (jQuery && jQuery(document).ajaxStart)
             jQuery(document).ajaxStart(function () { ajaxStartTime = new Date(); });
-        
+
         // fetch results after ASP Ajax calls
         if (typeof (Sys) != 'undefined' && typeof (Sys.WebForms) != 'undefined' && typeof (Sys.WebForms.PageRequestManager) != 'undefined') {
             // Get the instance of PageRequestManager.
@@ -481,7 +481,7 @@ var MiniProfiler = (function () {
             });
         }
 
-        // more Asp.Net callbacks 
+        // more Asp.Net callbacks
         if (typeof (WebForm_ExecuteCallback) == "function") {
             WebForm_ExecuteCallback = (function (callbackObject) {
                 // Store original function
@@ -495,7 +495,7 @@ var MiniProfiler = (function () {
                         var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
                         fetchResults(ids);
                     }
-                }
+                };
 
             })();
         }
@@ -546,10 +546,10 @@ var MiniProfiler = (function () {
               }
 
               return this._onreadystatechange.apply(this, arguments);
-            }
+            };
 
             return _send.apply(this, arguments);
-          }
+          };
         }
 
         // some elements want to be hidden on certain doc events
@@ -575,8 +575,9 @@ var MiniProfiler = (function () {
 
                 var toggleShortcut = script.getAttribute('data-toggle-shortcut');
 
-                if (script.getAttribute('data-max-traces'))
-                    var maxTraces = parseInt(script.getAttribute('data-max-traces'));
+                if (script.getAttribute('data-max-traces')) {
+                    var maxTraces = parseInt(script.getAttribute('data-max-traces'), 10);
+                }
 
                 if (script.getAttribute('data-trivial') === 'true') var trivial = true;
                 if (script.getAttribute('data-children') == 'true') var children = true;
@@ -597,7 +598,7 @@ var MiniProfiler = (function () {
                     authorized: authorized,
                     toggleShortcut: toggleShortcut,
                     startHidden: startHidden
-                }
+                };
             })();
 
             var doInit = function () {
@@ -605,7 +606,7 @@ var MiniProfiler = (function () {
                 container = $('.profiler-result-full');
                 if (container.length) {
                     if (window.location.href.indexOf("&trivial=1") > 0) {
-                        options.showTrivial = true
+                        options.showTrivial = true;
                     }
                     initFullView();
                 }
@@ -633,7 +634,7 @@ var MiniProfiler = (function () {
             var finish = false;
             var deferInit = function() {
                 if (finish) return;
-                if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd == 0 && wait < 10000) {
+                if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
                     setTimeout(deferInit, 100);
                     wait += 100;
                 } else {
@@ -660,10 +661,15 @@ var MiniProfiler = (function () {
                 }
             };
 
+            var major, minor;
             if (typeof(jQuery) == 'function') {
                 var jQueryVersion = jQuery.fn.jquery.split('.');
+                major = parseInt(jQueryVersion[0], 10);
+                minor = parseInt(jQueryVersion[1], 10);
             }
-            if (jQueryVersion && ((parseInt(jQueryVersion[0]) == 2) || (parseInt(jQueryVersion[0]) < 2 && parseInt(jQueryVersion[1]) >= 7))) {
+
+
+            if (major === 2 || (major === 1 && minor >= 7)) {
                 MiniProfiler.jQuery = $ = jQuery;
                 $(deferInit);
             } else {
@@ -715,7 +721,7 @@ var MiniProfiler = (function () {
         getClientTimings: function (clientTimings) {
             var list = [];
             var t;
-            
+
             if (!clientTimings.Timings) return [];
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
