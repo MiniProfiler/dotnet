@@ -7,10 +7,10 @@ obj
 *.sdf
 *.nupkg
 nuget.exe
-Ruby/Gemfile.lock
-Ruby/*.gem
 *.*~
 *.swp
 .DS_Store
 tmp
 *~
+.DotSettings
+*StyleCop*
