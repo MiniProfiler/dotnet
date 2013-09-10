@@ -1,17 +1,16 @@
-﻿namespace StackExchange.Profiling.UI
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web;
+using System.Web.Routing;
+using StackExchange.Profiling.Helpers;
+
+namespace StackExchange.Profiling
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Web;
-    using System.Web.Routing;
-
-    using StackExchange.Profiling.Helpers;
-
     /// <summary>
     /// Understands how to route and respond to MiniProfiler UI URLS.
     /// </summary>

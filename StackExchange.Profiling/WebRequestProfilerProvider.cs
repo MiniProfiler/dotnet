@@ -20,7 +20,7 @@
         /// </summary>
         public WebRequestProfilerProvider()
         {
-            UI.MiniProfilerHandler.RegisterRoutes();
+            MiniProfilerHandler.RegisterRoutes();
         }
 
         /// <summary>

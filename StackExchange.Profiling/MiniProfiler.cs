@@ -333,7 +333,7 @@
             bool samplingOnly = false,      // TODO: can we remove this?
             bool? startHidden = null)
         {
-            return UI.MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls, startHidden);
+            return MiniProfilerHandler.RenderIncludes(Current, position, showTrivial, showTimeWithChildren, maxTracesToShow, showControls, startHidden);
         }
 
         /// <summary>

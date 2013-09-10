@@ -64,6 +64,9 @@
     </Compile>
     <Compile Include="ClientTimingHelper.MVC.cs" />
     <Compile Include="ClientTimings.cs" />
+    <Compile Include="MiniProfilerHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Suppression.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
@@ -127,7 +130,6 @@
     <Compile Include="Storage\DatabaseStorageBase.cs" />
     <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
-    <Compile Include="UI\MiniProfilerHandler.cs" />
     <Compile Include="WebRequestProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
