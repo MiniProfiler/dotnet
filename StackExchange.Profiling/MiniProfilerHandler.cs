@@ -80,6 +80,7 @@ namespace StackExchange.Profiling
 
             switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
             {
+                case "underscore":
                 case "jquery.1.7.1":
                 case "jquery.tmpl":
                 case "includes":
@@ -134,16 +135,17 @@ namespace StackExchange.Profiling
             {
                 path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
                 version = MiniProfiler.Settings.Version,
+                currentId = profiler.Id,
                 ids = string.Join(",", ids.Select(guid => guid.ToString())),
                 position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
                 showTrivial = (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial).ToJs(),
                 showChildren = (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren).ToJs(),
                 maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
                 showControls = (showControls ?? MiniProfiler.Settings.ShowControls).ToJs(),
-                currentId = profiler.Id,
                 authorized = authorized.ToJs(),
                 toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
-                startHidden = (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs()
+                startHidden = (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs(),
+                trivialMilliseconds = profiler.TrivialMilliseconds
             });
 
             return new HtmlString(result);
@@ -277,7 +279,6 @@ namespace StackExchange.Profiling
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
 #endif
-
             var embeddedFile = Path.GetFileName(path);
             return GetResource(embeddedFile);
         }
@@ -423,7 +424,7 @@ namespace StackExchange.Profiling
             {
 
                 var trace = new System.Diagnostics.StackTrace(true);
-                var path = System.IO.Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\..\\UI\\" + filename;
+                var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\..\\ui\\" + filename;
                 try
                 {
                     return File.ReadAllText(path);
@@ -446,7 +447,7 @@ namespace StackExchange.Profiling
                 }
                 else
                 {
-                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.UI." + filename))
+                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
                     using (var reader = new StreamReader(stream))
                     {
                         result = reader.ReadToEnd();

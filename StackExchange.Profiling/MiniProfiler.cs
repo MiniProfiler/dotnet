@@ -183,26 +183,27 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether this profile or it's children are trivial timings.
+        /// Returns true if any child timing has a duration less than <see cref="TrivialDurationThresholdMilliseconds"/>.
         /// </summary>
         public bool HasTrivialTimings
         {
-            get
-            {
-                return GetTimingHierarchy().Any(t => t.IsTrivial);
-            }
+            get { return GetTimingHierarchy().Any(t => t.IsTrivial); }
         }
 
         /// <summary>
-        /// Gets a value indicating whether this profile and it's children are all trivial timings.
         /// Returns true when all child <see cref="Timing"/>s are <see cref="Timing.IsTrivial"/>.
         /// </summary>
         public bool HasAllTrivialTimings
         {
-            get
-            {
-                return GetTimingHierarchy().All(t => t.IsTrivial);
-            }
+            get { return GetTimingHierarchy().All(t => t.IsTrivial); }
+        }
+
+        /// <summary>
+        /// Returns total
+        /// </summary>
+        public decimal TrivialMilliseconds
+        {
+            get { return GetTimingHierarchy().Where(t => t.IsTrivial).Sum(t => t.DurationMilliseconds ?? 0); }
         }
 
         /// <summary>
@@ -223,10 +224,7 @@
         /// </summary>
         internal long ElapsedTicks
         {
-            get
-            {
-                return _sw.ElapsedTicks;
-            }
+            get { return _sw.ElapsedTicks; }
         }
 
         /// <summary>
@@ -234,10 +232,7 @@
         /// </summary>
         internal IStopwatch Stopwatch
         {
-            get
-            {
-                return _sw;
-            }
+            get { return _sw; }
         }
 
         /// <summary>

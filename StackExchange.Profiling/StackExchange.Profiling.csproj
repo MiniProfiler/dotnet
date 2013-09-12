@@ -140,10 +140,18 @@
   <ItemGroup>
     <None Include="miniprofiler.snk" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="ui\includes.tmpl" />
+    <EmbeddedResource Include="ui\README.md" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Content Include="lib\dotless.Compiler.exe" />
+    <EmbeddedResource Include="ui\include.partial.html" />
+    <EmbeddedResource Include="ui\includes.css" />
+    <EmbeddedResource Include="ui\includes.js" />
+    <EmbeddedResource Include="ui\jquery.1.7.1.js" />
+    <EmbeddedResource Include="ui\share.html" />
+    <EmbeddedResource Include="ui\underscore.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -151,7 +159,8 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)lib\dotless.Compiler.exe" -m "$(ProjectDir)UI\includes.less" "$(ProjectDir)UI\includes.css"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
