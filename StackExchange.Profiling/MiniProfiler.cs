@@ -435,19 +435,6 @@
         }
 
         /// <summary>
-        /// add the data implementation.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        internal void AddDataImpl(string key, string value)
-        {
-            if (Head == null)
-                return;
-
-            Head.AddKeyValue(key, value);
-        }
-
-        /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency.
         /// </summary>
         /// <param name="stopwatchElapsedTicks">The stopwatch Elapsed Ticks.</param>

@@ -93,13 +93,7 @@
         /// </summary>
         [DataMember(Order = 5)]
         public List<Timing> Children { get; set; }
-
-        /// <summary>
-        /// Gets or sets Stores arbitrary key/value strings on this Timing step. Add new tuples through <see cref="AddKeyValue"/>.
-        /// </summary>
-        [DataMember(Order = 6)]
-        public Dictionary<string, string> KeyValues { get; set; }
-
+        
         /// <summary>
         /// Gets or sets Any queries that occurred during this Timing step.
         /// </summary>
@@ -301,19 +295,6 @@
         public override int GetHashCode()
         {
             return Id.GetHashCode();
-        }
-
-        /// <summary>
-        /// Adds arbitrary string 'value' under 'key', allowing custom properties to be stored in this Timing step.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        public void AddKeyValue(string key, string value)
-        {
-            if (KeyValues == null)
-                KeyValues = new Dictionary<string, string>();
-
-            KeyValues[key] = value;
         }
 
         /// <summary>
