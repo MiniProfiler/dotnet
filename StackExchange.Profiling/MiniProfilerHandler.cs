@@ -22,11 +22,6 @@ namespace StackExchange.Profiling
         private static readonly ConcurrentDictionary<string, string> ResourceCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>
-        /// The bypass local load.
-        /// </summary>
-        private static bool bypassLocalLoad = false;
-
-        /// <summary>
         /// Gets a value indicating whether to keep things static and reusable.
         /// </summary>
         public bool IsReusable
@@ -60,19 +55,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns this <see cref="MiniProfilerHandler"/> to handle <paramref name="requestContext"/>.
         /// </summary>
-        /// <param name="requestContext">
-        /// The request Context.
-        /// </param>
-        /// <returns>the http handler implementation</returns>
-        public IHttpHandler GetHttpHandler(RequestContext requestContext)
+        IHttpHandler IRouteHandler.GetHttpHandler(RequestContext requestContext)
         {
-            return this; // elegant? I THINK SO.
+            return this;
         }
 
         /// <summary>
         /// Returns either includes' <c>css/javascript</c> or results' html.
         /// </summary>
-        /// <param name="context">The http context.</param>
         public void ProcessRequest(HttpContext context)
         {
             string output;
@@ -93,11 +83,11 @@ namespace StackExchange.Profiling
                     break;
 
                 case "results-list":
-                    output = ResultList(context);
+                    output = GetListJson(context);
                     break;
 
                 case "results":
-                    output = Results(context);
+                    output = GetSingleProfilerResult(context);
                     break;
 
                 default:
@@ -109,8 +99,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Renders script tag found in "include.partial.html" - this is shared with all other language implementations, so if you change it, you MUST
-        /// provide changes for those other implementations, e.g. ruby.
+        /// Renders script tag found in "include.partial.html".
         /// </summary>
         internal static HtmlString RenderIncludes(
             MiniProfiler profiler,
@@ -152,66 +141,33 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// The result list.
+        /// Handles rendering static content files.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>a string containing the result list.</returns>
-        private static string ResultList(HttpContext context)
+        private static string Includes(HttpContext context, string path)
         {
-            string message;
-            if (!AuthorizeRequest(context, isList: true, message: out message))
+            var response = context.Response;
+            switch (Path.GetExtension(path))
             {
-                return message;
+                case ".js":
+                    response.ContentType = "application/javascript";
+                    break;
+                case ".css":
+                    response.ContentType = "text/css";
+                    break;
+                case ".tmpl":
+                    response.ContentType = "text/x-jquery-tmpl";
+                    break;
+                default:
+                    return NotFound(context);
             }
-
-            var lastId = context.Request["last-id"];
-            Guid lastGuid = Guid.Empty;
-
-            if (!lastId.IsNullOrWhiteSpace())
-            {
-                Guid.TryParse(lastId, out lastGuid);
-            }
-
-            // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
-            if (MiniProfiler.Settings.Storage == null)
-            {
-                MiniProfiler.Settings.EnsureStorageStrategy();
-            }
-
-            var guids = MiniProfiler.Settings.Storage.List(100);
-
-            if (lastGuid != Guid.Empty)
-            {
-                guids = guids.TakeWhile(g => g != lastGuid);
-            }
-
-            guids = guids.Reverse();
-
-            return guids.Select(
-                g =>
-                {
-                    var profiler = MiniProfiler.Settings.Storage.Load(g);
-                    return
-                        new
-                            {
-                                profiler.Id,
-                                profiler.Name,
-                                profiler.DurationMilliseconds,
-                                profiler.DurationMillisecondsInSql,
-                                profiler.ClientTimings,
-                                profiler.Started,
-                                profiler.ExecutedNonQueries,
-                                profiler.ExecutedReaders,
-                                profiler.ExecutedScalars,
-                                profiler.HasAllTrivialTimings,
-                                profiler.HasDuplicateSqlTimings,
-                                profiler.HasSqlTimings,
-                                profiler.HasTrivialTimings,
-                                profiler.HasUserViewed,
-                                profiler.MachineName,
-                                profiler.User
-                            };
-                }).ToJson();
+#if !DEBUG
+            var cache = response.Cache;
+            cache.SetCacheability(System.Web.HttpCacheability.Public);
+            cache.SetExpires(DateTime.Now.AddDays(7));
+            cache.SetValidUntilExpires(true);
+#endif
+            var embeddedFile = Path.GetFileName(path);
+            return GetResource(embeddedFile);
         }
 
         /// <summary>
@@ -251,48 +207,91 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Handles rendering static content files.
+        /// Returns true if the current request is allowed to see the profiler response.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="path">The path.</param>
-        /// <returns>a string containing the content type.</returns>
-        private static string Includes(HttpContext context, string path)
+        private static bool AuthorizeRequest(HttpContext context, bool isList, out string message)
         {
-            var response = context.Response;
-            switch (Path.GetExtension(path))
+            message = null;
+            var authorize = MiniProfiler.Settings.Results_Authorize;
+            var authorizeList = MiniProfiler.Settings.Results_List_Authorize;
+
+            if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
             {
-                case ".js":
-                    response.ContentType = "application/javascript";
-                    break;
-                case ".css":
-                    response.ContentType = "text/css";
-                    break;
-                case ".tmpl":
-                    response.ContentType = "text/x-jquery-tmpl";
-                    break;
-                default:
-                    return NotFound(context);
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "text/plain";
+                message = "unauthorized";
+                return false;
             }
-#if !DEBUG
-            var cache = response.Cache;
-            cache.SetCacheability(System.Web.HttpCacheability.Public);
-            cache.SetExpires(DateTime.Now.AddDays(7));
-            cache.SetValidUntilExpires(true);
-#endif
-            var embeddedFile = Path.GetFileName(path);
-            return GetResource(embeddedFile);
+
+            return true;
+        }
+
+        private static string GetListJson(HttpContext context)
+        {
+            string message;
+            if (!AuthorizeRequest(context, isList: true, message: out message))
+            {
+                return message;
+            }
+
+            var lastId = context.Request["last-id"];
+            Guid lastGuid = Guid.Empty;
+
+            if (!lastId.IsNullOrWhiteSpace())
+            {
+                Guid.TryParse(lastId, out lastGuid);
+            }
+
+            // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
+            if (MiniProfiler.Settings.Storage == null)
+            {
+                MiniProfiler.Settings.EnsureStorageStrategy();
+            }
+
+            var guids = MiniProfiler.Settings.Storage.List(100);
+
+            if (lastGuid != Guid.Empty)
+            {
+                guids = guids.TakeWhile(g => g != lastGuid);
+            }
+
+            guids = guids.Reverse();
+
+            return guids.Select(
+                g =>
+                {
+                    var profiler = MiniProfiler.Settings.Storage.Load(g);
+                    return new
+                    {
+                        profiler.Id,
+                        profiler.Name,
+                        profiler.DurationMilliseconds,
+                        profiler.DurationMillisecondsInSql,
+                        profiler.ClientTimings,
+                        profiler.Started,
+                        profiler.ExecutedNonQueries,
+                        profiler.ExecutedReaders,
+                        profiler.ExecutedScalars,
+                        profiler.HasAllTrivialTimings,
+                        profiler.HasDuplicateSqlTimings,
+                        profiler.HasSqlTimings,
+                        profiler.HasTrivialTimings,
+                        profiler.HasUserViewed,
+                        profiler.MachineName,
+                        profiler.User
+                    };
+                }).ToJson();
         }
 
         /// <summary>
-        /// Handles rendering a previous <c>MiniProfiler</c> session, identified by its <c>"?id=GUID"</c> on the query.
+        /// Returns either json or full page html of a previous <c>MiniProfiler</c> session, 
+        /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>a string containing the rendered content</returns>
-        private static string Results(HttpContext context)
+        private static string GetSingleProfilerResult(HttpContext context)
         {
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
-            var isPopup = !string.IsNullOrWhiteSpace(context.Request["popup"]);
+            var isPopup = context.Request["popup"].HasValue();
 
             // this guid is the MiniProfiler.Id property
             // if this guid is not supplied, the last set of results needs to be
@@ -331,16 +330,18 @@ namespace StackExchange.Profiling
                 }
             }
 
-            if (profiler.HasUserViewed == false)
+            if (!profiler.HasUserViewed)
             {
                 profiler.HasUserViewed = true;
                 needsSave = true;
             }
 
-            if (needsSave) MiniProfiler.Settings.Storage.Save(profiler);
+            if (needsSave)
+            {
+                MiniProfiler.Settings.Storage.Save(profiler);
+            }
 
             var authorize = MiniProfiler.Settings.Results_Authorize;
-
             if (authorize != null && !authorize(context.Request))
             {
                 context.Response.ContentType = "application/json";
@@ -348,30 +349,6 @@ namespace StackExchange.Profiling
             }
 
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
-        }
-
-        /// <summary>
-        /// authorize the request. 
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="isList">is list.</param>
-        /// <param name="message">The message.</param>
-        /// <returns>true if the request is authorised.</returns>
-        private static bool AuthorizeRequest(HttpContext context, bool isList, out string message)
-        {
-            message = null;
-            var authorize = MiniProfiler.Settings.Results_Authorize;
-            var authorizeList = MiniProfiler.Settings.Results_List_Authorize;
-
-            if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
-            {
-                context.Response.StatusCode = 401;
-                context.Response.ContentType = "text/plain";
-                message = "unauthorized";
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -420,7 +397,7 @@ namespace StackExchange.Profiling
 
 #if DEBUG 
             // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
-            if (!bypassLocalLoad)
+            if (!BypassLocalLoad)
             {
 
                 var trace = new System.Diagnostics.StackTrace(true);
@@ -431,7 +408,7 @@ namespace StackExchange.Profiling
                 }
                 catch 
                 {
-                    bypassLocalLoad = true;
+                    BypassLocalLoad = true;
                 }
             }
 #endif
@@ -459,6 +436,10 @@ namespace StackExchange.Profiling
 
             return result;
         }
+
+#if DEBUG
+        private static bool BypassLocalLoad = false;
+#endif
 
         /// <summary>
         /// Helper method that sets a proper 404 response code.
