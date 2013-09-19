@@ -1,10 +1,10 @@
-﻿#if ASP_NET_MVC3
+﻿using System;
+using System.Web;
+using System.Web.WebPages;
+
+#if ASP_NET_MVC3
 namespace StackExchange.Profiling
 {
-    using System;
-    using System.Web;
-    using System.Web.WebPages;
-
     /// <summary>
     /// Used to provide 
     /// </summary>

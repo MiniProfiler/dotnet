@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling
-{
-    using System;
-    using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
+namespace StackExchange.Profiling
+{
     /// <summary>
     /// An individual suppression block that deactivates profiling temporarily
     /// </summary>

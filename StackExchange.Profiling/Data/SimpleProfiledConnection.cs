@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
+﻿using System;
+using System.Data;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// A general implementation of <c>IDbConnection</c> that uses an <see cref="IDbProfiler"/>
     /// to collect profiling information.

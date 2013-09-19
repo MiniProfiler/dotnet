@@ -1,10 +1,10 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// The profiled database data reader.
     /// </summary>

@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling.Helpers
-{
-    using System.Text.RegularExpressions;
-    using System.Web.Script.Serialization;
+﻿using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 
+namespace StackExchange.Profiling.Helpers
+{
     /// <summary>
     /// Common extension methods to use only in this project
     /// </summary>

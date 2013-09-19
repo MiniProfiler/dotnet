@@ -1,9 +1,9 @@
-﻿namespace StackExchange.Profiling.Storage
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
 
+namespace StackExchange.Profiling.Storage
+{
     /// <summary>
     /// Understands how to store a <see cref="MiniProfiler"/> to the <see cref="System.Web.HttpRuntime.Cache"/> with absolute expiration.
     /// </summary>

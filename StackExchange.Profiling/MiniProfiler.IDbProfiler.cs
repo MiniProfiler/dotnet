@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using StackExchange.Profiling.Data;
 using System.Data.Common;
+using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling
 {

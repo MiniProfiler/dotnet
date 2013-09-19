@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling.Storage
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace StackExchange.Profiling.Storage
+{
     /// <summary>
     /// The list results order.
     /// </summary>

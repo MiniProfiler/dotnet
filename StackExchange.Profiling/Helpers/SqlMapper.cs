@@ -5,6 +5,7 @@
  Note: to build on C# 3.0 + .NET 3.5, include the CSHARP30 compiler symbol (and yes,
  I know the difference between language and runtime versions; this is a compromise).
  */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using System.Threading;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace StackExchange.Profiling.Helpers.Dapper
 {

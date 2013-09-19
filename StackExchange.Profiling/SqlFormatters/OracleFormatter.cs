@@ -1,11 +1,11 @@
-﻿namespace StackExchange.Profiling.SqlFormatters
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Globalization;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
 
+namespace StackExchange.Profiling.SqlFormatters
+{
     /// <summary>
     /// Oracle formatter for all your Oracle formatting needs 
     /// </summary>

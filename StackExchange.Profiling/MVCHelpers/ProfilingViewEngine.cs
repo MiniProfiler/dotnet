@@ -1,11 +1,11 @@
-﻿#if ASP_NET_MVC3
+﻿using System;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+#if ASP_NET_MVC3
 namespace StackExchange.Profiling.MVCHelpers
 {
-    using System;
-    using System.Linq;
-    using System.Web;
-    using System.Web.Mvc;
-
     /// <summary>
     /// You can wrap your view engines with this view to enable profiling on views and partial
     /// </summary>

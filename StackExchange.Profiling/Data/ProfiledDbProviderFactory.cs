@@ -1,9 +1,9 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System.Data.Common;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Security;
+﻿using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
+using System.Security;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// Wrapper for a database provider factory to enable profiling
     /// </summary>

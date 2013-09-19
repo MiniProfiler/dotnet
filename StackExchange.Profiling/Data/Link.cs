@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System.Threading;
+﻿using System.Threading;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// This is a micro-cache; suitable when the number of terms is controllable (a few hundred, for example),
     /// and strictly append-only; you cannot change existing values. All key matches are on **REFERENCE**

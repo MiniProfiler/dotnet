@@ -1,9 +1,9 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
-    using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// A general implementation of <see cref="IDbCommand"/> that uses an <see cref="IDbProfiler"/>
     /// to collect profiling information.

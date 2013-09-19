@@ -1,12 +1,12 @@
-﻿namespace StackExchange.Profiling
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Web;
 
+namespace StackExchange.Profiling
+{
     /// <summary>
     /// Times collected from the client
     /// </summary>

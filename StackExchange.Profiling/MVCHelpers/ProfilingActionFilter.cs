@@ -1,12 +1,12 @@
-﻿#if ASP_NET_MVC3
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+#if ASP_NET_MVC3
 namespace StackExchange.Profiling.MVCHelpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
-    using System.Web.Mvc;
-
     /// <summary>
     /// This filter can be applied globally to hook up automatic action profiling
     /// </summary>

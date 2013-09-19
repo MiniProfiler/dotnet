@@ -1,10 +1,10 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
-    using System.Data.Common;
-    using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// Wraps a database connection, allowing SQL execution timings to be collected when a <see cref="MiniProfiler"/> session is started.
     /// </summary>

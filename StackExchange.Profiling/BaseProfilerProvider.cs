@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling
-{
-    using System;
+﻿using System;
 
+namespace StackExchange.Profiling
+{
     /// <summary>
     /// BaseProfilerProvider.  This providers some helper methods which provide access to
     /// internals not otherwise available.

@@ -1,9 +1,9 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
-    using System.Data.Common;
+﻿using System;
+using System.Data;
+using System.Data.Common;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// A call back for <c>ProfiledDbConnection</c> and family
     /// </summary>

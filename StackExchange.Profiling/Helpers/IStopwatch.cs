@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling.Helpers
-{
-    using System.Diagnostics;
+﻿using System.Diagnostics;
 
+namespace StackExchange.Profiling.Helpers
+{
     /// <summary>
     /// The Stopwatch interface.
     /// </summary>

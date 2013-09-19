@@ -1,13 +1,11 @@
-﻿namespace StackExchange.Profiling.Data
+﻿using System;
+using System.Data;
+using System.Data.Common;
+using System.Reflection;
+using System.Reflection.Emit;
+
+namespace StackExchange.Profiling.Data
 {
-    using System;
-    using System.Data;
-    using System.Data.Common;
-    using System.Reflection;
-    using System.Reflection.Emit;
-
-    using StackExchange.Profiling;
-
     /// <summary>
     /// The profiled database command.
     /// </summary>

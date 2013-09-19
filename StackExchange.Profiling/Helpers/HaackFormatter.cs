@@ -1,11 +1,11 @@
-﻿namespace StackExchange.Profiling.Helpers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
-    using System.Web.UI;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
 
+namespace StackExchange.Profiling.Helpers
+{
     /// <summary>
     /// The <c>haack</c> formatter.
     /// <c>http://haacked.com/archive/2009/01/04/fun-with-named-formats-string-parsing-and-edge-cases.aspx</c>.

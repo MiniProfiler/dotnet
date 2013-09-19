@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
+﻿using System;
+using System.Data;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// A simple profiled data reader.
     /// </summary>

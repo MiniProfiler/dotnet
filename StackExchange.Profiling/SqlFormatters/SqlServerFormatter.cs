@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+
 namespace StackExchange.Profiling.SqlFormatters
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Globalization;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// Formats SQL server queries with a DECLARE up top for parameter values
     /// </summary>

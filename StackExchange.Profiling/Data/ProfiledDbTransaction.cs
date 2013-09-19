@@ -1,11 +1,11 @@
-﻿#pragma warning disable 1591 // xml doc comments warnings
+﻿using System;
+using System.Data;
+using System.Data.Common;
+
+#pragma warning disable 1591 // xml doc comments warnings
 
 namespace StackExchange.Profiling.Data
 {
-    using System;
-    using System.Data;
-    using System.Data.Common;
-
     /// <summary>
     /// The profiled database transaction.
     /// </summary>

@@ -1,12 +1,11 @@
-﻿namespace StackExchange.Profiling
+﻿using System;
+using System.Linq;
+using System.Web;
+using System.Web.Routing;
+using StackExchange.Profiling.Helpers;
+
+namespace StackExchange.Profiling
 {
-    using System;
-    using System.Linq;
-    using System.Web;
-    using System.Web.Routing;
-
-    using StackExchange.Profiling.Helpers;
-
     /// <summary>
     /// HttpContext based profiler provider.  This is the default provider to use in a web context.
     /// The current profiler is associated with a HttpContext.Current ensuring that profilers are 

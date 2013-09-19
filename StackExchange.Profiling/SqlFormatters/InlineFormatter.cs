@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling.SqlFormatters
-{
-    using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
+namespace StackExchange.Profiling.SqlFormatters
+{
     /// <summary>
     /// Formats any SQL query with inline parameters, optionally including the value type
     /// </summary>

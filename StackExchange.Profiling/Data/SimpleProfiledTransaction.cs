@@ -1,8 +1,8 @@
-﻿namespace StackExchange.Profiling.Data
-{
-    using System;
-    using System.Data;
+﻿using System;
+using System.Data;
 
+namespace StackExchange.Profiling.Data
+{
     /// <summary>
     /// A general implementation of <see cref="IDbTransaction"/> that is used to
     /// wrap profiling information around calls to it.

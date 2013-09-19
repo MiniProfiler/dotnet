@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling
-{
-    using System;
+﻿using System;
 
+namespace StackExchange.Profiling
+{
     /// <summary>
     /// Mostly for unit testing and single-threaded apps, only allows one 
     /// instance of a <see cref="MiniProfiler"/> to be the <see cref="MiniProfiler.Current"/> one.

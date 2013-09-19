@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Web;
 using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.SqlFormatters;
 
 namespace StackExchange.Profiling
 {
-    using StackExchange.Profiling.SqlFormatters;
-
     partial class MiniProfiler
     {
         /// <summary>

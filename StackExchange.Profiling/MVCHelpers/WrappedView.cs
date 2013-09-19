@@ -1,8 +1,8 @@
-﻿#if ASP_NET_MVC3
+﻿using System.Web.Mvc;
+
+#if ASP_NET_MVC3
 namespace StackExchange.Profiling.MVCHelpers
 {
-    using System.Web.Mvc;
-
     /// <summary>
     /// Wrapped MVC View that ProfilingViewEngine uses to log profiling data
     /// </summary>
