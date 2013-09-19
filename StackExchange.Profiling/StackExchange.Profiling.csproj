@@ -64,9 +64,14 @@
     </Compile>
     <Compile Include="ClientTimingHelper.MVC.cs" />
     <Compile Include="ClientTimings.cs" />
+    <Compile Include="CustomTiming.cs" />
     <Compile Include="MiniProfilerHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlTiming.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SqlTimingParameter.cs" />
     <Compile Include="Suppression.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />
@@ -116,9 +121,6 @@
     <Compile Include="SqlFormatters\ISqlFormatter.cs" />
     <Compile Include="SqlFormatters\OracleFormatter.cs" />
     <Compile Include="SqlFormatters\SqlServerFormatter.cs" />
-    <Compile Include="SqlTimingParameter.cs">
-      <DependentUpon>SqlTiming.cs</DependentUpon>
-    </Compile>
     <Compile Include="SingletonProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
@@ -126,9 +128,6 @@
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlProfiler.cs" />
-    <Compile Include="SqlTiming.cs" />
-    <Compile Include="Storage\DatabaseStorageBase.cs" />
-    <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Timing.cs" />
     <Compile Include="WebRequestProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>

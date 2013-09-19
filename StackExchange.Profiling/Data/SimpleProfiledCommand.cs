@@ -81,7 +81,7 @@
         /// <returns>The <see cref="int"/>.</returns>
         public int ExecuteNonQuery()
         {
-            return ProfileWith(ExecuteType.NonQuery, _command.ExecuteNonQuery);
+            return ProfileWith(SqlExecuteType.NonQuery, _command.ExecuteNonQuery);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@
         public IDataReader ExecuteReader()
         {
             return ProfileWith(
-                ExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
+                SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@
         public IDataReader ExecuteReader(CommandBehavior behavior)
         {
             return ProfileWith(
-                ExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
+                SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
         }
 
         /// <summary>
@@ -111,7 +111,7 @@
         /// <returns>the scalar value.</returns>
         public object ExecuteScalar()
         {
-            return ProfileWith(ExecuteType.Scalar, () => _command.ExecuteScalar());
+            return ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
         }
 
         /// <summary>
@@ -121,7 +121,7 @@
         /// <param name="func">a function to execute against against the profile result</param>
         /// <typeparam name="TResult">the type of result to return.</typeparam>
         /// <returns>The <see cref="TResult"/>return the profiled result.</returns>
-        private TResult ProfileWith<TResult>(ExecuteType type, Func<TResult> func)
+        private TResult ProfileWith<TResult>(SqlExecuteType type, Func<TResult> func)
         {
             if (_profiler == null || !_profiler.IsActive)
             {

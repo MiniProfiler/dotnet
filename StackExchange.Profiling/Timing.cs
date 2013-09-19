@@ -1,13 +1,11 @@
-﻿namespace StackExchange.Profiling
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Web.Script.Serialization;
+
+namespace StackExchange.Profiling
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Web.Script.Serialization;
-
-    using StackExchange.Profiling.Data;
-
     /// <summary>
     /// An individual profiling step that can contain child steps.
     /// </summary>
@@ -37,15 +35,6 @@
         /// Initialises a new instance of the <see cref="Timing"/> class. 
         /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
         /// </summary>
-        /// <param name="profiler">
-        /// The profiler.
-        /// </param>
-        /// <param name="parent">
-        /// The parent.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
         public Timing(MiniProfiler profiler, Timing parent, string name)
         {
             Id = Guid.NewGuid();
@@ -93,16 +82,26 @@
         /// </summary>
         [DataMember(Order = 5)]
         public List<Timing> Children { get; set; }
+
+        /// <summary>
+        /// <see cref="CustomTiming"/> lists keyed by their type, e.g. "sql", "memcache", "redis", "http".
+        /// </summary>
+        [DataMember(Order = 6)]
+        public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
         
         /// <summary>
-        /// Gets or sets Any queries that occurred during this Timing step.
+        /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
-        [DataMember(Order = 7)]
-        public List<SqlTiming> SqlTimings { get; set; }
+        [ScriptIgnore]
+        public bool HasCustomTimings
+        {
+            get { return CustomTimings != null && CustomTimings.Any(pair => pair.Value != null && pair.Value.Any()); }
+        }
 
         /// <summary>
         /// Gets or sets Needed for database deserialization and JSON serialization.
         /// </summary>
+        [ScriptIgnore]
         public Guid? ParentTimingId { get; set; }
 
         /// <summary>
@@ -116,7 +115,6 @@
             {
                 return _parentTiming;
             }
-            
             set
             {
                 _parentTiming = value;
@@ -129,6 +127,7 @@
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
         /// </summary>
+        [ScriptIgnore]
         public decimal DurationWithoutChildrenMilliseconds
         {
             get
@@ -147,18 +146,19 @@
             }
         }
 
-        /// <summary>
-        /// Gets the aggregate elapsed milliseconds of all <c>SqlTimings</c> executed in this Timing, excluding Children Timings.
-        /// </summary>
-        public decimal SqlTimingsDurationMilliseconds
-        {
-            get { return HasSqlTimings ? Math.Round(SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
-        }
+        ///// <summary>
+        ///// Gets the aggregate elapsed milliseconds of all <c>SqlTimings</c> executed in this Timing, excluding Children Timings.
+        ///// </summary>
+        //public decimal SqlTimingsDurationMilliseconds
+        //{
+        //    get { return HasSqlTimings ? Math.Round(SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
+        //}
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="DurationWithoutChildrenMilliseconds"/> is less than the configured
         /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
+        [ScriptIgnore]
         public bool IsTrivial
         {
             get { return DurationWithoutChildrenMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds; }
@@ -167,39 +167,42 @@
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
+        [ScriptIgnore]
         public bool HasChildren
         {
             get { return Children != null && Children.Count > 0; }
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this Timing step collected SQL execution timings.
-        /// </summary>
-        public bool HasSqlTimings
-        {
-            get { return SqlTimings != null && SqlTimings.Count > 0; }
-        }
+        ///// <summary>
+        ///// Gets a value indicating whether this Timing step collected SQL execution timings.
+        ///// </summary>
+        //public bool HasSqlTimings
+        //{
+        //    get { return SqlTimings != null && SqlTimings.Count > 0; }
+        //}
 
-        /// <summary>
-        /// Gets a value indicating whether this has duplicate SQL timings.
-        /// Returns true if any <see cref="SqlTiming"/>s executed in this step are detected as duplicate statements.
-        /// </summary>
-        public bool HasDuplicateSqlTimings
-        {
-            get { return HasSqlTimings && SqlTimings.Any(s => s.IsDuplicate); }
-        }
+        ///// <summary>
+        ///// Gets a value indicating whether this has duplicate SQL timings.
+        ///// Returns true if any <see cref="SqlTiming"/>s executed in this step are detected as duplicate statements.
+        ///// </summary>
+        //public bool HasDuplicateSqlTimings
+        //{
+        //    get { return HasSqlTimings && SqlTimings.Any(s => s.IsDuplicate); }
+        //}
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
+        [ScriptIgnore]
         public bool IsRoot
         {
-            get { return ParentTiming == null; }
+            get { return Equals(Profiler.Root); }
         }
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
         /// </summary>
+        [ScriptIgnore]
         public short Depth
         {
             get
@@ -218,61 +221,13 @@
         }
 
         /// <summary>
-        /// Gets how many SQL data readers were executed in this Timing step. Does not include queries in any child Timings.
-        /// </summary>
-        public int ExecutedReaders
-        {
-            get { return GetExecutedCount(ExecuteType.Reader); }
-        }
-
-        /// <summary>
-        /// Gets how many SQL scalar queries were executed in this Timing step. Does not include queries in any child Timings.
-        /// </summary>
-        public int ExecutedScalars
-        {
-            get { return GetExecutedCount(ExecuteType.Scalar); }
-        }
-
-        /// <summary>
-        /// Gets how many SQL non-query statements were executed in this Timing step. Does not include queries in any child Timings.
-        /// </summary>
-        public int ExecutedNonQueries
-        {
-            get { return GetExecutedCount(ExecuteType.NonQuery); }
-        }
-
-        /// <summary>
         /// Gets a reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
         internal MiniProfiler Profiler { get; private set; }
 
         /// <summary>
-        /// Rebuilds all the parent timings on deserialization calls
-        /// </summary>
-        public void RebuildParentTimings()
-        {
-            if (SqlTimings != null)
-            {
-                foreach (var timing in SqlTimings)
-                {
-                    timing.ParentTiming = this;
-                }
-            }
-
-            if (Children != null)
-            {
-                foreach (var child in Children)
-                {
-                    child.ParentTiming = this;
-                    child.RebuildParentTimings();
-                }
-            }
-        }
-
-        /// <summary>
         /// Returns this Timing's Name.
         /// </summary>
-        /// <returns>a string containing the name.</returns>
         public override string ToString()
         {
             return Name;
@@ -281,17 +236,14 @@
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        /// <param name="rValue">The rValue.</param>
-        /// <returns>true if the supplied value is the same as </returns>
-        public override bool Equals(object rValue)
+        public override bool Equals(object other)
         {
-            return rValue is Timing && Id.Equals(((Timing)rValue).Id);
+            return other is Timing && Id.Equals(((Timing)other).Id);
         }
 
         /// <summary>
         /// Returns hash code of Id.
         /// </summary>
-        /// <returns>the hash code value.</returns>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
@@ -304,13 +256,13 @@
         {
             if (DurationMilliseconds == null)
             {
-                DurationMilliseconds = Profiler.GetRoundedMilliseconds(Profiler.ElapsedTicks - _startTicks);
+                DurationMilliseconds = Profiler.GetDurationMilliseconds(_startTicks);
                 Profiler.Head = ParentTiming;
             }
         }
 
         /// <summary>
-        /// dispose the profiler.
+        /// Stops profiling, allowing the <c>using</c> construct to neatly encapsulate a region to be profiled.
         /// </summary>
         void IDisposable.Dispose()
         {
@@ -320,8 +272,9 @@
         /// <summary>
         /// Add the parameter 'timing' to this Timing's Children collection.
         /// </summary>
-        /// <param name="timing">The timing.</param>
-        /// <remarks>Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.</remarks>
+        /// <remarks>
+        /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.
+        /// </remarks>
         public void AddChild(Timing timing)
         {
             if (Children == null)
@@ -335,24 +288,45 @@
         /// Adds the parameter <c>sqlTiming</c> to this Timing's <c>SqlTimings</c> collection.
         /// </summary>
         /// <param name="sqlTiming">A SQL statement profiling that was executed in this Timing step.</param>
-        /// <remarks>Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.</remarks>
+        /// <remarks>
+        /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.
+        /// </remarks>
         public void AddSqlTiming(SqlTiming sqlTiming)
         {
-            if (SqlTimings == null)
-                SqlTimings = new List<SqlTiming>();
-
-            SqlTimings.Add(sqlTiming);
-            sqlTiming.ParentTiming = this;
+            GetCustomTimingList("sql").Add(sqlTiming);
         }
 
         /// <summary>
-        /// Returns the number of SQL statements of <paramref name="type"/> that were executed in this <see cref="Timing"/>.
+        /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of 
+        /// custom timings, <see cref="CustomTimings"/>.  Ensures that <see cref="CustomTimings"/> is created, 
+        /// as well as the <paramref name="category"/>'s list.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>the execution count.</returns>
-        internal int GetExecutedCount(ExecuteType type)
+        /// <param name="category">The kind of custom timing, e.g. "http", "redis", "memcache"</param>
+        /// <param name="customTiming">Duration and command information</param>
+        public void AddCustomTiming(string category, CustomTiming customTiming)
         {
-            return HasSqlTimings ? SqlTimings.Count(s => s.ExecuteType == type) : 0;
+            GetCustomTimingList(category).Add(customTiming);
+        }
+
+        /// <summary>
+        /// Returns the <see cref="CustomTiming"/> list keyed to the <paramref name="category"/>, creating any collections when null.
+        /// </summary>
+        /// <param name="category">The kind of custom timings, e.g. "sql", "redis", "memcache"</param>
+        private List<CustomTiming> GetCustomTimingList(string category)
+        {
+            if (CustomTimings == null)
+                CustomTimings = new Dictionary<string, List<CustomTiming>>();
+
+            List<CustomTiming> result;
+            lock (CustomTimings)
+            {
+                if (!CustomTimings.TryGetValue(category, out result))
+                {
+                    result = new List<CustomTiming>();
+                    CustomTimings[category] = result;
+                }
+            }
+            return result;
         }
     }
 }

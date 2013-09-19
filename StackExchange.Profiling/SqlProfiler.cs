@@ -1,39 +1,31 @@
-﻿namespace StackExchange.Profiling
+﻿using System;
+using System.Collections.Concurrent;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
+
+using StackExchange.Profiling.Data;
+
+namespace StackExchange.Profiling
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Data;
-    using System.Data.Common;
-    using System.Linq;
-
-    using StackExchange.Profiling.Data;
-
     /// <summary>
     /// Contains helper code to time SQL statements.
     /// </summary>
     public class SqlProfiler
     {
         /// <summary>
-        /// The _in progress.
+        /// Returns a new <c>SqlProfiler</c> to be used in the <paramref name="profiler"/> session.
         /// </summary>
-        private readonly ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming> _inProgress = new ConcurrentDictionary<Tuple<object, ExecuteType>, SqlTiming>();
-
-        /// <summary>
-        /// The _in progress readers.
-        /// </summary>
-        private readonly ConcurrentDictionary<IDataReader, SqlTiming> _inProgressReaders = new ConcurrentDictionary<IDataReader, SqlTiming>();
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="SqlProfiler"/> class. 
-        /// Returns a new <c>SqlProfiler</c> to be used in the 'profiler' session.
-        /// </summary>
-        /// <param name="profiler">
-        /// The profiler.
-        /// </param>
         public SqlProfiler(MiniProfiler profiler)
         {
             Profiler = profiler;
         }
+
+        private readonly ConcurrentDictionary<Tuple<object, SqlExecuteType>, SqlTiming> _inProgress =
+            new ConcurrentDictionary<Tuple<object, SqlExecuteType>, SqlTiming>();
+
+        private readonly ConcurrentDictionary<IDataReader, SqlTiming> _inProgressReaders =
+            new ConcurrentDictionary<IDataReader, SqlTiming>();
 
         /// <summary>
         /// Gets the profiling session this <c>SqlProfiler</c> is part of.
@@ -43,9 +35,7 @@
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="type">The type.</param>
-        public void ExecuteStartImpl(IDbCommand command, ExecuteType type)
+        public void ExecuteStartImpl(IDbCommand command, SqlExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
             var sqlTiming = new SqlTiming(command, type, Profiler);
@@ -54,21 +44,9 @@
         }
 
         /// <summary>
-        /// Returns all currently open commands on this connection
-        /// </summary>
-        /// <returns>the set of SQL timings.</returns>
-        public SqlTiming[] GetInProgressCommands()
-        {
-            return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
-        }
-
-        /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="reader">The reader.</param>
-        public void ExecuteFinishImpl(IDbCommand command, ExecuteType type, DbDataReader reader = null)
+        public void ExecuteFinishImpl(IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
         {
             var id = Tuple.Create((object)command, type);
             var current = _inProgress[id];
@@ -84,7 +62,6 @@
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
-        /// <param name="reader">The reader.</param>
         public void ReaderFinishedImpl(IDataReader reader)
         {
             SqlTiming stat;
@@ -97,6 +74,14 @@
                 _inProgressReaders.TryRemove(reader, out ignore);
             }
         }
+
+        /// <summary>
+        /// Returns all currently open commands on this connection
+        /// </summary>
+        public SqlTiming[] GetInProgressCommands()
+        {
+            return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
+        }
     }
 
     /// <summary>
@@ -107,10 +92,7 @@
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
-        /// <param name="sqlProfiler">The SQL Profiler.</param>
-        /// <param name="command">The command.</param>
-        /// <param name="type">The type.</param>
-        public static void ExecuteStart(this SqlProfiler sqlProfiler, IDbCommand command, ExecuteType type)
+        public static void ExecuteStart(this SqlProfiler sqlProfiler, IDbCommand command, SqlExecuteType type)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ExecuteStartImpl(command, type);
@@ -119,11 +101,7 @@
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        /// <param name="sqlProfiler">The SQL Profiler.</param>
-        /// <param name="command">The command.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="reader">The reader.</param>
-        public static void ExecuteFinish(this SqlProfiler sqlProfiler, IDbCommand command, ExecuteType type, DbDataReader reader = null)
+        public static void ExecuteFinish(this SqlProfiler sqlProfiler, IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ExecuteFinishImpl(command, type, reader);
@@ -132,8 +110,6 @@
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
-        /// <param name="sqlProfiler">The SQL Profiler.</param>
-        /// <param name="reader">The reader.</param>
         public static void ReaderFinish(this SqlProfiler sqlProfiler, IDataReader reader)
         {
             if (sqlProfiler == null) return;

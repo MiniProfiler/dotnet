@@ -244,8 +244,17 @@ namespace StackExchange.Profiling
             /// By default, SqlTimings will grab a stack trace to help locate where queries are being executed.
             /// When this setting is true, no stack trace will be collected, possibly improving profiler performance.
             /// </summary>
-            [DefaultValue(false)]
+            [DefaultValue(false), Obsolete("Use ExcludeStackTraceSnippetFromCustomTimings")]
             public static bool ExcludeStackTraceSnippetFromSqlTimings { get; set; }
+
+            /// <summary>
+            /// By default, <see cref="CustomTiming"/>s created by this assmebly will grab a stack trace to help 
+            /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
+            /// will be collected, possibly improving profiler performance.
+            /// </summary>
+            [DefaultValue(false)]
+            public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; }
+
 
             /// <summary>
             /// When <see cref="MiniProfiler.Start"/> is called, if the current request url contains any items in this property,
@@ -296,7 +305,7 @@ namespace StackExchange.Profiling
             public static Storage.IStorage Storage { get; set; }
 
             /// <summary>
-            /// The formatter applied to the SQL being rendered (used only for UI)
+            /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
             /// </summary>
             public static ISqlFormatter SqlFormatter { get; set; }
 

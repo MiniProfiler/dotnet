@@ -107,19 +107,19 @@
 
             int result;
             var cmd = (DbCommand)_selectCommand;
-            _profiler.ExecuteStart(cmd, ExecuteType.Reader);
+            _profiler.ExecuteStart(cmd, SqlExecuteType.Reader);
             try
             {
                 result = _adapter.Fill(dataSet);
             }
             catch (Exception e)
             {
-                _profiler.OnError(cmd, ExecuteType.Reader, e);
+                _profiler.OnError(cmd, SqlExecuteType.Reader, e);
                 throw;
             }
             finally
             {
-                _profiler.ExecuteFinish(cmd, ExecuteType.Reader, TokenReader);
+                _profiler.ExecuteFinish(cmd, SqlExecuteType.Reader, TokenReader);
             }
 
             return result;

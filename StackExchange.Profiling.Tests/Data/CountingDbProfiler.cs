@@ -65,7 +65,7 @@
         /// </summary>
         /// <param name="profiledDbCommand">The profiled DB command.</param>
         /// <param name="executeType">The execute type.</param>
-        void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, ExecuteType executeType)
+        void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
         {
             _watch.Start();
             ExecuteStartCount++;
@@ -78,7 +78,7 @@
         /// <param name="profiledDbCommand">The profiled DB command.</param>
         /// <param name="executeType">The execute type.</param>
         /// <param name="reader">The reader.</param>
-        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, ExecuteType executeType, System.Data.Common.DbDataReader reader)
+        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, System.Data.Common.DbDataReader reader)
         {
             if (reader == null)
             {
@@ -112,7 +112,7 @@
         /// <param name="exception">
         /// The exception.
         /// </param>
-        void IDbProfiler.OnError(IDbCommand profiledDbCommand, ExecuteType executeType, Exception exception)
+        void IDbProfiler.OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception)
         {
             ErrorCount++;
             ErrorSql = profiledDbCommand.CommandText;

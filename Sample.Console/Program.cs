@@ -5,6 +5,9 @@
     using Dapper;
 
     using StackExchange.Profiling;
+    using System.Net;
+    using System.Diagnostics;
+    using System.Threading;
 
     /// <summary>
     /// simple sample console application.
@@ -20,6 +23,9 @@
             SetupProfiling();
             Test();
             Report();
+
+            if (Debugger.IsAttached)
+                System.Console.ReadKey();
         }
 
         /// <summary>
@@ -46,6 +52,12 @@
                 {
                     conn.Query<long>("select 1");
                 }
+                
+                using (var wc = new WebClient())
+                using (mp.CustomTiming("http", "GET http://google.com"))
+                {
+                    wc.DownloadString("http://google.com");
+                }
             }
 
             MiniProfiler.Stop();
@@ -57,7 +69,6 @@
         public static void Report()
         {
             System.Console.WriteLine(MiniProfiler.Current.RenderPlainText());
-            System.Console.ReadKey();
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
     /// <summary>
     /// Categories of SQL statements.
     /// </summary>
-    public enum ExecuteType : byte
+    public enum SqlExecuteType : byte
     {
         /// <summary>
         /// Unknown type

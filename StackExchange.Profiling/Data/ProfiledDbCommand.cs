@@ -236,7 +236,7 @@
             }
 
             DbDataReader result = null;
-            _profiler.ExecuteStart(this, ExecuteType.Reader);
+            _profiler.ExecuteStart(this, SqlExecuteType.Reader);
             try
             {
                 result = _command.ExecuteReader(behavior);
@@ -244,12 +244,12 @@
             }
             catch (Exception e)
             {
-                _profiler.OnError(this, ExecuteType.Reader, e);
+                _profiler.OnError(this, SqlExecuteType.Reader, e);
                 throw;
             }
             finally
             {
-                _profiler.ExecuteFinish(this, ExecuteType.Reader, result);
+                _profiler.ExecuteFinish(this, SqlExecuteType.Reader, result);
             }
 
             return result;
@@ -268,19 +268,19 @@
 
             int result;
 
-            _profiler.ExecuteStart(this, ExecuteType.NonQuery);
+            _profiler.ExecuteStart(this, SqlExecuteType.NonQuery);
             try
             {
                 result = _command.ExecuteNonQuery();
             }
             catch (Exception e)
             {
-                _profiler.OnError(this, ExecuteType.NonQuery, e);
+                _profiler.OnError(this, SqlExecuteType.NonQuery, e);
                 throw;
             }
             finally
             {
-                _profiler.ExecuteFinish(this, ExecuteType.NonQuery, null);
+                _profiler.ExecuteFinish(this, SqlExecuteType.NonQuery, null);
             }
 
             return result;
@@ -300,19 +300,19 @@
             }
 
             object result;
-            _profiler.ExecuteStart(this, ExecuteType.Scalar);
+            _profiler.ExecuteStart(this, SqlExecuteType.Scalar);
             try
             {
                 result = _command.ExecuteScalar();
             }
             catch (Exception e)
             {
-                _profiler.OnError(this, ExecuteType.Scalar, e);
+                _profiler.OnError(this, SqlExecuteType.Scalar, e);
                 throw;
             }
             finally
             {
-                _profiler.ExecuteFinish(this, ExecuteType.Scalar, null);
+                _profiler.ExecuteFinish(this, SqlExecuteType.Scalar, null);
             }
 
             return result;

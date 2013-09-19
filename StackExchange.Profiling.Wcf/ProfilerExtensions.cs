@@ -1,7 +1,9 @@
-﻿namespace StackExchange.Profiling.Wcf
-{
-    using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Linq;
 
+namespace StackExchange.Profiling.Wcf
+{
+    
     /// <summary>
     /// The profiler extensions.
     /// </summary>
@@ -41,11 +43,11 @@
                 }
             }
 
-            if (timing.SqlTimings != null)
+            if (timing.CustomTimings != null)
             {
-                foreach (var child in timing.SqlTimings)
+                foreach (var customTiming in timing.CustomTimings.SelectMany(pair => pair.Value))
                 {
-                    child.StartMilliseconds += deltaMilliseconds;                    
+                    customTiming.StartMilliseconds += deltaMilliseconds;                    
                 }
             }
         }

@@ -118,8 +118,6 @@
                         resultsHeader.ProfilerResults.Root.UpdateStartMillisecondTimingsToAbsolute(profilerStart.StartTime);
 
                     profiler.AddProfilerResults(resultsHeader.ProfilerResults);
-                    //// if (resultsHeader.ProfilerResults.HasSqlTimings)
-                        //// profiler.HasSqlTimings = true;
                 }
             }
         }

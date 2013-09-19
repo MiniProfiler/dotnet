@@ -535,7 +535,7 @@ namespace StackExchange.Profiling.Storage
             public string Id { get; set; }
             public string MiniProfilerId { get; set; }
             public string ParentTimingId { get; set; }
-            public ExecuteType ExecuteType { get; set; }
+            public SqlExecuteType ExecuteType { get; set; }
             public double StartMilliseconds { get; set; }
             public double DurationMilliseconds { get; set; }
             public double FirstFetchDurationMilliseconds { get; set; }

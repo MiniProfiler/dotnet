@@ -182,35 +182,35 @@
                 Console.WriteLine();
                 AssertPublicPropertiesAreEqual(t1, t2);
 
-                if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
+                //if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
 
-                Assert.NotNull(t1.SqlTimings);
-                Assert.NotNull(t2.SqlTimings);
+                //Assert.NotNull(t1.SqlTimings);
+                //Assert.NotNull(t2.SqlTimings);
 
-                for (int j = 0; j < t1.SqlTimings.Count; j++)
-                {
-                    var s1 = t1.SqlTimings[j];
-                    var s2 = t2.SqlTimings[j];
-                    Assert.AreEqual(s1, s2);
+                //for (int j = 0; j < t1.SqlTimings.Count; j++)
+                //{
+                //    var s1 = t1.SqlTimings[j];
+                //    var s2 = t2.SqlTimings[j];
+                //    Assert.AreEqual(s1, s2);
 
-                    Console.WriteLine();
-                    AssertPublicPropertiesAreEqual(s1, s2);
+                //    Console.WriteLine();
+                //    AssertPublicPropertiesAreEqual(s1, s2);
 
-                    if (s1.Parameters == null && s2.Parameters == null) continue;
+                //    if (s1.Parameters == null && s2.Parameters == null) continue;
 
-                    Assert.NotNull(s1.Parameters);
-                    Assert.NotNull(s2.Parameters);
+                //    Assert.NotNull(s1.Parameters);
+                //    Assert.NotNull(s2.Parameters);
 
-                    for (int k = 0; k < s1.Parameters.Count; k++)
-                    {
-                        var p1 = s1.Parameters[k];
-                        var p2 = s2.Parameters[k];
-                        Assert.AreEqual(p1, p2);
+                //    for (int k = 0; k < s1.Parameters.Count; k++)
+                //    {
+                //        var p1 = s1.Parameters[k];
+                //        var p2 = s2.Parameters[k];
+                //        Assert.AreEqual(p1, p2);
 
-                        Console.WriteLine();
-                        AssertPublicPropertiesAreEqual(p1, p2);
-                    }
-                }
+                //        Console.WriteLine();
+                //        AssertPublicPropertiesAreEqual(p1, p2);
+                //    }
+                //}
             }
         }
 

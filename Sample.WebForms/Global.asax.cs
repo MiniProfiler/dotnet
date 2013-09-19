@@ -16,7 +16,7 @@ namespace Sample.WebForms
             InitProfilerSettings();
 
             // this is only done for testing purposes so we don't check in the db to source control
-            ((SampleWeb.Helpers.SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase();
+            //((SampleWeb.Helpers.SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase();
         }
 
         protected void Application_BeginRequest()
@@ -55,7 +55,7 @@ namespace Sample.WebForms
             ignored.Add("/Styles/");
             MiniProfiler.Settings.IgnoredPaths = ignored.ToArray();
 
-            MiniProfiler.Settings.Storage = new SampleWeb.Helpers.SqliteMiniProfilerStorage(SampleWeb.MvcApplication.ConnectionString);
+            //MiniProfiler.Settings.Storage = new SampleWeb.Helpers.SqliteMiniProfilerStorage(SampleWeb.MvcApplication.ConnectionString);
             MiniProfiler.Settings.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
         }
     }

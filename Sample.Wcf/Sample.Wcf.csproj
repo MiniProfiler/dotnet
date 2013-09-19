@@ -85,9 +85,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\SqliteMiniProfilerStorage.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="RouteHit.cs" />
     <Compile Include="SampleService.svc.cs">
       <DependentUpon>SampleService.svc</DependentUpon>

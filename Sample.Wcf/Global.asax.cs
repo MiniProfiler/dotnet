@@ -1,22 +1,12 @@
-﻿namespace Sample.Wcf
+﻿using System;
+using System.Web;
+using StackExchange.Profiling;
+using StackExchange.Profiling.Wcf;
+
+namespace Sample.Wcf
 {
-    using System;
-    using System.IO;
-    using System.Web;
-
-    using Dapper;
-
-    using Sample.Wcf.Helpers;
-
-    using StackExchange.Profiling;
-    using StackExchange.Profiling.Wcf;
-
-    /// <summary>
-    /// The global.
-    /// </summary>
     public class Global : HttpApplication
     {
-
         /// <summary>
         /// Customize aspects of the MiniProfiler.
         /// </summary>
@@ -56,33 +46,9 @@
             MiniProfiler.Settings.StackMaxLength = 256;          // default is 120 characters
         }
 
-        /// <summary>
-        /// The application start event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The e.</param>
         protected void Application_Start(object sender, EventArgs eventArgs)
         {
-
-            InitProfilerSettings();
-
-            var dataFile = HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
-            if (File.Exists(dataFile))
-            {
-                File.Delete(dataFile);
-            }
-
-            using (var cnn = new System.Data.SQLite.SQLiteConnection(WcfCommon.ConnectionString))
-            {
-                cnn.Open();
-                cnn.Execute("create table RouteHits(RouteName,HitCount)");
-
-                // we need some tiny mods to allow sqlite support 
-                foreach (var sql in SqliteMiniProfilerStorage.TableCreationSQL)
-                {
-                    cnn.Execute(sql);
-                }
-            }
+            InitProfilerSettings();            
         }
     }
 }

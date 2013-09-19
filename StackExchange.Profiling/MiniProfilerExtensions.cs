@@ -1,10 +1,11 @@
-﻿namespace StackExchange.Profiling
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web;
 
+namespace StackExchange.Profiling
+{
     /// <summary>
     /// Contains helper methods that ease working with null <see cref="MiniProfiler"/>s.
     /// </summary>
@@ -64,6 +65,32 @@
         }
 
         /// <summary>
+        /// Returns a new <see cref="CustomTiming"/> that will automatically set its <see cref="Profiling.CustomTiming.StartMilliseconds"/>
+        /// and <see cref="Profiling.CustomTiming.DurationMilliseconds"/>
+        /// </summary>
+        /// <remarks>
+        /// Should be used like the <see cref="Step"/> extension method:
+        /// 
+        /// <example>
+        /// 
+        /// </example>
+        /// </remarks>
+        public static CustomTiming CustomTiming(this MiniProfiler profiler, string category, string commandString, string executeType = null)
+        {
+            if (profiler == null || profiler.Head == null) return null;
+
+            var result = new CustomTiming(profiler, commandString)
+            {
+                ExecuteType = executeType
+            };
+            
+            // THREADING: revisit
+            profiler.Head.AddCustomTiming(category, result);
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns an <see cref="IDisposable"/> that will ignore profiling between its creation and disposal.
         /// </summary>
         /// <remarks>
@@ -81,21 +108,16 @@
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
         /// allowing other threads, remote calls, etc. to be profiled and joined into this profiling session.
         /// </summary>
-        /// <param name="profiler">The profiler.</param>
-        /// <param name="externalProfiler">The external Profiler.</param>
         public static void AddProfilerResults(this MiniProfiler profiler, MiniProfiler externalProfiler)
         {
             if (profiler == null || profiler.Head == null || externalProfiler == null) return;
             profiler.Head.AddChild(externalProfiler.Root);
-            profiler.HasSqlTimings |= externalProfiler.HasSqlTimings;
-            profiler.HasDuplicateSqlTimings |= externalProfiler.HasDuplicateSqlTimings;
         }
 
         /// <summary>
         /// Returns an html-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
-        /// <returns>a string containing the rendered result.</returns>
         public static IHtmlString Render(this MiniProfiler profiler)
         {
             return new HtmlString(RenderImpl(profiler, true));
@@ -106,18 +128,11 @@
         /// <see cref="Console"/>, log, or unit test output.
         /// </summary>
         /// <param name="profiler">A profiling session with child <see cref="Timing"/> instances.</param>
-        /// <returns>a string containing the plain text.</returns>
         public static string RenderPlainText(this MiniProfiler profiler)
         {
             return RenderImpl(profiler, false);
         }
 
-        /// <summary>
-        /// The render implementation.
-        /// </summary>
-        /// <param name="profiler">The profiler.</param>
-        /// <param name="htmlEncode">The html encode.</param>
-        /// <returns>a string containing the render implementation</returns>
         private static string RenderImpl(MiniProfiler profiler, bool htmlEncode)
         {
             if (profiler == null) return string.Empty;
@@ -138,9 +153,19 @@
 
                 text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.DurationMilliseconds, new string('>', timing.Depth));
 
-                if (timing.HasSqlTimings)
+                if (timing.HasCustomTimings)
                 {
-                    text.AppendFormat(" ({0:###,##0.##}ms in {1} sql quer{2})", timing.SqlTimingsDurationMilliseconds, timing.SqlTimings.Count, timing.SqlTimings.Count == 1 ? "y" : "ies");
+                    foreach (var pair in timing.CustomTimings)
+                    {
+                        var type = pair.Key;
+                        var customTimings = pair.Value;
+
+                        text.AppendFormat(" ({0} = {1:###,##0.##}ms in {2} cmd{3})", 
+                            type, 
+                            customTimings.Sum(ct => ct.DurationMilliseconds),
+                            customTimings.Count,
+                            customTimings.Count == 1 ? "" : "s");
+                    }
                 }
 
                 text.AppendLine();

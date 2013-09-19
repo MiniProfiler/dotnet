@@ -26,10 +26,6 @@
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
-        /// <param name="level">
-        /// The level.
-        /// </param>
-        /// <returns>the profiler.</returns>
         public override MiniProfiler Start(ProfileLevel level)
         {
             var context = HttpContext.Current;
@@ -39,7 +35,7 @@
             var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();
 
             // don't profile /content or /scripts, either - happens in web.dev
-            foreach (var ignored in StackExchange.Profiling.MiniProfiler.Settings.IgnoredPaths ?? new string[0])
+            foreach (var ignored in MiniProfiler.Settings.IgnoredPaths ?? new string[0])
             {
                 if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
                     return null;

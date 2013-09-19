@@ -1,18 +1,16 @@
-﻿namespace StackExchange.Profiling.Helpers
-{
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 
+namespace StackExchange.Profiling.Helpers
+{
     /// <summary>
 	/// Gets part of a stack trace containing only methods we care about.
 	/// </summary>
 	public class StackTraceSnippet
 	{
-        /// <summary>
-        /// The asp net entry point method name.
-        /// </summary>
         private const string AspNetEntryPointMethodName = "System.Web.HttpApplication.IExecutionStep.Execute";
 
 		/// <summary>
@@ -24,11 +22,12 @@
 			var frames = new StackTrace().GetFrames();
 			if (frames == null)
 			{
-				return string.Empty;
+				return "";
 			}
 
 			var methods = new List<string>();
 
+            // TODO: short circuit here by keeping a sum of method name chars and checking against Settings.StackMaxLength
 			foreach (StackFrame t in frames)
 			{
 				var method = t.GetMethod();
@@ -38,9 +37,9 @@
 					break;
 
 				var assembly = method.Module.Assembly.GetName().Name;
-				if (!MiniProfiler.Settings.AssembliesToExclude.Contains(assembly) &&
-					!ShouldExcludeType(method) &&
-					!MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
+				if (!ShouldExcludeType(method) 
+                    && !MiniProfiler.Settings.AssembliesToExclude.Contains(assembly) 
+                    && !MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
 				{
 					methods.Add(method.Name);
 				}
@@ -50,7 +49,7 @@
 
             if (result.Length > MiniProfiler.Settings.StackMaxLength)
             {
-                var index = result.IndexOf(" ", MiniProfiler.Settings.StackMaxLength, System.StringComparison.Ordinal);		
+                var index = result.IndexOf(" ", MiniProfiler.Settings.StackMaxLength, StringComparison.Ordinal);		
 	            if (index >= MiniProfiler.Settings.StackMaxLength)		
 	            {		
 	                result = result.Substring(0, index);		
@@ -60,11 +59,6 @@
 			return result;
 		}
 
-        /// <summary>
-        /// should the type be excluded.
-        /// </summary>
-        /// <param name="method">The method.</param>
-        /// <returns>The <see cref="bool"/>.</returns>
         private static bool ShouldExcludeType(MethodBase method)
 		{
 			var t = method.DeclaringType;
@@ -76,6 +70,7 @@
 
 				t = t.DeclaringType;
 			}
+
 			return false;
 		}
 	}
