@@ -10,8 +10,6 @@
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
-        /// <param name="level">The level.</param>
-        /// <returns>the mini profiler.</returns>
         MiniProfiler Start(ProfileLevel level);
 
         /// <summary>
@@ -26,7 +24,6 @@
         /// <summary>
         /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
-        /// <returns>the mini profiler.</returns>
         MiniProfiler GetCurrentProfiler();
     }
 }

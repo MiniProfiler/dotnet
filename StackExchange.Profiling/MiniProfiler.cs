@@ -316,17 +316,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        /// <param name="rValue">The rValue.</param>
-        /// <returns>true if the profilers are equal.</returns>
-        public override bool Equals(object rValue)
+        public override bool Equals(object other)
         {
-            return rValue is MiniProfiler && Id.Equals(((MiniProfiler)rValue).Id);
+            return other is MiniProfiler && Id.Equals(((MiniProfiler)other).Id);
         }
 
         /// <summary>
         /// Returns hash code of Id.
         /// </summary>
-        /// <returns>an integer containing the hash code.</returns>
         public override int GetHashCode()
         {
             return Id.GetHashCode();
@@ -335,7 +332,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Walks the <see cref="Timing"/> hierarchy contained in this profiler, starting with <see cref="Root"/>, and returns each Timing found.
         /// </summary>
-        /// <returns>the set of timings.</returns>
         public IEnumerable<Timing> GetTimingHierarchy()
         {
             var timings = new Stack<Timing>();

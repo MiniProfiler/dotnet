@@ -147,7 +147,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the current profiler
         /// </summary>
-        /// <returns></returns>
         public override MiniProfiler GetCurrentProfiler()
         {
             return Current;

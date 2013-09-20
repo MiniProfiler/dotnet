@@ -13,8 +13,6 @@ namespace StackExchange.Profiling.Wcf
         /// We don't actually know the start milliseconds, but lets 
         /// take it as zero being the start of the current head
         /// </summary>
-        /// <param name="timing">the timing data</param>
-        /// <param name="newStartMilliseconds">new Start Milliseconds.</param>
         public static void UpdateStartMillisecondTimingsToAbsolute(this Timing timing, decimal newStartMilliseconds)
         {
             if (timing == null)
@@ -25,10 +23,7 @@ namespace StackExchange.Profiling.Wcf
 
         /// <summary>
         /// Delta is added to the existing StartMillisecondsValue
-        /// Recursive method
         /// </summary>
-        /// <param name="timing">The timing.</param>
-        /// <param name="deltaMilliseconds">The delta Milliseconds.</param>
         public static void UpdateStartMillisecondTimingsByDelta(this Timing timing, decimal deltaMilliseconds)
         {
             if (timing == null)
@@ -55,7 +50,6 @@ namespace StackExchange.Profiling.Wcf
         /// <summary>
         /// Removes trivial items from the current profiler results
         /// </summary>
-        /// <param name="timing">The timing.</param>
         public static void RemoveTrivialTimings(this Timing timing)
         {
             if (timing.Children != null)

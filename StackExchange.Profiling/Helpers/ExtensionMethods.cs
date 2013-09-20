@@ -11,10 +11,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Answers true if this String is either null or empty.
         /// </summary>
-        /// <param name="value">
-        /// The string value.
-        /// </param>
-        /// <returns>true if the string is null or white space</returns>
         internal static bool IsNullOrWhiteSpace(this string value)
         {
             return string.IsNullOrWhiteSpace(value);
@@ -23,19 +19,11 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Answers true if this String is neither null or empty.
         /// </summary>
-        /// <param name="value">The string value.</param>
-        /// <returns>The <see cref="bool"/>.</returns>
         internal static bool HasValue(this string value)
         {
             return !string.IsNullOrWhiteSpace(value);
         }
 
-        /// <summary>
-        /// truncate the string.
-        /// </summary>
-        /// <param name="s">The string.</param>
-        /// <param name="maxLength">The max length.</param>
-        /// <returns>The <see cref="string"/>.</returns>
         internal static string Truncate(this string s, int maxLength)
         {
             return s != null && s.Length > maxLength ? s.Substring(0, maxLength) : s;
@@ -44,10 +32,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Removes trailing / characters from a path and leaves just one
         /// </summary>
-        /// <param name="input">
-        /// The input.
-        /// </param>
-        /// <returns>the input string with a trailing slash</returns>
         internal static string EnsureTrailingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
@@ -57,8 +41,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Removes any leading / characters from a path
         /// </summary>
-        /// <param name="input">The input string.</param>
-        /// <returns>the input string without a leading slash</returns>
         internal static string RemoveLeadingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
@@ -68,8 +50,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Removes any leading / characters from a path
         /// </summary>
-        /// <param name="input">The input.</param>
-        /// <returns>the input string without a trailing slash</returns>
         internal static string RemoveTrailingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;

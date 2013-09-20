@@ -13,14 +13,7 @@ namespace StackExchange.Profiling
     [DataContract]
     public class ClientTimings
     {
-        /// <summary>
-        /// The client timing prefix.
-        /// </summary>
         private const string ClientTimingPrefix = "clientPerformance[timing][";
-
-        /// <summary>
-        /// The client probes prefix.
-        /// </summary>
         private const string ClientProbesPrefix = "clientProbes[";
 
         /// <summary>
@@ -38,8 +31,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns null if there is not client timing stuff
         /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns>the client timings.</returns>
         public static ClientTimings FromRequest(HttpRequest request)
         {
             ClientTimings timing = null;
@@ -164,11 +155,6 @@ namespace StackExchange.Profiling
             return timing;
         }
 
-        /// <summary>
-        /// convert to sentence case.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>the converted string.</returns>
         private static string SentenceCase(string value)
         {
             var sb = new StringBuilder();

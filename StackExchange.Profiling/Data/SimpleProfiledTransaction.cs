@@ -20,15 +20,8 @@ namespace StackExchange.Profiling.Data
         private readonly SimpleProfiledConnection _connection;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleProfiledTransaction"/> class. 
         /// Creates a new wrapped <see cref="IDbTransaction"/>
         /// </summary>
-        /// <param name="transaction">
-        /// The transaction to wrap
-        /// </param>
-        /// <param name="connection">
-        /// The wrapped connection this transaction is attached to
-        /// </param>
         public SimpleProfiledTransaction(IDbTransaction transaction, SimpleProfiledConnection connection)
         {
             if (transaction == null) throw new ArgumentNullException("transaction");
@@ -86,10 +79,6 @@ namespace StackExchange.Profiling.Data
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// dispose the command / connection and profiler.
-        /// </summary>
-        /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         private void Dispose(bool disposing)
         {
             if (disposing && _transaction != null)
