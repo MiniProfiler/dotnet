@@ -12,21 +12,9 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
-        /// <summary>
-        /// The parameter translator.
-        /// </summary>
         private static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
-
-        /// <summary>
-        /// don't quote.
-        /// </summary>
         private static readonly string[] DontQuote = new[] { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
 
-        /// <summary>
-        /// get the 'with length' formatter.
-        /// </summary>
-        /// <param name="native">The native string.</param>
-        /// <returns>the SQL timing parameter formatter function</returns>
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
             var capture = native;
@@ -66,8 +54,6 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        /// <param name="timing">The <c>SqlTiming</c> to format</param>
-        /// <returns>A formatted SQL string</returns>
         public string FormatSql(SqlTiming timing)
         {
             if (timing.Parameters == null || timing.Parameters.Count == 0)
@@ -123,11 +109,6 @@ namespace StackExchange.Profiling.SqlFormatters
                 .ToString();
         }
 
-        /// <summary>
-        /// prepare the value.
-        /// </summary>
-        /// <param name="parameter">The parameter.</param>
-        /// <returns>the prepared parameter value.</returns>
         private string PrepareValue(SqlTimingParameter parameter)
         {
             if (parameter.Value == null)

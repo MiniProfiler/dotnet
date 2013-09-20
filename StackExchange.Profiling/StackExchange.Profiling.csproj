@@ -119,7 +119,6 @@
     <Compile Include="RenderPosition.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />
     <Compile Include="SqlFormatters\ISqlFormatter.cs" />
-    <Compile Include="SqlFormatters\OracleFormatter.cs" />
     <Compile Include="SqlFormatters\SqlServerFormatter.cs" />
     <Compile Include="SingletonProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>

@@ -100,7 +100,11 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        public static void ExecuteFinish(this SqlProfiler sqlProfiler, IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
+        public static void ExecuteFinish(
+            this SqlProfiler sqlProfiler, 
+            IDbCommand command, 
+            SqlExecuteType type, 
+            DbDataReader reader = null)
         {
             if (sqlProfiler == null) return;
             sqlProfiler.ExecuteFinishImpl(command, type, reader);

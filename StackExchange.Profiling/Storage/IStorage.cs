@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace StackExchange.Profiling.Storage
 {
     /// <summary>
-    /// The list results order.
+    /// How lists should be sorted.
     /// </summary>
     public enum ListResultsOrder
     { 
@@ -36,14 +36,13 @@ namespace StackExchange.Profiling.Storage
     public interface IStorage
     {
         /// <summary>
-        /// list the result keys.
+        /// List the latest profiling results.
         /// </summary>
-        /// <param name="maxResults">The max results.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="finish">The finish.</param>
-        /// <param name="orderBy">order by.</param>
-        /// <returns>the list of keys in the result.</returns>
-        IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
+        IEnumerable<Guid> List(
+            int maxResults, 
+            DateTime? start = null, 
+            DateTime? finish = null, 
+            ListResultsOrder orderBy = ListResultsOrder.Descending);
 
         /// <summary>
         /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/>.
@@ -55,39 +54,23 @@ namespace StackExchange.Profiling.Storage
         void Save(MiniProfiler profiler);
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, which should map to <see cref="MiniProfiler.Id"/>.
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
         /// <remarks>
-        /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
+        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        /// <returns>
-        /// The <see cref="MiniProfiler"/>.
-        /// </returns>
         MiniProfiler Load(Guid id);
 
         /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
         void SetUnviewed(string user, Guid id);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
         void SetViewed(string user, Guid id);
 
         /// <summary>
@@ -96,7 +79,6 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">
         /// User identified by the current <c>MiniProfiler.Settings.UserProvider</c>
         /// </param>
-        /// <returns>the list of key values.</returns>
         List<Guid> GetUnviewedIds(string user);
     }
 }

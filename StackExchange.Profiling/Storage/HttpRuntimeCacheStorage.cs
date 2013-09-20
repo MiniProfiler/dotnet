@@ -5,31 +5,20 @@ using System.Web;
 namespace StackExchange.Profiling.Storage
 {
     /// <summary>
-    /// Understands how to store a <see cref="MiniProfiler"/> to the <see cref="System.Web.HttpRuntime.Cache"/> with absolute expiration.
+    /// Understands how to store a <see cref="MiniProfiler"/> to the <see cref="System.Web.HttpRuntime.Cache"/> 
+    /// with absolute expiration.
     /// </summary>
     public class HttpRuntimeCacheStorage : IStorage
     {
         /// <summary>
-        /// The profile info.
-        /// FYI: SortedList on uses the comparer for both key lookups and insertion
+        /// Identifies a MiniProfiler result and only contains the needed info for sorting a list of profiling sessions.
         /// </summary>
-        public class ProfileInfo : IComparable<ProfileInfo>
+        /// <remarks>SortedList on uses the comparer for both key lookups and insertion</remarks>
+        private class ProfileInfo : IComparable<ProfileInfo>
         {
-            /// <summary>
-            /// Gets or sets the started.
-            /// </summary>
+            public Guid Id { get; set; }
             public DateTime Started { get; set; }
 
-            /// <summary>
-            /// Gets or sets the id.
-            /// </summary>
-            public Guid Id { get; set; }
-
-            /// <summary>
-            /// compare the profile information.
-            /// </summary>
-            /// <param name="other">The other profile info instance..</param>
-            /// <returns>the comparison result.</returns>
             public int CompareTo(ProfileInfo other)
             {
                 var comp = Started.CompareTo(other.Started);
@@ -43,9 +32,6 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         private static readonly object AddPerUserUnviewedIdsLock = new object();
 
-        /// <summary>
-        /// The profiles.
-        /// </summary>
         private readonly SortedList<ProfileInfo, object> _profiles = new SortedList<ProfileInfo, object>();
 
         /// <summary>
@@ -55,8 +41,7 @@ namespace StackExchange.Profiling.Storage
         public const string CacheKeyPrefix = "mini-profiler-";
 
         /// <summary>
-        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for (i.e. the absolute expiration parameter of 
-        /// <see cref="System.Web.Caching.Cache.Insert(string, object, System.Web.Caching.CacheDependency, System.DateTime, System.TimeSpan, System.Web.Caching.CacheItemUpdateCallback)"/>)
+        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms.
         /// </summary>
         public TimeSpan CacheDuration { get; set; }
 
@@ -64,9 +49,6 @@ namespace StackExchange.Profiling.Storage
         /// Initialises a new instance of the <see cref="HttpRuntimeCacheStorage"/> class. 
         /// Returns a new HttpRuntimeCacheStorage class that will cache MiniProfilers for the specified duration.
         /// </summary>
-        /// <param name="cacheDuration">
-        /// The cache Duration.
-        /// </param>
         public HttpRuntimeCacheStorage(TimeSpan cacheDuration)
         {
             CacheDuration = cacheDuration;
@@ -76,7 +58,6 @@ namespace StackExchange.Profiling.Storage
         /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with <see cref="CacheKeyPrefix"/>
         /// and the parameter's <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The profiler.</param>
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
@@ -107,8 +88,6 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// remembers we did not view the profile
         /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="id">The id.</param>
         public void SetUnviewed(string user, Guid id)
         { 
             var ids = GetPerUserUnviewedIds(user);
@@ -124,8 +103,6 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Set the profile to viewed for this user
         /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="id">The id.</param>
         public void SetViewed(string user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
@@ -140,8 +117,6 @@ namespace StackExchange.Profiling.Storage
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>the mini profiler</returns>
         public MiniProfiler Load(Guid id)
         {
             var result = HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
@@ -154,7 +129,6 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">
         /// User identified by the current <c>MiniProfiler.Settings.UserProvider</c>.
         /// </param>
-        /// <returns>the list of keys.</returns>
         public List<Guid> GetUnviewedIds(string user)
         {
             var ids = GetPerUserUnviewedIds(user);
@@ -164,11 +138,6 @@ namespace StackExchange.Profiling.Storage
             }
         }
 
-        /// <summary>
-        /// insert into cache.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
         private void InsertIntoCache(string key, object value)
         {
             var expiration = DateTime.Now.Add(CacheDuration);
@@ -184,41 +153,16 @@ namespace StackExchange.Profiling.Storage
                 onRemoveCallback: null);
         }
 
-        /// <summary>
-        /// get the cache key.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>a string containing the cache key</returns>
         private string GetCacheKey(Guid id)
         {
             return CacheKeyPrefix + id;
         }
 
-        /// <summary>
-        /// get the per user un-viewed cache key.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>a string containing the un-viewed key</returns>
         private string GetPerUserUnviewedCacheKey(string user)
         {
             return CacheKeyPrefix + "unviewed-for-user-" + user;
         }
-
-        /// <summary>
-        /// get the per user un viewed ids.
-        /// </summary>
-        /// <param name="profiler">The profiler.</param>
-        /// <returns>the list of keys</returns>
-        private List<Guid> GetPerUserUnviewedIds(MiniProfiler profiler)
-        {
-            return GetPerUserUnviewedIds(profiler.User);
-        }
-
-        /// <summary>
-        /// get the per user un-viewed ids.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>the list of keys</returns>
+        
         private List<Guid> GetPerUserUnviewedIds(string user)
         {
             var key = GetPerUserUnviewedCacheKey(user);
@@ -242,14 +186,13 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// list the result keys.
+        /// List the latest profiling results.
         /// </summary>
-        /// <param name="maxResults">The max results.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="finish">The finish.</param>
-        /// <param name="orderBy">order by.</param>
-        /// <returns>the list of keys in the result.</returns>
-        public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
+        public IEnumerable<Guid> List(
+            int maxResults, 
+            DateTime? start = null, 
+            DateTime? finish = null, 
+            ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var guids = new List<Guid>(); 
             lock (_profiles)
@@ -285,11 +228,6 @@ namespace StackExchange.Profiling.Storage
             return guids;
         }
 
-        /// <summary>
-        /// The closest binary search.
-        /// </summary>
-        /// <param name="date">The date.</param>
-        /// <returns>The <see cref="int"/>.</returns>
         private int BinaryClosestSearch(DateTime date)
         {
             int lower = 0;

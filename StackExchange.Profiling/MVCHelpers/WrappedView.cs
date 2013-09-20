@@ -38,15 +38,6 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Initialises a new instance of the <see cref="WrappedView"/> class. 
         /// </summary>
-        /// <param name="wrapped">
-        /// IView to wrap
-        /// </param>
-        /// <param name="name">
-        /// Name/Path to view
-        /// </param>
-        /// <param name="isPartial">
-        /// Whether view is Partial
-        /// </param>
         public WrappedView(IView wrapped, string name, bool isPartial)
         {
             _wrapped = wrapped;
@@ -57,12 +48,6 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Renders the WrappedView and logs profiling data
         /// </summary>
-        /// <param name="viewContext">
-        /// The view Context.
-        /// </param>
-        /// <param name="writer">
-        /// The writer.
-        /// </param>
         public void Render(ViewContext viewContext, System.IO.TextWriter writer)
         {
             using (MiniProfiler.Current.Step("Render " + (IsPartial ? "partial" : string.Empty) + ": " + Name))

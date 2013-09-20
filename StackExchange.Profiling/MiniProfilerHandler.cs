@@ -30,7 +30,8 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, if you do that call this to bring back mini profiler.
+        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, 
+        /// if you do that call this to bring back mini profiler.
         /// </summary>
         public static void RegisterRoutes()
         {
@@ -41,11 +42,11 @@ namespace StackExchange.Profiling
             using (routes.GetWriteLock())
             {
                 var route = new Route(prefix + "{filename}", handler)
-                                {
-                                    // we have to specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
-                                    Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" }),
-                                    Constraints = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
-                                };
+                {
+                    // specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
+                    Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" }),
+                    Constraints = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
+                };
 
                 // put our routes at the beginning, like a boss
                 routes.Insert(0, route);
@@ -113,9 +114,11 @@ namespace StackExchange.Profiling
             if (profiler == null) return new HtmlString("");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
-            var authorized = MiniProfiler.Settings.Results_Authorize == null || MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
+            var authorized = MiniProfiler.Settings.Results_Authorize == null 
+                || MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
 
-            // unviewed ids are added to this list during Storage.Save, but we know we haven't see the current one yet, so go ahead and add it to the end 
+            // unviewed ids are added to this list during Storage.Save, but we know we haven't 
+            // seen the current one yet, so go ahead and add it to the end 
             var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
             ids.Add(profiler.Id);
 
@@ -170,11 +173,6 @@ namespace StackExchange.Profiling
             return GetResource(embeddedFile);
         }
 
-        /// <summary>
-        /// the index (Landing) view.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>a string containing the html.</returns>
         private static string Index(HttpContext context)
         {
             string message;
@@ -345,24 +343,12 @@ namespace StackExchange.Profiling
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
         }
 
-        /// <summary>
-        /// set the JSON results and the content type.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="profiler">The profiler.</param>
-        /// <returns>a string containing the JSON results.</returns>
         private static string ResultsJson(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "application/json";
             return MiniProfiler.ToJson(profiler);
         }
 
-        /// <summary>
-        /// results full page.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="profiler">The profiler.</param>
-        /// <returns>a string containing the results page</returns>
         private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "text/html";
@@ -379,11 +365,6 @@ namespace StackExchange.Profiling
             });
         }
 
-        /// <summary>
-        /// get the resource.
-        /// </summary>
-        /// <param name="filename">The filename.</param>
-        /// <returns>a string containing the resource</returns>
         private static string GetResource(string filename)
         {
             filename = filename.ToLower();
@@ -435,13 +416,6 @@ namespace StackExchange.Profiling
         private static bool BypassLocalLoad = false;
 #endif
 
-        /// <summary>
-        /// Helper method that sets a proper 404 response code.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="contentType">The content Type.</param>
-        /// <param name="message">The message.</param>
-        /// <returns>a string containing the 'not found' message.</returns>
         private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
         {
             context.Response.StatusCode = 404;

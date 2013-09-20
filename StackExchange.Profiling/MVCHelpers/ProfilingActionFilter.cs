@@ -12,15 +12,11 @@ namespace StackExchange.Profiling.MVCHelpers
     /// </summary>
     public class ProfilingActionFilter : ActionFilterAttribute
     {
-        /// <summary>
-        /// The stack key.
-        /// </summary>
         private const string StackKey = "ProfilingActionFilterStack";
 
         /// <summary>
         /// Happens before the action starts running
         /// </summary>
-        /// <param name="filterContext">The filter Context.</param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var mp = MiniProfiler.Current;
@@ -52,7 +48,6 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Happens after the action executes
         /// </summary>
-        /// <param name="filterContext">The filter Context.</param>
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             base.OnActionExecuted(filterContext);

@@ -25,9 +25,6 @@ namespace StackExchange.Profiling
         /// Initialises a new instance of the <see cref="Suppression"/> class. 
         /// Creates a new Suppression to deactive profiling while alive
         /// </summary>
-        /// <param name="profiler">
-        /// The profiler.
-        /// </param>
         public Suppression(MiniProfiler profiler)
         {
             if (profiler == null)
@@ -50,9 +47,6 @@ namespace StackExchange.Profiling
         /// </summary>
         internal MiniProfiler Profiler { get; private set; }
 
-        /// <summary>
-        /// dispose the profiler.
-        /// </summary>
         void IDisposable.Dispose()
         {
             if(Profiler != null && _wasSuppressed)
