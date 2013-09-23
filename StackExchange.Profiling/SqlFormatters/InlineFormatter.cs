@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -26,26 +27,24 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Formats the SQL in a generic friendly format, including the parameter type information 
         /// in a comment if it was specified in the InlineFormatter constructor
         /// </summary>
-        public string FormatSql(SqlTiming timing)
+        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
         {
-            var sql = timing.CommandString;
-
-            if (timing.Parameters == null || timing.Parameters.Count == 0)
+            if (parameters == null || parameters.Count == 0)
             {
-                return sql;
+                return commandText;
             }
 
-            foreach (var p in timing.Parameters)
+            foreach (var p in parameters)
             {
                 // If the parameter doesn't have a prefix (@,:,etc), append one
                 var name = ParamPrefixes.IsMatch(p.Name) 
                     ? p.Name 
-                    : Regex.Match(sql, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
+                    : Regex.Match(commandText, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
                 var value = GetParameterValue(p);
-                sql = Regex.Replace(sql, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
             }
 
-            return sql;
+            return commandText;
         }
 
         /// <summary>

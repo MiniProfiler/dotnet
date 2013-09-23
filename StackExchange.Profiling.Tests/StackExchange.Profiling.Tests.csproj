@@ -43,16 +43,26 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.666\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\packages\System.Data.SQLite.1.0.88.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\packages\System.Data.SQLite.1.0.88.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SqlServerCompact.4.0.8482.1\lib\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -66,12 +76,12 @@
     <Compile Include="BaseTestTest.cs">
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProtobufSerializationTest.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
     <Compile Include="lib\HaackHttpSimulator\SimulatedHttpRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MiniProfilerTest.cs" />
-    <Compile Include="SqlTimingParameterTest.cs" />
     <Compile Include="Storage\TestHttpRuntimeCacheStorage.cs" />
     <Compile Include="UnitTestStopwatch.cs" />
   </ItemGroup>
@@ -81,6 +91,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StackExchange.Profiling.EntityFramework\StackExchange.Profiling.EntityFramework.csproj">

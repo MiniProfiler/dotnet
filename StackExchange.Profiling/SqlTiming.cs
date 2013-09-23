@@ -14,15 +14,14 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Profiles a single SQL execution.
     /// </summary>
-    [DataContract]
-    public class SqlTiming : CustomTiming // TODO: remove this inheritance 
+    public class SqlTiming
     {
         /// <summary>
         /// Holds the maximum size that will be stored for byte[] parameters
         /// </summary>
         private const int MaxByteParameterSize = 512;
         private readonly MiniProfiler _profiler;
-        private readonly long _startTicks;
+        private readonly CustomTiming _customTiming;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="SqlTiming"/> class. 
@@ -30,62 +29,39 @@ namespace StackExchange.Profiling
         /// </summary>
         public SqlTiming(IDbCommand command, SqlExecuteType type, MiniProfiler profiler)
         {
-            Id = Guid.NewGuid();
-
-            CommandString = AddSpacesToParameters(command.CommandText);
-            Parameters = GetCommandParameters(command);
-            ExecuteType = type.ToString();
-
-            if (!MiniProfiler.Settings.ExcludeStackTraceSnippetFromCustomTimings)
-                StackTraceSnippet = Helpers.StackTraceSnippet.Get();
-
+            if (profiler == null) throw new ArgumentNullException("profiler");
             _profiler = profiler;
-            if (_profiler != null)
+            
+            var commandText = AddSpacesToParameters(command.CommandText);
+            var parameters = GetCommandParameters(command);
+
+            if (MiniProfiler.Settings.SqlFormatter != null)
             {
-                // THREADING: revisit
-                _profiler.Head.AddSqlTiming(this);
-
-                _startTicks = _profiler.ElapsedTicks;
-                StartMilliseconds = _profiler.GetRoundedMilliseconds(_startTicks);
+                commandText = MiniProfiler.Settings.SqlFormatter.FormatSql(commandText, parameters);
             }
-        }
 
-        // TODO: remove this
-
-        /// <summary>
-        /// Gets the command string with special formatting applied based on <c>MiniProfiler.Settings.SqlFormatter</c>
-        /// </summary>
-        internal string FormattedCommandString
-        {
-            get
-            {
-                if (MiniProfiler.Settings.SqlFormatter == null)
-                    return CommandString;
-
-                return MiniProfiler.Settings.SqlFormatter.FormatSql(this);
-            }
+            _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());
         }
 
         /// <summary>
-        /// Gets or sets any parameter names and values used by the profiled <c>DbCommand.</c>
+        /// Gets or sets the offset from main <c>MiniProfiler</c> start that this custom command began.
         /// </summary>
-        [ScriptIgnore]
-        public List<SqlTimingParameter> Parameters { get; set; }
+        public decimal StartMilliseconds { get { return _customTiming.StartMilliseconds; } }
 
         /// <summary>
         /// Returns a snippet of the SQL command and the duration.
         /// </summary>
         public override string ToString()
         {
-            return CommandString.Truncate(30) + " (" + DurationMilliseconds + " ms)";
+            return _customTiming.CommandString.Truncate(30) + " (" + _customTiming.DurationMilliseconds + " ms)";
         }
 
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        public override bool Equals(object rValue)
+        public override bool Equals(object other)
         {
-            return rValue is SqlTiming && Id.Equals(((SqlTiming)rValue).Id);
+            return other is SqlTiming && _customTiming.Id.Equals(((SqlTiming)other)._customTiming.Id);
         }
 
         /// <summary>
@@ -93,7 +69,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return _customTiming.Id.GetHashCode();
         }
 
         /// <summary>
@@ -103,11 +79,11 @@ namespace StackExchange.Profiling
         {
             if (isReader)
             {
-                FirstFetchDurationMilliseconds = GetDurationMilliseconds();
+                _customTiming.FirstFetchCompleted();
             }
             else
             {
-                DurationMilliseconds = GetDurationMilliseconds();
+                _customTiming.Stop();
             }
         }
 
@@ -117,7 +93,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public void ReaderFetchComplete()
         {
-            DurationMilliseconds = GetDurationMilliseconds();
+            _customTiming.Stop();
         }
 
         /// <summary>
@@ -174,12 +150,7 @@ namespace StackExchange.Profiling
 
             return parameter.Size;
         }
-
-        private decimal GetDurationMilliseconds()
-        {
-            return _profiler.GetRoundedMilliseconds(_profiler.ElapsedTicks - _startTicks);
-        }
-
+        
         /// <summary>
         /// To help with display, put some space around crowded commas.
         /// </summary>
@@ -188,7 +159,10 @@ namespace StackExchange.Profiling
             return Regex.Replace(commandString, @",([^\s])", ", $1");
         }
 
-        private List<SqlTimingParameter> GetCommandParameters(IDbCommand command)
+        /// <summary>
+        /// Returns better parameter information for <paramref name="command"/>.  Returns null if no parameters are present.
+        /// </summary>
+        public static List<SqlTimingParameter> GetCommandParameters(IDbCommand command)
         {
             if (command.Parameters == null || command.Parameters.Count == 0) return null;
 
@@ -196,11 +170,10 @@ namespace StackExchange.Profiling
 
             foreach (DbParameter parameter in command.Parameters)
             {
-                if (!string.IsNullOrWhiteSpace(parameter.ParameterName))
+                if (parameter.ParameterName.HasValue())
                 {
                     result.Add(new SqlTimingParameter
                     {
-                        ParentSqlTimingId = Id,
                         Name = parameter.ParameterName.Trim(),
                         Value = GetValue(parameter),
                         DbType = parameter.DbType.ToString(),

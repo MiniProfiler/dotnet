@@ -88,15 +88,26 @@ namespace StackExchange.Profiling
         /// </summary>
         public void FirstFetchCompleted()
         {
-            
+            if (FirstFetchDurationMilliseconds == null)
+            {
+                FirstFetchDurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
+            }
         }
 
-        void IDisposable.Dispose()
+        /// <summary>
+        /// Stops this timing, setting <see cref="DurationMilliseconds"/>.
+        /// </summary>
+        public void Stop()
         {
             if (DurationMilliseconds == null)
             {
                 DurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
             }
+        }
+
+        void IDisposable.Dispose()
+        {
+            Stop();
         }
     }
 }

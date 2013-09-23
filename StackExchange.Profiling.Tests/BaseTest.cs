@@ -1,4 +1,7 @@
-﻿namespace StackExchange.Profiling.Tests
+﻿using System.Collections;
+using System.Data.Common;
+
+namespace StackExchange.Profiling.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -55,14 +58,16 @@
         }
 
         /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, e.g. when <paramref name="childDepth"/> is 0, the
-        /// resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
-        /// <param name="url">the url</param>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
         /// <returns>the mini profiler</returns>
-        public static MiniProfiler GetProfiler(string url = DefaultRequestUrl, int childDepth = 0, int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+        public static MiniProfiler GetProfiler(
+            string url = DefaultRequestUrl, 
+            int childDepth = 0, 
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             MiniProfiler result = null;
             Action step = null;
@@ -104,10 +109,6 @@
         /// <summary>
         /// Creates a <c>SqlCe</c> file database named after <typeparamref name="T"/>, returning the connection string to the database.
         /// </summary>
-        /// <typeparam name="T">the database type</typeparam>
-        /// <param name="deleteIfExists">delete if exists.</param>
-        /// <param name="sqlToExecute">The SQL To execute.</param>
-        /// <returns>a string containing the SQL database</returns>
         public static string CreateSqlCeDatabase<T>(bool deleteIfExists = false, IEnumerable<string> sqlToExecute = null)
         {
             var filename = GetSqlCeFileNameFor<T>();
@@ -160,90 +161,115 @@
         }
 
         /// <summary>
+        /// Returns an open connection that will have its queries profiled.
+        /// </summary>
+        public static DbConnection GetSqliteConnection()
+        {
+            DbConnection cnn = new System.Data.SQLite.SQLiteConnection("Data Source=:memory:");
+
+            // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
+            // when MiniProfiler.Current is null, this connection will not record any database timings
+            if (MiniProfiler.Current != null)
+            {
+                cnn = new Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
+            }
+
+            cnn.Open();
+            return cnn;
+        }
+
+        /// <summary>
         /// The assert profilers are equal.
         /// </summary>
-        /// <param name="mp1">the first profiler.</param>
-        /// <param name="mp2">The second profiler.</param>
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
             Assert.AreEqual(mp1, mp2);
             AssertPublicPropertiesAreEqual(mp1, mp2);
+            AssertTimingsAreEqualAndRecurse(mp1.Root, mp2.Root);
+        }
 
-            var timings1 = mp1.GetTimingHierarchy().ToList();
-            var timings2 = mp2.GetTimingHierarchy().ToList();
+        protected void AssertTimingsAreEqualAndRecurse(Timing t1, Timing t2)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
 
-            Assert.That(timings1.Count == timings2.Count);
-            for (int i = 0; i < timings1.Count; i++)
+            Assert.NotNull(t1);
+            Assert.NotNull(t2);
+
+            AssertPublicPropertiesAreEqual(t1, t2);
+
+            if (t1.CustomTimings != null || t2.CustomTimings != null)
             {
-                var t1 = timings1[i];
-                var t2 = timings2[i];
-                Assert.AreEqual(t1, t2);
+                Assert.NotNull(t1.CustomTimings);
+                Assert.NotNull(t2.CustomTimings);
 
-                Console.WriteLine();
-                AssertPublicPropertiesAreEqual(t1, t2);
+                Assert.AreEqual(t1.CustomTimings.Count, t2.CustomTimings.Count);
 
-                //if (!t1.HasSqlTimings && !t2.HasSqlTimings) continue;
+                foreach (var pair1 in t1.CustomTimings)
+                {
+                    Console.WriteLine();
 
-                //Assert.NotNull(t1.SqlTimings);
-                //Assert.NotNull(t2.SqlTimings);
+                    var ct1 = pair1.Value;
+                    List<CustomTiming> ct2;
+                    Assert.True(t2.CustomTimings.TryGetValue(pair1.Key, out ct2));
 
-                //for (int j = 0; j < t1.SqlTimings.Count; j++)
-                //{
-                //    var s1 = t1.SqlTimings[j];
-                //    var s2 = t2.SqlTimings[j];
-                //    Assert.AreEqual(s1, s2);
+                    for (int i = 0; i < ct1.Count; i++)
+                    {
+                        AssertPublicPropertiesAreEqual(ct1[i], ct2[i]);
+                    }
+                }
+            }
 
-                //    Console.WriteLine();
-                //    AssertPublicPropertiesAreEqual(s1, s2);
+            if (t1.Children != null || t2.Children != null)
+            {
+                Assert.NotNull(t1.Children);
+                Assert.NotNull(t2.Children);
 
-                //    if (s1.Parameters == null && s2.Parameters == null) continue;
+                Assert.AreEqual(t1.Children.Count, t2.Children.Count);
 
-                //    Assert.NotNull(s1.Parameters);
-                //    Assert.NotNull(s2.Parameters);
-
-                //    for (int k = 0; k < s1.Parameters.Count; k++)
-                //    {
-                //        var p1 = s1.Parameters[k];
-                //        var p2 = s2.Parameters[k];
-                //        Assert.AreEqual(p1, p2);
-
-                //        Console.WriteLine();
-                //        AssertPublicPropertiesAreEqual(p1, p2);
-                //    }
-                //}
+                for (int i = 0; i < t1.Children.Count; i++)
+                {
+                    AssertTimingsAreEqualAndRecurse(t1.Children[i], t2.Children[i]);
+                }
             }
         }
 
         /// <summary>
-        /// The assert public properties are equal.
+        /// Doesn't handle collection properties!
         /// </summary>
-        /// <param name="t1">first instance.</param>
-        /// <param name="t2">second instance.</param>
-        /// <typeparam name="T">the property type</typeparam>
         protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2)
         {
             Assert.NotNull(t1);
             Assert.NotNull(t2);
 
-            // check public properties
+            // we'll handle any collections elsewhere
             var props = from p in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        where p.IsDefined(typeof(System.Runtime.Serialization.DataMemberAttribute), false)
+                        && !p.PropertyType.GetInterfaces().Any(i => i.Equals(typeof(IDictionary)) || i.Equals(typeof(IList)))
                         select p;
 
             foreach (var p in props)
             {
-                var val1 = p.GetValue(t1, null);
-                var val2 = p.GetValue(t2, null);
-
-                // datetimes are sometimes serialized with different precisions - just look care about the 10th of a second
-                if (p.PropertyType == typeof(DateTime))
+                try
                 {
-                    val1 = TrimToDecisecond((DateTime)val1);
-                    val2 = TrimToDecisecond((DateTime)val2);
-                }
+                    var val1 = p.GetValue(t1, null);
+                    var val2 = p.GetValue(t2, null);
 
-                var name = typeof(T).Name + "." + p.Name;
-                Assert.AreEqual(val1, val2, name + " have different values");
-                Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
+                    // datetimes are sometimes serialized with different precisions - just look care about the 10th of a second
+                    if (p.PropertyType == typeof(DateTime))
+                    {
+                        val1 = TrimToDecisecond((DateTime)val1);
+                        val2 = TrimToDecisecond((DateTime)val2);
+                    }
+
+                    var name = typeof(T).Name + "." + p.Name;
+                    Assert.AreEqual(val1, val2, name + " have different values");
+                    Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("AssertPublicPropertiesAreEqual had an exception on " + p.Name + "; " + ex);
+                }
             }
         }
 

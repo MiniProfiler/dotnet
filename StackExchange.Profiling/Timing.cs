@@ -235,18 +235,6 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Adds the parameter <c>sqlTiming</c> to this Timing's <c>SqlTimings</c> collection.
-        /// </summary>
-        /// <param name="sqlTiming">A SQL statement profiling that was executed in this Timing step.</param>
-        /// <remarks>
-        /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.
-        /// </remarks>
-        public void AddSqlTiming(SqlTiming sqlTiming)
-        {
-            GetCustomTimingList("sql").Add(sqlTiming);
-        }
-
-        /// <summary>
         /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of 
         /// custom timings, <see cref="CustomTimings"/>.  Ensures that <see cref="CustomTimings"/> is created, 
         /// as well as the <paramref name="category"/>'s list.

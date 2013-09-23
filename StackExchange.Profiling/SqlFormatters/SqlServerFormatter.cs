@@ -48,23 +48,22 @@ namespace StackExchange.Profiling.SqlFormatters
                 { DbType.Boolean, p => "bit" },
                 { DbType.Binary, GetWithLenFormatter("varbinary") },
             };
-
         }
 
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public string FormatSql(SqlTiming timing)
+        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
         {
-            if (timing.Parameters == null || timing.Parameters.Count == 0)
+            if (parameters == null || parameters.Count == 0)
             {
-                return timing.CommandString;
+                return commandText;
             }
 
             var buffer = new StringBuilder("DECLARE ");
             var first = true;
 
-            foreach (var p in timing.Parameters)
+            foreach (var p in parameters)
             {
                 if (first)
                 {
@@ -105,7 +104,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 .Append(";")
                 .AppendLine()
                 .AppendLine()
-                .Append(timing.CommandString)
+                .Append(commandText)
                 .ToString();
         }
 

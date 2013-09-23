@@ -13,7 +13,6 @@ namespace StackExchange.Profiling
     /// </summary>
     /// <remarks>Totally baller.</remarks>
     [DataContract]
-    [KnownType(typeof(SqlTiming))] // TODO: remove this after removing SqlTiming's subclassing of CustomTiming
     public partial class MiniProfiler
     {
         /// <summary>
@@ -32,7 +31,9 @@ namespace StackExchange.Profiling
         public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info)
         {
             Id = Guid.NewGuid();
+#pragma warning disable 612,618
             Level = level;
+#pragma warning restore 612,618
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
             Started = DateTime.UtcNow;

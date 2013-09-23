@@ -11,12 +11,6 @@ namespace StackExchange.Profiling
     public class SqlTimingParameter
     {
         /// <summary>
-        /// Which SqlTiming this Parameter was executed with.
-        /// </summary>
-        [ScriptIgnore]
-        public Guid ParentSqlTimingId { get; set; }
-
-        /// <summary>
         /// Parameter name, e.g. "@routeName"
         /// </summary>
         [DataMember(Order = 1)]
@@ -48,7 +42,6 @@ namespace StackExchange.Profiling
         {
             var other = obj as SqlTimingParameter;
             return other != null 
-                && ParentSqlTimingId.Equals(other.ParentSqlTimingId) 
                 && string.Equals(Name, other.Name) 
                 && string.Equals(Value, other.Value);
         }
@@ -58,7 +51,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public override int GetHashCode()
         {
-            int hashcode = ParentSqlTimingId.GetHashCode() ^ Name.GetHashCode();
+            int hashcode = Name.GetHashCode();
             
             if (Value != null)
                 hashcode ^= Value.GetHashCode();
