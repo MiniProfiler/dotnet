@@ -32,14 +32,12 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
-        /// <returns>mini profiler.</returns>
         public abstract MiniProfiler GetCurrentProfiler();
 
         /// <summary>
         /// Sets <paramref name="profiler"/> to be active (read to start profiling)
         /// This should be called once a new MiniProfiler has been created.
         /// </summary>
-        /// <param name="profiler">The profiler to set to active</param>
         /// <exception cref="ArgumentNullException">If <paramref name="profiler"/> is null</exception>
         protected static void SetProfilerActive(MiniProfiler profiler)
         {
@@ -52,7 +50,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the profiler and marks it as inactive.
         /// </summary>
-        /// <param name="profiler">The profiler to stop</param>
         /// <returns>True if successful, false if Stop had previously been called on this profiler</returns>
         /// <exception cref="ArgumentNullException">If <paramref name="profiler"/> is null</exception>
         protected static bool StopProfiler(MiniProfiler profiler)
@@ -71,7 +68,6 @@ namespace StackExchange.Profiling
         /// Calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
         /// profiler using the current storage settings
         /// </summary>
-        /// <param name="current">mini profiler</param>
         protected static void SaveProfiler(MiniProfiler current)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime

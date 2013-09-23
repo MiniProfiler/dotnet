@@ -376,7 +376,7 @@ namespace StackExchange.Profiling
             {
 
                 var trace = new System.Diagnostics.StackTrace(true);
-                var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\..\\ui\\" + filename;
+                var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\ui\\" + filename;
                 try
                 {
                     return File.ReadAllText(path);

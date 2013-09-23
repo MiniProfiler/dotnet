@@ -18,11 +18,6 @@ namespace StackExchange.Profiling
         private readonly long _startTicks;
 
         /// <summary>
-        /// Gets or sets the parent timing.
-        /// </summary>
-        private Timing _parentTiming;
-
-        /// <summary>
         /// Initialises a new instance of the <see cref="Timing"/> class. 
         /// Obsolete - used for serialization.
         /// </summary>
@@ -32,7 +27,6 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="Timing"/> class. 
         /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
         /// </summary>
         public Timing(MiniProfiler profiler, Timing parent, string name)
@@ -99,30 +93,11 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Gets or sets Needed for database deserialization and JSON serialization.
-        /// </summary>
-        [ScriptIgnore]
-        public Guid? ParentTimingId { get; set; }
-
-        /// <summary>
         /// Gets or sets Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         [ScriptIgnore]
-        public Timing ParentTiming
-        {
-            get
-            {
-                return _parentTiming;
-            }
-            set
-            {
-                _parentTiming = value;
-
-                if (value != null && ParentTimingId != value.Id)
-                    ParentTimingId = value.Id;
-            }
-        }
+        public Timing ParentTiming { get; set; }
 
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
@@ -145,15 +120,7 @@ namespace StackExchange.Profiling
                 return Math.Round(result, 1);
             }
         }
-
-        ///// <summary>
-        ///// Gets the aggregate elapsed milliseconds of all <c>SqlTimings</c> executed in this Timing, excluding Children Timings.
-        ///// </summary>
-        //public decimal SqlTimingsDurationMilliseconds
-        //{
-        //    get { return HasSqlTimings ? Math.Round(SqlTimings.Sum(s => s.DurationMilliseconds), 1) : 0; }
-        //}
-
+        
         /// <summary>
         /// Gets a value indicating whether this <see cref="DurationWithoutChildrenMilliseconds"/> is less than the configured
         /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
@@ -172,23 +139,6 @@ namespace StackExchange.Profiling
         {
             get { return Children != null && Children.Count > 0; }
         }
-
-        ///// <summary>
-        ///// Gets a value indicating whether this Timing step collected SQL execution timings.
-        ///// </summary>
-        //public bool HasSqlTimings
-        //{
-        //    get { return SqlTimings != null && SqlTimings.Count > 0; }
-        //}
-
-        ///// <summary>
-        ///// Gets a value indicating whether this has duplicate SQL timings.
-        ///// Returns true if any <see cref="SqlTiming"/>s executed in this step are detected as duplicate statements.
-        ///// </summary>
-        //public bool HasDuplicateSqlTimings
-        //{
-        //    get { return HasSqlTimings && SqlTimings.Any(s => s.IsDuplicate); }
-        //}
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
