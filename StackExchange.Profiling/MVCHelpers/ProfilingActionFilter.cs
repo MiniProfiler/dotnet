@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using StackExchange.Profiling.Helpers;
 
 #if ASP_NET_MVC3
 namespace StackExchange.Profiling.MVCHelpers
@@ -17,7 +18,7 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Happens before the action starts running
         /// </summary>
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext ctx)
         {
             var mp = MiniProfiler.Current;
             if (mp != null)
@@ -29,20 +30,16 @@ namespace StackExchange.Profiling.MVCHelpers
                     HttpContext.Current.Items[StackKey] = stack;
                 }
 
-                var profiler = MiniProfiler.Current;
-                if (profiler != null)
-                {
-                    var tokens = filterContext.RouteData.DataTokens;
-                    string area = tokens.ContainsKey("area") && !string.IsNullOrEmpty((string)tokens["area"]) ?
-                        tokens["area"] + "." : string.Empty;
-                    string controller = filterContext.Controller.ToString().Split('.').Last() + ".";
-                    string action = filterContext.ActionDescriptor.ActionName;
+                var tokens = ctx.RouteData.DataTokens;
+                string area = tokens.ContainsKey("area") && ((string)tokens["area"]).HasValue() 
+                    ? tokens["area"] + "." 
+                    : "";
+                string controller = ctx.Controller.ToString().Split('.').Last() + ".";
+                string action = ctx.ActionDescriptor.ActionName;
 
-                    stack.Push(profiler.Step("Controller: " + area + controller + action));
-                }
-            
+                stack.Push(mp.Step("Controller: " + area + controller + action));
             }
-            base.OnActionExecuting(filterContext);
+            base.OnActionExecuting(ctx);
         }
 
         /// <summary>

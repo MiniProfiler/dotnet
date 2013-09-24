@@ -21,10 +21,7 @@ namespace StackExchange.Profiling.MVCHelpers
             _wrapped = wrapped;
         }
 
-        private ViewEngineResult Find(
-            ControllerContext controllerContext, 
-            string name, 
-            Func<ViewEngineResult> finder, bool isPartial)
+        private ViewEngineResult Find(ControllerContext ctx, string name, Func<ViewEngineResult> finder, bool isPartial)
         {
             var profiler = MiniProfiler.Current;
             IDisposable block = null;
@@ -63,25 +60,17 @@ namespace StackExchange.Profiling.MVCHelpers
         /// <summary>
         /// Find a partial
         /// </summary>
-        public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache)
+        public ViewEngineResult FindPartialView(ControllerContext ctx, string partialViewName, bool useCache)
         {
-            return Find(
-                controllerContext, 
-                partialViewName, 
-                () => _wrapped.FindPartialView(controllerContext, partialViewName, useCache), 
-                isPartial: true);
+            return Find(ctx, partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
         }
 
         /// <summary>
         /// Find a view
         /// </summary>
-        public ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache)
+        public ViewEngineResult FindView(ControllerContext ctx, string viewName, string masterName, bool useCache)
         {
-            return Find(
-                controllerContext, 
-                viewName, 
-                () => _wrapped.FindView(controllerContext, viewName, masterName, useCache), 
-                isPartial: false);
+            return Find(ctx, viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
         }
 
         /// <summary>

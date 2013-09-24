@@ -50,7 +50,9 @@ namespace StackExchange.Profiling.MVCHelpers
         /// </summary>
         public void Render(ViewContext viewContext, System.IO.TextWriter writer)
         {
-            using (MiniProfiler.Current.Step("Render " + (IsPartial ? "partial" : string.Empty) + ": " + Name))
+            var prof = MiniProfiler.Current;
+            string name = prof != null ? ("Render" + (IsPartial ? " partial" : "") + ": " + Name) : null;
+            using (prof.Step(name))
             {
                 _wrapped.Render(viewContext, writer);
             }
