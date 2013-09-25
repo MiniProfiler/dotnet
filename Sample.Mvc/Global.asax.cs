@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using StackExchange.Profiling;
-using StackExchange.Profiling.MVCHelpers;
+using StackExchange.Profiling.Mvc;
 
 namespace SampleWeb
 {

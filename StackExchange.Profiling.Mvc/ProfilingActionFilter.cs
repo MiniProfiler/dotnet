@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using StackExchange.Profiling.Helpers;
 
-#if ASP_NET_MVC3
-namespace StackExchange.Profiling.MVCHelpers
+namespace StackExchange.Profiling.Mvc
 {
     /// <summary>
     /// This filter can be applied globally to hook up automatic action profiling
@@ -31,8 +29,8 @@ namespace StackExchange.Profiling.MVCHelpers
                 }
 
                 var tokens = ctx.RouteData.DataTokens;
-                string area = tokens.ContainsKey("area") && ((string)tokens["area"]).HasValue() 
-                    ? tokens["area"] + "." 
+                string area = tokens.ContainsKey("area") && !string.IsNullOrWhiteSpace(((string)tokens["area"]))
+                    ? tokens["area"] + "."
                     : "";
                 string controller = ctx.Controller.ToString().Split('.').Last() + ".";
                 string action = ctx.ActionDescriptor.ActionName;
@@ -56,4 +54,3 @@ namespace StackExchange.Profiling.MVCHelpers
         }
     }
 }
-#endif

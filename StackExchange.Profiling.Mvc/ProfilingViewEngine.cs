@@ -3,8 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-#if ASP_NET_MVC3
-namespace StackExchange.Profiling.MVCHelpers
+namespace StackExchange.Profiling.Mvc
 {
     /// <summary>
     /// You can wrap your view engines with this view to enable profiling on views and partial
@@ -82,4 +81,3 @@ namespace StackExchange.Profiling.MVCHelpers
         }
     }
 }
-#endif

@@ -1,7 +1,6 @@
 ﻿using System.Web.Mvc;
 
-#if ASP_NET_MVC3
-namespace StackExchange.Profiling.MVCHelpers
+namespace StackExchange.Profiling.Mvc
 {
     /// <summary>
     /// Wrapped MVC View that ProfilingViewEngine uses to log profiling data
@@ -59,4 +58,3 @@ namespace StackExchange.Profiling.MVCHelpers
         }
     }
 }
-#endif

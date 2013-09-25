@@ -112,9 +112,6 @@
     <Compile Include="MiniProfiler.cs" />
     <Compile Include="ClientTimingHelper.cs" />
     <Compile Include="MiniProfilerExtensions.cs" />
-    <Compile Include="MVCHelpers\ProfilingActionFilter.cs" />
-    <Compile Include="MVCHelpers\ProfilingViewEngine.cs" />
-    <Compile Include="MVCHelpers\WrappedView.cs" />
     <Compile Include="ProfileLevel.cs" />
     <Compile Include="RenderPosition.cs" />
     <Compile Include="SqlFormatters\InlineFormatter.cs" />
