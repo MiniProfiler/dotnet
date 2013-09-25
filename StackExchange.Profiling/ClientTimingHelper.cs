@@ -1,6 +1,9 @@
 ﻿namespace StackExchange.Profiling
 {
-    public static partial class ClientTimingHelper
+    /// <summary>
+    /// Pro
+    /// </summary>
+    public static class ClientTimingHelper
     {
         /// <summary>
         /// This code needs to be inserted in the page before client timings work

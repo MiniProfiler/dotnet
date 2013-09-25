@@ -2,13 +2,12 @@
 using System.Web;
 using System.Web.WebPages;
 
-#if ASP_NET_MVC3
-namespace StackExchange.Profiling
+namespace StackExchange.Profiling.Mvc
 {
     /// <summary>
-    /// Used to provide 
+    /// Used to provide MVC-specific extensions for gathering <see cref="ClientTimingHelper"/> information.
     /// </summary>
-    partial class ClientTimingHelper
+    public static class ClientTimingHelperExtensions
     {
         /// <summary>
         /// This needs to be called at the beginning of the layout for client side probe support, returns nothing if mini profiler is not enabled
@@ -16,7 +15,7 @@ namespace StackExchange.Profiling
         public static IHtmlString InitClientTimings(this WebPageBase page)
         {
             if (MiniProfiler.Current == null) return null;
-            return new HtmlString(InitScript);
+            return new HtmlString(ClientTimingHelper.InitScript);
         }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace StackExchange.Profiling
         public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> html)
         {
             var result = html(null).ToHtmlString();
-            return new HtmlString(TimeScript(name, result));
+            return new HtmlString(ClientTimingHelper.TimeScript(name, result));
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static IHtmlString TimeScript(this WebPageBase page, string name, IHtmlString html)
         {
-            return new HtmlString(TimeScript(name, html.ToHtmlString()));
+            return new HtmlString(ClientTimingHelper.TimeScript(name, html.ToHtmlString()));
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static IHtmlString TimeScript(this WebPageBase page, string name, string html)
         {
-            return new HtmlString(TimeScript(name, html));
+            return new HtmlString(ClientTimingHelper.TimeScript(name, html));
         }
     }
 }
-#endif

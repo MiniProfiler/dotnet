@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ASP_NET_MVC3</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\MiniProfiler.xml</DocumentationFile>
@@ -62,7 +62,6 @@
     <Compile Include="BaseProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClientTimingHelper.MVC.cs" />
     <Compile Include="ClientTimings.cs" />
     <Compile Include="CustomTiming.cs" />
     <Compile Include="MiniProfilerHandler.cs">
