@@ -64,6 +64,21 @@ namespace SampleWeb.Controllers
                 }
             }
 
+            // simulate fetching a url
+            using (profiler.CustomTiming("http", "GET http://google.com"))
+            {
+                Thread.Sleep(50);
+            }
+
+            // now something that loops
+            for (int i = 0; i < 15; i++)
+            {
+                using (profiler.CustomTiming("redis", "SET \"mykey\" 10"))
+                {
+                    Thread.Sleep(i);
+                }
+            }
+
             return View();
         }
 
