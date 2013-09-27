@@ -56,18 +56,25 @@ namespace SampleWeb.Controllers
             {
                 using (profiler.Step("Step A"))
                 {
-                    Thread.Sleep(100);
+                    // simulate fetching a url
+                    using (profiler.CustomTiming("http", "GET http://google.com"))
+                    {
+                        Thread.Sleep(10);
+                    }
                 }
                 using (profiler.Step("Step B"))
                 {
-                    Thread.Sleep(250);
-                }
-            }
+                    // simulate fetching a url
+                    using (profiler.CustomTiming("http", "GET http://stackoverflow.com"))
+                    {
+                        Thread.Sleep(20);
+                    }
 
-            // simulate fetching a url
-            using (profiler.CustomTiming("http", "GET http://google.com"))
-            {
-                Thread.Sleep(50);
+                    using (profiler.CustomTiming("redis", "SET \"mykey\" 10"))
+                    {
+                        Thread.Sleep(5);
+                    }
+                }
             }
 
             // now something that loops
