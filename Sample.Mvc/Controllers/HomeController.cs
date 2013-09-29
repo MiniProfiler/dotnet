@@ -86,6 +86,9 @@ namespace SampleWeb.Controllers
                 }
             }
 
+            // let's also add a custom link to stack overflow!
+            profiler.AddCustomLink("stack overflow", "http://stackoverflow.com");
+
             return View();
         }
 

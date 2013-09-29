@@ -89,6 +89,9 @@ namespace StackExchange.Profiling
         /// Keys are names, values are URLs, allowing additional links to be added to a profiler result, e.g. perhaps a deeper
         /// diagnostic page for the current request.
         /// </summary>
+        /// <remarks>
+        /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/url pair to this dictionary.
+        /// </remarks>
         [DataMember(Order = 6)]
         public Dictionary<string, string> CustomLinks { get; set; }
         

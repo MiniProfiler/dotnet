@@ -93,6 +93,25 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Adds the <paramref name="text"/> and <paramref name="url"/> pair to <paramref name="profiler"/>'s 
+        /// <see cref="MiniProfiler.CustomLinks"/> dictionary; will be displayed on the client in the bottom of the profiler popup.
+        /// </summary>
+        public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
+        {
+            if (profiler == null) return;
+
+            lock (profiler)
+            {
+                if (profiler.CustomLinks == null)
+                {
+                    profiler.CustomLinks = new Dictionary<string, string>();
+                }
+            }
+
+            profiler.CustomLinks[text] = url;
+        }
+
+        /// <summary>
         /// Returns an html-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
