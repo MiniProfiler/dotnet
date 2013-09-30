@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>MiniProfiler.Mvc4</id>
+    <version>3.0.0</version>
+    <authors>Marc Gravell, Jarrod Dixon</authors>
+    <owners>Marc Gravell, Jarrod Dixon</owners>
+    <description>MiniProfiler extensions and helpers for ASP.NET MVC</description>
+    <projectUrl>http://miniprofiler.com</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>profiler sql mvc asp.net performance profiling timing</tags>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="MiniProfiler" version="3.0.0" />
+      <dependency id="Microsoft.AspNet.Mvc" version="4.0.30506.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="StackExchange.Profiling.Mvc\bin\Release\MiniProfiler.*" target="lib\net40" />
+  </files>
+</package>
