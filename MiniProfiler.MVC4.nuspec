@@ -2,9 +2,9 @@
 <package>
   <metadata>
     <id>MiniProfiler.Mvc4</id>
-    <version>3.0.0</version>
-    <authors>Marc Gravell, Jarrod Dixon</authors>
-    <owners>Marc Gravell, Jarrod Dixon</owners>
+    <version>3.0.1</version>
+    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
+    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
     <description>MiniProfiler extensions and helpers for ASP.NET MVC</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
