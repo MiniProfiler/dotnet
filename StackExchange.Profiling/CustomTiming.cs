@@ -109,5 +109,13 @@ namespace StackExchange.Profiling
         {
             Stop();
         }
+
+        /// <summary>
+        /// Returns <see cref="CommandString"/> for debugging.
+        /// </summary>
+        public override string ToString()
+        {
+            return CommandString;
+        }
     }
 }

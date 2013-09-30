@@ -31,7 +31,7 @@
         /// </summary>
         /// <param name="level">The profile level.</param>
         /// <returns>the mini profiler.</returns>
-        public override MiniProfiler Start(ProfileLevel level)
+        public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = WcfInstanceContext.Current;
             if (context == null) return null;
@@ -58,7 +58,7 @@
                     return null;
             }
 
-            var result = new MiniProfiler(GetProfilerName(operationContext, instanceContext), level);
+            var result = new MiniProfiler(sessionName ?? GetProfilerName(operationContext, instanceContext), level);
 
             SetCurrentProfiler(result);
 

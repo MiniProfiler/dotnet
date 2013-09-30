@@ -14,13 +14,7 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
-        /// <param name="level">
-        /// The level.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MiniProfiler"/>.
-        /// </returns>
-        public abstract MiniProfiler Start(ProfileLevel level);
+        public abstract MiniProfiler Start(ProfileLevel level, string sessionName = null);
 
         /// <summary>
         /// Stops the current MiniProfiler (if any is currently running).

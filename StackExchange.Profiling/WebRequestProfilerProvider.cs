@@ -25,7 +25,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
-        public override MiniProfiler Start(ProfileLevel level)
+        public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = HttpContext.Current;
             if (context == null) return null;
@@ -45,7 +45,7 @@ namespace StackExchange.Profiling
                 return null;
             }
 
-            var result = new MiniProfiler(url.OriginalString, level);
+            var result = new MiniProfiler(sessionName ?? url.OriginalString, level);
             Current = result;
 
             SetProfilerActive(result);

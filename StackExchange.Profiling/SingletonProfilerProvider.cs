@@ -18,9 +18,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
-        public MiniProfiler Start(ProfileLevel level)
+        public MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
-            _profiler = new MiniProfiler(AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
+            _profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
             return _profiler;
         }
 

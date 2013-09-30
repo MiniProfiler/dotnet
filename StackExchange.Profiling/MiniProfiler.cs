@@ -211,14 +211,16 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
-        /// <see cref="MiniProfiler.Current"/>
+        /// <see cref="MiniProfiler.Current"/>.
         /// </summary>
-        /// <param name="level">The level.</param>
-        /// <returns>the mini profiler.</returns>
-        public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info)
+        /// <param name="sessionName">
+        /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
+        /// a web request, the url will be used for the overall session name.
+        /// </param>
+        public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info, string sessionName = null)
         {
             Settings.EnsureProfilerProvider();
-            return Settings.ProfilerProvider.Start(level);
+            return Settings.ProfilerProvider.Start(level, sessionName);
         }
 
         /// <summary>

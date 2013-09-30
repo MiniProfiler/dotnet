@@ -41,6 +41,7 @@ namespace StackExchange.Profiling
             }
 
             _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());
+            if (_customTiming == null) throw new InvalidOperationException();
         }
 
         /// <summary>

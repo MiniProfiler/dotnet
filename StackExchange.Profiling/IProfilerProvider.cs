@@ -10,7 +10,11 @@
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
-        MiniProfiler Start(ProfileLevel level);
+        /// <param name="sessionName">
+        /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
+        /// a web request, the url will be used for the overall session name.
+        /// </param>
+        MiniProfiler Start(ProfileLevel level, string sessionName = null);
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
