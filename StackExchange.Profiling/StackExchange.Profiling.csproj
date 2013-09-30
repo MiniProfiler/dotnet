@@ -135,7 +135,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="lib\dotless.Compiler.exe" />
     <EmbeddedResource Include="ui\include.partial.html" />
     <EmbeddedResource Include="ui\includes.css" />
     <EmbeddedResource Include="ui\includes.js" />
