@@ -28,6 +28,7 @@ namespace StackExchange.Profiling
             CommandString = commandString;
 
             Id = Guid.NewGuid();
+            StartMilliseconds = profiler.GetRoundedMilliseconds(profiler.ElapsedTicks);
 
             if (!MiniProfiler.Settings.ExcludeStackTraceSnippetFromCustomTimings)
             {
