@@ -156,12 +156,14 @@ namespace SampleWeb.Controllers
                 Thread.Sleep(new Random().Next(100, 400));
             }
 
-            using (profiler.Step("FetchRouteHits"))
-            using (var conn = GetConnection(profiler))
-            {
-                var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
-                return Json(result, JsonRequestBehavior.AllowGet);
-            }
+            //using (profiler.Step("FetchRouteHits"))
+            //using (var conn = GetConnection(profiler))
+            //{
+            //    var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
+            //    return Json(result, JsonRequestBehavior.AllowGet);
+            //}
+
+            return Content("disabled");
         }
 
         /// <summary>
@@ -263,16 +265,16 @@ namespace SampleWeb.Controllers
         /// <returns>duplicated query demonstration</returns>
         public ActionResult DuplicatedQueries()
         {
-            using (var conn = GetConnection())
-            {
+            //using (var conn = GetConnection())
+            //{
                 long total = 0;
 
-                for (int i = 0; i < 20; i++)
-                {
-                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
-                }
+                //for (int i = 0; i < 20; i++)
+                //{
+                //    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+                //}
                 return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
-            }
+            //}
         }
 
         /// <summary>
@@ -282,10 +284,10 @@ namespace SampleWeb.Controllers
         public ActionResult MassiveNesting()
         {
             var i = 0;
-            using (var conn = GetConnection())
-            {
-                RecursiveMethod(ref i, conn, MiniProfiler.Current);
-            }
+            //using (var conn = GetConnection())
+            //{
+            //    RecursiveMethod(ref i, conn, MiniProfiler.Current);
+            //}
             return Content("Massive Nesting completed");
         }
 
@@ -425,11 +427,12 @@ namespace SampleWeb.Controllers
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult ParameterizedSqlWithEnums()
         {
-            using (var conn = GetConnection())
-            {
-                var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
-                return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
-            }
+            //using (var conn = GetConnection())
+            //{
+            //    var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
+            //    return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
+            //}
+            return Content("disabled");
         }
     }
 }

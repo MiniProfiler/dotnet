@@ -216,7 +216,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Data\TestMiniProfiler.sqlite" />
     <Content Include="Views\Home\ResultsAuthorization.cshtml" />
     <Content Include="Views\Home\XHTML.cshtml" />
     <Content Include="Views\WcfSample\Index.cshtml" />

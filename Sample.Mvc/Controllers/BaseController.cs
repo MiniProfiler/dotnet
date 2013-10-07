@@ -90,27 +90,27 @@
         /// <param name="profiler">The profiler.</param>
         private void UpsertRouteHit(ActionDescriptor actionDesc, MiniProfiler profiler)
         {
-            var routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
+//            var routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
 
-            using (var conn = GetConnection(profiler))
-            {
-                var param = new { routeName };
+//            using (var conn = GetConnection(profiler))
+//            {
+//                var param = new { routeName };
 
-                using (profiler.Step("Insert RouteHits"))
-                {
-                   conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
-                }
-                using (profiler.Step("Update RouteHits"))
-                {
-                    // let's put some whitespace in this query to demonstrate formatting
-                    // i might have broken this with the tabs (jim - 2013-01-08)
-                    conn.Execute(
-                        @"update RouteHits
-                        set    HitCount = HitCount + 1
-                        where  RouteName = @routeName", 
-                        param);
-                }
-            }
+//                using (profiler.Step("Insert RouteHits"))
+//                {
+//                   conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
+//                }
+//                using (profiler.Step("Update RouteHits"))
+//                {
+//                    // let's put some whitespace in this query to demonstrate formatting
+//                    // i might have broken this with the tabs (jim - 2013-01-08)
+//                    conn.Execute(
+//                        @"update RouteHits
+//                        set    HitCount = HitCount + 1
+//                        where  RouteName = @routeName", 
+//                        param);
+//                }
+//            }
         }
 
     }
