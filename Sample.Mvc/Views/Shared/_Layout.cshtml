@@ -34,6 +34,8 @@
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Results Authorization", "ResultsAuthorization", "Home")</li>
                     <li>@Html.ActionLink("WCF Sample", "Index", "WcfSample")</li>
+                    <li>@Html.ActionLink("Bottom Left", "BottomLeft", "Home")</li>
+                    <li>@Html.ActionLink("Bottom Right", "BottomRight", "Home")</li>
                 </ul>
             </div>
         </div>
@@ -45,6 +47,13 @@
     </div>
 
     @* renders our UI's css and javascript - best put it in the bottom so it does not effect perf *@
-    @MiniProfiler.RenderIncludes(position: RenderPosition.Left, showTrivial: false, showTimeWithChildren: false, startHidden: startHidden)
+    @if (ViewBag.Orientation != null)
+    {
+        @MiniProfiler.RenderIncludes(position: ViewBag.Orientation, showTrivial: false, showTimeWithChildren: false, startHidden: startHidden)
+    }
+    else
+    {
+        @MiniProfiler.RenderIncludes(position: RenderPosition.Left, showTrivial: false, showTimeWithChildren: false, startHidden: startHidden)
+    }
 </body>
 </html>
