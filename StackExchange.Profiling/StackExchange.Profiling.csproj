@@ -138,9 +138,7 @@
     <EmbeddedResource Include="ui\include.partial.html" />
     <EmbeddedResource Include="ui\includes.css" />
     <EmbeddedResource Include="ui\includes.js" />
-    <EmbeddedResource Include="ui\jquery.1.7.1.js" />
     <EmbeddedResource Include="ui\share.html" />
-    <EmbeddedResource Include="ui\underscore.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
