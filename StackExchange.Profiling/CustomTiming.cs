@@ -104,6 +104,9 @@ namespace StackExchange.Profiling
             {
                 DurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
             }
+
+            var parentTimingId = Timing.GetParentTimingIdFromCallContext();
+            _profiler.AddFlatCustomTiming(parentTimingId, "sql", this);
         }
 
         void IDisposable.Dispose()
