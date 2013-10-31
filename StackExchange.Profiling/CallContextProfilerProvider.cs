@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
+using System.Web;
 
 namespace StackExchange.Profiling
 {
@@ -13,6 +14,9 @@ namespace StackExchange.Profiling
 
         public MiniProfiler GetCurrentProfiler()
         {
+            if (HttpContext.Current != null)
+                return HttpContext.Current.Items[CALLCONTEXT_PARAM_CURRENT_PROFILER] as MiniProfiler ?? GetCurrentProfilerFromCallContext();
+
             return GetCurrentProfilerFromCallContext();
         }
 
@@ -22,6 +26,8 @@ namespace StackExchange.Profiling
         public MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
+            if (HttpContext.Current != null)
+                HttpContext.Current.Items[CALLCONTEXT_PARAM_CURRENT_PROFILER] = profiler;
             SetCurrentProfilerToCallContext(profiler);
             return profiler;
         }
