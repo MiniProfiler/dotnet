@@ -34,25 +34,27 @@
         /// <returns>A wrapped version of the DbProviderService service.</returns>
         private static DbProviderServices WrapProviderService(DbProviderServices services)
         {
-            // first let's see if our type is already wrapped.
+            // First let's check our cache.
+            if (ProviderCache.ContainsKey(services))
+            {
+                return ProviderCache[services];
+            }
+
+            // Then let's see if our type is already wrapped.
             var serviceType = services.GetType();
             while (serviceType != null)
             {
                 if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(EFProfiledDbProviderServices<>))
                 {
+                    // Add it to the cache and return it.
+                    ProviderCache[services] = services;
                     return services;
                 }
 
                 serviceType = serviceType.BaseType;
             }
 
-            // Then let's check our cache.
-            if (ProviderCache.ContainsKey(services))
-            {
-                return ProviderCache[services];
-            }
-
-            // Let's wrap it.
+            // Finally let's wrap it.
             var genericType = typeof(EFProfiledDbProviderServices<>);
             Type[] typeArgs = { services.GetType() };
             var createdType = genericType.MakeGenericType(typeArgs);
