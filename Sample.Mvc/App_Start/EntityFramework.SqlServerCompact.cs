@@ -1,7 +1,7 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
-[assembly: WebActivator.PreApplicationStartMethod(typeof(SampleWeb.App_Start.EntityFrameworkSqlServerCompact), "Start")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SampleWeb.App_Start.EntityFrameworkSqlServerCompact), "Start")]
 
 namespace SampleWeb.App_Start 
 {
