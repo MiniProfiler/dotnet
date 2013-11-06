@@ -1,9 +1,6 @@
 ﻿namespace StackExchange.Profiling.Data
 {
-    using System.Data.Entity.Core.Common;
-    using System.Data.Entity.Core.Common.CommandTrees;
     using System.Data.Entity.SqlServer;
-    using System.Data.SqlClient;
 
     /// <summary>
     /// Specific implementation of <c>EFProfiledDbProviderFactory&lt;SqlClientFactory&gt;</c> to enable profiling

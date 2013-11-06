@@ -1,15 +1,12 @@
 ﻿namespace StackExchange.Profiling.Data
 {
-    using System;
-    using System.Reflection;
-    using System.Security;
-
-    using StackExchange.Profiling;
-    using System.Data.Entity.Core.Common;
     using System.Data.Common;
+    using System.Data.Entity.Core.Common;
     using System.Data.Entity.Core.Common.CommandTrees;
-    using System.Diagnostics;
     using System.Data.Entity.Core.Metadata.Edm;
+    using System.Diagnostics;
+    using System.Reflection;
+    using StackExchange.Profiling;
 
     /// <summary>
     /// Wrapper for a database provider factory to enable profiling
