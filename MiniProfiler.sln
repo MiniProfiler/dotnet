@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Console", "Sample.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Mvc", "StackExchange.Profiling.Mvc\StackExchange.Profiling.Mvc.csproj", "{074BCD84-3E44-4140-9918-C09FCBEEC09F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.RavenDb", "StackExchange.Profiling.RavenDb\StackExchange.Profiling.RavenDb.csproj", "{5176CF64-E00D-423F-9341-A8999A774B24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,12 @@ Global
 		{074BCD84-3E44-4140-9918-C09FCBEEC09F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{074BCD84-3E44-4140-9918-C09FCBEEC09F}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
 		{074BCD84-3E44-4140-9918-C09FCBEEC09F}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{5176CF64-E00D-423F-9341-A8999A774B24}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
