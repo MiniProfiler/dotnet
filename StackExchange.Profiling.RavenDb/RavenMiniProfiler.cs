@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace StackExchange.Profiling.RavenDb
+﻿namespace StackExchange.Profiling.RavenDb
 {
     using System;
     using Raven.Client.Document;
@@ -8,20 +6,23 @@ namespace StackExchange.Profiling.RavenDb
 
     public class MiniProfilerRaven
     {
-
+        /// <summary>
+        /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)
+        /// </summary>
+        /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
         public static void InitializeFor(DocumentStore store) {
 
             if (store != null && store.JsonRequestFactory != null)
                 store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(JsonFormatter.FormatRequest(r));
 
         }
-
+       
         private static void IncludeTiming(RequestResultArgs request)
         {
-            if (MiniProfiler.Current == null)
+            if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
                 return;
 
-            MiniProfiler.Current.Head.AddCustomTiming("raven", new RavenTiming(MiniProfiler.Current, request)
+            MiniProfiler.Current.Head.AddCustomTiming("raven", new RavenTiming(request, MiniProfiler.Current)
             {
                 Id = Guid.NewGuid(),
                 DurationMilliseconds = (decimal)request.DurationMilliseconds,
