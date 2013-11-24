@@ -10,7 +10,7 @@
 <html>
 <head>
     @this.InitClientTimings()
-    @this.TimeScript("jQuery 1.7.1", @<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>)
+    @this.TimeScript("jQuery 2.0.3", @<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>)
 
 @using (profiler.Step("<head> rendering"))
 { 
@@ -26,7 +26,7 @@
                 <h1>MVC MiniProfiler Demo</h1>
             </div>
             <div id="logindisplay">
-                @Html.Partial("_LogOnPartial")
+                &nbsp;
             </div>
             <div id="menucontainer">
                 <ul id="menu">
