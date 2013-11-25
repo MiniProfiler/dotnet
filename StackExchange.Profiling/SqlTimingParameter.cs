@@ -35,7 +35,7 @@ namespace StackExchange.Profiling
         public int Size { get; set; }
 
         /// <summary>
-        /// Returns true if this has the same parent <see cref="SqlTiming.Id"/>, 
+        /// Returns true if this has the same parent  
         /// <see cref="Name"/> and <see cref="Value"/> as <paramref name="obj"/>.
         /// </summary>
         public override bool Equals(object obj)

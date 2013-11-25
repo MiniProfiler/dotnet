@@ -213,6 +213,7 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
         /// <see cref="MiniProfiler.Current"/>.
         /// </summary>
+        /// <param name="level">Profiling level. Default to Info.</param>
         /// <param name="sessionName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
@@ -289,6 +290,7 @@ namespace StackExchange.Profiling
         /// Should MiniProfiler attempt to load its own version of jQuery, or rely on a version previously loaded on the page?
         /// </param>
         /// <param name="samplingOnly">The sampling Only.</param>
+        /// <param name="startHidden">Should the profiler start as hidden. Default to null.</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes(
             RenderPosition? position = null, 

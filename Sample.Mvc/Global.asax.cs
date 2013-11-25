@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using StackExchange.Profiling;
+using StackExchange.Profiling.EntityFramework6;
 using StackExchange.Profiling.Mvc;
 
 namespace SampleWeb
@@ -63,7 +64,7 @@ namespace SampleWeb
                 ViewEngines.Engines.Add(new ProfilingViewEngine(item));
             }
 
-            MiniProfilerEF.Initialize(false);
+            MiniProfilerEF6.Initialize();
         }
 
         /// <summary>

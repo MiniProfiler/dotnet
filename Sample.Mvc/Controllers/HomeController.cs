@@ -283,7 +283,7 @@ namespace SampleWeb.Controllers
         /// <returns>the result view of the massive nesting.</returns>
         public ActionResult MassiveNesting()
         {
-            var i = 0;
+            //var i = 0;
             //using (var conn = GetConnection())
             //{
             //    RecursiveMethod(ref i, conn, MiniProfiler.Current);
