@@ -33,6 +33,13 @@
             PropertyInfo property = typeof(T).GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
             if (property != null)
                 _tail = (T)property.GetValue(null);
+
+            if (_tail == null)
+            {
+                FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+                if(field != null)
+                    _tail = (T)field.GetValue(null);
+            }
         }
 
         /// <summary>
