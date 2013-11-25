@@ -27,8 +27,6 @@
       *          Important: Dapper is now shipping as a DLL which will work on .net 3.5 or .net 4.0,
       *          This improves the debugging experience as you no longer break into dapper when SQL fails.
       *          Added: ParameterNames on DynamicParameters</releaseNotes>
-    <copyright />
-    <language />
     <tags>orm sql micro-orm</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Core" targetFramework="" />
@@ -36,8 +34,5 @@
       <frameworkAssembly assemblyName="System.Data" targetFramework="" />
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.0-Client, .NETFramework4.0" />
     </frameworkAssemblies>
-    <references>
-      <reference file="Dapper.dll" />
-    </references>
   </metadata>
 </package>
