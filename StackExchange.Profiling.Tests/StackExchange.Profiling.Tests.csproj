@@ -102,6 +102,7 @@
     <Compile Include="BaseTestTest.cs">
       <DependentUpon>BaseTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniProfileHandlerTests.cs" />
     <Compile Include="ProtobufSerializationTest.cs" />
     <Compile Include="lib\HaackHttpSimulator\HttpSimulator.cs" />
     <Compile Include="lib\HaackHttpSimulator\ReflectionHelper.cs" />
