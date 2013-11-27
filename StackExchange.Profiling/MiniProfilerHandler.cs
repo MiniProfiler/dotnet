@@ -74,8 +74,10 @@ namespace StackExchange.Profiling
                 case "underscore":
                 case "jquery.1.7.1":
                 case "jquery.tmpl":
-                case "includes":
                 case "list":
+                    output = NotFound(context);
+                    break;
+                case "includes":
                     output = Includes(context, path);
                     break;
 
@@ -114,7 +116,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return new HtmlString("");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
-            var authorized = MiniProfiler.Settings.Results_Authorize == null 
+            var authorized = MiniProfiler.Settings.Results_Authorize == null
                 || MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
@@ -122,8 +124,13 @@ namespace StackExchange.Profiling
             var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
             ids.Add(profiler.Id);
 
-            var format = GetResource("include.partial.html");
-            var result = format.Format(new
+            string format;
+            if (!TryGetResource("include.partial.html", out format))
+            {
+                return (new HtmlString("<!-- Could not find 'include.partial.html' -->"));
+            }
+
+            return new HtmlString(format.Format(new
             {
                 path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
                 version = MiniProfiler.Settings.Version,
@@ -138,9 +145,7 @@ namespace StackExchange.Profiling
                 toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
                 startHidden = (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs(),
                 trivialMilliseconds = MiniProfiler.Settings.TrivialDurationThresholdMilliseconds
-            });
-
-            return new HtmlString(result);
+            }));
         }
 
         /// <summary>
@@ -169,8 +174,8 @@ namespace StackExchange.Profiling
             cache.SetExpires(DateTime.Now.AddDays(7));
             cache.SetValidUntilExpires(true);
 #endif
-            var embeddedFile = Path.GetFileName(path);
-            return GetResource(embeddedFile);
+            string resource;
+            return TryGetResource(Path.GetFileName(path), out resource) ? resource : NotFound(context);
         }
 
         private static string Index(HttpContext context)
@@ -188,14 +193,9 @@ namespace StackExchange.Profiling
                 .AppendLine("<html><head>")
                 .AppendFormat("<title>List of profiling sessions</title>")
                 .AppendLine()
-                .AppendLine("<script type='text/javascript' src='" + path + "jquery.1.7.1.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine("<script id='mini-profiler' data-ids='' type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
-                .AppendLine("<script type='text/javascript' src='" + path + "jquery.tmpl.js?v=" + MiniProfiler.Settings.Version + "'></script>")
                 .AppendLine(
-                    "<script type='text/javascript' src='" + path + "list.js?v=" + MiniProfiler.Settings.Version
-                    + "'></script>")
-                .AppendLine(
-                    "<link href='" + path + "list.css?v=" + MiniProfiler.Settings.Version
+                    "<link href='" + path + "includes.css?v=" + MiniProfiler.Settings.Version
                     + "' rel='stylesheet' type='text/css'>")
                 .AppendLine(
                     "<script type='text/javascript'>MiniProfiler.list.init({path: '" + path + "', version: '"
@@ -353,7 +353,9 @@ namespace StackExchange.Profiling
         {
             context.Response.ContentType = "text/html";
 
-            var template = GetResource("share.html");
+            string template;
+            if (!TryGetResource("share.html", out template))
+                return NotFound(context);
             return template.Format(new
             {
                 name = profiler.Name,
@@ -365,12 +367,12 @@ namespace StackExchange.Profiling
             });
         }
 
-        private static string GetResource(string filename)
+        private static bool TryGetResource(string filename, out string resource)
         {
             filename = filename.ToLower();
             string result;
 
-#if DEBUG 
+#if DEBUG
             // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
             if (!BypassLocalLoad)
             {
@@ -379,37 +381,44 @@ namespace StackExchange.Profiling
                 var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\ui\\" + filename;
                 try
                 {
-                    return File.ReadAllText(path);
+                    resource = File.ReadAllText(path);
+                    return true;
                 }
-                catch 
+                catch
                 {
                     BypassLocalLoad = true;
                 }
             }
 #endif
 
-            if (!ResourceCache.TryGetValue(filename, out result))
+            if (!ResourceCache.TryGetValue(filename, out resource))
             {
                 string customTemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
                 string customTemplateFile = Path.Combine(customTemplatesPath, filename);
 
                 if (File.Exists(customTemplateFile))
                 {
-                    result = File.ReadAllText(customTemplateFile);
+                    resource = File.ReadAllText(customTemplateFile);
                 }
                 else
                 {
                     using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
-                    using (var reader = new StreamReader(stream))
                     {
-                        result = reader.ReadToEnd();
+                        if (stream == null)
+                        {
+                            return false;
+                        }
+                        using (var reader = new StreamReader(stream))
+                        {
+                            resource = reader.ReadToEnd();
+                        }
                     }
                 }
 
-                ResourceCache[filename] = result;
+                ResourceCache[filename] = resource;
             }
 
-            return result;
+            return true;
         }
 
 #if DEBUG
