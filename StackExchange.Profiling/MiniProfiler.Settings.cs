@@ -350,7 +350,7 @@ namespace StackExchange.Profiling
             {
                 if (ProfilerProvider == null)
                 {
-                    ProfilerProvider = new WebRequestProfilerProvider();
+                    ProfilerProvider = new CallContextProfilerProvider();
                 }
             }
 

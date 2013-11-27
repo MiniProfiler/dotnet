@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
 
@@ -12,6 +13,9 @@ namespace StackExchange.Profiling
     [DataContract]
     public class Timing : IDisposable
     {
+        private readonly Guid? _parentTimingId;
+        private const string CALLCONTEXT_PARAM_PARENT_TIMING_ID = "miniprofiler_parent_timing_id";
+
         /// <summary>
         /// Offset from parent MiniProfiler's creation that this Timing was created.
         /// </summary>
@@ -45,6 +49,12 @@ namespace StackExchange.Profiling
 
             _startTicks = profiler.ElapsedTicks;
             StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
+
+            // get parent id from CallContext
+            _parentTimingId = GetParentTimingIdFromCallContext();
+
+            // set id of current timing as parent timing id in CallContext for current timing scope
+            SetParentTimingIdToCallContext(this.Id);
         }
 
         /// <summary>
@@ -217,6 +227,11 @@ namespace StackExchange.Profiling
         void IDisposable.Dispose()
         {
             Stop();
+
+            // set back current timing's parent timing id as parent timing id in CallContext
+            SetParentTimingIdToCallContext(_parentTimingId);
+
+            Profiler.AddFlatTiming(_parentTimingId, this);
         }
 
         /// <summary>
@@ -246,6 +261,8 @@ namespace StackExchange.Profiling
             GetCustomTimingList(category).Add(customTiming);
         }
 
+        #region Non-Public Methods
+
         /// <summary>
         /// Returns the <see cref="CustomTiming"/> list keyed to the <paramref name="category"/>, creating any collections when null.
         /// </summary>
@@ -266,5 +283,17 @@ namespace StackExchange.Profiling
             }
             return result;
         }
+
+        internal static void SetParentTimingIdToCallContext(Guid? id)
+        {
+            CallContext.LogicalSetData(CALLCONTEXT_PARAM_PARENT_TIMING_ID, id);
+        }
+
+        internal static Guid? GetParentTimingIdFromCallContext()
+        {
+            return CallContext.LogicalGetData(CALLCONTEXT_PARAM_PARENT_TIMING_ID) as Guid?;
+        }
+
+        #endregion
     }
 }

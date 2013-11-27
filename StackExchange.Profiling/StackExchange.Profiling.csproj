@@ -58,6 +58,9 @@
     <Compile Include="BaseProfilerProvider.cs">
       <DependentUpon>IProfilerProvider.cs</DependentUpon>
     </Compile>
+    <Compile Include="CallContextProfilerProvider.cs">
+      <DependentUpon>IProfilerProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="ClientTimings.cs" />
     <Compile Include="CustomTiming.cs" />
     <Compile Include="MiniProfilerHandler.cs">

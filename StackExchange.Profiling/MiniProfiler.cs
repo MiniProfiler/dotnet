@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Script.Serialization;
+
 using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling
@@ -15,6 +18,16 @@ namespace StackExchange.Profiling
     [DataContract]
     public partial class MiniProfiler
     {
+        // flat timings to be assembled on stopping
+        // Tuple<Guid, Timing> means e.g. Tuple<parentTimingid, timing>
+        private readonly ConcurrentQueue<Tuple<Guid, Timing>> _timings = new ConcurrentQueue<Tuple<Guid, Timing>>();
+
+        // flat custom timings to be assembled on stopping
+        // Tuple<Guid, string, CustomTiming> means e.g. Tuple<parentTimingid, "sql", sqlTiming._customTiming>
+        private readonly ConcurrentQueue<Tuple<Guid, string, CustomTiming>> _customTimings = new ConcurrentQueue<Tuple<Guid, string, CustomTiming>>();
+
+        private readonly object _timingsAssembleLock = new object();
+
         /// <summary>
         /// Initialises a new instance of the <see cref="MiniProfiler"/> class. 
         /// Obsolete - used for serialization.
@@ -41,6 +54,8 @@ namespace StackExchange.Profiling
             // stopwatch must start before any child Timings are instantiated
             _sw = Settings.StopwatchProvider();
             Root = new Timing(this, null, url);
+
+            Timing.SetParentTimingIdToCallContext(Root.Id);
         }
 
         /// <summary>
@@ -93,7 +108,7 @@ namespace StackExchange.Profiling
         /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/url pair to this dictionary.
         /// </remarks>
         [DataMember(Order = 6)]
-        public Dictionary<string, string> CustomLinks { get; set; }
+        public ConcurrentDictionary<string, string> CustomLinks { get; set; }
         
             /// <summary>
         /// Gets or sets the root timing.
@@ -392,6 +407,12 @@ namespace StackExchange.Profiling
             _sw.Stop();
             DurationMilliseconds = GetRoundedMilliseconds(ElapsedTicks);
 
+            // assemble flat timings, for threadsafe, we need to lock when assembling timings
+            lock (_timingsAssembleLock)
+            {
+                AssembleTimingsAndCustomTimings();
+            }
+
             foreach (var timing in GetTimingHierarchy())
             {
                 timing.Stop();
@@ -429,5 +450,40 @@ namespace StackExchange.Profiling
                 //_root.RebuildParentTimings();
             }
         }
+
+        internal void AddFlatTiming(Guid? parentTimingId, Timing timing)
+        {
+            if (!parentTimingId.HasValue) return;
+            _timings.Enqueue(new Tuple<Guid, Timing>(parentTimingId.Value, timing));
+        }
+
+        internal void AddFlatCustomTiming(Guid? parentTimingId, string category, CustomTiming customTiming)
+        {
+            if (!parentTimingId.HasValue) return;
+            _customTimings.Enqueue(new Tuple<Guid, string, CustomTiming>(parentTimingId.Value, category, customTiming));
+        }
+
+        #region Private Methods
+
+        private void AssembleTimingsAndCustomTimings()
+        {
+            AddChildrenFromTimingsAndCustomTimings(Root);
+        }
+
+        private void AddChildrenFromTimingsAndCustomTimings(Timing parentTiming)
+        {
+            foreach (var customTiming in _customTimings.Where(item => item.Item1 == parentTiming.Id))
+            {
+                parentTiming.AddCustomTiming(customTiming.Item2, customTiming.Item3);
+            }
+            foreach (var timing in _timings.Where(item => item.Item1 == parentTiming.Id))
+            {
+                AddChildrenFromTimingsAndCustomTimings(timing.Item2);
+
+                parentTiming.AddChild(timing.Item2);
+            }
+        }
+
+        #endregion
     }
 }

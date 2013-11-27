@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,6 +54,7 @@ namespace StackExchange.Profiling
         /// 
         /// </example>
         /// </remarks>
+        [Obsolete("This method is not threadsafe, should not be used any more.")]
         public static CustomTiming CustomTiming(this MiniProfiler profiler, string category, string commandString, string executeType = null)
         {
             if (profiler == null || profiler.Head == null) return null;
@@ -104,7 +106,7 @@ namespace StackExchange.Profiling
             {
                 if (profiler.CustomLinks == null)
                 {
-                    profiler.CustomLinks = new Dictionary<string, string>();
+                    profiler.CustomLinks = new ConcurrentDictionary<string, string>();
                 }
             }
 

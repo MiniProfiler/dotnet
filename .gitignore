@@ -12,5 +12,6 @@ nuget.exe
 .DS_Store
 tmp
 *~
-.DotSettings
+*.DotSettings
 *StyleCop*
+packages

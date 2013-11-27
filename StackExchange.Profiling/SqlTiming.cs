@@ -31,7 +31,7 @@ namespace StackExchange.Profiling
         {
             if (profiler == null) throw new ArgumentNullException("profiler");
             _profiler = profiler;
-            
+
             var commandText = AddSpacesToParameters(command.CommandText);
             var parameters = GetCommandParameters(command);
 
@@ -40,8 +40,10 @@ namespace StackExchange.Profiling
                 commandText = MiniProfiler.Settings.SqlFormatter.FormatSql(commandText, parameters);
             }
 
-            _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());
-            if (_customTiming == null) throw new InvalidOperationException();
+            _customTiming = new CustomTiming(profiler, commandText)
+            {
+                ExecuteType = type.ToString()
+            };
         }
 
         /// <summary>
