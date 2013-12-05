@@ -6,7 +6,7 @@ namespace StackExchange.Profiling.Helpers
     /// <summary>
     /// Common extension methods to use only in this project
     /// </summary>
-    internal static class ExtensionMethods
+    public static class ExtensionMethods
     {
         /// <summary>
         /// Answers true if this String is either null or empty.
@@ -24,7 +24,13 @@ namespace StackExchange.Profiling.Helpers
             return !string.IsNullOrWhiteSpace(value);
         }
 
-        internal static string Truncate(this string s, int maxLength)
+        /// <summary>
+        /// Chops off a string at the specified length and accounts for smaller length
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="maxLength"></param>
+        /// <returns></returns>
+        public static string Truncate(this string s, int maxLength)
         {
             return s != null && s.Length > maxLength ? s.Substring(0, maxLength) : s;
         }
