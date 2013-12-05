@@ -98,7 +98,12 @@ namespace StackExchange.Profiling
                     break;
             }
 
-            context.Response.Write(output);
+	        if (!string.IsNullOrEmpty(output))
+	        {
+		        Compression.EncodeStreamAndAppendResponseHeaders(context.Request, context.Response);
+	        }
+
+			context.Response.Write(output);
         }
 
         /// <summary>
