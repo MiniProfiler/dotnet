@@ -132,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="miniprofiler.snk" />
-    <None Include="packages.config" />
     <EmbeddedResource Include="ui\includes.tmpl" />
     <EmbeddedResource Include="ui\README.md" />
   </ItemGroup>
