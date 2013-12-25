@@ -1,4 +1,5 @@
 ﻿using SampleWeb.EfModelFirst;
+using StackExchange.Profiling.Helpers.Dapper;
 
 namespace SampleWeb.Controllers
 {
@@ -7,11 +8,8 @@ namespace SampleWeb.Controllers
     using System.Linq;
     using System.Threading;
     using System.Web.Mvc;
-
     using Dapper;
-
-    using SampleWeb.EFCodeFirst;
-
+    using EFCodeFirst;
     using StackExchange.Profiling;
 
     /// <summary>
@@ -129,7 +127,7 @@ namespace SampleWeb.Controllers
         public ActionResult About()
         {
             // prevent this specific route from being profiled
-            MiniProfiler.Stop(discardResults: true);
+            MiniProfiler.Stop(true);
 
             return View();
         }
@@ -151,19 +149,23 @@ namespace SampleWeb.Controllers
         {
             var profiler = MiniProfiler.Current;
 
+            using (profiler.Step("Insert Route Row"))
+            using (var conn = GetConnection(profiler))
+            {
+                conn.Execute("INSERT INTO RouteHits (RouteName, HitCount) VALUES (@RouteName, @HitCount)", new {RouteName = Request.Url.AbsoluteUri, HitCount = new Random().Next(100, 400)});
+            }
+
             using (profiler.Step("Do more complex stuff"))
             {
                 Thread.Sleep(new Random().Next(100, 400));
             }
 
-            //using (profiler.Step("FetchRouteHits"))
-            //using (var conn = GetConnection(profiler))
-            //{
-            //    var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
-            //    return Json(result, JsonRequestBehavior.AllowGet);
-            //}
-
-            return Content("disabled");
+            using (profiler.Step("FetchRouteHits"))
+            using (var conn = GetConnection(profiler))
+            {
+                var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
         }
 
         /// <summary>
@@ -265,16 +267,16 @@ namespace SampleWeb.Controllers
         /// <returns>duplicated query demonstration</returns>
         public ActionResult DuplicatedQueries()
         {
-            //using (var conn = GetConnection())
-            //{
-                long total = 0;
+            using (var conn = GetConnection())
+            {
+              long total = 0;
 
-                //for (int i = 0; i < 20; i++)
-                //{
-                //    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
-                //}
-                return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
-            //}
+              for (int i = 0; i < 20; i++)
+              {
+                  total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+              }
+              return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+            }
         }
 
         /// <summary>
@@ -283,11 +285,11 @@ namespace SampleWeb.Controllers
         /// <returns>the result view of the massive nesting.</returns>
         public ActionResult MassiveNesting()
         {
-            //var i = 0;
-            //using (var conn = GetConnection())
-            //{
-            //    RecursiveMethod(ref i, conn, MiniProfiler.Current);
-            //}
+            var i = 0;
+            using (var conn = GetConnection())
+            {
+                RecursiveMethod(ref i, conn, MiniProfiler.Current);
+            }
             return Content("Massive Nesting completed");
         }
 
@@ -322,18 +324,14 @@ namespace SampleWeb.Controllers
                 connection.Query(
                     @"select *
                     from   MiniProfilers
-                    where  Name like @name
-                            or Name = @name
-                            or DurationMilliseconds >= @duration
-                            or HasSqlTimings = @hasSqlTimings
-                            or Started > @yesterday ",
+                    where  DurationMilliseconds >= @duration
+                            or Started > @yesterday",
                     new
-                        {
-                            name = "Home/Index",
-                                     duration = 100.5,
-                                     hasSqlTimings = true,
-                                     yesterday = DateTime.UtcNow.AddDays(-1)
-                                 });
+                    {
+                        name = "Home/Index",
+                        duration = 100.5,
+                        yesterday = DateTime.UtcNow.AddDays(-1)
+                    });
 
                 connection.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
 
@@ -427,12 +425,11 @@ namespace SampleWeb.Controllers
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult ParameterizedSqlWithEnums()
         {
-            //using (var conn = GetConnection())
-            //{
-            //    var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
-            //    return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
-            //}
-            return Content("disabled");
+            using (var conn = GetConnection())
+            {
+                var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
+                return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
+            }
         }
     }
 }
