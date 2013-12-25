@@ -3,8 +3,8 @@
   <metadata>
     <id>MiniProfiler.EF6</id>
     <version>2.1.0</version>
-    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
-    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
+    <authors>Jarrod Dixon, Yaakov Ellis</authors>
+    <owners>Jarrod Dixon, Yaakov Ellis</owners>
     <description>MiniProfiler integration for Entity Framework 6</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>

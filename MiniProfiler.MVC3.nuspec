@@ -3,8 +3,8 @@
   <metadata>
     <id>MiniProfiler.MVC3</id>
     <version>2.0.2</version>
-    <authors>Marc Gravell,Sam Saffron,Jarrod Dixon</authors>
-    <owners>Marc Gravell,Sam Saffron,Jarrod Dixon,Scott Hanselman</owners>
+    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
+    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon, Scott Hanselman</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>http://code.google.com/p/mvc-mini-profiler/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
