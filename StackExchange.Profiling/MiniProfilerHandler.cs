@@ -196,15 +196,10 @@ namespace StackExchange.Profiling
             var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
             return new StringBuilder()
                 .AppendLine("<html><head>")
-                .AppendFormat("<title>List of profiling sessions</title>")
-                .AppendLine()
-                .AppendLine("<script id='mini-profiler' data-ids='' type='text/javascript' src='" + path + "includes.js?v=" + MiniProfiler.Settings.Version + "'></script>")
-                .AppendLine(
-                    "<link href='" + path + "includes.css?v=" + MiniProfiler.Settings.Version
-                    + "' rel='stylesheet' type='text/css'>")
-                .AppendLine(
-                    "<script type='text/javascript'>MiniProfiler.list.init({path: '" + path + "', version: '"
-                    + MiniProfiler.Settings.Version + "'})</script>")
+                .AppendLine("<title>List of profiling sessions</title>")
+                .AppendFormat("<script id='mini-profiler' data-ids='' type='text/javascript' src='{0}includes.js?v={1}'></script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
+                .AppendFormat("<link href='{0}includes.css?v={1}' rel='stylesheet' type='text/css'>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
+                .AppendFormat("<script type='text/javascript'>MiniProfiler.list.init({{path: '{0}', version: '{1}'}})</script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
                 .AppendLine("</head><body></body></html>")
                 .ToString();
         }
@@ -375,7 +370,6 @@ namespace StackExchange.Profiling
         private static bool TryGetResource(string filename, out string resource)
         {
             filename = filename.ToLower();
-            string result;
 
 #if DEBUG
             // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
