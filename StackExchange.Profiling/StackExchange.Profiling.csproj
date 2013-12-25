@@ -68,6 +68,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlTimingParameter.cs" />
+    <Compile Include="Storage\DatabaseStorageBase.cs" />
+    <Compile Include="Storage\SqlServerStorage.cs" />
     <Compile Include="Suppression.cs" />
     <Compile Include="Data\ExecuteType.cs" />
     <Compile Include="Data\IDbProfiler.cs" />

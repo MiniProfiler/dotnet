@@ -167,6 +167,16 @@ namespace StackExchange.Profiling
         public bool HasUserViewed { get; set; }
 
         /// <summary>
+        /// Json representing the collection of CustomTimings relating to this MiniProfiler
+        /// </summary>
+        /// <remarks>
+        /// Is used when storing the MiniProfiler in SqlStorage
+        /// </remarks>
+        [DataMember(Order = 11)]
+        [ScriptIgnore]
+        public string Json { get; set; }
+
+        /// <summary>
         /// Gets or sets whether or not filtering is allowed of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
         /// the steps are created with.
         /// </summary>
@@ -195,8 +205,7 @@ namespace StackExchange.Profiling
         {
             get { return _sw; }
         }
-
-
+        
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
         /// </summary>

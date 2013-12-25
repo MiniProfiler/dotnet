@@ -2,12 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.Common;
-    using System.Linq;
 
     /// <summary>
-    /// Understands how to save MiniProfiler results to a MSSQL database, allowing more permanent storage and
-    /// querying of slow results.
+    /// Understands how to save MiniProfiler results to a MSSQL database, allowing more permanent storage and querying of slow results.
     /// </summary>
     public abstract class DatabaseStorageBase : IStorage
     {
@@ -79,49 +76,26 @@
         /// hierarchy under the 'result' MiniProfiler.
         /// </summary>
         /// <param name="result">The result.</param>
-        /// <param name="timings">The timings.</param>
-        /// <param name="sqlTimings">The SQL Timings.</param>
-        /// <param name="sqlParameters">The SQL Parameters.</param>
-        /// <param name="clientTimings">The client Timings.</param>
-        protected void MapTimings(MiniProfiler result, List<Timing> timings, List<SqlTiming> sqlTimings, List<SqlTimingParameter> sqlParameters, ClientTimings clientTimings)
+        /// <param name="timingsWrapper">The timings to map</param>
+        protected void MapTimings(MiniProfiler result, DbTimingsWrapper timingsWrapper)
         {
-            var stack = new Stack<Timing>();
-
-            for (int i = 0; i < timings.Count; i++)
-            {
-                var cur = timings[i];
-                foreach (var sqlTiming in sqlTimings)
-                {
-                    if (sqlTiming.ParentTimingId == cur.Id)
-                    {
-                        cur.AddSqlTiming(sqlTiming);
-
-                        var parameters = sqlParameters.Where(p => p.ParentSqlTimingId == sqlTiming.Id);
-                        if (parameters.Any())
-                        {
-                            sqlTiming.Parameters = parameters.ToList();
-                        }
-                    }
-                }
-
-                if (stack.Count > 0)
-                {
-                    Timing head;
-                    while ((head = stack.Peek()).Id != cur.ParentTimingId)
-                    {
-                        stack.Pop();
-                    }
-
-                    head.AddChild(cur);
-                }
-                stack.Push(cur);
-            }
-
-            result.ClientTimings = clientTimings;
-
-            // TODO: .Root does all the above work again, but it's used after [DataContract] deserialization; refactor it out somehow
-            result.Root = timings.First();
+            result.ClientTimings = timingsWrapper.ClientTimings;
+            result.CustomLinks = timingsWrapper.CustomLinks;
+            result.Root = timingsWrapper.Root;
         }
 
+        /// <summary>
+        /// Stores the different timings related to a MiniProfiler that is to be inserted into a DbStorage
+        /// </summary>
+        /// <remarks>Is to be stored in </remarks>
+        protected class DbTimingsWrapper
+        {
+            public Dictionary<string, string> CustomLinks { get; set; }
+            public Timing Root { get; set; }
+            public ClientTimings ClientTimings { get; set; }
+        }
     }
+
+
+
 }
