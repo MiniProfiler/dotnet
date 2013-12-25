@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 
 namespace StackExchange.Profiling.Helpers
@@ -70,6 +71,16 @@ namespace StackExchange.Profiling.Helpers
         internal static string ToJson(this object o)
         {
             return o == null ? null : new JavaScriptSerializer().Serialize(o);
+        }
+
+        /// <summary>
+        /// Deserializes <paramref name="s"/> to an object of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <param name="s">The string to deserialize</param>
+        /// <returns>The object resulting from the given string</returns>
+        internal static T FromJson<T>(this string s) where T : class 
+        {
+            return s.HasValue() ? new JavaScriptSerializer().Deserialize<T>(s) : null;
         }
 
         /// <summary>

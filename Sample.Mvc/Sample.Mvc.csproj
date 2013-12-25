@@ -139,6 +139,7 @@
     </Compile>
     <Compile Include="EFCodeFirst\EFContext.cs" />
     <Compile Include="EFCodeFirst\Person.cs" />
+    <Compile Include="Helpers\SqliteMiniProfilerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\SampleService\Reference.cs">
       <AutoGen>True</AutoGen>
