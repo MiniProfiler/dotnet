@@ -229,7 +229,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                      DurationMilliseconds                 decimal(7, 1) not null,
                      User                                 nvarchar(100) null,
                      HasUserViewed                        bit not null,
-                     Json                                 varchar(max)
+                     Json                                 nvarchar(max)
                   );
                 
                 -- displaying results selects everything based on the main MiniProfilers.Id column
