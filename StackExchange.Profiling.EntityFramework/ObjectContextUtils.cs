@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling.Data
+﻿using System.Collections.Concurrent;
+
+namespace StackExchange.Profiling.Data
 {
     using System;
     using System.Collections.Generic;
@@ -322,14 +324,14 @@
             /// <summary>
             /// The _workspaces.
             /// </summary>
-            private static readonly Dictionary<MetadataCacheKey, MetadataWorkspace> Workspaces;
+            private static readonly ConcurrentDictionary<MetadataCacheKey, MetadataWorkspace> Workspaces;
 
             /// <summary>
             /// Initialises static members of the <see cref="MetadataCache"/> class.
             /// </summary>
             static MetadataCache()
             {
-                Workspaces = new Dictionary<MetadataCacheKey, MetadataWorkspace>();
+                Workspaces = new ConcurrentDictionary<MetadataCacheKey, MetadataWorkspace>();
             }
 
             /// <summary>
@@ -339,10 +341,12 @@
             /// <returns>the meta data workspace.</returns>
             public static MetadataWorkspace GetWorkspace(MetadataCacheKey key)
             {
-                if (Workspaces.ContainsKey(key))
-                    return Workspaces[key];
-                Workspaces[key] = new MetadataWorkspace(key.Paths, key.Assemblies);
-                return Workspaces[key];
+                return Workspaces.GetOrAdd(key, CreateWorkspace);
+            }
+
+            private static MetadataWorkspace CreateWorkspace(MetadataCacheKey key)
+            {
+                return new MetadataWorkspace(key.Paths, key.Assemblies);
             }
         }
     }
