@@ -150,6 +150,7 @@
                     hashCode = (3 * hashCode) ^ assembly.GetHashCode();
                 foreach (var path in _paths)
                     hashCode = (3 * hashCode) ^ path.GetHashCode();
+                return hashCode;
             }
         }
 
