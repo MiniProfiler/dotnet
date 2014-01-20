@@ -33,7 +33,7 @@
             /// <summary>
             /// The hash code.
             /// </summary>
-            private int _hashCode;
+            private readonly int _hashCode;
 
             /// <summary>
             /// Initialises a new instance of the <see cref="MetadataCacheKey"/> class. 
@@ -54,7 +54,7 @@
 
                 _assemblies = assemblies;
                 _paths = paths;
-                CreateHashCode();
+                _hashCode = CreateHashCode();
             }
 
             /// <summary>
@@ -76,7 +76,7 @@
                 _paths[0] = string.Format(Pattern, assemblyName, edmxName, "ssdl");
                 _paths[1] = string.Format(Pattern, assemblyName, edmxName, "msl");
                 _paths[2] = string.Format(Pattern, assemblyName, edmxName, "csdl");
-                CreateHashCode();
+                _hashCode = CreateHashCode();
             }
 
             /// <summary>
@@ -143,13 +143,13 @@
             /// <summary>
             /// create the hash code.
             /// </summary>
-            private void CreateHashCode()
+            private int CreateHashCode()
             {
-                _hashCode = 19;
+                var hashCode = 19;
                 foreach (var assembly in _assemblies)
-                    _hashCode = (3 * _hashCode) ^ assembly.GetHashCode();
+                    hashCode = (3 * hashCode) ^ assembly.GetHashCode();
                 foreach (var path in _paths)
-                    _hashCode = (3 * _hashCode) ^ path.GetHashCode();
+                    hashCode = (3 * hashCode) ^ path.GetHashCode();
             }
         }
 
