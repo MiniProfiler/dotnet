@@ -124,14 +124,14 @@
                     return false;
                 if (_assemblies.Count() != cacheKey._assemblies.Count() || _paths.Count() != cacheKey._paths.Count())
                     return false;
-                int i = 0;
-                for (i = 0; i < _assemblies.Count(); i++)
+
+                for (int i = 0; i < _assemblies.Count(); i++)
                 {
                     if (_assemblies[i] != cacheKey._assemblies[i])
                         return false;
                 }
 
-                for (i = 0; i < _paths.Count(); i++)
+                for (int i = 0; i < _paths.Count(); i++)
                 {
                     if (_paths[i] != cacheKey._paths[i])
                         return false;
