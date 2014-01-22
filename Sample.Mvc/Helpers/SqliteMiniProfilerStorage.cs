@@ -50,7 +50,7 @@ namespace SampleWeb.Helpers
                 cnn.Open();
 
                 // we need some tiny mods to allow sqlite support 
-                foreach (var sql in new List<string>{TableCreationScript}.Union(extraTablesToCreate))
+                foreach (var sql in TableCreationScripts.Union(extraTablesToCreate))
                 {
                     cnn.Execute(sql);
                 }
@@ -91,16 +91,41 @@ namespace SampleWeb.Helpers
             }
         }
 
-        private new const string TableCreationScript = @"
+        private static readonly List<string> TableCreationScripts = new  List<string>{@"
                 CREATE TABLE MiniProfilers
                   (
                      RowId                                integer not null primary key,
                      Id                                   uniqueidentifier not null, 
+                     RootTimingId                         uniqueidentifier null,
                      Started                              datetime not null,
-                     DurationMilliseconds                 decimal(7, 1) not null,
+                     DurationMilliseconds                 decimal(9, 3) not null,
                      User                                 nvarchar(100) null,
                      HasUserViewed                        bit not null,
-                     Json                                 text
-                  );";
+                     MachineName                          nvarchar(100) null,
+                     CustomLinksJson                      text null,
+                     ClientTimingsRedirectCount           int null
+                  );",
+                     @"create table MiniProfilerTimings
+                  (
+                     RowId                               integer not null primary key,
+                     Id                                  uniqueidentifier not null,
+                     MiniProfilerId                      uniqueidentifier not null,
+                     ParentTimingId                      uniqueidentifier null,
+                     Name                                nvarchar(200) not null,
+                     DurationMilliseconds                decimal(9, 3) not null,
+                     StartMilliseconds                   decimal(9, 3) not null,
+                     IsRoot                              bit not null,
+                     Depth                               smallint not null,
+                     CustomTimingsJson                   text null
+                  );",
+                     @" create table MiniProfilerClientTimings
+                  (
+                     RowId                               integer not null primary key,
+                     Id                                  uniqueidentifier not null,
+                     MiniProfilerId                      uniqueidentifier not null,
+                     Name                                nvarchar(200) not null,
+                     Start                               decimal(9, 3) not null,
+                     Duration                            decimal(9, 3) not null
+                  );"};
     }
 }

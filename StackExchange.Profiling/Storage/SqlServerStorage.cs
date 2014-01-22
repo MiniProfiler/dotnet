@@ -16,9 +16,12 @@
     public class SqlServerStorage : DatabaseStorageBase
     {
         /// <summary>
-        /// Load the SQL statements.
+        /// Load the SQL statements (using Dapper Multiple Results)
         /// </summary>
-        private const string SqlStatement = "select * from MiniProfilers where Id = @id";
+        private const string SqlStatements = @"
+SELECT * FROM MiniProfilers WHERE Id = @id;
+SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerStorage"/> class. 
@@ -37,38 +40,144 @@
         /// <param name="profiler">The Mini Profiler</param>
         public override void Save(MiniProfiler profiler)
         {
-            const string Sql =
+            const string sql =
 @"insert into MiniProfilers
             (Id,
+             RootTimingId,
              Started,
              DurationMilliseconds,
              [User],
              HasUserViewed,
-             Json)
+             MachineName,
+             CustomLinksJson,
+             ClientTimingsRedirectCount)
 select       @Id,
+             @RootTimingId,
              @Started,
              @DurationMilliseconds,
              @User,
              @HasUserViewed,
-             @Json
+             @MachineName,
+             @CustomLinksJson,
+             @ClientTimingsRedirectCount
 where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax works on both mssql and sqlite
-
-            var wrapper = new DbTimingsWrapper {ClientTimings = profiler.ClientTimings, CustomLinks = profiler.CustomLinks, Root = profiler.Root};
 
             using (var conn = GetOpenConnection())
             {
                 conn.Execute(
-                    Sql,
+                    sql,
                     new
                         {
                             profiler.Id,
                             profiler.Started,
                             User = profiler.User.Truncate(100),
-                            RootTimingId = profiler.Root.Id,
+                            RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
                             profiler.DurationMilliseconds,
                             profiler.HasUserViewed,
-                            Json = wrapper.ToJson()
+                            MachineName = profiler.MachineName.Truncate(100),
+                            profiler.CustomLinksJson,
+                            ClientTimingsRedirectCount = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?)null
                         });
+
+                var timings = new List<Timing>();
+                if (profiler.Root != null)
+                {
+                    profiler.Root.MiniProfilerId = profiler.Id;
+                    FlattenTimings(profiler.Root, timings);
+                }
+
+                SaveTimings(timings, conn);
+                if (profiler.ClientTimings != null && profiler.ClientTimings.Timings != null && profiler.ClientTimings.Timings.Any())
+                {
+                    // set the profilerId (isn't needed unless we are storing it)
+                    profiler.ClientTimings.Timings.ForEach(x =>
+                    {
+                        x.MiniProfilerId = profiler.Id;
+                        x.Id = Guid.NewGuid();
+                    });
+                    SaveClientTimings(profiler.ClientTimings.Timings, conn);
+                }
+            }
+        }
+
+        private void SaveTimings(List<Timing> timings, DbConnection conn)
+        {
+            const string sql = @"INSERT INTO MiniProfilerTimings
+            (Id,
+             MiniProfilerId,
+             ParentTimingId,
+             Name,
+             DurationMilliseconds,
+             StartMilliseconds,
+             IsRoot,
+             Depth,
+             CustomTimingsJson)
+SELECT       @Id,
+             @MiniProfilerId,
+             @ParentTimingId,
+             @Name,
+             @DurationMilliseconds,
+             @StartMilliseconds,
+             @IsRoot,
+             @Depth,
+             @CustomTimingsJson
+WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)";
+
+            foreach (var timing in timings)
+            {
+                conn.Execute(
+                    sql, 
+                    new
+                        {
+                            timing.Id,
+                            timing.MiniProfilerId,
+                            timing.ParentTimingId,
+                            timing.Name,
+                            timing.DurationMilliseconds,
+                            timing.StartMilliseconds,
+                            timing.IsRoot,
+                            timing.Depth,
+                            timing.CustomTimingsJson
+                        });
+            }
+        }
+
+        private void SaveClientTimings(List<ClientTimings.ClientTiming> timings, DbConnection conn)
+        {
+            const string sql = @"INSERT INTO MiniProfilerClientTimings
+            ( Id,
+              MiniProfilerId,
+              Name,
+              Start,
+              Duration)
+SELECT       @Id,
+             @MiniProfilerId,
+             @Name,
+             @Start,
+             @Duration
+WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
+
+            foreach (var timing in timings)
+            {
+                conn.Execute(
+                    sql,
+                    new
+                    {
+                        timing.Id,
+                        timing.MiniProfilerId,
+                        Name = timing.Name.Truncate(200),
+                        timing.Start,
+                        timing.Duration
+                    });
+            }
+        }
+
+        private void FlattenTimings(Timing timing, List<Timing> timingsCollection)
+        {
+            timingsCollection.Add(timing);
+            if (timing.HasChildren)
+            {
+                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
             }
         }
 
@@ -103,7 +212,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         {
             using (var conn = GetOpenConnection())
             {
-                conn.Execute("update MiniProfilers set HasUserViewed = 0 where Id = @id AND [User] = @user", new { id, user });
+                conn.Execute("UPDATE MiniProfilers SET HasUserViewed = 0 WHERE Id = @id AND [User] = @user", new { id, user });
             }
         }
 
@@ -116,7 +225,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         {
             using (var conn = GetOpenConnection())
             {
-                conn.Execute("update MiniProfilers set HasUserViewed = 1 where Id = @id AND [User] = @user", new { id, user });
+                conn.Execute("UPDATE MiniProfilers SET HasUserViewed = 1 WHERE Id = @id AND [User] = @user", new { id, user });
             }
         }
 
@@ -179,18 +288,53 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
         /// <returns>Related MiniProfiler object</returns>
         private MiniProfiler LoadProfilerRecord(DbConnection connection, object keyParameter)
         {
-            var result = connection.Query<MiniProfiler>(SqlStatement, keyParameter).SingleOrDefault();
-
-            if (result != null)
+            MiniProfiler profiler;
+            using (var multi = connection.QueryMultiple(SqlStatements, keyParameter))
             {
-                if (result.Json.HasValue())
+                profiler = multi.Read<MiniProfiler>().SingleOrDefault();
+                var timings = multi.Read<Timing>().ToList();
+                var clientTimings = multi.Read<ClientTimings.ClientTiming>().ToList();
+
+                if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
                 {
-                    var wrapper = result.Json.FromJson<DbTimingsWrapper>();
-                    MapTimings(result, wrapper);
+                    var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
+                    if (rootTiming != null)
+                    {
+                        profiler.Root = rootTiming;
+                        timings.ForEach(x => x.Profiler = profiler);
+                        timings.Remove(rootTiming);
+                        var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
+                        PopulateChildTimings(rootTiming, timingsLookupByParent);
+                    }
+                    if (clientTimings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
+                    {
+                        profiler.ClientTimings = new ClientTimings
+                        {
+                            RedirectCount = profiler.ClientTimingsRedirectCount ?? 0, 
+                            Timings = clientTimings
+                        };
+                    }
                 }
             }
+            return profiler;
+        }
 
-            return result;
+        /// <summary>
+        /// Build the subtree of <see cref="Timing"/> objects with <paramref name="parent"/> at the top.
+        /// Used recursively.
+        /// </summary>
+        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated.</param>
+        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent.</param>
+        private void PopulateChildTimings(Timing parent, ILookup<Guid, Timing> timingsLookupByParent)
+        {
+            if (timingsLookupByParent.Contains(parent.Id))
+            {
+                foreach (var timing in timingsLookupByParent[parent.Id].OrderBy(x => x.StartMilliseconds))
+                {
+                    parent.AddChild(timing);
+                    PopulateChildTimings(timing, timingsLookupByParent);
+                }
+            }
         }
 
         /// <summary>
@@ -225,18 +369,51 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                   (
                      RowId                                integer not null identity constraint PK_MiniProfilers primary key clustered, -- Need a clustered primary key for SQL Azure
                      Id                                   uniqueidentifier not null, -- don't cluster on a guid
+                     RootTimingId                         uniqueidentifier null,
                      Started                              datetime not null,
                      DurationMilliseconds                 decimal(7, 1) not null,
-                     User                                 nvarchar(100) null,
+                     [User]                                 nvarchar(100) null,
                      HasUserViewed                        bit not null,
-                     Json                                 nvarchar(max)
+                     MachineName                          nvarchar(100) null,
+                     CustomLinksJson                      nvarchar(max),
+                     ClientTimingsRedirectCount           int null
                   );
                 
                 -- displaying results selects everything based on the main MiniProfilers.Id column
                 create unique nonclustered index IX_MiniProfilers_Id on MiniProfilers (Id)
                 
                 -- speeds up a query that is called on every .Stop()
-                create nonclustered index IX_MiniProfilers_User_HasUserViewed_Includes on MiniProfilers ([User], HasUserViewed) include (Id, [Started])                
+                create nonclustered index IX_MiniProfilers_User_HasUserViewed_Includes on MiniProfilers ([User], HasUserViewed) include (Id, [Started])   
+
+                create table MiniProfilerTimings
+                  (
+                     RowId                               integer not null identity constraint PK_MiniProfilerTimings primary key clustered,
+                     Id                                  uniqueidentifier not null,
+                     MiniProfilerId                      uniqueidentifier not null,
+                     ParentTimingId                      uniqueidentifier null,
+                     Name                                nvarchar(200) not null,
+                     DurationMilliseconds                decimal(9, 3) not null,
+                     StartMilliseconds                   decimal(9, 3) not null,
+                     IsRoot                              bit not null,
+                     Depth                               smallint not null,
+                     CustomTimingsJson                   nvarchar(max) null
+                  );
+
+                 create unique nonclustered index IX_MiniProfilerTimings_Id on MiniProfilerTimings (Id);
+                 create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId);
+
+                 create table MiniProfilerClientTimings
+                  (
+                     RowId                               integer not null identity constraint PK_MiniProfilerClientTimings primary key clustered,
+                     Id                                  uniqueidentifier not null,
+                     MiniProfilerId                      uniqueidentifier not null,
+                     Name                                nvarchar(200) not null,
+                     Start                               decimal(9, 3) not null,
+                     Duration                            decimal(9, 3) not null
+                  );
+
+                 create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);
+                 create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);             
                 ";
 
     }

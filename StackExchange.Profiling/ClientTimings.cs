@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace StackExchange.Profiling
 {
@@ -34,7 +35,7 @@ namespace StackExchange.Profiling
         public static ClientTimings FromRequest(HttpRequest request)
         {
             ClientTimings timing = null;
-            long navigationStart = 0;
+            long navigationStart;
             long.TryParse(request[ClientTimingPrefix + "navigationStart]"], out navigationStart);
             if (navigationStart > 0)
             {
@@ -42,7 +43,7 @@ namespace StackExchange.Profiling
 
                 timing = new ClientTimings();
 
-                int redirectCount = 0;
+                int redirectCount;
                 int.TryParse(request["clientPerformance[navigation][redirectCount]"], out redirectCount);
                 timing.RedirectCount = redirectCount;
 
@@ -56,7 +57,7 @@ namespace StackExchange.Profiling
                 {
                     if (key.StartsWith(ClientTimingPrefix))
                     {
-                        long val = 0;
+                        long val;
                         long.TryParse(request[key], out val);
                         val -= navigationStart;
 
@@ -112,7 +113,7 @@ namespace StackExchange.Profiling
 
                             if (key.EndsWith("[d]")) 
                             {
-                                long val = 0;
+                                long val;
                                 long.TryParse(request[key], out val);
                                 if (val > 0)
                                 {
@@ -200,6 +201,20 @@ namespace StackExchange.Profiling
             /// </summary>
             [DataMember(Order = 3)]
             public decimal Duration { get; set; }
+
+            /// <summary>
+            /// Unique Identifier used for sql storage. 
+            /// </summary>
+            /// <remarks>Not set unless storing in Sql</remarks>
+            [ScriptIgnore]
+            public Guid Id { get; set; }
+
+            /// <summary>
+            /// Used for sql storage
+            /// </summary>
+            /// <remarks>Not set unless storing in Sql</remarks>
+            [ScriptIgnore]
+            public Guid MiniProfilerId { get; set; }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
+using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling
 {
@@ -84,6 +85,15 @@ namespace StackExchange.Profiling
         public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
         
         /// <summary>
+        /// JSON representing the Custom Timings associated with this timing.
+        /// </summary>
+        [ScriptIgnore]
+        public string CustomTimingsJson {
+            get { return CustomTimings != null ? CustomTimings.ToJson() : null; }
+            set { CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>(); }
+        }
+        
+        /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
         [ScriptIgnore]
@@ -98,6 +108,12 @@ namespace StackExchange.Profiling
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         [ScriptIgnore]
         public Timing ParentTiming { get; set; }
+
+        /// <summary>
+        /// The Unique Identifier identifying the parent timing of this Timing. Used for sql server storage.
+        /// </summary>
+        [ScriptIgnore]
+        public Guid ParentTimingId { get; set; }
 
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
@@ -173,7 +189,13 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
-        internal MiniProfiler Profiler { get; private set; }
+        internal MiniProfiler Profiler { get; set; }
+
+        /// <summary>
+        /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
+        /// </summary>
+        [ScriptIgnore]
+        public Guid MiniProfilerId { get; set; }
 
         /// <summary>
         /// Returns this Timing's Name.
@@ -232,6 +254,8 @@ namespace StackExchange.Profiling
 
             Children.Add(timing);
             timing.ParentTiming = this;
+            timing.ParentTimingId = Id;
+            timing.MiniProfilerId = Profiler.Id;
         }
 
         /// <summary>

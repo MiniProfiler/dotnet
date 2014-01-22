@@ -94,6 +94,20 @@ namespace StackExchange.Profiling
         /// </remarks>
         [DataMember(Order = 6)]
         public Dictionary<string, string> CustomLinks { get; set; }
+
+        /// <summary>
+        /// Json used to store Custom Links
+        /// </summary>
+        [ScriptIgnore]
+        public string CustomLinksJson {
+            get { return CustomLinks != null ? CustomLinks.ToJson() : null; } 
+            set {
+                if (value.HasValue())
+                {
+                    CustomLinks = value.FromJson<Dictionary<string, string>>();
+                }
+            } 
+        }
         
             /// <summary>
         /// Gets or sets the root timing.
@@ -110,6 +124,7 @@ namespace StackExchange.Profiling
             set
             {
                 _root = value;
+                RootTimingId = value.Id;
 
                 // TODO: remove this shit
 
@@ -140,10 +155,22 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Id of Root Timing. Used for Sql Storage purposes.
+        /// </summary>
+        [ScriptIgnore]
+        public Guid? RootTimingId { get; set; }
+
+        /// <summary>
         /// Gets or sets timings collected from the client
         /// </summary>
         [DataMember(Order = 8)]
         public ClientTimings ClientTimings { get; set; }
+
+        /// <summary>
+        /// RedirectCount in ClientTimings. Used for sql storage.
+        /// </summary>
+        [ScriptIgnore]
+        public int? ClientTimingsRedirectCount { get; set; }
 
         /// <summary>
         /// Gets or sets a string identifying the user/client that is profiling this request.
@@ -165,16 +192,6 @@ namespace StackExchange.Profiling
         [DataMember(Order = 10)]
         [ScriptIgnore]
         public bool HasUserViewed { get; set; }
-
-        /// <summary>
-        /// Json representing the collection of CustomTimings relating to this MiniProfiler
-        /// </summary>
-        /// <remarks>
-        /// Is used when storing the MiniProfiler in SqlStorage
-        /// </remarks>
-        [DataMember(Order = 11)]
-        [ScriptIgnore]
-        public string Json { get; set; }
 
         /// <summary>
         /// Gets or sets whether or not filtering is allowed of <see cref="Timing"/> steps based on what <see cref="ProfileLevel"/> 
