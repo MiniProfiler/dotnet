@@ -16,6 +16,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="StackExchange.Profiling.Mvc\bin\Release\MiniProfiler.*" target="lib\net40" />
+    <file src="StackExchange.Profiling.Mvc\bin\Release\MiniProfiler.Mvc.*" target="lib\net40" />
   </files>
 </package>
