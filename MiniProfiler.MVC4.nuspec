@@ -2,10 +2,10 @@
 <package>
   <metadata>
     <id>MiniProfiler.Mvc4</id>
-    <version>3.0.7</version>
-    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
-    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
-    <description>MiniProfiler extensions and helpers for ASP.NET MVC 4</description>
+    <version>3.0.8</version>
+    <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
+    <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
+    <description>MiniProfiler extensions and helpers for ASP.NET MVC 4+</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance profiling timing</tags>

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>MiniProfiler.EF</id>
-    <version>2.1.0</version>
-    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
-    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
-    <description>MiniProfiler integration for Entity Framework (Obsolete)</description>
+    <id>MiniProfiler.EF5</id>
+    <version>3.0.8</version>
+    <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis</authors>
+    <owners>Marc Gravell, Jarrod Dixon, Yaakov Ellis</owners>
+    <description>MiniProfiler integration for Entity Framework version 4-5</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance profiling timing entityframework</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="[2,3)"/>
+      <dependency id="MiniProfiler" version="3.0"/>
+      <dependency id="EntityFramework" version="(,6.0)" />
     </dependencies>
     <language>en-US</language>
   </metadata>

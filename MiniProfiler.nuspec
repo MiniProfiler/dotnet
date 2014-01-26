@@ -3,8 +3,8 @@
   <metadata>
     <id>MiniProfiler</id>
     <version>3.0.8</version>
-    <authors>Marc Gravell, Sam Saffron, Jarrod Dixon</authors>
-    <owners>Marc Gravell, Sam Saffron, Jarrod Dixon</owners>
+    <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
+    <owners>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</owners>
     <description>Lightweight mini-profiler, in particular designed for ASP.NET MVC sites</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>

@@ -8,7 +8,7 @@
     <description>MiniProfiler integration for Entity Framework 6</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <tags>profiler sql mvc asp.net performance profiling timing</tags>
+    <tags>profiler sql mvc asp.net performance profiling timing entityframework</tags>
     <dependencies>
       <dependency id="MiniProfiler" version="3.0.8"/>
       <dependency id="EntityFramework" version="6.0.1" />
