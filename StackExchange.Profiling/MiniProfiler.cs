@@ -27,13 +27,13 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
-        /// for the root <paramref name="url"/>, filtering <see cref="Timing"/> steps to <paramref name="level"/>.
+        /// for the root <paramref name="url"/>.
         /// </summary>
-        public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info)
+        public MiniProfiler(string url)
         {
             Id = Guid.NewGuid();
 #pragma warning disable 612,618
-            Level = level;
+            Level = ProfileLevel.Info;
 #pragma warning restore 612,618
             SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
@@ -42,6 +42,18 @@ namespace StackExchange.Profiling
             // stopwatch must start before any child Timings are instantiated
             _sw = Settings.StopwatchProvider();
             Root = new Timing(this, null, url);
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
+        /// for the root <paramref name="url"/>, filtering <see cref="Timing"/> steps to <paramref name="level"/>.
+        /// </summary>
+        [Obsolete("ProfileLevel is going away")]
+        public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info) : this(url)
+        {
+#pragma warning disable 612,618
+            Level = level;
+#pragma warning restore 612,618
         }
 
         /// <summary>
@@ -247,11 +259,37 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
         /// <see cref="MiniProfiler.Current"/>.
         /// </summary>
+        public static MiniProfiler Start()
+        {
+            // ToDo - overloading the method too many times - will correct when delete the Obsolete version. 
+            // Until then need it this way to prevent ambiguity
+            return Start(null);
+        }
+
+        /// <summary>
+        /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
+        /// <see cref="MiniProfiler.Current"/>.
+        /// </summary>
+        /// <param name="sessionName">
+        /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
+        /// a web request, the url will be used for the overall session name.
+        /// </param>
+        public static MiniProfiler Start(string sessionName)
+        {
+            Settings.EnsureProfilerProvider();
+            return Settings.ProfilerProvider.Start(sessionName);
+        }
+
+        /// <summary>
+        /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
+        /// <see cref="MiniProfiler.Current"/>.
+        /// </summary>
         /// <param name="level">Profiling level. Default to Info.</param>
         /// <param name="sessionName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
+        [Obsolete("ProfileLevel is going away")]
         public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info, string sessionName = null)
         {
             Settings.EnsureProfilerProvider();
@@ -276,8 +314,20 @@ namespace StackExchange.Profiling
         /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step"/> extension method.
         /// </summary>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <returns>the static step.</returns>
+        public static IDisposable StepStatic(string name)
+        {
+            return Current.Step(name);
+        }
+
+        /// <summary>
+        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you
+        /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step"/> extension method.
+        /// </summary>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
         /// <returns>the static step.</returns>
+        [Obsolete("ProfileLevel is going away")]
         public static IDisposable StepStatic(string name, ProfileLevel level = ProfileLevel.Info)
         {
             return Current.Step(name, level);
@@ -408,9 +458,15 @@ namespace StackExchange.Profiling
             }
         }
 
+        internal IDisposable StepImpl(string name)
+        {
+            return new Timing(this, Head, name);
+        }
+
+        [Obsolete("Level is going away")]
         internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
-            return level > Level ? null : new Timing(this, Head, name);
+            return level > Level ? null : StepImpl(name);
         }
 
         internal IDisposable IgnoreImpl()

@@ -22,13 +22,49 @@ namespace StackExchange.Profiling
             MiniProfilerHandler.RegisterRoutes();
         }
 
+
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
+        public override MiniProfiler Start(string sessionName = null)
+        {
+            var context = HttpContext.Current;
+            if (context == null || context.Request.AppRelativeCurrentExecutionFilePath == null) return null;
+
+            var url = context.Request.Url;
+            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();
+
+            // don't profile /content or /scripts, either - happens in web.dev
+            foreach (var ignored in MiniProfiler.Settings.IgnoredPaths ?? new string[0])
+            {
+                if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
+                    return null;
+            }
+
+            if (context.Request.Path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
+
+            var result = new MiniProfiler(sessionName ?? url.OriginalString);
+            Current = result;
+
+            SetProfilerActive(result);
+
+            // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
+            result.User = Settings.UserProvider.GetUser(context.Request);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
+        /// </summary>
+        [Obsolete("ProfileLevel is going away")]
         public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = HttpContext.Current;
-            if (context == null) return null;
+            if (context == null || context.Request.AppRelativeCurrentExecutionFilePath == null) return null;
 
             var url = context.Request.Url;
             var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();

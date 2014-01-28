@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling
+﻿using System;
+
+namespace StackExchange.Profiling
 {
 
     /// <summary>
@@ -15,7 +17,18 @@
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
+        [Obsolete("ProfileLevel is going away")]
         MiniProfiler Start(ProfileLevel level, string sessionName = null);
+
+        /// <summary>
+        /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
+        /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
+        /// </summary>
+        /// <param name="sessionName">
+        /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
+        /// a web request, the url will be used for the overall session name.
+        /// </param>
+        MiniProfiler Start(string sessionName = null);
 
         /// <summary>
         /// Ends the current profiling session, if one exists.

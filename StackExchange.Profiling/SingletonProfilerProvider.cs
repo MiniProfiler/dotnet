@@ -18,10 +18,19 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
-        public MiniProfiler Start(ProfileLevel level, string sessionName = null)
+        public MiniProfiler Start(string sessionName = null)
         {
             _profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
             return _profiler;
+        }
+
+        /// <summary>
+        /// Starts a new profiling session.
+        /// </summary>
+        [Obsolete("ProfileLevel is going away")]
+        public MiniProfiler Start(ProfileLevel level, string sessionName = null) 
+        {
+            return Start(sessionName);
         }
 
         /// <summary>

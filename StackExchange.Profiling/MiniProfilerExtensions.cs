@@ -18,8 +18,27 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="selector">Method to execute and profile.</param>
         /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
+        /// <returns>the profiled result.</returns>
+        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
+        {
+            if (selector == null) throw new ArgumentNullException("selector");
+            if (profiler == null) return selector();
+            using (profiler.StepImpl(name))
+            {
+                return selector();
+            }
+        }
+
+        /// <summary>
+        /// Wraps <paramref name="selector"/> in a <see cref="Step"/> call and executes it, returning its result.
+        /// </summary>
+        /// <typeparam name="T">the type of result.</typeparam>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <param name="selector">Method to execute and profile.</param>
+        /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
         /// <returns>the profiled result.</returns>
+        [Obsolete("ProfileLevel is going away")]
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level = ProfileLevel.Info)
         {
             if (selector == null) throw new ArgumentNullException("selector");
@@ -29,6 +48,16 @@ namespace StackExchange.Profiling
                 return selector();
             }
         }
+        /// <summary>
+        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
+        /// </summary>
+        /// <param name="profiler">The current profiling session or null.</param>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <returns>the profile step</returns>
+        public static IDisposable Step(this MiniProfiler profiler, string name)
+        {
+            return profiler == null ? null : profiler.StepImpl(name);
+        }
 
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
@@ -37,6 +66,7 @@ namespace StackExchange.Profiling
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
         /// <returns>the profile step</returns>
+        [Obsolete("ProfileLevel is going away")]
         public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
         {
             return profiler == null ? null : profiler.StepImpl(name, level);

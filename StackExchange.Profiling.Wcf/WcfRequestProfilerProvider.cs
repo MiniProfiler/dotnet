@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling.Wcf
+﻿using System;
+
+namespace StackExchange.Profiling.Wcf
 {
     using System.ServiceModel;
 
@@ -29,8 +31,52 @@
         /// <summary>
         /// start the profiler.
         /// </summary>
+        /// <returns>the mini profiler.</returns>
+        public override MiniProfiler Start(string sessionName = null)
+        {
+            var context = WcfInstanceContext.Current;
+            if (context == null) return null;
+
+            var operationContext = OperationContext.Current;
+            if (operationContext == null) return null;
+
+            var instanceContext = operationContext.InstanceContext;
+            if (instanceContext == null) return null;
+
+            // TODO: Include the action name here as well, and null protection
+            string serviceName = instanceContext.Host.Description.Name;
+
+            // BaseAddresses.FirstOrDefault();
+            // TODO: Ignored paths - currently solely based on servicename
+
+            // var url = context.Request.Url;
+            // var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1);
+
+            // don't profile /content or /scripts, either - happens in web.dev
+            foreach (var ignored in MiniProfiler.Settings.IgnoredPaths ?? new string[0])
+            {
+                if (serviceName.ToUpperInvariant().Contains((ignored ?? string.Empty).ToUpperInvariant()))
+                    return null;
+            }
+
+            var result = new MiniProfiler(sessionName ?? GetProfilerName(operationContext, instanceContext));
+
+            SetCurrentProfiler(result);
+
+            // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
+            result.User = (Settings.UserProvider ?? new EmptyUserProvider()).GetUser(/*context.Request*/);
+
+            SetProfilerActive(result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// start the profiler.
+        /// </summary>
         /// <param name="level">The profile level.</param>
         /// <returns>the mini profiler.</returns>
+        [Obsolete("ProfileLevel is going away")]
         public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = WcfInstanceContext.Current;
