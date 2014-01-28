@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Storage
         
         /// <summary>
         /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit? 
-        /// If False, all operations will run synchronously, in order. Defaults to True.
+        /// If False, all operations will run synchronously, in order. Defaults to False.
         /// </summary>
         public bool AllowParallelOps { get; set; }
 
@@ -35,7 +35,6 @@ namespace StackExchange.Profiling.Storage
                 throw new ArgumentNullException("stores", "Please include at least one IStorage object when initializing a MultiStorageProvider");
             }
             Stores = stores.ToList();
-            AllowParallelOps = true;
         }
 
         /// <summary>
