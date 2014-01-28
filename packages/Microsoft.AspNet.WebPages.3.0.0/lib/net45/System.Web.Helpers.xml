@@ -157,7 +157,7 @@
       <returns>The hash value for <paramref name="input" /> as a string of hexadecimal characters.</returns>
       <param name="input">The data to provide a hash value for.</param>
       <param name="algorithm">The algorithm that is used to generate the hash value. The default is "sha256".</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="input" /> is null.</exception>
     </member>
     <member name="M:System.Web.Helpers.Crypto.Hash(System.String,System.String)">
@@ -165,28 +165,28 @@
       <returns>The hash value for <paramref name="input" /> as a string of hexadecimal characters.</returns>
       <param name="input">The data to provide a hash value for.</param>
       <param name="algorithm">The algorithm that is used to generate the hash value. The default is "sha256".</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="input" /> is null.</exception>
     </member>
     <member name="M:System.Web.Helpers.Crypto.HashPassword(System.String)">
       <summary>Returns an RFC 2898 hash value for the specified password.</summary>
       <returns>The hash value for <paramref name="password" /> as a base-64-encoded string.</returns>
       <param name="password">The password to generate a hash value for.</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="password" /> is null.</exception>
     </member>
     <member name="M:System.Web.Helpers.Crypto.SHA1(System.String)">
       <summary>Returns a SHA-1 hash value for the specified string.</summary>
       <returns>The SHA-1 hash value for <paramref name="input" /> as a string of hexadecimal characters.</returns>
       <param name="input">The data to provide a hash value for.</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="input" /> is null.</exception>
     </member>
     <member name="M:System.Web.Helpers.Crypto.SHA256(System.String)">
       <summary>Returns a SHA-256 hash value for the specified string.</summary>
       <returns>The SHA-256 hash value for <paramref name="input" /> as a string of hexadecimal characters.</returns>
       <param name="input">The data to provide a hash value for.</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="input" /> is null.</exception>
     </member>
     <member name="M:System.Web.Helpers.Crypto.VerifyHashedPassword(System.String,System.String)">
@@ -194,7 +194,7 @@
       <returns>true if the hash value is a cryptographic match for the password; otherwise, false.</returns>
       <param name="hashedPassword">The previously-computed RFC 2898 hash value as a base-64-encoded string.</param>
       <param name="password">The plaintext password to cryptographically compare with <paramref name="hashedPassword" />.</param>
-      <exception cref="System.ArgumentNullException">
+      <exception cref="T:System.ArgumentNullException">
         <paramref name="hashedPassword" /> or <paramref name="password" /> is null.</exception>
     </member>
     <member name="T:System.Web.Helpers.DynamicJsonArray">
@@ -211,7 +211,6 @@
     <member name="P:System.Web.Helpers.DynamicJsonArray.Item(System.Int32)">
       <summary>Returns the value at the specified index in the <see cref="T:System.Web.Helpers.DynamicJsonArray" /> instance.</summary>
       <returns>The value at the specified index.</returns>
-      <param name="index">The zero-based index of the value in the JSON array to return.</param>
     </member>
     <member name="P:System.Web.Helpers.DynamicJsonArray.Length">
       <summary>Returns the number of elements in the <see cref="T:System.Web.Helpers.DynamicJsonArray" /> instance.</summary>
@@ -388,6 +387,10 @@
       <param name="sortFieldName">The name of the query-string field that is used to specify the name of the data column that the <see cref="T:System.Web.Helpers.WebGrid" /> instance is sorted by.</param>
       <param name="sortDirectionFieldName">The name of the query-string field that is used to specify the direction in which the <see cref="T:System.Web.Helpers.WebGrid" /> instance is sorted.</param>
     </member>
+    <member name="M:System.Web.Helpers.WebGrid.AddSorter``2(System.String,System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+      <typeparam name="TElement"></typeparam>
+      <typeparam name="TProperty"></typeparam>
+    </member>
     <member name="P:System.Web.Helpers.WebGrid.AjaxUpdateCallback">
       <summary>Gets the name of the JavaScript function to call after the HTML element that is associated with the <see cref="T:System.Web.Helpers.WebGrid" /> instance has been updated in response to an Ajax update request.</summary>
       <returns>The name of the function.</returns>
@@ -408,7 +411,7 @@
       <summary>Gets a value that indicates whether the <see cref="T:System.Web.Helpers.WebGrid" /> instance supports sorting.</summary>
       <returns>true if the instance supports sorting; otherwise, false.</returns>
     </member>
-    <member name="M:System.Web.Helpers.WebGrid.Column(System.String,System.String,System.Func`2,System.Boolean,System.Object)">
+    <member name="M:System.Web.Helpers.WebGrid.Column(System.String,System.String,System.Func{System.Object,System.Object},System.String,System.Boolean)">
       <summary>Creates a new <see cref="T:System.Web.Helpers.WebGridColumn" /> instance.</summary>
       <returns>The new column.</returns>
       <param name="columnName">The name of the data column to associate with the <see cref="T:System.Web.Helpers.WebGridColumn" /> instance.</param>
@@ -535,7 +538,7 @@
       <summary>Gets the full name of the query-string field that is used to specify the name of the data column that the <see cref="T:System.Web.Helpers.WebGrid" /> instance is sorted by.</summary>
       <returns>The full name of the query-string field that is used to specify the name of the data column that the grid is sorted by.</returns>
     </member>
-    <member name="M:System.Web.Helpers.WebGrid.Table(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Boolean,System.String,System.Collections.Generic.IEnumerable{System.Web.Helpers.WebGridColumn},System.Collections.Generic.IEnumerable{System.String},System.Func`2,System.Boolean)">
+    <member name="M:System.Web.Helpers.WebGrid.Table(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Boolean,System.String,System.Collections.Generic.IEnumerable{System.Web.Helpers.WebGridColumn},System.Collections.Generic.IEnumerable{System.String},System.Func{System.Object,System.Object},System.Object)">
       <summary>Returns the HTML markup that is used to render the <see cref="T:System.Web.Helpers.WebGrid" /> instance.</summary>
       <returns>The HTML markup that represents the fully-populated <see cref="T:System.Web.Helpers.WebGrid" /> instance.</returns>
       <param name="tableStyle">The name of the CSS class that is used to style the whole table.</param>
@@ -584,19 +587,19 @@
       <returns>The CSS class attribute that is applied to cells that are associated with the column.</returns>
     </member>
     <member name="T:System.Web.Helpers.WebGridPagerModes">
-      <summary>Specifies flags that describe the methods that are provided for moving between the pages of a <see cref="T:System.Web.Helpers.WebGrid" /> instance.</summary>
+      <summary>Specifies flags that describe the methods that are provided for moving between the pages of a <see cref="T:System.Web.Helpers.WebGrid" /> instance.This enumeration has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values.</summary>
     </member>
-    <member name="F:System.Web.Helpers.WebGridPagerModes.Numeric">
-      <summary>Indicates that methods for moving to a nearby <see cref="F:System.Web.Helpers.WebGrid" /> page by using a page number are provided.</summary>
-    </member>
-    <member name="F:System.Web.Helpers.WebGridPagerModes.NextPrevious">
-      <summary>Indicates that methods for moving to the next or previous <see cref="F:System.Web.Helpers.WebGrid" /> page are provided.</summary>
+    <member name="F:System.Web.Helpers.WebGridPagerModes.All">
+      <summary>Indicates that all methods for moving between <see cref="T:System.Web.Helpers.WebGrid" /> pages are provided.</summary>
     </member>
     <member name="F:System.Web.Helpers.WebGridPagerModes.FirstLast">
       <summary>Indicates that methods for moving directly to the first or last <see cref="F:System.Web.Helpers.WebGrid" /> page are provided.</summary>
     </member>
-    <member name="F:System.Web.Helpers.WebGridPagerModes.All">
-      <summary>Indicates that all methods for moving between <see cref="T:System.Web.Helpers.WebGrid" /> pages are provided.</summary>
+    <member name="F:System.Web.Helpers.WebGridPagerModes.NextPrevious">
+      <summary>Indicates that methods for moving to the next or previous <see cref="F:System.Web.Helpers.WebGrid" /> page are provided.</summary>
+    </member>
+    <member name="F:System.Web.Helpers.WebGridPagerModes.Numeric">
+      <summary>Indicates that methods for moving to a nearby <see cref="F:System.Web.Helpers.WebGrid" /> page by using a page number are provided.</summary>
     </member>
     <member name="T:System.Web.Helpers.WebGridRow">
       <summary>Represents a row in a <see cref="T:System.Web.Helpers.WebGrid" /> instance.</summary>
@@ -632,7 +635,7 @@
       <returns>The specified value.</returns>
       <param name="name">The name of the value in the row to return.</param>
       <exception cref="T:System.ArgumentException">
-        <paramref name="name" /> is null or empty.</exception>
+        <paramref name="name" /> is Nothing or empty.</exception>
       <exception cref="T:System.InvalidOperationException">
         <paramref name="name" /> specifies a value that does not exist.</exception>
     </member>
