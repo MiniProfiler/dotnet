@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Script.Serialization;
 using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
 {
@@ -234,6 +235,13 @@ namespace StackExchange.Profiling
                 return Settings.ProfilerProvider.GetCurrentProfiler();
             }
         }
+
+        /// <summary>
+        /// A <see cref="IStorage"/> strategy to use for the current profiler. 
+        /// If null, then the <see cref="IStorage"/> set in <see cref="MiniProfiler.Settings.Storage"/> will be used.
+        /// </summary>
+        /// <remarks>Used to set custom storage for an individual request</remarks>
+        public IStorage Storage { get; set; }
 
         /// <summary>
         /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
