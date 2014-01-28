@@ -1,5 +1,4 @@
 ﻿using SampleWeb.EfModelFirst;
-using StackExchange.Profiling.Helpers.Dapper;
 
 namespace SampleWeb.Controllers
 {

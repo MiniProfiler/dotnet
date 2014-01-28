@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Storage
     }
 
     /*
-     * Maybe ... to cut down on deserializtion 
+     * Maybe ... to cut down on deserialization 
     public class ProfileSummary
     {
 
