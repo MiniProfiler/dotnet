@@ -1,12 +1,10 @@
 ﻿using System;
+using System.ServiceModel;
+using StackExchange.Profiling.Wcf.Helpers;
+using StackExchange.Profiling.Wcf.Storage;
 
 namespace StackExchange.Profiling.Wcf
 {
-    using System.ServiceModel;
-
-    using StackExchange.Profiling.Wcf.Helpers;
-    using StackExchange.Profiling.Wcf.Storage;
-
     /// <summary>
     /// wCF implementation of a profile provider.  This provider uses <see cref="StackExchange.Profiling.Wcf.Helpers.WcfInstanceContext"/>
     /// to keep one MiniProfiler for each request

@@ -277,7 +277,7 @@ namespace StackExchange.Profiling
         public static MiniProfiler Start(string sessionName)
         {
             Settings.EnsureProfilerProvider();
-            return Settings.ProfilerProvider.Start(sessionName);
+            return Settings.ProfilerProvider.Start(ProfileLevel.Info, sessionName);
         }
 
         /// <summary>
