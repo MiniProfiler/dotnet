@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.Raven</id>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
     <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
     <description>MiniProfiler extensions and helpers for RavenDb</description>
@@ -11,7 +11,7 @@
     <tags>profiler performance profiling timing raven ravendb</tags>
     <language>en-US</language>
     <dependencies>
-      <dependency id="MiniProfiler" version="3.0.8" />
+      <dependency id="MiniProfiler" version="3.0.9" />
       <dependency id="RavenDB.Client" version="2.5.2750" />
     </dependencies>
   </metadata>

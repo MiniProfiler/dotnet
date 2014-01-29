@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF6</id>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
     <authors>Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Jarrod Dixon, Yaakov Ellis</owners>
     <description>MiniProfiler integration for Entity Framework 6</description>
@@ -10,7 +10,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance profiling timing entityframework</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="3.0.8"/>
+      <dependency id="MiniProfiler" version="3.0.9"/>
       <dependency id="EntityFramework" version="6.0.1" />
     </dependencies>
     <language>en-US</language>

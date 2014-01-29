@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF5</id>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Marc Gravell, Jarrod Dixon, Yaakov Ellis</owners>
     <description>MiniProfiler integration for Entity Framework version 4-5</description>
