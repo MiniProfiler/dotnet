@@ -1,4 +1,5 @@
 ﻿using SampleWeb.EfModelFirst;
+using SampleWeb.Helpers;
 
 namespace SampleWeb.Controllers
 {
@@ -74,6 +75,9 @@ namespace SampleWeb.Controllers
         private void DefaultActions()
         {
             var profiler = MiniProfiler.Current;
+
+            // test out using storage for this one request. Only store in SqlLite, not in httpCache
+            profiler.Storage = new SqliteMiniProfilerStorage(MvcApplication.ConnectionString);
 
             using (profiler.Step("Set page title"))
             {

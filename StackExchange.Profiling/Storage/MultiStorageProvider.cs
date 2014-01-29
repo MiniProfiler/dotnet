@@ -57,7 +57,6 @@ namespace StackExchange.Profiling.Storage
             return new List<Guid>();
         }
 
-
         /// <summary>
         /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/> in all of the <see cref="Stores"/>.
         /// </summary>

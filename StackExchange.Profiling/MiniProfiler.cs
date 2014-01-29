@@ -109,7 +109,7 @@ namespace StackExchange.Profiling
         public Dictionary<string, string> CustomLinks { get; set; }
 
         /// <summary>
-        /// Json used to store Custom Links
+        /// Json used to store Custom Links. Do not touch.
         /// </summary>
         [ScriptIgnore]
         public string CustomLinksJson {

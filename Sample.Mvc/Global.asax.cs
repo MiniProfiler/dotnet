@@ -8,6 +8,7 @@ using SampleWeb.Helpers;
 using StackExchange.Profiling;
 using StackExchange.Profiling.EntityFramework6;
 using StackExchange.Profiling.Mvc;
+using StackExchange.Profiling.Storage;
 
 namespace SampleWeb
 {
@@ -46,7 +47,8 @@ namespace SampleWeb
 
             // this is only done for testing purposes so we don't check in the db to source control
             // parameter table is only used in this project for sample queries
-            ((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
+            // yes, it is ugly, and do not do this unless you know for sure that the second Store in the MultiStorageProvider is of this type
+            ((SqliteMiniProfilerStorage)((MultiStorageProvider)MiniProfiler.Settings.Storage).Stores[1]).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
 
             var entityFrameworkDataPath = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
             if (File.Exists(entityFrameworkDataPath))
@@ -113,7 +115,12 @@ namespace SampleWeb
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
             // let's rig up serialization of our profiler results to a database, so they survive app restarts.
-            MiniProfiler.Settings.Storage = new SqliteMiniProfilerStorage(ConnectionString);
+
+            // Setting up a MultiStorage provider. This will store results in the HttpRuntimeCache (normally the default) and in SqlLite as well.
+            MultiStorageProvider multiStorage = new MultiStorageProvider(
+                new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0)),
+                new SqliteMiniProfilerStorage(ConnectionString));
+            MiniProfiler.Settings.Storage = multiStorage;
 
             // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
             // by default, sql parameters won't be displayed
