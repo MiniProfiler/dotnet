@@ -57,6 +57,14 @@ namespace StackExchange.Profiling.Storage
             return new List<Guid>();
         }
 
+
+        /// <summary>
+        /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/> in all of the <see cref="Stores"/>.
+        /// </summary>
+        /// <param name="profiler">The results of a profiling session.</param>
+        /// <remarks>
+        /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
+        /// </remarks>
         public void Save(MiniProfiler profiler)
         {
             if (Stores != null)
@@ -72,6 +80,15 @@ namespace StackExchange.Profiling.Storage
             }
         }
 
+        /// <summary>
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IStorage"/>
+        /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
+        /// </summary>
+        /// <remarks>
+        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// profiling <see cref="MiniProfiler.User"/>.
+        /// </remarks>
         public MiniProfiler Load(Guid id)
         {
             if (Stores != null)

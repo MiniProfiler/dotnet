@@ -256,7 +256,7 @@ namespace StackExchange.Profiling
 
 
             /// <summary>
-            /// When <see cref="MiniProfiler.Start"/> is called, if the current request url contains any items in this property,
+            /// When <see cref="MiniProfiler.Start(string)"/> is called, if the current request url contains any items in this property,
             /// no profiler will be instantiated and no results will be displayed.
             /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
             /// </summary>

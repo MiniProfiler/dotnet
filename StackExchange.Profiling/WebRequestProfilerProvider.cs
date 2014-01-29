@@ -192,7 +192,7 @@ namespace StackExchange.Profiling
         private const string CacheKey = ":mini-profiler:";
 
         /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
         private MiniProfiler Current
         {

@@ -10,6 +10,10 @@ namespace StackExchange.Profiling
     {
         private MiniProfiler _profiler;
 
+        /// <summary>
+        /// The name says it all
+        /// </summary>
+        /// <returns></returns>
         public MiniProfiler GetCurrentProfiler()
         {
             return _profiler;

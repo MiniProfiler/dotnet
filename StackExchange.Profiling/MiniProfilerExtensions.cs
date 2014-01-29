@@ -12,7 +12,7 @@ namespace StackExchange.Profiling
     public static class MiniProfilerExtensions
     {
         /// <summary>
-        /// Wraps <paramref name="selector"/> in a <see cref="Step"/> call and executes it, returning its result.
+        /// Wraps <paramref name="selector"/> in a <see cref="Step(MiniProfiler, string)"/> call and executes it, returning its result.
         /// </summary>
         /// <typeparam name="T">the type of result.</typeparam>
         /// <param name="profiler">The current profiling session or null.</param>
@@ -30,13 +30,13 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Wraps <paramref name="selector"/> in a <see cref="Step"/> call and executes it, returning its result.
+        /// Wraps <paramref name="selector"/> in a <see cref="Step(MiniProfiler, string)"/> call and executes it, returning its result.
         /// </summary>
         /// <typeparam name="T">the type of result.</typeparam>
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="selector">Method to execute and profile.</param>
         /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
-        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profiled result.</returns>
         [Obsolete("ProfileLevel is going away")]
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level = ProfileLevel.Info)
@@ -64,7 +64,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
-        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profile step</returns>
         [Obsolete("ProfileLevel is going away")]
         public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
@@ -77,7 +77,7 @@ namespace StackExchange.Profiling
         /// and <see cref="Profiling.CustomTiming.DurationMilliseconds"/>
         /// </summary>
         /// <remarks>
-        /// Should be used like the <see cref="Step"/> extension method:
+        /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method:
         /// 
         /// <example>
         /// 

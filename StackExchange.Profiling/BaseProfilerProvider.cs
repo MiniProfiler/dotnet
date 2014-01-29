@@ -5,7 +5,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// BaseProfilerProvider.  This providers some helper methods which provide access to
     /// internals not otherwise available.
-    /// To use, override the <see cref="Start"/>, <see cref="Stop"/> and <see cref="GetCurrentProfiler"/>
+    /// To use, override the <see cref="Start(string)"/>, <see cref="Stop"/> and <see cref="GetCurrentProfiler"/>
     /// methods.
     /// </summary>
     public abstract class BaseProfilerProvider : IProfilerProvider

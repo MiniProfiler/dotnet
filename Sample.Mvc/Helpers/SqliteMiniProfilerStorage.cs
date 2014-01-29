@@ -1,4 +1,5 @@
-﻿using StackExchange.Profiling.Helpers.Dapper;
+﻿using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Helpers.Dapper;
 
 namespace SampleWeb.Helpers
 {

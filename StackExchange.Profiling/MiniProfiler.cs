@@ -237,7 +237,7 @@ namespace StackExchange.Profiling
         }
         
         /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start"/>ed.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
         public static MiniProfiler Current
         {
@@ -311,7 +311,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you
-        /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step"/> extension method.
+        /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step(MiniProfiler,string)"/> extension method.
         /// </summary>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <returns>the static step.</returns>
@@ -322,10 +322,10 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you
-        /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step"/> extension method.
+        /// do not wish to include the StackExchange.Profiling namespace for the <see cref="MiniProfilerExtensions.Step(MiniProfiler,string)"/> extension method.
         /// </summary>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
-        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start"/> is called.</param>
+        /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the static step.</returns>
         [Obsolete("ProfileLevel is going away")]
         public static IDisposable StepStatic(string name, ProfileLevel level = ProfileLevel.Info)

@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using StackExchange.Profiling.Helpers.Dapper;
 
-namespace StackExchange.Profiling.Helpers.Dapper
+namespace StackExchange.Profiling.Helpers
 {
+    /// <summary>
+    /// Help to build out sql
+    /// </summary>
     public class SqlBuilder
     {
         Dictionary<string, Clauses> data = new Dictionary<string, Clauses>();
@@ -37,6 +41,9 @@ namespace StackExchange.Profiling.Helpers.Dapper
             }
         }
 
+        /// <summary>
+        /// Template helper class for SqlBuilder
+        /// </summary>
         public class Template
         {
             readonly string sql;
@@ -44,6 +51,12 @@ namespace StackExchange.Profiling.Helpers.Dapper
             readonly object initParams;
             int dataSeq = -1; // Unresolved
 
+            /// <summary>
+            /// Template constructor
+            /// </summary>
+            /// <param name="builder"></param>
+            /// <param name="sql"></param>
+            /// <param name="parameters"></param>
             public Template(SqlBuilder builder, string sql, dynamic parameters)
             {
                 this.initParams = parameters;
@@ -51,14 +64,14 @@ namespace StackExchange.Profiling.Helpers.Dapper
                 this.builder = builder;
             }
 
-            static System.Text.RegularExpressions.Regex regex =
+            static readonly System.Text.RegularExpressions.Regex regex =
                 new System.Text.RegularExpressions.Regex(@"\/\*\*.+\*\*\/", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline);
 
             void ResolveSql()
             {
                 if (dataSeq != builder.seq)
                 {
-                    DynamicParameters p = new DynamicParameters(initParams);
+                    var p = new DynamicParameters(initParams);
 
                     rawSql = sql;
 
@@ -82,11 +95,6 @@ namespace StackExchange.Profiling.Helpers.Dapper
             public object Parameters { get { ResolveSql(); return parameters; } }
         }
 
-
-        public SqlBuilder()
-        {
-        }
-
         public Template AddTemplate(string sql, dynamic parameters = null)
         {
             return new Template(this, sql, parameters);
@@ -105,12 +113,20 @@ namespace StackExchange.Profiling.Helpers.Dapper
         }
 
 
+        /// <summary>
+        /// Add a Left Join
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder LeftJoin(string sql, dynamic parameters = null)
         {
             AddClause("leftjoin", sql, parameters, joiner: "\nLEFT JOIN ", prefix: "\nLEFT JOIN ", postfix: "\n");
             return this;
         }
 
+        /// <summary>
+        /// Add a Where Clause
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder Where(string sql, dynamic parameters = null)
         {
             AddClause("where", sql, parameters, " AND ", prefix: "WHERE ", postfix: "\n");
