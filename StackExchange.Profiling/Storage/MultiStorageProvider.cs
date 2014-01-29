@@ -30,11 +30,11 @@ namespace StackExchange.Profiling.Storage
         /// <param name="stores">The <see cref="IStorage"/> objects to use for storage (order is important!)</param>
         public MultiStorageProvider(params IStorage[] stores)
         {
-            if (stores.All(x => x == null))
+            Stores = stores.Where(x => x != null).ToList();
+            if (!Stores.Any())
             {
                 throw new ArgumentNullException("stores", "Please include at least one IStorage object when initializing a MultiStorageProvider");
             }
-            Stores = stores.Where(x => x != null).ToList();
         }
 
         /// <summary>
