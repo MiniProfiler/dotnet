@@ -91,10 +91,23 @@ namespace StackExchange.Profiling.Helpers
             string rawSql;
             object parameters;
 
+            /// <summary>
+            /// Raw Sql returns by the <see cref="SqlBuilder"/>
+            /// </summary>
             public string RawSql { get { ResolveSql(); return rawSql; } }
+
+            /// <summary>
+            /// Parameters being used
+            /// </summary>
             public object Parameters { get { ResolveSql(); return parameters; } }
         }
 
+        /// <summary>
+        /// Add a template to the SqlBuilder
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public Template AddTemplate(string sql, dynamic parameters = null)
         {
             return new Template(this, sql, parameters);
@@ -132,37 +145,61 @@ namespace StackExchange.Profiling.Helpers
             AddClause("where", sql, parameters, " AND ", prefix: "WHERE ", postfix: "\n");
             return this;
         }
-
+        
+        /// <summary>
+        /// Add an OrderBy Clause
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder OrderBy(string sql, dynamic parameters = null)
         {
             AddClause("orderby", sql, parameters, " , ", prefix: "ORDER BY ", postfix: "\n");
             return this;
         }
 
+        /// <summary>
+        /// Add the Select section
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder Select(string sql, dynamic parameters = null)
         {
             AddClause("select", sql, parameters, " , ", prefix: "", postfix: "\n");
             return this;
         }
 
+        /// <summary>
+        /// Add a parameters to the query
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder AddParameters(dynamic parameters)
         {
             AddClause("--parameters", "", parameters, "");
             return this;
         }
 
+        /// <summary>
+        /// Add a Join statement
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder Join(string sql, dynamic parameters = null)
         {
             AddClause("join", sql, parameters, joiner: "\nJOIN ", prefix: "\nJOIN ", postfix: "\n");
             return this;
         }
 
+        /// <summary>
+        /// Add a Group By section
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder GroupBy(string sql, dynamic parameters = null)
         {
             AddClause("groupby", sql, parameters, joiner: " , ", prefix: "\nGROUP BY ", postfix: "\n");
             return this;
         }
 
+        /// <summary>
+        /// Add a Having section
+        /// </summary>
+        /// <returns>itself</returns>
         public SqlBuilder Having(string sql, dynamic parameters = null)
         {
             AddClause("having", sql, parameters, joiner: "\nAND ", prefix: "HAVING ", postfix: "\n");

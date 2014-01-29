@@ -103,7 +103,11 @@ namespace StackExchange.Profiling.Storage
             }
             return null;
         }
-
+        
+        /// <summary>
+        /// Sets a particular profiler session so it is considered "un-viewed".
+        /// Will set this to all <see cref="IStorage"/> items in <see cref="Stores"/>
+        /// </summary>
         public void SetUnviewed(string user, Guid id)
         {
             if (Stores != null)
@@ -119,6 +123,10 @@ namespace StackExchange.Profiling.Storage
             }
         }
 
+        /// <summary>
+        /// Sets a particular profiler session to "viewed".
+        /// Will set this to all <see cref="IStorage"/> items in <see cref="Stores"/>
+        /// </summary>
         public void SetViewed(string user, Guid id)
         {
             if (Stores != null)

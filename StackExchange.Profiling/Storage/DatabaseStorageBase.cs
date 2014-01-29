@@ -70,30 +70,6 @@
         /// <param name="orderBy">order By.</param>
         /// <returns>the list of GUID keys</returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
-
-        /// <summary>
-        /// Giving freshly selected collections, this method puts them in the correct
-        /// hierarchy under the 'result' MiniProfiler.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        /// <param name="timingsWrapper">The timings to map</param>
-        protected void MapTimings(MiniProfiler result, DbTimingsWrapper timingsWrapper)
-        {
-            result.ClientTimings = timingsWrapper.ClientTimings;
-            result.CustomLinks = timingsWrapper.CustomLinks;
-            result.Root = timingsWrapper.Root;
-        }
-
-        /// <summary>
-        /// Stores the different timings related to a MiniProfiler that is to be inserted into a DbStorage
-        /// </summary>
-        /// <remarks>Is to be stored in </remarks>
-        protected class DbTimingsWrapper
-        {
-            public Dictionary<string, string> CustomLinks { get; set; }
-            public Timing Root { get; set; }
-            public ClientTimings ClientTimings { get; set; }
-        }
     }
 
 
