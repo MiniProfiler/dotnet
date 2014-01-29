@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Web;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
+using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
 {
