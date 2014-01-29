@@ -12,10 +12,10 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="MiniProfiler" version="3.0.9" />
-      <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" />
+      <dependency id="Microsoft.AspNet.Mvc" version="4.0.30506.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="StackExchange.Profiling.Mvc\bin\Release\MiniProfiler.Mvc.*" target="lib\net45" />
+    <file src="StackExchange.Profiling.Mvc\bin\Release\MiniProfiler.Mvc.*" target="lib\net40" />
   </files>
 </package>
