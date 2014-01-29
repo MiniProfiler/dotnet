@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using StackExchange.Profiling.Helpers.Dapper;
 
-namespace StackExchange.Profiling.Helpers
+namespace StackExchange.Profiling.Helpers.Dapper
 {
     /// <summary>
     /// Help to build out sql
