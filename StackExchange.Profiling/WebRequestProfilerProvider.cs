@@ -60,7 +60,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Start(string sessionName) overload instead of this one. ProfileLevel is going away.")]
         public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = HttpContext.Current;

@@ -38,7 +38,7 @@ namespace StackExchange.Profiling
         /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profiled result.</returns>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Inline(Func<T> selector, string name) overload instead of this one. ProfileLevel is going away.")]
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level = ProfileLevel.Info)
         {
             if (selector == null) throw new ArgumentNullException("selector");
@@ -66,7 +66,7 @@ namespace StackExchange.Profiling
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profile step</returns>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Step(string name) overload instead of this one. ProfileLevel is going away.")]
         public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
         {
             return profiler == null ? null : profiler.StepImpl(name, level);

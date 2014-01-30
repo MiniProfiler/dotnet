@@ -74,7 +74,7 @@ namespace StackExchange.Profiling.Wcf
         /// </summary>
         /// <param name="level">The profile level.</param>
         /// <returns>the mini profiler.</returns>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Start(string sessionName) overload instead of this one. ProfileLevel is going away.")]
         public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             var context = WcfInstanceContext.Current;

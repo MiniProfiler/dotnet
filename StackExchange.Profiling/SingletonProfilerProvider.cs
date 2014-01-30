@@ -31,7 +31,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Start(string sessionName) overload instead of this one. ProfileLevel is going away.")]
         public MiniProfiler Start(ProfileLevel level, string sessionName = null) 
         {
             return Start(sessionName);

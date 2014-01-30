@@ -48,7 +48,7 @@ namespace StackExchange.Profiling
         /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
         /// for the root <paramref name="url"/>, filtering <see cref="Timing"/> steps to <paramref name="level"/>.
         /// </summary>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the MiniProfiler(string url) constructor instead of this one. ProfileLevel is going away")]
         public MiniProfiler(string url, ProfileLevel level = ProfileLevel.Info) : this(url)
         {
 #pragma warning disable 612,618
@@ -289,7 +289,7 @@ namespace StackExchange.Profiling
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the Start(string sessionName) or Start() overload instead of this one. ProfileLevel is going away.")]
         public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info, string sessionName = null)
         {
             Settings.EnsureProfilerProvider();
@@ -327,7 +327,7 @@ namespace StackExchange.Profiling
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the static step.</returns>
-        [Obsolete("ProfileLevel is going away")]
+        [Obsolete("Please use the StepStatic(string name) overload instead of this one. ProfileLevel is going away")]
         public static IDisposable StepStatic(string name, ProfileLevel level = ProfileLevel.Info)
         {
             return Current.Step(name, level);
@@ -463,7 +463,7 @@ namespace StackExchange.Profiling
             return new Timing(this, Head, name);
         }
 
-        [Obsolete("Level is going away")]
+        [Obsolete("Please use the StepImpl(string name) overload instead of this one. ProfileLevel is going away.")]
         internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
         {
             return level > Level ? null : StepImpl(name);
