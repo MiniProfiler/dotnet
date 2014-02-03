@@ -143,7 +143,7 @@
             MiniProfiler.Settings.ExcludeAssembly("EntityFramework");
             MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServer");
             MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServerCompact");
-            MiniProfiler.Settings.ExcludeAssembly("mscorlib");
+            MiniProfiler.Settings.ExcludeAssembly(typeof(MiniProfilerEF).Assembly.GetName().Name);
         }
     }
 }
