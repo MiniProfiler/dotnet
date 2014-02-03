@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -20,14 +19,14 @@ namespace StackExchange.Profiling.Helpers
 		public static string Get()
 		{
 			var frames = new StackTrace().GetFrames();
-			if (frames == null)
+            if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)
 			{
 				return "";
 			}
 
 			var methods = new List<string>();
+		    int stackLength = -1; // Starts on -1 instead of zero to compensate for adding 1 first time
 
-            // TODO: short circuit here by keeping a sum of method name chars and checking against Settings.StackMaxLength
 			foreach (StackFrame t in frames)
 			{
 				var method = t.GetMethod();
@@ -36,27 +35,20 @@ namespace StackExchange.Profiling.Helpers
 				if (method.Name == AspNetEntryPointMethodName)
 					break;
 
+                if (stackLength >= MiniProfiler.Settings.StackMaxLength)
+                    break;
+
 				var assembly = method.Module.Assembly.GetName().Name;
 				if (!ShouldExcludeType(method) 
                     && !MiniProfiler.Settings.AssembliesToExclude.Contains(assembly) 
                     && !MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
 				{
 					methods.Add(method.Name);
+				    stackLength += method.Name.Length + 1; // 1 added for spaces.
 				}
 			}
 
-			var result = string.Join(" ", methods);
-
-            if (result.Length > MiniProfiler.Settings.StackMaxLength)
-            {
-                var index = result.IndexOf(" ", MiniProfiler.Settings.StackMaxLength, StringComparison.Ordinal);		
-	            if (index >= MiniProfiler.Settings.StackMaxLength)		
-	            {		
-	                result = result.Substring(0, index);		
-	            }		
-	        }		
-
-			return result;
+            return string.Join(" ", methods);
 		}
 
         private static bool ShouldExcludeType(MethodBase method)
