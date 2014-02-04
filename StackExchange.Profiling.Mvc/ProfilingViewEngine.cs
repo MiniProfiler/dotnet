@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Mvc
             _wrapped = wrapped;
         }
 
-        private ViewEngineResult Find(ControllerContext ctx, string name, Func<ViewEngineResult> finder, bool isPartial)
+        private ViewEngineResult Find(string name, Func<ViewEngineResult> finder, bool isPartial)
         {
             var profiler = MiniProfiler.Current;
             IDisposable block = null;
@@ -61,7 +61,7 @@ namespace StackExchange.Profiling.Mvc
         /// </summary>
         public ViewEngineResult FindPartialView(ControllerContext ctx, string partialViewName, bool useCache)
         {
-            return Find(ctx, partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
+            return Find(partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace StackExchange.Profiling.Mvc
         /// </summary>
         public ViewEngineResult FindView(ControllerContext ctx, string viewName, string masterName, bool useCache)
         {
-            return Find(ctx, viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
+            return Find(viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
         }
 
         /// <summary>
