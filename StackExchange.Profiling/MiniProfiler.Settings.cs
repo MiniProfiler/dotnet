@@ -107,6 +107,7 @@ namespace StackExchange.Profiling
                     "System.Data.Linq",
                     "System.Web",
                     "System.Web.Mvc",
+                    "mscorlib",
                 };
 
                 // for normal usage, this will return a System.Diagnostics.Stopwatch to collect times - unit tests can explicitly set how much time elapses
