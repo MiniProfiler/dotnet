@@ -3,7 +3,6 @@
 namespace StackExchange.Profiling.Data
 {
     using System;
-    using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.EntityClient;
     using System.Data.Metadata.Edm;
@@ -164,7 +163,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>the object context.</returns>
         public static T CreateObjectContext<T>(this DbConnection connection) where T : System.Data.Objects.ObjectContext
         {
-            return CreateObjectContext<T>(connection, new MetadataCacheKey(new Assembly[] { typeof(T).Assembly }, new string[] { "res://*/" }));
+            return CreateObjectContext<T>(connection, new MetadataCacheKey(new [] { typeof(T).Assembly }, new [] { "res://*/" }));
         }
 
         /// <summary>
@@ -188,7 +187,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>the object context</returns>
         public static T CreateObjectContext<T>(this DbConnection connection, string[] paths) where T : System.Data.Objects.ObjectContext
         {
-            return CreateObjectContext<T>(connection, new MetadataCacheKey(new Assembly[] { typeof(T).Assembly }, paths));
+            return CreateObjectContext<T>(connection, new MetadataCacheKey(new [] { typeof(T).Assembly }, paths));
         }
 
         /// <summary>
@@ -204,9 +203,11 @@ namespace StackExchange.Profiling.Data
             var factory = DbProviderServices.GetProviderFactory(connection);
 
             var itemCollection = workspace.GetItemCollection(DataSpace.SSpace);
-            itemCollection.GetType().GetField(
+            var fieldInfo = itemCollection.GetType().GetField(
                 "_providerFactory", // <==== big fat ugly hack
-                BindingFlags.NonPublic | BindingFlags.Instance).SetValue(itemCollection, factory);
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            if (fieldInfo != null)
+                fieldInfo.SetValue(itemCollection, factory);
 
             var ec = new EntityConnection(workspace, connection);
             return CtorCache<T, EntityConnection>.Ctor(ec);
@@ -220,7 +221,7 @@ namespace StackExchange.Profiling.Data
         public static T GetProfiledContext<T>() where T : System.Data.Objects.ObjectContext
         {
             var conn = new EFProfiledDbConnection(GetStoreConnection<T>(), MiniProfiler.Current);
-            return ObjectContextUtils.CreateObjectContext<T>(conn);
+            return CreateObjectContext<T>(conn);
         }
 
         /// <summary>
