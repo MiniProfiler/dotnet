@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling.Data
+﻿using System.Collections.Concurrent;
+
+namespace StackExchange.Profiling.Data
 {
     using System;
     using System.Collections.Generic;
@@ -33,7 +35,7 @@
             /// <summary>
             /// The hash code.
             /// </summary>
-            private int _hashCode;
+            private readonly int _hashCode;
 
             /// <summary>
             /// Initialises a new instance of the <see cref="MetadataCacheKey"/> class. 
@@ -54,7 +56,7 @@
 
                 _assemblies = assemblies;
                 _paths = paths;
-                CreateHashCode();
+                _hashCode = CreateHashCode();
             }
 
             /// <summary>
@@ -76,7 +78,7 @@
                 _paths[0] = string.Format(Pattern, assemblyName, edmxName, "ssdl");
                 _paths[1] = string.Format(Pattern, assemblyName, edmxName, "msl");
                 _paths[2] = string.Format(Pattern, assemblyName, edmxName, "csdl");
-                CreateHashCode();
+                _hashCode = CreateHashCode();
             }
 
             /// <summary>
@@ -124,14 +126,14 @@
                     return false;
                 if (_assemblies.Count() != cacheKey._assemblies.Count() || _paths.Count() != cacheKey._paths.Count())
                     return false;
-                int i = 0;
-                for (i = 0; i < _assemblies.Count(); i++)
+
+                for (int i = 0; i < _assemblies.Count(); i++)
                 {
                     if (_assemblies[i] != cacheKey._assemblies[i])
                         return false;
                 }
 
-                for (i = 0; i < _paths.Count(); i++)
+                for (int i = 0; i < _paths.Count(); i++)
                 {
                     if (_paths[i] != cacheKey._paths[i])
                         return false;
@@ -143,13 +145,14 @@
             /// <summary>
             /// create the hash code.
             /// </summary>
-            private void CreateHashCode()
+            private int CreateHashCode()
             {
-                _hashCode = 19;
+                var hashCode = 19;
                 foreach (var assembly in _assemblies)
-                    _hashCode = (3 * _hashCode) ^ assembly.GetHashCode();
+                    hashCode = (3 * hashCode) ^ assembly.GetHashCode();
                 foreach (var path in _paths)
-                    _hashCode = (3 * _hashCode) ^ path.GetHashCode();
+                    hashCode = (3 * hashCode) ^ path.GetHashCode();
+                return hashCode;
             }
         }
 
@@ -321,14 +324,14 @@
             /// <summary>
             /// The _workspaces.
             /// </summary>
-            private static readonly Dictionary<MetadataCacheKey, MetadataWorkspace> Workspaces;
+            private static readonly ConcurrentDictionary<MetadataCacheKey, MetadataWorkspace> Workspaces;
 
             /// <summary>
             /// Initialises static members of the <see cref="MetadataCache"/> class.
             /// </summary>
             static MetadataCache()
             {
-                Workspaces = new Dictionary<MetadataCacheKey, MetadataWorkspace>();
+                Workspaces = new ConcurrentDictionary<MetadataCacheKey, MetadataWorkspace>();
             }
 
             /// <summary>
@@ -338,10 +341,12 @@
             /// <returns>the meta data workspace.</returns>
             public static MetadataWorkspace GetWorkspace(MetadataCacheKey key)
             {
-                if (Workspaces.ContainsKey(key))
-                    return Workspaces[key];
-                Workspaces[key] = new MetadataWorkspace(key.Paths, key.Assemblies);
-                return Workspaces[key];
+                return Workspaces.GetOrAdd(key, CreateWorkspace);
+            }
+
+            private static MetadataWorkspace CreateWorkspace(MetadataCacheKey key)
+            {
+                return new MetadataWorkspace(key.Paths, key.Assemblies);
             }
         }
     }
