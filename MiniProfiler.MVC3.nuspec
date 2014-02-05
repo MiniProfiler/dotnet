@@ -17,7 +17,7 @@
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.Web.Infrastructure" targetFramework=".NETFramework4.0" />
-  </frameworkAssemblies>
+    </frameworkAssemblies>
   </metadata>
   <files>
 	<file src="MiniProfiler.MVC3.Package\Content\Views\Shared\*.cshtml" target="Content\Views\Shared"/>

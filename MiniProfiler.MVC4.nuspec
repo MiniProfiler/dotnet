@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.Mvc4</id>
-    <version>3.0.9</version>
+    <version>3.0.10-beta1</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
     <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
     <description>MiniProfiler extensions and helpers for ASP.NET MVC 4+</description>

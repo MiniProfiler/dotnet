@@ -2,10 +2,10 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF5</id>
-    <version>3.0.9</version>
+    <version>3.0.10-beta1</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Marc Gravell, Jarrod Dixon, Yaakov Ellis</owners>
-    <description>MiniProfiler integration for Entity Framework version 4-5</description>
+    <description>MiniProfiler integration for Entity Framework versions 4 and 5.</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance profiling timing entityframework</tags>
