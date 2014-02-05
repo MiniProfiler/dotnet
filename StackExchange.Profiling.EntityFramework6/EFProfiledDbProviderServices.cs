@@ -32,7 +32,7 @@
         {
             PropertyInfo property = typeof(T).GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
             if (property != null)
-                _tail = (T)property.GetValue(null);
+                _tail = (T)property.GetValue(null, null);
 
             if (_tail == null)
             {
