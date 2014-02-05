@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>MiniProfiler.Mvc4</id>
+    <id>MiniProfiler.MVC4</id>
     <version>3.0.10-beta1</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
     <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
