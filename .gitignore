@@ -17,3 +17,4 @@ tmp
 *.ncrunchsolution
 *.GhostDoc.xml
 *.ncrunchproject
+nupkg
