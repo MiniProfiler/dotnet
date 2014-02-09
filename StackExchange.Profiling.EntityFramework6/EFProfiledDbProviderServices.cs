@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling.Data
+﻿using System;
+
+namespace StackExchange.Profiling.Data
 {
     using System.Data.Common;
     using System.Data.Entity.Core.Common;
@@ -39,6 +41,10 @@
                 FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
                 if(field != null)
                     _tail = (T)field.GetValue(null);
+            }
+            if (_tail == null)
+            {
+                throw new Exception(string.Format("Unable to define EFProfiledDbProviderServices class of type '{0}'. Please check that your web.config defines a <DbProviderFactories> section underneath <system.data>.", typeof(T).Name));
             }
         }
 
