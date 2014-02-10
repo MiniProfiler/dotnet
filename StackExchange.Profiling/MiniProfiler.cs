@@ -328,7 +328,7 @@ namespace StackExchange.Profiling
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the static step.</returns>
         [Obsolete("Please use the StepStatic(string name) overload instead of this one. ProfileLevel is going away")]
-        public static IDisposable StepStatic(string name, ProfileLevel level = ProfileLevel.Info)
+        public static IDisposable StepStatic(string name, ProfileLevel level)
         {
             return Current.Step(name, level);
         }
@@ -464,7 +464,7 @@ namespace StackExchange.Profiling
         }
 
         [Obsolete("Please use the StepImpl(string name) overload instead of this one. ProfileLevel is going away.")]
-        internal IDisposable StepImpl(string name, ProfileLevel level = ProfileLevel.Info)
+        internal IDisposable StepImpl(string name, ProfileLevel level)
         {
             return level > Level ? null : StepImpl(name);
         }

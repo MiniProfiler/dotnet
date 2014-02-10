@@ -67,7 +67,7 @@ namespace StackExchange.Profiling
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profile step</returns>
         [Obsolete("Please use the Step(string name) overload instead of this one. ProfileLevel is going away.")]
-        public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level = ProfileLevel.Info)
+        public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level)
         {
             return profiler == null ? null : profiler.StepImpl(name, level);
         }
