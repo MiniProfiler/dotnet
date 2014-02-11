@@ -290,7 +290,7 @@ namespace StackExchange.Profiling
         /// a web request, the url will be used for the overall session name.
         /// </param>
         [Obsolete("Please use the Start(string sessionName) or Start() overload instead of this one. ProfileLevel is going away.")]
-        public static MiniProfiler Start(ProfileLevel level = ProfileLevel.Info, string sessionName = null)
+        public static MiniProfiler Start(ProfileLevel level, string sessionName = null)
         {
             Settings.EnsureProfilerProvider();
             return Settings.ProfilerProvider.Start(level, sessionName);

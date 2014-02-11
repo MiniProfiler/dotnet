@@ -39,14 +39,9 @@ namespace StackExchange.Profiling
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profiled result.</returns>
         [Obsolete("Please use the Inline(Func<T> selector, string name) overload instead of this one. ProfileLevel is going away.")]
-        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level = ProfileLevel.Info)
+        public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level)
         {
-            if (selector == null) throw new ArgumentNullException("selector");
-            if (profiler == null) return selector();
-            using (profiler.StepImpl(name, level))
-            {
-                return selector();
-            }
+            return profiler.Inline(selector, name);
         }
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
