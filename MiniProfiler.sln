@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
 		MiniProfiler.EF.nuspec = MiniProfiler.EF.nuspec
@@ -42,10 +44,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Mvc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.RavenDb", "StackExchange.Profiling.RavenDb\StackExchange.Profiling.RavenDb.csproj", "{5176CF64-E00D-423F-9341-A8999A774B24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.MongoDB", "StackExchange.Profiling.MongoDB\StackExchange.Profiling.MongoDB.csproj", "{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "Sample.Mvc.Mongo\Sample.Mvc.Mongo.csproj", "{C74578A4-E848-40F5-84CE-64165E7F477E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = StackExchange.Profiling.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -106,11 +111,30 @@ Global
 		{5176CF64-E00D-423F-9341-A8999A774B24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5176CF64-E00D-423F-9341-A8999A774B24}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
 		{5176CF64-E00D-423F-9341-A8999A774B24}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EAE04FE1-268F-46EF-ACB5-290408478EBC} = {CC40098D-04F2-4F43-B5CF-B74F74351761}
+		{58DA79DE-F30B-4068-BEE9-013C9360CD74} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
+		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
+		{C74578A4-E848-40F5-84CE-64165E7F477E} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
+		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = StackExchange.Profiling.vsmdi
 	EndGlobalSection
 EndGlobal

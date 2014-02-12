@@ -1,37 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-
 using StackExchange.Profiling;
-using System.IO;
-using SampleWeb.Controllers;
-using Dapper;
-using StackExchange.Profiling.Storage;
-using System.Data.SqlServerCe;
-using SampleWeb.EFCodeFirst;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity;
-using StackExchange.Profiling.MVCHelpers;
-using SampleWeb.SampleService;
-using SampleWeb.Helpers;
+using StackExchange.Profiling.MongoDB;
+using StackExchange.Profiling.Mvc;
 
 namespace SampleWeb
 {
 
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
 
-        //public static string ConnectionString
-        //{
-        //    get { return "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); }
-        //}
-
-        public static string ConnectionString
+        public static string MongoConnectionString
         {
-            get { return "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite"); }
+            get { return "mongodb://localhost"; }
         }
 
         public static void RegisterRoutes(RouteCollection routes)
@@ -51,18 +34,6 @@ namespace SampleWeb
 
             InitProfilerSettings();
 
-            // this is only done for testing purposes so we don't check in the db to source control
-            // parameter table is only used in this project for sample queries
-            //((SqliteMiniProfilerStorage)MiniProfiler.Settings.Storage).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
-            var tempProfiler = new SqliteMiniProfilerStorage(ConnectionString);
-            tempProfiler.RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
-
-            var efDb = HttpContext.Current.Server.MapPath("~/App_Data/SampleWeb.EFCodeFirst.EFContext.sdf");
-            if (File.Exists(efDb))
-            {
-                File.Delete(efDb);
-            }
-
             //Setup profiler for Controllers via a Global ActionFilter
             GlobalFilters.Filters.Add(new ProfilingActionFilter());
 
@@ -73,8 +44,6 @@ namespace SampleWeb
             {
                 ViewEngines.Engines.Add(new ProfilingViewEngine(item));
             }
-
-            MiniProfilerEF.Initialize(false);
         }
 
         protected void Application_BeginRequest()
@@ -88,7 +57,7 @@ namespace SampleWeb
             // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                profiler = StackExchange.Profiling.MiniProfiler.Start();
+                profiler = MiniProfiler.Start();
             }
 
             using (profiler.Step("Application_BeginRequest"))
@@ -99,7 +68,7 @@ namespace SampleWeb
 
         protected void Application_EndRequest()
         {
-            StackExchange.Profiling.MiniProfiler.Stop();
+            MiniProfiler.Stop();
         }
 
 
@@ -115,7 +84,7 @@ namespace SampleWeb
             // 
             // let's rig up serialization of our profiler results to a database, so they survive app restarts.
             //MiniProfiler.Settings.Storage = new Helpers.SqliteMiniProfilerStorage(ConnectionString);
-            MiniProfiler.Settings.Storage = new MongoDbStorage(ConnectionString);
+            MiniProfiler.Settings.Storage = new MongoDbStorage(MongoConnectionString);
 
             // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
             // by default, sql parameters won't be displayed
@@ -157,6 +126,5 @@ namespace SampleWeb
                 return true; // all requests are kosher
             };
         }
-
     }
 }
