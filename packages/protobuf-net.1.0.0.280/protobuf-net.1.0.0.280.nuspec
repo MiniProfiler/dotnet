@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>protobuf-net</id>
+    <version>1.0.0.280</version>
+    <title>protobuf-net</title>
+    <authors>Marc Gravell</authors>
+    <owners>Marc Gravell</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://code.google.com/p/protobuf-net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>protocol buffers is the name of the binary serialization format used by Google for much of their data communications. It is designed to be: small in size - efficient data storage (far smaller than xml) cheap to process - both at the client and server platform independent - portable between different programming architectures extensible - to add new data to old messages. protobuf-net is a .NET implementation of this, allowing you to serialize your .NET objects efficiently and easily. It is compatible with most of the .NET family, including .NET 2.0/3.0/3.5, .NET CF 2.0/3.5, Mono 2.x, Silverlight 2, etc.</description>
+    <summary>protocol buffers is the name of the binary serialization format used by Google for much of their data communications. It is designed to be: small in size - efficient data storage (far smaller than xml) cheap to process - both at the client and server platform independent - portable between different programming architectures extensible - to add new data to old messages. protobuf-net is a .NET implementation of this, allowing you to serialize your .NET objects efficiently and easily. It is compatible with most of the .NET family, including .NET 2.0/3.0/3.5, .NET CF 2.0/3.5, Mono 2.x, Silverlight 2, etc.</summary>
+    <copyright>Marc Gravell</copyright>
+  </metadata>
+</package>

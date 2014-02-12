@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>EntityFramework</id>
+    <version>4.1.10331.0</version>
+    <title>EntityFramework</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://go.microsoft.com/fwlink/?LinkID=211010</licenseUrl>
+    <projectUrl>http://msdn.com/data/ef</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=386613</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>DbContext API and Code First workflow for ADO.NET Entity Framework.</description>
+    <summary>DbContext API and Code First workflow for ADO.NET Entity Framework.</summary>
+  </metadata>
+</package>
