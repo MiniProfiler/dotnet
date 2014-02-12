@@ -73,6 +73,7 @@ namespace StackExchange.Profiling.Wcf
         /// start the profiler.
         /// </summary>
         /// <param name="level">The profile level.</param>
+        /// <param name="sessionName">The session name</param>
         /// <returns>the mini profiler.</returns>
         [Obsolete("Please use the Start(string sessionName) overload instead of this one. ProfileLevel is going away.")]
         public override MiniProfiler Start(ProfileLevel level, string sessionName = null)
