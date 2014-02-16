@@ -26,6 +26,75 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
+        public void StepIf_Basic()
+        {
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+                var mp1 = MiniProfiler.Current;
+
+                IncrementStopwatch(); // 1 ms
+                Timing goodTiming;
+                Timing badTiming;
+
+                using (goodTiming = (Timing)(mp1.StepIf("Yes", 1)))
+                {
+                    IncrementStopwatch(2);
+                }
+                using (badTiming = (Timing)(mp1.StepIf("No", 5)))
+                {
+                    IncrementStopwatch(); // 1 ms
+                }
+                MiniProfiler.Stop();
+
+                Assert.IsTrue(mp1.Root.Children.Contains(goodTiming));
+                Assert.IsTrue(!mp1.Root.Children.Contains(badTiming));
+            }
+        }
+
+        [Test]
+        public void StepIf_IncludeChildren()
+        {
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+                var mp1 = MiniProfiler.Current;
+
+                IncrementStopwatch(); // 1 ms
+                Timing goodTiming;
+                Timing badTiming;
+
+                using (goodTiming = (Timing)(mp1.StepIf("Yes", 5, true)))
+                {
+                    IncrementStopwatch(2);
+                    using (mp1.Step("#1"))
+                    {
+                        IncrementStopwatch(2);
+                    }
+                    using (mp1.Step("#2"))
+                    {
+                        IncrementStopwatch(2);
+                    }
+                }
+                using (badTiming = (Timing)(mp1.StepIf("No", 5, false)))
+                {
+                    IncrementStopwatch(2);
+                    using (mp1.Step("#1"))
+                    {
+                        IncrementStopwatch(2);
+                    }
+                    using (mp1.Step("#2"))
+                    {
+                        IncrementStopwatch(2);
+                    }
+                }
+                MiniProfiler.Stop();
+
+                Assert.IsTrue(mp1.Root.Children.Contains(goodTiming));
+                Assert.IsTrue(!mp1.Root.Children.Contains(badTiming));
+            }
+        }
+        [Test]
         public void DiscardResults()
         {
             using (GetRequest(startAndStopProfiler: false))

@@ -458,9 +458,9 @@ namespace StackExchange.Profiling
             }
         }
 
-        internal IDisposable StepImpl(string name)
+        internal IDisposable StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {
-            return new Timing(this, Head, name);
+            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
         }
 
         [Obsolete("Please use the StepImpl(string name) overload instead of this one. ProfileLevel is going away.")]
