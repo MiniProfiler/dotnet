@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.Raven</id>
-    <version>3.0.10-beta1</version>
+    <version>3.0.10-beta2</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
     <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
     <description>MiniProfiler extensions and helpers for RavenDb</description>
