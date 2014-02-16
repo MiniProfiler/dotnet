@@ -10,6 +10,9 @@ namespace StackExchange.Profiling
     [DataContract]
     public class CustomTiming : IDisposable
     {
+
+        private readonly decimal? _minSaveMs;
+
         /// <summary>
         /// Don't use this.
         /// </summary>
@@ -21,10 +24,11 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a new CustomTiming, also initializing its <see cref="Id"/> and, optionally, its <see cref="StackTraceSnippet"/>.
         /// </summary>
-        public CustomTiming(MiniProfiler profiler, string commandString)
+        public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs)
         {
             _profiler = profiler;
             _startTicks = profiler.ElapsedTicks;
+            _minSaveMs = minSaveMs;
             CommandString = commandString;
 
             Id = Guid.NewGuid();
@@ -83,6 +87,8 @@ namespace StackExchange.Profiling
         [DataMember(Order = 7)]
         public decimal? FirstFetchDurationMilliseconds { get; set; }
 
+        internal string Category { get; set; }
+
         /// <summary>
         /// OPTIONAL - call after receiving the first response from your Remote Procedure Call to 
         /// properly set <see cref="FirstFetchDurationMilliseconds"/>.
@@ -103,6 +109,14 @@ namespace StackExchange.Profiling
             if (DurationMilliseconds == null)
             {
                 DurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
+            }
+
+            if (_minSaveMs.HasValue && _minSaveMs.Value > 0)
+            {
+                if (DurationMilliseconds < _minSaveMs.Value)
+                {
+                    _profiler.Head.RemoveCustomTiming(Category, this);
+                }
             }
         }
 

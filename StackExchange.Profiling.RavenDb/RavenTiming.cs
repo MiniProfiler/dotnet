@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.RavenDb
         private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");
 
         public RavenTiming(RequestResultArgs request, MiniProfiler profiler)
-            : base(profiler, null)
+            : base(profiler, null, null)
         {
             if (profiler == null) throw new ArgumentNullException("profiler");
 

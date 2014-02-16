@@ -94,6 +94,34 @@ namespace StackExchange.Profiling.Tests
                 Assert.IsTrue(!mp1.Root.Children.Contains(badTiming));
             }
         }
+
+        [Test]
+        public void CustomTimingIf_Basic()
+        {
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+                var mp1 = MiniProfiler.Current;
+
+                IncrementStopwatch(); // 1 ms
+                CustomTiming goodTiming;
+                CustomTiming badTiming;
+
+                using (goodTiming = mp1.CustomTimingIf("Cat1", "Yes", 1))
+                {
+                    IncrementStopwatch(2);
+                }
+                using (badTiming = mp1.CustomTimingIf("Cat1", "No", 5))
+                {
+                    IncrementStopwatch(); // 1 ms
+                }
+                MiniProfiler.Stop();
+
+                Assert.IsTrue(mp1.Root.CustomTimings["Cat1"].Contains(goodTiming));
+                Assert.IsTrue(!mp1.Root.CustomTimings["Cat1"].Contains(badTiming));
+            }
+        }
+
         [Test]
         public void DiscardResults()
         {
