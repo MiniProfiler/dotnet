@@ -171,6 +171,61 @@ namespace SampleWeb.Controllers
             }
         }
 
+        public ActionResult MinSaveMs()
+        {
+            var profiler = MiniProfiler.Current;
+
+            using (profiler.StepIf("Should show up", 50))
+            {
+                Thread.Sleep(60);
+            }
+            using (profiler.StepIf("Should not show up", 50))
+            {
+                Thread.Sleep(10);
+            }
+
+            using (profiler.StepIf("Show show up with children", 10, true))
+            {
+                Thread.Sleep(5);
+                using (profiler.Step("Step A"))
+                {
+                    Thread.Sleep(10);
+                }
+                using (profiler.Step("Step B"))
+                {
+                    Thread.Sleep(10);
+                }
+                using (profiler.StepIf("Should not show up", 15))
+                {
+                    Thread.Sleep(10);
+                }
+            }
+
+            using (profiler.StepIf("Show Not show up with children", 10))
+            {
+                Thread.Sleep(5);
+                using (profiler.Step("Step A"))
+                {
+                    Thread.Sleep(10);
+                }
+                using (profiler.Step("Step B"))
+                {
+                    Thread.Sleep(10);
+                }
+            }
+
+            using (profiler.CustomTimingIf("redis", "should show up", 5))
+            {
+                Thread.Sleep(10);
+            }
+
+            using (profiler.CustomTimingIf("redis", "should not show up", 15))
+            {
+                Thread.Sleep(10);
+            }
+            return Content("All good");
+        }
+
         /// <summary>
         /// The XHTML view.
         /// </summary>
