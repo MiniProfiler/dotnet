@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling.EntityFramework6
+﻿using System.Data.SqlClient;
+
+namespace StackExchange.Profiling.EntityFramework6
 {
     using System;
     using System.Collections.Concurrent;
@@ -23,10 +25,22 @@
         /// </summary>
         public static void Initialize()
         {
-            DbConfiguration.Loaded += (_, a) => a.ReplaceService<DbProviderServices>(
-                (services, o) => WrapProviderService(services));
+            try
+            {
+                DbConfiguration.Loaded += (_, a) => a.ReplaceService<DbProviderServices>(
+                    (services, o) => WrapProviderService(services));
 
-            ExcludeEntityFrameworkAssemblies();
+                ExcludeEntityFrameworkAssemblies();
+            }
+            catch (SqlException ex)
+            {
+                // Try to prevent tripping this harmless Exception when initializing the DB
+                // Issue in EF6 upgraded from EF5 on first db call in debug mode: http://entityframework.codeplex.com/workitem/594
+                if (!ex.Message.Contains("Invalid column name 'ContextKey'"))
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>

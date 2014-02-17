@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF6</id>
-    <version>3.0.10-beta3</version>
+    <version>3.0.10-beta4</version>
     <authors>Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Jarrod Dixon, Yaakov Ellis</owners>
     <description>MiniProfiler integration for Entity Framework 6</description>
