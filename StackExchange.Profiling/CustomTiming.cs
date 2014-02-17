@@ -24,7 +24,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a new CustomTiming, also initializing its <see cref="Id"/> and, optionally, its <see cref="StackTraceSnippet"/>.
         /// </summary>
-        public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs)
+        public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs = null)
         {
             _profiler = profiler;
             _startTicks = profiler.ElapsedTicks;
