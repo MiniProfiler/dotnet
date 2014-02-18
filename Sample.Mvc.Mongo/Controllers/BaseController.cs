@@ -17,6 +17,14 @@ namespace SampleWeb.Controllers
                 UpsertRouteHit(filterContext.ActionDescriptor, profiler);
                 base.OnActionExecuting(filterContext);
             }
+
+            profiler.Head.AddCustomTiming("sample",
+                new CustomTiming(profiler, "SOME COMMAND STRING")
+                {
+                    DurationMilliseconds = 123.45m,
+                    StartMilliseconds = 0.07m,
+                    ExecuteType = "COMMAND"
+                });
         }
 
         protected override void OnResultExecuting(ResultExecutingContext filterContext)

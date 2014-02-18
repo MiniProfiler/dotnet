@@ -85,14 +85,14 @@ namespace StackExchange.Profiling.MongoDB
             }
         }
 
-        private MongoCollection<CustomTiming> _customTimings;
-        private MongoCollection<CustomTiming> CustomTimings
+        private MongoCollection<CustomTimingPoco> _customTimings;
+        private MongoCollection<CustomTimingPoco> CustomTimings
         {
             get
             {
                 if (_customTimings == null)
                 {
-                    _customTimings = Db.GetCollection<CustomTiming>("customtimings");
+                    _customTimings = Db.GetCollection<CustomTimingPoco>("customtimings");
                 }
                 return _customTimings;
             }
@@ -133,25 +133,25 @@ namespace StackExchange.Profiling.MongoDB
                 RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?) null,
                 Name = profiler.Name,
                 Started = profiler.Started,
-                DurationMilliseconds = (double)profiler.DurationMilliseconds,
+                DurationMilliseconds = (double) profiler.DurationMilliseconds,
                 User = profiler.User,
                 HasUserViewed = profiler.HasUserViewed,
                 MachineName = profiler.MachineName,
                 CustomLinksJson = profiler.CustomLinksJson,
-                ClientTimingsRedirectCounts = profiler.ClientTimingsRedirectCount
+                ClientTimingsRedirectCounts = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?) null
             };
 
             var result = Profilers.Save(miniProfilerPoco, WriteConcern.Acknowledged);
 
             if (!result.UpdatedExisting)
             {
-                SaveTiming(profiler, profiler.Root);
+                SaveTiming(profiler.Root);
             }
 
             SaveClientTimings(profiler);
         }
 
-        private void SaveTiming(MiniProfiler profiler, Timing timing)
+        private void SaveTiming(Timing timing)
         {
             var rootTiming = new TimingPoco
             {
@@ -168,7 +168,7 @@ namespace StackExchange.Profiling.MongoDB
             {
                 foreach (var child in timing.Children)
                 {
-                    SaveTiming(profiler, child);
+                    SaveTiming(child);
                 }
             }
 
@@ -176,7 +176,7 @@ namespace StackExchange.Profiling.MongoDB
             {
                 foreach (var customTimingsKV in timing.CustomTimings)
                 {
-                    SaveCustomTimings(profiler, customTimingsKV);
+                    SaveCustomTimings(timing, customTimingsKV);
                 }
             }
         }
@@ -207,7 +207,7 @@ namespace StackExchange.Profiling.MongoDB
             }
         }
 
-        private void SaveCustomTimings(MiniProfiler profiler, KeyValuePair<string, List<CustomTiming>> customTimingsKV)
+        private void SaveCustomTimings(Timing timing, KeyValuePair<string, List<CustomTiming>> customTimingsKV)
         {
             var key = customTimingsKV.Key;
             var value = customTimingsKV.Value;
@@ -218,7 +218,7 @@ namespace StackExchange.Profiling.MongoDB
                 {
                     Id = customTiming.Id,
                     Key = key,
-                    MiniProfilerId = profiler.Id,
+                    TimingId = timing.Id,
                     CommandString = customTiming.CommandString,
                     ExecuteType = customTiming.ExecuteType,
                     StackTraceSnippet = customTiming.StackTraceSnippet,
@@ -245,12 +245,12 @@ namespace StackExchange.Profiling.MongoDB
                     ? LoadTiming(miniProfiler.RootTimingId.Value)
                     : null;
 
-                var clientTimings = LoadClientTimings(miniProfiler.Id);
-
                 if (rootTiming != null)
                 {
                     miniProfiler.Root = rootTiming;
                 }
+
+                miniProfiler.ClientTimings = LoadClientTimings(miniProfiler);
             }
 
             return miniProfiler;
@@ -264,6 +264,8 @@ namespace StackExchange.Profiling.MongoDB
             if (timing != null)
             {
                 timing.Children = LoadChildrenTimings(timing.Id);
+
+                timing.CustomTimings = LoadCustomTimings(timing.Id);
             }
 
             return timing;
@@ -286,7 +288,42 @@ namespace StackExchange.Profiling.MongoDB
             return childrenTimings;
         }
 
-        private MiniProfiler ProfilerPocoToProfiler(MiniProfilerPoco profilerPoco)
+        private Dictionary<string, List<CustomTiming>> LoadCustomTimings(Guid timingId)
+        {
+            var customTimingPocos = CustomTimings
+                .Find(Query<CustomTimingPoco>.EQ(poco => poco.TimingId, timingId))
+                .ToList();
+
+            return customTimingPocos
+                .GroupBy(poco => poco.Key)
+                .ToDictionary(grp => grp.Key,
+                    grp => grp.OrderBy(poco => poco.StartMilliseconds)
+                        .Select(CustomTimingPocoToCustomTiming).ToList());
+        }
+
+        private ClientTimings LoadClientTimings(MiniProfiler profiler)
+        {
+            var timings = ClientTimings
+                .Find(Query<ClientTimingPoco>.EQ(poco => poco.MiniProfilerId, profiler.Id))
+                .ToList()
+                .Select(ClientTimingPocoToClientTiming)
+                .ToList();
+
+            timings.ForEach(timing => timing.MiniProfilerId = profiler.Id);
+
+            if (timings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
+                return new ClientTimings
+                {
+                    Timings = timings,
+                    RedirectCount = profiler.ClientTimingsRedirectCount ?? 0
+                };
+
+            return null;
+        }
+
+        #region Mapping
+
+        private static MiniProfiler ProfilerPocoToProfiler(MiniProfilerPoco profilerPoco)
         {
             if (profilerPoco == null)
                 return null;
@@ -308,7 +345,7 @@ namespace StackExchange.Profiling.MongoDB
             return miniProfiler;
         }
 
-        private Timing TimingPocoToTiming(TimingPoco timingPoco)
+        private static Timing TimingPocoToTiming(TimingPoco timingPoco)
         {
             if (timingPoco == null)
                 return null;
@@ -324,10 +361,33 @@ namespace StackExchange.Profiling.MongoDB
             };
         }
 
-        private List<ClientTimings> LoadClientTimings(Guid id)
+        private static CustomTiming CustomTimingPocoToCustomTiming(CustomTimingPoco customTimingPoco)
         {
-            return null;
+#pragma warning disable 618
+            return new CustomTiming
+#pragma warning restore 618
+            {
+                CommandString = customTimingPoco.CommandString,
+                DurationMilliseconds = customTimingPoco.DurationMilliseconds,
+                FirstFetchDurationMilliseconds = customTimingPoco.FirstFetchDurationMilliseconds,
+                StartMilliseconds = customTimingPoco.StartMilliseconds,
+                ExecuteType = customTimingPoco.ExecuteType,
+                StackTraceSnippet = customTimingPoco.StackTraceSnippet
+            };
         }
+
+        private static ClientTimings.ClientTiming ClientTimingPocoToClientTiming(ClientTimingPoco clientTimingPoco)
+        {
+            return new ClientTimings.ClientTiming
+            {
+                Id = clientTimingPoco.Id,
+                Duration = (decimal) clientTimingPoco.Duration,
+                Name = clientTimingPoco.Name,
+                Start = (decimal) clientTimingPoco.Start
+            };
+        }
+
+        #endregion
 
         /// <summary>
         /// Sets the profiler as unviewed
@@ -443,7 +503,7 @@ namespace StackExchange.Profiling.MongoDB
             [BsonId]
             public Guid Id { get; set; }
             public string Key { get; set; }
-            public Guid MiniProfilerId { get; set; }
+            public Guid TimingId { get; set; }
             public string CommandString { get; set; }
             public string ExecuteType { get; set; }
             public string StackTraceSnippet { get; set; }

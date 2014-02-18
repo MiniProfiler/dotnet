@@ -51,7 +51,6 @@ namespace StackExchange.Profiling
         [DataMember(Order = 2)]
         public string CommandString { get; set; }
 
-        // TODO: should this just match the key that the List<CustomTiming> is stored under in Timing.CustomTimings?
         /// <summary>
         /// Short name describing what kind of custom timing this is, e.g. "Get", "Query", "Fetch".
         /// </summary>
