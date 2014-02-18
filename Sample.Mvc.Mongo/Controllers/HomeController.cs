@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using System.Threading;
 using System.Web.Mvc;
 using StackExchange.Profiling;
