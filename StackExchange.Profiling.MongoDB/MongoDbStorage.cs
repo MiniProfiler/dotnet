@@ -471,33 +471,6 @@ namespace StackExchange.Profiling.MongoDB
             public double DurationMilliseconds { get; set; }
         }
 
-        class SqlTimingPoco
-        {
-            [BsonId]
-            public string Id { get; set; }
-            public string MiniProfilerId { get; set; }
-            public string ParentTimingId { get; set; }
-            public SqlExecuteType ExecuteType { get; set; }
-            public double StartMilliseconds { get; set; }
-            public double DurationMilliseconds { get; set; }
-            public double FirstFetchDurationMilliseconds { get; set; }
-            public bool IsDuplicate { get; set; }
-            public string StackTraceSnippet { get; set; }
-            public string CommandString { get; set; }
-        }
-
-        class SqlTimingParameterPoco
-        {
-            [BsonId]
-            public Guid Id { get; set; }
-            public string MiniProfilerId { get; set; }
-            public string ParentSqlTimingId { get; set; }
-            public string Name { get; set; }
-            public string DbType { get; set; }
-            public int Size { get; set; }
-            public string Value { get; set; }
-        }
-
         class CustomTimingPoco
         {
             [BsonId]
