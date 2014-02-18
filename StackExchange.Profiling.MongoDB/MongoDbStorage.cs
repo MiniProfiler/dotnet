@@ -59,32 +59,6 @@ namespace StackExchange.Profiling.MongoDB
             }
         }
 
-        private MongoCollection<SqlTimingPoco> _sqltimings;
-        private MongoCollection<SqlTimingPoco> SqlTimings
-        {
-            get
-            {
-                if (_sqltimings == null)
-                {
-                    _sqltimings = Db.GetCollection<SqlTimingPoco>("sqltimings");
-                }
-                return _sqltimings;
-            }
-        }
-
-        private MongoCollection<SqlTimingParameterPoco> _sqltimingparamss;
-        private MongoCollection<SqlTimingParameterPoco> SqlTimingParams
-        {
-            get
-            {
-                if (_sqltimingparamss == null)
-                {
-                    _sqltimingparamss = Db.GetCollection<SqlTimingParameterPoco>("sqltimingparams");
-                }
-                return _sqltimingparamss;
-            }
-        }
-
         private MongoCollection<CustomTimingPoco> _customTimings;
         private MongoCollection<CustomTimingPoco> CustomTimings
         {
