@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Internal;
+using StackExchange.Profiling.MongoDB.Utils;
 
 namespace StackExchange.Profiling.MongoDB
 {
@@ -26,7 +27,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandString = string.Format("{0}.count()", Name);
 
-            Utils.AddMongoTiming(
+            ProfilerUtils.AddMongoTiming(
                 new MongoTiming(MiniProfiler.Current, commandString)
                 {
                     Id = Guid.NewGuid(),
