@@ -42,12 +42,7 @@ namespace StackExchange.Profiling
         }
 
 
-        bool _isActive;
-        bool IDbProfiler.IsActive { get { return _isActive; } }
-        internal bool IsActive
-        {
-            get { return _isActive; }
-            set { _isActive = value; }
-        }
+        bool IDbProfiler.IsActive { get { return IsActive; } }
+        internal bool IsActive { get; set; }
     }
 }
