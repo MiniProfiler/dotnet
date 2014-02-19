@@ -18,5 +18,3 @@ tmp
 *.GhostDoc.xml
 *.ncrunchproject
 nupkg
-UpgradeLog.htm
-packages
