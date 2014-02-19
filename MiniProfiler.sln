@@ -46,9 +46,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "Sample.Mvc.Mongo\Sample.Mvc.Mongo.csproj", "{C74578A4-E848-40F5-84CE-64165E7F477E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}"
-EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = StackExchange.Profiling.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -127,12 +128,5 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EAE04FE1-268F-46EF-ACB5-290408478EBC} = {CC40098D-04F2-4F43-B5CF-B74F74351761}
-		{58DA79DE-F30B-4068-BEE9-013C9360CD74} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
-		{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
-		{C74578A4-E848-40F5-84CE-64165E7F477E} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6} = {FFA50EB4-49F9-4BC0-A1C3-5D22280C441B}
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = StackExchange.Profiling.vsmdi
 	EndGlobalSection
 EndGlobal
