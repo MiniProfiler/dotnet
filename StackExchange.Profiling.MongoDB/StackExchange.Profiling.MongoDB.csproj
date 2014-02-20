@@ -52,7 +52,10 @@
     </Compile>
     <Compile Include="MongoMiniProfiler.cs" />
     <Compile Include="MongoTiming.cs" />
+    <Compile Include="ProfiledMongoClient.cs" />
     <Compile Include="ProfiledMongoCollection.cs" />
+    <Compile Include="ProfiledMongoDatabase.cs" />
+    <Compile Include="ProfiledMongoServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ProfilerUtils.cs" />
     <Compile Include="Utils\StringUtils.cs" />

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Web.Mvc;
+using MongoDB.Driver.Builders;
+using SampleWeb.Data;
+using SampleWeb.Models;
 using StackExchange.Profiling;
 
 namespace SampleWeb.Controllers
@@ -40,20 +43,13 @@ namespace SampleWeb.Controllers
                 }
             }
 
-            return View();
-        }
+            var model = new MongoDemoModel
+            {
+                FooCount = (int) Repository.FooCollection.Count(),
+                FooCountQuery = (int) Repository.FooCollection.Count(Query.LT("r", 0.5))
+            };
 
-        public ActionResult About()
-        {
-            // prevent this specific route from being profiled
-            MiniProfiler.Stop(discardResults: true);
-
-            return View();
-        }
-
-        public ActionResult ResultsAuthorization()
-        {
-            return View();
+            return View(model);
         }
 
         public ActionResult FetchRouteHits()
@@ -73,17 +69,6 @@ namespace SampleWeb.Controllers
             //}
 
             return Json(null);
-        }
-
-        public ActionResult XHTML()
-        {
-            return View();
-        }
-
-        public class RouteHit
-        {
-            public string RouteName { get; set; }
-            public Int64 HitCount { get; set; }
         }
     }
 }

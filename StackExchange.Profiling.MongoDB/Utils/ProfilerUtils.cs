@@ -6,9 +6,9 @@
 
         public static void AddMongoTiming(MongoTiming timing)
         {
-            if (MiniProfiler.Current != null && MiniProfiler.Current.Head != null)
+            if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
                 return;
-            
+
             MiniProfiler.Current.Head.AddCustomTiming(MongoMiniProfiler.CategoryName, timing);
         }
     }

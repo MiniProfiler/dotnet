@@ -1,36 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Internal;
 using StackExchange.Profiling.MongoDB.Utils;
 
 namespace StackExchange.Profiling.MongoDB
 {
-    public class ProfiledMongoCollection : MongoCollection
+    public class ProfiledMongoCollection<TDefaultDocument> : MongoCollection<TDefaultDocument>
     {
-        public ProfiledMongoCollection(MongoDatabase database, string name, MongoCollectionSettings settings)
-            : base(database, name, settings)
+        public ProfiledMongoCollection(MongoDatabase database, string name, MongoCollectionSettings settings) : base(database, name, settings)
         {
         }
 
-        public override long Count()
+        public override long Count(IMongoQuery query)
         {
             var sw = new Stopwatch();
 
             sw.Start();
-            var count = base.Count();
+            var count = base.Count(query);
             sw.Stop();
 
-            var commandString = string.Format("{0}.count()", Name);
+            string commandString = query == null ? string.Format("{0}.count()", Name) : string.Format("{0}.count(query)\n\nquery = {1}", Name, query);
 
             ProfilerUtils.AddMongoTiming(
                 new MongoTiming(MiniProfiler.Current, commandString)
                 {
-                    Id = Guid.NewGuid(),
                     DurationMilliseconds = sw.ElapsedMilliseconds,
                     FirstFetchDurationMilliseconds = sw.ElapsedMilliseconds,
                     ExecuteType = ExecuteType.Command.ToString().ToLower()

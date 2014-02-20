@@ -1,4 +1,6 @@
 ﻿@using StackExchange.Profiling
+@using SampleWeb.Models
+@model MongoDemoModel
 @{
     var profiler = MiniProfiler.Current;
 
@@ -82,20 +84,34 @@
 
 <h2>Behold the MiniProfiler in the top left corner and tremble!</h2>
 
-<div class="ajax-requests">
-    <h3>Click the links below to see it profile ajax requests:</h3>
-    <ul>
-        <li><a href="/Home/DuplicatedQueries">Duplicated Queries (N+1)</a></li>
-        <li><a href="/Home/EFCodeFirst">EF Code First</a></li>
-        <li><a href="/Home/FetchRouteHits" data-transform="fetchRouteHits_transform">Fetch Route Hits</a></li>    
-        <li><a href="/Home/MassiveNesting">Massive Nesting</a></li>
-        <li><a href="/Home/MassiveNesting2">Massive Nesting 2</a></li>
-        <li><a href="/Home/ParameterizedSqlWithEnums">Parameterized SQL with Enums</a></li>
-    </ul>
-</div>
-
-<div class="ajax-results">
-    <h3>Results from ajax requests:</h3>
+<div>
+    <h3>Mongo Data Demo</h3>
+    <table>
+        <tr>
+            <th>
+                Description
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+        <tr>
+            <td>
+                Foo collection records count
+            </td>
+            <td>
+                @Model.FooCount
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Foo collection records count with query
+            </td>
+            <td>
+                @Model.FooCountQuery
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div style="clear: both;">
@@ -110,7 +126,7 @@
         <li><a href="/Home/DisableProfilingUI">Disable profiling UI</a></li>
     }
         <li><a href="/profiler/results-index">Show all profiling sessions</a></li>
-    </ul>    
+    </ul>
 </div>
 
 <div style="margin:900px 0 300px 0;">
