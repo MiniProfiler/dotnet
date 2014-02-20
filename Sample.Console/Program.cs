@@ -1,5 +1,6 @@
 ﻿namespace Sample.Console
 {
+    using System;
     using System.Data.Common;
 
     using Dapper;
@@ -20,12 +21,20 @@
         /// <param name="args">application command line arguments.</param>
         public static void Main(string[] args)
         {
-            SetupProfiling();
-            Test();
-            Report();
+            try
+            {
+                SetupProfiling();
+                //Test();
+                TestMultiThreaded();
+                Report();
 
-            if (Debugger.IsAttached)
-                System.Console.ReadKey();
+                if (Debugger.IsAttached)
+                    System.Console.ReadKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         /// <summary>
@@ -52,7 +61,7 @@
                 {
                     conn.Query<long>("select 1");
                 }
-                
+
                 using (var wc = new WebClient())
                 using (mp.CustomTiming("http", "GET http://google.com"))
                 {
@@ -61,6 +70,30 @@
             }
 
             MiniProfiler.Stop();
+        }
+
+        public static void TestMultiThreaded()
+        {
+            var mp = MiniProfiler.Start("Locking");
+            Action doWork = () => Thread.Sleep(new Random().Next(1, 50));
+
+            using (mp.Step("outer"))
+            {
+                System.Threading.Tasks.Parallel.For(0, 5, i =>
+                {
+                    doWork();
+
+                    using (mp.Step("step " + i))
+                    {
+                        doWork();
+
+                        using (mp.Step("sub-step" + i))
+                        {
+                            doWork();
+                        }
+                    }
+                });
+            }
         }
 
         /// <summary>
