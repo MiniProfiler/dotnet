@@ -1,6 +1,28 @@
-If you are interested in using MongoDB with the new version of MiniProfiler, then please help us to bring this sample project up to date: 
+## Sample for Miniprofiler for MongoDB
 
-- Need to modify the [MongoDbStorage.cs](https://github.com/MiniProfiler/dotnet/blob/master/Sample.Mvc.Mongo/Helpers/MongoDbStorage.cs) file to bring it up to date with the new MiniProfiler code in version 3
-- Test and verify that the sample code in this project works
-- Issue a Pull Request with the updates 
+This sample shows how `MongoDbStorage` and `MongoDB Profiler` works.
 
+### MongoDB Storage
+
+The easiest way to test how it works is to ensure that the server is running
+on `localhost` on standart port, without authentication.
+
+`MongoDbStorage` will create the database called `MiniProfiler` and put profiling data there.
+
+### MongoDb Profiler
+
+To test how profiling works you need some sample data. The app expects to find the `test`
+database with `foo` collection with following data schema:
+
+        {_id:<object_id>, r:<some_random_number_from_0_to_1>}
+
+Use this JS code snippet to quickly populate it with sample data:
+
+        for (var i = 0; i < 1000000; i++) {
+            db.foo.save({
+                i: i,
+                r: Math.random()
+            });
+        }
+
+_To be continued..._
