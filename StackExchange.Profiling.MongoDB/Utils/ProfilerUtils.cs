@@ -11,5 +11,16 @@
 
             MiniProfiler.Current.Head.AddCustomTiming(MongoMiniProfiler.CategoryName, timing);
         }
+
+        public static void AddMongoTiming(string commandString, long durationMilliseconds, ExecuteType executeType)
+        {
+            AddMongoTiming(
+                new MongoTiming(MiniProfiler.Current, commandString)
+                {
+                    DurationMilliseconds = durationMilliseconds,
+                    FirstFetchDurationMilliseconds = durationMilliseconds,
+                    ExecuteType = executeType.ToString().ToLower()
+                });
+        }
     }
 }
