@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -14,8 +15,6 @@ namespace StackExchange.Profiling.MongoDB
         public ProfiledMongoCollection(MongoDatabase database, string name, MongoCollectionSettings settings) : base(database, name, settings)
         {
         }
-
-        #region Methods overrides
 
         public override MongoCursor<TDocument> FindAs<TDocument>(IMongoQuery query)
         {
@@ -139,6 +138,63 @@ namespace StackExchange.Profiling.MongoDB
                 : string.Format("{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
+
+            return result;
+        }
+
+        #region FindAndModify
+
+        public override FindAndModifyResult FindAndModify(IMongoQuery query, IMongoSortBy sortBy, IMongoUpdate update, IMongoFields fields,
+            bool returnNew, bool upsert)
+        {
+            return FindAndModifyImpl(query, sortBy, false, update, returnNew, fields, upsert);
+        }
+
+        public override FindAndModifyResult FindAndRemove(IMongoQuery query, IMongoSortBy sortBy)
+        {
+            return FindAndModifyImpl(query, sortBy, true, null, false, null, false);
+        }
+
+        private FindAndModifyResult FindAndModifyImpl(IMongoQuery query, IMongoSortBy sortBy, bool remove, IMongoUpdate update, bool returnNew, IMongoFields fields, bool upsert)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.FindAndModify(query, sortBy, update, fields, returnNew, upsert);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+            commandStringBuilder.AppendFormat("{0}.findAndModify(query, sort, remove, update, new, fields, upsert)", Name);
+
+            if (query != null)
+                commandStringBuilder.AppendFormat("\nquery = {0}", query.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nquery = null");
+
+            if (sortBy != null)
+                commandStringBuilder.AppendFormat("\nsort = {0}", sortBy.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nsort = null");
+
+            commandStringBuilder.AppendFormat("\nremove = {0}", remove ? "true" : "false");
+
+            if (update != null)
+                commandStringBuilder.AppendFormat("\nupdate = {0}", update.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nupdate = null");
+
+            commandStringBuilder.AppendFormat("\nnew = {0}", returnNew ? "true" : "false");
+
+            if (fields != null)
+                commandStringBuilder.AppendFormat("\nfields = {0}", fields.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nfields = null");
+
+            commandStringBuilder.AppendFormat("\nupsert = {0}", upsert ? "true" : "false");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Update);
 
             return result;
         }

@@ -10,18 +10,6 @@ namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
     {
-        public ActionResult EnableProfilingUI()
-        {
-            MvcApplication.DisableProfilingResults = false;
-            return Redirect("/");
-        }
-
-        public ActionResult DisableProfilingUI() 
-        {
-            MvcApplication.DisableProfilingResults = true;
-            return Redirect("/");
-        }
-
         public ActionResult Index()
         {
             var profiler = MiniProfiler.Current;
@@ -46,6 +34,10 @@ namespace SampleWeb.Controllers
             // create couple of indexes
 
             Repository.FooCollection.EnsureIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
+
+            // update docs just to update docs (meaningless activity)
+            Repository.FooCollection.FindAndModify(Query.EQ("r", 0.12345), SortBy.Ascending("i"),
+                Update.Set("updated", true));
 
             var model = new MongoDemoModel
             {
