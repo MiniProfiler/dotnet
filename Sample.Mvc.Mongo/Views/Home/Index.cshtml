@@ -47,7 +47,23 @@
                 Aggregation result document
             </td>
             <td>
-                <pre>@Model.AggregateResult</pre>
+                <pre>@Model.AggregateResult.Substring(0, 100)...</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Some query explained
+            </td>
+            <td>
+                <pre>@Model.ExplainResult.Substring(0, 100)...</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Query for 5 docs with different options
+            </td>
+            <td>
+                <pre>@Model.FiveDocs</pre>
             </td>
         </tr>
     </table>

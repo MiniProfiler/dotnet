@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver.Builders;
@@ -41,6 +42,10 @@ namespace SampleWeb.Controllers
                     Thread.Sleep(250);
                 }
             }
+
+            // create couple of indexes
+
+            Repository.FooCollection.EnsureIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
 
             var model = new MongoDemoModel
             {
@@ -91,8 +96,23 @@ namespace SampleWeb.Controllers
                             }
                         }
                     }
-                    ).Response.ToString()
+                    ).Response.ToString(),
+                ExplainResult =
+                    Repository.FooCollection.FindAs<BsonDocument>(Query.GT("r", 0.5))
+                        .SetLimit(10)
+                        .SetSortOrder(SortBy.Descending("i"))
+                        .Explain()
+                        .ToString(),
+                FiveDocs =
+                    string.Join("\n",
+                        Repository.FooCollection.FindAs<BsonDocument>(Query.GTE("r", 0.8))
+                            .SetLimit(5)
+                            .SetSortOrder(SortBy.Descending("r"))
+                            .ToList())
             };
+            
+            // drop all indexes
+            Repository.FooCollection.DropAllIndexes();
 
             return View(model);
         }

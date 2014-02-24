@@ -13,5 +13,9 @@ namespace SampleWeb.Models
 
         // string representation of aggregation result
         public string AggregateResult { get; set; }
+
+        // cursors
+        public string ExplainResult { get; set; }
+        public string FiveDocs { get; set; }
     }
 }
