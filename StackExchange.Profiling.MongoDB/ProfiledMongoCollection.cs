@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -195,6 +194,100 @@ namespace StackExchange.Profiling.MongoDB
             string commandString = commandStringBuilder.ToString();
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Update);
+
+            return result;
+        }
+
+        #endregion
+
+        #region Group
+
+        public override IEnumerable<BsonDocument> Group(IMongoQuery query, IMongoGroupBy keys, BsonDocument initial, BsonJavaScript reduce, BsonJavaScript finalize)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.Group(query, keys, initial, reduce, finalize);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+
+            commandStringBuilder.AppendFormat("{0}.group({{key, reduce, initial", Name);
+
+            if (query != null)
+                commandStringBuilder.Append(", cond");
+
+            if (initial != null)
+                commandStringBuilder.Append(", initial");
+
+            if (finalize != null)
+                commandStringBuilder.Append(", finalize");
+
+            commandStringBuilder.Append("})");
+
+            commandStringBuilder.AppendFormat("\nkey = {0}", keys.ToBsonDocument());
+
+            commandStringBuilder.Append("\nreduce = javascript");
+
+            commandStringBuilder.AppendFormat("\ninitial = {0}", initial.ToBsonDocument());
+
+            if (query != null)
+                commandStringBuilder.AppendFormat("\ncond = {0}", query.ToBsonDocument());
+
+            if (initial != null)
+                commandStringBuilder.AppendFormat("\ninitial = {0}", initial.ToBsonDocument());
+
+            if (finalize != null)
+                commandStringBuilder.Append("\nfinalize = javascript");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
+
+            return result;
+        }
+
+        public override IEnumerable<BsonDocument> Group(IMongoQuery query, BsonJavaScript keyFunction, BsonDocument initial, BsonJavaScript reduce, BsonJavaScript finalize)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.Group(query, keyFunction, initial, reduce, finalize);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+
+            commandStringBuilder.AppendFormat("{0}.group({{keyf, reduce, initial", Name);
+
+            if (query != null)
+                commandStringBuilder.Append(", cond");
+
+            if (initial != null)
+                commandStringBuilder.Append(", initial");
+
+            if (finalize != null)
+                commandStringBuilder.Append(", finalize");
+
+            commandStringBuilder.Append("})");
+
+            commandStringBuilder.AppendFormat("\nkeyf = javascript");
+
+            commandStringBuilder.Append("\nreduce = javascript");
+
+            commandStringBuilder.AppendFormat("\ninitial = {0}", initial.ToBsonDocument());
+
+            if (query != null)
+                commandStringBuilder.AppendFormat("\ncond = {0}", query.ToBsonDocument());
+
+            if (initial != null)
+                commandStringBuilder.AppendFormat("\ninitial = {0}", initial.ToBsonDocument());
+
+            if (finalize != null)
+                commandStringBuilder.Append("\nfinalize = javascript");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
             return result;
         }
