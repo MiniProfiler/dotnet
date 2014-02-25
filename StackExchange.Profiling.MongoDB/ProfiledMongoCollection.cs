@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -44,7 +46,7 @@ namespace StackExchange.Profiling.MongoDB
             var sw = new Stopwatch();
 
             sw.Start();
-            var count = base.Count(query);
+            var result = base.Count(query);
             sw.Stop();
 
             string commandString = query != null
@@ -53,7 +55,7 @@ namespace StackExchange.Profiling.MongoDB
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
-            return count;
+            return result;
         }
 
         public override IEnumerable<BsonValue> Distinct(string key, IMongoQuery query)
@@ -293,5 +295,33 @@ namespace StackExchange.Profiling.MongoDB
         }
 
         #endregion
+
+        public override IEnumerable<WriteConcernResult> InsertBatch(Type nominalType, IEnumerable documents, MongoInsertOptions options)
+        {
+            var documentsList = documents.Cast<object>().ToList();
+
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.InsertBatch(nominalType, documentsList, options);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(512);
+
+            commandStringBuilder.AppendFormat("{0}.insert(", Name);
+
+            if (documentsList.Count > 1)
+                commandStringBuilder.AppendFormat("<{0} documents>", documentsList.Count);
+            else
+                commandStringBuilder.Append("<document>");
+
+            commandStringBuilder.Append(")");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
+
+            return result;
+        }
     }
 }

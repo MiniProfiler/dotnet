@@ -66,5 +66,18 @@ namespace SampleWeb.Data
                 return _fooCollection;
             }
         }
+
+        private MongoCollection _barCollection;
+        public MongoCollection BarCollection
+        {
+            get
+            {
+                if (_barCollection == null)
+                {
+                    _barCollection = Database.GetCollection("bar");
+                }
+                return _barCollection;
+            }
+        }
     }
 }

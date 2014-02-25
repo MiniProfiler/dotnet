@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Web.Mvc;
 using MongoDB.Bson;
@@ -105,6 +106,17 @@ namespace SampleWeb.Controllers
             
             // drop all indexes
             Repository.FooCollection.DropAllIndexes();
+
+            // add couple of records
+            // single record
+            Repository.BarCollection.Insert(new BsonDocument {{"timestamp", DateTime.Now}});
+
+            // 2 records at once
+            Repository.BarCollection.InsertBatch(new[]
+            {
+                new BsonDocument {{"timestamp", DateTime.Now}},
+                new BsonDocument {{"timestamp", DateTime.Now.AddSeconds(1)}}
+            });
 
             return View(model);
         }
