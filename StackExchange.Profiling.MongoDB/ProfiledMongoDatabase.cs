@@ -33,6 +33,35 @@ namespace StackExchange.Profiling.MongoDB
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
         }
 
-        
+        public override CommandResult DropCollection(string collectionName)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.DropCollection(collectionName);
+            sw.Stop();
+
+            string commandString = string.Format("db.{0}.drop()", collectionName);
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
+
+            return result;
+        }
+
+        public override CommandResult RenameCollection(string oldCollectionName, string newCollectionName, bool dropTarget)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.RenameCollection(oldCollectionName, newCollectionName, dropTarget);
+            sw.Stop();
+
+            string commandString = string.Format("db.{0}.renameCollection(\"{1}\", {2})",
+                oldCollectionName, newCollectionName, dropTarget.ToString().ToLower());
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
+
+            return result;
+        }
     }
 }

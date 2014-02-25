@@ -33,7 +33,7 @@ namespace StackExchange.Profiling.MongoDB
             var result = base.Aggregate(operationsList);
             sw.Stop();
 
-            string commandString = string.Format("{0}.aggregate(pipeline)\n\npipeline = \n{1}", Name,
+            string commandString = string.Format("db.{0}.aggregate(pipeline)\n\npipeline = \n{1}", Name,
                 string.Join("\n", operationsList.Select(operation => string.Format("   {0}", operation))));
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
@@ -50,8 +50,8 @@ namespace StackExchange.Profiling.MongoDB
             sw.Stop();
 
             string commandString = query != null
-                ? string.Format("{0}.count(query)\n\nquery = {1}", Name, query)
-                : string.Format("{0}.count()", Name);
+                ? string.Format("db.{0}.count(query)\n\nquery = {1}", Name, query)
+                : string.Format("db.{0}.count()", Name);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
@@ -67,8 +67,8 @@ namespace StackExchange.Profiling.MongoDB
             sw.Stop();
 
             string commandString = query != null
-                ? string.Format("{0}.distinct(\"{1}\", query)\n\nquery = {2}", Name, key, query)
-                : string.Format("{0}.distinct(\"{1}\")", Name, key);
+                ? string.Format("db.{0}.distinct(\"{1}\", query)\n\nquery = {2}", Name, key, query)
+                : string.Format("db.{0}.distinct(\"{1}\")", Name, key);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
@@ -84,8 +84,8 @@ namespace StackExchange.Profiling.MongoDB
             sw.Stop();
 
             string commandString = query != null
-                ? string.Format("{0}.distinct(\"{1}\", query)\n\nquery = {2}", Name, key, query)
-                : string.Format("{0}.distinct(\"{1}\")", Name, key);
+                ? string.Format("db.{0}.distinct(\"{1}\", query)\n\nquery = {2}", Name, key, query)
+                : string.Format("db.{0}.distinct(\"{1}\")", Name, key);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
@@ -100,7 +100,7 @@ namespace StackExchange.Profiling.MongoDB
             var result = base.Drop();
             sw.Stop();
 
-            string commandString = string.Format("{0}.drop()", Name);
+            string commandString = string.Format("db.{0}.drop()", Name);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
 
@@ -115,7 +115,7 @@ namespace StackExchange.Profiling.MongoDB
             var result = base.DropIndexByName(indexName);
             sw.Stop();
 
-            string commandString = string.Format("{0}.dropIndex(\"{1}\")", Name, indexName);
+            string commandString = string.Format("db.{0}.dropIndex(\"{1}\")", Name, indexName);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
 
@@ -135,8 +135,8 @@ namespace StackExchange.Profiling.MongoDB
             sw.Stop();
 
             string commandString = options != null
-                ? string.Format("{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
-                : string.Format("{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
+                ? string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
+                : string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
 
@@ -165,7 +165,7 @@ namespace StackExchange.Profiling.MongoDB
             sw.Stop();
 
             var commandStringBuilder = new StringBuilder(1024);
-            commandStringBuilder.AppendFormat("{0}.findAndModify(query, sort, remove, update, new, fields, upsert)", Name);
+            commandStringBuilder.AppendFormat("db.{0}.findAndModify(query, sort, remove, update, new, fields, upsert)", Name);
 
             if (query != null)
                 commandStringBuilder.AppendFormat("\nquery = {0}", query.ToBsonDocument());
@@ -214,7 +214,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandStringBuilder = new StringBuilder(1024);
 
-            commandStringBuilder.AppendFormat("{0}.group({{key, reduce, initial", Name);
+            commandStringBuilder.AppendFormat("db.{0}.group({{key, reduce, initial", Name);
 
             if (query != null)
                 commandStringBuilder.Append(", cond");
@@ -259,7 +259,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandStringBuilder = new StringBuilder(1024);
 
-            commandStringBuilder.AppendFormat("{0}.group({{keyf, reduce, initial", Name);
+            commandStringBuilder.AppendFormat("db.{0}.group({{keyf, reduce, initial", Name);
 
             if (query != null)
                 commandStringBuilder.Append(", cond");
@@ -308,7 +308,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandStringBuilder = new StringBuilder(512);
 
-            commandStringBuilder.AppendFormat("{0}.insert(", Name);
+            commandStringBuilder.AppendFormat("db.{0}.insert(", Name);
 
             if (documentsList.Count > 1)
                 commandStringBuilder.AppendFormat("<{0} documents>", documentsList.Count);
@@ -332,7 +332,7 @@ namespace StackExchange.Profiling.MongoDB
             var result = base.MapReduce(map, reduce, options);
             sw.Stop();
 
-            string commandString = string.Format("{0}.mapReduce(<map function>, <reduce function>, options)", Name);
+            string commandString = string.Format("db.{0}.mapReduce(<map function>, <reduce function>, options)", Name);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
 
@@ -347,7 +347,7 @@ namespace StackExchange.Profiling.MongoDB
             var result = base.ReIndex();
             sw.Stop();
 
-            string commandString = string.Format("{0}.reIndex()", Name);
+            string commandString = string.Format("db.{0}.reIndex()", Name);
 
             ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
 
@@ -364,7 +364,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandStringBuilder = new StringBuilder(1024);
 
-            commandStringBuilder.AppendFormat("{0}.remove", Name);
+            commandStringBuilder.AppendFormat("db.{0}.remove", Name);
 
             if (query == null)
             {
@@ -403,7 +403,7 @@ namespace StackExchange.Profiling.MongoDB
 
             var commandStringBuilder = new StringBuilder(1024);
 
-            commandStringBuilder.AppendFormat("{0}.update(query, update", Name);
+            commandStringBuilder.AppendFormat("db.{0}.update(query, update", Name);
 
             var optionsList = new List<string>();
 
