@@ -392,5 +392,47 @@ namespace StackExchange.Profiling.MongoDB
 
             return result;
         }
+
+        public override WriteConcernResult Update(IMongoQuery query, IMongoUpdate update, MongoUpdateOptions options)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.Update(query, update, options);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+
+            commandStringBuilder.AppendFormat("{0}.update(query, update", Name);
+
+            var optionsList = new List<string>();
+
+            if ((options.Flags & UpdateFlags.Upsert) == UpdateFlags.Upsert)
+                optionsList.Add("upsert: true");
+
+            if ((options.Flags & UpdateFlags.Multi) == UpdateFlags.Multi)
+                optionsList.Add("multi: true");
+
+            if (optionsList.Any())
+                commandStringBuilder.AppendFormat("{{ {0} }}", string.Join(", ", optionsList));
+
+            commandStringBuilder.Append(")");
+
+            if (query != null)
+                commandStringBuilder.AppendFormat("\nquery = {0}", query.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nquery = {}");
+
+            if (update != null)
+                commandStringBuilder.AppendFormat("\nupdate = {0}", update.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nupdate = {}");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Update);
+
+            return result;
+        }
     }
 }
