@@ -353,5 +353,44 @@ namespace StackExchange.Profiling.MongoDB
 
             return result;
         }
+
+        public override WriteConcernResult Remove(IMongoQuery query, RemoveFlags flags, WriteConcern writeConcern)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.Remove(query, flags, writeConcern);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+
+            commandStringBuilder.AppendFormat("{0}.remove", Name);
+
+            if (query == null)
+            {
+                if ((flags & RemoveFlags.None) == RemoveFlags.None)
+                    commandStringBuilder.Append("()");
+                else if ((flags & RemoveFlags.Single) == RemoveFlags.Single)
+                    commandStringBuilder.Append("({}, true)");
+            }
+            else
+            {
+                commandStringBuilder.Append("(");
+                commandStringBuilder.AppendFormat("query");
+
+                if ((flags & RemoveFlags.Single) == RemoveFlags.Single)
+                    commandStringBuilder.Append(", true");
+
+                commandStringBuilder.Append(")");
+
+                commandStringBuilder.AppendFormat("\nquery = {0}", query.ToBsonDocument());
+            }
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
+
+            return result;
+        }
     }
 }
