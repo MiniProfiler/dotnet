@@ -323,5 +323,20 @@ namespace StackExchange.Profiling.MongoDB
 
             return result;
         }
+
+        public override MapReduceResult MapReduce(BsonJavaScript map, BsonJavaScript reduce, IMongoMapReduceOptions options)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.MapReduce(map, reduce, options);
+            sw.Stop();
+
+            string commandString = string.Format("{0}.mapReduce(<map function>, <reduce function>, options)", Name);
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
+
+            return result;
+        }
     }
 }
