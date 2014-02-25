@@ -1,4 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 using StackExchange.Profiling.MongoDB;
 
 namespace SampleWeb.Data
@@ -79,5 +82,30 @@ namespace SampleWeb.Data
                 return _barCollection;
             }
         }
+
+        private MongoCollection<BazzItem> _bazzCollection;
+        public MongoCollection<BazzItem> BazzCollection
+        {
+            get
+            {
+                if (_bazzCollection == null)
+                {
+                    _bazzCollection = Database.GetCollection<BazzItem>("bazz");
+                }
+                return _bazzCollection;
+            }
+        }
+    }
+
+    public class BazzItem
+    {
+        [BsonId]
+        public ObjectId Id { get; set; }
+
+        public int SomeRandomInt { get; set; }
+
+        public double SomeRandomDouble { get; set; }
+
+        public DateTime CurrentTimestamp { get; set; }
     }
 }

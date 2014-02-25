@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
+using SampleWeb.Data;
 using SampleWeb.Models;
 using StackExchange.Profiling;
 
@@ -129,6 +130,15 @@ namespace SampleWeb.Controllers
             oneRecord.Set("meta", "updated");
 
             Repository.FooCollection.Save(oneRecord);
+
+            // testing typed collections
+
+            Repository.BazzCollection.Insert(new BazzItem
+            {
+                CurrentTimestamp = DateTime.Now,
+                SomeRandomInt = _random.Next(0, 256),
+                SomeRandomDouble = _random.NextDouble()
+            });
 
             return View(model);
         }
