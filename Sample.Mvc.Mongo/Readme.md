@@ -18,11 +18,10 @@ database with `foo` collection with following data schema:
 
 Use this JS code snippet to quickly populate it with sample data:
 
-        for (var i = 0; i < 1000000; i++) {
+        for (var i = 0; i < 100000; i++) {
             db.foo.save({
                 i: i,
                 r: Math.random()
             });
         }
 
-_To be continued..._
