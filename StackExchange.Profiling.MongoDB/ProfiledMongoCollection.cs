@@ -122,26 +122,26 @@ namespace StackExchange.Profiling.MongoDB
             return result;
         }
 
-#pragma warning disable 672
-        public override WriteConcernResult CreateIndex(IMongoIndexKeys keys, IMongoIndexOptions options)
-#pragma warning restore 672
-        {
-            var sw = new Stopwatch();
+//#pragma warning disable 672
+//        public override WriteConcernResult CreateIndex(IMongoIndexKeys keys, IMongoIndexOptions options)
+//#pragma warning restore 672
+//        {
+//            var sw = new Stopwatch();
 
-            sw.Start();
-#pragma warning disable 618
-            var result = base.CreateIndex(keys, options);
-#pragma warning restore 618
-            sw.Stop();
+//            sw.Start();
+//#pragma warning disable 618
+//            var result = base.CreateIndex(keys, options);
+//#pragma warning restore 618
+//            sw.Stop();
 
-            string commandString = options != null
-                ? string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
-                : string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
+//            string commandString = options != null
+//                ? string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
+//                : string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
 
-            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
+//            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
 
-            return result;
-        }
+//            return result;
+//        }
 
         #region FindAndModify
 
@@ -313,7 +313,13 @@ namespace StackExchange.Profiling.MongoDB
             if (documentsList.Count > 1)
                 commandStringBuilder.AppendFormat("<{0} documents>", documentsList.Count);
             else
-                commandStringBuilder.Append("<document>");
+            {
+                // handle ensureIndex specially
+                if (Name == "system.indexes")
+                    commandStringBuilder.AppendFormat("{0}", documentsList.First().ToBsonDocument());
+                else
+                    commandStringBuilder.Append("<document>");
+            }
 
             commandStringBuilder.Append(")");
 

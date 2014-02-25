@@ -4,7 +4,7 @@
     {
         public const string ExecuteTypeCommand = "command";
 
-        public static void AddMongoTiming(MongoTiming timing)
+        public static void AddMongoTiming(CustomTiming timing)
         {
             if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
                 return;
@@ -15,7 +15,7 @@
         public static void AddMongoTiming(string commandString, long durationMilliseconds, ExecuteType executeType)
         {
             AddMongoTiming(
-                new MongoTiming(MiniProfiler.Current, commandString)
+                new CustomTiming(MiniProfiler.Current, commandString)
                 {
                     DurationMilliseconds = durationMilliseconds,
                     FirstFetchDurationMilliseconds = durationMilliseconds,
