@@ -338,5 +338,20 @@ namespace StackExchange.Profiling.MongoDB
 
             return result;
         }
+
+        public override CommandResult ReIndex()
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.ReIndex();
+            sw.Stop();
+
+            string commandString = string.Format("{0}.reIndex()", Name);
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
+
+            return result;
+        }
     }
 }
