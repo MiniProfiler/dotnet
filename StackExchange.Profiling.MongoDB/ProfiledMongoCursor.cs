@@ -45,10 +45,10 @@ namespace StackExchange.Profiling.MongoDB
 
         private void ProfiledEnumeratorOnEnumerationEnded(object sender, ProfiledEnumerator<TDocument>.EnumerationEndedEventArgs enumerationEndedEventArgs)
         {
-            BsonValue hint, orderBy;
+            BsonValue hint = null, orderBy = null;
 
-            var hasHint = Options.TryGetValue("$hint", out hint);
-            var hasOrderBy = Options.TryGetValue("$orderby", out orderBy);
+            var hasHint = Options != null && Options.TryGetValue("$hint", out hint);
+            var hasOrderBy = Options != null && Options.TryGetValue("$orderby", out orderBy);
 
             var commandStringBuilder = new StringBuilder(1024);
 
