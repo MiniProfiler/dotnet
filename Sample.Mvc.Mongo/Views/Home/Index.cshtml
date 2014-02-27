@@ -1,4 +1,6 @@
 ﻿@using StackExchange.Profiling
+@using SampleWeb.Models
+@model MongoDemoModel
 @{
     var profiler = MiniProfiler.Current;
 
@@ -9,110 +11,60 @@
 }
 @section head 
 {
-    <style type="text/css">
-        .ajax-requests {
-            width: 45%;
-            float: left;
-        }
-        .ajax-requests a {
-            
-        }
-        
-        .ajax-spinner {
-            padding-left: 6px;
-        }
-
-        .ajax-results {
-            width: 50%;
-            float: right;
-        }
-
-        .fetch-route-hits-template {
-            display: none;
-        }
-
-        .ajax-result td {
-            padding: 0 5px;
-        }
-    </style>
-    <script type="text/javascript">
-        $(function() {
-            
-            // these links should fire ajax requests, not do navigation
-            $('.ajax-requests a').click(function() {
-                makeAjaxRequest($(this));
-                return false;
-            });
-            
-        });
-        
-        function makeAjaxRequest($clicked) {
-
-            var $spinner = $('<img class="ajax-spinner" src="/Content/progress-dots.gif" title="working...">').appendTo($clicked.parent()),
-                $results = $('.ajax-results');
-
-            $.ajax({
-                type: 'GET',
-                url: $clicked[0].href,
-                success: function(data) {
-                    if (window.mPt) mPt.probe("Processing ajax response.");
-
-                    var $p = $('<p class="ajax-result">'),
-                        transform = $clicked.data('transform');
-
-                    $p.append(transform ? window[transform](data) : data);
-                    $results.append($p);
-                    
-                    if (window.mPt) mPt.probe("Processing ajax response.");
-                },
-                error: function() { $results.append('ERROR!'); },
-                complete: function() { $spinner.remove(); }
-            });
-        }
-        
-        function fetchRouteHits_transform(data) {
-            var $table = $('<table>');
-            for (var i = 0; i < data.length; i++) {
-                $table.append('<tr><td>' + data[i].RouteName + '</td><td>' + data[i].HitCount + '</td></tr>');
-            }
-            return $table;
-        }
-    </script>
 }
 
-<h2>Behold the MiniProfiler in the top left corner and tremble!</h2>
+<h2>MongoDB MiniProfiler Sample</h2>
 
-<div class="ajax-requests">
-    <h3>Click the links below to see it profile ajax requests:</h3>
-    <ul>
-        <li><a href="/Home/DuplicatedQueries">Duplicated Queries (N+1)</a></li>
-        <li><a href="/Home/EFCodeFirst">EF Code First</a></li>
-        <li><a href="/Home/FetchRouteHits" data-transform="fetchRouteHits_transform">Fetch Route Hits</a></li>    
-        <li><a href="/Home/MassiveNesting">Massive Nesting</a></li>
-        <li><a href="/Home/MassiveNesting2">Massive Nesting 2</a></li>
-        <li><a href="/Home/ParameterizedSqlWithEnums">Parameterized SQL with Enums</a></li>
-    </ul>
-</div>
-
-<div class="ajax-results">
-    <h3>Results from ajax requests:</h3>
-</div>
-
-<div style="clear: both;">
-    <h3>You can also:</h3>
-    <ul>
-    @if (SampleWeb.MvcApplication.DisableProfilingResults)
-    {
-        <li><a href="/Home/EnableProfilingUI">Enable profiling UI (disabled)</a></li>
-    }
-    else
-    { 
-        <li><a href="/Home/DisableProfilingUI">Disable profiling UI</a></li>
-    }
-        <li><a href="/profiler/results-index">Show all profiling sessions</a></li>
-    </ul>    
-</div>
-
-<div style="margin:900px 0 300px 0;">
-    Some content way down the page - notice how the profiler button is fixed in the upper left corner.
+<div>
+    <h3>Mongo Data Demo</h3>
+    <table>
+        <tr>
+            <th>
+                Description
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+        <tr>
+            <td>
+                Foo collection records count
+            </td>
+            <td>
+                @Model.FooCount
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Foo collection records count with query
+            </td>
+            <td>
+                @Model.FooCountQuery
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Aggregation result document
+            </td>
+            <td>
+                <pre>@Model.AggregateResult.Substring(0, 100)...</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Some query explained
+            </td>
+            <td>
+                <pre>@Model.ExplainResult.Substring(0, 100)...</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Query for 5 docs with different options
+            </td>
+            <td>
+                <pre>@Model.FiveDocs</pre>
+            </td>
+        </tr>
+    </table>
 </div>

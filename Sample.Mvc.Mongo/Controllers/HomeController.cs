@@ -1,23 +1,19 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Web.Mvc;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Builders;
+using SampleWeb.Data;
+using SampleWeb.Models;
 using StackExchange.Profiling;
 
 namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
     {
-        public ActionResult EnableProfilingUI()
-        {
-            MvcApplication.DisableProfilingResults = false;
-            return Redirect("/");
-        }
-
-        public ActionResult DisableProfilingUI() 
-        {
-            MvcApplication.DisableProfilingResults = true;
-            return Redirect("/");
-        }
+        private static Random _random = new Random();
 
         public ActionResult Index()
         {
@@ -40,50 +36,111 @@ namespace SampleWeb.Controllers
                 }
             }
 
-            return View();
-        }
+            // create couple of indexes
 
-        public ActionResult About()
-        {
-            // prevent this specific route from being profiled
-            MiniProfiler.Stop(discardResults: true);
+            Repository.FooCollection.EnsureIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
 
-            return View();
-        }
+            // update docs just to update docs (meaningless activity)
+            Repository.FooCollection.FindAndModify(Query.EQ("r", 0.12345), SortBy.Ascending("i"),
+                Update.Set("updated", true));
 
-        public ActionResult ResultsAuthorization()
-        {
-            return View();
-        }
-
-        public ActionResult FetchRouteHits()
-        {
-            var profiler = MiniProfiler.Current;
-
-            using (profiler.Step("Do more complex stuff"))
+            var model = new MongoDemoModel
             {
-                Thread.Sleep(new Random().Next(100, 400));
-            }
+                FooCount = (int) Repository.FooCollection.Count(),
+                FooCountQuery = (int) Repository.FooCollection.Count(Query.LT("r", 0.5)),
+                AggregateResult = Repository.FooCollection.Aggregate(
+                    new BsonDocument
+                    {
+                        {
+                            "$match", new BsonDocument
+                            {
+                                {
+                                    "r", new BsonDocument
+                                    {
+                                        {"$gt", 0.2}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new BsonDocument
+                    {
+                        {
+                            "$group", new BsonDocument
+                            {
+                                {
+                                    "_id", new BsonDocument
+                                    {
+                                        {
+                                            "$cond", new BsonArray
+                                            {
+                                                new BsonDocument
+                                                {
+                                                    {"$lt", new BsonArray {"$r", 0.6}}
+                                                },
+                                                "lessthen0.6",
+                                                "morethan0.6"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "count", new BsonDocument
+                                    {
+                                        {"$sum", 1}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ).Response.ToString(),
+                ExplainResult =
+                    Repository.FooCollection.FindAs<BsonDocument>(Query.GT("r", 0.5))
+                        .SetLimit(10)
+                        .SetSortOrder(SortBy.Descending("i"))
+                        .Explain()
+                        .ToString(),
+                FiveDocs =
+                    string.Join("\n",
+                        Repository.FooCollection.FindAs<BsonDocument>(Query.GTE("r", 0.8))
+                            .SetLimit(5)
+                            .SetSortOrder(SortBy.Descending("r"))
+                            .ToList())
+            };
+            
+            // drop all indexes
+            Repository.FooCollection.DropAllIndexes();
 
-            //using (profiler.Step("FetchRouteHits"))
-            //using (var conn = GetConnection(profiler))
-            //{
-            //    var result = conn.Query<RouteHit>("select RouteName, HitCount from RouteHits order by RouteName");
-            //    return Json(result, JsonRequestBehavior.AllowGet);
-            //}
+            // add couple of records
+            // single record
+            Repository.BarCollection.Insert(new BsonDocument {{"timestamp", DateTime.Now}});
 
-            return Json(null);
-        }
+            // 2 records at once
+            Repository.BarCollection.InsertBatch(new[]
+            {
+                new BsonDocument {{"timestamp", DateTime.Now}},
+                new BsonDocument {{"timestamp", DateTime.Now.AddSeconds(1)}}
+            });
 
-        public ActionResult XHTML()
-        {
-            return View();
-        }
+            // update couple of records
+            Repository.FooCollection.Update(Query.LT("r", 0.01), Update.Inc("up", 1), UpdateFlags.Multi);
 
-        public class RouteHit
-        {
-            public string RouteName { get; set; }
-            public Int64 HitCount { get; set; }
+            // find one record
+            var oneRecord = Repository.FooCollection.FindOneAs<BsonDocument>(Query.GT("r", _random.NextDouble()));
+            oneRecord.Set("meta", "updated");
+
+            Repository.FooCollection.Save(oneRecord);
+
+            // testing typed collections
+
+            Repository.BazzCollection.Insert(new BazzItem
+            {
+                CurrentTimestamp = DateTime.Now,
+                SomeRandomInt = _random.Next(0, 256),
+                SomeRandomDouble = _random.NextDouble()
+            });
+
+            return View(model);
         }
     }
 }
