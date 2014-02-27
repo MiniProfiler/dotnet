@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using SampleWeb.Data;
 using StackExchange.Profiling;
 
 namespace SampleWeb.Controllers
@@ -8,23 +9,21 @@ namespace SampleWeb.Controllers
     {
         private IDisposable _resultExecutingToExecuted;
 
+        protected MongoDataRepository Repository { get; private set; }
+
+        protected BaseController()
+        {
+            Repository = new MongoDataRepository("mongodb://localhost", "test");
+        }
+
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             MiniProfiler profiler = MiniProfiler.Current;
 
             using (profiler.Step("OnActionExecuting"))
             {
-                UpsertRouteHit(filterContext.ActionDescriptor, profiler);
                 base.OnActionExecuting(filterContext);
             }
-
-            profiler.Head.AddCustomTiming("sample",
-                new CustomTiming(profiler, "SOME COMMAND STRING")
-                {
-                    DurationMilliseconds = 123.45m,
-                    StartMilliseconds = 0.07m,
-                    ExecuteType = "COMMAND"
-                });
         }
 
         protected override void OnResultExecuting(ResultExecutingContext filterContext)
@@ -42,27 +41,5 @@ namespace SampleWeb.Controllers
             base.OnResultExecuted(filterContext);
         }
 
-        private void UpsertRouteHit(ActionDescriptor actionDesc, MiniProfiler profiler)
-        {
-            string routeName = actionDesc.ControllerDescriptor.ControllerName + "/" + actionDesc.ActionName;
-
-            //            using (var conn = GetConnection(profiler))
-            //            {
-            //                var param = new { routeName = routeName };
-
-            //                using (profiler.Step("Insert RouteHits"))
-            //                {
-            //                   conn.Execute("insert or ignore into RouteHits (RouteName, HitCount) values (@routeName, 0)", param);
-            //                }
-            //                using (profiler.Step("Update RouteHits"))
-            //                {
-            //                    // let's put some whitespace in this query to demonstrate formatting
-            //                    conn.Execute(
-            //@"update RouteHits
-            //set    HitCount = HitCount + 1
-            //where  RouteName = @routeName", param);
-            //                }
-            //            }
-        }
     }
 }

@@ -51,8 +51,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MongoMiniProfiler.cs" />
-    <Compile Include="MongoTiming.cs" />
-    <Compile Include="ProfiledMongoConnection.cs" />
+    <Compile Include="ProfiledEnumerator.cs" />
+    <Compile Include="ProfiledMongoCollection.cs" />
+    <Compile Include="ProfiledMongoCursor.cs" />
+    <Compile Include="ProfiledMongoDatabase.cs" />
+    <Compile Include="ProfiledMongoServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ProfilerUtils.cs" />
     <Compile Include="Utils\StringUtils.cs" />

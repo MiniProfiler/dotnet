@@ -15,4 +15,19 @@ To use the storage simply create an instance of `MongoDbStorage` type and assign
 
 ### Profiling MongoDB commands
 
-Work in progress...
+See `Sample.Mvc.Mongo\Data\MongoDataRepository.cs` for how to implement the profiled MongoDB commands. The main point to pay attention to is creating a `ProfiledMongoServer`:
+
+        private MongoServer _server;
+        public MongoServer Server
+        {
+            get
+            {
+                if (_server == null)
+                {
+                    _server = new ProfiledMongoServer(Client.GetServer());
+                }
+                return _server;
+            }
+        }
+
+The API might change in future so that it will be possible to create profiled counterpart from plain `MongoDatabase` and `MongoColection` as well as from MongoServer.

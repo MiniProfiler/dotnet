@@ -109,22 +109,6 @@ namespace SampleWeb
             MiniProfiler.Settings.ExcludeMethod("Flush");        // Ignore any method with the name of Flush
            // MiniProfiler.Settings.ShowControls = true;
             MiniProfiler.Settings.StackMaxLength = 256;          // default is 120 characters
-
-            // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
-            // can define a function that will authorize clients to see the json or full page results.
-            // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
-            MiniProfiler.Settings.Results_Authorize = (request) =>
-            {
-                // you may implement this if you need to restrict visibility of profiling on a per request basis 
-                return !DisableProfilingResults; 
-            };
-
-            // the list of all sessions in the store is restricted by default, you must return true to alllow it
-            MiniProfiler.Settings.Results_List_Authorize = (request) =>
-            {
-                // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
-                return true; // all requests are kosher
-            };
         }
     }
 }
