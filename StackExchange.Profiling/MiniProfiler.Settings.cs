@@ -316,9 +316,11 @@ namespace StackExchange.Profiling
             public static string Version { get; private set; }
 
             /// <summary>
-            /// The provider used to provider the current instance of a provider
-            /// This is also 
+            /// The <see cref="IProfilerProvider"/> class that is used to run MiniProfiler
             /// </summary>
+            /// <remarks>
+            /// If not set explicitly, will default to <see cref="WebRequestProfilerProvider"/>
+            /// </remarks>
             public static IProfilerProvider ProfilerProvider { get; set; }
 
             /// <summary>
