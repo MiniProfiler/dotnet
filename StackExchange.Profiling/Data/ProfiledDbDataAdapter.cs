@@ -148,6 +148,52 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
+        /// Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataTable"/>. 
+        /// </summary>
+        /// <remarks>
+        /// This function will only work if you are using an <see cref="T:IDbDataAdapter"/> implementation that inherits from <see cref="T:DbDataAdapter"/>. 
+        /// This includes <see cref="T:SqlDataAdapter"/> and most other similar classes. 
+        /// </remarks> 
+        /// <returns>
+        /// The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet"/>. This does not include rows affected by statements that do not return rows.
+        /// </returns>
+        /// <param name="dataTable">The <see cref="T:System.Data.DataTable"/> to use for table mapping.</param>
+        /// <exception cref="T:System.InvalidOperationException">The source table is invalid or being used with an <see cref="T:IDbDataAdapter"/> implementation that does not inherit from <see cref="T:DbDataAdapter"/>.</exception>
+        public new int Fill(DataTable dataTable)
+        {
+            var dbDataAdapter = _adapter as DbDataAdapter;
+            if (dbDataAdapter == null)
+            {
+                throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. " + 
+                    "If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
+            }
+
+            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
+            {
+                return dbDataAdapter.Fill(dataTable);
+            }
+
+            int result;
+            var cmd = (DbCommand)_selectCommand;
+            _profiler.ExecuteStart(cmd, SqlExecuteType.Reader);
+            try
+            {
+                result = dbDataAdapter.Fill(dataTable);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(cmd, SqlExecuteType.Reader, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(cmd, SqlExecuteType.Reader, TokenReader);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Gets the parameters set by the user when executing an SQL SELECT statement.
         /// </summary>
         /// <returns>
