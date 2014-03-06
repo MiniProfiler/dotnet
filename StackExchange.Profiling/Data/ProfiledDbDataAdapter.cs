@@ -66,6 +66,28 @@ namespace StackExchange.Profiling.Data
 
             _adapter = wrappedAdapter;
             _profiler = profiler ?? MiniProfiler.Current;
+
+            InitCommands(wrappedAdapter);
+        }
+
+        private void InitCommands(IDbDataAdapter wrappedAdapter)
+        {
+            if (wrappedAdapter.SelectCommand != null)
+            {
+                _selectCommand = wrappedAdapter.SelectCommand;
+            }
+            if (wrappedAdapter.DeleteCommand != null)
+            {
+                _deleteCommand = wrappedAdapter.DeleteCommand;
+            }
+            if (wrappedAdapter.UpdateCommand != null)
+            {
+                _updateCommand = wrappedAdapter.UpdateCommand;
+            }
+            if (wrappedAdapter.InsertCommand != null)
+            {
+                _insertCommand = wrappedAdapter.InsertCommand;
+            }
         }
 
         /// <summary>
