@@ -49,7 +49,6 @@
     <Compile Include="JsonFormatter.cs" />
     <Compile Include="RavenMiniProfiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RavenTiming.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StackExchange.Profiling\StackExchange.Profiling.csproj">
