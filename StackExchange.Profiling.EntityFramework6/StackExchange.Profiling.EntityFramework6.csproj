@@ -63,8 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EFProfiledSqlClientDbProviderServices.cs" />
-    <Compile Include="EFProfiledDbProviderServices.cs" />
+    <Compile Include="MiniProfilerDbCommandInterceptor.cs" />
     <Compile Include="MiniProfilerEF6.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
