@@ -24,7 +24,6 @@ namespace StackExchange.Profiling.Data
         /// Initialises a new instance of the <see cref="ProfiledDbProviderFactory"/> class.
         /// proxy provider factory
         /// </summary>
-        /// <param name="profiler">The profiler.</param>
         /// <param name="tail">The tail.</param>
         public ProfiledDbProviderFactory(DbProviderFactory tail)
         {
@@ -150,7 +149,6 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Allow to re-initialise the provider factory.
         /// </summary>
-        /// <param name="profiler">The profiler.</param>
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail)
         {
