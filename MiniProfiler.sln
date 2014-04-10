@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		MiniProfiler.MVC4.nuspec = MiniProfiler.MVC4.nuspec
 		MiniProfiler.nuspec = MiniProfiler.nuspec
 		MiniProfiler.Raven.nuspec = MiniProfiler.Raven.nuspec
+		MiniProfiler.WCF.nuspec = MiniProfiler.WCF.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniProfiler.MVC3", "MiniProfiler.MVC3", "{EAE04FE1-268F-46EF-ACB5-290408478EBC}"
@@ -78,6 +79,7 @@ Global
 		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
