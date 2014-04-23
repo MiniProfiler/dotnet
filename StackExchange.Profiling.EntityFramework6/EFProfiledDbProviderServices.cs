@@ -2,11 +2,14 @@
 
 namespace StackExchange.Profiling.Data
 {
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.Entity.Core.Common;
     using System.Data.Entity.Core.Common.CommandTrees;
     using System.Data.Entity.Core.Metadata.Edm;
+    using System.Data.Entity.Spatial;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reflection;
     using StackExchange.Profiling;
 
@@ -160,5 +163,74 @@ namespace StackExchange.Profiling.Data
 
             return connection;
         }
+
+        private static DbDataReader GetSpatialDataReader(DbDataReader fromReader)
+        {
+            var profiled = fromReader as ProfiledDbDataReader;
+            if (profiled != null)
+            {
+                fromReader = profiled.WrappedReader;
+            }
+            return fromReader;
+        }
+
+        public override object GetService(Type type, object key)
+        {
+            return _tail.GetService(type, key);
+        }
+
+        public override IEnumerable<object> GetServices(Type type, object key)
+        {
+            return _tail.GetServices(type, key);
+        }
+
+        protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken)
+        {
+            var setDbParameterValueMethod =
+            _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("GetDbSpatialDataReader"));
+
+            var reader = GetSpatialDataReader(fromReader);
+
+
+            if (setDbParameterValueMethod == null)
+            {
+                return base.GetDbSpatialDataReader(reader, manifestToken);
+            }
+
+            var result = setDbParameterValueMethod.Invoke(_tail, new object[] { reader, manifestToken });
+            return result as DbSpatialDataReader;
+        }
+
+        protected override DbSpatialServices DbGetSpatialServices(string manifestToken)
+        {
+            var dbGetSpatialServices =
+            _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("DbGetSpatialServices"));
+
+            return dbGetSpatialServices.Invoke(_tail, new[] { manifestToken }) as DbSpatialServices;
+        }
+
+        
+
+
+        protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value)
+        {
+            // if this is available in _tail, use it
+            var setDbParameterValueMethod = _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("SetDbParameterValue"));
+            if (setDbParameterValueMethod != null)
+            {
+                setDbParameterValueMethod.Invoke(_tail, new[] { parameter, parameterType, value });
+                return;
+            }
+
+            // this should never need to be called, but just in case get the Provider Value
+            if (value is DbGeography)
+            {
+                value = ((DbGeography)value).ProviderValue;
+            }
+            
+            base.SetDbParameterValue(parameter, parameterType, value);
+        }
+
+        
     }
 }
