@@ -76,6 +76,11 @@ namespace StackExchange.Profiling.Data
             get { return _reader.RecordsAffected; }
         }
 
+        public DbDataReader WrappedReader
+        {
+            get { return _reader; }
+        }
+
         /// <summary>
         /// The 
         /// </summary>
