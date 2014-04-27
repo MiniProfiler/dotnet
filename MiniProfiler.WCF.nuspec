@@ -10,7 +10,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql wcf asp.net performance profiling timing</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="3.0.10-beta7"/>
+      <dependency id="MiniProfiler" version="3.0.10"/>
     </dependencies>
     <language>en-US</language>
   </metadata>
