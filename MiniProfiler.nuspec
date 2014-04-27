@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler</id>
-    <version>3.0.10-beta7</version>
+    <version>3.0.10</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</authors>
     <owners>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</owners>
     <description>Lightweight mini-profiler, in particular designed for ASP.NET MVC sites</description>
