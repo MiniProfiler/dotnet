@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Data.Common;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
@@ -24,13 +25,24 @@ SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilli
 SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class. 
+        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">
-        /// The connection String.
+        /// The connection string to use.
         /// </param>
         public SqlServerStorage(string connectionString)
             : base(connectionString)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string settings.
+        /// </summary>
+        /// <param name="connectionStringSettings">
+        /// The connection string settings read from ConfigurationManager.ConnectionStrings["connection"]
+        /// </param>
+        public SqlServerStorage(ConnectionStringSettings connectionStringSettings)
+            :base(connectionStringSettings.ConnectionString)
         {
         }
         
