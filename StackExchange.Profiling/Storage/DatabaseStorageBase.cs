@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
 
     /// <summary>
     /// Understands how to save MiniProfiler results to a MSSQL database, allowing more permanent storage and querying of slow results.
@@ -21,6 +22,23 @@
         protected DatabaseStorageBase(string connectionString)
         {
             ConnectionString = connectionString;
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connection string settings.
+        /// </summary>
+        /// <param name="connectionStringSettings">
+        /// The connection string settings read from ConfigurationManager.ConnectionStrings["connection"]
+        /// </param>
+        protected DatabaseStorageBase(ConnectionStringSettings connectionStringSettings)
+        {
+            if (connectionStringSettings == null)
+            {
+                throw new ArgumentNullException("connectionStringSettings");
+            }
+
+            this.ConnectionString = connectionStringSettings.ConnectionString;
         }
 
         /// <summary>
