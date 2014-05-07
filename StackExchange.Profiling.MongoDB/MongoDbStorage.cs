@@ -5,8 +5,6 @@ using System.Linq;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using StackExchange.Profiling.Data;
-using StackExchange.Profiling.MongoDB.Utils;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling.MongoDB

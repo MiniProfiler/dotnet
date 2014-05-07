@@ -8,10 +8,9 @@ namespace StackExchange.Profiling.Data
     using System.Data.Entity.Core.Common.CommandTrees;
     using System.Data.Entity.Core.Metadata.Edm;
     using System.Data.Entity.Spatial;
-    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-    using StackExchange.Profiling;
+    using Profiling;
 
     /// <summary>
     /// Wrapper for a database provider factory to enable profiling
