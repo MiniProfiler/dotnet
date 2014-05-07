@@ -1,5 +1,6 @@
 ﻿using SampleWeb.EfModelFirst;
 using SampleWeb.Helpers;
+using StackExchange.Profiling.Data;
 
 namespace SampleWeb.Controllers
 {
@@ -283,6 +284,7 @@ namespace SampleWeb.Controllers
         public ActionResult EFCodeFirst()
         {
             int count;
+            int? newCount = null;
 
             EFContext context = null;
             using (MiniProfiler.Current.Step("EF Stuff"))
@@ -306,6 +308,22 @@ namespace SampleWeb.Controllers
                     // this count is actually used.
                     using (MiniProfiler.Current.Step("Second count"))
                         count = context.People.Count();
+
+                    const string sql = "Select count(*) from People";
+                    using (MiniProfiler.Current.Step("Get Count from SqlQuery Method - no sql recorded"))
+                    {
+                        newCount = context.Database.SqlQuery<int>(sql).Single();
+                    }
+                    using (MiniProfiler.Current.Step("Get Count using ProfiledConnection - sql recorded"))
+                    {
+                        using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
+                        {
+                            conn.Open();
+                            newCount = conn.Query<int>(sql).Single();
+                            conn.Close();
+                        }
+                    }
+
                 }
                 finally
                 {
@@ -316,7 +334,7 @@ namespace SampleWeb.Controllers
                 }
             }
 
-            return Content("EF Code First complete - count: " + count);
+            return Content(string.Format("EF Code First complete - count: {0}, sqlQuery count {1}", count, newCount));
         }
 
         /// <summary>
