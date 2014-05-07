@@ -10,7 +10,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <tags>profiler sql mvc asp.net performance profiling timing entityframework</tags>
     <dependencies>
-      <dependency id="MiniProfiler" version="3.0.9"/>
+      <dependency id="MiniProfiler" version="3.0.10"/>
       <dependency id="EntityFramework" version="6.0.1" />
     </dependencies>
     <language>en-US</language>
