@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -10,6 +11,6 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Return SQL the way you want it to look on the in the trace. Usually used to format parameters.
         /// </summary>
-        string FormatSql(string commandText, List<SqlTimingParameter> parameters);
+        string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command);
     }
 }

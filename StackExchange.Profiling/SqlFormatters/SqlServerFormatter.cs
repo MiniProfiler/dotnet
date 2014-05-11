@@ -12,8 +12,14 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
-        private static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
-        private static readonly string[] DontQuote = new[] { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
+        /// <summary>
+        /// Lookup a function for translating a parameter by parameter type
+        /// </summary>
+        protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
+        /// <summary>
+        /// What data types should not be quoted when used in parameters
+        /// </summary>
+        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
 
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
@@ -53,7 +59,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
+        public string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
             if (parameters == null || parameters.Count == 0)
             {
@@ -108,7 +114,12 @@ namespace StackExchange.Profiling.SqlFormatters
                 .ToString();
         }
 
-        private string PrepareValue(SqlTimingParameter parameter)
+        /// <summary>
+        /// Prepare the parameter value for use in SqlFormatter output
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        protected string PrepareValue(SqlTimingParameter parameter)
         {
             if (parameter.Value == null)
             {

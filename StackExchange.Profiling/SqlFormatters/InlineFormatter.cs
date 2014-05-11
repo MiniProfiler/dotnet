@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace StackExchange.Profiling.SqlFormatters
@@ -27,7 +28,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Formats the SQL in a generic friendly format, including the parameter type information 
         /// in a comment if it was specified in the InlineFormatter constructor
         /// </summary>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
+        public string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
             if (parameters == null || parameters.Count == 0)
             {
