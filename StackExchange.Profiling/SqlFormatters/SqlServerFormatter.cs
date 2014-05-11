@@ -59,52 +59,15 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
             if (parameters == null || parameters.Count == 0)
             {
                 return commandText;
             }
 
-            var buffer = new StringBuilder("DECLARE ");
-            var first = true;
-
-            foreach (var p in parameters)
-            {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    buffer.AppendLine(",").Append(new string(' ', 8));
-                }
-
-                DbType parsed;
-                string resolvedType = null;
-                if (!Enum.TryParse(p.DbType, out parsed))
-                {
-                    resolvedType = p.DbType;
-                }
-                
-                if (resolvedType == null)
-                {
-                    Func<SqlTimingParameter, string> translator; 
-                    if (ParamTranslator.TryGetValue(parsed, out translator))
-                    {
-                        resolvedType = translator(p);
-                    }
-                    resolvedType = resolvedType ?? p.DbType;
-                }
-
-                var niceName = p.Name;
-                if (!niceName.StartsWith("@"))
-                {
-                    niceName = "@" + niceName;
-                }
-
-                buffer.Append(niceName).Append(" ").Append(resolvedType).Append(" = ").Append(PrepareValue(p));
-            }
+            StringBuilder buffer = new StringBuilder();
+            GenerateParamText(buffer, parameters);
 
             return buffer
                 .Append(";")
@@ -112,6 +75,58 @@ namespace StackExchange.Profiling.SqlFormatters
                 .AppendLine()
                 .Append(commandText)
                 .ToString();
+        }
+
+        /// <summary>
+        /// Generate formatter output text for all <paramref name="parameters"/>.
+        /// </summary>
+        /// <param name="str"><see cref="StringBuilder"/> to use</param>
+        /// <param name="parameters">Parameters to evaluate</param>
+        /// <returns></returns>
+        protected void GenerateParamText(StringBuilder str, List<SqlTimingParameter> parameters)
+        {
+            if (parameters != null && parameters.Count > 0)
+            {
+                str.Append("DECLARE ");
+                var first = true;
+
+                foreach (var p in parameters)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        str.AppendLine(",").Append(new string(' ', 8));
+                    }
+
+                    DbType parsed;
+                    string resolvedType = null;
+                    if (!Enum.TryParse(p.DbType, out parsed))
+                    {
+                        resolvedType = p.DbType;
+                    }
+
+                    if (resolvedType == null)
+                    {
+                        Func<SqlTimingParameter, string> translator;
+                        if (ParamTranslator.TryGetValue(parsed, out translator))
+                        {
+                            resolvedType = translator(p);
+                        }
+                        resolvedType = resolvedType ?? p.DbType;
+                    }
+
+                    var niceName = p.Name;
+                    if (!niceName.StartsWith("@"))
+                    {
+                        niceName = "@" + niceName;
+                    }
+
+                    str.Append(niceName).Append(" ").Append(resolvedType).Append(" = ").Append(PrepareValue(p));
+                }
+            }
         }
 
         /// <summary>
