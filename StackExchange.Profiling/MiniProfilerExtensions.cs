@@ -159,7 +159,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
         {
-            if (profiler == null) return;
+            if (profiler == null || !profiler.IsActive) return;
 
             lock (profiler)
             {
