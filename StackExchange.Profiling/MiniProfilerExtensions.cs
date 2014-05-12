@@ -115,7 +115,7 @@ namespace StackExchange.Profiling
         /// </remarks>
         public static CustomTiming CustomTimingIf(this MiniProfiler profiler, string category, string commandString, decimal minSaveMs, string executeType = null)
         {
-            if (profiler == null || profiler.Head == null) return null;
+            if (profiler == null || profiler.Head == null || !profiler.IsActive) return null;
 
             var result = new CustomTiming(profiler, commandString, minSaveMs)
             {
