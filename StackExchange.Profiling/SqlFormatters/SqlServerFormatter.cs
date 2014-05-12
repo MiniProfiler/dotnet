@@ -59,7 +59,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
             if (parameters == null || parameters.Count == 0)
             {
