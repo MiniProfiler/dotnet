@@ -76,6 +76,9 @@ namespace StackExchange.Profiling.Data
             get { return _reader.RecordsAffected; }
         }
 
+        /// <summary>
+        /// The <see cref="DbDataReader"/> that is being used
+        /// </summary>
         public DbDataReader WrappedReader
         {
             get { return _reader; }
