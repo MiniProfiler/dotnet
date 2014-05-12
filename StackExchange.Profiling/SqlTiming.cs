@@ -37,7 +37,7 @@ namespace StackExchange.Profiling
 
             if (MiniProfiler.Settings.SqlFormatter != null)
             {
-                commandText = MiniProfiler.Settings.SqlFormatter.FormatSql(commandText, parameters);
+                commandText = MiniProfiler.Settings.SqlFormatter.FormatSql(commandText, parameters, command);
             }
 
             _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());

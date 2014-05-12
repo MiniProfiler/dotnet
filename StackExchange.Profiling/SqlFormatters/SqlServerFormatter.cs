@@ -12,8 +12,14 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
-        private static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
-        private static readonly string[] DontQuote = new[] { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
+        /// <summary>
+        /// Lookup a function for translating a parameter by parameter type
+        /// </summary>
+        protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
+        /// <summary>
+        /// What data types should not be quoted when used in parameters
+        /// </summary>
+        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
 
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
@@ -53,52 +59,15 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
             if (parameters == null || parameters.Count == 0)
             {
                 return commandText;
             }
 
-            var buffer = new StringBuilder("DECLARE ");
-            var first = true;
-
-            foreach (var p in parameters)
-            {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    buffer.AppendLine(",").Append(new string(' ', 8));
-                }
-
-                DbType parsed;
-                string resolvedType = null;
-                if (!Enum.TryParse(p.DbType, out parsed))
-                {
-                    resolvedType = p.DbType;
-                }
-                
-                if (resolvedType == null)
-                {
-                    Func<SqlTimingParameter, string> translator; 
-                    if (ParamTranslator.TryGetValue(parsed, out translator))
-                    {
-                        resolvedType = translator(p);
-                    }
-                    resolvedType = resolvedType ?? p.DbType;
-                }
-
-                var niceName = p.Name;
-                if (!niceName.StartsWith("@"))
-                {
-                    niceName = "@" + niceName;
-                }
-
-                buffer.Append(niceName).Append(" ").Append(resolvedType).Append(" = ").Append(PrepareValue(p));
-            }
+            StringBuilder buffer = new StringBuilder();
+            GenerateParamText(buffer, parameters);
 
             return buffer
                 .Append(";")
@@ -108,7 +77,64 @@ namespace StackExchange.Profiling.SqlFormatters
                 .ToString();
         }
 
-        private string PrepareValue(SqlTimingParameter parameter)
+        /// <summary>
+        /// Generate formatter output text for all <paramref name="parameters"/>.
+        /// </summary>
+        /// <param name="str"><see cref="StringBuilder"/> to use</param>
+        /// <param name="parameters">Parameters to evaluate</param>
+        /// <returns></returns>
+        protected void GenerateParamText(StringBuilder str, List<SqlTimingParameter> parameters)
+        {
+            if (parameters != null && parameters.Count > 0)
+            {
+                str.Append("DECLARE ");
+                var first = true;
+
+                foreach (var p in parameters)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        str.AppendLine(",").Append(new string(' ', 8));
+                    }
+
+                    DbType parsed;
+                    string resolvedType = null;
+                    if (!Enum.TryParse(p.DbType, out parsed))
+                    {
+                        resolvedType = p.DbType;
+                    }
+
+                    if (resolvedType == null)
+                    {
+                        Func<SqlTimingParameter, string> translator;
+                        if (ParamTranslator.TryGetValue(parsed, out translator))
+                        {
+                            resolvedType = translator(p);
+                        }
+                        resolvedType = resolvedType ?? p.DbType;
+                    }
+
+                    var niceName = p.Name;
+                    if (!niceName.StartsWith("@"))
+                    {
+                        niceName = "@" + niceName;
+                    }
+
+                    str.Append(niceName).Append(" ").Append(resolvedType).Append(" = ").Append(PrepareValue(p));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Prepare the parameter value for use in SqlFormatter output
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        protected string PrepareValue(SqlTimingParameter parameter)
         {
             if (parameter.Value == null)
             {
