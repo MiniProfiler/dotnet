@@ -73,7 +73,7 @@ namespace StackExchange.Profiling.SqlFormatters
             }
 
             // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' and 'StoredProcedure'
-            if (command.CommandType == CommandType.StoredProcedure)
+            if (command != null && command.CommandType == CommandType.StoredProcedure)
             {
                 GenerateStoreProcedureCall(commandText, parameters, buffer);
             }
