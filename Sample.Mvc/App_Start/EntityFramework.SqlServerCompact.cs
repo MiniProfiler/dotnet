@@ -13,9 +13,11 @@ namespace SampleWeb.App_Start
         /// <summary>
         /// set the default connection factory.
         /// </summary>
-        public static void Start() 
+        public static void Start()
         {
+#pragma warning disable 0618
             Database.DefaultConnectionFactory = new SqlCeConnectionFactory("System.Data.SqlServerCe.4.0");
+#pragma warning restore 0618
         }
     }
 }
