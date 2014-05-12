@@ -115,7 +115,7 @@ namespace StackExchange.Profiling
         /// </remarks>
         public static CustomTiming CustomTimingIf(this MiniProfiler profiler, string category, string commandString, decimal minSaveMs, string executeType = null)
         {
-            if (profiler == null || profiler.Head == null) return null;
+            if (profiler == null || profiler.Head == null || !profiler.IsActive) return null;
 
             var result = new CustomTiming(profiler, commandString, minSaveMs)
             {
@@ -159,7 +159,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
         {
-            if (profiler == null) return;
+            if (profiler == null || !profiler.IsActive) return;
 
             lock (profiler)
             {

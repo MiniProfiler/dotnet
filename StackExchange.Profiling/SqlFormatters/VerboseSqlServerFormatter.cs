@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
+        public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
             StringBuilder buffer = new StringBuilder();
 
