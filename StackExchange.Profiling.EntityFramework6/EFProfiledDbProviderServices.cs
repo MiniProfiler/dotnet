@@ -41,6 +41,9 @@ namespace StackExchange.Profiling.Data
             if (_tail == null)
             {
                 FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+                if(field == null)
+                    field = typeof(T).GetField("Instance", BindingFlags.NonPublic | BindingFlags.Static);
+
                 if(field != null)
                     _tail = (T)field.GetValue(null);
             }
