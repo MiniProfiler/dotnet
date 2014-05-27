@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Web.Script.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace StackExchange.Profiling
 {
@@ -11,7 +9,7 @@ namespace StackExchange.Profiling
     public class SqlTimingParameter
     {
         /// <summary>
-        /// Parameter name, e.g. "@routeName"
+        /// Parameter name, e.g. "routeName"
         /// </summary>
         [DataMember(Order = 1)]
         public string Name { get; set; }
@@ -33,6 +31,18 @@ namespace StackExchange.Profiling
         /// </summary>
         [DataMember(Order = 4)]
         public int Size { get; set; }
+
+        /// <summary>
+        /// System.Data.ParameterDirection: "Input", "Output", "InputOutput", "ReturnValue"
+        /// </summary>
+        [DataMember(Order = 5)]
+        public string Direction { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the parameter accepts null values.
+        /// </summary>
+        [DataMember(Order = 6)]
+        public bool IsNullable { get; set; }
 
         /// <summary>
         /// Returns true if this has the same parent  
