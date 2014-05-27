@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.EF6</id>
-    <version>3.0.10-beta5</version>
+    <version>3.0.11</version>
     <authors>Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Jarrod Dixon, Yaakov Ellis</owners>
     <description>MiniProfiler integration for Entity Framework 6</description>
@@ -14,6 +14,7 @@
       <dependency id="EntityFramework" version="6.0.1" />
     </dependencies>
     <language>en-US</language>
+    <releaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</releaseNotes>
   </metadata>
   <files>
     <file src="StackExchange.Profiling.EntityFramework6\bin\Release\MiniProfiler.EntityFramework6.*" target="lib/net40" />

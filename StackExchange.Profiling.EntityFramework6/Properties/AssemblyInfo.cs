@@ -6,11 +6,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Stack Exchange")]
 [assembly: AssemblyProduct("StackExchange.Profiling.EntityFramework6")]
+[assembly: AssemblyCopyright("Copyright © 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
 [assembly: ComVisible(false)]
 [assembly: Guid("d56997c3-6d37-4953-bd49-b7f690390735")]
-
-[assembly: AssemblyVersion("3.0.10")]
-[assembly: AssemblyInformationalVersion("3.0.10-beta2")]
+[assembly: AssemblyVersion("3.0.11")]
+[assembly: AssemblyInformationalVersion("3.0.11")]
