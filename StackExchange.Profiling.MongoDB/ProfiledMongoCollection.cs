@@ -23,6 +23,35 @@ namespace StackExchange.Profiling.MongoDB
             return new ProfiledMongoCursor<TDocument>(this, query, Settings.ReadPreference, serializer, null);
         }
 
+        public override IEnumerable<BsonDocument> Aggregate(AggregateArgs args)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var underlyingEnumerable = base.Aggregate(args);
+            sw.Stop();
+
+            var profiledEnumerable = new ProfiledEnumerable<BsonDocument>(underlyingEnumerable);
+
+            sw.Start();
+            var profiledEnumerator = (ProfiledEnumerator<BsonDocument>) profiledEnumerable.GetEnumerator();
+            sw.Stop();
+
+            profiledEnumerator.EnumerationEnded += (sender, eventArgs) =>
+            {
+                var operationsList = args.Pipeline.ToList();
+
+                string commandString = string.Format("db.{0}.aggregate(pipeline)\n\npipeline = \n{1}", Name,
+                    string.Join("\n", operationsList.Select(operation => string.Format("   {0}", operation))));
+
+                ProfilerUtils.AddMongoTiming(commandString, (long) (eventArgs.Elapsed + sw.Elapsed).TotalMilliseconds,
+                    ExecuteType.Read);
+            };
+
+            return profiledEnumerable;
+        }
+
+        [Obsolete("Use the overload with an AggregateArgs parameter.")]
         public override AggregateResult Aggregate(IEnumerable<BsonDocument> operations)
         {
             var operationsList = operations.ToList();
@@ -122,76 +151,98 @@ namespace StackExchange.Profiling.MongoDB
             return result;
         }
 
-//#pragma warning disable 672
-//        public override WriteConcernResult CreateIndex(IMongoIndexKeys keys, IMongoIndexOptions options)
-//#pragma warning restore 672
-//        {
-//            var sw = new Stopwatch();
-
-//            sw.Start();
-//#pragma warning disable 618
-//            var result = base.CreateIndex(keys, options);
-//#pragma warning restore 618
-//            sw.Stop();
-
-//            string commandString = options != null
-//                ? string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
-//                : string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
-
-//            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
-
-//            return result;
-//        }
-
-        #region FindAndModify
-
-        public override FindAndModifyResult FindAndModify(IMongoQuery query, IMongoSortBy sortBy, IMongoUpdate update, IMongoFields fields,
-            bool returnNew, bool upsert)
-        {
-            return FindAndModifyImpl(query, sortBy, false, update, returnNew, fields, upsert);
-        }
-
-        public override FindAndModifyResult FindAndRemove(IMongoQuery query, IMongoSortBy sortBy)
-        {
-            return FindAndModifyImpl(query, sortBy, true, null, false, null, false);
-        }
-
-        private FindAndModifyResult FindAndModifyImpl(IMongoQuery query, IMongoSortBy sortBy, bool remove, IMongoUpdate update, bool returnNew, IMongoFields fields, bool upsert)
+        public override WriteConcernResult CreateIndex(IMongoIndexKeys keys, IMongoIndexOptions options)
         {
             var sw = new Stopwatch();
 
             sw.Start();
-            var result = base.FindAndModify(query, sortBy, update, fields, returnNew, upsert);
+            var result = base.CreateIndex(keys, options);
+            sw.Stop();
+
+            string commandString = options != null
+                ? string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}\n\noptions = {2}", Name, keys.ToBsonDocument(), options.ToBsonDocument())
+                : string.Format("db.{0}.ensureIndex(keys, options)\n\nkeys = {1}", Name, keys.ToBsonDocument());
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Command);
+
+            return result;
+        }
+
+        #region FindAndModify
+
+        public override FindAndModifyResult FindAndModify(FindAndModifyArgs args)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.FindAndModify(args);
             sw.Stop();
 
             var commandStringBuilder = new StringBuilder(1024);
-            commandStringBuilder.AppendFormat("db.{0}.findAndModify(query, sort, remove, update, new, fields, upsert)", Name);
+            commandStringBuilder.AppendFormat("db.{0}.findAndModify(query, sort, update, new, fields, upsert)", Name);
 
-            if (query != null)
-                commandStringBuilder.AppendFormat("\nquery = {0}", query.ToBsonDocument());
+            if (args.Query != null)
+                commandStringBuilder.AppendFormat("\nquery = {0}", args.Query.ToBsonDocument());
             else
                 commandStringBuilder.Append("\nquery = null");
 
-            if (sortBy != null)
-                commandStringBuilder.AppendFormat("\nsort = {0}", sortBy.ToBsonDocument());
+            if (args.SortBy != null)
+                commandStringBuilder.AppendFormat("\nsort = {0}", args.SortBy.ToBsonDocument());
             else
                 commandStringBuilder.Append("\nsort = null");
 
-            commandStringBuilder.AppendFormat("\nremove = {0}", remove ? "true" : "false");
-
-            if (update != null)
-                commandStringBuilder.AppendFormat("\nupdate = {0}", update.ToBsonDocument());
+            if (args.Update != null)
+                commandStringBuilder.AppendFormat("\nupdate = {0}", args.Update.ToBsonDocument());
             else
                 commandStringBuilder.Append("\nupdate = null");
 
-            commandStringBuilder.AppendFormat("\nnew = {0}", returnNew ? "true" : "false");
+            commandStringBuilder.AppendFormat("\nnew = {0}", args.VersionReturned == FindAndModifyDocumentVersion.Modified ? "true" : "false");
 
-            if (fields != null)
-                commandStringBuilder.AppendFormat("\nfields = {0}", fields.ToBsonDocument());
+            if (args.Fields != null)
+                commandStringBuilder.AppendFormat("\nfields = {0}", args.Fields.ToBsonDocument());
             else
                 commandStringBuilder.Append("\nfields = null");
 
-            commandStringBuilder.AppendFormat("\nupsert = {0}", upsert ? "true" : "false");
+            commandStringBuilder.AppendFormat("\nupsert = {0}", args.Upsert ? "true" : "false");
+
+            string commandString = commandStringBuilder.ToString();
+
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Update);
+
+            return result;
+        }
+
+        #endregion
+
+        #region FindAndRemove
+
+        public override FindAndModifyResult FindAndRemove(FindAndRemoveArgs args)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = base.FindAndRemove(args);
+            sw.Stop();
+
+            var commandStringBuilder = new StringBuilder(1024);
+            commandStringBuilder.AppendFormat("db.{0}.findAndModify(query, sort, remove, fields)", Name);
+
+            if (args.Query != null)
+                commandStringBuilder.AppendFormat("\nquery = {0}", args.Query.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nquery = null");
+
+            if (args.SortBy != null)
+                commandStringBuilder.AppendFormat("\nsort = {0}", args.SortBy.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nsort = null");
+
+            commandStringBuilder.AppendFormat("\nremove = true");
+
+            if (args.Fields != null)
+                commandStringBuilder.AppendFormat("\nfields = {0}", args.Fields.ToBsonDocument());
+            else
+                commandStringBuilder.Append("\nfields = null");
 
             string commandString = commandStringBuilder.ToString();
 
@@ -330,17 +381,17 @@ namespace StackExchange.Profiling.MongoDB
             return result;
         }
 
-        public override MapReduceResult MapReduce(BsonJavaScript map, BsonJavaScript reduce, IMongoMapReduceOptions options)
+        public override MapReduceResult MapReduce(MapReduceArgs args)
         {
             var sw = new Stopwatch();
 
             sw.Start();
-            var result = base.MapReduce(map, reduce, options);
+            var result = base.MapReduce(args);
             sw.Stop();
 
             string commandString = string.Format("db.{0}.mapReduce(<map function>, <reduce function>, options)", Name);
 
-            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Create);
+            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
 
             return result;
         }

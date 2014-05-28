@@ -91,7 +91,7 @@ namespace StackExchange.Profiling.MongoDB
 
             string commandString = commandStringBuilder.ToString();
 
-            ProfilerUtils.AddMongoTiming(commandString, enumerationEndedEventArgs.ElapsedMilliseconds, ExecuteType.Read);
+            ProfilerUtils.AddMongoTiming(commandString, (long) enumerationEndedEventArgs.Elapsed.TotalMilliseconds, ExecuteType.Read);
         }
     }
 }
