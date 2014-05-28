@@ -15,5 +15,6 @@ Nuget Packages Available:
   * [MiniProfiler.MVC3](https://www.nuget.org/packages/MiniProfiler.MVC3/) - ASP.net MVC 3 Integration
   * [MiniProfiler.MVC4](https://www.nuget.org/packages/MiniProfiler.Mvc4/) - ASP.net MVC 4 and 5 Integration
   * [MiniProfiler.Raven](https://www.nuget.org/packages/MiniProfiler.Raven/) - [RavenDb](http://ravendb.net) Integration
+  * [MiniProfiler.WCF](https://www.nuget.org/packages/MiniProfiler.WCF/) - WCF Integration
 
 Licensed under [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0)
