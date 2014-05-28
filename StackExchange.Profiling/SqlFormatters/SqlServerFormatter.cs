@@ -72,7 +72,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     .AppendLine();
             }
 
-            // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' and 'StoredProcedure'
+            // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' or 'StoredProcedure'
             if (command != null && command.CommandType == CommandType.StoredProcedure)
             {
                 GenerateStoreProcedureCall(commandText, parameters, buffer);
@@ -101,13 +101,32 @@ namespace StackExchange.Profiling.SqlFormatters
             GenerateStoredProcedureParameters(buffer, parameters);
             buffer.Append(";");
 
-            if (returnValueParameter != null)
-            {
-                buffer.AppendLine().Append("SELECT @").Append(returnValueParameter.Name).Append(" AS ReturnValue;");
-            }
+	        GenerateSelectStatement(buffer, parameters);
         }
 
-        private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
+	    private void GenerateSelectStatement(StringBuilder buffer, List<SqlTimingParameter> parameters)
+	    {
+		    if (parameters == null) return;
+
+		    var parametersToSelect = parameters.Where(
+			    x => x.Direction == ParameterDirection.InputOutput.ToString() ||
+			         x.Direction == ParameterDirection.Output.ToString())
+					 .Select(x => x.Name.TrimStart('@'))
+					 .Select(x => "@" + x + " AS " + x)
+					 .ToList();
+
+		    var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
+			if (returnValueParameter != null)
+			{
+				parametersToSelect.Insert(0, "@" + returnValueParameter.Name + " AS ReturnValue");
+			}
+
+		    if (!parametersToSelect.Any()) return;
+		    
+			buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(";");
+	    }
+
+	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
         {
             if (parameters == null || !parameters.Any()) return null;
             return parameters.FirstOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
