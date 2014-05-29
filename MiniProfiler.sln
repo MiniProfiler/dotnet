@@ -53,6 +53,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D54100
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.WebApi", "StackExchange.Profiling.WebApi\StackExchange.Profiling.WebApi.csproj", "{76B80A1F-F1F3-4456-8442-0506A5094750}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
@@ -130,6 +132,12 @@ Global
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{76B80A1F-F1F3-4456-8442-0506A5094750}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
