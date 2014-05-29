@@ -3,8 +3,8 @@
   <metadata>
     <id>MiniProfiler.MongoDb</id>
     <version>3.0.11</version>
-    <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis</authors>
-    <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis</owners>
+    <authors>Yaakov Ellis</authors>
+    <owners>Yaakov Ellis</owners>
     <description>MiniProfiler extensions and helpers for MongoDb</description>
     <projectUrl>http://miniprofiler.com</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
@@ -12,11 +12,11 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="MiniProfiler" version="3.0.10" />
-      <dependency id="mongocsharpdriver" version="[1.8.3]" />
+      <dependency id="mongocsharpdriver" version="[1.8.0,1.8.3]" />
     </dependencies>
     <releaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</releaseNotes>
   </metadata>
   <files>
-    <file src="StackExchange.Profiling.MongoDb\bin\Release\StackExchange.Profiling.MongoDb.*" target="lib\net40" />
+    <file src="StackExchange.Profiling.MongoDb\bin\Release\StackExchange.Profiling.MongoDB.*" target="lib\net40" />
   </files>
 </package>
