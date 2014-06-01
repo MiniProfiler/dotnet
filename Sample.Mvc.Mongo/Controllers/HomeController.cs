@@ -13,7 +13,7 @@ namespace SampleWeb.Controllers
 {
     public class HomeController : BaseController
     {
-        private static Random _random = new Random();
+        private static readonly Random Random = new Random();
 
         public ActionResult Index()
         {
@@ -38,62 +38,73 @@ namespace SampleWeb.Controllers
 
             // create couple of indexes
 
-            Repository.FooCollection.EnsureIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
+            Repository.FooCollection.CreateIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
 
             // update docs just to update docs (meaningless activity)
-            Repository.FooCollection.FindAndModify(Query.EQ("r", 0.12345), SortBy.Ascending("i"),
-                Update.Set("updated", true));
+            Repository.FooCollection.FindAndModify(
+                new FindAndModifyArgs
+                {
+                    Query = Query.EQ("r", 0.12345),
+                    SortBy = SortBy.Ascending("i"),
+                    Update = Update.Set("updated", true)
+                });
 
             var model = new MongoDemoModel
             {
-                FooCount = (int) Repository.FooCollection.Count(),
-                FooCountQuery = (int) Repository.FooCollection.Count(Query.LT("r", 0.5)),
-                AggregateResult = Repository.FooCollection.Aggregate(
-                    new BsonDocument
+                FooCount = (int)Repository.FooCollection.Count(),
+                FooCountQuery = (int)Repository.FooCollection.Count(Query.LT("r", 0.5)),
+                AggregateResult = string.Join(Environment.NewLine, Repository.FooCollection.Aggregate(
+                new AggregateArgs
+                {
+                    OutputMode = AggregateOutputMode.Cursor,
+                    Pipeline = new[]
                     {
+                        new BsonDocument
                         {
-                            "$match", new BsonDocument
                             {
+                                "$match", new BsonDocument
                                 {
-                                    "r", new BsonDocument
                                     {
-                                        {"$gt", 0.2}
+                                        "r", new BsonDocument
+                                        {
+                                            {"$gt", 0.2}
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    new BsonDocument
-                    {
+                        },
+                        new BsonDocument
                         {
-                            "$group", new BsonDocument
                             {
+                                "$group", new BsonDocument
                                 {
-                                    "_id", new BsonDocument
                                     {
+                                        "_id", new BsonDocument
                                         {
-                                            "$cond", new BsonArray
                                             {
-                                                new BsonDocument
+                                                "$cond", new BsonArray
                                                 {
-                                                    {"$lt", new BsonArray {"$r", 0.6}}
-                                                },
-                                                "lessthen0.6",
-                                                "morethan0.6"
+                                                    new BsonDocument
+                                                    {
+                                                        {"$lt", new BsonArray {"$r", 0.6}}
+                                                    },
+                                                    "lessthen0.6",
+                                                    "morethan0.6"
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                                {
-                                    "count", new BsonDocument
+                                    },
                                     {
-                                        {"$sum", 1}
+                                        "count", new BsonDocument
+                                        {
+                                            {"$sum", 1}
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    ).Response.ToString(),
+                }).ToList()),
                 ExplainResult =
                     Repository.FooCollection.FindAs<BsonDocument>(Query.GT("r", 0.5))
                         .SetLimit(10)
@@ -107,13 +118,13 @@ namespace SampleWeb.Controllers
                             .SetSortOrder(SortBy.Descending("r"))
                             .ToList())
             };
-            
+
             // drop all indexes
             Repository.FooCollection.DropAllIndexes();
 
             // add couple of records
             // single record
-            Repository.BarCollection.Insert(new BsonDocument {{"timestamp", DateTime.Now}});
+            Repository.BarCollection.Insert(new BsonDocument { { "timestamp", DateTime.Now } });
 
             // 2 records at once
             Repository.BarCollection.InsertBatch(new[]
@@ -126,7 +137,7 @@ namespace SampleWeb.Controllers
             Repository.FooCollection.Update(Query.LT("r", 0.01), Update.Inc("up", 1), UpdateFlags.Multi);
 
             // find one record
-            var oneRecord = Repository.FooCollection.FindOneAs<BsonDocument>(Query.GT("r", _random.NextDouble()));
+            var oneRecord = Repository.FooCollection.FindOneAs<BsonDocument>(Query.GT("r", Random.NextDouble()));
             oneRecord.Set("meta", "updated");
 
             Repository.FooCollection.Save(oneRecord);
@@ -136,8 +147,8 @@ namespace SampleWeb.Controllers
             Repository.BazzCollection.Insert(new BazzItem
             {
                 CurrentTimestamp = DateTime.Now,
-                SomeRandomInt = _random.Next(0, 256),
-                SomeRandomDouble = _random.NextDouble()
+                SomeRandomInt = Random.Next(0, 256),
+                SomeRandomDouble = Random.NextDouble()
             });
 
             return View(model);
