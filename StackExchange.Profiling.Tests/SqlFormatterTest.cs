@@ -10,7 +10,9 @@ namespace StackExchange.Profiling.Tests
     [TestFixture]
     public class SqlFormatterTest
     {
-        private SqlServerFormatter _formatter;
+	    private const string None = "";
+	    private const string At = "@";
+	    private SqlServerFormatter _formatter;
         private string _commandText;
         private SqlCommand _dbCommand;
         private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap;
@@ -98,7 +100,7 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void EnsureVerboseSqlServerFormatterAddsOnlyInformation()
+        public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             // arrange
 			// overwrite the formatter
@@ -130,13 +132,13 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void TableQueryWithOneParameters()
+        public void TableQueryWithOneParameters([Values(None, At)] string at)
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @a";
             const string expectedOutput = "DECLARE @a int = 123;\r\n\r\nselect 1 from dbo.Table where x = @a;";
             CreateDbCommand(CommandType.Text);
-            AddDbParameter<int>("a", 123);
+            AddDbParameter<int>(at + "a", 123);
 
             // act
             var actualOutput = GenerateOutput();
@@ -146,14 +148,14 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void TableQueryWithTwoParameters()
+        public void TableQueryWithTwoParameters([Values(None, At)] string at)
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @y bigint = 123;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
-            AddDbParameter<int>("x", 123);
-            AddDbParameter<long>("y", 123);
+            AddDbParameter<int>(at + "x", 123);
+            AddDbParameter<long>(at + "y", 123);
 
             // act
             var actualOutput = GenerateOutput();
@@ -178,13 +180,13 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithOneParameter()
+        public void StoredProcedureCallWithOneParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x;";
             CreateDbCommand(CommandType.StoredProcedure);
-            AddDbParameter<int>("x", 123, ParameterDirection.Input);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
 
             // act
             var actualOutput = GenerateOutput();
@@ -194,14 +196,14 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithTwoParameter()
+        public void StoredProcedureCallWithTwoParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @y bigint = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x, @y = @y;";
             CreateDbCommand(CommandType.StoredProcedure);
-            AddDbParameter<int>("x", 123, ParameterDirection.Input);
-            AddDbParameter<long>("y", 123, ParameterDirection.Input);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
+            AddDbParameter<long>(at + "y", 123, ParameterDirection.Input);
 
             // act
             var actualOutput = GenerateOutput();
@@ -211,13 +213,13 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithOneReturnParameter()
+        public void StoredProcedureCallWithOneReturnParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE;\r\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
-            AddDbParameter<int>("retval", null, ParameterDirection.ReturnValue);
+            AddDbParameter<int>(at + "retval", null, ParameterDirection.ReturnValue);
 
             // act
             var actualOutput = GenerateOutput();
@@ -227,14 +229,14 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithNormalAndReturnParameter()
+        public void StoredProcedureCallWithNormalAndReturnParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x;\r\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
-            AddDbParameter<int>("x", 123, ParameterDirection.Input);
-            AddDbParameter<int>("retval", null, ParameterDirection.ReturnValue);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
+            AddDbParameter<int>(at + "retval", null, ParameterDirection.ReturnValue);
 
             // act
             var actualOutput = GenerateOutput();
@@ -244,14 +246,14 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithOneOutputParameter()
+        public void StoredProcedureCallWithOneOutputParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
-            AddDbParameter<int>("x", 123, ParameterDirection.Output);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
 
             // act
             var actualOutput = GenerateOutput();
@@ -261,15 +263,15 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithTwoOutputParameter()
+        public void StoredProcedureCallWithTwoOutputParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @y int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT, @y = @y OUTPUT;\r\nSELECT @x AS x, @y AS y;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
-            AddDbParameter<int>("x", 123, ParameterDirection.Output);
-            AddDbParameter<int>("y", 123, ParameterDirection.Output);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
+            AddDbParameter<int>(at + "y", 123, ParameterDirection.Output);
 
             // act
             var actualOutput = GenerateOutput();
@@ -279,15 +281,15 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithOneOutputParameterAndOneReturnParameter()
+        public void StoredProcedureCallWithOneOutputParameterAndOneReturnParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
-            string expectedOutput = "DECLARE @x int = 123,\r\n        @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @retval AS ReturnValue, @x AS x;";
+            const string expectedOutput = "DECLARE @x int = 123,\r\n        @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @retval AS ReturnValue, @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
-            AddDbParameter<int>("x", 123, ParameterDirection.Output);
-            AddDbParameter<int>("retval", null, ParameterDirection.ReturnValue);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
+            AddDbParameter<int>(at + "retval", null, ParameterDirection.ReturnValue);
 
             // act
             var actualOutput = GenerateOutput();
@@ -297,14 +299,14 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void StoredProcedureCallWithInOutputParameter()
+        public void StoredProcedureCallWithInOutputParameter([Values(None, At)] string at)
         {
             // arrange
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
-            AddDbParameter<int>("x", 123, ParameterDirection.InputOutput);
+            AddDbParameter<int>(at + "x", 123, ParameterDirection.InputOutput);
 
             // act
             var actualOutput = GenerateOutput();

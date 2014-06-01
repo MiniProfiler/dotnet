@@ -86,14 +86,24 @@ namespace StackExchange.Profiling.SqlFormatters
             return formattedText;
         }
 
-        private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
+		private string EnsureParameterPrefix(string name)
+		{
+			return !name.StartsWith("@") ? "@" + name : name;
+		}
+
+		private string RemoveParameterPrefix(string name)
+		{
+			return name.StartsWith("@") ? name.Substring(1) : name;
+		}
+
+	    private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
         {
             buffer.Append("EXEC ");
 
             SqlTimingParameter returnValueParameter = GetReturnValueParameter(parameters);
             if (returnValueParameter != null)
             {
-                buffer.Append("@").Append(returnValueParameter.Name).Append(" = ");
+                buffer.Append(EnsureParameterPrefix(returnValueParameter.Name)).Append(" = ");
             }
 
             buffer.Append(commandText);
@@ -111,14 +121,13 @@ namespace StackExchange.Profiling.SqlFormatters
 		    var parametersToSelect = parameters.Where(
 			    x => x.Direction == ParameterDirection.InputOutput.ToString() ||
 			         x.Direction == ParameterDirection.Output.ToString())
-					 .Select(x => x.Name.TrimStart('@'))
-					 .Select(x => "@" + x + " AS " + x)
+					 .Select(x => EnsureParameterPrefix(x.Name) + " AS " + RemoveParameterPrefix(x.Name))
 					 .ToList();
 
 		    var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
 			if (returnValueParameter != null)
 			{
-				parametersToSelect.Insert(0, "@" + returnValueParameter.Name + " AS ReturnValue");
+				parametersToSelect.Insert(0, EnsureParameterPrefix(returnValueParameter.Name) + " AS ReturnValue");
 			}
 
 		    if (!parametersToSelect.Any()) return;
@@ -163,7 +172,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 }
 
                 firstParameter = false;
-                buffer.Append(" @").Append(parameter.Name).Append(" = ").Append("@").Append(parameter.Name);
+                buffer.Append(" ").Append(EnsureParameterPrefix(parameter.Name)).Append(" = ").Append(EnsureParameterPrefix(parameter.Name));
 
                 // Output and InputOutput directions treated equally on the database side.
                 if (parameter.Direction == ParameterDirection.Output.ToString() ||
@@ -215,12 +224,8 @@ namespace StackExchange.Profiling.SqlFormatters
                         resolvedType = resolvedType ?? parameter.DbType;
                     }
 
-                    var niceName = parameter.Name;
-                    if (!niceName.StartsWith("@"))
-                    {
-                        niceName = "@" + niceName;
-                    }
-
+                    var niceName = EnsureParameterPrefix(parameter.Name);
+                    
                     buffer.Append(niceName).Append(" ").Append(resolvedType);
 
                     // return values don't have a value assignment
