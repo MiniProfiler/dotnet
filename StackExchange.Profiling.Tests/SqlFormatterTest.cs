@@ -39,7 +39,9 @@ namespace StackExchange.Profiling.Tests
         private string GenerateOutput()
         {
             var sqlParameters = SqlTiming.GetCommandParameters(_dbCommand);
-            var output = _formatter.FormatSql(_commandText, sqlParameters);
+
+            var advancedFormatter = _formatter as IAdvancedSqlFormatter;
+            var output = advancedFormatter != null ? advancedFormatter.FormatSql(_commandText, sqlParameters, _dbCommand) : _formatter.FormatSql(_commandText, sqlParameters);
             return output;
         }
 
@@ -99,14 +101,12 @@ namespace StackExchange.Profiling.Tests
             return _dbTypeMap[type.TypeHandle];
         }
 
-        // Code being removed for v3.0.x to maintain semver versioning. Will be present in v3.1+
-        /*
         [Test]
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             // arrange
 			// overwrite the formatter
-	        _formatter = new VerboseSqlServerFormatter();
+	        _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
             const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n\r\nselect 1;";
             CreateDbCommand(CommandType.Text);
@@ -116,7 +116,7 @@ namespace StackExchange.Profiling.Tests
 
             // assert
             Assert.AreEqual(expectedOutput, actualOutput);
-        }*/
+        }
 
         [Test]
         public void TabelQueryWithoutParameters()
@@ -170,6 +170,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithoutParameters()
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "EXEC dbo.SOMEPROCEDURE;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -185,6 +186,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithOneParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -201,6 +203,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithTwoParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @y bigint = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x, @y = @y;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -218,6 +221,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithOneReturnParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE;\r\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -234,6 +238,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithNormalAndReturnParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x;\r\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -251,6 +256,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithOneOutputParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -268,6 +274,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithTwoOutputParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @y int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT, @y = @y OUTPUT;\r\nSELECT @x AS x, @y AS y;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -286,6 +293,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithOneOutputParameterAndOneReturnParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123,\r\n        @retval int;\r\n\r\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @retval AS ReturnValue, @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
@@ -304,6 +312,7 @@ namespace StackExchange.Profiling.Tests
         public void StoredProcedureCallWithInOutputParameter([Values(None, At)] string at)
         {
             // arrange
+            _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "DECLARE @x int = 123;\r\n\r\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\r\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);

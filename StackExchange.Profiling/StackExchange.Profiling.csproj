@@ -65,6 +65,7 @@
     <Compile Include="MiniProfilerHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlFormatters\IAdvancedSqlFormatter.cs" />
     <Compile Include="SqlFormatters\VerboseSqlServerFormatter.cs" />
     <Compile Include="SqlTiming.cs">
       <SubType>Code</SubType>

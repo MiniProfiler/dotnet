@@ -4,22 +4,34 @@ using System.Text;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
-    // Code being removed for v3.0.x to maintain semver versioning. Will be present in v3.1+
-
-    /*/// <summary>
+    /// <summary>
     /// Formats SQL server queries with a DECLARE up top for parameter values
     /// </summary>
     /// 
-    public class VerboseSqlServerFormatter : SqlServerFormatter
+    public class VerboseSqlServerFormatter : SqlServerFormatter, IAdvancedSqlFormatter
     {
+        /// <summary>
+        /// Should meta data relating to the command type, database and transaction be included in sql output
+        /// </summary>
+        public bool IncludeMetaData { get; set; }
+
+        /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="includeMetaData"></param>
+        public VerboseSqlServerFormatter(bool includeMetaData = false)
+        {
+            IncludeMetaData = includeMetaData;
+        }
+
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+        public string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
             StringBuilder buffer = new StringBuilder();
 
-            if (command != null)
+            if (command != null && IncludeMetaData)
             {
                 buffer.AppendLine("-- Command Type: " + command.CommandType);
                 buffer.AppendLine("-- Database: " + command.Connection.Database);
@@ -36,5 +48,5 @@ namespace StackExchange.Profiling.SqlFormatters
 
 	        return buffer.ToString();
         }
-    }*/
+    }
 }

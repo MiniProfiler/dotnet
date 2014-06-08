@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -311,6 +312,21 @@ namespace StackExchange.Profiling
             public static ISqlFormatter SqlFormatter { get; set; }
 
             /// <summary>
+            /// Format sql using the FormatSql method available in the current <see cref="Settings.SqlFormatter"/>. 
+            /// </summary>
+            /// <param name="commandText"></param>
+            /// <param name="parameters"></param>
+            /// <param name="command"></param>
+            /// <remarks>It is preferable to use this rather than accessing <see cref="ISqlFormatter.FormatSql"/> directly, 
+            /// as this method will detect whether an <see cref="IAdvancedSqlFormatter"/> is being used, and will access it properly.</remarks>
+            /// <returns></returns>
+            public static string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+            {
+                var advancedFormatter = SqlFormatter as IAdvancedSqlFormatter;
+                return advancedFormatter != null ? advancedFormatter.FormatSql(commandText, parameters, command) : SqlFormatter.FormatSql(commandText, parameters);
+            }
+
+            /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
             public static string Version { get; private set; }
@@ -331,7 +347,6 @@ namespace StackExchange.Profiling
             /// The HttpRequest parameter that will be passed into this function should never be null.
             /// </remarks>
             public static Func<HttpRequest, bool> Results_Authorize { get; set; }
-
 
             /// <summary>
             /// Special authorization function that is called for the list results (listing all the profiling sessions), 
@@ -362,7 +377,6 @@ namespace StackExchange.Profiling
             /// Allows switching out stopwatches for unit testing.
             /// </summary>
             internal static Func<IStopwatch> StopwatchProvider { get; set; }
-           
         }
     }
 }
