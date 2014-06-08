@@ -4,9 +4,12 @@ using System.Text;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
-    /// <summary>
+    // Code being removed for v3.0.x to maintain semver versioning. Will be present in v3.1+
+
+    /*/// <summary>
     /// Formats SQL server queries with a DECLARE up top for parameter values
     /// </summary>
+    /// 
     public class VerboseSqlServerFormatter : SqlServerFormatter
     {
         /// <summary>
@@ -33,5 +36,5 @@ namespace StackExchange.Profiling.SqlFormatters
 
 	        return buffer.ToString();
         }
-    }
+    }*/
 }

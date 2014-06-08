@@ -59,7 +59,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters)
         {
             StringBuilder buffer = new StringBuilder();
             
@@ -72,15 +72,18 @@ namespace StackExchange.Profiling.SqlFormatters
                     .AppendLine();
             }
 
+            // Code being removed for v3.0.x to maintain semver versioning. Will be present in v3.1+
+
             // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' or 'StoredProcedure'
-            if (command != null && command.CommandType == CommandType.StoredProcedure)
+            /*if (command != null && command.CommandType == CommandType.StoredProcedure)
             {
                 GenerateStoreProcedureCall(commandText, parameters, buffer);
             }
             else
             {
                 buffer.Append(commandText);
-            }
+            }*/
+            buffer.Append(commandText);
 
             string formattedText = TerminateSqlStatement(buffer.ToString());
             return formattedText;

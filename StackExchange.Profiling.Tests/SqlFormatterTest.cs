@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Tests
         private string GenerateOutput()
         {
             var sqlParameters = SqlTiming.GetCommandParameters(_dbCommand);
-            var output = _formatter.FormatSql(_commandText, sqlParameters, _dbCommand);
+            var output = _formatter.FormatSql(_commandText, sqlParameters);
             return output;
         }
 
@@ -99,6 +99,8 @@ namespace StackExchange.Profiling.Tests
             return _dbTypeMap[type.TypeHandle];
         }
 
+        // Code being removed for v3.0.x to maintain semver versioning. Will be present in v3.1+
+        /*
         [Test]
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
@@ -114,7 +116,7 @@ namespace StackExchange.Profiling.Tests
 
             // assert
             Assert.AreEqual(expectedOutput, actualOutput);
-        }
+        }*/
 
         [Test]
         public void TabelQueryWithoutParameters()
