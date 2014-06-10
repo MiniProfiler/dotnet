@@ -295,14 +295,19 @@ namespace StackExchange.Profiling
             GetCustomTimingList(category).Remove(customTiming);
         }
 
+        private readonly object _lockObject = new object();
+
         /// <summary>
         /// Returns the <see cref="CustomTiming"/> list keyed to the <paramref name="category"/>, creating any collections when null.
         /// </summary>
         /// <param name="category">The kind of custom timings, e.g. "sql", "redis", "memcache"</param>
         private List<CustomTiming> GetCustomTimingList(string category)
         {
-            if (CustomTimings == null)
-                CustomTimings = new Dictionary<string, List<CustomTiming>>();
+            lock (_lockObject)
+            {
+                if (CustomTimings == null)
+                    CustomTimings = new Dictionary<string, List<CustomTiming>>();
+            }
 
             List<CustomTiming> result;
             lock (CustomTimings)
