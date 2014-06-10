@@ -38,12 +38,12 @@ namespace StackExchange.Profiling.SqlFormatters
                 buffer.AppendLine("-- Database: " + command.Connection.Database);
                 if (command.Transaction != null)
                 {
-                    buffer.AppendLine("-- Transaction Iso Level: " + command.Transaction.IsolationLevel);
+                    buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);
                 }
 				if (Transaction.Current != null)
 				{
 					// transactions issued by TransactionScope are not bound to the database command but exists globally
-					buffer.AppendLine("-- Transaction Iso Level: " + Transaction.Current.IsolationLevel);
+					buffer.AppendLine("-- Transaction Scope Iso Level: " + Transaction.Current.IsolationLevel);
 				}
                 buffer.AppendLine();
             }
