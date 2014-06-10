@@ -39,10 +39,7 @@ namespace StackExchange.Profiling.Tests
         private string GenerateOutput()
         {
             var sqlParameters = SqlTiming.GetCommandParameters(_dbCommand);
-
-            var advancedFormatter = _formatter as IAdvancedSqlFormatter;
-            var output = advancedFormatter != null ? advancedFormatter.FormatSql(_commandText, sqlParameters, _dbCommand) : _formatter.FormatSql(_commandText, sqlParameters);
-            return output;
+            return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 
         private void AddDbParameter<T>(string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
