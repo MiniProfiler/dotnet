@@ -6,6 +6,7 @@ using System.Data.SqlTypes;
 using System.Text.RegularExpressions;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.SqlFormatters;
 
 namespace StackExchange.Profiling
 {
@@ -35,7 +36,7 @@ namespace StackExchange.Profiling
 
             if (MiniProfiler.Settings.SqlFormatter != null)
             {
-                commandText = MiniProfiler.Settings.FormatSql(commandText, parameters, command);
+                commandText = MiniProfiler.Settings.SqlFormatter.GetFormattedSql(commandText, parameters, command);
             }
 
             _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());

@@ -310,22 +310,7 @@ namespace StackExchange.Profiling
             /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
             /// </summary>
             public static ISqlFormatter SqlFormatter { get; set; }
-
-            /// <summary>
-            /// Format sql using the FormatSql method available in the current <see cref="Settings.SqlFormatter"/>. 
-            /// </summary>
-            /// <param name="commandText"></param>
-            /// <param name="parameters"></param>
-            /// <param name="command"></param>
-            /// <remarks>It is preferable to use this rather than accessing <see cref="ISqlFormatter.FormatSql"/> directly, 
-            /// as this method will detect whether an <see cref="IAdvancedSqlFormatter"/> is being used, and will access it properly.</remarks>
-            /// <returns></returns>
-            public static string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
-            {
-                var advancedFormatter = SqlFormatter as IAdvancedSqlFormatter;
-                return advancedFormatter != null ? advancedFormatter.FormatSql(commandText, parameters, command) : SqlFormatter.FormatSql(commandText, parameters);
-            }
-
+            
             /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
