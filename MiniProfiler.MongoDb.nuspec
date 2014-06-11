@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>MiniProfiler.MongoDb</id>
-    <version>3.0.11</version>
+    <version>3.0.12</version>
     <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis</authors>
     <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis</owners>
     <description>MiniProfiler extensions and helpers for MongoDb</description>
