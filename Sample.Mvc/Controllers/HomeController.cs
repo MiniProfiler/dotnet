@@ -256,7 +256,7 @@ namespace SampleWeb.Controllers
 
                     using (MiniProfiler.Current.Step("Insertion"))
                     {
-                        var p = new ModelPerson { Name = "sam" };
+                        var p = new ModelPerson { Name = "sam", Id = new Random().Next(10000)};
                         context.ModelPersons.Add(p);
                         context.SaveChanges();
                     }
