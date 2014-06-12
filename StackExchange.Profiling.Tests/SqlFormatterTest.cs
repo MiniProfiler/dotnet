@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Transactions;
 using NUnit.Framework;
 using StackExchange.Profiling.SqlFormatters;
-using IsolationLevel = System.Data.IsolationLevel;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -127,7 +126,7 @@ namespace StackExchange.Profiling.Tests
 			// overwrite the formatter
 	        _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
-            const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n-- Transaction Iso Level: Serializable\r\n\r\nselect 1;";
+            const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n-- Transaction Scope Iso Level: Serializable\r\n\r\nselect 1;";
             CreateDbCommand(CommandType.Text);
 	        TransactionScope transactionScope = new TransactionScope();
 
