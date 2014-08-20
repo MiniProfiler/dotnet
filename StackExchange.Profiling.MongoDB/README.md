@@ -30,7 +30,7 @@ See `Sample.Mvc.Mongo\Data\MongoDataRepository.cs` for how to implement the prof
         {
             if (_server == null)
             {
-                _server = new ProfiledMongoServer(Client.GetServer());
+                _server = ProfiledMongoServer.Create(Client);
             }
             return _server;
         }
