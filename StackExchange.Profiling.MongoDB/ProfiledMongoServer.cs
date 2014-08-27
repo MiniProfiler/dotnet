@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MongoDB.Driver;
 
 namespace StackExchange.Profiling.MongoDB
@@ -7,15 +8,25 @@ namespace StackExchange.Profiling.MongoDB
     {
         private readonly static object __staticLock = new object();
         private readonly static Dictionary<MongoServerSettings, ProfiledMongoServer> __servers = new Dictionary<MongoServerSettings, ProfiledMongoServer>();
-        private static int __maxServerCount = 100;
+        private static int __maxServerCount = MiniProfiler.Settings.MaxMongoServerCount;
 
+        [Obsolete("This may leak server connectinos, use ProfiledMongoServer.Create instead.")]
         public ProfiledMongoServer(MongoServerSettings settings) : base(settings)
+        {
+        }
+
+        [Obsolete("This may leak server connectinos, use ProfiledMongoServer.Create instead.")]
+        public ProfiledMongoServer(MongoServer server) : base (server.Settings)
         {
         }
 
         public static ProfiledMongoServer Create(MongoClient client)
         {
-            MongoServerSettings settings = MongoServerSettings.FromClientSettings(client.Settings);
+            return Create(MongoServerSettings.FromClientSettings(client.Settings));
+        }
+
+        public static new ProfiledMongoServer Create(MongoServerSettings settings)
+        {
             lock (__staticLock)
             {
                 ProfiledMongoServer server;
@@ -24,9 +35,11 @@ namespace StackExchange.Profiling.MongoDB
                     if (__servers.Count >= __maxServerCount)
                     {
                         var message = string.Format("ProfiledMongoServer.Create has already created {0} servers which is the maximum number of servers allowed.", __maxServerCount);
-                        throw new MongoException(message);
+                        throw new Exception(message);
                     }
+#pragma warning disable 618
                     server = new ProfiledMongoServer(settings);
+#pragma warning restore
                     __servers.Add(settings, server);
                 }
                 return server;
