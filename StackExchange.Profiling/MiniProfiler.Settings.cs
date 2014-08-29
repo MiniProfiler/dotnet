@@ -290,12 +290,6 @@ namespace StackExchange.Profiling
             public static int MaxJsonResponseSize { get; set; }
 
             /// <summary>
-            /// Maximum number of ProfiledeMongoServer instance to create, defaults to 100.
-            /// </summary>
-            [DefaultValue(100)]
-            public static int MaxMongoServerCount { get; set; }
-
-            /// <summary>
             /// Understands how to save and load MiniProfilers. Used for caching between when
             /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.
             /// </summary>

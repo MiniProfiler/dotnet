@@ -8,14 +8,14 @@ namespace StackExchange.Profiling.MongoDB
     {
         private readonly static object __staticLock = new object();
         private readonly static Dictionary<MongoServerSettings, ProfiledMongoServer> __servers = new Dictionary<MongoServerSettings, ProfiledMongoServer>();
-        private static int __maxServerCount = MiniProfiler.Settings.MaxMongoServerCount;
+        private static int __maxServerCount = MongoMiniProfiler.Settings.MaxServerCount;
 
-        [Obsolete("This may leak server connectinos, use ProfiledMongoServer.Create instead.")]
+        [Obsolete("This may leak server connections, use ProfiledMongoServer.Create instead.")]
         public ProfiledMongoServer(MongoServerSettings settings) : base(settings)
         {
         }
 
-        [Obsolete("This may leak server connectinos, use ProfiledMongoServer.Create instead.")]
+        [Obsolete("This may leak server connections, use ProfiledMongoServer.Create instead.")]
         public ProfiledMongoServer(MongoServer server) : base (server.Settings)
         {
         }

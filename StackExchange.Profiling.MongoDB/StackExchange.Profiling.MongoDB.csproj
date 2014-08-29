@@ -54,6 +54,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MongoMiniProfiler.cs" />
+    <Compile Include="MongoMiniProfiler.Settings.cs">
+      <DependentUpon>MongoMiniProfiler.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProfiledEnumerator.cs" />
     <Compile Include="ProfiledMongoCollection.cs" />
     <Compile Include="ProfiledMongoCursor.cs" />
