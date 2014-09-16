@@ -1,6 +1,6 @@
 ﻿namespace StackExchange.Profiling.MongoDB
 {
-    public class MongoMiniProfiler
+    public partial class MongoMiniProfiler
     {
         public const string CategoryName = "mongo";
     }

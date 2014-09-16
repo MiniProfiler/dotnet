@@ -38,7 +38,7 @@ namespace SampleWeb.Data
             {
                 if (_server == null)
                 {
-                    _server = new ProfiledMongoServer(Client.GetServer());
+                    _server = ProfiledMongoServer.Create(Client);
                 }
                 return _server;
             }
