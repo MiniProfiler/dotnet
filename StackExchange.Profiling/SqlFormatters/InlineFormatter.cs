@@ -42,7 +42,10 @@ namespace StackExchange.Profiling.SqlFormatters
                     ? p.Name 
                     : Regex.Match(commandText, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
                 var value = GetParameterValue(p);
-                commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                if(!string.IsNullOrEmpty(name))
+                {
+                    commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                }
             }
 
             return commandText;
