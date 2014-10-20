@@ -41,8 +41,11 @@ namespace StackExchange.Profiling.SqlFormatters
                 var name = ParamPrefixes.IsMatch(p.Name) 
                     ? p.Name 
                     : Regex.Match(commandText, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
-                var value = GetParameterValue(p);
-                commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                if (name.HasValue())
+                {
+                    var value = GetParameterValue(p);
+                    commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                }
             }
 
             return commandText;
