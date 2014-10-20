@@ -162,7 +162,7 @@ namespace SampleWeb
                 return !DisableProfilingResults; 
             };
 
-            // the list of all sessions in the store is restricted by default, you must return true to alllow it
+            // the list of all sessions in the store is restricted by default, you must return true to allow it
             MiniProfiler.Settings.Results_List_Authorize = request =>
             {
                 // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
