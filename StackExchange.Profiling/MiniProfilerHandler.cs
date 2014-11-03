@@ -226,53 +226,51 @@ namespace StackExchange.Profiling
 
         private static string GetListJson(HttpContext context)
         {
-            //string message;
-            //if (!AuthorizeRequest(context, isList: true, message: out message))
-            //{
-            //    return message;
-            //}
+            string message;
+            if (!AuthorizeRequest(context, isList: true, message: out message))
+            {
+                return message;
+            }
 
-            //var lastId = context.Request["last-id"];
-            //Guid lastGuid = Guid.Empty;
+            var lastId = context.Request["last-id"];
+            Guid lastGuid = Guid.Empty;
 
-            //if (!lastId.IsNullOrWhiteSpace())
-            //{
-            //    Guid.TryParse(lastId, out lastGuid);
-            //}
+            if (!lastId.IsNullOrWhiteSpace())
+            {
+                Guid.TryParse(lastId, out lastGuid);
+            }
 
-            //// After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
-            //if (MiniProfiler.Settings.Storage == null)
-            //{
-            //    MiniProfiler.Settings.EnsureStorageStrategy();
-            //}
+            // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
+            if (MiniProfiler.Settings.Storage == null)
+            {
+                MiniProfiler.Settings.EnsureStorageStrategy();
+            }
 
-            //var guids = MiniProfiler.Settings.Storage.List(100);
+            var guids = MiniProfiler.Settings.Storage.List(100);
 
-            //if (lastGuid != Guid.Empty)
-            //{
-            //    guids = guids.TakeWhile(g => g != lastGuid);
-            //}
+            if (lastGuid != Guid.Empty)
+            {
+                guids = guids.TakeWhile(g => g != lastGuid);
+            }
 
-            //guids = guids.Reverse();
+            guids = guids.Reverse();
 
-            //return guids.Select(
-            //    g =>
-            //    {
-            //        var profiler = MiniProfiler.Settings.Storage.Load(g);
-            //        return new
-            //        {
-            //            profiler.Id,
-            //            profiler.Name,
-            //            profiler.ClientTimings,
-            //            profiler.Started,
-            //            profiler.HasUserViewed,
-            //            profiler.MachineName,
-            //            profiler.User
-            //        };
-            //    }).ToJson();
-
-            // TODO: get this working again
-            return "";
+            return guids.Select(
+                g =>
+                {
+                    var profiler = MiniProfiler.Settings.Storage.Load(g);
+                    return new
+                    {
+                        profiler.Id,
+                        profiler.Name,
+                        profiler.ClientTimings,
+                        profiler.Started,
+                        profiler.HasUserViewed,
+                        profiler.MachineName,
+                        profiler.User,
+                        profiler.DurationMilliseconds
+                    };
+                }).ToJson();
         }
 
         /// <summary>
