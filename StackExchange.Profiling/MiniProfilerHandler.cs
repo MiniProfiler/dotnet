@@ -98,12 +98,12 @@ namespace StackExchange.Profiling
                     break;
             }
 
-	        if (!string.IsNullOrEmpty(output))
-	        {
-		        Compression.EncodeStreamAndAppendResponseHeaders(context.Request, context.Response);
-	        }
+            if (MiniProfiler.Settings.EnableCompression && !string.IsNullOrEmpty(output))
+            {
+                Compression.EncodeStreamAndAppendResponseHeaders(context.Request, context.Response);
+            }
 
-			context.Response.Write(output);
+            context.Response.Write(output);
         }
 
         /// <summary>
