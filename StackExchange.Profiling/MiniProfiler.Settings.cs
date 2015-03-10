@@ -363,12 +363,12 @@ namespace StackExchange.Profiling
             /// </summary>
             internal static Func<IStopwatch> StopwatchProvider { get; set; }
 
-			/// <summary>
-			/// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.
-			/// If this setting is false, the output won't be compressed. (Only do this when you take care of compression yourself)
-			/// </summary>
-			[DefaultValue(true)]
-			public static bool EnableCompression { get; set; }
+            /// <summary>
+            /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.
+            /// If this setting is false, the output won't be compressed. (Only do this when you take care of compression yourself)
+            /// </summary>
+            [DefaultValue(true)]
+            public static bool EnableCompression { get; set; }
         }
     }
 }
