@@ -18,7 +18,7 @@
         {
 
             if (store != null && store.JsonRequestFactory != null)
-                store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(JsonFormatter.FormatRequest(r));
+                store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(r);
 
         }
 
@@ -27,12 +27,14 @@
             if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
                 return;
 
-            MiniProfiler.Current.Head.AddCustomTiming("raven", new CustomTiming(MiniProfiler.Current, BuildCommandString(request))
+            var formattedRequest = JsonFormatter.FormatRequest(request);
+
+            MiniProfiler.Current.Head.AddCustomTiming("raven", new CustomTiming(MiniProfiler.Current, BuildCommandString(formattedRequest))
             {
                 Id = Guid.NewGuid(),
-                DurationMilliseconds = (decimal)request.DurationMilliseconds,
-                FirstFetchDurationMilliseconds = (decimal)request.DurationMilliseconds,
-                ExecuteType = request.Status.ToString()
+                DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
+                FirstFetchDurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
+                ExecuteType = formattedRequest.Status.ToString()
             });
         }
 
