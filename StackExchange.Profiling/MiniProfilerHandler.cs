@@ -201,6 +201,7 @@ namespace StackExchange.Profiling
                 .AppendFormat("<link href='{0}includes.css?v={1}' rel='stylesheet' type='text/css'>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
                 .AppendFormat("<script type='text/javascript' src='{0}includes.js?v={1}'></script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
                 .AppendFormat("<script type='text/javascript'>MiniProfiler.list.init({{path: '{0}', version: '{1}'}})</script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
+                .AppendLine("</head></html>")
                 .ToString();
         }
 
