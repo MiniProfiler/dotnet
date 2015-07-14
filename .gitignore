@@ -21,3 +21,4 @@ nupkg
 Sample.Wcf/x64/
 Sample.Wcf/x86/
 packages/**/*.*
+.vs/*
