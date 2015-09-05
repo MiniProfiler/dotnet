@@ -14,7 +14,7 @@ Nuget Packages Available:
   * [MiniProfiler.MVC4](https://www.nuget.org/packages/MiniProfiler.Mvc4/) - ASP.net MVC 4 and 5 Integration
   * [MiniProfiler.Raven](https://www.nuget.org/packages/MiniProfiler.Raven/) - [RavenDb](http://ravendb.net) Integration
   * [MiniProfiler.WCF](https://www.nuget.org/packages/MiniProfiler.WCF/) - WCF Integration
-  * [MiniProfiler.MongoDb](https://www.nuget.org/packages/MiniProfiler.MongoDb/) - WCF Integration
+  * [MiniProfiler.MongoDb](https://www.nuget.org/packages/MiniProfiler.MongoDb/) - MongoDB Integration
   * [MiniProfiler.EF5](https://www.nuget.org/packages/MiniProfiler.EF5/) - Entity Framework 4 and 5 Integration
 
 (The following packages are no longer being actively worked on):
