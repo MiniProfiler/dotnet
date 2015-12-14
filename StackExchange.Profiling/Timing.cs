@@ -269,7 +269,8 @@ namespace StackExchange.Profiling
                 timing.Profiler = Profiler;
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
-            timing.MiniProfilerId = Profiler.Id;
+            if (Profiler != null)
+                timing.MiniProfilerId = Profiler.Id;
         }
 
         internal void RemoveChild(Timing timing)
