@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.MongoDB
         public override MongoCursor<TDocument> FindAs<TDocument>(IMongoQuery query)
         {
             var serializer = BsonSerializer.LookupSerializer(typeof(TDocument));
-            return new ProfiledMongoCursor<TDocument>(this, query, Settings.ReadPreference, serializer, null);
+            return new ProfiledMongoCursor<TDocument>(this, query, Settings.ReadPreference, serializer);
         }
 
         public override IEnumerable<BsonDocument> Aggregate(AggregateArgs args)
@@ -49,25 +49,6 @@ namespace StackExchange.Profiling.MongoDB
             };
 
             return profiledEnumerable;
-        }
-
-        [Obsolete("Use the overload with an AggregateArgs parameter.")]
-        public override AggregateResult Aggregate(IEnumerable<BsonDocument> operations)
-        {
-            var operationsList = operations.ToList();
-
-            var sw = new Stopwatch();
-
-            sw.Start();
-            var result = base.Aggregate(operationsList);
-            sw.Stop();
-
-            string commandString = string.Format("db.{0}.aggregate(pipeline)\n\npipeline = \n{1}", Name,
-                string.Join("\n", operationsList.Select(operation => string.Format("   {0}", operation))));
-
-            ProfilerUtils.AddMongoTiming(commandString, sw.ElapsedMilliseconds, ExecuteType.Read);
-
-            return result;
         }
 
         public override long Count(IMongoQuery query)

@@ -11,8 +11,8 @@ namespace StackExchange.Profiling.MongoDB
     public class ProfiledMongoCursor<TDocument> : MongoCursor<TDocument>
     {
         public ProfiledMongoCursor(MongoCollection collection, IMongoQuery query, ReadPreference readPreference,
-            IBsonSerializer serializer, IBsonSerializationOptions serializationOptions)
-            : base(collection, query, readPreference, serializer, serializationOptions)
+            IBsonSerializer serializer)
+            : base(collection, query, readPreference, serializer)
         {
         }
 
