@@ -38,6 +38,9 @@ namespace SampleWeb.Controllers
 
             // create couple of indexes
 
+            Repository.FooCollection.Insert(new BsonDocument { { "r", 0.12345 } });
+            Repository.FooCollection.Insert(new BsonDocument { { "r", 10000.0 } });
+
             Repository.FooCollection.CreateIndex(IndexKeys.Ascending("i"), IndexOptions.SetBackground(true));
 
             // update docs just to update docs (meaningless activity)
