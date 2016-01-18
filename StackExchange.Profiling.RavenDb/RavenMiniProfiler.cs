@@ -1,4 +1,4 @@
-﻿namespace StackExchange.Profiling.RavenDb
+namespace StackExchange.Profiling.RavenDb
 {
     using System;
     using System.Text;
@@ -18,18 +18,38 @@
         {
 
             if (store != null && store.JsonRequestFactory != null)
-                store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(r);
+            {
+                store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
+                {
+                    EventHandler<RequestResultArgs> handler = null;
+
+                    Func<MiniProfiler, EventHandler<RequestResultArgs>> getRequestHandler = (profiler) =>
+                    {
+                        EventHandler<RequestResultArgs> h = (s, r) =>
+                        {
+                            IncludeTiming(r, profiler);
+                            store.JsonRequestFactory.LogRequest -= handler;
+                        };
+
+                        return h;
+                    };
+
+                    if (MiniProfiler.Current != null && MiniProfiler.Current.Head != null)
+                    {
+                        handler = getRequestHandler(MiniProfiler.Current);
+
+                        store.JsonRequestFactory.LogRequest += handler;
+                    }
+                };
+            }
 
         }
 
-        private static void IncludeTiming(RequestResultArgs request)
+        private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)
         {
-            if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
-                return;
-
             var formattedRequest = JsonFormatter.FormatRequest(request);
 
-            MiniProfiler.Current.Head.AddCustomTiming("raven", new CustomTiming(MiniProfiler.Current, BuildCommandString(formattedRequest))
+            profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
             {
                 Id = Guid.NewGuid(),
                 DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
