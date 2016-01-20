@@ -8,7 +8,9 @@ namespace StackExchange.Profiling.RavenDb
 
     public class MiniProfilerRaven
     {
-        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");
+        private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
+
+        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");        
 
         /// <summary>
         /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)
@@ -16,18 +18,23 @@ namespace StackExchange.Profiling.RavenDb
         /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
         public static void InitializeFor(DocumentStore store)
         {
-
             if (store != null && store.JsonRequestFactory != null)
             {
                 store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
                 {
                     EventHandler<RequestResultArgs> handler = null;
-
+                    
                     Func<MiniProfiler, EventHandler<RequestResultArgs>> getRequestHandler = (p) =>
                     {
                         EventHandler<RequestResultArgs> h = (s, r) =>
                         {
-                            IncludeTiming(r, p);
+                            // add a "handled" marker because not every ConfigureRequest event is for a single query
+                            // so if we've already timed this request, ignore otherwise we will have dup timings
+                            if (!r.AdditionalInformation.ContainsKey(RavenHandledRequestMarker))
+                            {
+                                r.AdditionalInformation.Add(RavenHandledRequestMarker, "");
+                                IncludeTiming(r, p);
+                            }
                             store.JsonRequestFactory.LogRequest -= handler;
                         };
 
