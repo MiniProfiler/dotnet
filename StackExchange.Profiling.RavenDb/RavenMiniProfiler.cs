@@ -23,20 +23,22 @@ namespace StackExchange.Profiling.RavenDb
                 {
                     EventHandler<RequestResultArgs> handler = null;
 
-                    Func<MiniProfiler, EventHandler<RequestResultArgs>> getRequestHandler = (profiler) =>
+                    Func<MiniProfiler, EventHandler<RequestResultArgs>> getRequestHandler = (p) =>
                     {
                         EventHandler<RequestResultArgs> h = (s, r) =>
                         {
-                            IncludeTiming(r, profiler);
+                            IncludeTiming(r, p);
                             store.JsonRequestFactory.LogRequest -= handler;
                         };
 
                         return h;
                     };
 
-                    if (MiniProfiler.Current != null && MiniProfiler.Current.Head != null)
+                    var profiler = MiniProfiler.Current;
+
+                    if (profiler != null && profiler.Head != null)
                     {
-                        handler = getRequestHandler(MiniProfiler.Current);
+                        handler = getRequestHandler(profiler);
 
                         store.JsonRequestFactory.LogRequest += handler;
                     }
@@ -47,6 +49,11 @@ namespace StackExchange.Profiling.RavenDb
 
         private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)
         {
+            if (profiler == null || profiler.Head == null)
+            {
+                return;
+            }
+
             var formattedRequest = JsonFormatter.FormatRequest(request);
 
             profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
