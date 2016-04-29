@@ -3,6 +3,8 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Data
 {
@@ -253,6 +255,41 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
+#if NET45
+        /// <summary>
+        /// The execute database data reader.
+        /// </summary>
+        /// <param name="behavior">The behaviour.</param>
+        /// <param name="cancellationToken">The cancellationToken.</param>
+        /// <returns>the resulting <see cref="DbDataReader"/>.</returns>
+        protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteReaderAsync(behavior, cancellationToken);
+            }
+
+            DbDataReader result = null;
+            _profiler.ExecuteStart(this, SqlExecuteType.Reader);
+            try
+            {
+                result = await _command.ExecuteReaderAsync(behavior, cancellationToken);
+                result = new ProfiledDbDataReader(result, _connection, _profiler);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.Reader, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.Reader, result);
+            }
+
+            return result;
+        }
+#endif
+
         /// <summary>
         /// execute a non query.
         /// </summary>
@@ -283,6 +320,39 @@ namespace StackExchange.Profiling.Data
 
             return result;
         }
+
+#if NET45
+        /// <summary>
+        /// execute a non query.
+        /// </summary>
+        /// <returns>the number of affected records.</returns>
+        public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            int result;
+
+            _profiler.ExecuteStart(this, SqlExecuteType.NonQuery);
+            try
+            {
+                result = await _command.ExecuteNonQueryAsync(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.NonQuery, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.NonQuery, null);
+            }
+
+            return result;
+        }
+#endif
 
         /// <summary>
         /// execute the scalar.
@@ -315,6 +385,40 @@ namespace StackExchange.Profiling.Data
 
             return result;
         }
+
+#if NET45
+        /// <summary>
+        /// execute the scalar.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteScalarAsync(cancellationToken);
+            }
+
+            object result;
+            _profiler.ExecuteStart(this, SqlExecuteType.Scalar);
+            try
+            {
+                result = await _command.ExecuteScalarAsync(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.Scalar, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.Scalar, null);
+            }
+
+            return result;
+        }
+#endif
 
         /// <summary>
         /// cancel the command.

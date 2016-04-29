@@ -14,5 +14,6 @@
   </metadata>
   <files>
     <file src="StackExchange.Profiling\bin\Release\MiniProfiler.*" target="lib\net40" />
+    <file src="StackExchange.Profiling\bin\Release 4.5\MiniProfiler.*" target="lib\net45" />
   </files>
 </package>
