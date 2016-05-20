@@ -1,14 +1,20 @@
-﻿namespace StackExchange.Profiling.RavenDb
+namespace StackExchange.Profiling.RavenDb
 {
     using System;
     using System.Text;
     using System.Text.RegularExpressions;
     using Raven.Client.Document;
     using Raven.Client.Connection.Profiling;
+    using System.Web;
 
     public class MiniProfilerRaven
     {
-        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");
+        private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
+        private const string RavenRequestPrefix = "__MiniProfiler.Raven.Request.";
+        private const string RavenRequestPending = "Pending";
+        private const string RavenRequestHandled = "Handled";
+
+        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");        
 
         /// <summary>
         /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)
@@ -16,20 +22,67 @@
         /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
         public static void InitializeFor(DocumentStore store)
         {
-
             if (store != null && store.JsonRequestFactory != null)
-                store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(r);
+            {
+                store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
+                {
+                    EventHandler<RequestResultArgs> handler = null;
+                    
+                    var profiler = MiniProfiler.Current;
+                    var httpContext = HttpContext.Current;
+
+                    if (profiler != null && profiler.Head != null && httpContext != null)
+                    {
+                        var requestId = Guid.NewGuid();
+
+                        // assign a unique request ID to this context since
+                        // HttpContext may be shared across events, due to singleton-nature
+                        // of DocumentStore
+                        if (!httpContext.Items.Contains(RavenRequestPrefix + requestId))
+                        {
+                            httpContext.Items[RavenRequestPrefix + requestId] = RavenRequestPending;
+                        }
+
+                        handler = (s, r) =>
+                        {
+                            store.JsonRequestFactory.LogRequest -= handler;
+
+                            // add a "handled" marker because not every ConfigureRequest event is for a single query
+                            // so if we've already timed this request, ignore otherwise we will have dup timings                            
+                            if (r.AdditionalInformation.ContainsKey(RavenHandledRequestMarker))
+                                return;
+
+                            // have we handled this request on this context?
+                            if ((string)httpContext.Items[RavenRequestPrefix + requestId] == RavenRequestHandled)
+                                return;
+
+                            // add handled marker to request
+                            r.AdditionalInformation.Add(RavenHandledRequestMarker, "");
+
+                            // mark this request as handled on this context
+                            httpContext.Items[RavenRequestPrefix + requestId] = RavenRequestHandled;
+
+                            // add custom timing
+                            IncludeTiming(r, profiler);                            
+                        };
+
+                        store.JsonRequestFactory.LogRequest += handler;
+                    }
+                };
+            }
 
         }
 
-        private static void IncludeTiming(RequestResultArgs request)
+        private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)
         {
-            if (MiniProfiler.Current == null || MiniProfiler.Current.Head == null)
+            if (profiler == null || profiler.Head == null)
+            {
                 return;
-
+            }
+            
             var formattedRequest = JsonFormatter.FormatRequest(request);
 
-            MiniProfiler.Current.Head.AddCustomTiming("raven", new CustomTiming(MiniProfiler.Current, BuildCommandString(formattedRequest))
+            profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
             {
                 Id = Guid.NewGuid(),
                 DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
