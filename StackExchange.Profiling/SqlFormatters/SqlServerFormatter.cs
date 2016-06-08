@@ -26,10 +26,10 @@ namespace StackExchange.Profiling.SqlFormatters
             var capture = native;
             return p =>
                 {
-                    if (p.Size < 1)
-                    {
+                    if (p.Size < 0)
+                        return capture + "(max)";
+                    if (p.Size == 0)
                         return capture;
-                    }
                     return capture + "(" + (p.Size > 8000 ? "max" : p.Size.ToString(CultureInfo.InvariantCulture)) + ")";
                 };
         }

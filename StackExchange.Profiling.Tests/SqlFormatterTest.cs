@@ -43,13 +43,15 @@ namespace StackExchange.Profiling.Tests
             return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 
-        private void AddDbParameter<T>(string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
+        private void AddDbParameter<T>(string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
         {
             var parameter = _dbCommand.CreateParameter();
             parameter.ParameterName = name;
             parameter.Value = value;
             parameter.Direction = parameterDirection;
-            parameter.DbType = GetDbType(typeof(T));
+            parameter.DbType = type ?? GetDbType(typeof(T));
+            if (size.HasValue)
+                parameter.Size = size.Value;
             _dbCommand.Parameters.Add(parameter);
         }
 
@@ -179,6 +181,23 @@ namespace StackExchange.Profiling.Tests
             AddDbParameter<int>(at + "x", 123);
             AddDbParameter<long>(at + "y", 123);
 
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.AreEqual(expectedOutput, actualOutput);
+        }
+
+
+        [Test]
+        public void TableQueryWithVarchar([Values(None, At)] string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x varchar(20) = 'bob',\r\n        @y varchar(max) = 'bob2';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<string>(at + "x", "bob", size: 20, type: DbType.AnsiString);
+            AddDbParameter<string>(at + "y", "bob2", size: -1, type: DbType.AnsiString);
             // act
             var actualOutput = GenerateOutput();
 
