@@ -288,7 +288,7 @@ namespace StackExchange.Profiling
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
             Guid id;
-            if (!Guid.TryParse(context.Request["id"], out id))
+            if (!Guid.TryParse(context.Request["id"], out id) && MiniProfiler.Settings.Storage != null)
                 id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
 
             if (id == default(Guid))
