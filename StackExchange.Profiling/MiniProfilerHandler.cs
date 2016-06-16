@@ -332,8 +332,8 @@ namespace StackExchange.Profiling
                 MiniProfiler.Settings.Storage.Save(profiler);
             }
 
-            var authorize = MiniProfiler.Settings.Results_Authorize;
-            if (authorize != null && !authorize(context.Request))
+            string authorizeMessage;
+            if (!AuthorizeRequest(context, isList: false, message: out authorizeMessage))
             {
                 context.Response.ContentType = "application/json";
                 return "hidden".ToJson();
