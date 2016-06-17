@@ -116,8 +116,7 @@
                     // Update timings of profiler results
                     resultsHeader.ProfilerResults.Root.UpdateStartMillisecondTimingsToAbsolute(profilerStart.StartTime);
 
-                    if (profilerStart.Parent != null)
-                        profilerStart.Parent.AddChild(resultsHeader.ProfilerResults.Root);
+                    profilerStart.Parent.AddChild(resultsHeader.ProfilerResults.Root);
                 }
             }
         }
