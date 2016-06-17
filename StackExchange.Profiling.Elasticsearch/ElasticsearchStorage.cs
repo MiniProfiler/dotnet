@@ -95,6 +95,7 @@ namespace StackExchange.Profiling.Elasticsearch
 
             if (response.Source == null)
             {
+                //search other index
                 var hit = _client
                        .Search<MiniProfilerModel>(s => s
                            .Index(_indexName + "-*")
