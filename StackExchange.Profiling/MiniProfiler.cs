@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -112,17 +113,19 @@ namespace StackExchange.Profiling
         /// Json used to store Custom Links. Do not touch.
         /// </summary>
         [ScriptIgnore]
-        public string CustomLinksJson {
-            get { return CustomLinks != null ? CustomLinks.ToJson() : null; } 
-            set {
+        public string CustomLinksJson
+        {
+            get { return CustomLinks != null ? CustomLinks.ToJson() : null; }
+            set
+            {
                 if (value.HasValue())
                 {
                     CustomLinks = value.FromJson<Dictionary<string, string>>();
                 }
-            } 
+            }
         }
-        
-            /// <summary>
+
+        /// <summary>
         /// Gets or sets the root timing.
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
         /// All other <see cref="Timing"/>s will be children of this one.
@@ -218,7 +221,12 @@ namespace StackExchange.Profiling
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
         [ScriptIgnore]
-        public Timing Head { get; set; }
+        public Timing Head
+        {
+            get { lock (_headLock) return CallContext.LogicalGetData("MiniProfiler-Timing") as Timing; }
+            set { lock (_headLock) CallContext.LogicalSetData("MiniProfiler-Timing", value); }
+        }
+        private readonly object _headLock = new object();
 
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
@@ -235,7 +243,7 @@ namespace StackExchange.Profiling
         {
             get { return _sw; }
         }
-        
+
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
@@ -359,7 +367,7 @@ namespace StackExchange.Profiling
 
         private static JavaScriptSerializer GetJsonSerializer()
         {
-            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };   
+            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };
         }
 
         /// <summary>
@@ -377,22 +385,22 @@ namespace StackExchange.Profiling
         /// <param name="startHidden">Should the profiler start as hidden. Default to null.</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
         public static IHtmlString RenderIncludes(
-            RenderPosition? position = null, 
-            bool? showTrivial = null, 
-            bool? showTimeWithChildren = null, 
-            int? maxTracesToShow = null, 
+            RenderPosition? position = null,
+            bool? showTrivial = null,
+            bool? showTimeWithChildren = null,
+            int? maxTracesToShow = null,
             bool? showControls = null,
             bool? useExistingjQuery = null, // TODO: we need to deprecate this
             bool samplingOnly = false,      // TODO: can we remove this?
             bool? startHidden = null)
         {
             return MiniProfilerHandler.RenderIncludes(
-                Current, 
-                position, 
-                showTrivial, 
-                showTimeWithChildren, 
-                maxTracesToShow, 
-                showControls, 
+                Current,
+                position,
+                showTrivial,
+                showTimeWithChildren,
+                maxTracesToShow,
+                showControls,
                 startHidden);
         }
 

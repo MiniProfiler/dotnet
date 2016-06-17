@@ -70,7 +70,7 @@
                 else
                     throw new InvalidOperationException("MVC Mini Profiler does not support EnvelopeNone unless HTTP is the transport mechanism");
 
-                return new MiniProfilerStart { StartTime = miniProfiler.DurationMilliseconds };
+                return new MiniProfilerStart { StartTime = miniProfiler.DurationMilliseconds, Parent = miniProfiler.Head };
             }
 
             return null;
@@ -86,8 +86,7 @@
             var profilerStart = correlationState as MiniProfilerStart;
 
             // Check to see if there are any results here
-            var profiler = GetCurrentProfiler();
-            if (profiler != null)
+            if (profilerStart != null && profilerStart.Parent != null)
             {
                 // Check to see if we have a request as part of this message
                 MiniProfilerResultsHeader resultsHeader = null;
@@ -115,10 +114,10 @@
                 if (resultsHeader != null && resultsHeader.ProfilerResults != null)
                 {
                     // Update timings of profiler results
-                    if (profilerStart != null)
-                        resultsHeader.ProfilerResults.Root.UpdateStartMillisecondTimingsToAbsolute(profilerStart.StartTime);
+                    resultsHeader.ProfilerResults.Root.UpdateStartMillisecondTimingsToAbsolute(profilerStart.StartTime);
 
-                    profiler.AddProfilerResults(resultsHeader.ProfilerResults);
+                    if (profilerStart.Parent != null)
+                        profilerStart.Parent.AddChild(resultsHeader.ProfilerResults.Root);
                 }
             }
         }
@@ -132,6 +131,11 @@
             /// Gets or sets the start time.
             /// </summary>
             public decimal StartTime { get; set; }
+
+            /// <summary>
+            /// Parent Timing
+            /// </summary>
+            public Timing Parent { get; set; }
         }
     }
 }
