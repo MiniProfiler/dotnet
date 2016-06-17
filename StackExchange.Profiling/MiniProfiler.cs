@@ -223,10 +223,9 @@ namespace StackExchange.Profiling
         [ScriptIgnore]
         public Timing Head
         {
-            get { lock (_headLock) return CallContext.LogicalGetData("MiniProfiler-Timing") as Timing; }
-            set { lock (_headLock) CallContext.LogicalSetData("MiniProfiler-Timing", value); }
+            get { return CallContext.LogicalGetData("MiniProfiler-Timing") as Timing; }
+            set { CallContext.LogicalSetData("MiniProfiler-Timing", value); }
         }
-        private readonly object _headLock = new object();
 
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
