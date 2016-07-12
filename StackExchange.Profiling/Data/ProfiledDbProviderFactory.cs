@@ -59,9 +59,7 @@ namespace StackExchange.Profiling.Data
 
             var command = _tail.CreateCommand();
 
-            return profiler != null
-                ? new ProfiledDbCommand(command, null, MiniProfiler.Current)
-                : command;
+            return new ProfiledDbCommand(command, null, profiler);
         }
 
         /// <summary>
@@ -85,9 +83,7 @@ namespace StackExchange.Profiling.Data
 
             var connection = _tail.CreateConnection();
 
-            return profiler != null
-                ? new ProfiledDbConnection(connection, MiniProfiler.Current)
-                : connection;
+            return new ProfiledDbConnection(connection, profiler);
         }
 
         /// <summary>
@@ -113,9 +109,7 @@ namespace StackExchange.Profiling.Data
 
             var dataAdapter = _tail.CreateDataAdapter();
 
-            return profiler != null
-                ? new ProfiledDbDataAdapter(dataAdapter, MiniProfiler.Current)
-                : dataAdapter;
+            return new ProfiledDbDataAdapter(dataAdapter, profiler);
         }
 
         /// <summary>
