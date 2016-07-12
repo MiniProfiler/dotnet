@@ -56,6 +56,7 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
 @"insert into MiniProfilers
             (Id,
              RootTimingId,
+             Name,
              Started,
              DurationMilliseconds,
              [User],
@@ -65,6 +66,7 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
              ClientTimingsRedirectCount)
 select       @Id,
              @RootTimingId,
+             @Name,
              @Started,
              @DurationMilliseconds,
              @User,
@@ -81,6 +83,7 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                     new
                         {
                             profiler.Id,
+                            profiler.Name,
                             profiler.Started,
                             User = profiler.User.Truncate(100),
                             RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
@@ -382,6 +385,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                      RowId                                integer not null identity constraint PK_MiniProfilers primary key clustered, -- Need a clustered primary key for SQL Azure
                      Id                                   uniqueidentifier not null, -- don't cluster on a guid
                      RootTimingId                         uniqueidentifier null,
+                     Name                                 nvarchar(200) not null,
                      Started                              datetime not null,
                      DurationMilliseconds                 decimal(7, 1) not null,
                      [User]                               nvarchar(100) null,
