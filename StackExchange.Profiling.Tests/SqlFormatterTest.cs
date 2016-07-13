@@ -141,7 +141,7 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Test]
-        public void TabelQueryWithoutParameters()
+        public void TableQueryWithoutParameters()
         {
             // arrange
             _commandText = "select 1";
