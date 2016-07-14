@@ -49,9 +49,9 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <returns>the profile step</returns>
-        public static IDisposable Step(this MiniProfiler profiler, string name)
+        public static Timing Step(this MiniProfiler profiler, string name)
         {
-            return profiler == null ? null : profiler.StepImpl(name);
+            return profiler == null ? (Timing)null : profiler.StepImpl(name);
         }
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace StackExchange.Profiling
         /// <param name="level">This step's visibility level; allows filtering when <see cref="MiniProfiler.Start(string)"/> is called.</param>
         /// <returns>the profile step</returns>
         [Obsolete("Please use the Step(string name) overload instead of this one. ProfileLevel is going away.")]
-        public static IDisposable Step(this MiniProfiler profiler, string name, ProfileLevel level)
+        public static Timing Step(this MiniProfiler profiler, string name, ProfileLevel level)
         {
-            return profiler == null ? null : profiler.StepImpl(name, level);
+            return profiler == null ? (Timing)null : profiler.StepImpl(name, level);
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace StackExchange.Profiling
         /// <returns></returns>
         /// <remarks>If <paramref name="includeChildren"/> is set to true and a child is removed due to its use of StepIf, then the 
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
-        public static IDisposable StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
+        public static Timing StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
         {
-            return profiler == null ? null : profiler.StepImpl(name, minSaveMs, includeChildren);
+            return profiler == null ? (Timing)null : profiler.StepImpl(name, minSaveMs, includeChildren);
         }
 
         /// <summary>
@@ -236,6 +236,21 @@ namespace StackExchange.Profiling
             }
 
             return text.ToString();
+        }
+
+        /// <summary>
+        /// Create a sub-step
+        /// </summary>
+        /// <param name="parent">The parent timing.  If this is null, SubStep will return null</param>
+        /// <param name="name"></param>
+        /// <returns>A new step that is a child of the parent timing, or null if the parent was null</returns>
+        public static Timing SubStep(this Timing parent, string name)
+        {
+            if (parent == null) 
+            {
+                return null;
+            }
+            return new Timing(parent.Profiler, parent, name);
         }
     }
 }

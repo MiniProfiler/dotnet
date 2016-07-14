@@ -76,18 +76,18 @@
         {
             var mp = MiniProfiler.Start("Locking");
             Action doWork = () => Thread.Sleep(new Random().Next(1, 50));
-
-            using (mp.Step("outer"))
+            
+            using (var outer = mp.Step("outer"))
             {
                 System.Threading.Tasks.Parallel.For(0, 5, i =>
                 {
                     doWork();
 
-                    using (mp.Step("step " + i))
+                    using (var step = outer.SubStep("step " + i))
                     {
                         doWork();
 
-                        using (mp.Step("sub-step" + i))
+                        using (var subStep = step.SubStep("sub-step" + i))
                         {
                             doWork();
                         }
