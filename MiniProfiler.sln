@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.25914.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
 		MiniProfiler.EF.nuspec = MiniProfiler.EF.nuspec
@@ -21,42 +23,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiniProfiler.MVC3", "MiniPr
 		MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp = MiniProfiler.MVC3.Package\Content\App_Start\MiniProfiler.cs.pp
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling", "StackExchange.Profiling\StackExchange.Profiling.csproj", "{386222BD-6B6E-480F-A342-8DE1AB516E2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler", "src\MiniProfiler\MiniProfiler.csproj", "{386222BD-6B6E-480F-A342-8DE1AB516E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc", "Sample.Mvc\Sample.Mvc.csproj", "{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6} = {2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc", "samples\Sample.Mvc\Sample.Mvc.csproj", "{5D54F88D-4C79-4EAB-B7B7-C8DE78F5DDA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Tests", "StackExchange.Profiling.Tests\StackExchange.Profiling.Tests.csproj", "{B4CA8022-257B-4893-97D8-76E05EBBAAB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Tests", "tests\MiniProfiler.Tests\MiniProfiler.Tests.csproj", "{B4CA8022-257B-4893-97D8-76E05EBBAAB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.EntityFramework", "StackExchange.Profiling.EntityFramework\StackExchange.Profiling.EntityFramework.csproj", "{7F18DC76-61A2-4E7D-BA5A-FE159E789362}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.EntityFramework", "src\MiniProfiler.EntityFramework\MiniProfiler.EntityFramework.csproj", "{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Wcf", "StackExchange.Profiling.Wcf\StackExchange.Profiling.Wcf.csproj", "{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Console", "samples\Sample.Console\Sample.Console.csproj", "{58DA79DE-F30B-4068-BEE9-013C9360CD74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Wcf", "Sample.Wcf\Sample.Wcf.csproj", "{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Mvc", "src\MiniProfiler.Mvc\MiniProfiler.Mvc.csproj", "{074BCD84-3E44-4140-9918-C09FCBEEC09F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.EntityFramework6", "StackExchange.Profiling.EntityFramework6\StackExchange.Profiling.EntityFramework6.csproj", "{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.RavenDb", "src\MiniProfiler.RavenDb\MiniProfiler.RavenDb.csproj", "{5176CF64-E00D-423F-9341-A8999A774B24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Console", "Sample.Console\Sample.Console.csproj", "{58DA79DE-F30B-4068-BEE9-013C9360CD74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.MongoDB", "src\MiniProfiler.MongoDB\MiniProfiler.MongoDB.csproj", "{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.Mvc", "StackExchange.Profiling.Mvc\StackExchange.Profiling.Mvc.csproj", "{074BCD84-3E44-4140-9918-C09FCBEEC09F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.RavenDb", "StackExchange.Profiling.RavenDb\StackExchange.Profiling.RavenDb.csproj", "{5176CF64-E00D-423F-9341-A8999A774B24}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Profiling.MongoDB", "StackExchange.Profiling.MongoDB\StackExchange.Profiling.MongoDB.csproj", "{94F0E90E-8D53-46FB-8266-4A1BA13E53F0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "Sample.Mvc.Mongo\Sample.Mvc.Mongo.csproj", "{C74578A4-E848-40F5-84CE-64165E7F477E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "samples\Sample.Mvc.Mongo\Sample.Mvc.Mongo.csproj", "{C74578A4-E848-40F5-84CE-64165E7F477E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D5410017-5E83-4BD2-B855-AEEC981D6973}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Shared", "src\MiniProfiler.Shared\MiniProfiler.Shared.csproj", "{BA40A569-BEE2-4E39-80A7-763BC15A9077}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = StackExchange.Profiling.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -79,22 +71,7 @@ Global
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
-		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F18DC76-61A2-4E7D-BA5A-FE159E789362}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
-		{C471B0E5-0AE4-48E0-A938-02AEDA030C5E}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DD1E352-3FFE-49F8-ADAB-65F3FECE75E6}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{B4CA8022-257B-4893-97D8-76E05EBBAAB0}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -130,11 +107,20 @@ Global
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
 		{C74578A4-E848-40F5-84CE-64165E7F477E}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{BA40A569-BEE2-4E39-80A7-763BC15A9077}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EAE04FE1-268F-46EF-ACB5-290408478EBC} = {CC40098D-04F2-4F43-B5CF-B74F74351761}
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = StackExchange.Profiling.vsmdi
 	EndGlobalSection
 EndGlobal
