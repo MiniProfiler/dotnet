@@ -271,7 +271,8 @@ namespace StackExchange.Profiling
         /// <returns>the static step.</returns>
         public static IDisposable StepStatic(string name)
         {
-            return Current.Step(name);
+            return null;
+            //return Current.Step(name);
         }
 
         /// <summary>
@@ -327,14 +328,15 @@ namespace StackExchange.Profiling
             bool samplingOnly = false,      // TODO: can we remove this?
             bool? startHidden = null)
         {
-            return MiniProfilerHandler.RenderIncludes(
-                Current, 
-                position, 
-                showTrivial, 
-                showTimeWithChildren, 
-                maxTracesToShow, 
-                showControls, 
-                startHidden);
+            return null;
+            //return MiniProfilerHandler.RenderIncludes(
+            //    Current, 
+            //    position, 
+            //    showTrivial, 
+            //    showTimeWithChildren, 
+            //    maxTracesToShow, 
+            //    showControls, 
+            //    startHidden);
         }
 
         /// <summary>

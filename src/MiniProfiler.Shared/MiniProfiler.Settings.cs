@@ -346,7 +346,7 @@ namespace StackExchange.Profiling
             {
                 if (Storage == null)
                 {
-                    Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+                    //Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
                 }
             }
 
@@ -354,7 +354,7 @@ namespace StackExchange.Profiling
             {
                 if (ProfilerProvider == null)
                 {
-                    ProfilerProvider = new WebRequestProfilerProvider();
+                    //ProfilerProvider = new WebRequestProfilerProvider();
                 }
             }
 

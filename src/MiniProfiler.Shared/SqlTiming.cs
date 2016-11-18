@@ -39,7 +39,7 @@ namespace StackExchange.Profiling
                 commandText = MiniProfiler.Settings.SqlFormatter.GetFormattedSql(commandText, parameters, command);
             }
 
-            _customTiming = profiler.CustomTiming("sql", commandText, type.ToString());
+            //customTiming = profiler.CustomTiming("sql", commandText, type.ToString());
             if (_customTiming == null) throw new InvalidOperationException();
         }
 

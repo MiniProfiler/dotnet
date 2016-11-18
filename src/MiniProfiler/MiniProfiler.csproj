@@ -6,7 +6,6 @@
     <AssemblyOriginatorKeyFile>miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -32,6 +31,9 @@
     <EmbeddedResource Include="ui\includes.css" />
     <EmbeddedResource Include="ui\includes.js" />
     <EmbeddedResource Include="ui\share.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
