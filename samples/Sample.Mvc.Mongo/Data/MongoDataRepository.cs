@@ -18,83 +18,22 @@ namespace SampleWeb.Data
         }
 
         private MongoClient _client;
-        public MongoClient Client
-        {
-            get
-            {
-                if (_client == null)
-                {
-                    _client = new MongoClient(MongoUrl);
-                }
-
-                return _client;
-            }
-        }
+        public MongoClient Client => _client ?? (_client = new MongoClient(MongoUrl));
 
         private MongoServer _server;
-        public MongoServer Server
-        {
-            get
-            {
-                if (_server == null)
-                {
-                    _server = ProfiledMongoServer.Create(Client);
-                }
-                return _server;
-            }
-        }
+        public MongoServer Server => _server ?? (_server = ProfiledMongoServer.Create(Client));
 
         private MongoDatabase _database;
-        public MongoDatabase Database
-        {
-            get
-            {
-                if (_database == null)
-                {
-                    _database = Server.GetDatabase(DbName);
-                }
-                return _database;
-            }
-        }
+        public MongoDatabase Database => _database ?? (_database = Server.GetDatabase(DbName));
 
         private MongoCollection _fooCollection;
-        public MongoCollection FooCollection
-        {
-            get
-            {
-                if (_fooCollection == null)
-                {
-                    _fooCollection = Database.GetCollection("foo");
-                }
-                return _fooCollection;
-            }
-        }
+        public MongoCollection FooCollection => _fooCollection ?? (_fooCollection = Database.GetCollection("foo"));
 
         private MongoCollection _barCollection;
-        public MongoCollection BarCollection
-        {
-            get
-            {
-                if (_barCollection == null)
-                {
-                    _barCollection = Database.GetCollection("bar");
-                }
-                return _barCollection;
-            }
-        }
+        public MongoCollection BarCollection => _barCollection ?? (_barCollection = Database.GetCollection("bar"));
 
         private MongoCollection<BazzItem> _bazzCollection;
-        public MongoCollection<BazzItem> BazzCollection
-        {
-            get
-            {
-                if (_bazzCollection == null)
-                {
-                    _bazzCollection = Database.GetCollection<BazzItem>("bazz");
-                }
-                return _bazzCollection;
-            }
-        }
+        public MongoCollection<BazzItem> BazzCollection => _bazzCollection ?? (_bazzCollection = Database.GetCollection<BazzItem>("bazz"));
     }
 
     public class BazzItem

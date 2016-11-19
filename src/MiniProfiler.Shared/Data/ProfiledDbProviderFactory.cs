@@ -9,6 +9,8 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class ProfiledDbProviderFactory : DbProviderFactory
     {
+        private DbProviderFactory _tail;
+
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
@@ -16,16 +18,11 @@ namespace StackExchange.Profiling.Data
         public static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
 
         /// <summary>
-        /// The tail.
-        /// </summary>
-        private DbProviderFactory _tail;
-
-        /// <summary>
         /// Initialises a new instance of the <see cref="ProfiledDbProviderFactory"/> class.
-        /// proxy provider factory
+        /// A proxy provider factory
         /// </summary>
-        /// <param name="tail">The tail.</param>
-        public ProfiledDbProviderFactory(DbProviderFactory tail)
+        /// <param name="tail">The provider factory to wrap.</param>
+        public ProfiledDbProviderFactory(DbProviderFactory tail) 
         {
             _tail = tail;
         }
@@ -34,25 +31,10 @@ namespace StackExchange.Profiling.Data
         /// Prevents a default instance of the <see cref="ProfiledDbProviderFactory"/> class from being created.
         /// Used for database provider APIS internally
         /// </summary>
-        private ProfiledDbProviderFactory()
-        {
-        }
+        private ProfiledDbProviderFactory() { }
 
-        /// <summary>
-        /// Gets a value indicating whether a data source enumerator can be created.
-        /// </summary>
-        public override bool CanCreateDataSourceEnumerator
-        {
-            get
-            {
-                return _tail.CanCreateDataSourceEnumerator;
-            }
-        }
-
-        /// <summary>
-        /// create the command.
-        /// </summary>
-        /// <returns>The <see cref="DbCommand"/>.</returns>
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbCommand"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbCommand"/>.</returns>
         public override DbCommand CreateCommand()
         {
             var profiler = MiniProfiler.Current;
@@ -64,21 +46,8 @@ namespace StackExchange.Profiling.Data
                 : command;
         }
 
-        /// <summary>
-        /// create the command builder.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="DbCommandBuilder"/>.
-        /// </returns>
-        public override DbCommandBuilder CreateCommandBuilder()
-        {
-            return _tail.CreateCommandBuilder();
-        }
-
-        /// <summary>
-        /// create the connection.
-        /// </summary>
-        /// <returns>The <see cref="DbConnection"/>.</returns>
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbConnection"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbConnection"/>.</returns>
         public override DbConnection CreateConnection()
         {
             var profiler = MiniProfiler.Current;
@@ -90,23 +59,33 @@ namespace StackExchange.Profiling.Data
                 : connection;
         }
 
-        /// <summary>
-        /// create the connection string builder.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="DbConnectionStringBuilder"/>.
-        /// </returns>
-        public override DbConnectionStringBuilder CreateConnectionStringBuilder()
-        {
-            return _tail.CreateConnectionStringBuilder();
-        }
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbConnectionStringBuilder"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbConnectionStringBuilder"/>.</returns>
+        public override DbConnectionStringBuilder CreateConnectionStringBuilder() => _tail.CreateConnectionStringBuilder();
+
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbParameter"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbParameter"/>.</returns>
+        public override DbParameter CreateParameter() => _tail.CreateParameter();
 
         /// <summary>
-        /// create the data adapter.
+        /// Allow to re-initialise the provider factory.
         /// </summary>
-        /// <returns>
-        /// The <see cref="DbDataAdapter"/>.
-        /// </returns>
+        /// <param name="tail">The tail.</param>
+        public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;
+
+// TODO: These are added back in netstandard1.7
+#if NET45
+        /// <summary>
+        /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
+        /// </summary>
+        public override bool CanCreateDataSourceEnumerator => _tail.CanCreateDataSourceEnumerator;
+
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbCommandBuilder"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbCommandBuilder"/>.</returns>
+        public override DbCommandBuilder CreateCommandBuilder() => _tail.CreateCommandBuilder();
+
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbDataAdapter"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbDataAdapter"/>.</returns>
         public override DbDataAdapter CreateDataAdapter()
         {
             var profiler = MiniProfiler.Current;
@@ -118,41 +97,14 @@ namespace StackExchange.Profiling.Data
                 : dataAdapter;
         }
 
-        /// <summary>
-        /// create the data source enumerator.
-        /// </summary>
-        /// <returns>The <see cref="DbDataSourceEnumerator"/>.</returns>
-        public override DbDataSourceEnumerator CreateDataSourceEnumerator()
-        {
-            return _tail.CreateDataSourceEnumerator();
-        }
-
-        /// <summary>
-        /// create the parameter.
-        /// </summary>
-        /// <returns>The <see cref="DbParameter"/>.</returns>
-        public override DbParameter CreateParameter()
-        {
-            return _tail.CreateParameter();
-        }
-
-        /// <summary>
-        /// create the permission.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns>The <see cref="CodeAccessPermission"/>.</returns>
-        public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
-        {
-            return _tail.CreatePermission(state);
-        }
-
-        /// <summary>
-        /// Allow to re-initialise the provider factory.
-        /// </summary>
-        /// <param name="tail">The tail.</param>
-        public void InitProfiledDbProviderFactory(DbProviderFactory tail)
-        {
-            _tail = tail;
-        }
+        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbDataSourceEnumerator"/> class.</summary>
+        /// <returns>A new instance of <see cref="DbDataSourceEnumerator"/>.</returns>
+        public override DbDataSourceEnumerator CreateDataSourceEnumerator() => _tail.CreateDataSourceEnumerator();
+        
+        /// <summary>Returns a new instance of the provider's class that implements the provider's version of the <see cref="CodeAccessPermission"/> class.</summary>
+        /// <param name="state">One of the <see cref="PermissionState"/> values.</param>
+        /// <returns>A <see cref="CodeAccessPermission"/> object for the specified <see cref="PermissionState"/>.</returns>
+        public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state) => _tail.CreatePermission(state);
+#endif
     }
 }

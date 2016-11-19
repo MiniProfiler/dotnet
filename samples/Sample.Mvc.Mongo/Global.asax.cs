@@ -8,14 +8,9 @@ using StackExchange.Profiling.Mvc;
 
 namespace SampleWeb
 {
-
     public class MvcApplication : HttpApplication
     {
-
-        public static string MongoConnectionString
-        {
-            get { return "mongodb://localhost"; }
-        }
+        public static string MongoConnectionString => "mongodb://localhost";
 
         public static void RegisterRoutes(RouteCollection routes)
         {

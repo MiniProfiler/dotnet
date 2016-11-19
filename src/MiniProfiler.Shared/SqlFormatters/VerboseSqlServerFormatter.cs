@@ -1,7 +1,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+
+// TODO: Revisit with .NET Standard 2.0
+#if NET45
 using System.Transactions;
+#endif
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -36,10 +40,12 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 buffer.AppendLine("-- Command Type: " + command.CommandType);
                 buffer.AppendLine("-- Database: " + command.Connection.Database);
+#if NET45
                 if (command.Transaction != null)
                 {
                     buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);
                 }
+#endif
 				if (Transaction.Current != null)
 				{
 					// transactions issued by TransactionScope are not bound to the database command but exists globally

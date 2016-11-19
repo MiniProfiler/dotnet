@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET45
+using System;
 using System.Data;
 using System.Data.Common;
 
@@ -14,34 +15,11 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
-        /// <summary>
-        /// The profiler.
-        /// </summary>
         private readonly IDbProfiler _profiler;
-
-        /// <summary>
-        /// The adapter.
-        /// </summary>
         private readonly IDbDataAdapter _adapter;
-
-        /// <summary>
-        /// The select command.
-        /// </summary>
         private IDbCommand _selectCommand;
-
-        /// <summary>
-        /// The insert command.
-        /// </summary>
         private IDbCommand _insertCommand;
-
-        /// <summary>
-        /// The update command.
-        /// </summary>
         private IDbCommand _updateCommand;
-
-        /// <summary>
-        /// The delete command.
-        /// </summary>
         private IDbCommand _deleteCommand;
 
         /// <summary>
@@ -98,10 +76,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// An array of <see cref="T:System.Data.DataTable"/> objects that contain schema information returned from the data source.
         /// </returns>
-        public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType)
-        {
-            return _adapter.FillSchema(dataSet, schemaType);
-        }
+        public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType) => _adapter.FillSchema(dataSet, schemaType);
 
         /// <summary>
         /// Adds or updates rows in the <see cref="T:System.Data.DataSet"/> to match those in the data source using the <see cref="T:System.Data.DataSet"/> name, and creates a <see cref="T:System.Data.DataTable"/> named "Table".
@@ -199,10 +174,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// An array of <see cref="T:System.Data.IDataParameter"/> objects that contains the parameters set by the user.
         /// </returns>
-        public new IDataParameter[] GetFillParameters()
-        {
-            return _adapter.GetFillParameters();
-        }
+        public new IDataParameter[] GetFillParameters() => _adapter.GetFillParameters();
 
         /// <summary>
         /// Calls the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet"/> from a <see cref="T:System.Data.DataTable"/> named "Table".
@@ -245,10 +217,7 @@ namespace StackExchange.Profiling.Data
         /// Gets how a source table is mapped to a dataset table.
         /// </summary>
         /// <returns>A collection that provides the master mapping between the returned records and the <see cref="T:System.Data.DataSet"/>. The default value is an empty collection.</returns>
-        public new ITableMappingCollection TableMappings
-        {
-            get { return _adapter.TableMappings; }
-        }
+        public new ITableMappingCollection TableMappings => _adapter.TableMappings;
 
         /// <summary>
         /// Gets or sets an SQL statement used to select records in the data source.
@@ -256,10 +225,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> that is used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to select records from data source for placement in the data set.</returns>
         public new IDbCommand SelectCommand
         {
-            get
-            {
-                return _selectCommand;
-            }
+            get { return _selectCommand; }
             set
             {
                 _selectCommand = value;
@@ -275,10 +241,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to insert records in the data source for new rows in the data set.</returns>
         public new IDbCommand InsertCommand
         {
-            get
-            {
-                return _insertCommand;
-            }
+            get { return _insertCommand; }
             set
             {
                 _insertCommand = value;
@@ -294,10 +257,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to update records in the data source for modified rows in the data set.</returns>
         public new IDbCommand UpdateCommand
         {
-            get
-            {
-                return _updateCommand;
-            }
+            get { return _updateCommand; }
             set
             {
                 _updateCommand = value;
@@ -313,10 +273,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to delete records in the data source for deleted rows in the data set.</returns>
         public new IDbCommand DeleteCommand
         {
-            get
-            {
-                return _deleteCommand;
-            }
+            get { return _deleteCommand; }
             set
             {
                 _deleteCommand = value;
@@ -327,3 +284,4 @@ namespace StackExchange.Profiling.Data
         }
     }
 }
+#endif

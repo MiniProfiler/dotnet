@@ -9,7 +9,10 @@ namespace StackExchange.Profiling.Data
     /// Wraps a database connection, allowing SQL execution timings to be collected when a <see cref="MiniProfiler"/> session is started.
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
-    public class ProfiledDbConnection : DbConnection, ICloneable
+    public class ProfiledDbConnection : DbConnection
+#if NET45
+, ICloneable
+#endif
     {
         /// <summary>
         /// This will be made private; use <see cref="InnerConnection"/>
@@ -22,10 +25,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the underlying, real database connection to your database provider.
         /// </summary>
-        public DbConnection InnerConnection
-        {
-            get { return _connection; }
-        }
+        public DbConnection InnerConnection =>  _connection;
 
         /// <summary>
         /// This will be made private; use <see cref="Profiler"/>
@@ -38,10 +38,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>
-        public IDbProfiler Profiler
-        {
-            get { return _profiler; }
-        }
+        public IDbProfiler Profiler => _profiler;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ProfiledDbConnection"/> class. 
@@ -68,20 +65,9 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Gets the wrapped connection.
+        /// Gets the connection that this ProfiledDbConnection wraps.
         /// </summary>
-        public DbConnection WrappedConnection
-        {
-            get { return _connection; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether events can be raised.
-        /// </summary>
-        protected override bool CanRaiseEvents
-        {
-            get { return true; }
-        }
+        public DbConnection WrappedConnection => _connection;
 
         /// <summary>
         /// Gets or sets the connection string.
@@ -93,130 +79,64 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Gets the connection timeout.
+        /// Gets the time to wait while establishing a connection before terminating the attempt and generating an error.
         /// </summary>
-        public override int ConnectionTimeout
-        {
-            get { return _connection.ConnectionTimeout; }
-        }
+        public override int ConnectionTimeout => _connection.ConnectionTimeout;
 
         /// <summary>
-        /// Gets the database.
+        /// Gets the name of the current database after a connection is opened, 
+        /// or the database name specified in the connection string before the connection is opened.
         /// </summary>
-        public override string Database
-        {
-            get { return _connection.Database; }
-        }
+        public override string Database => _connection.Database;
 
         /// <summary>
-        /// Gets the data source.
+        /// Gets the name of the database server to which to connect.
         /// </summary>
-        public override string DataSource
-        {
-            get { return _connection.DataSource; }
-        }
+        public override string DataSource => _connection.DataSource;
 
         /// <summary>
-        /// Gets the server version.
+        /// Gets a string that represents the version of the server to which the object is connected.
         /// </summary>
-        public override string ServerVersion
-        {
-            get { return _connection.ServerVersion; }
-        }
+        public override string ServerVersion => _connection.ServerVersion;
 
         /// <summary>
-        /// Gets the state.
+        /// Gets the current state of the connection.
         /// </summary>
-        public override ConnectionState State
-        {
-            get { return _connection.State; }
-        }
+        public override ConnectionState State => _connection.State;
 
-        /// <summary>
-        /// change the database.
-        /// </summary>
+        /// <summary>Change the database.</summary>
         /// <param name="databaseName">The new database name.</param>
-        public override void ChangeDatabase(string databaseName)
-        {
-            _connection.ChangeDatabase(databaseName);
-        }
+        public override void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 
         /// <summary>
-        /// close the connection.
+        /// Closes the connection to the database.
+        /// This is the preferred method of closing any open connection.
         /// </summary>
-        public override void Close()
-        {
-            _connection.Close();
-        }
+        public override void Close() => _connection.Close();
 
         /// <summary>
-        /// enlist the transaction.
+        /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
-        /// <param name="transaction">The transaction.</param>
-        public override void EnlistTransaction(System.Transactions.Transaction transaction)
-        {
-            _connection.EnlistTransaction(transaction);
-        }
+        public override void Open() => _connection.Open();
 
         /// <summary>
-        /// get the schema.
+        /// Starts a database transaction.
         /// </summary>
-        /// <returns>The <see cref="DataTable"/>.</returns>
-        public override DataTable GetSchema()
-        {
-            return _connection.GetSchema();
-        }
-
-        /// <summary>
-        /// get the schema.
-        /// </summary>
-        /// <param name="collectionName">The collection name.</param>
-        /// <returns>The <see cref="DataTable"/>.</returns>
-        public override DataTable GetSchema(string collectionName)
-        {
-            return _connection.GetSchema(collectionName);
-        }
-
-        /// <summary>
-        /// get the schema.
-        /// </summary>
-        /// <param name="collectionName">The collection name.</param>
-        /// <param name="restrictionValues">The restriction values.</param>
-        /// <returns>The <see cref="DataTable"/>.</returns>
-        public override DataTable GetSchema(string collectionName, string[] restrictionValues)
-        {
-            return _connection.GetSchema(collectionName, restrictionValues);
-        }
-
-        /// <summary>
-        /// open the connection
-        /// </summary>
-        public override void Open()
-        {
-            _connection.Open();
-        }
-
-        /// <summary>
-        /// begin the database transaction.
-        /// </summary>
-        /// <param name="isolationLevel">The isolation level.</param>
-        /// <returns>The <see cref="DbTransaction"/>.</returns>
+        /// <param name="isolationLevel">Specifies the isolation level for the transaction.</param>
+        /// <returns>An object representing the new transaction.</returns>
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             return new ProfiledDbTransaction(_connection.BeginTransaction(isolationLevel), this);
         }
 
         /// <summary>
-        /// create the database command.
+        /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
         /// </summary>
-        /// <returns>The <see cref="DbCommand"/>.</returns>
-        protected override DbCommand CreateDbCommand()
-        {
-            return new ProfiledDbCommand(_connection.CreateCommand(), this, _profiler);
-        }
+        /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
+        protected override DbCommand CreateDbCommand() => new ProfiledDbCommand(_connection.CreateCommand(), this, _profiler);
 
         /// <summary>
-        /// dispose the underlying connection.
+        /// Dispose the underlying connection.
         /// </summary>
         /// <param name="disposing">false if pre-empted from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
@@ -241,6 +161,42 @@ namespace StackExchange.Profiling.Data
             OnStateChange(stateChangeEventArguments);
         }
 
+// TODO: Retuning in .Net Standard 2.0
+#if NET45
+        /// <summary>
+        /// Gets a value indicating whether events can be raised.
+        /// </summary>
+        protected override bool CanRaiseEvents => true;
+
+        /// <summary>
+        /// enlist the transaction.
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        public override void EnlistTransaction(System.Transactions.Transaction transaction) =>_connection.EnlistTransaction(transaction);
+
+        /// <summary>
+        /// get the schema.
+        /// </summary>
+        /// <returns>The <see cref="DataTable"/>.</returns>
+        public override DataTable GetSchema() => _connection.GetSchema();
+
+        /// <summary>
+        /// get the schema.
+        /// </summary>
+        /// <param name="collectionName">The collection name.</param>
+        /// <returns>The <see cref="DataTable"/>.</returns>
+        public override DataTable GetSchema(string collectionName) => _connection.GetSchema(collectionName);
+
+        /// <summary>
+        /// get the schema.
+        /// </summary>
+        /// <param name="collectionName">The collection name.</param>
+        /// <param name="restrictionValues">The restriction values.</param>
+        /// <returns>The <see cref="DataTable"/>.</returns>
+        public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
+#endif
+
+#if NET45
         /// <summary>
         /// create a clone.
         /// </summary>
@@ -256,9 +212,7 @@ namespace StackExchange.Profiling.Data
         /// create a clone.
         /// </summary>
         /// <returns>The <see cref="object"/>.</returns>
-        object ICloneable.Clone()
-        {
-            return Clone();
-        }
+        object ICloneable.Clone() => Clone();
+#endif
     }
 }

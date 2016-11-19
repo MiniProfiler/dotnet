@@ -8,7 +8,10 @@ namespace StackExchange.Profiling.Data
     /// A general implementation of <see cref="IDbCommand"/> that uses an <see cref="IDbProfiler"/>
     /// to collect profiling information.
     /// </summary>
-    public class SimpleProfiledCommand : IDbCommand, ICloneable
+    public class SimpleProfiledCommand : IDbCommand
+#if NET45
+, ICloneable
+#endif
     {
         /// <summary>
         /// The command.
@@ -252,6 +255,7 @@ namespace StackExchange.Profiling.Data
             _profiler = null;
         }
 
+#if NET45
         /// <summary>
         /// clone the command.
         /// </summary>
@@ -264,5 +268,6 @@ namespace StackExchange.Profiling.Data
 
             return new SimpleProfiledCommand((IDbCommand)tail.Clone(), _connection, _profiler);
         }
+#endif
     } 
 }

@@ -1,16 +1,14 @@
-﻿namespace StackExchange.Profiling.Storage
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
+using Dapper;
+
+namespace StackExchange.Profiling.Storage
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Data.Common;
-    using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
-    using Helpers;
-    using Helpers.Dapper;
-
     /// <summary>
     /// Understands how to store a <see cref="MiniProfiler"/> to a MSSQL database.
     /// </summary>
@@ -30,11 +28,9 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// <param name="connectionString">
         /// The connection string to use.
         /// </param>
-        public SqlServerStorage(string connectionString)
-            : base(connectionString)
-        {
-        }
+        public SqlServerStorage(string connectionString) : base(connectionString) { }
 
+#if NET45
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string settings.
         /// </summary>
@@ -42,9 +38,8 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// The connection string settings read from ConfigurationManager.ConnectionStrings["connection"]
         /// </param>
         public SqlServerStorage(ConnectionStringSettings connectionStringSettings)
-            :base(connectionStringSettings.ConnectionString)
-        {
-        }
+            :base(connectionStringSettings.ConnectionString) { }
+#endif
         
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;

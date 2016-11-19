@@ -1,9 +1,11 @@
-﻿namespace StackExchange.Profiling.Storage
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+#if NET45
+using System.Configuration;
+#endif
 
+namespace StackExchange.Profiling.Storage
+{
     /// <summary>
     /// Understands how to save MiniProfiler results to a MSSQL database, allowing more permanent storage and querying of slow results.
     /// </summary>
@@ -24,6 +26,7 @@
             ConnectionString = connectionString;
         }
 
+#if NET45
         /// <summary>
         /// Initialises a new instance of the <see cref="DatabaseStorageBase"/> class. 
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connection string settings.
@@ -40,6 +43,7 @@
 
             this.ConnectionString = connectionStringSettings.ConnectionString;
         }
+#endif
 
         /// <summary>
         /// Saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.

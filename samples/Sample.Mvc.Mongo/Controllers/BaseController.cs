@@ -40,6 +40,5 @@ namespace SampleWeb.Controllers
 
             base.OnResultExecuted(filterContext);
         }
-
     }
 }

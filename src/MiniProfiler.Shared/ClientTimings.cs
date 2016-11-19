@@ -40,7 +40,6 @@ namespace StackExchange.Profiling
             if (navigationStart > 0)
             {
                 var timings = new List<ClientTiming>();
-
                 timing = new ClientTimings();
 
                 int redirectCount;

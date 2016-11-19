@@ -10,36 +10,20 @@ namespace StackExchange.Profiling.Data
     /// The profiled database command.
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
-    public class ProfiledDbCommand : DbCommand, ICloneable
+    public class ProfiledDbCommand : DbCommand
+#if NET45
+, ICloneable
+#endif
     {
         /// <summary>
         /// The bind by name cache.
         /// </summary>
         private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
 
-        /// <summary>
-        /// The command.
-        /// </summary>
         private DbCommand _command;
-
-        /// <summary>
-        /// The connection.
-        /// </summary>
         private DbConnection _connection;
-
-        /// <summary>
-        /// The transaction.
-        /// </summary>
         private DbTransaction _transaction;
-
-        /// <summary>
-        /// The profiler.
-        /// </summary>
         private IDbProfiler _profiler;
-
-        /// <summary>
-        /// bind by name.
-        /// </summary>
         private bool _bindByName;
 
         /// <summary>
@@ -49,11 +33,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public bool BindByName
         {
-            get
-            {
-                return _bindByName;
-            }
-
+            get { return _bindByName; }
             set
             {
                 if (_bindByName != value)
@@ -77,7 +57,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiler">The profiler.</param>
         public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
         {
-            if (command == null) throw new ArgumentNullException("command");
+            if (command == null) throw new ArgumentNullException(nameof(command));
 
             _command = command;
             _connection = connection;
@@ -157,11 +137,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected override DbConnection DbConnection
         {
-            get
-            {
-                return _connection;
-            }
-
+            get { return _connection; }
             set
             {
                 // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
@@ -180,21 +156,14 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the database parameter collection.
         /// </summary>
-        protected override DbParameterCollection DbParameterCollection
-        {
-            get { return _command.Parameters; }
-        }
+        protected override DbParameterCollection DbParameterCollection => _command.Parameters;
 
         /// <summary>
         /// Gets or sets the database transaction.
         /// </summary>
         protected override DbTransaction DbTransaction
         {
-            get
-            {
-                return _transaction;
-            }
-
+            get { return _transaction; }
             set
             {
                 _transaction = value;
@@ -319,27 +288,18 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// cancel the command.
         /// </summary>
-        public override void Cancel()
-        {
-            _command.Cancel();
-        }
+        public override void Cancel() => _command.Cancel();
 
         /// <summary>
         /// prepare the command.
         /// </summary>
-        public override void Prepare()
-        {
-            _command.Prepare();
-        }
+        public override void Prepare() => _command.Prepare();
 
         /// <summary>
         /// create a database parameter.
         /// </summary>
         /// <returns>The <see cref="DbParameter"/>.</returns>
-        protected override DbParameter CreateDbParameter()
-        {
-            return _command.CreateParameter();
-        }
+        protected override DbParameter CreateDbParameter() => _command.CreateParameter();
 
         /// <summary>
         /// dispose the command.
@@ -358,14 +318,9 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the internal command.
         /// </summary>
-        public DbCommand InternalCommand
-        {
-            get
-            {
-                return _command;
-            }
-        }
+        public DbCommand InternalCommand => _command;
 
+#if NET45
         /// <summary>
         /// clone the command, entity framework expects this behaviour.
         /// </summary>
@@ -383,9 +338,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        object ICloneable.Clone()
-        {
-            return Clone();
-        }
+        object ICloneable.Clone() => Clone();
+#endif
     }
 }
