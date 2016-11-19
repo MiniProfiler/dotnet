@@ -121,8 +121,8 @@ namespace StackExchange.Profiling
             if (profiler == null) return new HtmlString("");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
-            var authorized = MiniProfiler.Settings.Results_Authorize == null
-                || MiniProfiler.Settings.Results_Authorize(HttpContext.Current.Request);
+            var authorized = MiniProfilerWebSettings.Results_Authorize == null
+                || MiniProfilerWebSettings.Results_Authorize(HttpContext.Current.Request);
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
@@ -211,8 +211,8 @@ namespace StackExchange.Profiling
         private static bool AuthorizeRequest(HttpContext context, bool isList, out string message)
         {
             message = null;
-            var authorize = MiniProfiler.Settings.Results_Authorize;
-            var authorizeList = MiniProfiler.Settings.Results_List_Authorize;
+            var authorize = MiniProfilerWebSettings.Results_Authorize;
+            var authorizeList = MiniProfilerWebSettings.Results_List_Authorize;
 
             if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
             {
@@ -320,7 +320,7 @@ namespace StackExchange.Profiling
             bool needsSave = false;
             if (profiler.ClientTimings == null)
             {
-                profiler.ClientTimings = ClientTimings.FromRequest(context.Request);
+                profiler.ClientTimings = context.Request.GetClientTimings();
                 if (profiler.ClientTimings != null)
                 {
                     needsSave = true;

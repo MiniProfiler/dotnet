@@ -6,19 +6,24 @@ using System.Reflection;
 namespace StackExchange.Profiling.Helpers
 {
     /// <summary>
-    ///     Gets part of a stack trace containing only methods we care about.
+    /// Gets part of a stack trace containing only methods we care about.
     /// </summary>
     public class StackTraceSnippet
     {
+        // TODO: Uhhhhhhh, this isn't gonna work. Let's come back to this. Oh and async. Dammit.
         private const string AspNetEntryPointMethodName = "System.Web.HttpApplication.IExecutionStep.Execute";
 
         /// <summary>
-        ///     Gets the current formatted and filtered stack trace.
+        /// Gets the current formatted and filtered stack trace.
         /// </summary>
         /// <returns>Space separated list of methods</returns>
         public static string Get()
         {
+#if NET45
             var frames = new StackTrace().GetFrames();
+#else // TODO: Make this work in .NET Standard, true fix isn't until 2.0 via https://github.com/dotnet/corefx/pull/12527
+            var frames = Enumerable.Empty<StackFrame>();
+#endif
             if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)
             {
                 return "";

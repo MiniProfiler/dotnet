@@ -13,27 +13,24 @@ namespace StackExchange.Profiling
         /// <summary>
         /// The name says it all
         /// </summary>
-        /// <returns></returns>
-        public MiniProfiler GetCurrentProfiler()
-        {
-            return _profiler;
-        }
+        public MiniProfiler GetCurrentProfiler() => _profiler;
 
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
         public MiniProfiler Start(string sessionName = null)
         {
+#if NET45
             _profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
+#else // TODO: Revisit with .NET Standard 2.0
+            _profiler = new MiniProfiler(sessionName ?? "MiniProfiler") { IsActive = true };
+#endif
             return _profiler;
         }
 
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
-        public void Stop(bool discardResults)
-        {
-            if (_profiler != null) _profiler.StopImpl();
-        }
+        public void Stop(bool discardResults) => _profiler?.StopImpl();
     }
 }

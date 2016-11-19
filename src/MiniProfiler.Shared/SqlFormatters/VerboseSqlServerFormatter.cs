@@ -12,7 +12,6 @@ namespace StackExchange.Profiling.SqlFormatters
     /// <summary>
     /// Formats SQL server queries with a DECLARE up top for parameter values
     /// </summary>
-    /// 
     public class VerboseSqlServerFormatter : SqlServerFormatter, IAdvancedSqlFormatter
     {
         /// <summary>
@@ -45,12 +44,12 @@ namespace StackExchange.Profiling.SqlFormatters
                 {
                     buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);
                 }
-#endif
 				if (Transaction.Current != null)
 				{
 					// transactions issued by TransactionScope are not bound to the database command but exists globally
 					buffer.AppendLine("-- Transaction Scope Iso Level: " + Transaction.Current.IsolationLevel);
 				}
+#endif
                 buffer.AppendLine();
             }
 

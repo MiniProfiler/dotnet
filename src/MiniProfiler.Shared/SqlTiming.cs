@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlTypes;
 using System.Text.RegularExpressions;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
+#if !NET45
+using System.Reflection;
+#endif
 
 namespace StackExchange.Profiling
 {
@@ -28,8 +30,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public SqlTiming(IDbCommand command, SqlExecuteType type, MiniProfiler profiler)
         {
-            if (profiler == null) throw new ArgumentNullException("profiler");
-            _profiler = profiler;
+            _profiler = profiler ?? throw new ArgumentNullException("profiler");
             
             var commandText = AddSpacesToParameters(command.CommandText);
             var parameters = GetCommandParameters(command);
@@ -127,7 +128,11 @@ namespace StackExchange.Profiling
 
             // we want the integral value of an enum, not its string representation
             var rawType = rawValue.GetType();
+#if NET45
             if (rawType.IsEnum)
+#else
+            if (rawType.GetTypeInfo().IsEnum)
+#endif
             {
                 // use ChangeType, as we can't cast - http://msdn.microsoft.com/en-us/library/exx3b86w(v=vs.80).aspx
                 return Convert.ChangeType(rawValue, Enum.GetUnderlyingType(rawType)).ToString();
@@ -138,17 +143,7 @@ namespace StackExchange.Profiling
 
         private static int GetParameterSize(IDbDataParameter parameter)
         {
-            var value = parameter.Value as INullable;
-            if (value != null)
-            {
-                var nullable = value;
-                if (nullable.IsNull)
-                {
-                    return 0;
-                }
-            }
-
-            return parameter.Size;
+            return parameter.IsNullable && parameter.Value == null ? 0 : parameter.Size;
         }
         
         /// <summary>

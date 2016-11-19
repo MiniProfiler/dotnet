@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Web;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
+
+#if NET45
+using System.Web;
+#endif
 
 namespace StackExchange.Profiling
 {
@@ -24,7 +27,11 @@ namespace StackExchange.Profiling
 
             static Settings()
             {
-                var props = from p in typeof(Settings).GetProperties(BindingFlags.Public | BindingFlags.Static)
+                var props = from p in typeof(Settings)
+#if !NET45 // TODO: Revisit in .NET Standard 2.0
+                            .GetTypeInfo()
+#endif
+                            .GetProperties(BindingFlags.Public | BindingFlags.Static)
                             let t = typeof(DefaultValueAttribute)
                             where p.IsDefined(t, inherit: false)
                             let a = p.GetCustomAttributes(t, inherit: false).Single() as DefaultValueAttribute
@@ -35,8 +42,9 @@ namespace StackExchange.Profiling
                     pair.PropertyInfo.SetValue(null, Convert.ChangeType(pair.DefaultValue.Value, pair.PropertyInfo.PropertyType), null);
                 }
 
+// TODO: Version off of the git hash and/or NuGet instead, set in the build
+#if NET45
                 // this assists in debug and is also good for prd, the version is a hash of the main assembly 
-
                 string location;
                 try
                 {
@@ -81,6 +89,11 @@ namespace StackExchange.Profiling
                 {
                     Version = Guid.NewGuid().ToString();
                 }
+#else
+                // TODO: Package and git version, set on the build...
+                // Note: this is used as the cache breaker on the client side, so template files matter
+                Version = "FIX ME!";
+#endif
 
                 typesToExclude = new HashSet<string>
                 {
@@ -97,7 +110,11 @@ namespace StackExchange.Profiling
                 assembliesToExclude = new HashSet<string>
                 {
                     // our assembly
-                    typeof(Settings).Assembly.GetName().Name,
+                    typeof(Settings)
+#if !NET45
+                    .GetTypeInfo()
+#endif
+                    .Assembly.GetName().Name,
 
                     // reflection emit
                     "Anonymously Hosted DynamicMethods Assembly",
@@ -119,55 +136,37 @@ namespace StackExchange.Profiling
             /// Assemblies to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeAssembly"/> method.
             /// </summary>
-            public static IEnumerable<string> AssembliesToExclude
-            {
-                get { return assembliesToExclude; }
-            }
+            public static IEnumerable<string> AssembliesToExclude => assembliesToExclude;
 
             /// <summary>
             /// Types to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeType"/> method.
             /// </summary>
-            public static IEnumerable<string> TypesToExclude
-            {
-                get { return typesToExclude; }
-            }
+            public static IEnumerable<string> TypesToExclude => typesToExclude;
 
             /// <summary>
             /// Methods to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeMethod"/> method.
             /// </summary>
-            public static IEnumerable<string> MethodsToExclude
-            {
-                get { return methodsToExclude; }
-            }
+            public static IEnumerable<string> MethodsToExclude => methodsToExclude;
 
             /// <summary>
             /// Excludes the specified assembly from the stack trace output.
             /// </summary>
             /// <param name="assemblyName">The short name of the assembly. AssemblyName.Name</param>
-            public static void ExcludeAssembly(string assemblyName)
-            {
-                assembliesToExclude.Add(assemblyName);
-            }
+            public static void ExcludeAssembly(string assemblyName) => assembliesToExclude.Add(assemblyName);
 
             /// <summary>
             /// Excludes the specified type from the stack trace output.
             /// </summary>
             /// <param name="typeToExclude">The System.Type name to exclude</param>
-            public static void ExcludeType(string typeToExclude)
-            {
-                typesToExclude.Add(typeToExclude);
-            }
+            public static void ExcludeType(string typeToExclude) => typesToExclude.Add(typeToExclude);
 
             /// <summary>
             /// Excludes the specified method name from the stack trace output.
             /// </summary>
             /// <param name="methodName">The name of the method</param>
-            public static void ExcludeMethod(string methodName)
-            {
-                methodsToExclude.Add(methodName);
-            }
+            public static void ExcludeMethod(string methodName) => methodsToExclude.Add(methodName);
 
             /// <summary>
             /// The maximum number of unviewed profiler sessions (set this low cause we don't want to blow up headers)
@@ -307,21 +306,6 @@ namespace StackExchange.Profiling
             /// If not set explicitly, will default to <see cref="WebRequestProfilerProvider"/>
             /// </remarks>
             public static IProfilerProvider ProfilerProvider { get; set; }
-
-            /// <summary>
-            /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
-            /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
-            /// </summary>
-            /// <remarks>
-            /// The HttpRequest parameter that will be passed into this function should never be null.
-            /// </remarks>
-            public static Func<HttpRequest, bool> Results_Authorize { get; set; }
-
-            /// <summary>
-            /// Special authorization function that is called for the list results (listing all the profiling sessions), 
-            /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
-            /// </summary>
-            public static Func<HttpRequest, bool> Results_List_Authorize { get; set; }
 
             private static Func<IStorage> _defaultStorage = () => new NullStorage();
             private static Func<IProfilerProvider> _defaultProfilerProvider = () => new SingletonProfilerProvider();

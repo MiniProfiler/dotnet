@@ -4,8 +4,13 @@ using System.IO;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
+#if NET45
 using System.Web;
 using System.Web.Script.Serialization;
+#else
+// TODO: Factor these extensions out? That'd be more breaks...
+using Newtonsoft.Json;
+#endif
 
 namespace StackExchange.Profiling
 {
@@ -193,18 +198,12 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
         /// </summary>
-        internal long ElapsedTicks
-        {
-            get { return _sw.ElapsedTicks; }
-        }
+        internal long ElapsedTicks => _sw.ElapsedTicks;
 
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>
-        internal IStopwatch Stopwatch
-        {
-            get { return _sw; }
-        }
+        internal IStopwatch Stopwatch => _sw;
         
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
@@ -224,18 +223,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
         public IStorage Storage { get; set; }
-
-        /// <summary>
-        /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
-        /// <see cref="MiniProfiler.Current"/>.
-        /// </summary>
-        public static MiniProfiler Start()
-        {
-            // ToDo - overloading the method too many times - will correct when delete the Obsolete version. 
-            // Until then need it this way to prevent ambiguity
-            return Start(null);
-        }
-
+        
         /// <summary>
         /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
         /// <see cref="MiniProfiler.Current"/>.
@@ -244,7 +232,7 @@ namespace StackExchange.Profiling
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
-        public static MiniProfiler Start(string sessionName)
+        public static MiniProfiler Start(string sessionName = null)
         {
             Settings.EnsureProfilerProvider();
             return Settings.ProfilerProvider.Start(sessionName);
@@ -271,16 +259,7 @@ namespace StackExchange.Profiling
         /// <returns>the static step.</returns>
         public static IDisposable StepStatic(string name)
         {
-            return null;
-            //return Current.Step(name);
-        }
-
-        /// <summary>
-        /// Renders the current <see cref="MiniProfiler"/> to JSON.
-        /// </summary>
-        public static string ToJson()
-        {
-            return ToJson(Current);
+            return Current.Step(name);
         }
 
         /// <summary>
@@ -288,7 +267,12 @@ namespace StackExchange.Profiling
         /// </summary>
         public static string ToJson(MiniProfiler profiler)
         {
-            return profiler == null ? null : GetJsonSerializer().Serialize(profiler);
+            return profiler != null
+#if NET45
+                ? GetJsonSerializer().Serialize(profiler) : null;
+#else
+                ? JsonConvert.SerializeObject(profiler) : null;
+#endif
         }
 
         /// <summary>
@@ -296,43 +280,21 @@ namespace StackExchange.Profiling
         /// </summary>
         public static MiniProfiler FromJson(string json)
         {
-            return json.HasValue() ? GetJsonSerializer().Deserialize<MiniProfiler>(json) : null;
+            return json.HasValue()
+#if NET45
+                ? GetJsonSerializer().Deserialize<MiniProfiler>(json) : null;
+#else
+                ? JsonConvert.DeserializeObject<MiniProfiler>(json) : null;
+#endif
         }
 
+#if NET45
         private static JavaScriptSerializer GetJsonSerializer()
         {
             return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };   
         }
-
-        /// <summary>
-        /// Returns the <c>css</c> and <c>javascript</c> includes needed to display the MiniProfiler results UI.
-        /// </summary>
-        /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
-        /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
-        /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>
-        /// <param name="maxTracesToShow">The maximum number of trace popups to show before removing the oldest (defaults to 15)</param>
-        /// <param name="showControls">when true, shows buttons to minimize and clear MiniProfiler results</param>
-        /// <param name="startHidden">Should the profiler start as hidden. Default to null.</param>
-        /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
-        public static IHtmlString RenderIncludes(
-            RenderPosition? position = null, 
-            bool? showTrivial = null, 
-            bool? showTimeWithChildren = null, 
-            int? maxTracesToShow = null, 
-            bool? showControls = null,
-            bool? startHidden = null)
-        {
-            return null;
-            // return MiniProfilerHandler.RenderIncludes(
-            //     Current, 
-            //     position, 
-            //     showTrivial, 
-            //     showTimeWithChildren, 
-            //     maxTracesToShow, 
-            //     showControls, 
-            //     startHidden);
-        }
-
+#endif
+        
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
         /// </summary>
@@ -353,10 +315,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns hash code of Id.
         /// </summary>
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
         /// <summary>
         /// Walks the <see cref="Timing"/> hierarchy contained in this profiler, starting with <see cref="Root"/>, and returns each Timing found.
@@ -381,6 +340,7 @@ namespace StackExchange.Profiling
             }
         }
 
+#if NET45 // TODO: Revisit in .NET Standard 2.0
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>
@@ -394,16 +354,14 @@ namespace StackExchange.Profiling
                 return (MiniProfiler)serializer.ReadObject(ms);
             }
         }
+#endif
 
         internal IDisposable StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {
             return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
         }
 
-        internal IDisposable IgnoreImpl()
-        {
-            return new Suppression(this);
-        }
+        internal IDisposable IgnoreImpl() => new Suppression(this);
 
         internal bool StopImpl()
         {

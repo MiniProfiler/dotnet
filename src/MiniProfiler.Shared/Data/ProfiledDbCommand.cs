@@ -69,7 +69,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// get the binding name.
+        /// Get the binding name.
         /// </summary>
         /// <param name="commandType">The command type.</param>
         /// <returns>The <see cref="Action"/>.</returns>
@@ -82,7 +82,11 @@ namespace StackExchange.Profiling.Data
                 return action;
             }
 
-            var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
+            var prop = commandType
+#if !NET45 // TODO: Revisit in .NET Standard 2.0
+                .GetTypeInfo()
+#endif
+                .GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
             action = null;
             ParameterInfo[] indexers;
             MethodInfo setter;
