@@ -19,12 +19,7 @@
       <Version>1.6.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Data\ProfiledDbDataAdapter.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworks)' == 'net45'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

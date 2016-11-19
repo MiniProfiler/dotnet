@@ -2,27 +2,31 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
-    <AssemblyName>MiniProfiler.MongoDB</AssemblyName>
+    <AssemblyName>MiniProfiler.EntityFramework</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="obj\**\*.cs" />
+    <None Include="App.config" />
+    <None Include="miniprofiler.snk" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="EntityFramework">
       <Version>6.1.3</Version>
     </PackageReference>
     <PackageReference Include="NETStandard.Library">
-      <Version>1.6</Version>
+      <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Sdk">
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="**/*.cs" />
-    <None Include="App.config" />
-    <None Include="miniprofiler.snk" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
