@@ -18,17 +18,6 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         Descending
     }
-
-    /*
-     * Maybe ... to cut down on deserialization 
-    public class ProfileSummary
-    {
-
-        DateTime Started { get; set; }
-        int TotalDurationMilliseconds { get; set; }
-        int SqlDurationMilliseconds { get; set; }
-    }
-    */
     
     /// <summary>
     /// Provides saving and loading <see cref="MiniProfiler"/>s to a storage medium.

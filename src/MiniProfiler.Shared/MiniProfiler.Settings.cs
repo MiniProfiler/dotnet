@@ -235,28 +235,12 @@ namespace StackExchange.Profiling
             public static bool ShowControls { get; set; }
 
             /// <summary>
-            /// Determines if Miniprofiler relies on jQuery already loaded on the page; defaults to false.
-            /// For a per-page override you can use .RenderIncludes(useExistingjQuery: true/false)
-            /// </summary>
-            [DefaultValue(false)]
-            [Obsolete("Remove this; includes.js will automatically check for a valid version of jquery, loading ours if none is found.", true)]
-            public static bool UseExistingjQuery { get; set; }
-
-            /// <summary>
-            /// By default, SqlTimings will grab a stack trace to help locate where queries are being executed.
-            /// When this setting is true, no stack trace will be collected, possibly improving profiler performance.
-            /// </summary>
-            [DefaultValue(false), Obsolete("Use ExcludeStackTraceSnippetFromCustomTimings")]
-            public static bool ExcludeStackTraceSnippetFromSqlTimings { get; set; }
-
-            /// <summary>
             /// By default, <see cref="CustomTiming"/>s created by this assmebly will grab a stack trace to help 
             /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
             /// will be collected, possibly improving profiler performance.
             /// </summary>
             [DefaultValue(false)]
             public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; }
-
 
             /// <summary>
             /// When <see cref="MiniProfiler.Start(string)"/> is called, if the current request url contains any items in this property,
@@ -339,6 +323,15 @@ namespace StackExchange.Profiling
             /// </summary>
             public static Func<HttpRequest, bool> Results_List_Authorize { get; set; }
 
+            private static Func<IStorage> _defaultStorage = () => new NullStorage();
+            private static Func<IProfilerProvider> _defaultProfilerProvider = () => new SingletonProfilerProvider();
+
+            public static void SetDefaults(Func<IStorage> defaultStorage, Func<IProfilerProvider> defaultProfilerProvider)
+            {
+                _defaultStorage = defaultStorage;
+                _defaultProfilerProvider = defaultProfilerProvider;
+            }
+
             /// <summary>
             /// Make sure we can at least store profiler results to the http runtime cache.
             /// </summary>
@@ -346,6 +339,7 @@ namespace StackExchange.Profiling
             {
                 if (Storage == null)
                 {
+                    Storage = _defaultStorage();
                     //Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
                 }
             }
@@ -354,7 +348,8 @@ namespace StackExchange.Profiling
             {
                 if (ProfilerProvider == null)
                 {
-                    //ProfilerProvider = new WebRequestProfilerProvider();
+                    ProfilerProvider = _defaultProfilerProvider();
+                    //ProfilerProvider =  new WebRequestProfilerProvider();
                 }
             }
 
