@@ -26,25 +26,6 @@ namespace StackExchange.Profiling.Storage
             ConnectionString = connectionString;
         }
 
-#if NET45
-        /// <summary>
-        /// Initialises a new instance of the <see cref="DatabaseStorageBase"/> class. 
-        /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connection string settings.
-        /// </summary>
-        /// <param name="connectionStringSettings">
-        /// The connection string settings read from ConfigurationManager.ConnectionStrings["connection"]
-        /// </param>
-        protected DatabaseStorageBase(ConnectionStringSettings connectionStringSettings)
-        {
-            if (connectionStringSettings == null)
-            {
-                throw new ArgumentNullException("connectionStringSettings");
-            }
-
-            this.ConnectionString = connectionStringSettings.ConnectionString;
-        }
-#endif
-
         /// <summary>
         /// Saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.
         /// </summary>

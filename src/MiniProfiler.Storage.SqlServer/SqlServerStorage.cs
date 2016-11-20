@@ -4,6 +4,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
+using StackExchange.Profiling.Helpers;
 
 using Dapper;
 
@@ -29,17 +31,6 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// The connection string to use.
         /// </param>
         public SqlServerStorage(string connectionString) : base(connectionString) { }
-
-#if NET45
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string settings.
-        /// </summary>
-        /// <param name="connectionStringSettings">
-        /// The connection string settings read from ConfigurationManager.ConnectionStrings["connection"]
-        /// </param>
-        public SqlServerStorage(ConnectionStringSettings connectionStringSettings)
-            :base(connectionStringSettings.ConnectionString) { }
-#endif
         
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -266,24 +257,25 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <returns>the list of key values.</returns>
         public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            var builder = new SqlBuilder();
-            var t = builder.AddTemplate("select top " + maxResults + " Id from MiniProfilers /**where**/ /**orderby**/");
-
+            var sb = new StringBuilder(@"
+Select Top {=maxResults} Id
+  From MiniProfilers
+");
             if (finish != null)
             {
-                builder.Where("Started < @finish", new { finish });
+                sb.AppendLine("Where Started < @finish");
             }
-
             if (start != null)
             {
-                builder.Where("Started > @start", new { start });
+                sb.AppendLine(finish != null 
+                    ? "  And Started > @start"
+                    : "Where Started > @start");
             }
-
-            builder.OrderBy(orderBy == ListResultsOrder.Descending ? "Started desc" : "Started asc");
+            sb.Append("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
 
             using (var conn = GetOpenConnection())
             {
-                return conn.Query<Guid>(t.RawSql, t.Parameters).ToList();
+                return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
             }
         }
         

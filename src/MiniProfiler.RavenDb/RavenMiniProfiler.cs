@@ -1,12 +1,11 @@
+using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using Raven.Client.Document;
+using Raven.Client.Connection.Profiling;
+
 namespace StackExchange.Profiling.RavenDb
 {
-    using System;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using Raven.Client.Document;
-    using Raven.Client.Connection.Profiling;
-    using System.Web;
-
     public class MiniProfilerRaven
     {
         private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
@@ -22,16 +21,16 @@ namespace StackExchange.Profiling.RavenDb
         /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
         public static void InitializeFor(DocumentStore store)
         {
-            if (store != null && store.JsonRequestFactory != null)
+            if (store?.JsonRequestFactory != null)
             {
                 store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
                 {
                     EventHandler<RequestResultArgs> handler = null;
                     
                     var profiler = MiniProfiler.Current;
-                    var httpContext = HttpContext.Current;
+                    var httpContext = System.Web.HttpContext.Current;
 
-                    if (profiler != null && profiler.Head != null && httpContext != null)
+                    if (profiler?.Head != null && httpContext != null)
                     {
                         var requestId = Guid.NewGuid();
 
@@ -75,7 +74,7 @@ namespace StackExchange.Profiling.RavenDb
 
         private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)
         {
-            if (profiler == null || profiler.Head == null)
+            if (profiler?.Head == null)
             {
                 return;
             }
@@ -126,6 +125,7 @@ namespace StackExchange.Profiling.RavenDb
 
         private static string FormatUrl(string requestUrl)
         {
+            // TODO: Allocations, ugh - refactor all of this
             var results = requestUrl.Split('?');
 
             if (results.Length > 0)

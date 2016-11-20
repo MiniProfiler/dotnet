@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Raven.Client.Connection.Profiling;
 using Raven.Imports.Newtonsoft.Json;
 using Raven.Imports.Newtonsoft.Json.Linq;
@@ -24,7 +20,6 @@ namespace StackExchange.Profiling.RavenDb
                 Url = input.Url,
                 PostedData = FilterData(input.PostedData),
                 Result = FilterData(input.Result)
-
             };
         }
 

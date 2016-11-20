@@ -16,7 +16,6 @@ namespace StackExchange.Profiling
         /// Offset from parent MiniProfiler's creation that this Timing was created.
         /// </summary>
         private readonly long _startTicks;
-
         private readonly decimal? _minSaveMs;
         private readonly bool _includeChildrenWithMinSave;
 
@@ -35,12 +34,9 @@ namespace StackExchange.Profiling
             Id = Guid.NewGuid();
             Profiler = profiler;
             Profiler.Head = this;
-
-            if (parent != null)
-            {
-                // root will have no parent
-                parent.AddChild(this);
-            }
+            
+            // root will have no parent
+            parent?.AddChild(this);
 
             Name = name;
 
@@ -146,18 +142,12 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
-        public bool HasChildren
-        {
-            get { return Children != null && Children.Count > 0; }
-        }
+        public bool HasChildren => Children?.Count > 0;
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
-        public bool IsRoot
-        {
-            get { return Equals(Profiler.Root); }
-        }
+        public bool IsRoot => Equals(Profiler.Root);
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
@@ -182,7 +172,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
-        internal MiniProfiler Profiler { get; set; }
+        public MiniProfiler Profiler { get; set; }
 
         /// <summary>
         /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
@@ -192,10 +182,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns this Timing's Name.
         /// </summary>
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
 
         /// <summary>
         /// Returns true if Ids match.
@@ -208,10 +195,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns hash code of Id.
         /// </summary>
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
         /// <summary>
         /// Completes this Timing's duration and sets the MiniProfiler's Head up one level.
@@ -235,10 +219,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops profiling, allowing the <c>using</c> construct to neatly encapsulate a region to be profiled.
         /// </summary>
-        void IDisposable.Dispose()
-        {
-            Stop();
-        }
+        void IDisposable.Dispose() => Stop();
 
         /// <summary>
         /// Add the parameter 'timing' to this Timing's Children collection.
@@ -260,13 +241,7 @@ namespace StackExchange.Profiling
                 timing.MiniProfilerId = Profiler.Id;
         }
 
-        internal void RemoveChild(Timing timing)
-        {
-            if (Children != null)
-            {
-                Children.Remove(timing);
-            }
-        }
+        internal void RemoveChild(Timing timing) => Children?.Remove(timing);
 
         /// <summary>
         /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of 

@@ -129,7 +129,6 @@
     <WCFMetadataStorage Include="Service References\SampleService\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MiniProfiler.MongoDB\MiniProfiler.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Mvc\MiniProfiler.Mvc.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
   </ItemGroup>

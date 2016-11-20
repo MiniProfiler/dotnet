@@ -1,6 +1,7 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>MiniProfiler</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>miniprofiler.snk</AssemblyOriginatorKeyFile>
@@ -20,13 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="**/*.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="miniprofiler.snk" />
     <EmbeddedResource Include="ui\includes.tmpl" />
     <EmbeddedResource Include="ui\README.md" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="ui\include.partial.html" />
     <EmbeddedResource Include="ui\includes.css" />
     <EmbeddedResource Include="ui\includes.js" />
