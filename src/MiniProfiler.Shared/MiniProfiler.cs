@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
 #if NET45
-using System.Web;
 using System.Web.Script.Serialization;
 #else
 // TODO: Factor these extensions out? That'd be more breaks...
