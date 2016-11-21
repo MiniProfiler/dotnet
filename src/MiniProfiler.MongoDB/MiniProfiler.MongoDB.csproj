@@ -3,6 +3,8 @@
     <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
     <AssemblyName>MiniProfiler.MongoDB</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

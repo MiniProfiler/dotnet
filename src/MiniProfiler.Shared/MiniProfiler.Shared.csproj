@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

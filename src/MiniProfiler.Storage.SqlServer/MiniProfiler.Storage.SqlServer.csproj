@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Storage.SqlServer</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -18,7 +20,7 @@
     <PackageReference Include="NETStandard.Library">
       <Version>1.6.1</Version>
     </PackageReference>
-    <PackageReference Include="Dapper">
+    <PackageReference Include="Dapper.StrongName">
       <Version>1.50.2</Version>
     </PackageReference>
   </ItemGroup>

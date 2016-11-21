@@ -1,20 +1,15 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
-    <PropertyGroup>
+  <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.RavenDb</AssemblyName>
-    <SignAssembly>true</SignAssembly>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\</OutputPath>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-    <None Include="Scripts\jquery-2.2.0.min.map" />
-    <Content Include="Scripts\jquery-2.2.0.intellisense.js" />
-    <Content Include="Scripts\jquery-2.2.0.js" />
-    <Content Include="Scripts\jquery-2.2.0.min.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />

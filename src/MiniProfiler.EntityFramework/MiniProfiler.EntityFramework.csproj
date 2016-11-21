@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>MiniProfiler.EntityFramework</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

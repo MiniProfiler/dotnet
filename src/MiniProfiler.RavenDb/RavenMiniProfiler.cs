@@ -21,6 +21,7 @@ namespace StackExchange.Profiling.RavenDb
         /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
         public static void InitializeFor(DocumentStore store)
         {
+#if NET45 // TODO: netstandard
             if (store?.JsonRequestFactory != null)
             {
                 store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
@@ -69,7 +70,7 @@ namespace StackExchange.Profiling.RavenDb
                     }
                 };
             }
-
+#endif
         }
 
         private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)

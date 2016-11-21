@@ -30,11 +30,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.RavenDb", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Mvc.Mongo", "samples\Sample.Mvc.Mongo\Sample.Mvc.Mongo.csproj", "{C74578A4-E848-40F5-84CE-64165E7F477E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D5410017-5E83-4BD2-B855-AEEC981D6973}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Shared", "src\MiniProfiler.Shared\MiniProfiler.Shared.csproj", "{BA40A569-BEE2-4E39-80A7-763BC15A9077}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Storage.SqlServer", "src\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj", "{D240FC79-651F-4107-95EC-30702AE610DB}"
