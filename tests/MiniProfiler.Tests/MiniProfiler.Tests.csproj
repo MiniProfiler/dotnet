@@ -4,7 +4,7 @@
     <TargetFramework>net451</TargetFramework>
     <AssemblyName>MiniProfiler.Tests</AssemblyName>
     <OutputType>Exe</OutputType>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Properties\MiniProfiler.Tests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -42,8 +42,8 @@
     <PackageReference Include="System.Data.SQLite.EF6">
       <Version>1.0.103</Version>
     </PackageReference>
-    <PackageReference Include="System.Data.SqlServerCe">
-      <Version>4.0.8482.1</Version>
+    <PackageReference Include="Microsoft.SqlServer.Compact">
+      <Version>4.0.8876.1</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.5.0</Version>

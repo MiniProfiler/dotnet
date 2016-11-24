@@ -4,7 +4,7 @@
     <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>MiniProfiler</AssemblyName>
     <OutputType>Library</OutputType>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
