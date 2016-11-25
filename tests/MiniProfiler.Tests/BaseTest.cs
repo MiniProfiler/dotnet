@@ -12,7 +12,6 @@ using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.Tests
 {
-
     /// <summary>
     /// The base test.
     /// </summary>

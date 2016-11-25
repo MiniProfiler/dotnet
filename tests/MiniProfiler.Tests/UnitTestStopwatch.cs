@@ -1,7 +1,7 @@
-﻿namespace StackExchange.Profiling.Tests
-{
-    using System;
+﻿using System;
 
+namespace StackExchange.Profiling.Tests
+{
     /// <summary>
     /// The unit test stopwatch.
     /// </summary>

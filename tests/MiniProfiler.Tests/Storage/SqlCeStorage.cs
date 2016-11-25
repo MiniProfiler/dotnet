@@ -1,10 +1,10 @@
-﻿namespace StackExchange.Profiling.Tests.Storage
+﻿using System.Data.Common;
+using System.Data.SqlServerCe;
+
+using StackExchange.Profiling.Storage;
+
+namespace StackExchange.Profiling.Tests.Storage
 {
-    using System.Data.Common;
-    using System.Data.SqlServerCe;
-
-    using StackExchange.Profiling.Storage;
-
     /// <summary>
     /// SQL CE Storage.
     /// </summary>

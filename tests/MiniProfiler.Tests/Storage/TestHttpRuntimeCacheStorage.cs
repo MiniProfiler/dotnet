@@ -1,12 +1,12 @@
-﻿namespace StackExchange.Profiling.Tests.Storage
+﻿using System;
+using System.Linq;
+
+using NUnit.Framework;
+
+using StackExchange.Profiling.Storage;
+
+namespace StackExchange.Profiling.Tests.Storage
 {
-    using System;
-    using System.Linq;
-
-    using NUnit.Framework;
-
-    using Profiling.Storage;
-
     /// <summary>
     /// test the HTTP runtime cache storage.
     /// </summary>
