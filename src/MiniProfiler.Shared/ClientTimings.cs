@@ -12,8 +12,8 @@ namespace StackExchange.Profiling
     [DataContract]
     public class ClientTimings
     {
-        private const string ClientTimingPrefix = "clientPerformance[timing][";
-        private const string ClientProbesPrefix = "clientProbes[";
+        private const string TimingPrefix = "clientPerformance[timing][";
+        private const string ProbesPrefix = "clientProbes[";
 
         /// <summary>
         /// Gets or sets the list of client side timings
@@ -35,7 +35,7 @@ namespace StackExchange.Profiling
         {
             ClientTimings timing = null;
             long navigationStart;
-            long.TryParse(form[ClientTimingPrefix + "navigationStart]"], out navigationStart);
+            long.TryParse(form[TimingPrefix + "navigationStart]"], out navigationStart);
             if (navigationStart > 0)
             {
                 var timings = new List<ClientTiming>();
@@ -52,14 +52,14 @@ namespace StackExchange.Profiling
                         form.Keys.Cast<string>()
                                .OrderBy(i => i.IndexOf("Start]", StringComparison.Ordinal) > 0 ? "_" + i : i))
                 {
-                    if (key.StartsWith(ClientTimingPrefix))
+                    if (key.StartsWith(TimingPrefix))
                     {
                         long val;
                         long.TryParse(form[key], out val);
                         val -= navigationStart;
 
                         string parsedName = key.Substring(
-                            ClientTimingPrefix.Length, (key.Length - 1) - ClientTimingPrefix.Length);
+                            TimingPrefix.Length, (key.Length - 1) - TimingPrefix.Length);
 
                         // just ignore stuff that is negative ... not relevant
                         if (val > 0)
@@ -91,10 +91,10 @@ namespace StackExchange.Profiling
                         }
                     }
 
-                    if (key.StartsWith(ClientProbesPrefix))
+                    if (key.StartsWith(ProbesPrefix))
                     {
                         int probeId;
-                        if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ClientProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ClientProbesPrefix.Length), out probeId))
+                        if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ProbesPrefix.Length), out probeId))
                         {
                             ClientTiming t;
                             if (!clientProbes.TryGetValue(probeId, out t))

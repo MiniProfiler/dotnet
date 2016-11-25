@@ -146,38 +146,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.That(profiler.ErrorSql == BadSql);
             }
         }
-
-        /// <summary>
-        /// The data adapter.
-        /// </summary>
-        [Test]
-        public void DataAdapter()
-        {
-            MiniProfiler mp;
-            var factory = EFProfiledDbProviderFactory<SqlCeProviderFactory>.Instance;
-
-            using (BaseTest.GetRequest())
-            using (var da = factory.CreateDataAdapter())
-            {
-                var cmd = factory.CreateCommand();
-                Debug.Assert(cmd != null, "cmd != null");
-                cmd.CommandText = "select 1 as A, 2 as B";
-                Debug.Assert(da != null, "da != null");
-                da.SelectCommand = cmd;
-                da.SelectCommand.Connection = GetConnection();
-
-                var ds = new DataSet();
-                da.Fill(ds);
-
-                Assert.That(((int)ds.Tables[0].Rows[0][0]) == 1);
-                mp = MiniProfiler.Current;
-            }
-
-            Assert.That(mp.ExecutedReaders == 1);
-            Assert.That(mp.ExecutedScalars == 0);
-            Assert.That(mp.ExecutedNonQueries == 0);
-        }
-
+        
         /// <summary>
         /// The get connection.
         /// </summary>
