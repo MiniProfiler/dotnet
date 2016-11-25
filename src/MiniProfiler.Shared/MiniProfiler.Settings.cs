@@ -282,12 +282,12 @@ namespace StackExchange.Profiling
             /// 2) profiler is started
             /// 3) normal page/controller/request execution
             /// 4) profiler is stopped
-            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="StackExchange.Profiling.Storage.IStorage.Save"/>
+            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IStorage.Save"/>
             /// 6) request ends
             /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
-            ///    <see cref="Storage"/>'s implementation of <see cref="StackExchange.Profiling.Storage.IStorage.Load"/>
+            ///    <see cref="Storage"/>'s implementation of <see cref="IStorage.Load"/>
             /// </remarks>
-            public static Storage.IStorage Storage { get; set; }
+            public static IStorage Storage { get; set; }
 
             /// <summary>
             /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
@@ -319,8 +319,9 @@ namespace StackExchange.Profiling
             /// <summary>
             /// Make sure we can at least store profiler results to the http runtime cache.
             /// </summary>
-            internal static void EnsureStorageStrategy()
+            public static void EnsureStorageStrategy()
             {
+                // TODO: refactor this into an on-demand with Storage access
                 if (Storage == null)
                 {
                     Storage = _defaultStorage();

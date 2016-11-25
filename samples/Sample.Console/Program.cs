@@ -1,15 +1,14 @@
-﻿namespace Sample.Console
+﻿using System;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Net;
+using System.Threading;
+
+using Dapper;
+using StackExchange.Profiling;
+
+namespace Sample.Console
 {
-    using System;
-    using System.Data.Common;
-
-    using Dapper;
-
-    using StackExchange.Profiling;
-    using System.Net;
-    using System.Diagnostics;
-    using System.Threading;
-
     /// <summary>
     /// simple sample console application.
     /// </summary>
@@ -33,7 +32,7 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                System.Console.WriteLine(ex);
             }
         }
 

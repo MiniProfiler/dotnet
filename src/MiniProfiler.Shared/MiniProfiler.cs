@@ -99,7 +99,7 @@ namespace StackExchange.Profiling
         /// Json used to store Custom Links. Do not touch.
         /// </summary>
         public string CustomLinksJson {
-            get { return CustomLinks != null ? CustomLinks.ToJson() : null; } 
+            get { return CustomLinks?.ToJson(); } 
             set {
                 if (value.HasValue())
                 {
@@ -116,10 +116,7 @@ namespace StackExchange.Profiling
         [DataMember(Order = 7)]
         public Timing Root
         {
-            get
-            {
-                return _root;
-            }
+            get { return _root; }
             set
             {
                 _root = value;

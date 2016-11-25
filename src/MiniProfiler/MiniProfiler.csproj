@@ -9,10 +9,15 @@
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <!-- Maintaining backwards compatability, maybe. Or maybe we point people to the new lib in the major break? -->
+    <ProjectReference Include="..\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Runtime.Serialization" />
@@ -20,6 +25,10 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.NET.Sdk">
+      <Version>1.0.0-alpha-20161104-2</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="**/*.cs" />
@@ -29,11 +38,6 @@
     <EmbeddedResource Include="ui\includes.css" />
     <EmbeddedResource Include="ui\includes.js" />
     <EmbeddedResource Include="ui\share.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <!-- Maintaining backwards compatability, maybe. Or maybe we point people to the new lib in the major break? -->
-    <ProjectReference Include="..\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

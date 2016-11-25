@@ -24,10 +24,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a value indicating whether to keep things static and reusable.
         /// </summary>
-        public bool IsReusable
-        {
-            get { return true; }
-        }
+        public bool IsReusable => true;
 
         /// <summary>
         /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, 
@@ -56,10 +53,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns this <see cref="MiniProfilerHandler"/> to handle <paramref name="requestContext"/>.
         /// </summary>
-        IHttpHandler IRouteHandler.GetHttpHandler(RequestContext requestContext)
-        {
-            return this;
-        }
+        IHttpHandler IRouteHandler.GetHttpHandler(RequestContext requestContext) => this;
 
         /// <summary>
         /// Returns either includes' <c>css/javascript</c> or results' html.
@@ -135,22 +129,21 @@ namespace StackExchange.Profiling
                 return (new HtmlString("<!-- Could not find 'include.partial.html' -->"));
             }
 
-            return new HtmlString(format.Format(new
-            {
-                path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
-                version = MiniProfiler.Settings.Version,
-                currentId = profiler.Id,
-                ids = string.Join(",", ids.Select(guid => guid.ToString())),
-                position = (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower(),
-                showTrivial = (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial).ToJs(),
-                showChildren = (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren).ToJs(),
-                maxTracesToShow = maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow,
-                showControls = (showControls ?? MiniProfiler.Settings.ShowControls).ToJs(),
-                authorized = authorized.ToJs(),
-                toggleShortcut = MiniProfiler.Settings.PopupToggleKeyboardShortcut,
-                startHidden = (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs(),
-                trivialMilliseconds = MiniProfiler.Settings.TrivialDurationThresholdMilliseconds
-            }));
+            var sb = new StringBuilder(format);
+              sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
+                .Replace("{version}", MiniProfiler.Settings.Version)
+                .Replace("{currentId}", profiler.Id.ToString())
+                .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
+                .Replace("{position}", (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower())
+                .Replace("{showTrivial}", (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial).ToJs())
+                .Replace("{showChildren}", (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren).ToJs())
+                .Replace("{maxTracesToShow}", (maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString())
+                .Replace("{showControls}", (showControls ?? MiniProfiler.Settings.ShowControls).ToJs())
+                .Replace("{authorized}", authorized.ToJs())
+                .Replace("{toggleShortcut}", MiniProfiler.Settings.PopupToggleKeyboardShortcut)
+                .Replace("{startHidden}", (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs())
+                .Replace("{trivialMilliseconds}", MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString());
+            return new HtmlString(sb.ToString());
         }
 
         /// <summary>
@@ -242,10 +235,7 @@ namespace StackExchange.Profiling
             }
 
             // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
-            if (MiniProfiler.Settings.Storage == null)
-            {
-                MiniProfiler.Settings.EnsureStorageStrategy();
-            }
+            MiniProfiler.Settings.EnsureStorageStrategy();
 
             var guids = MiniProfiler.Settings.Storage.List(100);
 
@@ -357,19 +347,18 @@ namespace StackExchange.Profiling
         private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "text/html";
-
+            
             string template;
             if (!TryGetResource("share.html", out template))
                 return NotFound(context);
-            return template.Format(new
-            {
-                name = profiler.Name,
-                duration = profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture),
-                path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash(),
-                json = MiniProfiler.ToJson(profiler),
-                includes = RenderIncludes(profiler),
-                version = MiniProfiler.Settings.Version
-            });
+            var sb = new StringBuilder(template);
+            sb.Replace("{name}", profiler.Name)
+              .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
+              .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
+              .Replace("{json}", MiniProfiler.ToJson(profiler))
+              .Replace("{includes}", RenderIncludes(profiler).ToString())
+              .Replace("{version}", MiniProfiler.Settings.Version);
+            return sb.ToString();
         }
 
         private static bool TryGetResource(string filename, out string resource)

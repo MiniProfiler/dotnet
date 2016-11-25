@@ -15,12 +15,12 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Answers true if this String is either null or empty.
         /// </summary>
-        internal static bool IsNullOrWhiteSpace(this string value) => string.IsNullOrWhiteSpace(value);
+        public static bool IsNullOrWhiteSpace(this string value) => string.IsNullOrWhiteSpace(value);
 
         /// <summary>
         /// Answers true if this String is neither null or empty.
         /// </summary>
-        internal static bool HasValue(this string value) => !string.IsNullOrWhiteSpace(value);
+        public static bool HasValue(this string value) => !string.IsNullOrWhiteSpace(value);
 
         /// <summary>
         /// Chops off a string at the specified length and accounts for smaller length
@@ -30,13 +30,13 @@ namespace StackExchange.Profiling.Helpers
         /// <returns></returns>
         public static string Truncate(this string s, int maxLength)
         {
-            return s != null && s.Length > maxLength ? s.Substring(0, maxLength) : s;
+            return s?.Length > maxLength ? s.Substring(0, maxLength) : s;
         }
 
         /// <summary>
         /// Removes trailing / characters from a path and leaves just one
         /// </summary>
-        internal static string EnsureTrailingSlash(this string input)
+        public static string EnsureTrailingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "/+$", string.Empty) + "/";
@@ -45,7 +45,7 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Removes any leading / characters from a path
         /// </summary>
-        internal static string RemoveLeadingSlash(this string input)
+        public static string RemoveLeadingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "^/+", string.Empty);
@@ -54,7 +54,7 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Removes any leading / characters from a path
         /// </summary>
-        internal static string RemoveTrailingSlash(this string input)
+        public static string RemoveTrailingSlash(this string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "/+$", string.Empty);
@@ -65,7 +65,7 @@ namespace StackExchange.Profiling.Helpers
         /// </summary>
         /// <param name="o">the instance to serialise</param>
         /// <returns>the resulting JSON object as a string</returns>
-        internal static string ToJson(this object o)
+        public static string ToJson(this object o)
         {
             return o != null
 #if NET45
@@ -80,7 +80,7 @@ namespace StackExchange.Profiling.Helpers
         /// </summary>
         /// <param name="s">The string to deserialize</param>
         /// <returns>The object resulting from the given string</returns>
-        internal static T FromJson<T>(this string s) where T : class
+        public static T FromJson<T>(this string s) where T : class
         {
             return s.HasValue()
 #if NET45
@@ -93,6 +93,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Returns a lowercase string of <paramref name="b"/> suitable for use in javascript.
         /// </summary>
-        internal static string ToJs(this bool b) => b ? "true" : "false";
+        public static string ToJs(this bool b) => b ? "true" : "false";
     }
 }

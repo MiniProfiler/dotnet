@@ -140,7 +140,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)";
             }
         }
 
-        private void SaveClientTimings(List<ClientTimings.ClientTiming> timings, DbConnection conn)
+        private void SaveClientTimings(List<ClientTiming> timings, DbConnection conn)
         {
             const string sql = @"INSERT INTO MiniProfilerClientTimings
             ( Id,
@@ -292,7 +292,7 @@ Select Top {=maxResults} Id
             {
                 profiler = multi.Read<MiniProfiler>().SingleOrDefault();
                 var timings = multi.Read<Timing>().ToList();
-                var clientTimings = multi.Read<ClientTimings.ClientTiming>().ToList();
+                var clientTimings = multi.Read<ClientTiming>().ToList();
 
                 if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
                 {

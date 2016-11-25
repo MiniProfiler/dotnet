@@ -86,7 +86,7 @@ namespace StackExchange.Profiling
         /// JSON representing the Custom Timings associated with this timing.
         /// </summary>
         public string CustomTimingsJson {
-            get { return CustomTimings != null ? CustomTimings.ToJson() : null; }
+            get { return CustomTimings?.ToJson(); }
             set { CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>(); }
         }
         

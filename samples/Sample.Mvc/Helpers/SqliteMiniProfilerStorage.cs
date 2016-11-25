@@ -1,14 +1,13 @@
-﻿using StackExchange.Profiling.Helpers.Dapper;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Dapper;
+using StackExchange.Profiling.Storage;
+using System.Text;
 
 namespace SampleWeb.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using Dapper;
-    using StackExchange.Profiling.Storage;
-
     /// <summary>
     /// The SQLITE mini profiler storage.
     /// </summary>
@@ -71,23 +70,27 @@ namespace SampleWeb.Helpers
             DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            var builder = new SqlBuilder();
-            var t = builder.AddTemplate("select Id from MiniProfilers /**where**/ /**orderby**/ LIMIT(" + maxResults + ")");
 
-            if (start != null)
-            {
-                builder.Where("Started > @start", new { start });
-            }
+            var sb = new StringBuilder(@"
+Select Id
+  From MiniProfilers
+");
             if (finish != null)
             {
-                builder.Where("Started < @finish", new { finish });
+                sb.AppendLine("Where Started < @finish");
             }
-
-            builder.OrderBy(orderBy == ListResultsOrder.Descending ? "Started desc" : "Started asc");
+            if (start != null)
+            {
+                sb.AppendLine(finish != null
+                    ? "  And Started > @start"
+                    : "Where Started > @start");
+            }
+            sb.AppendLine("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
+            sb.Append("LIMIT(").Append(maxResults).AppendLine(")");
 
             using (var conn = GetOpenConnection())
             {
-                return conn.Query<Guid>(t.RawSql, t.Parameters).ToList();
+                return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
             }
         }
 

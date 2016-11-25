@@ -24,6 +24,5 @@
 
             return html;
         }
-
     }
 }
