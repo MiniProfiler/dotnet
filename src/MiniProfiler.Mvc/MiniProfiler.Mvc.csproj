@@ -4,9 +4,9 @@
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>MiniProfiler.Mvc</AssemblyName>
     <OutputType>Library</OutputType>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\MiniProfiler\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj" />

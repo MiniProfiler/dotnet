@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -23,7 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="**/*.cs" />
-    <None Include="miniprofiler.snk" />
     <EmbeddedResource Include="ui\includes.tmpl" />
     <EmbeddedResource Include="ui\README.md" />
     <EmbeddedResource Include="ui\include.partial.html" />
