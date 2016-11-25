@@ -16,18 +16,7 @@
         /// <param name="connectionString">
         /// The connection string.
         /// </param>
-        public SqlCeStorage(string connectionString)
-            : base(connectionString)
-        {
-        }
-
-        /// <summary>
-        /// CE doesn't support multiple result sets in one query.
-        /// </summary>
-        public override bool EnableBatchSelects
-        {
-            get { return false; }
-        }
+        public SqlCeStorage(string connectionString) : base(connectionString) { }
 
         /// <summary>
         /// The get connection.
@@ -35,9 +24,6 @@
         /// <returns>
         /// The <see cref="DbConnection"/>.
         /// </returns>
-        protected override DbConnection GetConnection()
-        {
-            return new SqlCeConnection(ConnectionString);
-        }
+        protected override DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
     }
 }

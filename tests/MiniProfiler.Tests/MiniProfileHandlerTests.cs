@@ -38,7 +38,7 @@ namespace StackExchange.Profiling.Tests
         {
             // Arrange
             var sut = new MiniProfilerHandler();
-            MiniProfiler.Settings.Results_List_Authorize = request => isRequestAuthorized;
+            MiniProfilerWebSettings.Results_List_Authorize = request => isRequestAuthorized;
 
             // Act
             var res = GetRequestResponseHttpStatus(sut, "/results-index");

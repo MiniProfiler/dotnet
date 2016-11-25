@@ -1,16 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlServerCe;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+using NUnit.Framework;
+using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.SqlServerCe;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-
-    using NUnit.Framework;
 
     /// <summary>
     /// The base test.
@@ -171,7 +172,7 @@ namespace StackExchange.Profiling.Tests
             // when MiniProfiler.Current is null, this connection will not record any database timings
             if (MiniProfiler.Current != null)
             {
-                cnn = new Data.ProfiledDbConnection(cnn, MiniProfiler.Current);
+                cnn = new ProfiledDbConnection(cnn, MiniProfiler.Current);
             }
 
             cnn.Open();

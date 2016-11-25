@@ -196,10 +196,11 @@ namespace StackExchange.Profiling
         /// </summary>
         internal long ElapsedTicks => _sw.ElapsedTicks;
 
+        // TODO: Back to InternalsVisibleTo
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>
-        internal IStopwatch Stopwatch => _sw;
+        public IStopwatch Stopwatch => _sw;
         
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.

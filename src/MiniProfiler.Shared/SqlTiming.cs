@@ -90,7 +90,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Called when database reader is closed, ending profiling for 
-        /// <see cref="StackExchange.Profiling.Data.SqlExecuteType.Reader"/> <c>SqlTimings</c>.
+        /// <see cref="SqlExecuteType.Reader"/> <c>SqlTimings</c>.
         /// </summary>
         public void ReaderFetchComplete()
         {

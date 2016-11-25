@@ -108,10 +108,7 @@ namespace StackExchange.Profiling
         /// </remarks>
         /// <param name="profiler">The current profiling session or null.</param>
         /// <returns>the profile step</returns>
-        public static IDisposable Ignore(this MiniProfiler profiler)
-        {
-            return profiler == null ? null : profiler.IgnoreImpl();
-        }
+        public static IDisposable Ignore(this MiniProfiler profiler) => profiler?.IgnoreImpl();
         
         /// <summary>
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
@@ -119,7 +116,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void AddProfilerResults(this MiniProfiler profiler, MiniProfiler externalProfiler)
         {
-            if (profiler == null || profiler.Head == null || externalProfiler == null) return;
+            if (profiler?.Head == null || externalProfiler == null) return;
             profiler.Head.AddChild(externalProfiler.Root);
         }
 

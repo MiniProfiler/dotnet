@@ -5,7 +5,7 @@ namespace StackExchange.Profiling.Helpers
     /// <summary>
     /// The Stopwatch interface.
     /// </summary>
-    internal interface IStopwatch
+    public interface IStopwatch
     {
         /// <summary>
         /// Gets the elapsed ticks.

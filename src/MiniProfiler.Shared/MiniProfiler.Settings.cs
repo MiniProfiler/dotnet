@@ -337,11 +337,12 @@ namespace StackExchange.Profiling
                     //ProfilerProvider =  new WebRequestProfilerProvider();
                 }
             }
-
+            
+            // TODO: IntervalsVisibleTo
             /// <summary>
             /// Allows switching out stopwatches for unit testing.
             /// </summary>
-            internal static Func<IStopwatch> StopwatchProvider { get; set; }
+            public static Func<IStopwatch> StopwatchProvider { get; set; }
 
             /// <summary>
             /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.

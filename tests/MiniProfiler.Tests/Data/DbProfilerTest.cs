@@ -1,15 +1,15 @@
-﻿namespace StackExchange.Profiling.Tests.Data
+﻿using System.Data;
+using System.Data.Common;
+using System.Data.SqlServerCe;
+using System.Diagnostics;
+
+using NUnit.Framework;
+
+using Dapper;
+using StackExchange.Profiling.Data;
+
+namespace StackExchange.Profiling.Tests.Data
 {
-    using System.Data;
-    using System.Data.Common;
-    using System.Data.SqlServerCe;
-    using System.Diagnostics;
-
-    using NUnit.Framework;
-
-    using StackExchange.Profiling.Data;
-    using StackExchange.Profiling.Helpers.Dapper;
-
     /// <summary>
     /// The profiler test.
     /// </summary>

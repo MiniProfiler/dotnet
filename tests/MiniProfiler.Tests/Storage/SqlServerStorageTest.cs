@@ -1,15 +1,16 @@
-﻿namespace StackExchange.Profiling.Tests.Storage
+﻿using System.Data.SqlServerCe;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
+using NUnit.Framework;
+
+using Dapper;
+using StackExchange.Profiling;
+using StackExchange.Profiling.Data;
+using StackExchange.Profiling.Storage;
+
+namespace StackExchange.Profiling.Tests.Storage
 {
-    using System.Data.SqlServerCe;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
-    using NUnit.Framework;
-
-    using StackExchange.Profiling.Data;
-    using StackExchange.Profiling.Helpers.Dapper;
-    using StackExchange.Profiling.Storage;
-
     /// <summary>
     /// The SQL server storage test.
     /// </summary>
