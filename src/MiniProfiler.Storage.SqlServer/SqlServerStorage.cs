@@ -344,6 +344,7 @@ Select Top {=maxResults} Id
             return new SqlConnection(ConnectionString);
         }
 
+        // TODO: Let Dapper handle this
         /// <summary>
         /// Returns a DbConnection already opened for execution.
         /// </summary>
