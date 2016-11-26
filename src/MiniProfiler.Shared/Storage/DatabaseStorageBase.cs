@@ -74,7 +74,4 @@ namespace StackExchange.Profiling.Storage
         /// <returns>the list of GUID keys</returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
     }
-
-
-
 }

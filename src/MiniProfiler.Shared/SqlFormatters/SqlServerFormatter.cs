@@ -196,10 +196,9 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="buffer"><see cref="StringBuilder"/> to use</param>
         /// <param name="parameters">Parameters to evaluate</param>
-        /// <returns></returns>
         protected void GenerateParamText(StringBuilder buffer, List<SqlTimingParameter> parameters)
         {
-            if (parameters != null && parameters.Count > 0)
+            if (parameters?.Count > 0)
             {
                 buffer.Append("DECLARE ");
                 var first = true;

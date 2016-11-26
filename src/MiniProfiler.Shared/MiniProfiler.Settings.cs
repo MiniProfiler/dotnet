@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using StackExchange.Profiling.Helpers;
@@ -242,7 +241,7 @@ namespace StackExchange.Profiling
             public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; }
 
             /// <summary>
-            /// When <see cref="MiniProfiler.Start(string)"/> is called, if the current request url contains any items in this property,
+            /// When <see cref="Start(string)"/> is called, if the current request url contains any items in this property,
             /// no profiler will be instantiated and no results will be displayed.
             /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
             /// </summary>

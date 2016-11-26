@@ -16,10 +16,7 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
-        public Suppression()
-        {
-
-        }
+        public Suppression() { }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="Suppression"/> class. 

@@ -13,7 +13,6 @@ namespace StackExchange.Profiling
         internal SqlProfiler SqlProfiler { get; private set; }
 
         // IDbProfiler methods
-
         void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
         {
             SqlProfiler.ExecuteStart(profiledDbCommand, executeType);
@@ -21,14 +20,7 @@ namespace StackExchange.Profiling
 
         void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader)
         {
-            if (reader != null)
-            {
-                SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
-            }
-            else
-            {
-                SqlProfiler.ExecuteFinish(profiledDbCommand, executeType);
-            }
+            SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
         }
 
         void IDbProfiler.ReaderFinish(IDataReader reader)

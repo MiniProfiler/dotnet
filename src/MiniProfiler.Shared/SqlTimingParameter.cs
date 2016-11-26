@@ -72,9 +72,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns name and value for debugging.
         /// </summary>
-        public override string ToString()
-        {
-            return string.Format("{0} = {1} ({2})", Name, Value, DbType);
-        }
+        public override string ToString() => $"{Name} = {Value} ({DbType})";
     }
 }

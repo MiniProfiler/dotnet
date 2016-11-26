@@ -117,17 +117,11 @@ namespace StackExchange.Profiling
             }
         }
 
-        void IDisposable.Dispose()
-        {
-            Stop();
-        }
+        void IDisposable.Dispose() => Stop();
 
         /// <summary>
         /// Returns <see cref="CommandString"/> for debugging.
         /// </summary>
-        public override string ToString()
-        {
-            return CommandString;
-        }
+        public override string ToString() => CommandString;
     }
 }

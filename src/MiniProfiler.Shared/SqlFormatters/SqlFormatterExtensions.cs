@@ -16,11 +16,11 @@ namespace StackExchange.Profiling.SqlFormatters
         /// This may be removed in a future major version when <see cref="IAdvancedSqlFormatter"/> can be consolidated back
         /// into <see cref="ISqlFormatter"/>.
         /// </remarks>
-        /// <returns></returns>
         public static string GetFormattedSql(this ISqlFormatter sqlFormatter, string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
             var advancedFormatter = sqlFormatter as IAdvancedSqlFormatter;
-            return advancedFormatter != null ? advancedFormatter.FormatSql(commandText, parameters, command) : sqlFormatter.FormatSql(commandText, parameters);
+            return advancedFormatter?.FormatSql(commandText, parameters, command)
+                ?? sqlFormatter.FormatSql(commandText, parameters);
         }
     }
 }
