@@ -44,20 +44,16 @@ namespace StackExchange.Profiling
         /// Returns an html-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
-        public static IHtmlString Render(this MiniProfiler profiler)
-        {
-            return new HtmlString(RenderImpl(profiler, true));
-        }
+        public static IHtmlString Render(this MiniProfiler profiler) =>
+            new HtmlString(RenderImpl(profiler, true));
 
         /// <summary>
         /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from 
         /// <see cref="Console"/>, log, or unit test output.
         /// </summary>
         /// <param name="profiler">A profiling session with child <see cref="Timing"/> instances.</param>
-        public static string RenderPlainText(this MiniProfiler profiler)
-        {
-            return RenderImpl(profiler, false);
-        }
+        public static string RenderPlainText(this MiniProfiler profiler) =>
+            RenderImpl(profiler, false);
 
         private static string RenderImpl(MiniProfiler profiler, bool htmlEncode)
         {

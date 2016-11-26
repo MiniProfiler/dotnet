@@ -117,11 +117,7 @@ namespace StackExchange.Profiling.Storage
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
-        public MiniProfiler Load(Guid id)
-        {
-            var result = HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
-            return result;
-        }
+        public MiniProfiler Load(Guid id) => HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -153,15 +149,9 @@ namespace StackExchange.Profiling.Storage
                 onRemoveCallback: null);
         }
 
-        private string GetCacheKey(Guid id)
-        {
-            return CacheKeyPrefix + id;
-        }
+        private string GetCacheKey(Guid id) => CacheKeyPrefix + id;
 
-        private string GetPerUserUnviewedCacheKey(string user)
-        {
-            return CacheKeyPrefix + "unviewed-for-user-" + user;
-        }
+        private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
         
         private List<Guid> GetPerUserUnviewedIds(string user)
         {

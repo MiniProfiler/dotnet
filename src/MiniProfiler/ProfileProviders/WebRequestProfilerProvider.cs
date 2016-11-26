@@ -22,23 +22,25 @@ namespace StackExchange.Profiling
             MiniProfilerHandler.RegisterRoutes();
         }
 
-
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
         public override MiniProfiler Start(string sessionName = null)
         {
             var context = HttpContext.Current;
-            if (context == null || context.Request.AppRelativeCurrentExecutionFilePath == null) return null;
+            if (context?.Request.AppRelativeCurrentExecutionFilePath == null) return null;
 
             var url = context.Request.Url;
             var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();
 
             // don't profile /content or /scripts, either - happens in web.dev
-            foreach (var ignored in MiniProfiler.Settings.IgnoredPaths ?? new string[0])
+            if (MiniProfiler.Settings.IgnoredPaths != null)
             {
-                if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
-                    return null;
+                foreach (var ignored in MiniProfiler.Settings.IgnoredPaths)
+                {
+                    if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
+                        return null;
+                }
             }
 
             if (context.Request.Path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.InvariantCultureIgnoreCase))
@@ -111,9 +113,7 @@ namespace StackExchange.Profiling
                     response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
                 }
             }
-            catch
-            {
-            } // headers blew up
+            catch { /* headers blew up */ }
         }
 
         /// <summary>
@@ -122,12 +122,12 @@ namespace StackExchange.Profiling
         private static void EnsureName(MiniProfiler profiler, HttpRequest request)
         {
             // also set the profiler name to Controller/Action or /url
-            if (string.IsNullOrWhiteSpace(profiler.Name))
+            if (profiler.Name.IsNullOrWhiteSpace())
             {
                 var rc = request.RequestContext;
                 RouteValueDictionary values;
 
-                if (rc != null && rc.RouteData != null && (values = rc.RouteData.Values).Count > 0)
+                if (rc?.RouteData != null && (values = rc.RouteData.Values).Count > 0)
                 {
                     var controller = values["Controller"];
                     var action = values["Action"];
@@ -136,7 +136,7 @@ namespace StackExchange.Profiling
                         profiler.Name = controller.ToString() + "/" + action.ToString();
                 }
 
-                if (string.IsNullOrWhiteSpace(profiler.Name))
+                if (profiler.Name.IsNullOrWhiteSpace())
                 {
                     profiler.Name = request.Url.AbsolutePath ?? string.Empty;
                     if (profiler.Name.Length > 50)
@@ -148,11 +148,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the current profiler
         /// </summary>
-        public override MiniProfiler GetCurrentProfiler()
-        {
-            return Current;
-        }
-
+        public override MiniProfiler GetCurrentProfiler() => Current;
 
         private const string CacheKey = ":mini-profiler:";
 
@@ -161,13 +157,7 @@ namespace StackExchange.Profiling
         /// </summary>
         private MiniProfiler Current
         {
-            get
-            {
-                var context = HttpContext.Current;
-                if (context == null) return null;
-
-                return context.Items[CacheKey] as MiniProfiler;
-            }
+            get { return HttpContext.Current?.Items[CacheKey] as MiniProfiler; }
             set
             {
                 var context = HttpContext.Current;

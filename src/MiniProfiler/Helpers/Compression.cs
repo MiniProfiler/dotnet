@@ -33,12 +33,14 @@ namespace StackExchange.Profiling.Helpers
 		}
 
 		static readonly string[] AllowedEncodings = new[] { "gzip", "deflate" };
-
-		static string ParsePreferredEncoding(string acceptEncoding)
+        static readonly char[] encodingSplit = new[] { ',' };
+        static readonly char[] encodingTypeSplit = new[] { ';' };
+        
+        static string ParsePreferredEncoding(string acceptEncoding)
 		{
 			return acceptEncoding
-				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(type => type.Split(';'))
+				.Split(encodingSplit, StringSplitOptions.RemoveEmptyEntries)
+				.Select(type => type.Split(encodingTypeSplit))
 				.Select(parts => new
 				{
 					encoding = parts[0].Trim(),

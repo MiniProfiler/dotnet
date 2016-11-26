@@ -92,7 +92,7 @@ namespace StackExchange.Profiling
                     break;
             }
 
-            if (MiniProfiler.Settings.EnableCompression && !string.IsNullOrEmpty(output))
+            if (MiniProfiler.Settings.EnableCompression && output.HasValue())
             {
                 Compression.EncodeStreamAndAppendResponseHeaders(context.Request, context.Response);
             }
@@ -244,30 +244,20 @@ namespace StackExchange.Profiling
                 guids = guids.TakeWhile(g => g != lastGuid);
             }
 
-            guids = guids.Reverse();
-
-            return guids.Select(
-                g =>
-                {
-                    var profiler = MiniProfiler.Settings.Storage.Load(g);
-                    
-                    if (profiler == null)
-                    {
-                        return null;
-                    }
-                    
-                    return new
-                    {
-                        profiler.Id,
-                        profiler.Name,
-                        profiler.ClientTimings,
-                        profiler.Started,
-                        profiler.HasUserViewed,
-                        profiler.MachineName,
-                        profiler.User,
-                        profiler.DurationMilliseconds
-                    };
-                }).Where(x => x != null).ToJson();
+            return guids.Reverse()
+                        .Select(g => MiniProfiler.Settings.Storage.Load(g))
+                        .Where(p => p != null)
+                        .Select(p => new
+                        {
+                            p.Id,
+                            p.Name,
+                            p.ClientTimings,
+                            p.Started,
+                            p.HasUserViewed,
+                            p.MachineName,
+                            p.User,
+                            p.DurationMilliseconds
+                        }).ToJson();
         }
 
         /// <summary>
@@ -425,6 +415,5 @@ namespace StackExchange.Profiling
 
             return message;
         }
-
     }
 }
