@@ -13,24 +13,9 @@ namespace StackExchange.Profiling.Data
 , ICloneable
 #endif
     {
-        /// <summary>
-        /// The command.
-        /// </summary>
         private IDbCommand _command;
-
-        /// <summary>
-        /// The connection.
-        /// </summary>
         private IDbConnection _connection;
-
-        /// <summary>
-        /// The profiler.
-        /// </summary>
         private IDbProfiler _profiler;
-
-        /// <summary>
-        /// The transaction.
-        /// </summary>
         private IDbTransaction _transaction;
 
         /// <summary>
@@ -56,66 +41,45 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// prepare the command.
         /// </summary>
-        public void Prepare()
-        {
-            _command.Prepare();
-        }
+        public void Prepare() => _command.Prepare();
 
         /// <summary>
         /// cancel the command.
         /// </summary>
-        public void Cancel()
-        {
-            _command.Cancel();
-        }
+        public void Cancel() => _command.Cancel();
 
         /// <summary>
         /// create a new parameter.
         /// </summary>
         /// <returns>The <see cref="IDbDataParameter"/>.</returns>
-        public IDbDataParameter CreateParameter()
-        {
-            return _command.CreateParameter();
-        }
+        public IDbDataParameter CreateParameter() => _command.CreateParameter();
 
         /// <summary>
         /// execute a non query.
         /// </summary>
         /// <returns>The <see cref="int"/>.</returns>
-        public int ExecuteNonQuery()
-        {
-            return ProfileWith(SqlExecuteType.NonQuery, _command.ExecuteNonQuery);
-        }
+        public int ExecuteNonQuery() => ProfileWith(SqlExecuteType.NonQuery, _command.ExecuteNonQuery);
 
         /// <summary>
         /// execute the reader.
         /// </summary>
         /// <returns>The <see cref="IDataReader"/>.</returns>
-        public IDataReader ExecuteReader()
-        {
-            return ProfileWith(
-                SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
-        }
+        public IDataReader ExecuteReader() =>
+            ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
 
         /// <summary>
         /// execute the reader.
         /// </summary>
         /// <param name="behavior">The <c>behavior</c>.</param>
         /// <returns>the active reader.</returns>
-        public IDataReader ExecuteReader(CommandBehavior behavior)
-        {
-            return ProfileWith(
-                SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
-        }
+        public IDataReader ExecuteReader(CommandBehavior behavior) =>
+            ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
 
         /// <summary>
         /// execute and return a scalar.
         /// </summary>
         /// <returns>the scalar value.</returns>
-        public object ExecuteScalar()
-        {
-            return ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
-        }
+        public object ExecuteScalar() => ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
 
         /// <summary>
         /// profile with results.
@@ -153,10 +117,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public IDbConnection Connection
         {
-            get
-            {
-                return _connection;
-            }
+            get { return _connection; }
             set
             {
                 if (MiniProfiler.Current != null)
@@ -176,10 +137,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public IDbTransaction Transaction
         {
-            get
-            {
-                return _transaction;
-            }
+            get { return _transaction; }
             set
             {
                 _transaction = value;
@@ -248,7 +206,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && _command != null) _command.Dispose();
+            if (disposing) _command?.Dispose();
 
             _command = null;
             _connection = null;

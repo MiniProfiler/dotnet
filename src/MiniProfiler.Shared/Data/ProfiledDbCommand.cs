@@ -40,8 +40,7 @@ namespace StackExchange.Profiling.Data
                 {
                     if (_command != null)
                     {
-                        var inner = GetBindByName(_command.GetType());
-                        if (inner != null) inner(_command, value);
+                        GetBindByName(_command.GetType())?.Invoke(_command, value);
                     }
 
                     _bindByName = value;
@@ -108,10 +107,7 @@ namespace StackExchange.Profiling.Data
             Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
             return action;
         }
-
-        /// <summary>
-        /// Gets or sets the command text.
-        /// </summary>
+        
         public override string CommandText
         {
             get { return _command.CommandText; }

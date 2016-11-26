@@ -39,10 +39,7 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>
         /// The <see cref="IStopwatch"/>.
         /// </returns>
-        public static IStopwatch StartNew()
-        {
-            return new StopwatchWrapper();
-        }
+        public static IStopwatch StartNew() => new StopwatchWrapper();
 
         /// <summary>
         /// The _stopwatch.
@@ -60,33 +57,21 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Gets the elapsed ticks.
         /// </summary>
-        public long ElapsedTicks
-        {
-            get { return _stopwatch.ElapsedTicks; }
-        }
+        public long ElapsedTicks => _stopwatch.ElapsedTicks;
 
         /// <summary>
         /// Gets the frequency.
         /// </summary>
-        public long Frequency
-        {
-            get { return Stopwatch.Frequency; }
-        }
+        public long Frequency => Stopwatch.Frequency;
 
         /// <summary>
         /// Gets a value indicating whether is running.
         /// </summary>
-        public bool IsRunning
-        {
-            get { return _stopwatch.IsRunning; }
-        }
+        public bool IsRunning => _stopwatch.IsRunning;
 
         /// <summary>
         /// stop the timer.
         /// </summary>
-        public void Stop()
-        {
-            _stopwatch.Stop();
-        }
+        public void Stop() => _stopwatch.Stop();
     }
 }

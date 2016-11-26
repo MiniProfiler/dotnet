@@ -1,6 +1,8 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+#if NET45
 using System.Security;
+#endif
 
 namespace StackExchange.Profiling.Data
 {

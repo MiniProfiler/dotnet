@@ -9,14 +9,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class SimpleProfiledConnection : IDbConnection
     {
-        /// <summary>
-        /// The profiler.
-        /// </summary>
         private IDbProfiler _profiler;
-
-        /// <summary>
-        /// The connection.
-        /// </summary>
         private IDbConnection _connection;
 
         /// <summary>
@@ -31,34 +24,22 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the connection timeout.
         /// </summary>
-        public int ConnectionTimeout
-        {
-            get { return _connection.ConnectionTimeout; }
-        }
+        public int ConnectionTimeout => _connection.ConnectionTimeout;
 
         /// <summary>
         /// Gets the database.
         /// </summary>
-        public string Database
-        {
-            get { return _connection.Database; }
-        }
+        public string Database => _connection.Database;
 
         /// <summary>
         /// Gets the state.
         /// </summary>
-        public ConnectionState State
-        {
-            get { return _connection.State; }
-        }
+        public ConnectionState State => _connection.State;
 
         /// <summary>
         /// Gets the internally wrapped <see cref="IDbConnection"/>
         /// </summary>
-        public IDbConnection WrappedConnection
-        {
-            get { return _connection; }
-        }
+        public IDbConnection WrappedConnection => _connection;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="SimpleProfiledConnection"/> class. 
@@ -83,54 +64,39 @@ namespace StackExchange.Profiling.Data
         /// begin the transaction.
         /// </summary>
         /// <returns>The <see cref="IDbTransaction"/>.</returns>
-        public IDbTransaction BeginTransaction()
-        {
-            return new SimpleProfiledTransaction(_connection.BeginTransaction(), this);
-        }
+        public IDbTransaction BeginTransaction() => 
+            new SimpleProfiledTransaction(_connection.BeginTransaction(), this);
 
         /// <summary>
         /// begin a transaction.
         /// </summary>
         /// <param name="isolationLevel">The isolation Level.</param>
         /// <returns>the wrapped transaction</returns>
-        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel)
-        {
-            return new SimpleProfiledTransaction(_connection.BeginTransaction(isolationLevel), this);
-        }
+        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) =>
+            new SimpleProfiledTransaction(_connection.BeginTransaction(isolationLevel), this);
 
         /// <summary>
         /// change the database.
         /// </summary>
         /// <param name="databaseName">The database name.</param>
-        public void ChangeDatabase(string databaseName)
-        {
-            _connection.ChangeDatabase(databaseName);
-        }
+        public void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 
         /// <summary>
-        /// create a new command.
+        /// Create a new command.
         /// </summary>
         /// <returns>The <see cref="IDbCommand"/>.</returns>
-        public IDbCommand CreateCommand()
-        {
-            return new SimpleProfiledCommand(_connection.CreateCommand(), this, _profiler);
-        }
+        public IDbCommand CreateCommand() =>
+            new SimpleProfiledCommand(_connection.CreateCommand(), this, _profiler);
 
         /// <summary>
-        /// close the connection
+        /// Close the connection.
         /// </summary>
-        public void Close()
-        {
-            _connection.Close();
-        }
+        public void Close() => _connection.Close();
 
         /// <summary>
-        /// open the connection
+        /// Open the connection.
         /// </summary>
-        public void Open()
-        {
-            _connection.Open();
-        }
+        public void Open() => _connection.Open();
 
         /// <summary>
         /// dispose the command / connection and profiler.

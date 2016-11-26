@@ -25,10 +25,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the underlying adapter.  Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).
         /// </summary>
-        public IDbDataAdapter InternalAdapter
-        {
-            get { return _adapter; }
-        }
+        public IDbDataAdapter InternalAdapter => _adapter;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ProfiledDbDataAdapter"/> class.

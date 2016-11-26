@@ -14,20 +14,11 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Initialises a new instance of the <see cref="Link{TKey,TValue}"/> class.
         /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <param name="tail">
-        /// The tail.
-        /// </param>
         private Link(TKey key, TValue value, Link<TKey, TValue> tail)
         {
-            this.Key = key;
-            this.Value = value;
-            this.Tail = tail;
+            Key = key;
+            Value = value;
+            Tail = tail;
         }
 
         /// <summary>
@@ -50,9 +41,6 @@ namespace StackExchange.Profiling.Data
         /// the default value is returned if no match is found.
         /// An exception is not thrown.
         /// </summary>
-        /// <param name="link">The link.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
         /// <returns>return true if a value is located.</returns>
         public static bool TryGet(Link<TKey, TValue> link, TKey key, out TValue value)
         {

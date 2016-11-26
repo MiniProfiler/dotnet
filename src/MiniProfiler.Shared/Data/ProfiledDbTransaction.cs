@@ -2,8 +2,6 @@
 using System.Data;
 using System.Data.Common;
 
-#pragma warning disable 1591 // xml doc comments warnings
-
 namespace StackExchange.Profiling.Data
 {
     /// <summary>
@@ -11,14 +9,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class ProfiledDbTransaction : DbTransaction
     {
-        /// <summary>
-        /// The connection.
-        /// </summary>
         private ProfiledDbConnection _connection;
-
-        /// <summary>
-        /// The transaction.
-        /// </summary>
         private DbTransaction _transaction;
 
         /// <summary>
@@ -37,42 +28,27 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the database connection.
         /// </summary>
-        protected override DbConnection DbConnection
-        {
-            get { return _connection; }
-        }
+        protected override DbConnection DbConnection => _connection;
 
         /// <summary>
         /// Gets the wrapped transaction.
         /// </summary>
-        public DbTransaction WrappedTransaction
-        {
-            get { return _transaction; }
-        }
+        public DbTransaction WrappedTransaction => _transaction;
 
         /// <summary>
         /// Gets the isolation level.
         /// </summary>
-        public override IsolationLevel IsolationLevel
-        {
-            get { return _transaction.IsolationLevel; }
-        }
+        public override IsolationLevel IsolationLevel => _transaction.IsolationLevel;
 
         /// <summary>
-        /// commit the transaction.
+        /// Commit the transaction.
         /// </summary>
-        public override void Commit()
-        {
-            _transaction.Commit();
-        }
+        public override void Commit() => _transaction.Commit();
 
         /// <summary>
-        /// rollback the transaction
+        /// Rollback the transaction.
         /// </summary>
-        public override void Rollback()
-        {
-            _transaction.Rollback();
-        }
+        public override void Rollback() => _transaction.Rollback();
 
         /// <summary>
         /// dispose the transaction and connection.
