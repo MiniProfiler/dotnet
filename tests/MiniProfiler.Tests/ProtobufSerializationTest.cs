@@ -48,7 +48,7 @@ namespace StackExchange.Profiling.Tests
                         IncrementStopwatch();
                     }
 
-                    using (var conn = GetSqliteConnection())
+                    using (var conn = Utils.GetSqliteConnection())
                     {
                         conn.Query<long>("select 1");
                         conn.Query<long>("select @one", new { one = (byte)1 });

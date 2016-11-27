@@ -9,11 +9,12 @@ namespace StackExchange.Profiling.Tests.Data
     /// <summary>
     /// The profiler test.
     /// </summary>
+    [Collection("DbProfiler")]
     public class DbProfilerTest : BaseTest
     {
-        public void TestFixtureSetUp()
+        public DbProfilerTest()
         {
-            CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
+            Utils.CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
         }
         
         [Fact]
@@ -127,7 +128,7 @@ namespace StackExchange.Profiling.Tests.Data
         /// <returns>the counting connection</returns>
         private CountingConnection GetConnection()
         {
-            var connection = GetOpenSqlCeConnection<DbProfilerTest>();
+            var connection = Utils.GetOpenSqlCeConnection<DbProfilerTest>();
             return new CountingConnection(connection, new CountingDbProfiler());
         }
         

@@ -1,4 +1,5 @@
-﻿using System.Data.SqlServerCe;
+﻿using System;
+using System.Data.SqlServerCe;
 using System.Linq;
 
 using Dapper;
@@ -11,17 +12,18 @@ namespace StackExchange.Profiling.Tests.Storage
     /// <summary>
     /// The SQL server storage test.
     /// </summary>
-    public class SqlServerStorageTest : BaseTest
+    [Collection("SqlServer")]
+    public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture>
     {
         private SqlCeConnection _conn;
         
         public SqlServerStorageTest()
         {
             var sqlToExecute = SqlServerStorage.TableCreationScript.Replace("nvarchar(max)", "ntext").Split(';').Where(s => !string.IsNullOrWhiteSpace(s));
-            var connStr = CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
+            var connStr = Utils.CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
 
             MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
-            _conn = GetOpenSqlCeConnection<SqlServerStorageTest>();
+            _conn = Utils.GetOpenSqlCeConnection<SqlServerStorageTest>();
         }
         
         //[TestFixtureTearDown]
@@ -52,11 +54,6 @@ namespace StackExchange.Profiling.Tests.Storage
             AssertProfilersAreEqual(mp, mp2);
         }
         
-        private ProfiledDbConnection GetProfiledConnection()
-        {
-            return new ProfiledDbConnection(GetOpenSqlCeConnection<SqlServerStorageTest>(), MiniProfiler.Current);
-        }
-        
         private void AssertMiniProfilerExists(MiniProfiler miniProfiler)
         {
             var count = _conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id }).Single();
@@ -68,5 +65,27 @@ namespace StackExchange.Profiling.Tests.Storage
             var count = _conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id }).Single();
             Assert.Equal(count, expected);
         }
+    }
+    public class SqlCeStorageFixture : IDisposable
+    {
+        public SqlCeStorageFixture()
+        {
+            var sqlToExecute = SqlServerStorage.TableCreationScript.Replace("nvarchar(max)", "ntext").Split(';').Where(s => !string.IsNullOrWhiteSpace(s));
+            var connStr = Utils.CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
+            MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
+            Conn = Utils.GetOpenSqlCeConnection<SqlServerStorageTest>();
+        }
+
+        private ProfiledDbConnection GetProfiledConnection()
+        {
+            return new ProfiledDbConnection(Utils.GetOpenSqlCeConnection<SqlServerStorageTest>(), MiniProfiler.Current);
+        }
+
+        public void Dispose()
+        {
+            Conn.Dispose();
+            MiniProfiler.Settings.Storage = null;
+        }
+        public SqlCeConnection Conn { get; private set; }
     }
 }
