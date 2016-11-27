@@ -1,15 +1,14 @@
 ﻿using System.Data.Common;
 
 using Dapper;
-using NUnit.Framework;
 using StackExchange.Profiling.Data;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests.Data
 {
     /// <summary>
     /// The profiler test.
     /// </summary>
-    [TestFixture]
     public class DbProfilerTest : BaseTest
     {
         public void TestFixtureSetUp()
@@ -17,7 +16,7 @@ namespace StackExchange.Profiling.Tests.Data
             CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
         }
         
-        [Test]
+        [Fact]
         public void NonQuery()
         {
             using (var conn = GetConnection())
@@ -25,18 +24,18 @@ namespace StackExchange.Profiling.Tests.Data
                 var profiler = conn.CountingProfiler;
 
                 conn.Execute("insert into TestTable values (1)");
-                Assert.That(profiler.ExecuteStartCount == 1);
-                Assert.That(profiler.ExecuteFinishCount == 1);
-                Assert.That(profiler.CompleteStatementMeasured);
+                Assert.Equal(profiler.ExecuteStartCount, 1);
+                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.True(profiler.CompleteStatementMeasured);
 
                 conn.Execute("delete from TestTable where Id = 1");
-                Assert.That(profiler.ExecuteStartCount == 2);
-                Assert.That(profiler.ExecuteFinishCount == 2);
-                Assert.That(profiler.CompleteStatementMeasured);
+                Assert.Equal(profiler.ExecuteStartCount, 2);
+                Assert.Equal(profiler.ExecuteFinishCount, 2);
+                Assert.True(profiler.CompleteStatementMeasured);
             }
         }
         
-        [Test]
+        [Fact]
         public void Scalar()
         {
             using (var conn = GetConnection())
@@ -47,13 +46,13 @@ namespace StackExchange.Profiling.Tests.Data
                 cmd.CommandText = "select 1";
                 cmd.ExecuteScalar();
 
-                Assert.That(profiler.ExecuteStartCount == 1);
-                Assert.That(profiler.ExecuteFinishCount == 1);
-                Assert.That(profiler.CompleteStatementMeasured);
+                Assert.Equal(profiler.ExecuteStartCount, 1);
+                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.True(profiler.CompleteStatementMeasured);
             }
         }
         
-        [Test]
+        [Fact]
         public void DataReader()
         {
             using (var conn = GetConnection())
@@ -67,14 +66,14 @@ namespace StackExchange.Profiling.Tests.Data
                 {
                 }
 
-                Assert.That(profiler.ExecuteStartCount == 1);
-                Assert.That(profiler.ExecuteFinishCount == 1);
-                Assert.That(profiler.ReaderFinishCount == 1);
-                Assert.That(profiler.CompleteStatementMeasured);
+                Assert.Equal(profiler.ExecuteStartCount, 1);
+                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.Equal(profiler.ReaderFinishCount, 1);
+                Assert.True(profiler.CompleteStatementMeasured);
             }
         }
         
-        [Test]
+        [Fact]
         public void Errors()
         {
             using (var conn = GetConnection())
@@ -89,10 +88,10 @@ namespace StackExchange.Profiling.Tests.Data
 
                 var profiler = conn.CountingProfiler;
 
-                Assert.That(profiler.ErrorCount == 1);
-                Assert.That(profiler.ExecuteStartCount == 1);
-                Assert.That(profiler.ExecuteFinishCount == 1);
-                Assert.That(profiler.ErrorSql == BadSql);
+                Assert.Equal(profiler.ErrorCount, 1);
+                Assert.Equal(profiler.ExecuteStartCount, 1);
+                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.Equal(profiler.ErrorSql, BadSql);
 
                 try
                 {
@@ -100,10 +99,10 @@ namespace StackExchange.Profiling.Tests.Data
                 }
                 catch (DbException) { /* yep */ }
 
-                Assert.That(profiler.ErrorCount == 2);
-                Assert.That(profiler.ExecuteStartCount == 2);
-                Assert.That(profiler.ExecuteFinishCount == 2);
-                Assert.That(profiler.ErrorSql == BadSql);
+                Assert.Equal(profiler.ErrorCount, 2);
+                Assert.Equal(profiler.ExecuteStartCount, 2);
+                Assert.Equal(profiler.ExecuteFinishCount, 2);
+                Assert.Equal(profiler.ErrorSql, BadSql);
 
                 try
                 {
@@ -115,10 +114,10 @@ namespace StackExchange.Profiling.Tests.Data
                 }
                 catch (DbException) { /* yep */ }
 
-                Assert.That(profiler.ExecuteStartCount == 3);
-                Assert.That(profiler.ExecuteFinishCount == 3);
-                Assert.That(profiler.ErrorCount == 3);
-                Assert.That(profiler.ErrorSql == BadSql);
+                Assert.Equal(profiler.ExecuteStartCount, 3);
+                Assert.Equal(profiler.ExecuteFinishCount, 3);
+                Assert.Equal(profiler.ErrorCount, 3);
+                Assert.Equal(profiler.ErrorSql, BadSql);
             }
         }
         

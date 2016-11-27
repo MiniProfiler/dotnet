@@ -1,15 +1,14 @@
 ﻿using System.IO;
 
 using Dapper;
-using NUnit.Framework;
 using StackExchange.Profiling.SqlFormatters;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    [TestFixture]
     public class ProtobufSerializationTest : BaseTest
     {
-        [Test]
+        [Fact]
         public void Simple()
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
@@ -29,7 +28,7 @@ namespace StackExchange.Profiling.Tests
         }
 
 
-        [Test]
+        [Fact]
         public void CustomTimings()
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))

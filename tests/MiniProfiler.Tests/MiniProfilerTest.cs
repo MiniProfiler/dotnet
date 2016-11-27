@@ -1,11 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    [TestFixture]
     public class MiniProfilerTest : BaseTest
     {
-        [Test]
+        [Fact]
         public void Simple()
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
@@ -16,16 +15,16 @@ namespace StackExchange.Profiling.Tests
 
                 var c = MiniProfiler.Current;
 
-                Assert.That(c, Is.Not.Null);
-                Assert.That(c.DurationMilliseconds, Is.EqualTo(StepTimeMilliseconds));
-                Assert.That(c.Name, Is.EqualTo("/Test.aspx"));
+                Assert.NotNull(c);
+                Assert.Equal(c.DurationMilliseconds, StepTimeMilliseconds);
+                Assert.Equal(c.Name, "/Test.aspx");
 
-                Assert.That(c.Root, Is.Not.Null);
-                Assert.That(c.Root.HasChildren, Is.False);
+                Assert.NotNull(c.Root);
+                Assert.False(c.Root.HasChildren);
             }
         }
 
-        [Test]
+        [Fact]
         public void StepIf_Basic()
         {
             using (GetRequest())
@@ -47,12 +46,12 @@ namespace StackExchange.Profiling.Tests
                 }
                 MiniProfiler.Stop();
 
-                Assert.IsTrue(mp1.Root.Children.Contains(goodTiming));
-                Assert.IsTrue(!mp1.Root.Children.Contains(badTiming));
+                Assert.True(mp1.Root.Children.Contains(goodTiming));
+                Assert.True(!mp1.Root.Children.Contains(badTiming));
             }
         }
 
-        [Test]
+        [Fact]
         public void StepIf_IncludeChildren()
         {
             using (GetRequest())
@@ -90,12 +89,12 @@ namespace StackExchange.Profiling.Tests
                 }
                 MiniProfiler.Stop();
 
-                Assert.IsTrue(mp1.Root.Children.Contains(goodTiming));
-                Assert.IsTrue(!mp1.Root.Children.Contains(badTiming));
+                Assert.True(mp1.Root.Children.Contains(goodTiming));
+                Assert.True(!mp1.Root.Children.Contains(badTiming));
             }
         }
 
-        [Test]
+        [Fact]
         public void CustomTimingIf_Basic()
         {
             using (GetRequest())
@@ -117,12 +116,12 @@ namespace StackExchange.Profiling.Tests
                 }
                 MiniProfiler.Stop();
 
-                Assert.IsTrue(mp1.Root.CustomTimings["Cat1"].Contains(goodTiming));
-                Assert.IsTrue(!mp1.Root.CustomTimings["Cat1"].Contains(badTiming));
+                Assert.True(mp1.Root.CustomTimings["Cat1"].Contains(goodTiming));
+                Assert.True(!mp1.Root.CustomTimings["Cat1"].Contains(badTiming));
             }
         }
 
-        [Test]
+        [Fact]
         public void DiscardResults()
         {
             using (GetRequest(startAndStopProfiler: false))
@@ -132,7 +131,7 @@ namespace StackExchange.Profiling.Tests
 
                 var c = MiniProfiler.Current;
 
-                Assert.That(c, Is.Null);
+                Assert.Null(c);
             }
         }
     }

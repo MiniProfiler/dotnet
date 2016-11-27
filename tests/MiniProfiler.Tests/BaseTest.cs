@@ -7,8 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using NUnit.Framework;
 using StackExchange.Profiling.Data;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -180,7 +180,7 @@ namespace StackExchange.Profiling.Tests
         
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
-            Assert.AreEqual(mp1, mp2);
+            Assert.Equal(mp1, mp2);
             AssertPublicPropertiesAreEqual(mp1, mp2);
             AssertTimingsAreEqualAndRecurse(mp1.Root, mp2.Root);
         }
@@ -200,7 +200,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.NotNull(t1.CustomTimings);
                 Assert.NotNull(t2.CustomTimings);
 
-                Assert.AreEqual(t1.CustomTimings.Count, t2.CustomTimings.Count);
+                Assert.Equal(t1.CustomTimings.Count, t2.CustomTimings.Count);
 
                 foreach (var pair1 in t1.CustomTimings)
                 {
@@ -222,7 +222,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.NotNull(t1.Children);
                 Assert.NotNull(t2.Children);
 
-                Assert.AreEqual(t1.Children.Count, t2.Children.Count);
+                Assert.Equal(t1.Children.Count, t2.Children.Count);
 
                 for (int i = 0; i < t1.Children.Count; i++)
                 {
@@ -260,12 +260,12 @@ namespace StackExchange.Profiling.Tests
                     }
 
                     var name = typeof(T).Name + "." + p.Name;
-                    Assert.AreEqual(val1, val2, name + " have different values");
+                    Assert.True(val1 == val2, name + " have different values");
                     Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
                 }
                 catch (Exception ex)
                 {
-                    Assert.Fail("AssertPublicPropertiesAreEqual had an exception on " + p.Name + "; " + ex);
+                    Assert.True(false, "AssertPublicPropertiesAreEqual had an exception on " + p.Name + "; " + ex);
                 }
             }
         }

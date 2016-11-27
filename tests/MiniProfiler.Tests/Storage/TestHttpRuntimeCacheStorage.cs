@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-using NUnit.Framework;
 using StackExchange.Profiling.Storage;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    [TestFixture]
     public class TestHttpRuntimeCacheStorage
     {
-        [Test]
+        [Fact]
         public void TestWeCanSaveTheSameProfilerTwice()
         {
             var profiler = new MiniProfiler("/") { Started = DateTime.UtcNow, Id = Guid.NewGuid() };
@@ -17,11 +16,11 @@ namespace StackExchange.Profiling.Tests.Storage
             storage.Save(profiler);
             storage.Save(profiler);
             var guids = storage.List(100).ToArray();
-            Assert.AreEqual(profiler.Id, guids.First());
-            Assert.AreEqual(1, guids.Count());
+            Assert.Equal(profiler.Id, guids.First());
+            Assert.Equal(1, guids.Count());
         }
         
-        [Test]
+        [Fact]
         public void TestRangeQueries()
         {
             var now = DateTime.UtcNow;
@@ -41,15 +40,15 @@ namespace StackExchange.Profiling.Tests.Storage
             storage.Save(profiler1);
 
             var guids = storage.List(100);
-            Assert.AreEqual(4, guids.Count());
+            Assert.Equal(4, guids.Count());
 
             guids = storage.List(1);
-            Assert.AreEqual(1, guids.Count());
+            Assert.Equal(1, guids.Count());
 
             guids = storage.List(2, now, in2Secs);
-            Assert.AreEqual(profiler2.Id, guids.First());
-            Assert.AreEqual(profiler1.Id, guids.Skip(1).First());
-            Assert.AreEqual(2, guids.Count());
+            Assert.Equal(profiler2.Id, guids.First());
+            Assert.Equal(profiler1.Id, guids.Skip(1).First());
+            Assert.Equal(2, guids.Count());
         }
     }
 }

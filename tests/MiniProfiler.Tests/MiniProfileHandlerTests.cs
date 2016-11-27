@@ -3,23 +3,22 @@ using System.Collections.Specialized;
 using System.IO.Compression;
 using System.Web;
 
-using NUnit.Framework;
 using Subtext.TestLibrary;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    [TestFixture]
     class MiniProfilerHandlerTests
     {
-        [Test]
-        [TestCase("BRILLANT", 404)]
-        [TestCase("underscore.js", 404)]
-        [TestCase("jquery.1.7.1.js", 404)]
-        [TestCase("jquery.tmpl.js", 404)]
-        [TestCase("jquery.tmpl.js", 404)]
-        [TestCase("results-list", 200)]
-        [TestCase("includes.js", 200)]
-        [TestCase("includes.css", 200)]
+        [Theory]
+        [InlineData("BRILLANT", 404)]
+        [InlineData("underscore.js", 404)]
+        [InlineData("jquery.1.7.1.js", 404)]
+        [InlineData("jquery.tmpl.js", 404)]
+        [InlineData("jquery.tmpl.js", 404)]
+        [InlineData("results-list", 200)]
+        [InlineData("includes.js", 200)]
+        [InlineData("includes.css", 200)]
         public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string resourceName, int expectedHttpStatus)
         {
             // Arrange
@@ -29,12 +28,12 @@ namespace StackExchange.Profiling.Tests
             var res = GetRequestResponseHttpStatus(sut, resourceName);
 
             // Assert
-            Assert.AreEqual(expectedHttpStatus, res);
+            Assert.Equal(expectedHttpStatus, res);
         }
 
-        [Test]
-        [TestCase(true, 200)]
-        [TestCase(false, 401)]
+        [Theory]
+        [InlineData(true, 200)]
+        [InlineData(false, 401)]
         public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(bool isRequestAuthorized, int expectedHttpStatus)
         {
             // Arrange
@@ -45,14 +44,14 @@ namespace StackExchange.Profiling.Tests
             var res = GetRequestResponseHttpStatus(sut, "/results-index");
             
             // Assert
-            Assert.AreEqual(expectedHttpStatus, res);
+            Assert.Equal(expectedHttpStatus, res);
         }
 
-		[Test]
-		[TestCase("gzip", typeof(GZipStream))]
-		[TestCase("deflate", typeof(DeflateStream))]
-		[TestCase("unknown", null)]
-		[TestCase("", null)]
+		[Theory]
+		[InlineData("gzip", typeof(GZipStream))]
+		[InlineData("deflate", typeof(DeflateStream))]
+		[InlineData("unknown", null)]
+		[InlineData("", null)]
 		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string acceptEncoding, Type expectedEncodingFilterType)
 		{
 			// Arrange
@@ -67,12 +66,12 @@ namespace StackExchange.Profiling.Tests
 
 			if (expectedEncodingFilterType == null)
 			{
-				Assert.AreNotEqual(typeof(GZipStream), res);
-				Assert.AreNotEqual(typeof(DeflateStream), res);
+				Assert.NotEqual(typeof(GZipStream), res);
+				Assert.NotEqual(typeof(DeflateStream), res);
 			}
 			else
 			{
-				Assert.AreEqual(expectedEncodingFilterType, res);
+				Assert.Equal(expectedEncodingFilterType, res);
 			}
 		}
 

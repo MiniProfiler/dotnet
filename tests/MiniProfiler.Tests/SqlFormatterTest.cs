@@ -4,12 +4,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Transactions;
 
-using NUnit.Framework;
 using StackExchange.Profiling.SqlFormatters;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    [TestFixture]
     public class SqlFormatterTest
     {
 	    private const string None = "";
@@ -18,17 +17,17 @@ namespace StackExchange.Profiling.Tests
         private string _commandText;
         private SqlCommand _dbCommand;
         private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap;
-
-        [TestFixtureSetUp]
-        public void TestFixtureSetup()
+        
+        public SqlFormatterTest()
         {
             CreateDbTypeMap();
+            _formatter = new SqlServerFormatter();
         }
 
-        [SetUp]
-        public void TestSetup()
+        public static IEnumerable<object[]> GetParamPrefixes()
         {
-            _formatter = new SqlServerFormatter();
+            yield return new object[] { None };
+            yield return new object[] { At };
         }
 
         private void CreateDbCommand(CommandType commandType)
@@ -102,7 +101,7 @@ namespace StackExchange.Profiling.Tests
             return _dbTypeMap[type.TypeHandle];
         }
 
-        [Test]
+        [Fact]
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             // arrange
@@ -116,10 +115,10 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
+        [Fact]
         public void VerboseSqlServerFormatterAddsTransactionInformation()
         {
 			// note: since we don't have an active sql connection we cannot test the transactions coupled to a connection
@@ -138,10 +137,10 @@ namespace StackExchange.Profiling.Tests
 	        transactionScope.Dispose();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
+        [Fact]
         public void TabelQueryWithoutParameters()
         {
             // arrange
@@ -153,11 +152,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void TableQueryWithOneParameters([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithOneParameters(string at)
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @a";
@@ -169,11 +169,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void TableQueryWithTwoParameters([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithTwoParameters(string at)
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
@@ -186,12 +187,13 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
 
-        [Test]
-        public void TableQueryWithVarchar([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithVarchar(string at)
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
@@ -203,10 +205,10 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
+        [Fact]
         public void StoredProcedureCallWithoutParameters()
         {
             // arrange
@@ -219,11 +221,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithOneParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithOneParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -236,11 +239,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithTwoParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithTwoParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -254,11 +258,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithOneReturnParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithOneReturnParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -271,11 +276,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithNormalAndReturnParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithNormalAndReturnParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -289,11 +295,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithOneOutputParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithOneOutputParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -307,11 +314,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithTwoOutputParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithTwoOutputParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -326,11 +334,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithOneOutputParameterAndOneReturnParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithOneOutputParameterAndOneReturnParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -345,11 +354,12 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
 
-        [Test]
-        public void StoredProcedureCallWithInOutputParameter([Values(None, At)] string at)
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithInOutputParameter(string at)
         {
             // arrange
             _formatter = new VerboseSqlServerFormatter();
@@ -363,7 +373,7 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput();
 
             // assert
-            Assert.AreEqual(expectedOutput, actualOutput);
+            Assert.Equal(expectedOutput, actualOutput);
         }
     }
 }
