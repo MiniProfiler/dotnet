@@ -1,11 +1,7 @@
-﻿using System.Data;
-using System.Data.Common;
-using System.Data.SqlServerCe;
-using System.Diagnostics;
-
-using NUnit.Framework;
+﻿using System.Data.Common;
 
 using Dapper;
+using NUnit.Framework;
 using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.Tests.Data
@@ -16,17 +12,11 @@ namespace StackExchange.Profiling.Tests.Data
     [TestFixture]
     public class DbProfilerTest : BaseTest
     {
-        /// <summary>
-        /// The test fixture set up.
-        /// </summary>
         public void TestFixtureSetUp()
         {
-            BaseTest.CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
+            CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
         }
-
-        /// <summary>
-        /// The non query.
-        /// </summary>
+        
         [Test]
         public void NonQuery()
         {
@@ -45,10 +35,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.That(profiler.CompleteStatementMeasured);
             }
         }
-
-        /// <summary>
-        /// test scalar.
-        /// </summary>
+        
         [Test]
         public void Scalar()
         {
@@ -65,10 +52,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.That(profiler.CompleteStatementMeasured);
             }
         }
-
-        /// <summary>
-        /// The data reader.
-        /// </summary>
+        
         [Test]
         public void DataReader()
         {
@@ -89,10 +73,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.That(profiler.CompleteStatementMeasured);
             }
         }
-
-        /// <summary>
-        /// The errors.
-        /// </summary>
+        
         [Test]
         public void Errors()
         {
@@ -104,9 +85,7 @@ namespace StackExchange.Profiling.Tests.Data
                 {
                     conn.Execute(BadSql);
                 }
-                catch (DbException)
-                {
-                }
+                catch (DbException) { /* yep */ }
 
                 var profiler = conn.CountingProfiler;
 
@@ -119,9 +98,7 @@ namespace StackExchange.Profiling.Tests.Data
                 {
                     conn.Query<int>(BadSql);
                 }
-                catch (DbException)
-                {
-                }
+                catch (DbException) { /* yep */ }
 
                 Assert.That(profiler.ErrorCount == 2);
                 Assert.That(profiler.ExecuteStartCount == 2);
@@ -136,9 +113,7 @@ namespace StackExchange.Profiling.Tests.Data
                         cmd.ExecuteScalar();
                     }
                 }
-                catch (DbException)
-                {
-                }
+                catch (DbException) { /* yep */ }
 
                 Assert.That(profiler.ExecuteStartCount == 3);
                 Assert.That(profiler.ExecuteFinishCount == 3);
@@ -156,31 +131,16 @@ namespace StackExchange.Profiling.Tests.Data
             var connection = GetOpenSqlCeConnection<DbProfilerTest>();
             return new CountingConnection(connection, new CountingDbProfiler());
         }
-
-        /// <summary>
-        /// The counting connection.
-        /// </summary>
+        
         public class CountingConnection : ProfiledDbConnection
         {
-            /// <summary>
-            /// Initialises a new instance of the <see cref="CountingConnection"/> class. 
-            /// </summary>
-            /// <param name="connection">
-            /// The connection.
-            /// </param>
-            /// <param name="profiler">
-            /// The profiler.
-            /// </param>
+            public CountingDbProfiler CountingProfiler { get; set; }
+
             public CountingConnection(DbConnection connection, IDbProfiler profiler)
                 : base(connection, profiler)
             {
                 CountingProfiler = (CountingDbProfiler)profiler;
             }
-
-            /// <summary>
-            /// Gets or sets the counting profiler.
-            /// </summary>
-            public CountingDbProfiler CountingProfiler { get; set; }
         }
     }
 }

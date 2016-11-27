@@ -1,7 +1,6 @@
 ﻿using System;
 
 using NUnit.Framework;
-
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling.Tests.Storage

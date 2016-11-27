@@ -7,6 +7,8 @@ namespace StackExchange.Profiling.Tests
     /// </summary>
     public class UnitTestStopwatch : Helpers.IStopwatch
     {
+        private bool _isRunning = true;
+
         /// <summary>
         /// The ticks per second.
         /// </summary>
@@ -16,12 +18,7 @@ namespace StackExchange.Profiling.Tests
         /// The ticks per millisecond.
         /// </summary>
         public static readonly long TicksPerMillisecond = TimeSpan.FromMilliseconds(1).Ticks;
-
-        /// <summary>
-        /// _is running.
-        /// </summary>
-        private bool _isRunning = true;
-
+        
         /// <summary>
         /// Gets or sets the elapsed ticks.
         /// </summary>
@@ -30,25 +27,16 @@ namespace StackExchange.Profiling.Tests
         /// <summary>
         /// Gets the frequency, <see cref="MiniProfiler.GetRoundedMilliseconds"/> method will use this to determine how many ticks actually elapsed, so make it simple.
         /// </summary>
-        public long Frequency
-        {
-            get { return TicksPerSecond; }
-        }
+        public long Frequency => TicksPerSecond;
 
         /// <summary>
         /// Gets a value indicating whether is running.
         /// </summary>
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-        }
+        public bool IsRunning => _isRunning;
 
         /// <summary>
-        /// stop the profiler.
+        /// Stop the profiler.
         /// </summary>
-        public void Stop()
-        {
-            _isRunning = false;
-        }
+        public void Stop() => _isRunning = false;
     }
 }

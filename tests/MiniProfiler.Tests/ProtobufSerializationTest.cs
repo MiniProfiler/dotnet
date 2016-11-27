@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
-using System.IO;
+﻿using System.IO;
 
 using Dapper;
+using NUnit.Framework;
 using StackExchange.Profiling.SqlFormatters;
 
 namespace StackExchange.Profiling.Tests

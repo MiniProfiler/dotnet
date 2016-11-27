@@ -177,10 +177,7 @@ namespace StackExchange.Profiling.Tests
             cnn.Open();
             return cnn;
         }
-
-        /// <summary>
-        /// The assert profilers are equal.
-        /// </summary>
+        
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
             Assert.AreEqual(mp1, mp2);
@@ -272,35 +269,11 @@ namespace StackExchange.Profiling.Tests
                 }
             }
         }
-
-        /// <summary>
-        /// get the SQL CE file name for.
-        /// </summary>
-        /// <typeparam name="T">the database type</typeparam>
-        /// <returns>a string containing the file name</returns>
-        private static string GetSqlCeFileNameFor<T>()
-        {
-            return typeof(T).FullName + ".sdf";
-        }
-
-        /// <summary>
-        /// get the SQL CE connection string for.
-        /// </summary>
-        /// <typeparam name="T">the database type</typeparam>
-        /// <returns>the file name</returns>
-        private static string GetSqlCeConnectionStringFor<T>()
-        {
-            return "Data Source = " + GetSqlCeFileNameFor<T>();
-        }
-
-        /// <summary>
-        /// trim to <c>decisecond</c>.
-        /// </summary>
-        /// <param name="dateTime">The date time.</param>
-        /// <returns>the trimmed date</returns>
-        private DateTime TrimToDecisecond(DateTime dateTime)
-        {
-            return new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
-        }
+        
+        private static string GetSqlCeFileNameFor<T>() => typeof(T).FullName + ".sdf";
+        private static string GetSqlCeConnectionStringFor<T>() => "Data Source = " + GetSqlCeFileNameFor<T>();
+        
+        private DateTime TrimToDecisecond(DateTime dateTime) =>
+            new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
     }
 }

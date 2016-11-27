@@ -49,6 +49,5 @@ namespace StackExchange.Profiling.Tests
             Assert.That(mp.DurationMilliseconds == 1);
             Assert.That(mp.Stopwatch.IsRunning, Is.False);
         }
-
     }
 }

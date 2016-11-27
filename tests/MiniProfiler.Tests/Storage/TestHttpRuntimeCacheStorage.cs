@@ -2,20 +2,13 @@
 using System.Linq;
 
 using NUnit.Framework;
-
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    /// <summary>
-    /// test the HTTP runtime cache storage.
-    /// </summary>
     [TestFixture]
     public class TestHttpRuntimeCacheStorage
     {
-        /// <summary>
-        /// test we can save the same profiler twice.
-        /// </summary>
         [Test]
         public void TestWeCanSaveTheSameProfilerTwice()
         {
@@ -27,10 +20,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Assert.AreEqual(profiler.Id, guids.First());
             Assert.AreEqual(1, guids.Count());
         }
-
-        /// <summary>
-        /// test range queries.
-        /// </summary>
+        
         [Test]
         public void TestRangeQueries()
         {

@@ -11,9 +11,6 @@ namespace StackExchange.Profiling.Tests.Data
     /// </summary>
     public class CountingDbProfiler : IDbProfiler
     {
-        /// <summary>
-        /// The watch.
-        /// </summary>
         private readonly Stopwatch _watch = new Stopwatch();
 
         /// <summary>
@@ -44,40 +41,20 @@ namespace StackExchange.Profiling.Tests.Data
         /// <summary>
         /// Gets a value indicating whether is active.
         /// </summary>
-        bool IDbProfiler.IsActive
-        {
-            get { return true; }
-        }
+        bool IDbProfiler.IsActive => true;
 
         /// <summary>
         /// Gets a value indicating whether complete statement measured.
         /// </summary>
-        public bool CompleteStatementMeasured
-        {
-            get
-            {
-                return !_watch.IsRunning && _watch.ElapsedTicks > 0;
-            }
-        }
-
-        /// <summary>
-        /// execute the start.
-        /// </summary>
-        /// <param name="profiledDbCommand">The profiled DB command.</param>
-        /// <param name="executeType">The execute type.</param>
+        public bool CompleteStatementMeasured => !_watch.IsRunning && _watch.ElapsedTicks > 0;
+        
         void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
         {
             _watch.Start();
             ExecuteStartCount++;
             ErrorSql = null;
         }
-
-        /// <summary>
-        /// execute the finish.
-        /// </summary>
-        /// <param name="profiledDbCommand">The profiled DB command.</param>
-        /// <param name="executeType">The execute type.</param>
-        /// <param name="reader">The reader.</param>
+        
         void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, System.Data.Common.DbDataReader reader)
         {
             if (reader == null)
@@ -87,31 +64,13 @@ namespace StackExchange.Profiling.Tests.Data
 
             ExecuteFinishCount++;
         }
-
-        /// <summary>
-        /// The reader finish.
-        /// </summary>
-        /// <param name="reader">
-        /// The reader.
-        /// </param>
+        
         void IDbProfiler.ReaderFinish(IDataReader reader)
         {
             _watch.Stop();
             ReaderFinishCount++;
         }
-
-        /// <summary>
-        /// on error.
-        /// </summary>
-        /// <param name="profiledDbCommand">
-        /// The profiled DB command.
-        /// </param>
-        /// <param name="executeType">
-        /// The execute type.
-        /// </param>
-        /// <param name="exception">
-        /// The exception.
-        /// </param>
+        
         void IDbProfiler.OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception)
         {
             ErrorCount++;
