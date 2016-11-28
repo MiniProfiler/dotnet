@@ -11,6 +11,7 @@ namespace StackExchange.Profiling.Tests
     /// <summary>
     /// The base test.
     /// </summary>
+    [Collection("Storage")]
     public abstract class BaseTest
     {
         /// <summary>
@@ -190,8 +191,12 @@ namespace StackExchange.Profiling.Tests
                     }
 
                     var name = typeof(T).Name + "." + p.Name;
-                    Assert.True(val1 == val2, name + " have different values");
+                    Assert.True(Equals(val1, val2), $"{name} have different values ({val1} vs. {val2}");
                     Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
+                }
+                catch (Xunit.Sdk.TrueException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

@@ -9,7 +9,6 @@ namespace StackExchange.Profiling.Tests.Data
     /// <summary>
     /// The profiler test.
     /// </summary>
-    [Collection("DbProfiler")]
     public class DbProfilerTest : BaseTest
     {
         public DbProfilerTest()

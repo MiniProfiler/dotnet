@@ -10,7 +10,6 @@ namespace StackExchange.Profiling.Tests.Storage
     /// <summary>
     /// The SQL server storage test.
     /// </summary>
-    [Collection("SqlServer")]
     public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture<SqlServerStorageTest>>
     {
         private SqlCeConnection _conn;
