@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlServerCe;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using StackExchange.Profiling.Data;
 using Xunit;
 
 namespace StackExchange.Profiling.Tests
@@ -34,6 +30,12 @@ namespace StackExchange.Profiling.Tests
         {
             // allows us to manually set ticks during tests
             MiniProfiler.Settings.StopwatchProvider = () => new UnitTestStopwatch();
+        }
+
+        protected void SetDefaultProviders()
+        {
+            MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
+            MiniProfiler.Settings.Storage = new Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
         }
 
         /// <summary>

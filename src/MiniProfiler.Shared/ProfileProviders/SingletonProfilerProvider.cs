@@ -31,6 +31,13 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
-        public void Stop(bool discardResults) => _profiler?.StopImpl();
+        public void Stop(bool discardResults)
+        {
+            _profiler?.StopImpl();
+            if (discardResults)
+            {
+                _profiler = null;
+            }
+        }
     }
 }

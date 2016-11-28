@@ -1,9 +1,17 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
+    [Collection("MiniProfiler")] // using that lib's storage provider
     public class MiniProfilerTest : BaseTest
     {
+        public MiniProfilerTest()
+        {
+            MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
+            MiniProfiler.Settings.Storage = new Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+        }
+
         [Fact]
         public void Simple()
         {
@@ -16,8 +24,8 @@ namespace StackExchange.Profiling.Tests
                 var c = MiniProfiler.Current;
 
                 Assert.NotNull(c);
-                Assert.Equal(c.DurationMilliseconds, StepTimeMilliseconds);
-                Assert.Equal(c.Name, "/Test.aspx");
+                Assert.Equal(StepTimeMilliseconds, c.DurationMilliseconds);
+                Assert.Equal("/Test.aspx", c.Name);
 
                 Assert.NotNull(c.Root);
                 Assert.False(c.Root.HasChildren);

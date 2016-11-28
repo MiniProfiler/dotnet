@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests
             var mp = GetProfiler();
 
             // and shouldn't have any duration
-            Assert.Equal(mp.DurationMilliseconds, 0);
+            Assert.Equal(0, mp.DurationMilliseconds);
             Assert.False(mp.Root.HasChildren);
         }
 
@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Tests
 
             var mp = GetProfiler(childDepth: depth);
 
-            Assert.Equal(mp.DurationMilliseconds, depth);
+            Assert.Equal(depth, mp.DurationMilliseconds);
             Assert.True(mp.Root.HasChildren);
 
             var children = 0;
@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Tests
                     children++;
             }
 
-            Assert.Equal(children, depth);
+            Assert.Equal(depth, children);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace StackExchange.Profiling.Tests
                 mp = MiniProfiler.Current;
             }
 
-            Assert.Equal(mp.DurationMilliseconds, 1);
+            Assert.Equal(1, mp.DurationMilliseconds);
             Assert.False(mp.Stopwatch.IsRunning);
         }
     }

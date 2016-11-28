@@ -307,7 +307,7 @@ namespace StackExchange.Profiling
             public static IProfilerProvider ProfilerProvider { get; set; }
 
             private static Func<IStorage> _defaultStorage = () => new NullStorage();
-            private static Func<IProfilerProvider> _defaultProfilerProvider = () => new SingletonProfilerProvider();
+            private static Func<IProfilerProvider> _defaultProfilerProvider = () => new DefaultProfilerProvider();
 
             public static void SetDefaults(Func<IStorage> defaultStorage, Func<IProfilerProvider> defaultProfilerProvider)
             {

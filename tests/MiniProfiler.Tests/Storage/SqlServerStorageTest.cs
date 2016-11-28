@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data.SqlServerCe;
+﻿using System.Data.SqlServerCe;
 using System.Linq;
 
 using Dapper;
-using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Storage;
 using Xunit;
 
@@ -13,24 +11,14 @@ namespace StackExchange.Profiling.Tests.Storage
     /// The SQL server storage test.
     /// </summary>
     [Collection("SqlServer")]
-    public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture>
+    public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture<SqlServerStorageTest>>
     {
         private SqlCeConnection _conn;
         
-        public SqlServerStorageTest()
+        public SqlServerStorageTest(SqlCeStorageFixture<SqlServerStorageTest> fixture)
         {
-            var sqlToExecute = SqlServerStorage.TableCreationScript.Replace("nvarchar(max)", "ntext").Split(';').Where(s => !string.IsNullOrWhiteSpace(s));
-            var connStr = Utils.CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
-
-            MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
-            _conn = Utils.GetOpenSqlCeConnection<SqlServerStorageTest>();
+            _conn = fixture.Conn;
         }
-        
-        //[TestFixtureTearDown]
-        //public void TestFixtureTearDown()
-        //{
-        //    MiniProfiler.Settings.Storage = null;
-        //}
         
         [Fact]
         public void NoChildTimings()
@@ -57,35 +45,13 @@ namespace StackExchange.Profiling.Tests.Storage
         private void AssertMiniProfilerExists(MiniProfiler miniProfiler)
         {
             var count = _conn.Query<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id }).Single();
-            Assert.Equal(count, 1);
+            Assert.Equal(1, count);
         }
         
         private void AssertTimingsExist(MiniProfiler profiler, int expected)
         {
             var count = _conn.Query<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id }).Single();
-            Assert.Equal(count, expected);
+            Assert.Equal(expected, count);
         }
-    }
-    public class SqlCeStorageFixture : IDisposable
-    {
-        public SqlCeStorageFixture()
-        {
-            var sqlToExecute = SqlServerStorage.TableCreationScript.Replace("nvarchar(max)", "ntext").Split(';').Where(s => !string.IsNullOrWhiteSpace(s));
-            var connStr = Utils.CreateSqlCeDatabase<SqlServerStorageTest>(sqlToExecute: sqlToExecute);
-            MiniProfiler.Settings.Storage = new SqlCeStorage(connStr);
-            Conn = Utils.GetOpenSqlCeConnection<SqlServerStorageTest>();
-        }
-
-        private ProfiledDbConnection GetProfiledConnection()
-        {
-            return new ProfiledDbConnection(Utils.GetOpenSqlCeConnection<SqlServerStorageTest>(), MiniProfiler.Current);
-        }
-
-        public void Dispose()
-        {
-            Conn.Dispose();
-            MiniProfiler.Settings.Storage = null;
-        }
-        public SqlCeConnection Conn { get; private set; }
     }
 }

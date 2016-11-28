@@ -25,13 +25,13 @@ namespace StackExchange.Profiling.Tests.Data
                 var profiler = conn.CountingProfiler;
 
                 conn.Execute("insert into TestTable values (1)");
-                Assert.Equal(profiler.ExecuteStartCount, 1);
-                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.Equal(1, profiler.ExecuteStartCount);
+                Assert.Equal(1, profiler.ExecuteFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
 
                 conn.Execute("delete from TestTable where Id = 1");
-                Assert.Equal(profiler.ExecuteStartCount, 2);
-                Assert.Equal(profiler.ExecuteFinishCount, 2);
+                Assert.Equal(2, profiler.ExecuteStartCount);
+                Assert.Equal(2, profiler.ExecuteFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
@@ -47,8 +47,8 @@ namespace StackExchange.Profiling.Tests.Data
                 cmd.CommandText = "select 1";
                 cmd.ExecuteScalar();
 
-                Assert.Equal(profiler.ExecuteStartCount, 1);
-                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.Equal(1, profiler.ExecuteStartCount);
+                Assert.Equal(1, profiler.ExecuteFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
@@ -67,9 +67,9 @@ namespace StackExchange.Profiling.Tests.Data
                 {
                 }
 
-                Assert.Equal(profiler.ExecuteStartCount, 1);
-                Assert.Equal(profiler.ExecuteFinishCount, 1);
-                Assert.Equal(profiler.ReaderFinishCount, 1);
+                Assert.Equal(1, profiler.ExecuteStartCount);
+                Assert.Equal(1, profiler.ExecuteFinishCount);
+                Assert.Equal(1, profiler.ReaderFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
@@ -89,9 +89,9 @@ namespace StackExchange.Profiling.Tests.Data
 
                 var profiler = conn.CountingProfiler;
 
-                Assert.Equal(profiler.ErrorCount, 1);
-                Assert.Equal(profiler.ExecuteStartCount, 1);
-                Assert.Equal(profiler.ExecuteFinishCount, 1);
+                Assert.Equal(1, profiler.ErrorCount);
+                Assert.Equal(1, profiler.ExecuteStartCount);
+                Assert.Equal(1, profiler.ExecuteFinishCount);
                 Assert.Equal(profiler.ErrorSql, BadSql);
 
                 try
@@ -100,9 +100,9 @@ namespace StackExchange.Profiling.Tests.Data
                 }
                 catch (DbException) { /* yep */ }
 
-                Assert.Equal(profiler.ErrorCount, 2);
-                Assert.Equal(profiler.ExecuteStartCount, 2);
-                Assert.Equal(profiler.ExecuteFinishCount, 2);
+                Assert.Equal(2, profiler.ErrorCount);
+                Assert.Equal(2, profiler.ExecuteStartCount);
+                Assert.Equal(2, profiler.ExecuteFinishCount);
                 Assert.Equal(profiler.ErrorSql, BadSql);
 
                 try
@@ -115,9 +115,9 @@ namespace StackExchange.Profiling.Tests.Data
                 }
                 catch (DbException) { /* yep */ }
 
-                Assert.Equal(profiler.ExecuteStartCount, 3);
-                Assert.Equal(profiler.ExecuteFinishCount, 3);
-                Assert.Equal(profiler.ErrorCount, 3);
+                Assert.Equal(3, profiler.ExecuteStartCount);
+                Assert.Equal(3, profiler.ExecuteFinishCount);
+                Assert.Equal(3, profiler.ErrorCount);
                 Assert.Equal(profiler.ErrorSql, BadSql);
             }
         }

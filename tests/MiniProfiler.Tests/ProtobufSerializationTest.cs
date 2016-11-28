@@ -27,7 +27,6 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-
         [Fact]
         public void CustomTimings()
         {
