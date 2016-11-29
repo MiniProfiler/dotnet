@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -169,15 +168,6 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
             }
         }
 
-        private void FlattenTimings(Timing timing, List<Timing> timingsCollection)
-        {
-            timingsCollection.Add(timing);
-            if (timing.HasChildren)
-            {
-                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
-            }
-        }
-
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
@@ -185,18 +175,25 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <returns>the mini profiler.</returns>
         public override MiniProfiler Load(Guid id)
         {
+            MiniProfiler result;
             using (var conn = GetConnection())
             {
-                var idParameter = new { id };
-                var result = LoadProfilerRecord(conn, idParameter);
-
-                if (result != null)
+                using (var multi = conn.QueryMultiple(SqlStatements, new { id }))
                 {
-                    // HACK: stored dates are utc, but are pulled out as local time
-                    result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
+                    result = multi.Read<MiniProfiler>().SingleOrDefault();
+                    var timings = multi.Read<Timing>().ToList();
+                    var clientTimings = multi.Read<ClientTiming>().ToList();
+
+                    ConnectTimings(result, timings, clientTimings);
                 }
-                return result;
             }
+
+            if (result != null)
+            {
+                // HACK: stored dates are utc, but are pulled out as local time
+                result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
+            }
+            return result;
         }
         
         /// <summary>
@@ -232,16 +229,14 @@ Update MiniProfilers
         /// <returns>the list of keys.</returns>
         public override List<Guid> GetUnviewedIds(string user)
         {
-            const string Sql = @"
+            using (var conn = GetConnection())
+            {
+                return conn.Query<Guid>(@"
   Select Id
     From MiniProfilers
    Where [User] = @user
      And HasUserViewed = 0
-Order By Started";
-
-            using (var conn = GetConnection())
-            {
-                return conn.Query<Guid>(Sql, new { user }).ToList();
+Order By Started", new { user }).ToList();
             }
         }
 
@@ -285,59 +280,22 @@ Select Top {=maxResults} Id
         /// <returns>Related MiniProfiler object</returns>
         private MiniProfiler LoadProfilerRecord(DbConnection connection, object keyParameter)
         {
-            MiniProfiler profiler;
             using (var multi = connection.QueryMultiple(SqlStatements, keyParameter))
             {
-                profiler = multi.Read<MiniProfiler>().SingleOrDefault();
+                var profiler = multi.Read<MiniProfiler>().SingleOrDefault();
                 var timings = multi.Read<Timing>().ToList();
                 var clientTimings = multi.Read<ClientTiming>().ToList();
 
-                if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
-                {
-                    var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
-                    if (rootTiming != null)
-                    {
-                        profiler.Root = rootTiming;
-                        timings.ForEach(x => x.Profiler = profiler);
-                        timings.Remove(rootTiming);
-                        var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
-                        PopulateChildTimings(rootTiming, timingsLookupByParent);
-                    }
-                    if (clientTimings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
-                    {
-                        profiler.ClientTimings = new ClientTimings
-                        {
-                            RedirectCount = profiler.ClientTimingsRedirectCount ?? 0, 
-                            Timings = clientTimings
-                        };
-                    }
-                }
-            }
-            return profiler;
-        }
+                ConnectTimings(profiler, timings, clientTimings);
 
-        /// <summary>
-        /// Build the subtree of <see cref="Timing"/> objects with <paramref name="parent"/> at the top.
-        /// Used recursively.
-        /// </summary>
-        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated.</param>
-        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent.</param>
-        private void PopulateChildTimings(Timing parent, ILookup<Guid, Timing> timingsLookupByParent)
-        {
-            if (timingsLookupByParent.Contains(parent.Id))
-            {
-                foreach (var timing in timingsLookupByParent[parent.Id].OrderBy(x => x.StartMilliseconds))
-                {
-                    parent.AddChild(timing);
-                    PopulateChildTimings(timing, timingsLookupByParent);
-                }
+                return profiler;
             }
         }
 
         /// <summary>
         /// Returns a connection to Sql Server.
         /// </summary>
-        protected virtual DbConnection GetConnection() => new SqlConnection(ConnectionString);
+        protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
         
         /// <summary>
         /// Creates needed tables. Run this once on your database.
@@ -345,7 +303,6 @@ Select Top {=maxResults} Id
         /// <remarks>
         /// Works in SQL server and <c>sqlite</c> (with documented removals).
         /// </remarks>
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
         public static readonly string TableCreationScript =
                 @"
                 create table MiniProfilers
@@ -399,6 +356,5 @@ Select Top {=maxResults} Id
                  create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);
                  create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);             
                 ";
-
     }
 }

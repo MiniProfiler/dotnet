@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NET45
-using System.Configuration;
-#endif
+using System.Data.Common;
+using System.Linq;
 
 namespace StackExchange.Profiling.Storage
 {
@@ -25,6 +24,11 @@ namespace StackExchange.Profiling.Storage
         {
             ConnectionString = connectionString;
         }
+
+        /// <summary>
+        /// Returns a connection to the data store.
+        /// </summary>
+        protected abstract DbConnection GetConnection();
 
         /// <summary>
         /// Saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.
@@ -73,5 +77,59 @@ namespace StackExchange.Profiling.Storage
         /// <param name="orderBy">order By.</param>
         /// <returns>the list of GUID keys</returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
+
+        protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
+        {
+            if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
+            {
+                var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
+                if (rootTiming != null)
+                {
+                    profiler.Root = rootTiming;
+                    timings.ForEach(x => x.Profiler = profiler);
+                    timings.Remove(rootTiming);
+                    var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
+                    PopulateChildTimings(rootTiming, timingsLookupByParent);
+                }
+                if (clientTimings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
+                {
+                    profiler.ClientTimings = new ClientTimings
+                    {
+                        RedirectCount = profiler.ClientTimingsRedirectCount ?? 0,
+                        Timings = clientTimings
+                    };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Build the subtree of <see cref="Timing"/> objects with <paramref name="parent"/> at the top.
+        /// Used recursively.
+        /// </summary>
+        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated.</param>
+        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent.</param>
+        private void PopulateChildTimings(Timing parent, ILookup<Guid, Timing> timingsLookupByParent)
+        {
+            if (timingsLookupByParent.Contains(parent.Id))
+            {
+                foreach (var timing in timingsLookupByParent[parent.Id].OrderBy(x => x.StartMilliseconds))
+                {
+                    parent.AddChild(timing);
+                    PopulateChildTimings(timing, timingsLookupByParent);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Flattems the timings down into a single list.
+        /// </summary>
+        protected void FlattenTimings(Timing timing, List<Timing> timingsCollection)
+        {
+            timingsCollection.Add(timing);
+            if (timing.HasChildren)
+            {
+                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlServerCe;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -169,16 +168,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                 });
             }
         }
-
-        private void FlattenTimings(Timing timing, List<Timing> timingsCollection)
-        {
-            timingsCollection.Add(timing);
-            if (timing.HasChildren)
-            {
-                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
-            }
-        }
-
+        
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
@@ -186,18 +176,24 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <returns>the mini profiler.</returns>
         public override MiniProfiler Load(Guid id)
         {
+            MiniProfiler result;
             using (var conn = GetConnection())
             {
-                var result = LoadProfilerRecord(conn, id);
+                // SQL CE can't do a multi-query
+                var param = new { id };
+                result = conn.QuerySingleOrDefault<MiniProfiler>("SELECT * FROM MiniProfilers WHERE Id = @id", param);
+                var timings = conn.Query<Timing>("SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilliseconds", param).AsList();
+                var clientTimings = conn.Query<ClientTiming>("SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start", param).AsList();
 
-                if (result != null)
-                {
-                    // HACK: stored dates are utc, but are pulled out as local time
-                    result.Started = DateTime.SpecifyKind(result.Started, DateTimeKind.Utc);
-                }
-
-                return result;
+                ConnectTimings(result, timings, clientTimings);
             }
+
+            if (result != null)
+            {
+                // HACK: stored dates are utc, but are pulled out as local time
+                result.Started = DateTime.SpecifyKind(result.Started, DateTimeKind.Utc);
+            }
+            return result;
         }
 
         /// <summary>
@@ -275,66 +271,11 @@ Select Top {=maxResults} Id
                 return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
             }
         }
-        
-        /// <summary>
-        /// Load individual MiniProfiler
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="keyParameter">The id Parameter.</param>
-        /// <returns>Related MiniProfiler object</returns>
-        private MiniProfiler LoadProfilerRecord(DbConnection connection, Guid id)
-        {
-            // SQL CE can't do a multi-query
-            var param = new { id };
-            var profiler = connection.QuerySingleOrDefault<MiniProfiler>("SELECT * FROM MiniProfilers WHERE Id = @id", param);
-            var timings = connection.Query<Timing>("SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilliseconds", param).AsList();
-            var clientTimings = connection.Query<ClientTiming>("SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start", param).AsList();
-
-            if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
-            {
-                var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
-                if (rootTiming != null)
-                {
-                    profiler.Root = rootTiming;
-                    timings.ForEach(x => x.Profiler = profiler);
-                    timings.Remove(rootTiming);
-                    var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
-                    PopulateChildTimings(rootTiming, timingsLookupByParent);
-                }
-                if (clientTimings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
-                {
-                    profiler.ClientTimings = new ClientTimings
-                    {
-                        RedirectCount = profiler.ClientTimingsRedirectCount ?? 0, 
-                        Timings = clientTimings
-                    };
-                }
-            }
-            return profiler;
-        }
-
-        /// <summary>
-        /// Build the subtree of <see cref="Timing"/> objects with <paramref name="parent"/> at the top.
-        /// Used recursively.
-        /// </summary>
-        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated.</param>
-        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent.</param>
-        private void PopulateChildTimings(Timing parent, ILookup<Guid, Timing> timingsLookupByParent)
-        {
-            if (timingsLookupByParent.Contains(parent.Id))
-            {
-                foreach (var timing in timingsLookupByParent[parent.Id].OrderBy(x => x.StartMilliseconds))
-                {
-                    parent.AddChild(timing);
-                    PopulateChildTimings(timing, timingsLookupByParent);
-                }
-            }
-        }
 
         /// <summary>
         /// Returns a connection to Sql Server.
         /// </summary>
-        protected virtual DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
+        protected override DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
         
         /// <summary>
         /// Creates needed tables. Run this once on your database.
@@ -342,7 +283,6 @@ Select Top {=maxResults} Id
         /// <remarks>
         /// Works in SQL server and <c>sqlite</c> (with documented removals).
         /// </remarks>
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
         public static readonly string[] TableCreationScripts = new[] {
             @"create table MiniProfilers
                   (
@@ -387,6 +327,5 @@ Select Top {=maxResults} Id
             @"create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);",
             @"create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);"
         };
-
     }
 }
