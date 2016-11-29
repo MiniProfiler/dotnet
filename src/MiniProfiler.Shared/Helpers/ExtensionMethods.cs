@@ -69,7 +69,7 @@ namespace StackExchange.Profiling.Helpers
         {
             return o != null
 #if NET45
-                ? new JavaScriptSerializer().Serialize(o) : null;
+                ? new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o) : null;
 #else
                 ? JsonConvert.SerializeObject(o) : null;
 #endif
