@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Shared", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Storage.SqlServer", "src\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj", "{D240FC79-651F-4107-95EC-30702AE610DB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Storage.SqlServerCe", "src\MiniProfiler.Storage.SqlServerCe\MiniProfiler.Storage.SqlServerCe.csproj", "{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,6 +205,24 @@ Global
 		{D240FC79-651F-4107-95EC-30702AE610DB}.ReleaseNuGet|x64.Build.0 = Release|x64
 		{D240FC79-651F-4107-95EC-30702AE610DB}.ReleaseNuGet|x86.ActiveCfg = Release|x86
 		{D240FC79-651F-4107-95EC-30702AE610DB}.ReleaseNuGet|x86.Build.0 = Release|x86
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|x64.Build.0 = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Debug|x86.Build.0 = Debug|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|x64.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|x64.Build.0 = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.Release|x86.Build.0 = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|Any CPU.Build.0 = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|x64.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|x64.Build.0 = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|x86.ActiveCfg = Release|Any CPU
+		{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}.ReleaseNuGet|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data.SqlServerCe;
 using System.IO;
 
+using Dapper;
 using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.Tests
@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Tests
         /// <summary>
         /// Creates a <c>SqlCe</c> file database named after <typeparamref name="T"/>, returning the connection string to the database.
         /// </summary>
-        public static string CreateSqlCeDatabase<T>(bool deleteIfExists = false, IEnumerable<string> sqlToExecute = null)
+        public static string CreateSqlCeDatabase<T>(bool deleteIfExists = false, string[] sqlToExecute = null)
         {
             var filename = GetSqlCeFileNameFor<T>();
             var connString = GetSqlCeConnectionStringFor<T>();
@@ -37,15 +37,11 @@ namespace StackExchange.Profiling.Tests
 
             if (sqlToExecute != null)
             {
-                using (var conn = GetOpenSqlCeConnection<T>())
+                foreach (var statement in sqlToExecute)
                 {
-                    foreach (var sql in sqlToExecute)
+                    using (var conn = GetOpenSqlCeConnection<T>())
                     {
-                        using (var cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = sql;
-                            cmd.ExecuteNonQuery();
-                        }
+                        conn.Execute(statement);
                     }
                 }
             }

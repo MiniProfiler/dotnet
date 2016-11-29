@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+
 using Dapper;
 using StackExchange.Profiling.Storage;
-using System.Text;
 
 namespace SampleWeb.Helpers
 {
@@ -88,7 +89,7 @@ Select Id
             sb.AppendLine("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
             sb.Append("LIMIT(").Append(maxResults).AppendLine(")");
 
-            using (var conn = GetOpenConnection())
+            using (var conn = GetConnection())
             {
                 return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
             }
