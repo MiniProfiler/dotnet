@@ -129,19 +129,21 @@ namespace StackExchange.Profiling
                 return (new HtmlString("<!-- Could not find 'include.partial.html' -->"));
             }
 
+            Func<bool, string> toJs = b => b ? "true" : "false";
+
             var sb = new StringBuilder(format);
               sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
                 .Replace("{version}", MiniProfiler.Settings.Version)
                 .Replace("{currentId}", profiler.Id.ToString())
                 .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
                 .Replace("{position}", (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower())
-                .Replace("{showTrivial}", (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial).ToJs())
-                .Replace("{showChildren}", (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren).ToJs())
+                .Replace("{showTrivial}", toJs(showTrivial ?? MiniProfiler.Settings.PopupShowTrivial))
+                .Replace("{showChildren}", toJs(showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren))
                 .Replace("{maxTracesToShow}", (maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString())
-                .Replace("{showControls}", (showControls ?? MiniProfiler.Settings.ShowControls).ToJs())
-                .Replace("{authorized}", authorized.ToJs())
+                .Replace("{showControls}", toJs(showControls ?? MiniProfiler.Settings.ShowControls))
+                .Replace("{authorized}", toJs(authorized))
                 .Replace("{toggleShortcut}", MiniProfiler.Settings.PopupToggleKeyboardShortcut)
-                .Replace("{startHidden}", (startHidden ?? MiniProfiler.Settings.PopupStartHidden).ToJs())
+                .Replace("{startHidden}", toJs(startHidden ?? MiniProfiler.Settings.PopupStartHidden))
                 .Replace("{trivialMilliseconds}", MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString());
             return new HtmlString(sb.ToString());
         }

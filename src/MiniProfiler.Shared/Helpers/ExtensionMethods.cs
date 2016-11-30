@@ -25,9 +25,6 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Chops off a string at the specified length and accounts for smaller length
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="maxLength"></param>
-        /// <returns></returns>
         public static string Truncate(this string s, int maxLength)
         {
             return s?.Length > maxLength ? s.Substring(0, maxLength) : s;
@@ -40,24 +37,6 @@ namespace StackExchange.Profiling.Helpers
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "/+$", string.Empty) + "/";
-        }
-
-        /// <summary>
-        /// Removes any leading / characters from a path
-        /// </summary>
-        public static string RemoveLeadingSlash(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) return string.Empty;
-            return Regex.Replace(input, "^/+", string.Empty);
-        }
-
-        /// <summary>
-        /// Removes any leading / characters from a path
-        /// </summary>
-        public static string RemoveTrailingSlash(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) return string.Empty;
-            return Regex.Replace(input, "/+$", string.Empty);
         }
 
         /// <summary>
@@ -89,10 +68,5 @@ namespace StackExchange.Profiling.Helpers
                 ? JsonConvert.DeserializeObject<T>(s) : null;
 #endif
         }
-
-        /// <summary>
-        /// Returns a lowercase string of <paramref name="b"/> suitable for use in javascript.
-        /// </summary>
-        public static string ToJs(this bool b) => b ? "true" : "false";
     }
 }
