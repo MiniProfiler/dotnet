@@ -28,9 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.RavenDb", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Shared", "src\MiniProfiler.Shared\MiniProfiler.Shared.csproj", "{BA40A569-BEE2-4E39-80A7-763BC15A9077}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Storage.SqlServer", "src\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj", "{D240FC79-651F-4107-95EC-30702AE610DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.SqlServer", "src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj", "{D240FC79-651F-4107-95EC-30702AE610DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Storage.SqlServerCe", "src\MiniProfiler.Storage.SqlServerCe\MiniProfiler.Storage.SqlServerCe.csproj", "{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.SqlServerCe", "src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj", "{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -10,8 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <!-- Maintaining backwards compatability, maybe. Or maybe we point people to the new lib in the major break? -->
-    <ProjectReference Include="..\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

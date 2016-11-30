@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFramework\MiniProfiler.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Mvc\MiniProfiler.Mvc.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <ProjectReference Include="..\..\src\MiniProfiler.Storage.SqlServer\MiniProfiler.Storage.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <PackageReference Include="EntityFramework">
       <Version>6.1.3</Version>
     </PackageReference>
