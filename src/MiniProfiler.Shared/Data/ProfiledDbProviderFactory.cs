@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 #if NET45
 using System.Security;
+using System.Security.Permissions;
 #endif
 
 namespace StackExchange.Profiling.Data
@@ -75,7 +76,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;
 
-// TODO: These are added back in netstandard1.7
+        // TODO: These are added back in netstandard1.7
 #if NET45
         /// <summary>
         /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
@@ -106,7 +107,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>Returns a new instance of the provider's class that implements the provider's version of the <see cref="CodeAccessPermission"/> class.</summary>
         /// <param name="state">One of the <see cref="PermissionState"/> values.</param>
         /// <returns>A <see cref="CodeAccessPermission"/> object for the specified <see cref="PermissionState"/>.</returns>
-        public override CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state) => _tail.CreatePermission(state);
+        public override CodeAccessPermission CreatePermission(PermissionState state) => _tail.CreatePermission(state);
 #endif
     }
 }

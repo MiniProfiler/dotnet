@@ -78,6 +78,12 @@ namespace StackExchange.Profiling.Storage
         /// <returns>the list of GUID keys</returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
 
+        /// <summary>
+        /// Connects timings from the database, shared here for use in multiple providers.
+        /// </summary>
+        /// <param name="profiler">The profiler to connect the timing tree to.</param>
+        /// <param name="timings">The raw list of Timings to construct the tree from.</param>
+        /// <param name="clientTimings">The client timings to connect to the profiler.</param>
         protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
         {
             if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())

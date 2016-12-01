@@ -170,7 +170,7 @@ namespace StackExchange.Profiling
         /// Gets or sets a string identifying the user/client that is profiling this request.
         /// </summary>
         /// <remarks>
-        /// If this is not set manually at some point, the <see cref="IUserProvider"/> implementation will be used;
+        /// If this is not set manually at some point, the IUserProvider implementation will be used;
         /// by default, this will be the current request's IP address.
         /// </remarks>
         [DataMember(Order = 9)]

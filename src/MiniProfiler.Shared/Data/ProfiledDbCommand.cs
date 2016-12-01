@@ -107,7 +107,10 @@ namespace StackExchange.Profiling.Data
             Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
             return action;
         }
-        
+
+        /// <summary>
+        /// Gets or sets the text command to run against the data source.
+        /// </summary>
         public override string CommandText
         {
             get { return _command.CommandText; }

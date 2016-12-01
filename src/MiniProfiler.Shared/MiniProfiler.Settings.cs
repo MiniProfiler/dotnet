@@ -302,13 +302,19 @@ namespace StackExchange.Profiling
             /// The <see cref="IProfilerProvider"/> class that is used to run MiniProfiler
             /// </summary>
             /// <remarks>
-            /// If not set explicitly, will default to <see cref="WebRequestProfilerProvider"/>
+            /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
             /// </remarks>
             public static IProfilerProvider ProfilerProvider { get; set; }
 
             private static Func<IStorage> _defaultStorage = () => new NullStorage();
             private static Func<IProfilerProvider> _defaultProfilerProvider = () => new DefaultProfilerProvider();
 
+            /// <summary>
+            /// Sets the default provider generators for MiniProfiler. 
+            /// This allows inheriting libraries to set their default providers.
+            /// </summary>
+            /// <param name="defaultStorage">The getter for the default storage profiler to use.</param>
+            /// <param name="defaultProfilerProvider">The getter for the default profiler profiler to use.</param>
             public static void SetDefaults(Func<IStorage> defaultStorage, Func<IProfilerProvider> defaultProfilerProvider)
             {
                 _defaultStorage = defaultStorage;
