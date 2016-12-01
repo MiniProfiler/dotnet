@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>MiniProfiler.WebApi</id>
+    <version>3.0.10</version>
+    <authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver, Trevor Pilley</authors>
+    <owners>Marc Gravell, Jarrod Dixon Yaakov Ellis, Nick Craver</owners>
+    <description>MiniProfiler extensions and helpers for WebApi 4+</description>
+    <projectUrl>http://miniprofiler.com</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>profiler sql webapi asp.net performance profiling timing</tags>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="MiniProfiler" version="3.0.10" />
+      <dependency id="Microsoft.AspNet.WebApi.Core" version="4.0.30506.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="StackExchange.Profiling.WebApi\bin\Release\MiniProfiler.WebApi.*" target="lib\net40" />
+  </files>
+</package>
