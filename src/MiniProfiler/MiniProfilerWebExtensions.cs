@@ -14,6 +14,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the <c>css</c> and <c>javascript</c> includes needed to display the MiniProfiler results UI.
         /// </summary>
+        /// <param name="profiler">The profiler this extension method is called on</param>
         /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
         /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
         /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>

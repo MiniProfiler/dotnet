@@ -3,6 +3,9 @@ using System.Web;
 
 namespace StackExchange.Profiling
 {
+    /// <summary>
+    /// Contains the settings specific to web applications (not in MiniProfiler.Standard)
+    /// </summary>
     public static class MiniProfilerWebSettings
     {
         /// <summary>

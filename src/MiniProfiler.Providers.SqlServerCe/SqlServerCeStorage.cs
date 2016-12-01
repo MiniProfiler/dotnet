@@ -25,7 +25,7 @@ SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilli
 SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string.
+        /// Initializes a new instance of the <see cref="SqlServerCeStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">
         /// The connection string to use.
