@@ -5,18 +5,18 @@
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\MiniProfiler.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <!-- .nupkg Metadata -->
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <Description>Lightweight mini-profiler, in particular designed for ASP.NET MVC sites</Description>
+    <Description>Shared library for all MiniProfiler libraries</Description>
     <PackageId>MiniProfiler.Shared</PackageId>
     <PackageVersion>4.0.0-alpha1</PackageVersion>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
-    <PackageTags>profiler sql mvc asp.net performance profiling timing</PackageTags>
+    <PackageTags></PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
