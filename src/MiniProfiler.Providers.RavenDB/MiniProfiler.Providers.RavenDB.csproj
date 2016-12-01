@@ -2,11 +2,22 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
-    <AssemblyName>MiniProfiler.RavenDb</AssemblyName>
+    <AssemblyName>MiniProfiler.Providers.RavenDB</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <!-- .nupkg Metadata -->
+    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
+    <Description>MiniProfiler: Profilers for RavenDB</Description>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageVersion>4.0.0-alpha1</PackageVersion>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
+    <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
+    <PackageTags>profiler performance profiling timing raven ravendb</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
