@@ -1,13 +1,12 @@
-﻿namespace SampleWeb.Controllers
+﻿using System;
+using System.Data.Common;
+using System.Web.Mvc;
+
+using Dapper;
+using StackExchange.Profiling;
+
+namespace SampleWeb.Controllers
 {
-    using System;
-    using System.Data.Common;
-    using System.Web.Mvc;
-
-    using Dapper;
-
-    using StackExchange.Profiling;
-
     /// <summary>
     /// The base controller.
     /// </summary>

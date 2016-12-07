@@ -4,9 +4,18 @@
     <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>SampleWeb</AssemblyName>
     <RootNamespace>SampleWeb</RootNamespace>
-    <ProjectTypeGuids>{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <SchemaVersion>2.0</SchemaVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp />
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
@@ -14,6 +23,11 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Mvc\MiniProfiler.Mvc.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper">
+      <Version>1.50.2</Version>
+    </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.1.3</Version>
     </PackageReference>
@@ -26,23 +40,17 @@
     <PackageReference Include="System.Data.SQLite">
       <Version>1.0.103</Version>
     </PackageReference>
-    <PackageReference Include="System.Data.SQLite.Core">
-      <Version>1.0.103</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite.EF6">
-      <Version>1.0.103</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite.Linq">
-      <Version>1.0.103</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.SqlServer.Compact">
       <Version>4.0.8876.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
-      <Version>4.0.40804</Version>
+      <Version>5.2.3</Version>
     </PackageReference>
     <PackageReference Include="WebActivatorEx">
       <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.Infrastructure">
+      <Version>1.0.0</Version>
     </PackageReference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -52,7 +60,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
@@ -70,64 +77,22 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\EntityFramework.SqlServerCompact.cs" />
+    <Content Include="*.config" />
+    <Content Include="App_Data\*" />
+    <Compile Include="App_Start\*.cs" />
+    <Content Include="Content\**\*" />
     <Compile Include="Controllers\*.cs" />
-    <Compile Include="EfModelFirst\EfModelFirstContext.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EfModelFirstContext.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EfModelFirst\EfModelFirstContext.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EfModelFirstContext.tt</DependentUpon>
-    </Compile>
-    <Compile Include="EfModelFirst\EfModelFirstContext.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="EfModelFirst\ModelPerson.cs">
-      <DependentUpon>EfModelFirstContext.tt</DependentUpon>
-    </Compile>
+    <Compile Include="EFCodeFirst\*.cs" />
+    <Compile Include="EfModelFirst\**\*.cs" />
+    <Content Include="Global.asax" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="EFCodeFirst\EFContext.cs" />
-    <Compile Include="EFCodeFirst\Person.cs" />
-    <Compile Include="Helpers\SqliteMiniProfilerStorage.cs" />
-    <Compile Include="Service References\SampleService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
+    <Compile Include="Helpers\*.cs" />
+    <Content Include="Scripts\*.js" />
+    <Content Include="Views\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\SampleEfModelFirst.mdf" />
-    <Content Include="App_Data\SampleEfModelFirst_log.ldf">
-      <DependentUpon>SampleEfModelFirst.mdf</DependentUpon>
-    </Content>
-    <Content Include="Scripts\*.js" />
-    <Content Include="Views\**\*.cshtml" />
-    <Content Include="Content\progress-dots.gif" />
-    <Content Include="Global.asax" />
-    <None Include="App.Config" />
-    <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
-    <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
-    <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
-    <None Include="_bin_deployableAssemblies\x86\sqlceer40EN.dll" />
-    <None Include="_bin_deployableAssemblies\x86\sqlcecompact40.dll" />
-    <None Include="_bin_deployableAssemblies\x86\sqlceca40.dll" />
-    <None Include="_bin_deployableAssemblies\x86\Microsoft.VC90.CRT\README_ENU.txt" />
-    <None Include="_bin_deployableAssemblies\x86\Microsoft.VC90.CRT\msvcr90.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlcese40.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlceqp40.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlceme40.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlceer40EN.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlcecompact40.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\sqlceca40.dll" />
-    <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\README_ENU.txt" />
-    <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\msvcr90.dll" />
     <EntityDeploy Include="EfModelFirst\EfModelFirstContext.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>EfModelFirstContext.Designer.cs</LastGenOutput>
@@ -145,63 +110,32 @@
       <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
       <LastGenOutput>EfModelFirstContext.cs</LastGenOutput>
     </Content>
-    <None Include="Service References\SampleService\SampleService.disco" />
-    <None Include="Service References\SampleService\configuration91.svcinfo" />
-    <None Include="Service References\SampleService\configuration.svcinfo" />
-    <None Include="Service References\SampleService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Content\Site.css" />
-    <Content Include="Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="Service References\SampleService\SampleService.wsdl" />
-    <None Include="Service References\SampleService\SampleService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SampleService\SampleService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SampleService\SampleWeb.SampleService.RouteHit.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <Content Include="Views\WcfSample\About.cshtml" />
-    <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
-    <None Include="_bin_deployableAssemblies\x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\ResultsAuthorization.cshtml" />
-    <Content Include="Views\Home\XHTML.cshtml" />
-    <Content Include="Views\WcfSample\Index.cshtml" />
-    <None Include="Service References\SampleService\SampleService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\SampleService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
+     <!-- This is to work around dotnet restore fail with web projects in newer .csproj-->
+    <MSBuildExtensionsPath32 Condition="'$(BuildingInsideVisualStudio)' != 'true'">C:\Program Files (x86)\MSBuild</MSBuildExtensionsPath32>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>64409</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:64409/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

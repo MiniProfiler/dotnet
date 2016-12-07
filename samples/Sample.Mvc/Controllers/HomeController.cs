@@ -1,18 +1,18 @@
-﻿using SampleWeb.EfModelFirst;
+﻿using System;
+using System.Data.Common;
+using System.Linq;
+using System.Threading;
+using System.Web.Mvc;
+using Dapper;
+//using EFCodeFirst;
+using StackExchange.Profiling;
+
+using SampleWeb.EfModelFirst;
 using SampleWeb.Helpers;
 using StackExchange.Profiling.Data;
 
 namespace SampleWeb.Controllers
 {
-    using System;
-    using System.Data.Common;
-    using System.Linq;
-    using System.Threading;
-    using System.Web.Mvc;
-    using Dapper;
-    using EFCodeFirst;
-    using StackExchange.Profiling;
-
     /// <summary>
     /// The home controller.
     /// </summary>
