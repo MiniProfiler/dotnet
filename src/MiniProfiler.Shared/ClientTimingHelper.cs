@@ -8,7 +8,7 @@
         /// <summary>
         /// This code needs to be inserted in the page before client timings work
         /// </summary>
-        public const string InitScript = "<script type='text/javascript'>mPt=function(){var t=[];return{results:function(){return t},probe:function(n){t.push({d:new Date(),n:n})},flush:function(){t=[]}}}()</script>";
+        public const string InitScript = "<script>mPt=function(){var t=[];return{results:function(){return t},probe:function(n){t.push({d:new Date(),n:n})},flush:function(){t=[]}}}()</script>";
 
         /// <summary>
         /// You can wrap an html block with timing wrappers using this helper
@@ -18,7 +18,7 @@
             if (MiniProfiler.Current != null)
             {
                 name = name.Replace("'", "\\'");
-                var probe = "<script type='text/javascript'>mPt.probe('" + name + "')</script>";
+                var probe = "<script>mPt.probe('" + name + "')</script>";
                 html = probe + html + probe;
             }
 

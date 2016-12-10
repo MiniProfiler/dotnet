@@ -35,6 +35,8 @@ namespace StackExchange.Profiling
         {
             ClientTimings timing = null;
             long navigationStart;
+            // AJAX requests won't have client timings
+            if (!form.ContainsKey(TimingPrefix + "navigationStart]")) return timing;
             long.TryParse(form[TimingPrefix + "navigationStart]"], out navigationStart);
             if (navigationStart > 0)
             {

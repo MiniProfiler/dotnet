@@ -112,7 +112,6 @@
     </Content>
   </ItemGroup>
   <PropertyGroup>
-     <!-- This is to work around dotnet restore fail with web projects in newer .csproj-->
     <MSBuildExtensionsPath32 Condition="'$(BuildingInsideVisualStudio)' != 'true'">C:\Program Files (x86)\MSBuild</MSBuildExtensionsPath32>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -121,7 +120,7 @@
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>
-    <VisualStudio>
+    <VisualStudio xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
