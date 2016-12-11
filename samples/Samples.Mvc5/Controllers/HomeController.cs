@@ -13,9 +13,6 @@ using Samples.Mvc5.Helpers;
 
 namespace Samples.Mvc5.Controllers
 {
-    /// <summary>
-    /// The home controller.
-    /// </summary>
     public class HomeController : BaseController
     {
         /// <summary>
@@ -39,34 +36,26 @@ namespace Samples.Mvc5.Controllers
         }
 
         /// <summary>
-        /// the default view, home page.
+        /// the default view, home page, top right orientation.
         /// </summary>
-        /// <returns>the home page view.</returns>
-        public ActionResult Index()
-        {
-            DefaultActions();
-            return View();
-        }        
-        
+        public ActionResult Index() => HomeWithPosition(RenderPosition.Right);
+        /// <summary>
+        /// the default view, home page, top left orientation.
+        /// </summary>
+        public ActionResult TopLeft() => HomeWithPosition(RenderPosition.Left);
         /// <summary>
         /// the default view, home page, bottom left orientation.
         /// </summary>
-        /// <returns>the home page view.</returns>
-        public ActionResult BottomLeft()
-        {
-            DefaultActions();
-            ViewBag.Orientation = RenderPosition.BottomLeft;
-            return View("Index");
-        }
-
+        public ActionResult BottomLeft() => HomeWithPosition(RenderPosition.BottomLeft);
         /// <summary>
         /// the default view, home page, bottom right orientation.
         /// </summary>
-        /// <returns>the home page view.</returns>
-        public ActionResult BottomRight()
+        public ActionResult BottomRight() => HomeWithPosition(RenderPosition.BottomRight);
+
+        private ActionResult HomeWithPosition(RenderPosition pos)
         {
             DefaultActions();
-            ViewBag.Orientation = RenderPosition.BottomRight;
+            ViewBag.Orientation = pos;
             return View("Index");
         }
 
@@ -140,10 +129,7 @@ namespace Samples.Mvc5.Controllers
         /// results authorization.
         /// </summary>
         /// <returns>The <see cref="ActionResult"/>.</returns>
-        public ActionResult ResultsAuthorization()
-        {
-            return View();
-        }
+        public ActionResult ResultsAuthorization() => View();
 
         /// <summary>
         /// fetch the route hits.
@@ -233,10 +219,7 @@ namespace Samples.Mvc5.Controllers
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        public ActionResult Xhtml()
-        {
-            return View();
-        }
+        public ActionResult Xhtml() => View();
 
         public ActionResult EfModelFirst()
         {

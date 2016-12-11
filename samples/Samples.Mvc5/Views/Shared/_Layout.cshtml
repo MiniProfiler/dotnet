@@ -1,8 +1,6 @@
 ﻿@using StackExchange.Profiling;
 @using StackExchange.Profiling.Mvc
 @{
-    var profiler = MiniProfiler.Current;
-    
     // allows us to test out starting a profiler hidden - use ALT + P to toggle display of results
     var startHidden = !string.IsNullOrEmpty(Request.QueryString["startHidden"]);
 }
@@ -11,40 +9,49 @@
 <head>
     @this.InitClientTimings()
     @this.TimeScript("jQuery 3.1.1", @<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>)
-
-@using (profiler.Step("<head> rendering"))
-{ 
-    <title>@ViewBag.Title - MVC MiniProfiler Demo</title>
-    @(this.TimeScript("Our CSS", @<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />))
-    @RenderSection("head", required:false)
-}
+    @using (MiniProfiler.Current.Step("<head> rendering"))
+    {
+        <title>@ViewBag.Title - MVC MiniProfiler Demo</title>
+        @(this.TimeScript("Our CSS", @Styles.Render("~/Content/css")));
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("head", required: false)
+    }
 </head>
 <body>
-    <div class="page">
-        <div id="header">
-            <div id="title">
-                <h1>MVC MiniProfiler Demo</h1>
+    <header>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">MiniProfiler Demo</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Results Authorization", "ResultsAuthorization", "Home")</li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Position <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("Top Left", "TopLeft", "Home")</li>
+                                <li>@Html.ActionLink("Top Right", "Index", "Home")</li>
+                                <li>@Html.ActionLink("Bottom Left", "BottomLeft", "Home")</li>
+                                <li>@Html.ActionLink("Bottom Right", "BottomRight", "Home")</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div id="logindisplay">
-                &nbsp;
-            </div>
-            <div id="menucontainer">
-                <ul id="menu">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Results Authorization", "ResultsAuthorization", "Home")</li>
-                    <li>@Html.ActionLink("Bottom Left", "BottomLeft", "Home")</li>
-                    <li>@Html.ActionLink("Bottom Right", "BottomRight", "Home")</li>
-                </ul>
-            </div>
-        </div>
-        <div id="main">
-            @RenderBody()
-        </div>
-        <div id="footer">
-        </div>
+        </nav>
+    </header>
+    <div>
+        @RenderBody()
     </div>
-
     @* renders our UI's css and javascript - best put it in the bottom so it does not effect perf *@
     @if (ViewBag.Orientation != null)
     {

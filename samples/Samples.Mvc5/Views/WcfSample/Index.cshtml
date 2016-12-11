@@ -1,8 +1,6 @@
 ﻿@using StackExchange.Profiling
 @{
-    var profiler = MiniProfiler.Current;
-
-    using (profiler.Step("Some complex thinking"))
+    using (MiniProfiler.Current.Step("Some complex thinking"))
     {
         System.Threading.Thread.Sleep(25);
     }
@@ -86,6 +84,5 @@
 </div>*@
 
 <div style="margin:900px 0 300px 0;">
-    Some content way down the page - notice how the profiler button is fixed in the upper left corner.
+    Some content way down the page - notice how the profiler button is fixed in the upper right corner.
 </div>
-

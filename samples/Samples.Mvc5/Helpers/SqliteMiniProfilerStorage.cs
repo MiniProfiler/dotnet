@@ -18,19 +18,14 @@ namespace Samples.Mvc5.Helpers
         /// Initialises a new instance of the <see cref="SqliteMiniProfilerStorage"/> class.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
-        public SqliteMiniProfilerStorage(string connectionString)
-            : base(connectionString)
-        {
-        }
+        public SqliteMiniProfilerStorage(string connectionString) : base(connectionString) { }
 
         /// <summary>
         /// Get the Connection.
         /// </summary>
         /// <returns>The Abstracted Connection</returns>
-        protected override System.Data.Common.DbConnection GetConnection()
-        {
-            return new System.Data.SQLite.SQLiteConnection(ConnectionString);
-        }
+        protected override System.Data.Common.DbConnection GetConnection() =>
+            new System.Data.SQLite.SQLiteConnection(ConnectionString);
 
         /// <summary>
         /// Used for testing purposes - destroys and recreates the SQLITE file with needed tables.
