@@ -1,5 +1,4 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
@@ -8,7 +7,6 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
-    <!-- .nupkg Metadata -->
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>Shared library for all MiniProfiler libraries</Description>
     <PackageId>MiniProfiler.Shared</PackageId>
@@ -16,7 +14,7 @@
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
-    <PackageTags></PackageTags>
+    <PackageTags />
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
@@ -24,42 +22,18 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
+    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <PackageReference Include="System.ComponentModel.Primitives">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.Common">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.StackTrace">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Dynamic.Runtime">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Emit.Lightweight">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Serialization.Primitives">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Parallel">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>9.0.1</Version>
-    </PackageReference>
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="Microsoft.CSharp" />
@@ -73,10 +47,11 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Data\ProfiledDbDataAdapter.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
 </Project>

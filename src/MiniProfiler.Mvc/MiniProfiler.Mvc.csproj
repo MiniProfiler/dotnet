@@ -1,5 +1,4 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>MiniProfiler.Mvc</AssemblyName>
@@ -22,13 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNet.Mvc">
-      <Version>4.0.40804</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="4.0.40804" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -41,5 +34,4 @@
   <ItemGroup>
     <Compile Include="**/*.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

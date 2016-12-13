@@ -1,5 +1,4 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>MiniProfiler.EntityFramework</AssemblyName>
@@ -14,20 +13,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="EntityFramework">
-      <Version>6.1.3</Version>
-    </PackageReference>
-    <PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="EntityFramework" Version="6.1.3" />
+    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="System" />
     <Reference Include="System.Data" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

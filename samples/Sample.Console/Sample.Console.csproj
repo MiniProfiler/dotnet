@@ -1,5 +1,4 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>Sample.Console</AssemblyName>
@@ -10,37 +9,20 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="Dapper.StrongName">
-      <Version>1.50.2</Version>
-    </PackageReference>
-    <PackageReference Include="EntityFramework">
-      <Version>6.1.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite">
-      <Version>1.0.103</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite.Core">
-      <Version>1.0.103</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite.EF6">
-      <Version>1.0.103</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite.Linq">
-      <Version>1.0.103</Version>
-    </PackageReference>
+    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
+    <PackageReference Include="EntityFramework" Version="6.1.3" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.103" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.103" />
+    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.103" />
+    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.103" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <None Include="App.config" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
