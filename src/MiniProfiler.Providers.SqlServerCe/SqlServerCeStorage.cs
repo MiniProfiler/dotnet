@@ -70,12 +70,12 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                     profiler.Started,
                     User = profiler.User.Truncate(100),
                     Name = profiler.Name.Truncate(200),
-                    RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
+                    RootTimingId = profiler.Root?.Id,
                     profiler.DurationMilliseconds,
                     profiler.HasUserViewed,
                     MachineName = profiler.MachineName.Truncate(100),
                     profiler.CustomLinksJson,
-                    ClientTimingsRedirectCount = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?)null
+                    ClientTimingsRedirectCount = profiler.ClientTimings?.RedirectCount
                 });
 
                 var timings = new List<Timing>();
