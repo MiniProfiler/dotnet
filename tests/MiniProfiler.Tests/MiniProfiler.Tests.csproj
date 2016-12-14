@@ -6,6 +6,12 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="**\*.cs" />
+    <None Include="App.config" />
+    <None Include="Properties\MiniProfiler.Tests.snk" />
+    <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFramework\MiniProfiler.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
@@ -38,12 +44,6 @@
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
       <Visible>False</Visible>
     </CodeAnalysisDependentAssemblyPaths>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="**\*.cs" />
-    <None Include="App.config" />
-    <None Include="Properties\MiniProfiler.Tests.snk" />
-    <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
