@@ -15,6 +15,7 @@ namespace StackExchange.Profiling.Wcf
         /// The WCF cache key.
         /// </summary>
         private const string WcfCacheKey = ":mini-profiler:";
+        private const string TimingCacheKey = ":head-timing:";
 
         /// <summary>
         /// Initialises a new instance of the <see cref="WcfRequestProfilerProvider"/> class.
@@ -202,6 +203,22 @@ namespace StackExchange.Profiling.Wcf
             if (context == null) return;
 
             context.Items[WcfCacheKey] = profiler;
+        }
+
+        public override Timing GetHead()
+        {
+            var context = WcfInstanceContext.GetCurrentWithoutInstantiating();
+            if (context == null) return null;
+
+            return context.Items[TimingCacheKey] as Timing;
+        }
+
+        public override void SetHead(Timing t)
+        {
+            var context = WcfInstanceContext.Current;
+            if (context == null) return;
+
+            context.Items[TimingCacheKey] = t;
         }
     }
 }

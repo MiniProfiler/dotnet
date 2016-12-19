@@ -189,7 +189,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
             timingsCollection.Add(timing);
             if (timing.HasChildren)
             {
-                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
+                timing.Children?.ForEach(x => FlattenTimings(x, timingsCollection));
             }
         }
 

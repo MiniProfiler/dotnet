@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web.Script.Serialization;
 
 namespace StackExchange.Profiling.Helpers
@@ -9,6 +12,45 @@ namespace StackExchange.Profiling.Helpers
     /// </summary>
     public static class ExtensionMethods
     {
+        /// <summary>
+        /// Performs the specified action on each element of the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// </summary>
+        /// <param name="list">the list to perform the operations for</param>
+        /// <param name="action">The <see cref="T:System.Action`1"/> delegate to perform on each element of the
+        ///  <see cref="T:System.Collections.Generic.List`1"/>.</param><exception cref="T:System.ArgumentNullException">
+        /// <paramref name="action"/> is null.</exception><exception cref="T:System.InvalidOperationException">An element in the collection has been modified. CautionThis exception is thrown starting with the .NET Framework 4.5. </exception>
+        public static void ForEach<T>(this IList<T> list, Action<T> action)
+        {
+            foreach(var item in list)
+                action(item);
+        }
+
+        public static void RemoveAll<T>(this IList<T> list, Predicate<T> match)
+        {
+            var lockObj = (list as SynchronizedCollection<T>)?.SyncRoot;
+            if (lockObj != null)
+                Monitor.Enter(lockObj);
+            try
+            {
+                var indexesToRemove = new List<int>();
+                for(int i = 0; i < list.Count; i++)
+                {
+                    if (match(list[i]))
+                        indexesToRemove.Add(i);
+                }
+                indexesToRemove.Reverse();
+                foreach (var idx in indexesToRemove)
+                {
+                    list.RemoveAt(idx);
+                }
+            }
+            finally
+            {
+                if (lockObj != null)
+                    Monitor.Exit(lockObj);
+            }
+        }
+
         /// <summary>
         /// Answers true if this String is either null or empty.
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling.Wcf
 {
@@ -55,11 +56,12 @@ namespace StackExchange.Profiling.Wcf
             if (timing.Children != null)
             {
                 // This assumes that trivial items do not have any non-trivial children
-                timing.Children.RemoveAll(child => child.IsTrivial);
+                timing.AccessChildren()?.RemoveAll(child => child.IsTrivial);
             }
 
             Debug.Assert(timing.Children != null, "timing.Children != null");
-            if (timing.Children != null) timing.Children.ForEach(child => child.RemoveTrivialTimings());
+            if (timing.Children != null) timing.Children?.ForEach(child => child.RemoveTrivialTimings());
         }
+
     }
 }

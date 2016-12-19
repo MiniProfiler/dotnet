@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -218,7 +219,19 @@ namespace StackExchange.Profiling
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
         [ScriptIgnore]
-        public Timing Head { get; set; }
+        public Timing Head {
+            get
+            {
+                Settings.EnsureProfilerProvider();
+                return Settings.ProfilerProvider.GetHead();
+            }
+
+            set
+            {
+                Settings.EnsureProfilerProvider();
+                Settings.ProfilerProvider.SetHead(value);
+            }
+        }
 
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.

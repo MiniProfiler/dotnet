@@ -19,6 +19,16 @@ namespace StackExchange.Profiling
             return _profiler;
         }
 
+        public Timing GetHead()
+        {
+            return _head;
+        }
+
+        public void SetHead(Timing t)
+        {
+            _head = t;
+        }
+
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
@@ -44,5 +54,7 @@ namespace StackExchange.Profiling
         {
             if (_profiler != null) _profiler.StopImpl();
         }
+
+        private Timing _head; 
     }
 }

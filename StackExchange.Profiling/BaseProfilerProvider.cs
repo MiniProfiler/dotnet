@@ -35,6 +35,10 @@ namespace StackExchange.Profiling
         /// </summary>
         public abstract MiniProfiler GetCurrentProfiler();
 
+        public abstract Timing GetHead();
+
+        public abstract void SetHead(Timing t);
+
         /// <summary>
         /// Sets <paramref name="profiler"/> to be active (read to start profiling)
         /// This should be called once a new MiniProfiler has been created.

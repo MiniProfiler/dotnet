@@ -1,4 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
+using NUnit.Framework;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -22,6 +26,103 @@ namespace StackExchange.Profiling.Tests
 
                 Assert.That(c.Root, Is.Not.Null);
                 Assert.That(c.Root.HasChildren, Is.False);
+            }
+        }
+
+        [Test]
+        public void WhenUsingAsyncProvider_SimpleCaseWorking()
+        {
+            MiniProfiler.Settings.ProfilerProvider = new AsyncWebRequestProfilerProvider();
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            {
+                MiniProfiler.Start();
+                IncrementStopwatch(); // 1 ms
+                MiniProfiler.Stop();
+
+                var c = MiniProfiler.Current;
+
+                Assert.That(c, Is.Not.Null);
+                Assert.That(c.DurationMilliseconds, Is.EqualTo(StepTimeMilliseconds));
+                Assert.That(c.Name, Is.EqualTo("/Test.aspx"));
+
+                Assert.That(c.Root, Is.Not.Null);
+                Assert.That(c.Root.HasChildren, Is.False);
+            }
+        }
+
+        [Test]
+        public async void Current_WhenAsyncMethodReturns_IsCarried(
+            [Values(true,false)]bool comfigureAwait
+            )
+        {
+            MiniProfiler.Settings.ProfilerProvider = new AsyncWebRequestProfilerProvider();
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            {
+                MiniProfiler.Start();
+
+                var c = MiniProfiler.Current;
+                await Task.Delay(TimeSpan.FromMilliseconds(1)).ConfigureAwait(comfigureAwait);
+                Assert.That(HttpContext.Current, Is.Null);
+
+                Assert.That(MiniProfiler.Current, Is.Not.Null);
+                Assert.That(MiniProfiler.Current, Is.EqualTo(c));
+            }
+        }
+
+        [Test]
+        public async void Head_WhenAsyncMethodReturns_IsCarried(
+            [Values(true,false)]bool comfigureAwait
+            )
+        {
+            MiniProfiler.Settings.ProfilerProvider = new AsyncWebRequestProfilerProvider();
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            {
+                MiniProfiler.Start();
+                var sut = MiniProfiler.Current;
+                var head = sut.Head;
+
+                await Task.Delay(TimeSpan.FromMilliseconds(1)).ConfigureAwait(comfigureAwait);
+                Assert.That(HttpContext.Current, Is.Null);
+
+                Assert.That(sut.Head, Is.Not.Null);
+                Assert.That(sut.Head, Is.EqualTo(head));
+            }
+        }
+
+        [Test]
+        public async void Head_WhenMultipleTasksSpawned_EachSetsItsOwnHead(
+            [Values(true,false)]bool comfigureAwait
+            )
+        {
+            MiniProfiler.Settings.ProfilerProvider = new AsyncWebRequestProfilerProvider();
+            var allTasks = new SemaphoreSlim(0, 1);
+            var completed = new TaskCompletionSource<int>();
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            {
+                MiniProfiler.Start();
+                var sut = MiniProfiler.Current;
+                var head = sut.Head;
+
+                Task.Run(() => {
+                    Assert.That(sut.Head, Is.EqualTo(head));
+                    using (sut.Step("test1"))
+                    {
+                        allTasks.Release();
+                        completed.Task.Wait();
+                    }
+                }).ConfigureAwait(comfigureAwait);
+                allTasks.Wait();
+                Task.Run(() => {
+                    using (sut.Step("test2"))
+                    {
+                        allTasks.Release();
+                        completed.Task.Wait();
+                    }
+                }).ConfigureAwait(comfigureAwait);
+                allTasks.Wait();
+                Assert.That(sut.Head, Is.Not.Null);
+                Assert.That(sut.Head, Is.EqualTo(head));
+                completed.SetResult(0);
             }
         }
 

@@ -81,7 +81,25 @@ namespace StackExchange.Profiling
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public List<Timing> Children { get; set; }
+        public IList<Timing> Children
+        {
+            get
+            {
+                lock(_lockObject)
+                {
+                    return _children == null ? null : new List<Timing>(_children);
+                }
+            }
+            set { _children = value == null ? null : new List<Timing>(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
+        /// </summary>
+        public IList<Timing> AccessChildren()
+        {
+            return new SynchronizedCollection<Timing>(_lockObject, _children);
+        }
 
         /// <summary>
         /// <see cref="CustomTiming"/> lists keyed by their type, e.g. "sql", "memcache", "redis", "http".
@@ -128,17 +146,19 @@ namespace StackExchange.Profiling
         {
             get
             {
-                var result = DurationMilliseconds.GetValueOrDefault();
-
-                if (HasChildren)
+                lock(_lockObject)
                 {
-                    foreach (var child in Children)
-                    {
-                        result -= child.DurationMilliseconds.GetValueOrDefault();
-                    }
-                }
+                    var result = DurationMilliseconds.GetValueOrDefault();
 
-                return Math.Round(result, 1);
+                    if (HasChildren)
+                    {
+                        foreach (var child in _children)
+                        {
+                            result -= child.DurationMilliseconds.GetValueOrDefault();
+                        }
+                    }
+                    return Math.Round(result, 1);
+                }
             }
         }
         
@@ -158,7 +178,7 @@ namespace StackExchange.Profiling
         [ScriptIgnore]
         public bool HasChildren
         {
-            get { return Children != null && Children.Count > 0; }
+            get { lock(_lockObject) { return _children != null && _children.Count > 0; } }
         }
 
         /// <summary>
@@ -261,23 +281,29 @@ namespace StackExchange.Profiling
         /// </remarks>
         public void AddChild(Timing timing)
         {
-            if (Children == null)
-                Children = new List<Timing>();
+            lock(_lockObject)
+            {
+                if (_children == null)
+                    _children = new List<Timing>();
 
-            Children.Add(timing);
-            if(timing.Profiler == null)
-                timing.Profiler = Profiler;
-            timing.ParentTiming = this;
-            timing.ParentTimingId = Id;
-            if (Profiler != null)
-                timing.MiniProfilerId = Profiler.Id;
+                _children.Add(timing);
+                if(timing.Profiler == null)
+                    timing.Profiler = Profiler;
+                timing.ParentTiming = this;
+                timing.ParentTimingId = Id;
+                if (Profiler != null)
+                    timing.MiniProfilerId = Profiler.Id;
+            }
         }
 
         internal void RemoveChild(Timing timing)
         {
-            if (Children != null)
+            lock(_lockObject)
             {
-                Children.Remove(timing);
+                if (_children != null)
+                {
+                    _children.Remove(timing);
+                }
             }
         }
 
@@ -299,6 +325,7 @@ namespace StackExchange.Profiling
         }
 
         private readonly object _lockObject = new object();
+        private IList<Timing> _children;
 
         /// <summary>
         /// Returns the <see cref="CustomTiming"/> list keyed to the <paramref name="category"/>, creating any collections when null.

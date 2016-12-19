@@ -188,13 +188,44 @@ namespace StackExchange.Profiling
             return Current;
         }
 
+        public override Timing GetHead()
+        {
+            return CurrentHead;
+        }
+
+        public override void SetHead(Timing t)
+        {
+            CurrentHead = t;
+        }
 
         private const string CacheKey = ":mini-profiler:";
+        private const string TimingCacheKey = ":head-timing:";
 
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
-        private MiniProfiler Current
+        protected virtual Timing CurrentHead
+        {
+            get
+            {
+                var context = HttpContext.Current;
+                if (context == null) return null;
+
+                return context.Items[TimingCacheKey] as Timing;
+            }
+            set
+            {
+                var context = HttpContext.Current;
+                if (context == null) return;
+
+                context.Items[TimingCacheKey] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
+        /// </summary>
+        protected virtual MiniProfiler Current
         {
             get
             {
