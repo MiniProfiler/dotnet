@@ -32,5 +32,15 @@ namespace StackExchange.Profiling
         /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
         MiniProfiler GetCurrentProfiler();
+
+        /// <summary>
+        /// Gets the currently executing Timing. This is used by <see cref="MiniProfiler.Head"/>.
+        /// </summary>
+        Timing GetHead();
+
+        /// <summary>
+        /// Sets the currently executing Timing. This is used by <see cref="MiniProfiler.Head"/>.
+        /// </summary>
+        void SetHead(Timing t);
     }
 }
