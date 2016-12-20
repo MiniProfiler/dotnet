@@ -4,12 +4,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
-#if NET45
-using System.Web.Script.Serialization;
-#else
-// TODO: Factor these extensions out? That'd be more breaks...
-using Newtonsoft.Json;
-#endif
 
 namespace StackExchange.Profiling
 {
@@ -264,12 +258,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static string ToJson(MiniProfiler profiler)
         {
-            return profiler != null
-#if NET45
-                ? GetJsonSerializer().Serialize(profiler) : null;
-#else
-                ? JsonConvert.SerializeObject(profiler) : null;
-#endif
+            return profiler != null ? SimpleJson.SimpleJson.SerializeObject(profiler) : null;
         }
 
         /// <summary>
@@ -277,20 +266,8 @@ namespace StackExchange.Profiling
         /// </summary>
         public static MiniProfiler FromJson(string json)
         {
-            return json.HasValue()
-#if NET45
-                ? GetJsonSerializer().Deserialize<MiniProfiler>(json) : null;
-#else
-                ? JsonConvert.DeserializeObject<MiniProfiler>(json) : null;
-#endif
+            return json.HasValue() ? SimpleJson.SimpleJson.DeserializeObject<MiniProfiler>(json) : null;
         }
-
-#if NET45
-        private static JavaScriptSerializer GetJsonSerializer()
-        {
-            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };   
-        }
-#endif
         
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.

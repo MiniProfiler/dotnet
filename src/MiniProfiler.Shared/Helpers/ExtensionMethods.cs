@@ -1,9 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-#if NET45
-using System.Web.Script.Serialization;
-#else
-using Newtonsoft.Json;
-#endif
 
 namespace StackExchange.Profiling.Helpers
 {
@@ -46,12 +41,7 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>the resulting JSON object as a string</returns>
         public static string ToJson(this object o)
         {
-            return o != null
-#if NET45
-                ? new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o) : null;
-#else
-                ? JsonConvert.SerializeObject(o) : null;
-#endif
+            return o != null ? SimpleJson.SimpleJson.SerializeObject(o) : null;
         }
 
         /// <summary>
@@ -61,12 +51,7 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>The object resulting from the given string</returns>
         public static T FromJson<T>(this string s) where T : class
         {
-            return s.HasValue()
-#if NET45
-                ? new JavaScriptSerializer().Deserialize<T>(s) : null;
-#else
-                ? JsonConvert.DeserializeObject<T>(s) : null;
-#endif
+            return s.HasValue() ? SimpleJson.SimpleJson.DeserializeObject<T>(s) : null;
         }
     }
 }

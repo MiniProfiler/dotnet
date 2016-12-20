@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
-#if NET45
-using System.Web.Script.Serialization;
-#endif
 
 namespace StackExchange.Profiling
 {
@@ -105,25 +102,16 @@ namespace StackExchange.Profiling
         /// Gets or sets Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
-#if NET45
-        [ScriptIgnore]
-#endif
         public Timing ParentTiming { get; set; }
 
         /// <summary>
         /// The Unique Identifier identifying the parent timing of this Timing. Used for sql server storage.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public Guid ParentTimingId { get; set; }
 
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public decimal DurationWithoutChildrenMilliseconds
         {
             get
@@ -146,33 +134,21 @@ namespace StackExchange.Profiling
         /// Gets a value indicating whether this <see cref="DurationMilliseconds"/> is less than the configured
         /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public bool IsTrivial => DurationMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds;
 
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public bool HasChildren => Children?.Count > 0;
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public bool IsRoot => Equals(Profiler.Root);
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public short Depth
         {
             get
@@ -198,9 +174,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
         /// </summary>
-#if NET45
-        [ScriptIgnore]
-#endif
         public Guid MiniProfilerId { get; set; }
 
         /// <summary>
