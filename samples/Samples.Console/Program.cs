@@ -7,7 +7,7 @@ using System.Threading;
 using Dapper;
 using StackExchange.Profiling;
 
-namespace Sample.Console
+namespace Samples.Console
 {
     /// <summary>
     /// simple sample console application.

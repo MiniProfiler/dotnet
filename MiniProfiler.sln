@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.25928.0
+VisualStudioVersion = 15.0.26014.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Tests", "tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EntityFramework", "src\MiniProfiler.EntityFramework\MiniProfiler.EntityFramework.csproj", "{4DFA7AD2-FCAE-44DB-AF5C-F26ABA93DBDC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Console", "samples\Sample.Console\Sample.Console.csproj", "{58DA79DE-F30B-4068-BEE9-013C9360CD74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Console", "samples\Samples.Console\Samples.Console.csproj", "{58DA79DE-F30B-4068-BEE9-013C9360CD74}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Mvc", "src\MiniProfiler.Mvc\MiniProfiler.Mvc.csproj", "{074BCD84-3E44-4140-9918-C09FCBEEC09F}"
 EndProject

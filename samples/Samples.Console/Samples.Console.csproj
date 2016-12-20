@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net45</TargetFrameworks>
-    <AssemblyName>Sample.Console</AssemblyName>
+    <AssemblyName>Samples.Console</AssemblyName>
     <OutputType>Exe</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
@@ -14,11 +14,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="EntityFramework" Version="6.1.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.103" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.103" />
-    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.103" />
-    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.103" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
