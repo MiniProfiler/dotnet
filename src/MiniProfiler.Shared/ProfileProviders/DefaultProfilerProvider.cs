@@ -1,7 +1,8 @@
 ﻿#if NET45
 using System;
 using System.Runtime.Remoting.Messaging;
-using System.Web;
+using System.Web; 
+using StackExchange.Profiling.Helpers.Net45;
 #else
 using System.Threading;
 #endif
@@ -13,43 +14,23 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
-#if NET45
-        const string ContextKey = ":miniprofiler:";
-
-        private MiniProfiler Profiler
-        {
-            get
-            {
-                if (HttpContext.Current != null)
-                {
-                    return HttpContext.Current?.Items[ContextKey] as MiniProfiler;
-                }
-                else
-                {
-                    return CallContext.LogicalGetData(ContextKey) as MiniProfiler;
-                }
-            }
-            set
-            {
-                if (HttpContext.Current != null)
-                {
-                    HttpContext.Current.Items[ContextKey] = value;
-                }
-                else
-                {
-                    CallContext.LogicalSetData(ContextKey, value);
-                }
-            }
-        }
-#else
-        private AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
+        private readonly AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
+        private readonly AsyncLocal<Timing> _currentTiming = new AsyncLocal<Timing>();
 
         private MiniProfiler Profiler
         {
             get { return _profiler.Value; }
             set { _profiler.Value = value; }
         }
-#endif
+
+        /// <summary>
+        /// Current head timing.
+        /// </summary>
+        public override Timing CurrentHead
+        {
+            get { return _currentTiming.Value; }
+            set { _currentTiming.Value = value; }
+        }
 
         /// <summary>
         /// The name says it all.

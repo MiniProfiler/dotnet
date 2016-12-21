@@ -134,7 +134,7 @@ namespace StackExchange.Profiling.Storage
             timingsCollection.Add(timing);
             if (timing.HasChildren)
             {
-                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
+                timing.Children?.ForEach(x => FlattenTimings(x, timingsCollection));
             }
         }
     }

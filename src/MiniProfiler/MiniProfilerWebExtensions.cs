@@ -76,9 +76,10 @@ namespace StackExchange.Profiling
 
                 text.AppendFormat("{2} {0} = {1:###,##0.##}ms", name, timing.DurationMilliseconds, new string('>', timing.Depth));
 
-                if (timing.HasCustomTimings)
+                var customTimingsMap = timing.CustomTimings;
+                if (customTimingsMap?.Count > 0)
                 {
-                    foreach (var pair in timing.CustomTimings)
+                    foreach (var pair in customTimingsMap)
                     {
                         var type = pair.Key;
                         var customTimings = pair.Value;

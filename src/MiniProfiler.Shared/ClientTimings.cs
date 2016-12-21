@@ -14,12 +14,26 @@ namespace StackExchange.Profiling
     {
         private const string TimingPrefix = "clientPerformance[timing][";
         private const string ProbesPrefix = "clientProbes[";
+        private readonly object _lockObject = new object();
+        private List<ClientTiming> _timings;
 
         /// <summary>
         /// Gets or sets the list of client side timings
         /// </summary>
         [DataMember(Order = 2)]
-        public List<ClientTiming> Timings { get; set; }
+        public List<ClientTiming> Timings
+        {
+            get
+            {
+                lock(_lockObject)
+                    return _timings == null ? null : new List<ClientTiming>(_timings);
+            }
+            set
+            {
+                lock (_lockObject)
+                    _timings = value == null ? null : new List<ClientTiming>(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the redirect count.

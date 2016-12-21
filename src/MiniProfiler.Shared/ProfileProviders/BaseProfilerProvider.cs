@@ -29,6 +29,11 @@ namespace StackExchange.Profiling
         public abstract MiniProfiler GetCurrentProfiler();
 
         /// <summary>
+        /// GEts or sets the current head timing. This is used by <see cref="MiniProfiler.Head"/>.
+        /// </summary>
+        public abstract Timing CurrentHead { get; set; }
+
+        /// <summary>
         /// Sets <paramref name="profiler"/> to be active (read to start profiling)
         /// This should be called once a new MiniProfiler has been created.
         /// </summary>

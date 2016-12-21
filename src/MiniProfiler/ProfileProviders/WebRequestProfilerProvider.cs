@@ -150,7 +150,23 @@ namespace StackExchange.Profiling
         /// </summary>
         public override MiniProfiler GetCurrentProfiler() => Current;
 
+        /// <summary>
+        /// Current head timing.
+        /// </summary>
+        public override Timing CurrentHead
+        {
+            get { return HttpContext.Current?.Items[CacheKeyHead] as Timing; }
+            set
+            {
+                var context = HttpContext.Current;
+                if (context == null) return;
+
+                context.Items[CacheKeyHead] = value;
+            }
+        }
+
         private const string CacheKey = ":mini-profiler:";
+        private const string CacheKeyHead = ":mini-profiler-head:";
 
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
