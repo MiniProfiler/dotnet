@@ -132,9 +132,13 @@ namespace StackExchange.Profiling.Storage
         protected void FlattenTimings(Timing timing, List<Timing> timingsCollection)
         {
             timingsCollection.Add(timing);
-            if (timing.HasChildren)
+            var children = timing.Children;
+            if (children?.Count > 0)
             {
-                timing.Children?.ForEach(x => FlattenTimings(x, timingsCollection));
+                foreach (var child in children)
+                {
+                    FlattenTimings(child, timingsCollection);
+                }
             }
         }
     }

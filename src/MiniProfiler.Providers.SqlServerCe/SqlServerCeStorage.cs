@@ -86,15 +86,16 @@ where not exists (select 1 from MiniProfilers where Id = @Id)"; // this syntax w
                 }
 
                 SaveTimings(timings, conn);
-                if (profiler.ClientTimings != null && profiler.ClientTimings.Timings != null && profiler.ClientTimings.Timings.Any())
+                var clientTimings = profiler.ClientTimings?.Timings;
+                if (clientTimings != null && clientTimings.Any())
                 {
                     // set the profilerId (isn't needed unless we are storing it)
-                    profiler.ClientTimings.Timings.ForEach(x =>
+                    foreach (var x in clientTimings)
                     {
                         x.MiniProfilerId = profiler.Id;
                         x.Id = Guid.NewGuid();
-                    });
-                    SaveClientTimings(profiler.ClientTimings.Timings, conn);
+                    }
+                    SaveClientTimings(clientTimings, conn);
                 }
             }
         }
@@ -140,7 +141,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)";
             }
         }
 
-        private void SaveClientTimings(List<ClientTiming> timings, DbConnection conn)
+        private void SaveClientTimings(IReadOnlyList<ClientTiming> timings, DbConnection conn)
         {
             const string sql = @"
 INSERT INTO MiniProfilerClientTimings
