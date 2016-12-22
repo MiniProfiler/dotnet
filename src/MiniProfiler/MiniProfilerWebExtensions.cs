@@ -93,10 +93,10 @@ namespace StackExchange.Profiling
                 }
 
                 text.AppendLine();
-                
-                if (timing.HasChildren)
+
+                var children = timing.Children;
+                if (children?.Count > 0)
                 {
-                    var children = timing.Children;
                     for (var i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }

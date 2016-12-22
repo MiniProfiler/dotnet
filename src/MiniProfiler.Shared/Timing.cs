@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
+using System.Collections.Immutable;
 #if NET45
 using System.Web.Script.Serialization;
 #endif
@@ -77,13 +78,13 @@ namespace StackExchange.Profiling
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public List<Timing> Children
+        public IImmutableList<Timing> Children
         {
             get
             {
                 lock(_lockObject)
                 {
-                    return _children == null ? null : new List<Timing>(_children);
+                    return _children == null ? (IImmutableList<Timing>)null : new List<Timing>(_children).ToImmutableArray();
                 }
             }
             set
