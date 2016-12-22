@@ -78,13 +78,13 @@ namespace StackExchange.Profiling
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public IImmutableList<Timing> Children
+        public List<Timing> Children
         {
             get
             {
                 lock(_lockObject)
                 {
-                    return _children == null ? (IImmutableList<Timing>)null : new List<Timing>(_children).ToImmutableArray();
+                    return _children == null ? null : new List<Timing>(_children);
                 }
             }
             set
