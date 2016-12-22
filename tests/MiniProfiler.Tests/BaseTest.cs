@@ -173,7 +173,7 @@ namespace StackExchange.Profiling.Tests
             // we'll handle any collections elsewhere
             var props = from p in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                         where p.IsDefined(typeof(System.Runtime.Serialization.DataMemberAttribute), false)
-                        && !p.PropertyType.GetInterfaces().Any(i => i.Equals(typeof(IDictionary)) || i.Equals(typeof(IList)))
+                        && !p.PropertyType.GetInterfaces().Any(i => i.Equals(typeof(IEnumerable)))
                         select p;
 
             foreach (var p in props)

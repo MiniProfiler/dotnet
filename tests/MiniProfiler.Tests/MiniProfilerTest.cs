@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace StackExchange.Profiling.Tests
@@ -32,6 +35,102 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
+        [Fact]
+        public void WhenUsingAsyncProvider_SimpleCaseWorking()
+        {
+            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+                IncrementStopwatch(); // 1 ms
+                MiniProfiler.Stop();
+
+                var c = MiniProfiler.Current;
+
+                Assert.NotNull(c);
+                Assert.Equal(StepTimeMilliseconds, c.DurationMilliseconds);
+
+                Assert.NotNull(c.Root);
+                Assert.False(c.Root.HasChildren);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Current_WhenAsyncMethodReturns_IsCarried(
+            bool configureAwait
+            )
+        {
+            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+
+                var c = MiniProfiler.Current;
+                await Task.Delay(TimeSpan.FromMilliseconds(1)).ConfigureAwait(configureAwait);
+
+                Assert.NotNull(MiniProfiler.Current);
+                Assert.Equal(c, MiniProfiler.Current);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Head_WhenAsyncMethodReturns_IsCarried(
+            bool configureAwait
+            )
+        {
+            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
+            using (GetRequest())
+            {
+                MiniProfiler.Start();
+                var sut = MiniProfiler.Current;
+                var head = sut.Head;
+
+                await Task.Delay(TimeSpan.FromMilliseconds(1)).ConfigureAwait(configureAwait);
+
+                Assert.NotNull(sut.Head);
+                Assert.Equal(head, sut.Head);
+            }
+        }
+
+        [Fact]
+        public void Head_WhenMultipleTasksSpawned_EachSetsItsOwnHead()
+        {
+            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
+            var allTasks = new SemaphoreSlim(0, 1);
+            var completed = new TaskCompletionSource<int>();
+            using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            {
+                MiniProfiler.Start();
+                var sut = MiniProfiler.Current;
+                var head = sut.Head;
+
+                Task.Run(() => {
+                    Assert.Equal(head, sut.Head);
+                    using (sut.Step("test1"))
+                    {
+                        allTasks.Release();
+                        completed.Task.Wait();
+                    }
+                });
+                allTasks.Wait();
+                Task.Run(() => {
+                    using (sut.Step("test2"))
+                    {
+                        allTasks.Release();
+                        completed.Task.Wait();
+                    }
+                });
+                allTasks.Wait();
+
+                Assert.NotNull(sut.Head);
+                Assert.Equal(head, sut.Head);
+                completed.SetResult(0);
+            }
+        }
         [Fact]
         public void StepIf_Basic()
         {

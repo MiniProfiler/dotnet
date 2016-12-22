@@ -135,10 +135,9 @@ namespace StackExchange.Profiling
                     {
                         var timing = timings.Pop();
 
-                        if (timing.HasChildren)
+                        var children = timing.Children;
+                        if (children?.Count > 0)
                         {
-                            var children = timing.Children;
-
                             for (int i = children.Count - 1; i >= 0; i--)
                             {
                                 children[i].ParentTiming = timing;
@@ -189,7 +188,19 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
-        public Timing Head { get; set; }
+        public Timing Head
+        {
+            get
+            {
+                Settings.EnsureProfilerProvider();
+                return Settings.ProfilerProvider.CurrentHead;
+            }
+            set
+            {
+                Settings.EnsureProfilerProvider();
+                Settings.ProfilerProvider.CurrentHead = value;
+            }
+        }
 
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
@@ -329,9 +340,9 @@ namespace StackExchange.Profiling
 
                 yield return timing;
 
-                if (timing.HasChildren)
+                var children = timing.Children;
+                if (children?.Count > 0)
                 {
-                    var children = timing.Children;
                     for (int i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
                 }
             }

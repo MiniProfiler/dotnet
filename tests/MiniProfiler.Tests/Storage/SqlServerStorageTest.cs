@@ -16,6 +16,7 @@ namespace StackExchange.Profiling.Tests.Storage
         
         public SqlServerStorageTest(SqlCeStorageFixture<SqlServerStorageTest> fixture)
         {
+            MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
             _conn = fixture.Conn;
         }
         

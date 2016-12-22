@@ -9,11 +9,21 @@ namespace StackExchange.Profiling
     public class SingletonProfilerProvider : IProfilerProvider
     {
         private MiniProfiler _profiler;
+        private Timing _timing;
 
         /// <summary>
         /// The name says it all
         /// </summary>
         public MiniProfiler GetCurrentProfiler() => _profiler;
+
+        /// <summary>
+        /// Current head timing.
+        /// </summary>
+        public Timing CurrentHead
+        {
+            get { return _timing; }
+            set { _timing = value; }
+        }
 
         /// <summary>
         /// Starts a new profiling session.
