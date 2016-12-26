@@ -189,13 +189,14 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html";
 
             var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
+            var version = MiniProfiler.Settings.Version;
             return new StringBuilder()
                 .AppendLine("<html><head>")
                 .AppendLine("<title>List of profiling sessions</title>")
-                .AppendFormat("<script id='mini-profiler' data-ids='' src='{0}includes.js?v={1}'></script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
-                .AppendFormat("<link href='{0}includes.css?v={1}' rel='stylesheet' type='text/css'>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
-                .AppendFormat("<script src='{0}includes.js?v={1}'></script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
-                .AppendFormat("<script>MiniProfiler.list.init({{path: '{0}', version: '{1}'}})</script>{2}", path, MiniProfiler.Settings.Version, Environment.NewLine)
+                .Append(@"<base href=""").Append(path).Append(@""">")
+                .Append(@"<script id=""mini-profiler"" data-ids="""" src=""includes.js?v=").Append(version).Append(@"""></script>").AppendLine()
+                .AppendFormat(@"<link href=""includes.css?v=").Append(version).Append(@""" rel=""stylesheet"">").AppendLine()
+                .AppendFormat("<script>MiniProfiler.list.init({{path: '").Append(path).Append("', version: '").Append(version).Append(@"'}})</script>").AppendLine()
                 .AppendLine("</head></html>")
                 .ToString();
         }
