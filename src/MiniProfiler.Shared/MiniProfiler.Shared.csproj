@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
@@ -20,10 +20,8 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
-  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
