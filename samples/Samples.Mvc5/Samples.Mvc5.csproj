@@ -97,7 +97,7 @@
   <PropertyGroup>
     <!-- Working around https://github.com/dotnet/sdk/issues/550 -->
     <PostBuildEvent>
-    xcopy /s /y "$(MSBuildProjectDirectory)\bin\net462\*.*" "$(MSBuildProjectDirectory)\bin"
+    start xcopy /s /y "$(MSBuildProjectDirectory)\bin\net462\*.*" "$(MSBuildProjectDirectory)\bin"
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
