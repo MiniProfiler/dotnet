@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using System.Threading.Tasks;
 using Xunit;
 
 namespace StackExchange.Profiling.Tests
@@ -94,6 +94,46 @@ namespace StackExchange.Profiling.Tests
                 result = MiniProfiler.Start();
                 step();
                 MiniProfiler.Stop();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
+        /// </summary>
+        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
+        /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
+        /// <returns>the mini profiler</returns>
+        public static async Task<MiniProfiler> GetProfilerAsync(
+            string url = DefaultRequestUrl, 
+            int childDepth = 0, 
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+        {
+            // TODO: Consolidate with above, maybe some out params
+            MiniProfiler result = null;
+            Action step = null;
+            var curDepth = 0;
+
+            // recursively add child steps
+            step = () =>
+            {
+                if (curDepth++ < childDepth)
+                {
+                    using (result.Step("Depth " + curDepth))
+                    {
+                        IncrementStopwatch(stepsEachTakeMilliseconds);
+                        step();
+                    }
+                }
+            };
+
+            using (GetRequest(url, startAndStopProfiler: false))
+            {
+                result = MiniProfiler.Start();
+                step();
+                await MiniProfiler.StopAsync();
             }
 
             return result;

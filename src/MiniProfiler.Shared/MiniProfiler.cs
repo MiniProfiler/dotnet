@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
+using System.Threading.Tasks;
 #if NET45
 using System.Web.Script.Serialization;
 #else
@@ -215,15 +216,15 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// A <see cref="IStorage"/> strategy to use for the current profiler. 
-        /// If null, then the <see cref="IStorage"/> set in <see cref="MiniProfiler.Settings.Storage"/> will be used.
+        /// A <see cref="IAsyncStorage"/> strategy to use for the current profiler. 
+        /// If null, then the <see cref="IAsyncStorage"/> set in <see cref="Settings.Storage"/> will be used.
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
-        public IStorage Storage { get; set; }
-        
+        public IAsyncStorage Storage { get; set; }
+
         /// <summary>
-        /// Starts a new MiniProfiler based on the current <see cref="IProfilerProvider"/>. This new profiler can be accessed by
-        /// <see cref="MiniProfiler.Current"/>.
+        /// Starts a new MiniProfiler based on the current <see cref="IAsyncProfilerProvider"/>. This new profiler can be accessed by
+        /// <see cref="Current"/>.
         /// </summary>
         /// <param name="sessionName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
@@ -239,13 +240,27 @@ namespace StackExchange.Profiling
         /// Ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public static void Stop(bool discardResults = false)
         {
             Settings.EnsureProfilerProvider();
             Settings.ProfilerProvider.Stop(discardResults);
+        }
+
+        /// <summary>
+        /// Asynchronously ends the current profiling session, if one exists. 
+        /// This invokves async saving all the way down if th providers support it.
+        /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
+        public static Task StopAsync(bool discardResults = false)
+        {
+            Settings.EnsureProfilerProvider();
+            return Settings.ProfilerProvider.StopAsync(discardResults);
         }
 
         /// <summary>

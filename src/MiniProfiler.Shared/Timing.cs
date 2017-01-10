@@ -249,7 +249,7 @@ namespace StackExchange.Profiling
         /// Add the parameter 'timing' to this Timing's Children collection.
         /// </summary>
         /// <remarks>
-        /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IStorage"/> implementation.
+        /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IAsyncStorage"/> implementation.
         /// </remarks>
         public void AddChild(Timing timing)
         {

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Routing;
 using StackExchange.Profiling.Helpers;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -69,16 +70,13 @@ namespace StackExchange.Profiling
         public override void Stop(bool discardResults)
         {
             var context = HttpContext.Current;
-            if (context == null)
-                return;
+            if (context == null) return;
 
             var current = Current;
-            if (current == null)
-                return;
+            if (current == null) return;
 
             // stop our timings - when this is false, we've already called .Stop before on this session
-            if (!StopProfiler(current))
-                return;
+            if (!StopProfiler(current)) return;
 
             if (discardResults)
             {
@@ -91,15 +89,12 @@ namespace StackExchange.Profiling
 
             // set the profiler name to Controller/Action or /url
             EnsureName(current, request);
-
-            // save the profiler
             SaveProfiler(current);
 
             try
             {
                 var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
-
-                if (arrayOfIds != null && arrayOfIds.Count > MiniProfiler.Settings.MaxUnviewedProfiles) 
+                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles) 
                 {
                     foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles)) 
                     {
@@ -108,7 +103,58 @@ namespace StackExchange.Profiling
                 }
 
                 // allow profiling of ajax requests
-                if (arrayOfIds != null && arrayOfIds.Count > 0)
+                if (arrayOfIds?.Count > 0)
+                {
+                    response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                }
+            }
+            catch { /* headers blew up */ }
+        }
+
+        /// <summary>
+        /// Asynchronously ends the current profiling session, if one exists.
+        /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
+        public override async Task StopAsync(bool discardResults)
+        {
+            var context = HttpContext.Current;
+            if (context == null) return;
+
+            var current = Current;
+            if (current == null) return;
+
+            // stop our timings - when this is false, we've already called .Stop before on this session
+            if (!StopProfiler(current)) return;
+
+            if (discardResults)
+            {
+                Current = null;
+                return;
+            }
+
+            var request = context.Request;
+            var response = context.Response;
+
+            // set the profiler name to Controller/Action or /url
+            EnsureName(current, request);
+            await SaveProfilerAsync(current).ConfigureAwait(false);
+
+            try
+            {
+                var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
+                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
+                {
+                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
+                    {
+                        await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
+                    }
+                }
+
+                // allow profiling of ajax requests
+                if (arrayOfIds?.Count > 0)
                 {
                     response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
                 }

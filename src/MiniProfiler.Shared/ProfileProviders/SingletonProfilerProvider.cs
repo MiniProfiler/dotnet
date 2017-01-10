@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -6,7 +7,7 @@ namespace StackExchange.Profiling
     /// Mostly for unit testing and single-threaded apps, only allows one 
     /// instance of a <see cref="MiniProfiler"/> to be the <see cref="MiniProfiler.Current"/> one.
     /// </summary>
-    public class SingletonProfilerProvider : IProfilerProvider
+    public class SingletonProfilerProvider : IAsyncProfilerProvider
     {
         private MiniProfiler _profiler;
 
@@ -38,6 +39,18 @@ namespace StackExchange.Profiling
             {
                 _profiler = null;
             }
+        }
+
+        // .NET 4.5 doesn't have Task.CompletedTask
+        private static Task _completedTask = Task.FromResult(true);
+
+        /// <summary>
+        /// Asynchronously stops the current profiling session.
+        /// </summary>
+        public Task StopAsync(bool discardResults)
+        {
+            Stop(discardResults);
+            return _completedTask;
         }
     }
 }

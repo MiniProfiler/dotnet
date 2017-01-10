@@ -281,12 +281,12 @@ namespace StackExchange.Profiling
             /// 2) profiler is started
             /// 3) normal page/controller/request execution
             /// 4) profiler is stopped
-            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IStorage.Save"/>
+            /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/>
             /// 6) request ends
             /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
-            ///    <see cref="Storage"/>'s implementation of <see cref="IStorage.Load"/>
+            ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
             /// </remarks>
-            public static IStorage Storage { get; set; }
+            public static IAsyncStorage Storage { get; set; }
 
             /// <summary>
             /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
@@ -299,15 +299,15 @@ namespace StackExchange.Profiling
             public static string Version { get; private set; }
 
             /// <summary>
-            /// The <see cref="IProfilerProvider"/> class that is used to run MiniProfiler
+            /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler
             /// </summary>
             /// <remarks>
             /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
             /// </remarks>
-            public static IProfilerProvider ProfilerProvider { get; set; }
+            public static IAsyncProfilerProvider ProfilerProvider { get; set; }
 
-            private static Func<IStorage> _defaultStorage = () => new NullStorage();
-            private static Func<IProfilerProvider> _defaultProfilerProvider = () => new DefaultProfilerProvider();
+            private static Func<IAsyncStorage> _defaultStorage = () => new NullStorage();
+            private static Func<IAsyncProfilerProvider> _defaultProfilerProvider = () => new DefaultProfilerProvider();
 
             /// <summary>
             /// Sets the default provider generators for MiniProfiler. 
@@ -315,7 +315,7 @@ namespace StackExchange.Profiling
             /// </summary>
             /// <param name="defaultStorage">The getter for the default storage profiler to use.</param>
             /// <param name="defaultProfilerProvider">The getter for the default profiler profiler to use.</param>
-            public static void SetDefaults(Func<IStorage> defaultStorage, Func<IProfilerProvider> defaultProfilerProvider)
+            public static void SetDefaults(Func<IAsyncStorage> defaultStorage, Func<IAsyncProfilerProvider> defaultProfilerProvider)
             {
                 _defaultStorage = defaultStorage;
                 _defaultProfilerProvider = defaultProfilerProvider;

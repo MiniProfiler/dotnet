@@ -5,6 +5,7 @@ using System.Web;
 #else
 using System.Threading;
 #endif
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -81,6 +82,20 @@ namespace StackExchange.Profiling
             {
                 Profiler = null;
             }
+        }
+
+        private static readonly Task _completed = Task.FromResult(false);
+        /// <summary>
+        /// Stops the current profiling session.
+        /// </summary>
+        public override Task StopAsync(bool discardResults)
+        {
+            Profiler?.StopImpl();
+            if (discardResults)
+            {
+                Profiler = null;
+            }
+            return _completed;
         }
     }
 }

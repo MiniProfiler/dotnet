@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -8,7 +9,7 @@ namespace StackExchange.Profiling
     /// To use, override the <see cref="Start(string)"/>, <see cref="Stop"/> and <see cref="GetCurrentProfiler"/>
     /// methods.
     /// </summary>
-    public abstract class BaseProfilerProvider : IProfilerProvider
+    public abstract class BaseProfilerProvider : IAsyncProfilerProvider
     {
         /// <summary>
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
@@ -24,6 +25,13 @@ namespace StackExchange.Profiling
         public abstract void Stop(bool discardResults);
 
         /// <summary>
+        /// Asynchronously stops the current MiniProfiler (if any is currently running).
+        /// <see cref="SaveProfiler"/> should be called if <paramref name="discardResults"/> is false
+        /// </summary>
+        /// <param name="discardResults">If true, any current results will be thrown away and nothing saved</param>
+        public abstract Task StopAsync(bool discardResults);
+
+        /// <summary>
         /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
         public abstract MiniProfiler GetCurrentProfiler();
@@ -36,7 +44,7 @@ namespace StackExchange.Profiling
         protected static void SetProfilerActive(MiniProfiler profiler)
         {
             if (profiler == null)
-                throw new ArgumentNullException("profiler");
+                throw new ArgumentNullException(nameof(profiler));
 
             profiler.IsActive = true;
         }
@@ -49,7 +57,7 @@ namespace StackExchange.Profiling
         protected static bool StopProfiler(MiniProfiler profiler)
         {
             if (profiler == null)
-                throw new ArgumentNullException("profiler");
+                throw new ArgumentNullException(nameof(profiler));
 
             if (!profiler.StopImpl())
                 return false;
@@ -66,7 +74,7 @@ namespace StackExchange.Profiling
         protected static void SaveProfiler(MiniProfiler current)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
-            // If the current MiniProfiler object has a custom IStorage set in the Storage property, use it. Else use the Global Storage.
+            // If the current MiniProfiler object has a custom IAsyncStorage set in the Storage property, use it. Else use the Global Storage.
             var storage = current.Storage;
             if (storage == null)
             {
@@ -77,6 +85,26 @@ namespace StackExchange.Profiling
             if (current.HasUserViewed == false)
             {
                 storage.SetUnviewed(current.User, current.Id);
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
+        /// profiler using the current storage settings. 
+        /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
+        /// </summary>
+        protected static async Task SaveProfilerAsync(MiniProfiler current)
+        {
+            var storage = current.Storage;
+            if (storage == null)
+            {
+                MiniProfiler.Settings.EnsureStorageStrategy();
+                storage = MiniProfiler.Settings.Storage;
+            }
+            await storage.SaveAsync(current).ConfigureAwait(false);
+            if (current.HasUserViewed == false)
+            {
+                await storage.SetUnviewedAsync(current.User, current.Id).ConfigureAwait(false);
             }
         }
     }
