@@ -774,8 +774,7 @@ namespace Subtext.TestLibrary
         {
             if (HttpContext.Current != null)
             {
-                if (OnBeforeDispose != null)
-                    OnBeforeDispose();
+                OnBeforeDispose?.Invoke();
 
                 HttpContext.Current = null;
             }

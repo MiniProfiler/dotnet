@@ -51,8 +51,8 @@ namespace StackExchange.Profiling
         public override bool Equals(object obj)
         {
             var other = obj as SqlTimingParameter;
-            return other != null 
-                && string.Equals(Name, other.Name) 
+            return other != null
+                && string.Equals(Name, other.Name)
                 && string.Equals(Value, other.Value);
         }
 
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling
         public override int GetHashCode()
         {
             int hashcode = Name.GetHashCode();
-            
+
             if (Value != null)
                 hashcode ^= Value.GetHashCode();
 

@@ -27,7 +27,7 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
-        public Timing() { }
+        public Timing() { /* serialization */ }
 
         /// <summary>
         /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
@@ -37,7 +37,7 @@ namespace StackExchange.Profiling
             Id = Guid.NewGuid();
             Profiler = profiler;
             Profiler.Head = this;
-            
+
             // root will have no parent
             parent?.AddChild(this);
 
@@ -84,7 +84,7 @@ namespace StackExchange.Profiling
         /// </summary>
         [DataMember(Order = 6)]
         public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
-        
+
         /// <summary>
         /// JSON representing the Custom Timings associated with this timing.
         /// </summary>
@@ -92,13 +92,13 @@ namespace StackExchange.Profiling
             get { return CustomTimings?.ToJson(); }
             set { CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>(); }
         }
-        
+
         /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
         public bool HasCustomTimings
         {
-            get { return CustomTimings != null && CustomTimings.Any(pair => pair.Value != null && pair.Value.Any()); }
+            get { return CustomTimings != null && CustomTimings.Any(pair => pair.Value?.Count > 0); }
         }
 
         /// <summary>

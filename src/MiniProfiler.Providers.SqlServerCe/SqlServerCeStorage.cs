@@ -31,21 +31,21 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// <param name="connectionString">
         /// The connection string to use.
         /// </param>
-        public SqlServerCeStorage(string connectionString) : base(connectionString) { }
+        public SqlServerCeStorage(string connectionString) : base(connectionString) { /* base setup */ }
 
-        const string _saveSql =
+        private const string _saveSql =
 @"INSERT INTO MiniProfilers
             (Id,  RootTimingId,  Name,  Started,  DurationMilliseconds, [User], HasUserViewed,  MachineName,  CustomLinksJson,  ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
 WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"; // this syntax works on both mssql and sqlite
 
-        const string _saveTimingsSql = @"
+        private const string _saveTimingsSql = @"
 INSERT INTO MiniProfilerTimings
             (Id,  MiniProfilerId,  ParentTimingId,  Name,  DurationMilliseconds,  StartMilliseconds,  IsRoot,  Depth,  CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
 WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)";
 
-        const string _saveClientTimingsSql = @"
+        private const string _saveClientTimingsSql = @"
 INSERT INTO MiniProfilerClientTimings
              (Id,  MiniProfilerId,  Name,  Start,  Duration)
 SELECT       @Id, @MiniProfilerId, @Name, @Start, @Duration
@@ -112,7 +112,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                 }
             }
         }
-        
+
         /// <summary>
         /// Asynchronously stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
@@ -133,7 +133,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     MachineName = profiler.MachineName.Truncate(100),
                     profiler.CustomLinksJson,
                     ClientTimingsRedirectCount = profiler.ClientTimings?.RedirectCount
-                });
+                }).ConfigureAwait(false);
 
                 var timings = new List<Timing>();
                 if (profiler.Root != null)
@@ -153,7 +153,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     timing.IsRoot,
                     timing.Depth,
                     timing.CustomTimingsJson
-                }));
+                })).ConfigureAwait(false);
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
@@ -170,7 +170,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                         Name = timing.Name.Truncate(200),
                         timing.Start,
                         timing.Duration
-                    }));
+                    })).ConfigureAwait(false);
                 }
             }
         }
@@ -193,7 +193,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
 
                 ConnectTimings(result, timings, clientTimings);
             }
-            
+
             return SetUTC(result);
         }
 
@@ -215,7 +215,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
 
                 ConnectTimings(result, timings, clientTimings);
             }
-            
+
             return SetUTC(result);
         }
 
@@ -262,7 +262,7 @@ Update MiniProfilers
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
    And [User] = @user";
-        
+
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
         {
             using (var conn = GetConnection())
@@ -371,7 +371,7 @@ Select Top {=maxResults} Id
         /// Returns a connection to Sql Server.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
-        
+
         /// <summary>
         /// Creates needed tables. Run this once on your database.
         /// </summary>

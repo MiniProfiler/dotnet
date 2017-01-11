@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// Don't use this.
         /// </summary>
         [Obsolete("Used for serialization")]
-        public CustomTiming() { }
+        public CustomTiming() { /* serialization only */ }
 
         /// <summary>
         /// Returns a new CustomTiming, also initializing its <see cref="Id"/> and, optionally, its <see cref="StackTraceSnippet"/>.

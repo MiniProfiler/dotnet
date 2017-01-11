@@ -131,7 +131,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="clientTimings">The client timings to connect to the profiler</param>
         protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
         {
-            if (profiler != null && profiler.RootTimingId.HasValue && timings.Any())
+            if (profiler != null && profiler.RootTimingId.HasValue && timings.Count > 0)
             {
                 var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
                 if (rootTiming != null)
@@ -142,7 +142,7 @@ namespace StackExchange.Profiling.Storage
                     var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
                     PopulateChildTimings(rootTiming, timingsLookupByParent);
                 }
-                if (clientTimings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
+                if (clientTimings.Count > 0 || profiler.ClientTimingsRedirectCount.HasValue)
                 {
                     profiler.ClientTimings = new ClientTimings
                     {

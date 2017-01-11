@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Assert.Equal(profiler.Id, guids.First());
             Assert.Equal(1, guids.Count());
         }
-        
+
         [Fact]
         public void TestRangeQueries()
         {
@@ -31,7 +31,7 @@ namespace StackExchange.Profiling.Tests.Storage
             var profiler1 = new MiniProfiler("/") { Started = inASec, Id = Guid.NewGuid() };
             var profiler2 = new MiniProfiler("/") { Started = in2Secs, Id = Guid.NewGuid() };
             var profiler3 = new MiniProfiler("/") { Started = in3Secs, Id = Guid.NewGuid() };
-            
+
             var storage = new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0));
 
             storage.Save(profiler);

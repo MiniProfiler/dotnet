@@ -26,11 +26,11 @@ namespace Subtext.TestLibrary
 	/// </summary>
 	public class SimulatedHttpRequest : SimpleWorkerRequest
 	{
-	    Uri _referer;
-		string _host;
-		string _verb;
-        int _port;
-	    string _physicalFilePath;
+        private Uri _referer;
+        private string _host;
+        private string _verb;
+        private int _port;
+        private string _physicalFilePath;
 
         /// <summary>
         /// Creates a new <see cref="SimulatedHttpRequest"/> instance.
@@ -47,13 +47,13 @@ namespace Subtext.TestLibrary
 	    public SimulatedHttpRequest(string applicationPath, string physicalAppPath, string physicalFilePath, string page, string query, TextWriter output, string host, int port, string verb) : base(applicationPath, physicalAppPath, page, query, output)
 	    {
             if (host == null)
-                throw new ArgumentNullException("host", "Host cannot be null.");
+                throw new ArgumentNullException(nameof(host), "Host cannot be null.");
 
             if(host.Length == 0)
-                throw new ArgumentException("Host cannot be empty.", "host");
+                throw new ArgumentException("Host cannot be empty.", nameof(host));
 
             if (applicationPath == null)
-                throw new ArgumentNullException("applicationPath", "Can't create a request with a null application path. Try empty string.");
+                throw new ArgumentNullException(nameof(applicationPath), "Can't create a request with a null application path. Try empty string.");
 
             _host = host;
             _verb = verb;
@@ -66,58 +66,36 @@ namespace Subtext.TestLibrary
             _referer = referer;
         }
 
-	    /// <summary>
-		/// Returns the specified member of the request header.
-		/// </summary>
-		/// <returns>
-		/// The HTTP verb returned in the request
-		/// header.
-		/// </returns>
-		public override string GetHttpVerbName()
-		{
-			return _verb;
-		}
-		
-		/// <summary>
-		/// Gets the name of the server.
-		/// </summary>
-		/// <returns></returns>
-		public override string GetServerName()
-		{
-			return _host;
-		}
-	    
-	    public override int GetLocalPort()
-	    {
-            return _port;
-	    }
+        /// <summary>
+        /// Returns the specified member of the request header.
+        /// </summary>
+        /// <returns>
+        /// The HTTP verb returned in the request
+        /// header.
+        /// </returns>
+        public override string GetHttpVerbName() => _verb;
 
-		/// <summary>
-		/// Gets the headers.
-		/// </summary>
-		/// <value>The headers.</value>
-		public NameValueCollection Headers
-		{
-			get
-			{
-				return headers;
-			}
-		}
+        /// <summary>
+        /// Gets the name of the server.
+        /// </summary>
+        /// <returns></returns>
+        public override string GetServerName() => _host;
 
-		private NameValueCollection headers = new NameValueCollection();
-		
-		/// <summary>
-		/// Gets the format exception.
-		/// </summary>
-		/// <value>The format exception.</value>
-		public NameValueCollection Form
-		{
-			get
-			{
-				return formVariables;
-			}
-		}
-		private NameValueCollection formVariables = new NameValueCollection();
+        public override int GetLocalPort() => _port;
+
+        private NameValueCollection headers = new NameValueCollection();
+        /// <summary>
+        /// Gets the headers.
+        /// </summary>
+        /// <value>The headers.</value>
+        public NameValueCollection Headers => headers;
+
+        private NameValueCollection formVariables = new NameValueCollection();
+        /// <summary>
+        /// Gets the format exception.
+        /// </summary>
+        /// <value>The format exception.</value>
+        public NameValueCollection Form => formVariables;
 
 		/// <summary>
 		/// Get all nonstandard HTTP header name-value pairs.
@@ -146,7 +124,7 @@ namespace Subtext.TestLibrary
 
             if (index == 12 && _verb == "POST")
                 return "application/x-www-form-urlencoded";
-            
+
             return base.GetKnownRequestHeader(index);
         }
 
@@ -175,38 +153,32 @@ namespace Subtext.TestLibrary
             return uriPath;
         }
 
-        public override string GetFilePathTranslated()
-        {
-            return _physicalFilePath;
-        }
-		
-		/// <summary>
-		/// Reads request data from the client (when not preloaded).
-		/// </summary>
-		/// <returns>The number of bytes read.</returns>
-		public override byte[] GetPreloadedEntityBody()
+        public override string GetFilePathTranslated() => _physicalFilePath;
+
+        /// <summary>
+        /// Reads request data from the client (when not preloaded).
+        /// </summary>
+        /// <returns>The number of bytes read.</returns>
+        public override byte[] GetPreloadedEntityBody()
 		{
 			string formText = string.Empty;
-			
+
 			foreach(string key in formVariables.Keys)
 			{
 				formText += string.Format("{0}={1}&", key, formVariables[key]);
 			}
-			
+
 			return Encoding.UTF8.GetBytes(formText);
 		}
-		
-		/// <summary>
-		/// Returns a value indicating whether all request data
-		/// is available and no further reads from the client are required.
-		/// </summary>
-		/// <returns>
-		/// 	<see langword="true"/> if all request data is available; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
-		public override bool IsEntireEntityBodyIsPreloaded()
-		{
-			return true;
-		}
-	}
+
+        /// <summary>
+        /// Returns a value indicating whether all request data
+        /// is available and no further reads from the client are required.
+        /// </summary>
+        /// <returns>
+        /// 	<see langword="true"/> if all request data is available; otherwise,
+        /// <see langword="false"/>.
+        /// </returns>
+        public override bool IsEntireEntityBodyIsPreloaded() => true;
+    }
 }

@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
-        public Suppression() { }
+        public Suppression() { /* serialization only */ }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="Suppression"/> class. 
@@ -24,12 +24,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public Suppression(MiniProfiler profiler)
         {
-            if (profiler == null)
-            {
-                throw new ArgumentNullException("profiler");
-            }
-
-            Profiler = profiler;
+            Profiler = profiler ?? throw new ArgumentNullException(nameof(profiler));
             if (!Profiler.IsActive)
             {
                 return;

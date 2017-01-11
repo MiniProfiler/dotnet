@@ -68,8 +68,8 @@ namespace StackExchange.Profiling.Tests
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
         /// <returns>the mini profiler</returns>
         public static MiniProfiler GetProfiler(
-            string url = DefaultRequestUrl, 
-            int childDepth = 0, 
+            string url = DefaultRequestUrl,
+            int childDepth = 0,
             int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             MiniProfiler result = null;
@@ -107,8 +107,8 @@ namespace StackExchange.Profiling.Tests
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
         /// <returns>the mini profiler</returns>
         public static async Task<MiniProfiler> GetProfilerAsync(
-            string url = DefaultRequestUrl, 
-            int childDepth = 0, 
+            string url = DefaultRequestUrl,
+            int childDepth = 0,
             int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             // TODO: Consolidate with above, maybe some out params
@@ -133,7 +133,7 @@ namespace StackExchange.Profiling.Tests
             {
                 result = MiniProfiler.Start();
                 step();
-                await MiniProfiler.StopAsync();
+                await MiniProfiler.StopAsync().ConfigureAwait(false);
             }
 
             return result;
@@ -148,7 +148,7 @@ namespace StackExchange.Profiling.Tests
             var sw = (UnitTestStopwatch)MiniProfiler.Current.Stopwatch;
             sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
         }
-        
+
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
             Assert.Equal(mp1, mp2);
@@ -178,8 +178,7 @@ namespace StackExchange.Profiling.Tests
                     Console.WriteLine();
 
                     var ct1 = pair1.Value;
-                    List<CustomTiming> ct2;
-                    Assert.True(t2.CustomTimings.TryGetValue(pair1.Key, out ct2));
+                    Assert.True(t2.CustomTimings.TryGetValue(pair1.Key, out var ct2));
 
                     for (int i = 0; i < ct1.Count; i++)
                     {
@@ -244,7 +243,7 @@ namespace StackExchange.Profiling.Tests
                 }
             }
         }
-        
+
         private DateTime TrimToDecisecond(DateTime dateTime) =>
             new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
     }

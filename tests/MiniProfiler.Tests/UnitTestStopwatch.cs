@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.Tests
         /// The ticks per millisecond.
         /// </summary>
         public static readonly long TicksPerMillisecond = TimeSpan.FromMilliseconds(1).Ticks;
-        
+
         /// <summary>
         /// Gets or sets the elapsed ticks.
         /// </summary>

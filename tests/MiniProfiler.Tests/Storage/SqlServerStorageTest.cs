@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             _conn = fixture.Conn;
         }
-        
+
         [Fact]
         public void NoChildTimings()
         {
@@ -30,15 +30,15 @@ namespace StackExchange.Profiling.Tests.Storage
             var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
             AssertProfilersAreEqual(mp, mp2);
         }
-        
+
         [Fact]
         public async Task NoChildTimingsAsync()
         {
-            var mp = await GetProfilerAsync();
+            var mp = await GetProfilerAsync().ConfigureAwait(false);
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 1);
 
-            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id);
+            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id).ConfigureAwait(false);
             AssertProfilersAreEqual(mp, mp2);
         }
 
@@ -56,11 +56,11 @@ namespace StackExchange.Profiling.Tests.Storage
         [Fact]
         public async Task WithChildTimingsAsync()
         {
-            var mp = await GetProfilerAsync(childDepth: 5);
+            var mp = await GetProfilerAsync(childDepth: 5).ConfigureAwait(false);
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 6);
 
-            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id);
+            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id).ConfigureAwait(false);
             AssertProfilersAreEqual(mp, mp2);
         }
 
@@ -69,7 +69,7 @@ namespace StackExchange.Profiling.Tests.Storage
             var count = _conn.QuerySingle<int>("select count(*) from MiniProfilers where Id = @Id", new { miniProfiler.Id });
             Assert.Equal(1, count);
         }
-        
+
         private void AssertTimingsExist(MiniProfiler profiler, int expected)
         {
             var count = _conn.QuerySingle<int>("select count(*) from MiniProfilerTimings where MiniProfilerId = @Id", new { profiler.Id });

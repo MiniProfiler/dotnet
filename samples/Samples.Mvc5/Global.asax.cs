@@ -95,7 +95,6 @@ namespace Samples.Mvc5
         /// </summary>
         private void InitProfilerSettings()
         {
-
             // a powerful feature of the MiniProfiler is the ability to share links to results with other developers.
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
@@ -122,7 +121,7 @@ namespace Samples.Mvc5
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                           // defaults to 15
             MiniProfiler.Settings.RouteBasePath = "~/profiler";                        // e.g. /profiler/mini-profiler-includes.js
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider(); // use the web profiler since we're in a web application
-            
+
             // optional settings to control the stack trace output in the details pane
             // the exclude methods are not thread safe, so be sure to only call these once per appdomain
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
@@ -145,7 +144,7 @@ namespace Samples.Mvc5
                 }
 
                 // all other paths can check our global switch
-                return !DisableProfilingResults; 
+                return !DisableProfilingResults;
             };
 
             // the list of all sessions in the store is restricted by default, you must return true to allow it

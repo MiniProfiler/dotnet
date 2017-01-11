@@ -39,8 +39,8 @@ namespace StackExchange.Profiling.SqlFormatters
             foreach (var p in parameters)
             {
                 // If the parameter doesn't have a prefix (@,:,etc), append one
-                var name = ParamPrefixes.IsMatch(p.Name) 
-                    ? p.Name 
+                var name = ParamPrefixes.IsMatch(p.Name)
+                    ? p.Name
                     : Regex.Match(commandText, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
                 if (name.HasValue())
                 {

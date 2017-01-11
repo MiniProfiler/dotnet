@@ -13,7 +13,7 @@ using System.Web;
 
 namespace StackExchange.Profiling
 {
-    partial class MiniProfiler
+    public partial class MiniProfiler
     {
         /// <summary>
         /// Various configuration properties.
@@ -56,9 +56,10 @@ namespace StackExchange.Profiling
 
                 try
                 {
-                    List<string> files = new List<string>();
-                    files.Add(location);
-
+                    var files = new List<string>
+                    {
+                        location
+                    };
                     string customUITemplatesPath = "";
                     if (HttpContext.Current != null)
                         customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
@@ -292,7 +293,7 @@ namespace StackExchange.Profiling
             /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
             /// </summary>
             public static ISqlFormatter SqlFormatter { get; set; }
-            
+
             /// <summary>
             /// Assembly version of this dank MiniProfiler.
             /// </summary>
@@ -342,7 +343,7 @@ namespace StackExchange.Profiling
                     //ProfilerProvider =  new WebRequestProfilerProvider();
                 }
             }
-            
+
             // TODO: IntervalsVisibleTo
             /// <summary>
             /// Allows switching out stopwatches for unit testing.

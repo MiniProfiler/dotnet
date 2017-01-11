@@ -40,7 +40,7 @@ namespace StackExchange.Profiling.Helpers
         /// </summary>
         /// <returns>The <see cref="IStopwatch"/>.</returns>
         public static IStopwatch StartNew() => new StopwatchWrapper();
-        
+
         /// <summary>
         /// Prevents a default instance of the <see cref="StopwatchWrapper"/> class from being created.
         /// </summary>

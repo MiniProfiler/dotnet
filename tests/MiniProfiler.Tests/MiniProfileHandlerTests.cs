@@ -8,7 +8,7 @@ using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    class MiniProfilerHandlerTests
+    internal class MiniProfilerHandlerTests
     {
         [Theory]
         [InlineData("BRILLANT", 404)]
@@ -42,7 +42,7 @@ namespace StackExchange.Profiling.Tests
 
             // Act
             var res = GetRequestResponseHttpStatus(sut, "/results-index");
-            
+
             // Assert
             Assert.Equal(expectedHttpStatus, res);
         }

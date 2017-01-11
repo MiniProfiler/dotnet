@@ -74,8 +74,7 @@ namespace StackExchange.Profiling.Data
             do
             {
                 var snapshot = Interlocked.CompareExchange(ref head, null, null);
-                TValue found;
-                if (TryGet(snapshot, key, out found))
+                if (TryGet(snapshot, key, out var found))
                 {
                     // existing match; report the existing value instead
                     value = found;
@@ -87,7 +86,7 @@ namespace StackExchange.Profiling.Data
                 // did somebody move our cheese?
                 tryAgain = Interlocked.CompareExchange(ref head, newNode, snapshot) != snapshot;
             }
-            
+
             while (tryAgain);
             return true;
         }

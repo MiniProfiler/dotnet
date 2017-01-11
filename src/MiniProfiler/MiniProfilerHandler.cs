@@ -122,11 +122,9 @@ namespace StackExchange.Profiling
             // seen the current one yet, so go ahead and add it to the end 
             var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
             ids.Add(profiler.Id);
-
-            string format;
-            if (!TryGetResource("include.partial.html", out format))
+            if (!TryGetResource("include.partial.html", out string format))
             {
-                return (new HtmlString("<!-- Could not find 'include.partial.html' -->"));
+                return new HtmlString("<!-- Could not find 'include.partial.html' -->");
             }
 
             Func<bool, string> toJs = b => b ? "true" : "false";
@@ -168,20 +166,13 @@ namespace StackExchange.Profiling
                 default:
                     return NotFound(context);
             }
-#if !DEBUG
-            var cache = response.Cache;
-            cache.SetCacheability(System.Web.HttpCacheability.Public);
-            cache.SetExpires(DateTime.Now.AddDays(7));
-            cache.SetValidUntilExpires(true);
-#endif
-            string resource;
-            return TryGetResource(Path.GetFileName(path), out resource) ? resource : NotFound(context);
+
+            return TryGetResource(Path.GetFileName(path), out string resource) ? resource : NotFound(context);
         }
 
         private static string Index(HttpContext context)
         {
-            string message;
-            if (!AuthorizeRequest(context, isList: true, message: out message))
+            if (!AuthorizeRequest(context, isList: true, message: out string message))
             {
                 return message;
             }
@@ -223,8 +214,7 @@ namespace StackExchange.Profiling
 
         private static string GetListJson(HttpContext context)
         {
-            string message;
-            if (!AuthorizeRequest(context, isList: true, message: out message))
+            if (!AuthorizeRequest(context, isList: true, message: out string message))
             {
                 return message;
             }
@@ -272,12 +262,10 @@ namespace StackExchange.Profiling
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
             var isPopup = context.Request["popup"].HasValue();
-
             // this guid is the MiniProfiler.Id property
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
-            Guid id;
-            if (!Guid.TryParse(context.Request["id"], out id) && MiniProfiler.Settings.Storage != null)
+            if (!Guid.TryParse(context.Request["id"], out var id) && MiniProfiler.Settings.Storage != null)
                 id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
 
             if (id == default(Guid))
@@ -321,8 +309,7 @@ namespace StackExchange.Profiling
                 MiniProfiler.Settings.Storage.Save(profiler);
             }
 
-            string authorizeMessage;
-            if (!AuthorizeRequest(context, isList: false, message: out authorizeMessage))
+            if (!AuthorizeRequest(context, isList: false, message: out string authorizeMessage))
             {
                 context.Response.ContentType = "application/json";
                 return "hidden".ToJson();
@@ -340,9 +327,7 @@ namespace StackExchange.Profiling
         private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "text/html";
-            
-            string template;
-            if (!TryGetResource("share.html", out template))
+            if (!TryGetResource("share.html", out string template))
                 return NotFound(context);
             var sb = new StringBuilder(template);
             sb.Replace("{name}", profiler.Name)
@@ -362,7 +347,6 @@ namespace StackExchange.Profiling
             // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
             if (!BypassLocalLoad)
             {
-
                 var trace = new System.Diagnostics.StackTrace(true);
                 var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\ui\\" + filename;
                 try

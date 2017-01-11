@@ -50,8 +50,7 @@ namespace StackExchange.Profiling
             var id = Tuple.Create((object)command, type);
             var current = _inProgress[id];
             current.ExecutionComplete(reader != null);
-            SqlTiming ignore;
-            _inProgress.TryRemove(id, out ignore);
+            _inProgress.TryRemove(id, out var ignore);
             if (reader != null)
             {
                 _inProgressReaders[reader] = current;
@@ -63,14 +62,11 @@ namespace StackExchange.Profiling
         /// </summary>
         public void ReaderFinishedImpl(IDataReader reader)
         {
-            SqlTiming stat;
-
             // this reader may have been disposed/closed by reader code, not by our using()
-            if (_inProgressReaders.TryGetValue(reader, out stat))
+            if (_inProgressReaders.TryGetValue(reader, out var stat))
             {
                 stat.ReaderFetchComplete();
-                SqlTiming ignore;
-                _inProgressReaders.TryRemove(reader, out ignore);
+                _inProgressReaders.TryRemove(reader, out var ignore);
             }
         }
 
@@ -101,9 +97,9 @@ namespace StackExchange.Profiling
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
         public static void ExecuteFinish(
-            this SqlProfiler sqlProfiler, 
-            IDbCommand command, 
-            SqlExecuteType type, 
+            this SqlProfiler sqlProfiler,
+            IDbCommand command,
+            SqlExecuteType type,
             DbDataReader reader = null)
         {
             if (sqlProfiler == null) return;

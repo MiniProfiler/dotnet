@@ -67,11 +67,11 @@ namespace StackExchange.Profiling.Storage
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
-            
+
             lock (_profiles)
             {
                 var profileInfo = new ProfileInfo { Id = profiler.Id, Started = profiler.Started };
-                if (_profiles.IndexOfKey(profileInfo) < 0) 
+                if (_profiles.IndexOfKey(profileInfo) < 0)
                 {
                     _profiles.Add(profileInfo, null);
                 }
@@ -105,7 +105,7 @@ namespace StackExchange.Profiling.Storage
         /// Set the profile to unviewed for this user
         /// </summary>
         public void SetUnviewed(string user, Guid id)
-        { 
+        {
             var ids = GetPerUserUnviewedIds(user);
             lock (ids)
             {
@@ -152,7 +152,7 @@ namespace StackExchange.Profiling.Storage
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
         public MiniProfiler Load(Guid id) => HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
-        
+
         /// <summary>
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
@@ -195,7 +195,7 @@ namespace StackExchange.Profiling.Storage
         private string GetCacheKey(Guid id) => CacheKeyPrefix + id;
 
         private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
-        
+
         private List<Guid> GetPerUserUnviewedIds(string user)
         {
             var key = GetPerUserUnviewedCacheKey(user);
@@ -222,12 +222,12 @@ namespace StackExchange.Profiling.Storage
         /// List the latest profiling results.
         /// </summary>
         public IEnumerable<Guid> List(
-            int maxResults, 
-            DateTime? start = null, 
-            DateTime? finish = null, 
+            int maxResults,
+            DateTime? start = null,
+            DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            var guids = new List<Guid>(); 
+            var guids = new List<Guid>();
             lock (_profiles)
             {
                 int idxStart = 0;
@@ -256,7 +256,6 @@ namespace StackExchange.Profiling.Storage
                         if (guids.Count == maxResults) break;
                     }
                 }
-               
             }
             return guids;
         }

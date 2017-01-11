@@ -16,7 +16,6 @@ namespace StackExchange.Profiling.Data
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
         private readonly IDbProfiler _profiler;
-        private readonly IDbDataAdapter _adapter;
         private IDbCommand _selectCommand;
         private IDbCommand _insertCommand;
         private IDbCommand _updateCommand;
@@ -25,7 +24,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the underlying adapter.  Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).
         /// </summary>
-        public IDbDataAdapter InternalAdapter => _adapter;
+        public IDbDataAdapter InternalAdapter { get; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ProfiledDbDataAdapter"/> class.
@@ -34,12 +33,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiler">The profiler.</param>
         public ProfiledDbDataAdapter(IDbDataAdapter wrappedAdapter, IDbProfiler profiler = null)
         {
-            if (wrappedAdapter == null)
-            {
-                throw new ArgumentNullException("wrappedAdapter");
-            }
-
-            _adapter = wrappedAdapter;
+            InternalAdapter = wrappedAdapter ?? throw new ArgumentNullException(nameof(wrappedAdapter));
             _profiler = profiler ?? MiniProfiler.Current;
 
             InitCommands(wrappedAdapter);
@@ -73,7 +67,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// An array of <see cref="T:System.Data.DataTable"/> objects that contain schema information returned from the data source.
         /// </returns>
-        public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType) => _adapter.FillSchema(dataSet, schemaType);
+        public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType) => InternalAdapter.FillSchema(dataSet, schemaType);
 
         /// <summary>
         /// Adds or updates rows in the <see cref="T:System.Data.DataSet"/> to match those in the data source using the <see cref="T:System.Data.DataSet"/> name, and creates a <see cref="T:System.Data.DataTable"/> named "Table".
@@ -96,7 +90,7 @@ namespace StackExchange.Profiling.Data
 
             if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
             {
-                return _adapter.Fill(dataSet);
+                return InternalAdapter.Fill(dataSet);
             }
 
             int result;
@@ -104,7 +98,7 @@ namespace StackExchange.Profiling.Data
             _profiler.ExecuteStart(cmd, SqlExecuteType.Reader);
             try
             {
-                result = _adapter.Fill(dataSet);
+                result = InternalAdapter.Fill(dataSet);
             }
             catch (Exception e)
             {
@@ -133,10 +127,10 @@ namespace StackExchange.Profiling.Data
         /// <exception cref="T:System.InvalidOperationException">The source table is invalid or being used with an <see cref="T:IDbDataAdapter"/> implementation that does not inherit from <see cref="T:DbDataAdapter"/>.</exception>
         public new int Fill(DataTable dataTable)
         {
-            var dbDataAdapter = _adapter as DbDataAdapter;
+            var dbDataAdapter = InternalAdapter as DbDataAdapter;
             if (dbDataAdapter == null)
             {
-                throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. " + 
+                throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. " +
                     "If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
             }
 
@@ -171,7 +165,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// An array of <see cref="T:System.Data.IDataParameter"/> objects that contains the parameters set by the user.
         /// </returns>
-        public new IDataParameter[] GetFillParameters() => _adapter.GetFillParameters();
+        public new IDataParameter[] GetFillParameters() => InternalAdapter.GetFillParameters();
 
         /// <summary>
         /// Calls the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet"/> from a <see cref="T:System.Data.DataTable"/> named "Table".
@@ -195,8 +189,8 @@ namespace StackExchange.Profiling.Data
         /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is Passthrough.</returns>
         public new MissingMappingAction MissingMappingAction
         {
-            get { return _adapter.MissingMappingAction; }
-            set { _adapter.MissingMappingAction = value; }
+            get { return InternalAdapter.MissingMappingAction; }
+            set { InternalAdapter.MissingMappingAction = value; }
         }
 
         /// <summary>
@@ -206,15 +200,15 @@ namespace StackExchange.Profiling.Data
         /// <exception cref="T:System.ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values. </exception>
         public new MissingSchemaAction MissingSchemaAction
         {
-            get { return _adapter.MissingSchemaAction; }
-            set { _adapter.MissingSchemaAction = value; }
+            get { return InternalAdapter.MissingSchemaAction; }
+            set { InternalAdapter.MissingSchemaAction = value; }
         }
 
         /// <summary>
         /// Gets how a source table is mapped to a dataset table.
         /// </summary>
         /// <returns>A collection that provides the master mapping between the returned records and the <see cref="T:System.Data.DataSet"/>. The default value is an empty collection.</returns>
-        public new ITableMappingCollection TableMappings => _adapter.TableMappings;
+        public new ITableMappingCollection TableMappings => InternalAdapter.TableMappings;
 
         /// <summary>
         /// Gets or sets an SQL statement used to select records in the data source.
@@ -228,7 +222,7 @@ namespace StackExchange.Profiling.Data
                 _selectCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                _adapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -244,7 +238,7 @@ namespace StackExchange.Profiling.Data
                 _insertCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                _adapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -260,7 +254,7 @@ namespace StackExchange.Profiling.Data
                 _updateCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                _adapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
 
@@ -276,7 +270,7 @@ namespace StackExchange.Profiling.Data
                 _deleteCommand = value;
 
                 var cmd = value as ProfiledDbCommand;
-                _adapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
             }
         }
     }

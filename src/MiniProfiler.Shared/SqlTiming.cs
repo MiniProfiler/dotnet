@@ -30,8 +30,8 @@ namespace StackExchange.Profiling
         /// </summary>
         public SqlTiming(IDbCommand command, SqlExecuteType type, MiniProfiler profiler)
         {
-            _profiler = profiler ?? throw new ArgumentNullException("profiler");
-            
+            _profiler = profiler ?? throw new ArgumentNullException(nameof(profiler));
+
             var commandText = AddSpacesToParameters(command.CommandText);
             var parameters = GetCommandParameters(command);
 
@@ -47,7 +47,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets or sets the offset from main <c>MiniProfiler</c> start that this custom command began.
         /// </summary>
-        public decimal StartMilliseconds { get { return _customTiming.StartMilliseconds; } }
+        public decimal StartMilliseconds => _customTiming.StartMilliseconds;
 
         /// <summary>
         /// Returns a snippet of the SQL command and the duration.
@@ -111,8 +111,7 @@ namespace StackExchange.Profiling
             // This assumes that all SQL variants use the same parameter format, it works for T-SQL
             if (parameter.DbType == DbType.Binary)
             {
-                var bytes = rawValue as byte[];
-                if (bytes != null && bytes.Length <= MaxByteParameterSize)
+                if (rawValue is byte[] bytes && bytes.Length <= MaxByteParameterSize)
                 {
                     return "0x" + BitConverter.ToString(bytes).Replace("-", string.Empty);
                 }
@@ -145,7 +144,7 @@ namespace StackExchange.Profiling
         {
             return parameter.IsNullable && parameter.Value == null ? 0 : parameter.Size;
         }
-        
+
         /// <summary>
         /// To help with display, put some space around crowded commas.
         /// </summary>

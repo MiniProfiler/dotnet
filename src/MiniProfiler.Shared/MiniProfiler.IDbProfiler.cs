@@ -5,7 +5,7 @@ using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling
 {
-    partial class MiniProfiler : IDbProfiler
+    public partial class MiniProfiler : IDbProfiler
     {
         /// <summary>
         /// Contains information about queries executed during this profiling session.
@@ -33,13 +33,7 @@ namespace StackExchange.Profiling
             // TODO: implement errors aggregation and presentation
         }
 
-
-        bool _isActive;
-        bool IDbProfiler.IsActive { get { return _isActive; } }
-        internal bool IsActive
-        {
-            get { return _isActive; }
-            set { _isActive = value; }
-        }
+        bool IDbProfiler.IsActive => IsActive;
+        internal bool IsActive { get; set; }
     }
 }

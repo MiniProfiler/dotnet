@@ -27,9 +27,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiler">The profiler to use</param>
         public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler profiler)
         {
-            if (command == null) throw new ArgumentNullException("command");
-
-            _command = command;
+            _command = command ?? throw new ArgumentNullException(nameof(command));
             _connection = connection;
 
             if (profiler != null)
@@ -227,5 +225,5 @@ namespace StackExchange.Profiling.Data
             return new SimpleProfiledCommand((IDbCommand)tail.Clone(), _connection, _profiler);
         }
 #endif
-    } 
+    }
 }

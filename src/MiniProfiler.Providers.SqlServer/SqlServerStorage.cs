@@ -28,14 +28,14 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        public SqlServerStorage(string connectionString) : base(connectionString) { }
-        
+        public SqlServerStorage(string connectionString) : base(connectionString) { /* base call */ }
+
         private const string _saveSql =
 @"INSERT INTO MiniProfilers
             (Id,  RootTimingId,  Name,  Started,  DurationMilliseconds, [User], HasUserViewed,  MachineName,  CustomLinksJson,  ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
 WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"; // this syntax works on both mssql and sqlite
-        
+
         private const string _saveTimingsSql = @"
 INSERT INTO MiniProfilerTimings
             (Id,  MiniProfilerId,  ParentTimingId,  Name,  DurationMilliseconds,  StartMilliseconds,  IsRoot,  Depth,  CustomTimingsJson)
@@ -131,7 +131,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     MachineName = profiler.MachineName.Truncate(100),
                     profiler.CustomLinksJson,
                     ClientTimingsRedirectCount = profiler.ClientTimings?.RedirectCount
-                });
+                }).ConfigureAwait(false);
 
                 var timings = new List<Timing>();
                 if (profiler.Root != null)
@@ -151,7 +151,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     timing.IsRoot,
                     timing.Depth,
                     timing.CustomTimingsJson
-                }));
+                })).ConfigureAwait(false);
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
@@ -168,7 +168,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                         Name = timing.Name.Truncate(200),
                         timing.Start,
                         timing.Duration
-                    }));
+                    })).ConfigureAwait(false);
                 }
             }
         }
@@ -366,7 +366,7 @@ Select Top {=maxResults} Id
 
             return sb.ToString();
         }
-        
+
         /// <summary>
         /// Load individual MiniProfiler
         /// </summary>
@@ -391,7 +391,7 @@ Select Top {=maxResults} Id
         /// Returns a connection to Sql Server.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
-        
+
         /// <summary>
         /// Creates needed tables. Run this once on your database.
         /// </summary>

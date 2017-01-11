@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.Helpers
 		static readonly string[] AllowedEncodings = new[] { "gzip", "deflate" };
         static readonly char[] encodingSplit = new[] { ',' };
         static readonly char[] encodingTypeSplit = new[] { ';' };
-        
+
         static string ParsePreferredEncoding(string acceptEncoding)
 		{
 			return acceptEncoding

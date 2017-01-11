@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Tests.Data
         {
             Utils.CreateSqlCeDatabase<DbProfilerTest>(sqlToExecute: new[] { "create table TestTable (Id int null)" });
         }
-        
+
         [Fact]
         public void NonQuery()
         {
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
-        
+
         [Fact]
         public void Scalar()
         {
@@ -51,7 +51,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
-        
+
         [Fact]
         public void DataReader()
         {
@@ -72,7 +72,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.True(profiler.CompleteStatementMeasured);
             }
         }
-        
+
         [Fact]
         public void Errors()
         {
@@ -120,7 +120,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.Equal(profiler.ErrorSql, BadSql);
             }
         }
-        
+
         /// <summary>
         /// The get connection.
         /// </summary>
@@ -130,7 +130,7 @@ namespace StackExchange.Profiling.Tests.Data
             var connection = Utils.GetOpenSqlCeConnection<DbProfilerTest>();
             return new CountingConnection(connection, new CountingDbProfiler());
         }
-        
+
         public class CountingConnection : ProfiledDbConnection
         {
             public CountingDbProfiler CountingProfiler { get; set; }

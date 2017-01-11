@@ -82,12 +82,12 @@ namespace StackExchange.Profiling
                 storage = MiniProfiler.Settings.Storage;
             }
             storage.Save(current);
-            if (current.HasUserViewed == false)
+            if (!current.HasUserViewed)
             {
                 storage.SetUnviewed(current.User, current.Id);
             }
         }
-        
+
         /// <summary>
         /// Asynchronously calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
         /// profiler using the current storage settings. 
@@ -102,7 +102,7 @@ namespace StackExchange.Profiling
                 storage = MiniProfiler.Settings.Storage;
             }
             await storage.SaveAsync(current).ConfigureAwait(false);
-            if (current.HasUserViewed == false)
+            if (!current.HasUserViewed)
             {
                 await storage.SetUnviewedAsync(current.User, current.Id).ConfigureAwait(false);
             }

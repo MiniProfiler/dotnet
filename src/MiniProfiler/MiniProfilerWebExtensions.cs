@@ -83,8 +83,8 @@ namespace StackExchange.Profiling
                         var type = pair.Key;
                         var customTimings = pair.Value;
 
-                        text.AppendFormat(" ({0} = {1:###,##0.##}ms in {2} cmd{3})", 
-                            type, 
+                        text.AppendFormat(" ({0} = {1:###,##0.##}ms in {2} cmd{3})",
+                            type,
                             customTimings.Sum(ct => ct.DurationMilliseconds),
                             customTimings.Count,
                             customTimings.Count == 1 ? "" : "s");
@@ -92,7 +92,7 @@ namespace StackExchange.Profiling
                 }
 
                 text.AppendLine();
-                
+
                 if (timing.HasChildren)
                 {
                     var children = timing.Children;
@@ -102,7 +102,7 @@ namespace StackExchange.Profiling
 
             return text.ToString();
         }
-        
+
         /// <summary>
         /// Returns null if there is not client timing stuff
         /// </summary>

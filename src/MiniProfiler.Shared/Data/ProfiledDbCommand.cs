@@ -56,9 +56,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiler">The profiler.</param>
         public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
         {
-            if (command == null) throw new ArgumentNullException(nameof(command));
-
-            _command = command;
+            _command = command ?? throw new ArgumentNullException(nameof(command));
             _connection = connection;
 
             if (profiler != null)
@@ -75,8 +73,7 @@ namespace StackExchange.Profiling.Data
         private static Action<IDbCommand, bool> GetBindByName(Type commandType)
         {
             if (commandType == null) return null; // GIGO
-            Action<IDbCommand, bool> action;
-            if (Link<Type, Action<IDbCommand, bool>>.TryGet(bindByNameCache, commandType, out action))
+            if (Link<Type, Action<IDbCommand, bool>>.TryGet(bindByNameCache, commandType, out var action))
             {
                 return action;
             }
@@ -102,7 +99,7 @@ namespace StackExchange.Profiling.Data
                 il.Emit(OpCodes.Ret);
                 action = (Action<IDbCommand, bool>)method.CreateDelegate(typeof(Action<IDbCommand, bool>));
             }
-            
+
             // cache it            
             Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
             return action;

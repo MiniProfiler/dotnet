@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Data
         // ReSharper disable InconsistentNaming
         protected DbConnection _connection; // TODO: in MiniProfiler 2.0, make private
         // ReSharper restore InconsistentNaming
-        
+
         /// <summary>
         /// Gets the underlying, real database connection to your database provider.
         /// </summary>
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Data
         // ReSharper disable InconsistentNaming
         protected IDbProfiler _profiler; // TODO: in MiniProfiler 2.0, make private
         // ReSharper restore InconsistentNaming
-        
+
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>
@@ -53,9 +53,7 @@ namespace StackExchange.Profiling.Data
         /// </param>
         public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
         {
-            if (connection == null) throw new ArgumentNullException("connection");
-
-            _connection = connection;
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _connection.StateChange += StateChangeHandler;
 
             if (profiler != null)

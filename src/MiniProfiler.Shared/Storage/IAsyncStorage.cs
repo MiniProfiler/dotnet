@@ -8,18 +8,18 @@ namespace StackExchange.Profiling.Storage
     /// How lists should be sorted.
     /// </summary>
     public enum ListResultsOrder
-    { 
+    {
         /// <summary>
         /// Ascending Order
         /// </summary>
         Ascending,
-        
+
         /// <summary>
         /// Descending Order
         /// </summary>
         Descending
     }
-    
+
     /// <summary>
     /// Provides saving and loading <see cref="MiniProfiler"/>s to a storage medium.
     /// </summary>
@@ -29,9 +29,9 @@ namespace StackExchange.Profiling.Storage
         /// List the latest profiling results.
         /// </summary>
         IEnumerable<Guid> List(
-            int maxResults, 
-            DateTime? start = null, 
-            DateTime? finish = null, 
+            int maxResults,
+            DateTime? start = null,
+            DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending);
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace StackExchange.Profiling.Storage
         /// User identified by the current <c>MiniProfiler.Settings.UserProvider</c>
         /// </param>
         List<Guid> GetUnviewedIds(string user);
-        
+
         /// <summary>
         /// Asynchronously list the latest profiling results.
         /// </summary>

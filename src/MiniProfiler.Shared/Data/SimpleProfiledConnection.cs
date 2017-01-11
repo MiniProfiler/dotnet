@@ -64,7 +64,7 @@ namespace StackExchange.Profiling.Data
         /// begin the transaction.
         /// </summary>
         /// <returns>The <see cref="IDbTransaction"/>.</returns>
-        public IDbTransaction BeginTransaction() => 
+        public IDbTransaction BeginTransaction() =>
             new SimpleProfiledTransaction(_connection.BeginTransaction(), this);
 
         /// <summary>

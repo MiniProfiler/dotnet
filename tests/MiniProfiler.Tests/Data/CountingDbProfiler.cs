@@ -47,14 +47,14 @@ namespace StackExchange.Profiling.Tests.Data
         /// Gets a value indicating whether complete statement measured.
         /// </summary>
         public bool CompleteStatementMeasured => !_watch.IsRunning && _watch.ElapsedTicks > 0;
-        
+
         void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
         {
             _watch.Start();
             ExecuteStartCount++;
             ErrorSql = null;
         }
-        
+
         void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, System.Data.Common.DbDataReader reader)
         {
             if (reader == null)
@@ -64,13 +64,13 @@ namespace StackExchange.Profiling.Tests.Data
 
             ExecuteFinishCount++;
         }
-        
+
         void IDbProfiler.ReaderFinish(IDataReader reader)
         {
             _watch.Stop();
             ReaderFinishCount++;
         }
-        
+
         void IDbProfiler.OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception)
         {
             ErrorCount++;

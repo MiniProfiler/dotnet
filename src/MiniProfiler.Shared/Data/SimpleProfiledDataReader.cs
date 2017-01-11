@@ -18,16 +18,14 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiler">The profiler.</param>
         public SimpleProfiledDataReader(IDataReader reader, IDbProfiler profiler)
         {
-            if (reader == null) throw new ArgumentNullException("reader");
-
-            _reader = reader;
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
             if (profiler != null)
             {
                 _profiler = profiler;
             }
         }
-        
+
         /// <summary>Gets a value indicating the depth of nesting for the current row.</summary>
         public int Depth => _reader.Depth;
 
@@ -169,7 +167,6 @@ namespace StackExchange.Profiling.Data
         /// <param name="ordinal">The index of the field to find.</param>
         /// <returns>true if the specified field is set to null; otherwise, false.</returns>
         public bool IsDBNull(int ordinal) => _reader.IsDBNull(ordinal);
-        
 
         /// <summary>Closes the IDataReader Object.</summary>
         public void Close()
@@ -191,7 +188,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>Advances the IDataReader to the next record.</summary>
         /// <returns>true if there are more rows; otherwise, false.</returns>
         public bool Read() => _reader.Read();
-        
+
         /// <summary>
         /// dispose the command / connection and profiler.
         /// </summary>

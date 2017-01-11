@@ -38,21 +38,21 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Initialises static members of the <see cref="SqlServerFormatter"/> class.
         /// </summary>
         static SqlServerFormatter()
-        {   
+        {
             ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
             {
-                { DbType.AnsiString, GetWithLenFormatter("varchar") },
-                { DbType.String, GetWithLenFormatter("nvarchar") },
-                { DbType.AnsiStringFixedLength, GetWithLenFormatter("char") },
-                { DbType.StringFixedLength, GetWithLenFormatter("nchar") },
-                { DbType.Byte, p => "tinyint" },
-                { DbType.Int16, p => "smallint" },
-                { DbType.Int32, p => "int" },
-                { DbType.Int64, p => "bigint" },
-                { DbType.DateTime, p => "datetime" },
-                { DbType.Guid, p => "uniqueidentifier" },
-                { DbType.Boolean, p => "bit" },
-                { DbType.Binary, GetWithLenFormatter("varbinary") },
+                [DbType.AnsiString] = GetWithLenFormatter("varchar"),
+                [DbType.String] = GetWithLenFormatter("nvarchar"),
+                [DbType.AnsiStringFixedLength] = GetWithLenFormatter("char"),
+                [DbType.StringFixedLength] = GetWithLenFormatter("nchar"),
+                [DbType.Byte] = p => "tinyint",
+                [DbType.Int16] = p => "smallint",
+                [DbType.Int32] = p => "int",
+                [DbType.Int64] = p => "bigint",
+                [DbType.DateTime] = p => "datetime",
+                [DbType.Guid] = p => "uniqueidentifier",
+                [DbType.Boolean] = p => "bit",
+                [DbType.Binary] = GetWithLenFormatter("varbinary"),
             };
         }
 
@@ -69,9 +69,9 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
-            StringBuilder buffer = new StringBuilder();
-            
-            if (parameters != null && parameters.Any())
+            var buffer = new StringBuilder();
+
+            if (parameters?.Count > 0)
             {
                 GenerateParamText(buffer, parameters);
                 // finish the parameter declaration
@@ -127,8 +127,8 @@ namespace StackExchange.Profiling.SqlFormatters
 		    if (parameters == null) return;
 
 		    var parametersToSelect = parameters.Where(
-			    x => x.Direction == ParameterDirection.InputOutput.ToString() ||
-			         x.Direction == ParameterDirection.Output.ToString())
+			    x => x.Direction == ParameterDirection.InputOutput.ToString()
+                  || x.Direction == ParameterDirection.Output.ToString())
 					 .Select(x => EnsureParameterPrefix(x.Name) + " AS " + RemoveParameterPrefix(x.Name))
 					 .ToList();
 
@@ -138,14 +138,14 @@ namespace StackExchange.Profiling.SqlFormatters
 				parametersToSelect.Insert(0, EnsureParameterPrefix(returnValueParameter.Name) + " AS ReturnValue");
 			}
 
-		    if (!parametersToSelect.Any()) return;
-		    
+		    if (parametersToSelect.Count == 0) return;
+
 			buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(";");
 	    }
 
 	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
         {
-            if (parameters == null || !parameters.Any()) return null;
+            if (parameters == null || parameters.Count == 0) return null;
             return parameters.FirstOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
         }
 
@@ -164,7 +164,7 @@ namespace StackExchange.Profiling.SqlFormatters
 
         private void GenerateStoredProcedureParameters(StringBuilder buffer, List<SqlTimingParameter> parameters)
         {
-            if (parameters == null || !parameters.Any()) return;
+            if (parameters == null || parameters.Count == 0) return;
 
             bool firstParameter = true;
             foreach (var parameter in parameters)
@@ -173,7 +173,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 {
                     continue;
                 }
-                
+
                 if (!firstParameter)
                 {
                     buffer.Append(",");
@@ -183,8 +183,8 @@ namespace StackExchange.Profiling.SqlFormatters
                 buffer.Append(" ").Append(EnsureParameterPrefix(parameter.Name)).Append(" = ").Append(EnsureParameterPrefix(parameter.Name));
 
                 // Output and InputOutput directions treated equally on the database side.
-                if (parameter.Direction == ParameterDirection.Output.ToString() ||
-                    parameter.Direction == ParameterDirection.InputOutput.ToString())
+                if (parameter.Direction == ParameterDirection.Output.ToString()
+                 || parameter.Direction == ParameterDirection.InputOutput.ToString())
                 {
                     buffer.Append(" OUTPUT");
                 }
@@ -214,17 +214,15 @@ namespace StackExchange.Profiling.SqlFormatters
                         buffer.AppendLine(",").Append(new string(' ', 8));
                     }
 
-                    DbType parsed;
                     string resolvedType = null;
-                    if (!Enum.TryParse(parameter.DbType, out parsed))
+                    if (!Enum.TryParse(parameter.DbType, out DbType parsed))
                     {
                         resolvedType = parameter.DbType;
                     }
 
                     if (resolvedType == null)
                     {
-                        Func<SqlTimingParameter, string> translator;
-                        if (ParamTranslator.TryGetValue(parsed, out translator))
+                        if (ParamTranslator.TryGetValue(parsed, out var translator))
                         {
                             resolvedType = translator(parameter);
                         }
@@ -232,7 +230,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     }
 
                     var niceName = EnsureParameterPrefix(parameter.Name);
-                    
+
                     buffer.Append(niceName).Append(" ").Append(resolvedType);
 
                     // return values don't have a value assignment

@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Storage
         /// The stores that are exposed by this <see cref="MultiStorageProvider"/>
         /// </summary>
         public List<IAsyncStorage> Stores { get; set; }
-        
+
         /// <summary>
         /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit? 
         /// If False, all operations will run synchronously, in order. Defaults to False.
@@ -33,9 +33,9 @@ namespace StackExchange.Profiling.Storage
         public MultiStorageProvider(params IAsyncStorage[] stores)
         {
             Stores = stores.Where(x => x != null).ToList();
-            if (!Stores.Any())
+            if (Stores.Count == 0)
             {
-                throw new ArgumentNullException("stores", "Please include at least one IAsyncStorage object when initializing a MultiStorageProvider");
+                throw new ArgumentNullException(nameof(stores), "Please include at least one IAsyncStorage object when initializing a MultiStorageProvider");
             }
         }
 
@@ -68,7 +68,7 @@ namespace StackExchange.Profiling.Storage
             if (Stores == null) return Enumerable.Empty<Guid>();
             foreach (var store in Stores)
             {
-                var results = await store.ListAsync(maxResults, start, finish, orderBy);
+                var results = await store.ListAsync(maxResults, start, finish, orderBy).ConfigureAwait(false);
                 if (results != null && results.Any())
                 {
                     return results;
@@ -146,7 +146,7 @@ namespace StackExchange.Profiling.Storage
             if (Stores == null) return null;
             foreach (var store in Stores)
             {
-                var result = await store.LoadAsync(id);
+                var result = await store.LoadAsync(id).ConfigureAwait(false);
                 if (result != null)
                 {
                     return result;
@@ -251,7 +251,7 @@ namespace StackExchange.Profiling.Storage
             if (Stores == null) return results;
 
             var tasks = Stores.Select(s => s.GetUnviewedIdsAsync(user));
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             foreach(var t in tasks)
             {

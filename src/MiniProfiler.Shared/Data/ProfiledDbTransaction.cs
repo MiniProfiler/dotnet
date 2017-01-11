@@ -19,10 +19,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The connection.</param>
         public ProfiledDbTransaction(DbTransaction transaction, ProfiledDbConnection connection)
         {
-            if (transaction == null) throw new ArgumentNullException("transaction");
-            if (connection == null) throw new ArgumentNullException("connection");
-            _transaction = transaction;
-            _connection = connection;
+            _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
         /// <summary>

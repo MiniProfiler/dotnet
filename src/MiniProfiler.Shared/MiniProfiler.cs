@@ -26,7 +26,7 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
-        public MiniProfiler() { }
+        public MiniProfiler() { /* serialization only */ }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
@@ -40,15 +40,9 @@ namespace StackExchange.Profiling
             Started = DateTime.UtcNow;
 
             // stopwatch must start before any child Timings are instantiated
-            _sw = Settings.StopwatchProvider();
+            Stopwatch = Settings.StopwatchProvider();
             Root = new Timing(this, null, url);
         }
-
-        /// <summary>
-        /// Starts when this profiler is instantiated. Each <see cref="Timing"/> step will use this Stopwatch's current ticks as
-        /// their starting time.
-        /// </summary>
-        private readonly IStopwatch _sw;
 
         /// <summary>
         /// The root.
@@ -100,15 +94,15 @@ namespace StackExchange.Profiling
         /// Json used to store Custom Links. Do not touch.
         /// </summary>
         public string CustomLinksJson {
-            get { return CustomLinks?.ToJson(); } 
+            get { return CustomLinks?.ToJson(); }
             set {
                 if (value.HasValue())
                 {
                     CustomLinks = value.FromJson<Dictionary<string, string>>();
                 }
-            } 
+            }
         }
-        
+
             /// <summary>
         /// Gets or sets the root timing.
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
@@ -186,7 +180,7 @@ namespace StackExchange.Profiling
         /// </remarks>
         [DataMember(Order = 10)]
         public bool HasUserViewed { get; set; }
-        
+
         /// <summary>
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
@@ -195,14 +189,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
         /// </summary>
-        internal long ElapsedTicks => _sw.ElapsedTicks;
+        internal long ElapsedTicks => Stopwatch.ElapsedTicks;
 
         // TODO: Back to InternalsVisibleTo
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>
-        public IStopwatch Stopwatch => _sw;
-        
+        public IStopwatch Stopwatch { get; }
+
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
@@ -303,10 +297,10 @@ namespace StackExchange.Profiling
 #if NET45
         private static JavaScriptSerializer GetJsonSerializer()
         {
-            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };   
+            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };
         }
 #endif
-        
+
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
         /// </summary>
@@ -377,10 +371,10 @@ namespace StackExchange.Profiling
 
         internal bool StopImpl()
         {
-            if (!_sw.IsRunning)
+            if (!Stopwatch.IsRunning)
                 return false;
 
-            _sw.Stop();
+            Stopwatch.Stop();
             DurationMilliseconds = GetRoundedMilliseconds(ElapsedTicks);
 
             foreach (var timing in GetTimingHierarchy())
@@ -397,7 +391,7 @@ namespace StackExchange.Profiling
         internal decimal GetRoundedMilliseconds(long ticks)
         {
             long z = 10000 * ticks;
-            decimal timesTen = (int)(z / _sw.Frequency);
+            decimal timesTen = (int)(z / Stopwatch.Frequency);
             return timesTen / 10;
         }
 

@@ -18,7 +18,7 @@ namespace StackExchange.Profiling
         /// <returns>the profiled result.</returns>
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
         {
-            if (selector == null) throw new ArgumentNullException("selector");
+            if (selector == null) throw new ArgumentNullException(nameof(selector));
             if (profiler == null) return selector();
             using (profiler.StepImpl(name))
             {
@@ -48,7 +48,7 @@ namespace StackExchange.Profiling
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
         public static IDisposable StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
         {
-            return profiler == null ? null : profiler.StepImpl(name, minSaveMs, includeChildren);
+            return profiler?.StepImpl(name, minSaveMs, includeChildren);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <returns>the profile step</returns>
         public static IDisposable Ignore(this MiniProfiler profiler) => profiler?.IgnoreImpl();
-        
+
         /// <summary>
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
         /// allowing other threads, remote calls, etc. to be profiled and joined into this profiling session.

@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.RavenDb
         private const string RavenRequestPending = "Pending";
         private const string RavenRequestHandled = "Handled";
 
-        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");        
+        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");
 
         /// <summary>
         /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)
@@ -27,7 +27,7 @@ namespace StackExchange.Profiling.RavenDb
                 store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
                 {
                     EventHandler<RequestResultArgs> handler = null;
-                    
+
                     var profiler = MiniProfiler.Current;
                     var httpContext = System.Web.HttpContext.Current;
 
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.RavenDb
                             httpContext.Items[RavenRequestPrefix + requestId] = RavenRequestHandled;
 
                             // add custom timing
-                            IncludeTiming(r, profiler);                            
+                            IncludeTiming(r, profiler);
                         };
 
                         store.JsonRequestFactory.LogRequest += handler;
@@ -79,7 +79,7 @@ namespace StackExchange.Profiling.RavenDb
             {
                 return;
             }
-            
+
             var formattedRequest = JsonFormatter.FormatRequest(request);
 
             profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
@@ -160,6 +160,5 @@ namespace StackExchange.Profiling.RavenDb
 
             return String.Empty;
         }
-
     }
 }

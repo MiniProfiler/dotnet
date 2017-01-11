@@ -9,7 +9,6 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class SimpleProfiledTransaction : IDbTransaction
     {
-        private readonly IDbTransaction _transaction;
         private readonly SimpleProfiledConnection _connection;
 
         /// <summary>
@@ -17,16 +16,14 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public SimpleProfiledTransaction(IDbTransaction transaction, SimpleProfiledConnection connection)
         {
-            if (transaction == null) throw new ArgumentNullException("transaction");
-            if (connection == null) throw new ArgumentNullException("connection");
-            _transaction = transaction;
-            _connection = connection;
+            WrappedTransaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
         /// <summary>
         /// Gets the internal wrapped transaction
         /// </summary>
-        public IDbTransaction WrappedTransaction => _transaction;
+        public IDbTransaction WrappedTransaction { get; }
 
         /// <summary>
         /// Gets the connection.
@@ -36,17 +33,17 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the isolation level.
         /// </summary>
-        public IsolationLevel IsolationLevel => _transaction.IsolationLevel;
+        public IsolationLevel IsolationLevel => WrappedTransaction.IsolationLevel;
 
         /// <summary>
         /// commit the transaction.
         /// </summary>
-        public void Commit() => _transaction.Commit();
+        public void Commit() => WrappedTransaction.Commit();
 
         /// <summary>
         /// rollback the transaction
         /// </summary>
-        public void Rollback() => _transaction.Rollback();
+        public void Rollback() => WrappedTransaction.Rollback();
 
         /// <summary>
         /// dispose the command / connection and profiler.
@@ -59,7 +56,7 @@ namespace StackExchange.Profiling.Data
 
         private void Dispose(bool disposing)
         {
-            if (disposing) _transaction?.Dispose();
+            if (disposing) WrappedTransaction?.Dispose();
         }
     }
 }

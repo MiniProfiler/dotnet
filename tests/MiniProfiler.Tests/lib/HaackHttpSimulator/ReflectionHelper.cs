@@ -8,14 +8,16 @@ namespace Subtext.TestLibrary
 	/// </summary>
 	public sealed class ReflectionHelper
 	{
-		private ReflectionHelper() {}
+		private ReflectionHelper()
+        {
+        }
 
-	    /// <summary>
-		/// Returns the value of the private member specified.
-		/// </summary>
-		/// <param name="fieldName">Name of the member.</param>
+        /// <summary>
+        /// Returns the value of the private member specified.
+        /// </summary>
+        /// <param name="fieldName">Name of the member.</param>
         /// /// <param name="type">Type of the member.</param>
-		public static T GetStaticFieldValue<T>(string fieldName, Type type)
+        public static T GetStaticFieldValue<T>(string fieldName, Type type)
 		{
 			FieldInfo field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static);
 			if(field != null)
@@ -52,7 +54,7 @@ namespace Subtext.TestLibrary
             FieldInfo field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static);
             if (field == null)
                 throw new ArgumentException(string.Format("Could not find the private instance field '{0}'", fieldName));
-            
+
             field.SetValue(null, value);
         }
 
@@ -98,7 +100,7 @@ namespace Subtext.TestLibrary
             FieldInfo field = source.GetType().GetField(memberName, BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Instance);
             if (field == null)
                 throw new ArgumentException(string.Format("Could not find the private instance field '{0}'",memberName));
-            
+
             field.SetValue(source, value);
         }
 
@@ -128,7 +130,7 @@ namespace Subtext.TestLibrary
         /// <returns></returns>
         public static TReturn InvokeNonPublicMethod<TReturn>(Type type, string methodName, params object[] parameters)
         {
-            Type[] paramTypes = Array.ConvertAll(parameters, new Converter<object, Type>(delegate(object o) { return o.GetType(); }));
+            Type[] paramTypes = Array.ConvertAll(parameters, new Converter<object, Type>((object o) => o.GetType()));
 
             MethodInfo method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static, null, paramTypes, null);
             if (method == null)
@@ -152,7 +154,7 @@ namespace Subtext.TestLibrary
         {
             PropertyInfo propertyInfo = source.GetType().GetProperty(propertyName);
             if (propertyInfo == null)
-                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), "propertyName");
+                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), nameof(propertyName));
 
             return (TReturn)propertyInfo.GetValue(source, null);
         }
@@ -161,7 +163,7 @@ namespace Subtext.TestLibrary
         {
             PropertyInfo propertyInfo = source.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance, null, typeof(TReturn), new Type[0], null);
             if (propertyInfo == null)
-                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), "propertyName");
+                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), nameof(propertyName));
 
             return (TReturn) propertyInfo.GetValue(source, null);
         }
@@ -170,7 +172,7 @@ namespace Subtext.TestLibrary
         {
             PropertyInfo propertyInfo = source.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (propertyInfo == null)
-                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), "propertyName");
+                throw new ArgumentException(string.Format("Could not find a propertyName with the name '{0}'", propertyName), nameof(propertyName));
 
             return propertyInfo.GetValue(source, null);
         }

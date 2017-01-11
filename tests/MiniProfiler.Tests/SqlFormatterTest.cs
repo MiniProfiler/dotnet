@@ -17,7 +17,7 @@ namespace StackExchange.Profiling.Tests
         private string _commandText;
         private SqlCommand _dbCommand;
         private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap;
-        
+
         public SqlFormatterTest()
         {
             CreateDbTypeMap();
@@ -58,41 +58,43 @@ namespace StackExchange.Profiling.Tests
         private static void CreateDbTypeMap()
         {
             #region copied from dapper
-            _dbTypeMap = new Dictionary<RuntimeTypeHandle, DbType>();
-            _dbTypeMap[typeof(byte).TypeHandle] = DbType.Byte;
-            _dbTypeMap[typeof(sbyte).TypeHandle] = DbType.SByte;
-            _dbTypeMap[typeof(short).TypeHandle] = DbType.Int16;
-            _dbTypeMap[typeof(ushort).TypeHandle] = DbType.UInt16;
-            _dbTypeMap[typeof(int).TypeHandle] = DbType.Int32;
-            _dbTypeMap[typeof(uint).TypeHandle] = DbType.UInt32;
-            _dbTypeMap[typeof(long).TypeHandle] = DbType.Int64;
-            _dbTypeMap[typeof(ulong).TypeHandle] = DbType.UInt64;
-            _dbTypeMap[typeof(float).TypeHandle] = DbType.Single;
-            _dbTypeMap[typeof(double).TypeHandle] = DbType.Double;
-            _dbTypeMap[typeof(decimal).TypeHandle] = DbType.Decimal;
-            _dbTypeMap[typeof(bool).TypeHandle] = DbType.Boolean;
-            _dbTypeMap[typeof(string).TypeHandle] = DbType.String;
-            _dbTypeMap[typeof(char).TypeHandle] = DbType.StringFixedLength;
-            _dbTypeMap[typeof(Guid).TypeHandle] = DbType.Guid;
-            _dbTypeMap[typeof(DateTime).TypeHandle] = DbType.DateTime;
-            _dbTypeMap[typeof(DateTimeOffset).TypeHandle] = DbType.DateTimeOffset;
-            _dbTypeMap[typeof(byte[]).TypeHandle] = DbType.Binary;
-            _dbTypeMap[typeof(byte?).TypeHandle] = DbType.Byte;
-            _dbTypeMap[typeof(sbyte?).TypeHandle] = DbType.SByte;
-            _dbTypeMap[typeof(short?).TypeHandle] = DbType.Int16;
-            _dbTypeMap[typeof(ushort?).TypeHandle] = DbType.UInt16;
-            _dbTypeMap[typeof(int?).TypeHandle] = DbType.Int32;
-            _dbTypeMap[typeof(uint?).TypeHandle] = DbType.UInt32;
-            _dbTypeMap[typeof(long?).TypeHandle] = DbType.Int64;
-            _dbTypeMap[typeof(ulong?).TypeHandle] = DbType.UInt64;
-            _dbTypeMap[typeof(float?).TypeHandle] = DbType.Single;
-            _dbTypeMap[typeof(double?).TypeHandle] = DbType.Double;
-            _dbTypeMap[typeof(decimal?).TypeHandle] = DbType.Decimal;
-            _dbTypeMap[typeof(bool?).TypeHandle] = DbType.Boolean;
-            _dbTypeMap[typeof(char?).TypeHandle] = DbType.StringFixedLength;
-            _dbTypeMap[typeof(Guid?).TypeHandle] = DbType.Guid;
-            _dbTypeMap[typeof(DateTime?).TypeHandle] = DbType.DateTime;
-            _dbTypeMap[typeof(DateTimeOffset?).TypeHandle] = DbType.DateTimeOffset;
+            _dbTypeMap = new Dictionary<RuntimeTypeHandle, DbType>
+            {
+                [typeof(byte).TypeHandle] = DbType.Byte,
+                [typeof(sbyte).TypeHandle] = DbType.SByte,
+                [typeof(short).TypeHandle] = DbType.Int16,
+                [typeof(ushort).TypeHandle] = DbType.UInt16,
+                [typeof(int).TypeHandle] = DbType.Int32,
+                [typeof(uint).TypeHandle] = DbType.UInt32,
+                [typeof(long).TypeHandle] = DbType.Int64,
+                [typeof(ulong).TypeHandle] = DbType.UInt64,
+                [typeof(float).TypeHandle] = DbType.Single,
+                [typeof(double).TypeHandle] = DbType.Double,
+                [typeof(decimal).TypeHandle] = DbType.Decimal,
+                [typeof(bool).TypeHandle] = DbType.Boolean,
+                [typeof(string).TypeHandle] = DbType.String,
+                [typeof(char).TypeHandle] = DbType.StringFixedLength,
+                [typeof(Guid).TypeHandle] = DbType.Guid,
+                [typeof(DateTime).TypeHandle] = DbType.DateTime,
+                [typeof(DateTimeOffset).TypeHandle] = DbType.DateTimeOffset,
+                [typeof(byte[]).TypeHandle] = DbType.Binary,
+                [typeof(byte?).TypeHandle] = DbType.Byte,
+                [typeof(sbyte?).TypeHandle] = DbType.SByte,
+                [typeof(short?).TypeHandle] = DbType.Int16,
+                [typeof(ushort?).TypeHandle] = DbType.UInt16,
+                [typeof(int?).TypeHandle] = DbType.Int32,
+                [typeof(uint?).TypeHandle] = DbType.UInt32,
+                [typeof(long?).TypeHandle] = DbType.Int64,
+                [typeof(ulong?).TypeHandle] = DbType.UInt64,
+                [typeof(float?).TypeHandle] = DbType.Single,
+                [typeof(double?).TypeHandle] = DbType.Double,
+                [typeof(decimal?).TypeHandle] = DbType.Decimal,
+                [typeof(bool?).TypeHandle] = DbType.Boolean,
+                [typeof(char?).TypeHandle] = DbType.StringFixedLength,
+                [typeof(Guid?).TypeHandle] = DbType.Guid,
+                [typeof(DateTime?).TypeHandle] = DbType.DateTime,
+                [typeof(DateTimeOffset?).TypeHandle] = DbType.DateTimeOffset
+            };
             #endregion
         }
 
@@ -189,7 +191,6 @@ namespace StackExchange.Profiling.Tests
             // assert
             Assert.Equal(expectedOutput, actualOutput);
         }
-
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]

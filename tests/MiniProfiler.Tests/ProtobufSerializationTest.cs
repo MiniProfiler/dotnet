@@ -55,7 +55,7 @@ namespace StackExchange.Profiling.Tests
                 }
 
                 MiniProfiler.Stop();
-                
+
                 var ms = new MemoryStream();
                 ProtoBuf.Serializer.Serialize(ms, mp1);
 

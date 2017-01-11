@@ -27,24 +27,20 @@ namespace StackExchange.Profiling
         [DataMember(Order = 1)]
         public int RedirectCount { get; set; }
 
-
         /// <summary>
         /// Returns null if there is not client timing stuff
         /// </summary>
         public static ClientTimings FromForm(IDictionary<string, string> form)
         {
             ClientTimings timing = null;
-            long navigationStart;
             // AJAX requests won't have client timings
             if (!form.ContainsKey(TimingPrefix + "navigationStart]")) return timing;
-            long.TryParse(form[TimingPrefix + "navigationStart]"], out navigationStart);
+            long.TryParse(form[TimingPrefix + "navigationStart]"], out long navigationStart);
             if (navigationStart > 0)
             {
                 var timings = new List<ClientTiming>();
                 timing = new ClientTimings();
-
-                int redirectCount;
-                int.TryParse(form["clientPerformance[navigation][redirectCount]"], out redirectCount);
+                int.TryParse(form["clientPerformance[navigation][redirectCount]"], out int redirectCount);
                 timing.RedirectCount = redirectCount;
 
                 var clientPerf = new Dictionary<string, ClientTiming>();
@@ -56,8 +52,7 @@ namespace StackExchange.Profiling
                 {
                     if (key.StartsWith(TimingPrefix))
                     {
-                        long val;
-                        long.TryParse(form[key], out val);
+                        long.TryParse(form[key], out long val);
                         val -= navigationStart;
 
                         string parsedName = key.Substring(
@@ -79,8 +74,7 @@ namespace StackExchange.Profiling
                             else if (parsedName.EndsWith("End"))
                             {
                                 var shortName = parsedName.Substring(0, parsedName.Length - 3);
-                                ClientTiming t;
-                                if (clientPerf.TryGetValue(shortName, out t))
+                                if (clientPerf.TryGetValue(shortName, out var t))
                                 {
                                     t.Duration = val - t.Start;
                                     t.Name = shortName;
@@ -95,11 +89,9 @@ namespace StackExchange.Profiling
 
                     if (key.StartsWith(ProbesPrefix))
                     {
-                        int probeId;
-                        if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ProbesPrefix.Length), out probeId))
+                        if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ProbesPrefix.Length), out int probeId))
                         {
-                            ClientTiming t;
-                            if (!clientProbes.TryGetValue(probeId, out t))
+                            if (!clientProbes.TryGetValue(probeId, out var t))
                             {
                                 t = new ClientTiming();
                                 clientProbes.Add(probeId, t);
@@ -112,8 +104,7 @@ namespace StackExchange.Profiling
 
                             if (key.EndsWith("[d]"))
                             {
-                                long val;
-                                long.TryParse(form[key], out val);
+                                long.TryParse(form[key], out long val);
                                 if (val > 0)
                                 {
                                     t.Start = val - navigationStart;
@@ -165,8 +156,8 @@ namespace StackExchange.Profiling
                     sb.Append(char.ToUpper(value[0]));
                     continue;
                 }
-                
-                if (value[i] == char.ToUpper(value[i])) 
+
+                if (value[i] == char.ToUpper(value[i]))
                 {
                     sb.Append(' ');
                 }

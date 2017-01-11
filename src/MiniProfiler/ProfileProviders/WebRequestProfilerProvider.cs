@@ -94,9 +94,9 @@ namespace StackExchange.Profiling
             try
             {
                 var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
-                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles) 
+                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
                 {
-                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles)) 
+                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
                     {
                         MiniProfiler.Settings.Storage.SetViewed(current.User, id);
                     }

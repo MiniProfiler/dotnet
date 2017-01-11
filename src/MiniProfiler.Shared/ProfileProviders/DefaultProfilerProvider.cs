@@ -15,7 +15,7 @@ namespace StackExchange.Profiling
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
 #if NET45
-        const string ContextKey = ":miniprofiler:";
+        private const string ContextKey = ":miniprofiler:";
 
         private MiniProfiler Profiler
         {
