@@ -1,4 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
+  </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <AssemblyName>MiniProfiler.EntityFramework</AssemblyName>

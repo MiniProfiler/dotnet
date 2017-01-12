@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling</RootNamespace>
+  </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
