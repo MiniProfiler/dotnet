@@ -6,7 +6,7 @@ using Raven.Client.Connection.Profiling;
 
 namespace StackExchange.Profiling.RavenDb
 {
-    public class MiniProfilerRaven
+    public static class MiniProfilerRaven
     {
         private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
         private const string RavenRequestPrefix = "__MiniProfiler.Raven.Request.";
