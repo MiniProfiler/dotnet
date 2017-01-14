@@ -1,6 +1,6 @@
 ﻿namespace StackExchange.Profiling
 {
-    partial class WebRequestProfilerProvider
+    public partial class WebRequestProfilerProvider
     {
         /// <summary>
         /// WebRequestProfilerProvider specific configurations

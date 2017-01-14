@@ -6,6 +6,10 @@ using Raven.Client.Connection.Profiling;
 
 namespace StackExchange.Profiling.RavenDb
 {
+    // TODO: this needs a complete overhaul for v4 and ASP.NET Core
+    /// <summary>
+    /// Old MiniProfiler raven functionality
+    /// </summary>
     public static class MiniProfilerRaven
     {
         private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
