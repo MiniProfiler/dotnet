@@ -101,10 +101,10 @@ namespace Samples.Mvc5
             // let's rig up serialization of our profiler results to a database, so they survive app restarts.
 
             // Setting up a MultiStorage provider. This will store results in the HttpRuntimeCache (normally the default) and in SqlLite as well.
-            MultiStorageProvider multiStorage = new MultiStorageProvider(
+            MiniProfiler.Settings.Storage = new MultiStorageProvider(
                 new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0)),
-                new SqliteMiniProfilerStorage(ConnectionString));
-            MiniProfiler.Settings.Storage = multiStorage;
+                new SqliteMiniProfilerStorage(ConnectionString)
+                );
 
             // different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine
             // by default, sql parameters won't be displayed
@@ -121,7 +121,7 @@ namespace Samples.Mvc5
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                           // defaults to 15
             MiniProfiler.Settings.RouteBasePath = "~/profiler";                        // e.g. /profiler/mini-profiler-includes.js
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider(); // use the web profiler since we're in a web application
-
+            
             // optional settings to control the stack trace output in the details pane
             // the exclude methods are not thread safe, so be sure to only call these once per appdomain
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
@@ -133,7 +133,7 @@ namespace Samples.Mvc5
             // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
             // can define a function that will authorize clients to see the json or full page results.
             // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
-            MiniProfilerWebSettings.Results_Authorize = request =>
+            MiniProfilerWebSettings.ResultsAuthorize = request =>
             {
                 // you may implement this if you need to restrict visibility of profiling on a per request basis
 
@@ -148,7 +148,7 @@ namespace Samples.Mvc5
             };
 
             // the list of all sessions in the store is restricted by default, you must return true to allow it
-            MiniProfilerWebSettings.Results_List_Authorize = request =>
+            MiniProfilerWebSettings.ResultsListAuthorize = request =>
             {
                 // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
                 return true; // all requests are kosher

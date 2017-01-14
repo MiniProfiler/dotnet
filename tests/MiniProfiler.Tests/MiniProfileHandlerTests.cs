@@ -13,9 +13,6 @@ namespace StackExchange.Profiling.Tests
         [Theory]
         [InlineData("BRILLANT", 404)]
         [InlineData("underscore.js", 404)]
-        [InlineData("jquery.1.7.1.js", 404)]
-        [InlineData("jquery.tmpl.js", 404)]
-        [InlineData("jquery.tmpl.js", 404)]
         [InlineData("results-list", 200)]
         [InlineData("includes.js", 200)]
         [InlineData("includes.css", 200)]
@@ -38,7 +35,7 @@ namespace StackExchange.Profiling.Tests
         {
             // Arrange
             var sut = new MiniProfilerHandler();
-            MiniProfilerWebSettings.Results_List_Authorize = request => isRequestAuthorized;
+            MiniProfilerWebSettings.ResultsListAuthorize = request => isRequestAuthorized;
 
             // Act
             var res = GetRequestResponseHttpStatus(sut, "/results-index");

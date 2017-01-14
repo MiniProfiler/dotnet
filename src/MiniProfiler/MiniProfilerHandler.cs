@@ -65,13 +65,8 @@ namespace StackExchange.Profiling
 
             switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
             {
-                case "underscore":
-                case "jquery.1.7.1":
-                case "jquery.tmpl":
-                case "list":
-                    output = Includes(context, path);
-                    break;
                 case "includes":
+                case "list":
                     output = Includes(context, path);
                     break;
 
@@ -115,8 +110,8 @@ namespace StackExchange.Profiling
             if (profiler == null) return new HtmlString("");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
-            var authorized = MiniProfilerWebSettings.Results_Authorize == null
-                || MiniProfilerWebSettings.Results_Authorize(HttpContext.Current.Request);
+            var authorized = MiniProfilerWebSettings.ResultsAuthorize == null
+                || MiniProfilerWebSettings.ResultsAuthorize(HttpContext.Current.Request);
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
@@ -184,8 +179,8 @@ namespace StackExchange.Profiling
             return new StringBuilder()
                 .AppendLine("<html><head>")
                 .AppendLine("<title>List of profiling sessions</title>")
-                .Append(@"<base href=""").Append(path).Append(@""">")
-                .Append(@"<script id=""mini-profiler"" data-ids="""" src=""includes.js?v=").Append(version).Append(@"""></script>").AppendLine()
+                .Append(@"<base href=""").Append(path).AppendLine(@""">")
+                .Append(@"<script id=""mini-profiler"" data-ids="""" src=""includes.js?v=").Append(version).AppendLine(@"""></script>")
                 .AppendFormat(@"<link href=""includes.css?v=").Append(version).Append(@""" rel=""stylesheet"">").AppendLine()
                 .AppendFormat("<script>MiniProfiler.list.init({{path: '").Append(path).Append("', version: '").Append(version).Append(@"'}})</script>").AppendLine()
                 .AppendLine("</head></html>")
@@ -198,8 +193,8 @@ namespace StackExchange.Profiling
         private static bool AuthorizeRequest(HttpContext context, bool isList, out string message)
         {
             message = null;
-            var authorize = MiniProfilerWebSettings.Results_Authorize;
-            var authorizeList = MiniProfilerWebSettings.Results_List_Authorize;
+            var authorize = MiniProfilerWebSettings.ResultsAuthorize;
+            var authorizeList = MiniProfilerWebSettings.ResultsListAuthorize;
 
             if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
             {
