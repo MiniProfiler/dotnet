@@ -23,12 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**/*.cs" />
-    <EmbeddedResource Include="ui\includes.tmpl" />
-    <EmbeddedResource Include="ui\README.md" />
-    <EmbeddedResource Include="ui\include.partial.html" />
-    <EmbeddedResource Include="ui\includes.css" />
-    <EmbeddedResource Include="ui\includes.js" />
-    <EmbeddedResource Include="ui\share.html" />
+    <EmbeddedResource Include="ui\*.*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
