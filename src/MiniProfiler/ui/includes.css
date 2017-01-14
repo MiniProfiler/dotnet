@@ -141,7 +141,7 @@
   margin-left: 12px;
 }
 .profiler-result .profiler-links a:first-child {
-    margin-left: 0px;
+    margin-left: 0;
 }
 .profiler-result .profiler-toggleable-links {
 float:right;   
@@ -253,10 +253,10 @@ float:right;
 .profiler-results {
   z-index: 2147483643;
   position: fixed;
-  top: 0px;
+  top: 0;
 }
 .profiler-results.profiler-left, .profiler-results.profiler-bottomleft {
-  left: 0px;
+  left: 0;
 }
 .profiler-results.profiler-left.profiler-no-controls .profiler-result:last-child .profiler-button,
 .profiler-results.profiler-left .profiler-controls {
@@ -271,7 +271,7 @@ float:right;
   border-right: 1px solid #888888;
 }
 .profiler-results.profiler-right, .profiler-results.profiler-bottomright  {
-  right: 0px;
+  right: 0;
 }
 .profiler-results.profiler-right.profiler-no-controls .profiler-result:last-child .profiler-button,
 .profiler-results.profiler-right .profiler-controls {
@@ -294,7 +294,7 @@ float:right;
 }
 .profiler-results.profiler-bottomleft, .profiler-results.profiler-bottomright {
   top: inherit;
-  bottom: 0px;
+  bottom: 0;
 }
 .profiler-results.profiler-bottomleft .profiler-result:first-child .profiler-button {
   -webkit-border-top-right-radius: 10px;
@@ -359,9 +359,9 @@ float:right;
   text-align: left;
   line-height: 18px;
   overflow: auto;
-  -moz-box-shadow: 0px 1px 15px #555555;
-  -webkit-box-shadow: 0px 1px 15px #555555;
-  box-shadow: 0px 1px 15px #555555;
+  -moz-box-shadow: 0 1px 15px #555555;
+  -webkit-box-shadow: 0 1px 15px #555555;
+  box-shadow: 0 1px 15px #555555;
 }
 .profiler-results .profiler-popup .profiler-info {
   margin-bottom: 3px;
@@ -408,8 +408,8 @@ float:right;
 }
 .profiler-results.profiler-min .profiler-controls .profiler-min-max {
   border-right: none;
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
 }
 .profiler-queries-bg {
   z-index: 2147483642;
@@ -417,8 +417,8 @@ float:right;
   background: #000;
   opacity: 0.7;
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   min-width: 100%;
 }
 .profiler-result-full .profiler-result {
