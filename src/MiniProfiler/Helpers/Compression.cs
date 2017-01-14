@@ -56,9 +56,7 @@ namespace StackExchange.Profiling.Helpers
 		{
 			const float defaultQValue = 1f;
 			if (parts.Length < 2) return defaultQValue;
-
-			float qvalue;
-			return float.TryParse(parts[1].Trim(), out qvalue) ? qvalue : defaultQValue;
+            return float.TryParse(parts[1].Trim(), out float qvalue) ? qvalue : defaultQValue;
 		}
 	}
 }
