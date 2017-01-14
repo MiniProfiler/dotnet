@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using StackExchange.Profiling;
 
 namespace Samples.AspNetCore
 {
@@ -36,6 +37,11 @@ namespace Samples.AspNetCore
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseMiniProfiler(new MiniProfilerOptions
+            {
+                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter()
+            });
 
             if (env.IsDevelopment())
             {
