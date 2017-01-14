@@ -22,21 +22,23 @@ namespace StackExchange.Profiling.Helpers
 
 			response.AppendHeader("Content-Encoding", preferredEncoding);
 			response.AppendHeader("Vary", "Accept-Encoding");
-			if (preferredEncoding == "deflate")
-			{
-				response.Filter = new DeflateStream(response.Filter, CompressionMode.Compress, true);
-			}
-			if (preferredEncoding == "gzip")
-			{
-				response.Filter = new GZipStream(response.Filter, CompressionMode.Compress, true);
-			}
+
+            switch(preferredEncoding)
+            {
+                case "deflate":
+                    response.Filter = new DeflateStream(response.Filter, CompressionMode.Compress, true);
+                    break;
+                case "gzip":
+                    response.Filter = new GZipStream(response.Filter, CompressionMode.Compress, true);
+                    break;
+            }
 		}
 
-		static readonly string[] AllowedEncodings = new[] { "gzip", "deflate" };
-        static readonly char[] encodingSplit = new[] { ',' };
-        static readonly char[] encodingTypeSplit = new[] { ';' };
+        private static readonly string[] AllowedEncodings = new[] { "gzip", "deflate" };
+        private static readonly char[] encodingSplit = new[] { ',' };
+        private static readonly char[] encodingTypeSplit = new[] { ';' };
 
-        static string ParsePreferredEncoding(string acceptEncoding)
+        private static string ParsePreferredEncoding(string acceptEncoding)
 		{
 			return acceptEncoding
 				.Split(encodingSplit, StringSplitOptions.RemoveEmptyEntries)
@@ -52,7 +54,7 @@ namespace StackExchange.Profiling.Helpers
 				.FirstOrDefault();
 		}
 
-		static float ParseQValueFromSecondArrayElement(string[] parts)
+        private static float ParseQValueFromSecondArrayElement(string[] parts)
 		{
 			const float defaultQValue = 1f;
 			if (parts.Length < 2) return defaultQValue;

@@ -32,21 +32,19 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void RegisterRoutes()
         {
-            var routes = RouteTable.Routes;
-            var handler = new MiniProfilerHandler();
             var prefix = MiniProfiler.Settings.RouteBasePath.Replace("~/", string.Empty).EnsureTrailingSlash();
 
-            using (routes.GetWriteLock())
+            using (RouteTable.Routes.GetWriteLock())
             {
-                var route = new Route(prefix + "{filename}", handler)
+                var route = new Route(prefix + "{filename}", new MiniProfilerHandler())
                 {
                     // specify these, so no MVC route helpers will match, e.g. @Html.ActionLink("Home", "Index", "Home")
-                    Defaults = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" }),
-                    Constraints = new RouteValueDictionary(new { controller = "MiniProfilerHandler", action = "ProcessRequest" })
+                    Defaults = new RouteValueDictionary(new { controller = nameof(MiniProfilerHandler), action = nameof(ProcessRequest) }),
+                    Constraints = new RouteValueDictionary(new { controller = nameof(MiniProfilerHandler), action = nameof(ProcessRequest) })
                 };
 
                 // put our routes at the beginning, like a boss
-                routes.Insert(0, route);
+                RouteTable.Routes.Insert(0, route);
             }
         }
 
@@ -110,8 +108,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return new HtmlString("");
 
             MiniProfiler.Settings.EnsureStorageStrategy();
-            var authorized = MiniProfilerWebSettings.ResultsAuthorize == null
-                || MiniProfilerWebSettings.ResultsAuthorize(HttpContext.Current.Request);
+            var authorized = MiniProfilerWebSettings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
@@ -212,21 +209,13 @@ namespace StackExchange.Profiling
             {
                 return message;
             }
-
-            var lastId = context.Request["last-id"];
-            Guid lastGuid = Guid.Empty;
-
-            if (!lastId.IsNullOrWhiteSpace())
-            {
-                Guid.TryParse(lastId, out lastGuid);
-            }
-
             // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
             MiniProfiler.Settings.EnsureStorageStrategy();
 
             var guids = MiniProfiler.Settings.Storage.List(100);
+            var lastId = context.Request["last-id"];
 
-            if (lastGuid != Guid.Empty)
+            if (!lastId.IsNullOrWhiteSpace() && Guid.TryParse(lastId, out var lastGuid))
             {
                 guids = guids.TakeWhile(g => g != lastGuid);
             }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web;
+﻿using System.Web;
 
 namespace StackExchange.Profiling
 {
@@ -17,15 +16,16 @@ namespace StackExchange.Profiling
         /// </summary>
         public string GetUser(HttpRequest request)
         {
-            // If there's no X_FORWARDED_FOR header, just return REMOTE_ADDR
-            if (String.IsNullOrWhiteSpace(request.ServerVariables["HTTP_X_FORWARDED_FOR"]))
-            {
-                return request.ServerVariables["REMOTE_ADDR"] ?? "";
-            }
+            var xff = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            var remoteAddr = request.ServerVariables["REMOTE_ADDR"] ?? "";
 
+            // If there's no X_FORWARDED_FOR header, just return REMOTE_ADDR
+            if (string.IsNullOrWhiteSpace(xff))
+            {
+                return remoteAddr;
+            }
             // Otherwise return the concatenation of the REMOTE_ADDR and the X_FORWARDED_FOR header
-            return string.Format("{0} - {1}", request.ServerVariables["REMOTE_ADDR"] ?? "",
-                                              request.ServerVariables["HTTP_X_FORWARDED_FOR"]);
+            return $"{remoteAddr} - {remoteAddr}";
         }
     }
 }

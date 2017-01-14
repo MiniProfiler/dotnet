@@ -121,7 +121,7 @@ namespace Samples.Mvc5
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                           // defaults to 15
             MiniProfiler.Settings.RouteBasePath = "~/profiler";                        // e.g. /profiler/mini-profiler-includes.js
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider(); // use the web profiler since we're in a web application
-            
+
             // optional settings to control the stack trace output in the details pane
             // the exclude methods are not thread safe, so be sure to only call these once per appdomain
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory
