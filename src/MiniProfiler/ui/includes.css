@@ -38,6 +38,7 @@
 .profiler-queries table {
   border-collapse: collapse;
   border-spacing: 0;
+  width: 100%;
 }
 .profiler-result a,
 .profiler-queries a,
@@ -181,10 +182,15 @@ float:right;
 .profiler-result .profiler-queries .profiler-info div {
   text-align: right;
   margin-bottom: 5px;
+  word-break: break-all;
+  max-width: 300px;
 }
 .profiler-result .profiler-queries .profiler-gap-info,
 .profiler-result .profiler-queries .profiler-gap-info td {
   background-color: #ccc;
+}
+.profiler-result .profiler-queries .profiler-gap-info td.query {
+  word-break: break-all;
 }
 .profiler-result .profiler-queries .profiler-gap-info .profiler-unit {
   color: #777;
@@ -313,6 +319,7 @@ float:right;
   z-index: 2147483640;
   border-bottom: 1px solid #888888;
   background-color: #fff;
+  animation: new-entry 5s 1;
   padding: 4px 7px;
   text-align: right;
   cursor: pointer;
@@ -392,7 +399,10 @@ float:right;
 .profiler-results .profiler-queries {
   display: none;
   z-index: 2147483643;
-  position: absolute;
+  top: 30px;
+  left: 30px;
+  right: 30px;
+  position: fixed;
   overflow-y: auto;
   overflow-x: auto;
   background-color: #fff;
@@ -475,4 +485,23 @@ float:right;
 .profiler-result-full .profiler-result .profiler-queries .profiler-info div {
   text-align: right;
   margin-bottom: 5px;
+}
+table.profiler-results-index  { border: 0; border-spacing:0;}
+table.profiler-results-index tbody tr:nth-child(odd) { background-color:#eee; }
+table.profiler-results-index tbody tr:nth-child(even) { background-color:#fff; }
+table.profiler-results-index tr {border: 0;}
+table.profiler-results-index thead tr {background-color: #bbb; color: #444; font-size: 12px;}
+table.profiler-results-index thead tr th { padding: 5px 15px;}
+table.profiler-results-index td {padding: 8px; font-size: 12px;}
+.profiler-results-index-date {font-size: 11px; color: #666;}
+.profiler-results-index-time {text-align:center;}
+.profiler-results-none { color: #888; text-align: center; }
+
+@keyframes new-entry {
+  0% {
+    background-color: #FFFAAA;
+  }
+  100% {
+    background-color: #FFF;
+  }
 }

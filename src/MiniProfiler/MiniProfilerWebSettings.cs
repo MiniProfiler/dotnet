@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
 using System.Web;
 
 namespace StackExchange.Profiling
@@ -22,5 +26,46 @@ namespace StackExchange.Profiling
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// </summary>
         public static Func<HttpRequest, bool> ResultsListAuthorize { get; set; }
+
+        /// <summary>
+        /// On first call, set the version hash for all cache breakers
+        /// </summary>
+        static MiniProfilerWebSettings()
+        {
+            try
+            {
+                if (HttpContext.Current == null) return;
+                var files = new List<string>();
+
+                var customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
+                if (Directory.Exists(customUITemplatesPath))
+                {
+                    files.AddRange(Directory.EnumerateFiles(customUITemplatesPath));
+                }
+
+                if (files.Count == 0) return;
+
+                using (var sha256 = new SHA256CryptoServiceProvider())
+                {
+                    var hash = new byte[sha256.HashSize / 8];
+                    foreach (string file in files)
+                    {
+                        // sha256 can throw a FIPS exception, but SHA256CryptoServiceProvider is FIPS BABY - FIPS 
+                        byte[] contents = File.ReadAllBytes(file);
+                        byte[] hashfile = sha256.ComputeHash(contents);
+                        for (int i = 0; i < (sha256.HashSize / 8); i++)
+                        {
+                            hash[i] = (byte)(hashfile[i] ^ hash[i]);
+                        }
+                    }
+                    MiniProfiler.Settings.VersionHash = Convert.ToBase64String(hash);
+                }
+            }
+            catch (Exception e)
+            {
+                //VersionHash is pre-opopulated
+                Debug.WriteLine($"Error calculating folder hash: {e.ToString()}\n{e.StackTrace}");
+            }
+        }
     }
 }

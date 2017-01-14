@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
-
-#if NET45
-using System.Web;
-#endif
 
 namespace StackExchange.Profiling
 {
@@ -20,105 +15,14 @@ namespace StackExchange.Profiling
         /// </summary>
         public static class Settings
         {
-            private static readonly HashSet<string> assembliesToExclude;
-            private static readonly HashSet<string> typesToExclude;
-            private static readonly HashSet<string> methodsToExclude;
-
-            static Settings()
-            {
-                var props = from p in typeof(Settings)
-#if !NET45 // TODO: Revisit in .NET Standard 2.0
-                            .GetTypeInfo()
-#endif
-                            .GetProperties(BindingFlags.Public | BindingFlags.Static)
-                            let t = typeof(DefaultValueAttribute)
-                            where p.IsDefined(t, inherit: false)
-                            let a = p.GetCustomAttributes(t, inherit: false).Single() as DefaultValueAttribute
-                            select new { PropertyInfo = p, DefaultValue = a };
-
-                foreach (var pair in props)
-                {
-                    pair.PropertyInfo.SetValue(null, Convert.ChangeType(pair.DefaultValue.Value, pair.PropertyInfo.PropertyType), null);
-                }
-
-// TODO: Version off of the git hash and/or NuGet instead, set in the build
-#if NET45
-                // this assists in debug and is also good for prd, the version is a hash of the main assembly 
-                string location;
-                try
-                {
-                    location = typeof (Settings).Assembly.Location;
-                }
-                catch
-                {
-                    location = HttpContext.Current.Server.MapPath("~/bin/MiniProfiler.dll");
-                }
-
-                try
-                {
-                    var files = new List<string>
-                    {
-                        location
-                    };
-                    string customUITemplatesPath = "";
-                    if (HttpContext.Current != null)
-                        customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
-
-                    if (System.IO.Directory.Exists(customUITemplatesPath))
-                    {
-                        files.AddRange(System.IO.Directory.EnumerateFiles(customUITemplatesPath));
-                    }
-
-                    using (var sha256 = new System.Security.Cryptography.SHA256CryptoServiceProvider())
-                    {
-                        byte[] hash = new byte[sha256.HashSize / 8];
-                        foreach (string file in files)
-                        {
-                            // sha256 can throw a FIPS exception, but SHA256CryptoServiceProvider is FIPS BABY - FIPS 
-                            byte[] contents = System.IO.File.ReadAllBytes(file);
-                            byte[] hashfile = sha256.ComputeHash(contents);
-                            for (int i = 0; i < (sha256.HashSize / 8); i++)
-                            {
-                                hash[i] = (byte)(hashfile[i] ^ hash[i]);
-                            }
-                        }
-                        Version = System.Convert.ToBase64String(hash);
-                    }
-                }
-                catch
-                {
-                    Version = Guid.NewGuid().ToString();
-                }
-#else
-                // TODO: Package and git version, set on the build...
-                // Note: this is used as the cache breaker on the client side, so template files matter
-                Version = "FIX ME!";
-#endif
-
-                typesToExclude = new HashSet<string>
-                {
-                    // while we like our Dapper friend, we don't want to see him all the time
-                    "SqlMapper"
-                };
-
-                methodsToExclude = new HashSet<string>
-                {
-                    "lambda_method",
-                    ".ctor"
-                };
-
-                assembliesToExclude = new HashSet<string>
+            private static readonly HashSet<string> assembliesToExclude = new HashSet<string>
                 {
                     // our assembly
-                    typeof(Settings)
-#if !NET45
-                    .GetTypeInfo()
-#endif
-                    .Assembly.GetName().Name,
-
+                    "MiniProfiler",
+                    "MiniProfiler.Shared",
+                    "MiniProfiler.AspNetCore",
                     // reflection emit
                     "Anonymously Hosted DynamicMethods Assembly",
-
                     // the man
                     "System.Core",
                     "System.Data",
@@ -127,10 +31,33 @@ namespace StackExchange.Profiling
                     "System.Web.Mvc",
                     "mscorlib",
                 };
+            private static readonly HashSet<string> typesToExclude = new HashSet<string>
+                {
+                    // while we like our Dapper friend, we don't want to see him all the time
+                    "SqlMapper"
+                };
+            private static readonly HashSet<string> methodsToExclude = new HashSet<string>
+                {
+                    "lambda_method",
+                    ".ctor"
+                };
 
+            static Settings()
+            {
                 // for normal usage, this will return a System.Diagnostics.Stopwatch to collect times - unit tests can explicitly set how much time elapses
                 StopwatchProvider = StopwatchWrapper.StartNew;
             }
+
+
+            /// <summary>
+            /// Assembly version of this dank MiniProfiler.
+            /// </summary>
+            public static Version Version { get; } = typeof(Settings).GetTypeInfo().Assembly.GetName().Version;
+
+            /// <summary>
+            /// The hash to use for file cache breaking, this is automatically calculated.
+            /// </summary>
+            public static string VersionHash { get; set; } = Version.ToString();
 
             /// <summary>
             /// Assemblies to exclude from the stack trace report.
@@ -171,106 +98,71 @@ namespace StackExchange.Profiling
             /// <summary>
             /// The maximum number of unviewed profiler sessions (set this low cause we don't want to blow up headers)
             /// </summary>
-            [DefaultValue(20)]
-            public static int MaxUnviewedProfiles { get; set; }
+            public static int MaxUnviewedProfiles { get; set; } = 20;
 
             /// <summary>
             /// The max length of the stack string to report back; defaults to 120 chars.
             /// </summary>
-            [DefaultValue(120)]
-            public static int StackMaxLength { get; set; }
+            public static int StackMaxLength { get; set; } = 120;
 
             /// <summary>
             /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.
             /// </summary>
-            [DefaultValue(2.0)]
-            public static decimal TrivialDurationThresholdMilliseconds { get; set; }
+            public static decimal TrivialDurationThresholdMilliseconds { get; set; } = 2.0M;
 
             /// <summary>
             /// Dictates if the "time with children" column is displayed by default, defaults to false.
             /// For a per-page override you can use .RenderIncludes(showTimeWithChildren: true/false)
             /// </summary>
-            [DefaultValue(false)]
-            public static bool PopupShowTimeWithChildren { get; set; }
+            public static bool PopupShowTimeWithChildren { get; set; } = false;
 
             /// <summary>
             /// Dictates if trivial timings are displayed by default, defaults to false.
             /// For a per-page override you can use .RenderIncludes(showTrivial: true/false)
             /// </summary>
-            [DefaultValue(false)]
-            public static bool PopupShowTrivial { get; set; }
+            public static bool PopupShowTrivial { get; set; } = false;
 
             /// <summary>
             /// Determines how many traces to show before removing the oldest; defaults to 15.
             /// For a per-page override you can use .RenderIncludes(maxTracesToShow: 10)
             /// </summary>
-            [DefaultValue(15)]
-            public static int PopupMaxTracesToShow { get; set; }
+            public static int PopupMaxTracesToShow { get; set; } = 15;
 
             /// <summary>
             /// Dictates on which side of the page the profiler popup button is displayed; defaults to left.
             /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
             /// </summary>
-            [DefaultValue(RenderPosition.Left)]
-            public static RenderPosition PopupRenderPosition { get; set; }
+            public static RenderPosition PopupRenderPosition { get; set; } = RenderPosition.Left;
 
             /// <summary>
             /// Allows showing/hiding of popup results buttons via keyboard.
             /// </summary>
-            [DefaultValue("Alt+P")]
-            public static string PopupToggleKeyboardShortcut { get; set; }
+            public static string PopupToggleKeyboardShortcut { get; set; } = "Alt+P";
 
             /// <summary>
             /// When true, results buttons will not initially be shown, requiring keyboard activation via <see cref="PopupToggleKeyboardShortcut"/>.
             /// </summary>
-            [DefaultValue(false)]
-            public static bool PopupStartHidden { get; set; }
+            public static bool PopupStartHidden { get; set; } = false;
 
             /// <summary>
             /// Determines if min-max, clear, etc are rendered; defaults to false.
             /// For a per-page override you can use .RenderIncludes(showControls: true/false)
             /// </summary>
-            [DefaultValue(false)]
-            public static bool ShowControls { get; set; }
+            public static bool ShowControls { get; set; } = false;
 
             /// <summary>
             /// By default, <see cref="CustomTiming"/>s created by this assmebly will grab a stack trace to help 
             /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
             /// will be collected, possibly improving profiler performance.
             /// </summary>
-            [DefaultValue(false)]
-            public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; }
+            public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; } = false;
 
-            /// <summary>
-            /// When <see cref="Start(string)"/> is called, if the current request url contains any items in this property,
-            /// no profiler will be instantiated and no results will be displayed.
-            /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
-            /// </summary>
-            [DefaultValue(new string[] { "/content/", "/scripts/", "/favicon.ico" })]
-            public static string[] IgnoredPaths { get; set; }
-
-            /// <summary>
-            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
-            /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
-            /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
-            /// </summary>
-            [DefaultValue("~/mini-profiler-resources")]
-            public static string RouteBasePath { get; set; }
-
-            /// <summary>
-            /// The path where custom ui elements are stored.
-            /// If the custom file doesn't exist, the standard resource is used.
-            /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"
-            /// </summary>
-            /// <remarks>A web server restart is required to reload new files.</remarks>
-            [DefaultValue("~/App_Data/MiniProfilerUI")]
-            public static string CustomUITemplates { get; set; }
-
+#if NET45
             /// <summary>
             /// Maximum payload size for json responses in bytes defaults to 2097152 characters, which is equivalent to 4 MB of Unicode string data.
             /// </summary>
-            [DefaultValue(2097152)]
-            public static int MaxJsonResponseSize { get; set; }
+            public static int MaxJsonResponseSize { get; set; } = 2097152;
+#endif
 
             /// <summary>
             /// Understands how to save and load MiniProfilers. Used for caching between when
@@ -287,7 +179,7 @@ namespace StackExchange.Profiling
             /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
             ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
             /// </remarks>
-            public static IAsyncStorage Storage { get; set; }
+            public static IAsyncStorage Storage { get; set; } = new NullStorage();
 
             /// <summary>
             /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
@@ -295,43 +187,26 @@ namespace StackExchange.Profiling
             public static ISqlFormatter SqlFormatter { get; set; }
 
             /// <summary>
-            /// Assembly version of this dank MiniProfiler.
-            /// </summary>
-            public static string Version { get; private set; }
-
-            /// <summary>
             /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler
             /// </summary>
             /// <remarks>
             /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
             /// </remarks>
-            public static IAsyncProfilerProvider ProfilerProvider { get; set; }
-
-            private static Func<IAsyncStorage> _defaultStorage = () => new NullStorage();
-            private static Func<IAsyncProfilerProvider> _defaultProfilerProvider = () => new DefaultProfilerProvider();
+            public static IAsyncProfilerProvider ProfilerProvider { get; set; } = new DefaultProfilerProvider();
 
             /// <summary>
-            /// Sets the default provider generators for MiniProfiler. 
-            /// This allows inheriting libraries to set their default providers.
+            /// Allows switching out stopwatches for unit testing.
             /// </summary>
-            /// <param name="defaultStorage">The getter for the default storage profiler to use.</param>
-            /// <param name="defaultProfilerProvider">The getter for the default profiler profiler to use.</param>
-            public static void SetDefaults(Func<IAsyncStorage> defaultStorage, Func<IAsyncProfilerProvider> defaultProfilerProvider)
-            {
-                _defaultStorage = defaultStorage;
-                _defaultProfilerProvider = defaultProfilerProvider;
-            }
+            public static Func<IStopwatch> StopwatchProvider { get; set; }
 
             /// <summary>
             /// Make sure we can at least store profiler results to the http runtime cache.
             /// </summary>
             public static void EnsureStorageStrategy()
             {
-                // TODO: refactor this into an on-demand with Storage access
                 if (Storage == null)
                 {
-                    Storage = _defaultStorage();
-                    //Storage = new Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+                    throw new Exception("No storage is set, use MiniProfiler.Settings.Storage = new <type>();");
                 }
             }
 
@@ -339,23 +214,37 @@ namespace StackExchange.Profiling
             {
                 if (ProfilerProvider == null)
                 {
-                    ProfilerProvider = _defaultProfilerProvider();
-                    //ProfilerProvider =  new WebRequestProfilerProvider();
+                    throw new Exception("No storage is set, use MiniProfiler.Settings.Storage = new <type>();");
                 }
             }
-
-            // TODO: IntervalsVisibleTo
-            /// <summary>
-            /// Allows switching out stopwatches for unit testing.
-            /// </summary>
-            public static Func<IStopwatch> StopwatchProvider { get; set; }
 
             /// <summary>
             /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.
             /// If this setting is false, the output won't be compressed. (Only do this when you take care of compression yourself)
             /// </summary>
-            [DefaultValue(true)]
-            public static bool EnableCompression { get; set; }
+            public static bool EnableCompression { get; set; } = true;
+
+            /// <summary>
+            /// When <see cref="Start(string)"/> is called, if the current request url contains any items in this property,
+            /// no profiler will be instantiated and no results will be displayed.
+            /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
+            /// </summary>
+            public static string[] IgnoredPaths { get; set; } = new string[] { "/content/", "/scripts/", "/favicon.ico" };
+
+            /// <summary>
+            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
+            /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
+            /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
+            /// </summary>
+            public static string RouteBasePath { get; set; } = "~/mini-profiler-resources";
+
+            /// <summary>
+            /// The path where custom ui elements are stored.
+            /// If the custom file doesn't exist, the standard resource is used.
+            /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"
+            /// </summary>
+            /// <remarks>A web server restart is required to reload new files.</remarks>
+            public static string CustomUITemplates { get; set; } = "~/App_Data/MiniProfilerUI";
         }
     }
 }

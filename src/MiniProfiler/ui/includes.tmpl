@@ -87,7 +87,7 @@
           <a href="<%= $link %>" class="profiler-custom-link" target="_blank"><%= $name %></a>
         <% }); %>
         <span class="profiler-toggleable-links">
-          <a class="profiler-toggle-hidden-columns" data-toggle-class="profiler-show-more" data-hide-text="less columns">
+          <a class="profiler-toggle-hidden-columns" data-toggle-class="profiler-show-more" data-hide-text="fewer columns">
             more columns
           </a>
           <% if (HasTrivialTimings) { %>
@@ -133,8 +133,8 @@
 <script id="timingTemplate" type="text/x-jquery-tmpl">
 
   <tr class="<%= timing.IsTrivial ? 'profiler-trivial' : '' %>" data-timing-id="<%= timing.Id %>">
-    <td class="profiler-label" title="<% if (timing.Name && timing.Name.length > 45 ) { %><%= timing.Name %><% } %>">
-      <span class="profiler-indent"><%= MiniProfiler.renderIndent(timing.Depth) %></span> <%= timing.Name.slice(0,45) %><% if (timing.Name && timing.Name.length > 45 ) { %>...<% } %>
+    <td class="profiler-label" title="<% if (timing.Name && timing.Name.length > 45 ) { %><%= MiniProfiler.safeHtml(timing.Name) %><% } %>">
+      <span class="profiler-indent"><%= MiniProfiler.renderIndent(timing.Depth) %></span> <%= MiniProfiler.safeHtml(timing.Name.slice(0,45)) %><% if (timing.Name && timing.Name.length > 45 ) { %>...<% } %>
     </td>
     <td class="profiler-duration" title="duration of this step without any children's durations">
       <%= MiniProfiler.formatDuration(timing.DurationWithoutChildrenMilliseconds) %>
@@ -198,4 +198,39 @@
     </td>
   </tr>
 
+</script>
+
+<script id="tableTemplate" type="text/x-jquery-tmpl">
+  <table class="profiler-results-index">
+    <thead>
+      <tr>
+        <th>Name</th>
+		<th>Server</th>
+        <th>Started</th>
+        <th>Total Duration</th>
+        <th>Request Start</th>
+        <th>Response Start</th>
+        <th>Dom Complete</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+</script>
+
+<script id="rowTemplate" type="text/x-jquery-tmpl">
+  <tr>
+    <td><a href="${MiniProfiler.path}results?id=${Id}">${Name}</a></td>
+    <td>${MachineName}</td>
+    <td class="profiler-results-index-date">${MiniProfiler.renderDate(Started)}</td>
+    <td class="profiler-results-index-time">${DurationMilliseconds}</td>
+    {{if ClientTimings}}
+    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Request Start").Start}</td>
+    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Response").Start}</td>
+    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Dom Complete").Start}</td>
+    {{else}}
+    <td colspan="3" class="profiler-results-none">(no client timings)</td>
+    {{/if}}
+  </tr>
 </script>

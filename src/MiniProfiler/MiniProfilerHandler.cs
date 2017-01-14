@@ -126,7 +126,7 @@ namespace StackExchange.Profiling
 
             var sb = new StringBuilder(format);
               sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
-                .Replace("{version}", MiniProfiler.Settings.Version)
+                .Replace("{version}", MiniProfiler.Settings.VersionHash)
                 .Replace("{currentId}", profiler.Id.ToString())
                 .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
                 .Replace("{position}", (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower())
@@ -175,16 +175,15 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html";
 
             var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
-            var version = MiniProfiler.Settings.Version;
-            return new StringBuilder()
-                .AppendLine("<html><head>")
-                .AppendLine("<title>List of profiling sessions</title>")
-                .Append(@"<base href=""").Append(path).AppendLine(@""">")
-                .Append(@"<script id=""mini-profiler"" data-ids="""" src=""includes.js?v=").Append(version).AppendLine(@"""></script>")
-                .AppendFormat(@"<link href=""includes.css?v=").Append(version).Append(@""" rel=""stylesheet"">").AppendLine()
-                .AppendFormat("<script>MiniProfiler.list.init({{path: '").Append(path).Append("', version: '").Append(version).Append(@"'}})</script>").AppendLine()
-                .AppendLine("</head></html>")
-                .ToString();
+            var version = MiniProfiler.Settings.VersionHash;
+            return $@"<html>
+  <head>
+    <title>List of profiling sessions</title>
+    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
+    <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
+    <script>MiniProfiler.list.init({{path: '{path}', version: '{version}'}});</script>
+  </head>
+</html>";
         }
 
         /// <summary>
@@ -330,9 +329,13 @@ namespace StackExchange.Profiling
               .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
               .Replace("{json}", MiniProfiler.ToJson(profiler))
               .Replace("{includes}", RenderIncludes(profiler).ToString())
-              .Replace("{version}", MiniProfiler.Settings.Version);
+              .Replace("{version}", MiniProfiler.Settings.VersionHash);
             return sb.ToString();
         }
+
+#if DEBUG
+        private static bool BypassLocalLoad = false;
+#endif
 
         private static bool TryGetResource(string filename, out string resource)
         {
@@ -367,7 +370,7 @@ namespace StackExchange.Profiling
                 }
                 else
                 {
-                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("MiniProfiler.ui." + filename))
+                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
                     {
                         if (stream == null)
                         {
@@ -385,10 +388,6 @@ namespace StackExchange.Profiling
 
             return true;
         }
-
-#if DEBUG
-        private static bool BypassLocalLoad = false;
-#endif
 
         private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
         {
