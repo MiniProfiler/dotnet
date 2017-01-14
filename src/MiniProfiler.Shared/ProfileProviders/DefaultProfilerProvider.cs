@@ -65,7 +65,7 @@ namespace StackExchange.Profiling
 #if NET45
             Profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else       // TODO: Revisit with .NET Standard 2.0
-            Profiler = new MiniProfiler(sessionName ?? "MiniProfiler") { IsActive = true };
+            Profiler = new MiniProfiler(sessionName ?? nameof(MiniProfiler)) { IsActive = true };
 #endif
             SetProfilerActive(Profiler);
 
@@ -77,7 +77,10 @@ namespace StackExchange.Profiling
         /// </summary>
         public override void Stop(bool discardResults)
         {
-            Profiler?.StopImpl();
+            var profiler = Profiler;
+            if (profiler == null) return;
+
+            StopProfiler(profiler);
             if (discardResults)
             {
                 Profiler = null;
@@ -90,10 +93,15 @@ namespace StackExchange.Profiling
         /// </summary>
         public override Task StopAsync(bool discardResults)
         {
-            Profiler?.StopImpl();
-            if (discardResults)
+            var profiler = Profiler;
+            if (profiler != null)
             {
-                Profiler = null;
+                StopProfiler(profiler);
+                SaveProfiler(profiler);
+                if (discardResults)
+                {
+                    Profiler = null;
+                }
             }
             return _completed;
         }
