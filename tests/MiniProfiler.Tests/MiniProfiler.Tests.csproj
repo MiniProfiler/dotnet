@@ -1,14 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
+  </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net45</TargetFrameworks>
     <AssemblyName>MiniProfiler.Tests</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <None Include="App.config" />
-    <None Include="Properties\MiniProfiler.Tests.snk" />
     <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -45,9 +49,6 @@
       <Visible>False</Visible>
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
-  <PropertyGroup Label="Configuration">
-    <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
     if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
