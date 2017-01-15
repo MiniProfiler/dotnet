@@ -42,5 +42,19 @@ namespace StackExchange.Profiling
         /// Assembly version of this dank MiniProfiler.
         /// </summary>
         public string Version { get; private set; }
+
+        /// <summary>
+        /// The base path for all MiniProfiler Middleware requests, defaults to /mini-profiler-resources
+        /// </summary>
+        /// <remarks>
+        /// Do NOT end this in a slash, due to how .StartWithSegments behaves
+        /// </remarks>
+        public string BasePath { get; set; } = "/mini-profiler-resources";
+
+        /// <summary>
+        /// Gets or sets the content directory subfolder to load custom template overrides from.
+        /// For example, if you're using wwwroot and want to use wwwroot/profiler/, set this to "profiler/"
+        /// </summary>
+        public string UITemplatesPath { get; set; }
     }
 }

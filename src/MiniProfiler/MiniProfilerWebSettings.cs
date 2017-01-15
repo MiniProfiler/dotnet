@@ -28,6 +28,34 @@ namespace StackExchange.Profiling
         public static Func<HttpRequest, bool> ResultsListAuthorize { get; set; }
 
         /// <summary>
+        /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.
+        /// If this setting is false, the output won't be compressed. (Only do this when you take care of compression yourself)
+        /// </summary>
+        public static bool EnableCompression { get; set; } = true;
+
+        /// <summary>
+        /// When <see cref="MiniProfiler.Start(string)"/> is called, if the current request url contains any items in this property,
+        /// no profiler will be instantiated and no results will be displayed.
+        /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
+        /// </summary>
+        public static string[] IgnoredPaths { get; set; } = new string[] { "/content/", "/scripts/", "/favicon.ico" };
+
+        /// <summary>
+        /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
+        /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
+        /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
+        /// </summary>
+        public static string RouteBasePath { get; set; } = "~/mini-profiler-resources";
+
+        /// <summary>
+        /// The path where custom ui elements are stored.
+        /// If the custom file doesn't exist, the standard resource is used.
+        /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"
+        /// </summary>
+        /// <remarks>A web server restart is required to reload new files.</remarks>
+        public static string CustomUITemplates { get; set; } = "~/App_Data/MiniProfilerUI";
+
+        /// <summary>
         /// On first call, set the version hash for all cache breakers
         /// </summary>
         static MiniProfilerWebSettings()
@@ -37,7 +65,7 @@ namespace StackExchange.Profiling
                 if (HttpContext.Current == null) return;
                 var files = new List<string>();
 
-                var customUITemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
+                var customUITemplatesPath = HttpContext.Current.Server.MapPath(CustomUITemplates);
                 if (Directory.Exists(customUITemplatesPath))
                 {
                     files.AddRange(Directory.EnumerateFiles(customUITemplatesPath));

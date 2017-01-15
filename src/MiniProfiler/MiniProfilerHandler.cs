@@ -32,7 +32,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void RegisterRoutes()
         {
-            var prefix = MiniProfiler.Settings.RouteBasePath.Replace("~/", string.Empty).EnsureTrailingSlash();
+            var prefix = MiniProfilerWebSettings.RouteBasePath.Replace("~/", string.Empty).EnsureTrailingSlash();
 
             using (RouteTable.Routes.GetWriteLock())
             {
@@ -64,7 +64,6 @@ namespace StackExchange.Profiling
             switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
             {
                 case "includes":
-                case "list":
                     output = Includes(context, path);
                     break;
 
@@ -85,7 +84,7 @@ namespace StackExchange.Profiling
                     break;
             }
 
-            if (MiniProfiler.Settings.EnableCompression && output.HasValue())
+            if (MiniProfilerWebSettings.EnableCompression && output.HasValue())
             {
                 Compression.EncodeStreamAndAppendResponseHeaders(context.Request, context.Response);
             }
@@ -122,7 +121,7 @@ namespace StackExchange.Profiling
             Func<bool, string> toJs = b => b ? "true" : "false";
 
             var sb = new StringBuilder(format);
-              sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
+              sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash())
                 .Replace("{version}", MiniProfiler.Settings.VersionHash)
                 .Replace("{currentId}", profiler.Id.ToString())
                 .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
@@ -171,7 +170,7 @@ namespace StackExchange.Profiling
 
             context.Response.ContentType = "text/html";
 
-            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
+            var path = VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash();
             var version = MiniProfiler.Settings.VersionHash;
             return $@"<html>
   <head>
@@ -315,7 +314,7 @@ namespace StackExchange.Profiling
             var sb = new StringBuilder(template);
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
-              .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
+              .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash())
               .Replace("{json}", MiniProfiler.ToJson(profiler))
               .Replace("{includes}", RenderIncludes(profiler).ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);
@@ -350,7 +349,7 @@ namespace StackExchange.Profiling
 
             if (!ResourceCache.TryGetValue(filename, out resource))
             {
-                string customTemplatesPath = HttpContext.Current.Server.MapPath(MiniProfiler.Settings.CustomUITemplates);
+                string customTemplatesPath = HttpContext.Current.Server.MapPath(MiniProfilerWebSettings.CustomUITemplates);
                 string customTemplateFile = Path.Combine(customTemplatesPath, filename);
 
                 if (File.Exists(customTemplateFile))

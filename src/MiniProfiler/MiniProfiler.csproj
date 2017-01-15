@@ -23,7 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**/*.cs" />
-    <EmbeddedResource Include="ui\*.*" />
+    <EmbeddedResource Include="ui/*.*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
