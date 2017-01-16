@@ -48,23 +48,24 @@
     <Content Include="App_Data\SampleEfModelFirst.mdf" />
     <Content Include="App_Data\SampleEfModelFirst_log.ldf" />
     <Content Include="Content\**\*" />
-    <EntityDeploy Include="EfModelFirst\EfModelFirstContext.edmx">
+    <!-- Working around https://github.com/dotnet/roslyn-project-system/issues/1176 -->
+    <!--<EntityDeploy Include="EfModelFirst\EfModelFirstContext.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>EfModelFirstContext1.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <Content Include="EfModelFirst\EfModelFirstContext.edmx.diagram">
+      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
+    </Content>
     <Content Include="EfModelFirst\EfModelFirstContext.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
       <LastGenOutput>EfModelFirstContext.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="EfModelFirst\EfModelFirstContext.edmx.diagram">
-      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
-    </Content>
     <Content Include="EfModelFirst\EfModelFirstContext.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
       <LastGenOutput>EfModelFirstContext.cs</LastGenOutput>
-    </Content>
+    </Content>-->
     <Content Include="Scripts\**\*" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -92,10 +93,4 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <!-- Working around https://github.com/dotnet/sdk/issues/550 -->
-    <PostBuildEvent>
-    start xcopy /s /y "$(MSBuildProjectDirectory)\bin\net462\*.*" "$(MSBuildProjectDirectory)\bin"
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -1,0 +1,7 @@
+<Project>
+    <!-- Working around https://github.com/dotnet/sdk/issues/550 -->
+    <PropertyGroup>
+        <OutputPath>bin/</OutputPath>
+        <OutDir>bin/</OutDir>
+    </PropertyGroup>
+</Project>
