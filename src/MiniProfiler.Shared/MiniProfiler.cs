@@ -200,14 +200,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
-        public static MiniProfiler Current
-        {
-            get
-            {
-                Settings.EnsureProfilerProvider();
-                return Settings.ProfilerProvider.GetCurrentProfiler();
-            }
-        }
+        public static MiniProfiler Current => Settings.ProfilerProvider.GetCurrentProfiler();
 
         /// <summary>
         /// A <see cref="IAsyncStorage"/> strategy to use for the current profiler. 
@@ -224,11 +217,8 @@ namespace StackExchange.Profiling
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
-        public static MiniProfiler Start(string sessionName = null)
-        {
-            Settings.EnsureProfilerProvider();
-            return Settings.ProfilerProvider.Start(sessionName);
-        }
+        public static MiniProfiler Start(string sessionName = null) =>
+            Settings.ProfilerProvider.Start(sessionName);
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
@@ -237,11 +227,8 @@ namespace StackExchange.Profiling
         /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public static void Stop(bool discardResults = false)
-        {
-            Settings.EnsureProfilerProvider();
+        public static void Stop(bool discardResults = false) => 
             Settings.ProfilerProvider.Stop(discardResults);
-        }
 
         /// <summary>
         /// Asynchronously ends the current profiling session, if one exists. 
@@ -251,11 +238,8 @@ namespace StackExchange.Profiling
         /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public static Task StopAsync(bool discardResults = false)
-        {
-            Settings.EnsureProfilerProvider();
-            return Settings.ProfilerProvider.StopAsync(discardResults);
-        }
+        public static Task StopAsync(bool discardResults = false) =>
+            Settings.ProfilerProvider.StopAsync(discardResults);
 
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you
@@ -263,10 +247,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
         /// <returns>the static step.</returns>
-        public static IDisposable StepStatic(string name)
-        {
-            return Current.Step(name);
-        }
+        public static IDisposable StepStatic(string name) => Current.Step(name);
 
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
@@ -398,21 +379,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns how many milliseconds have elapsed since <paramref name="startTicks"/> was recorded.
         /// </summary>
-        internal decimal GetDurationMilliseconds(long startTicks)
-        {
-            return GetRoundedMilliseconds(ElapsedTicks - startTicks);
-        }
-
-        /// <summary>
-        /// Called immediately after deserialization.
-        /// </summary>
-        [OnDeserialized]
-        public void OnDeserialized(StreamingContext ctx)
-        {
-            if (_root != null)
-            {
-                //_root.RebuildParentTimings();
-            }
-        }
+        internal decimal GetDurationMilliseconds(long startTicks) =>
+            GetRoundedMilliseconds(ElapsedTicks - startTicks);
     }
 }

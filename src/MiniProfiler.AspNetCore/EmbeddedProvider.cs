@@ -48,7 +48,7 @@ namespace StackExchange.Profiling
             return null;
         }
 
-        private bool TryGetResource(string filename, out string resource)
+        public bool TryGetResource(string filename, out string resource)
         {
             filename = filename.ToLower();
             if (_resourceCache.TryGetValue(filename, out resource))

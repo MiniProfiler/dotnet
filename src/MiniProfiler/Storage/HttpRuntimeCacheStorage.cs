@@ -49,7 +49,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms.
         /// </summary>
-        public TimeSpan CacheDuration { get; set; }
+        public TimeSpan CacheDuration { get; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRuntimeCacheStorage"/> class. 

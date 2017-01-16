@@ -13,6 +13,11 @@ namespace StackExchange.Profiling
     public static class MiniProfilerWebSettings
     {
         /// <summary>
+        /// Provides user identification for a given profiling request.
+        /// </summary>
+        public static IUserProvider UserProvider { get; set; } = new IpAddressIdentity();
+
+        /// <summary>
         /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
         /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
         /// </summary>

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
@@ -197,25 +196,6 @@ namespace StackExchange.Profiling
             /// Allows switching out stopwatches for unit testing.
             /// </summary>
             public static Func<IStopwatch> StopwatchProvider { get; set; }
-
-            /// <summary>
-            /// Make sure we can at least store profiler results to the http runtime cache.
-            /// </summary>
-            public static void EnsureStorageStrategy()
-            {
-                if (Storage == null)
-                {
-                    throw new Exception("No storage is set, use MiniProfiler.Settings.Storage = new <type>();");
-                }
-            }
-
-            internal static void EnsureProfilerProvider()
-            {
-                if (ProfilerProvider == null)
-                {
-                    throw new Exception("No storage is set, use MiniProfiler.Settings.Storage = new <type>();");
-                }
-            }
         }
     }
 }

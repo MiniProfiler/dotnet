@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Profiling.Storage;
+using System;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
@@ -67,7 +68,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
+        /// Calls <see cref="IAsyncStorage.Save(MiniProfiler)"/> to save the current
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
@@ -75,12 +76,7 @@ namespace StackExchange.Profiling
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             // If the current MiniProfiler object has a custom IAsyncStorage set in the Storage property, use it. Else use the Global Storage.
-            var storage = current.Storage;
-            if (storage == null)
-            {
-                MiniProfiler.Settings.EnsureStorageStrategy();
-                storage = MiniProfiler.Settings.Storage;
-            }
+            var storage = current.Storage ?? MiniProfiler.Settings.Storage;
             storage.Save(current);
             if (!current.HasUserViewed)
             {
@@ -89,18 +85,13 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Asynchronously calls <see cref="MiniProfiler.Settings.EnsureStorageStrategy"/> to save the current
+        /// Asynchronously calls <see cref="IAsyncStorage.SaveAsync(MiniProfiler)"/> to save the current
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
         protected static async Task SaveProfilerAsync(MiniProfiler current)
         {
-            var storage = current.Storage;
-            if (storage == null)
-            {
-                MiniProfiler.Settings.EnsureStorageStrategy();
-                storage = MiniProfiler.Settings.Storage;
-            }
+            var storage = current.Storage ?? MiniProfiler.Settings.Storage;
             await storage.SaveAsync(current).ConfigureAwait(false);
             if (!current.HasUserViewed)
             {

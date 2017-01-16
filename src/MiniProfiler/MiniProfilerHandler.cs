@@ -106,7 +106,6 @@ namespace StackExchange.Profiling
         {
             if (profiler == null) return new HtmlString("");
 
-            MiniProfiler.Settings.EnsureStorageStrategy();
             var authorized = MiniProfilerWebSettings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
@@ -208,9 +207,6 @@ namespace StackExchange.Profiling
             {
                 return message;
             }
-            // After app restart, MiniProfiler.Settings.Storage will be null if no results saved, and NullReferenceException is thrown.
-            MiniProfiler.Settings.EnsureStorageStrategy();
-
             var guids = MiniProfiler.Settings.Storage.List(100);
             var lastId = context.Request["last-id"];
 
@@ -253,15 +249,8 @@ namespace StackExchange.Profiling
             if (id == default(Guid))
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
-            MiniProfiler.Settings.EnsureStorageStrategy();
             var profiler = MiniProfiler.Settings.Storage.Load(id);
-
-            var provider = WebRequestProfilerProvider.Settings.UserProvider;
-            string user = null;
-            if (provider != null)
-            {
-                user = provider.GetUser(context.Request);
-            }
+            string user = MiniProfilerWebSettings.UserProvider?.GetUser(context.Request);
 
             MiniProfiler.Settings.Storage.SetViewed(user, id);
 
