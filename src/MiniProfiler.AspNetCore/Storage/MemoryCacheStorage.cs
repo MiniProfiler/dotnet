@@ -4,6 +4,9 @@ using System;
 namespace StackExchange.Profiling.Storage
 {
     // TODO: Finish implementing
+    /// <summary>
+    /// A IMemoryCache-based provider for storing MiniProfiler instances
+    /// </summary>
     public class MemoryCacheStorage //: IAsyncStorage
     {
         /// <summary>
@@ -17,6 +20,8 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public TimeSpan CacheDuration { get; }
 
+        private MemoryCacheEntryOptions CacheEntryOptions { get; }
+
         /// <summary>
         /// Creates a memory cache provider, storing each result in the provided IMemoryCache
         /// for the specified duration.
@@ -26,11 +31,11 @@ namespace StackExchange.Profiling.Storage
         public MemoryCacheStorage(IMemoryCache cache, TimeSpan cacheDuration)
         {
             CacheDuration = cacheDuration;
+            CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
         }
 
         private string GetCacheKey(Guid id) => CacheKeyPrefix + id;
 
         private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
-
     }
 }

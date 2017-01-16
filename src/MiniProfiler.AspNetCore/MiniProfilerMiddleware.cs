@@ -122,7 +122,7 @@ namespace StackExchange.Profiling
 
             return message;
         }
-        
+
         /// <summary>
         /// Returns true if the current request is allowed to see the profiler response.
         /// </summary>
@@ -153,7 +153,7 @@ namespace StackExchange.Profiling
 
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
-            bool isPopup = form["popup"].Any();
+            bool isPopup = form["popup"].FirstOrDefault() == "1";
             // this guid is the MiniProfiler.Id property
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
