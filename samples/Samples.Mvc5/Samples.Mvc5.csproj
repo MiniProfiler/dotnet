@@ -66,10 +66,8 @@
       <LastGenOutput>EfModelFirstContext.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\**\*" />
-    <Content Include="Views\**\*" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="*.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
