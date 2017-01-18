@@ -46,13 +46,6 @@ namespace StackExchange.Profiling
         public static string[] IgnoredPaths { get; set; } = new string[] { "/content/", "/scripts/", "/favicon.ico" };
 
         /// <summary>
-        /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
-        /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
-        /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
-        /// </summary>
-        public static string RouteBasePath { get; set; } = "~/mini-profiler-resources";
-
-        /// <summary>
         /// The path where custom ui elements are stored.
         /// If the custom file doesn't exist, the standard resource is used.
         /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"

@@ -46,6 +46,13 @@ namespace StackExchange.Profiling
                 // for normal usage, this will return a System.Diagnostics.Stopwatch to collect times - unit tests can explicitly set how much time elapses
                 StopwatchProvider = StopwatchWrapper.StartNew;
             }
+            
+            /// <summary>
+            /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
+            /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
+            /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
+            /// </summary>
+            public static string RouteBasePath { get; set; } = "~/mini-profiler-resources";
 
             /// <summary>
             /// Assembly version of this dank MiniProfiler.

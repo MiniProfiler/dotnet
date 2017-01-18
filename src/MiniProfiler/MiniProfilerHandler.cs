@@ -32,7 +32,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void RegisterRoutes()
         {
-            var prefix = MiniProfilerWebSettings.RouteBasePath.Replace("~/", string.Empty).EnsureTrailingSlash();
+            var prefix = MiniProfiler.Settings.RouteBasePath.Replace("~/", string.Empty).EnsureTrailingSlash();
 
             using (RouteTable.Routes.GetWriteLock())
             {
@@ -120,7 +120,7 @@ namespace StackExchange.Profiling
             Func<bool, string> toJs = b => b ? "true" : "false";
 
             var sb = new StringBuilder(format);
-              sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash())
+              sb.Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
                 .Replace("{version}", MiniProfiler.Settings.VersionHash)
                 .Replace("{currentId}", profiler.Id.ToString())
                 .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
@@ -169,7 +169,7 @@ namespace StackExchange.Profiling
 
             context.Response.ContentType = "text/html";
 
-            var path = VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash();
+            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
             var version = MiniProfiler.Settings.VersionHash;
             return $@"<html>
   <head>
@@ -303,7 +303,7 @@ namespace StackExchange.Profiling
             var sb = new StringBuilder(template);
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
-              .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfilerWebSettings.RouteBasePath).EnsureTrailingSlash())
+              .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
               .Replace("{json}", MiniProfiler.ToJson(profiler))
               .Replace("{includes}", RenderIncludes(profiler).ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);

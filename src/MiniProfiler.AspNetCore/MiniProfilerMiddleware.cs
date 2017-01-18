@@ -17,8 +17,8 @@ namespace StackExchange.Profiling
     {
         private readonly RequestDelegate _next;
         private readonly IHostingEnvironment _env;
-        private readonly PathString _basePath;
 
+        internal readonly PathString BasePath;
         internal readonly MiniProfilerOptions Options;
         internal readonly EmbeddedProvider Embedded;
         internal static MiniProfilerMiddleware Current;
@@ -38,12 +38,17 @@ namespace StackExchange.Profiling
             _env = hostingEnvironment ?? throw new ArgumentException(nameof(hostingEnvironment));
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
-            if (string.IsNullOrEmpty(Options.BasePath))
+            if (string.IsNullOrEmpty(Options.RouteBasePath))
             {
-                throw new ArgumentException("BasePath cannot be empty", nameof(Options.BasePath));
+                throw new ArgumentException("BasePath cannot be empty", nameof(Options.RouteBasePath));
             }
 
-            _basePath = new PathString(Options.BasePath);
+            var basePath = Options.RouteBasePath;
+            // Example transform: ~/mini-profiler-results/ to /mini-profiler-results
+            if (basePath.StartsWith("~/")) basePath = basePath.Substring(1);
+            if (basePath.EndsWith("/") && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
+
+            BasePath = new PathString(basePath);
             Embedded = new EmbeddedProvider(Options, _env);
             // A static reference back to this middleware for property access.
             // Which is probably a crime against humanity in ways I'm ignorant of.
@@ -62,7 +67,7 @@ namespace StackExchange.Profiling
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Request.Path.StartsWithSegments(_basePath, out PathString subPath))
+            if (context.Request.Path.StartsWithSegments(BasePath, out PathString subPath))
             {
                 // This is a request in the MiniProfiler path (e.g. one of "our" routes), HANDLE THE SITUATION.
                 await HandleRequest(context, subPath);
@@ -158,10 +163,13 @@ namespace StackExchange.Profiling
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
             if (!Guid.TryParse(form["id"], out var id) && MiniProfiler.Settings.Storage != null)
+            {
                 id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
-
+            }
             if (id == default(Guid))
+            {
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
+            }
 
             var profiler = MiniProfiler.Settings.Storage.Load(id);
             string user = Options.UserIdProvider?.Invoke(context.Request);
@@ -223,7 +231,7 @@ namespace StackExchange.Profiling
             var sb = new StringBuilder(template);
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
-              .Replace("{path}", _basePath.Value.EnsureTrailingSlash())
+              .Replace("{path}", BasePath.Value.EnsureTrailingSlash())
               .Replace("{json}", MiniProfiler.ToJson(profiler))
               .Replace("{includes}", profiler.RenderIncludes().ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);

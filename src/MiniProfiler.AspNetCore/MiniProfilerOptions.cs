@@ -83,12 +83,13 @@ namespace StackExchange.Profiling
         public string Version { get; private set; }
 
         /// <summary>
-        /// The base path for all MiniProfiler Middleware requests, defaults to /mini-profiler-resources
+        /// The base path for all MiniProfiler Middleware requests, defaults to ~/mini-profiler-resources
         /// </summary>
-        /// <remarks>
-        /// Do NOT end this in a slash, due to how .StartWithSegments behaves
-        /// </remarks>
-        public string BasePath { get; set; } = "/mini-profiler-resources";
+        public string RouteBasePath
+        {
+            get { return MiniProfiler.Settings.RouteBasePath; }
+            set { MiniProfiler.Settings.RouteBasePath = value; }
+        }
 
         /// <summary>
         /// Gets or sets the content directory subfolder to load custom template overrides from.

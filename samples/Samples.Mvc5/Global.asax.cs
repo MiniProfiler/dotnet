@@ -118,10 +118,10 @@ namespace Samples.Mvc5
             // then the position would be on the left that that page, and on the right (the app default) for anywhere that doesn't
             // specified position in the .RenderIncludes() call.
             MiniProfiler.Settings.PopupRenderPosition = RenderPosition.Right;          // defaults to left
+            MiniProfiler.Settings.RouteBasePath = "~/profiler";                        // e.g. /profiler/mini-profiler-includes.js
             MiniProfiler.Settings.PopupMaxTracesToShow = 10;                           // defaults to 15
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider(); // use the web profiler since we're in a web application
-            MiniProfilerWebSettings.RouteBasePath = "~/profiler";                      // e.g. /profiler/mini-profiler-includes.js
-
+            
             // optional settings to control the stack trace output in the details pane
             // the exclude methods are not thread safe, so be sure to only call these once per appdomain
             MiniProfiler.Settings.ExcludeType("SessionFactory"); // Ignore any class with the name of SessionFactory

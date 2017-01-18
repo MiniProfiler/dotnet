@@ -42,7 +42,7 @@ namespace StackExchange.Profiling
             Func<bool, string> toJs = b => b ? "true" : "false";
 
             var sb = new StringBuilder(format);
-            sb.Replace("{path}", MiniProfilerMiddleware.Current.Options.BasePath.EnsureTrailingSlash())
+            sb.Replace("{path}", MiniProfilerMiddleware.Current.BasePath.Value.EnsureTrailingSlash())
               .Replace("{version}", MiniProfiler.Settings.VersionHash)
               .Replace("{currentId}", profiler.Id.ToString())
               .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
