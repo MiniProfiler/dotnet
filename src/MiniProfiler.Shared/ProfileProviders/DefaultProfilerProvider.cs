@@ -1,10 +1,5 @@
-﻿#if NET46
-using System;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
-#else
+﻿using System;
 using System.Threading;
-#endif
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
@@ -14,35 +9,6 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
-#if NET46
-        private const string ContextKey = ":miniprofiler:";
-
-        private MiniProfiler Profiler
-        {
-            get
-            {
-                if (HttpContext.Current != null)
-                {
-                    return HttpContext.Current?.Items[ContextKey] as MiniProfiler;
-                }
-                else
-                {
-                    return CallContext.LogicalGetData(ContextKey) as MiniProfiler;
-                }
-            }
-            set
-            {
-                if (HttpContext.Current != null)
-                {
-                    HttpContext.Current.Items[ContextKey] = value;
-                }
-                else
-                {
-                    CallContext.LogicalSetData(ContextKey, value);
-                }
-            }
-        }
-#else
         private AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
 
         private MiniProfiler Profiler
@@ -50,7 +16,6 @@ namespace StackExchange.Profiling
             get { return _profiler.Value; }
             set { _profiler.Value = value; }
         }
-#endif
 
         /// <summary>
         /// The name says it all.
