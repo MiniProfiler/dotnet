@@ -86,8 +86,8 @@ namespace StackExchange.Profiling.Data
                 // did somebody move our cheese?
                 tryAgain = Interlocked.CompareExchange(ref head, newNode, snapshot) != snapshot;
             }
-
             while (tryAgain);
+
             return true;
         }
     }

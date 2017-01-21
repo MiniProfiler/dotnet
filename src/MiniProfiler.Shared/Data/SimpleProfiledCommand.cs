@@ -37,36 +37,36 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// prepare the command.
+        /// Prepare the command.
         /// </summary>
         public void Prepare() => _command.Prepare();
 
         /// <summary>
-        /// cancel the command.
+        /// Cancel the command.
         /// </summary>
         public void Cancel() => _command.Cancel();
 
         /// <summary>
-        /// create a new parameter.
+        /// Create a new parameter.
         /// </summary>
         /// <returns>The <see cref="IDbDataParameter"/>.</returns>
         public IDbDataParameter CreateParameter() => _command.CreateParameter();
 
         /// <summary>
-        /// execute a non query.
+        /// Execute a non query.
         /// </summary>
         /// <returns>The <see cref="int"/>.</returns>
         public int ExecuteNonQuery() => ProfileWith(SqlExecuteType.NonQuery, _command.ExecuteNonQuery);
 
         /// <summary>
-        /// execute the reader.
+        /// Execute the reader.
         /// </summary>
         /// <returns>The <see cref="IDataReader"/>.</returns>
         public IDataReader ExecuteReader() =>
             ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
 
         /// <summary>
-        /// execute the reader.
+        /// Execute the reader.
         /// </summary>
         /// <param name="behavior">The <c>behavior</c>.</param>
         /// <returns>the active reader.</returns>
@@ -74,7 +74,7 @@ namespace StackExchange.Profiling.Data
             ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
 
         /// <summary>
-        /// execute and return a scalar.
+        /// Execute and return a scalar.
         /// </summary>
         /// <returns>the scalar value.</returns>
         public object ExecuteScalar() => ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
@@ -175,10 +175,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets the parameters.
         /// </summary>
-        public IDataParameterCollection Parameters
-        {
-            get { return _command.Parameters; }
-        }
+        public IDataParameterCollection Parameters => _command.Parameters;
 
         /// <summary>
         /// Gets or sets the updated row source.
@@ -190,7 +187,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Dispose the command / connection and profiler.
         /// </summary>
         public void Dispose()
         {
@@ -199,7 +196,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Dispose the command / connection and profiler.
         /// </summary>
         /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         protected virtual void Dispose(bool disposing)
@@ -213,7 +210,7 @@ namespace StackExchange.Profiling.Data
 
 #if NET46
         /// <summary>
-        /// clone the command.
+        /// Clones this command.
         /// </summary>
         /// <returns>The <see cref="object"/>.</returns>
         public object Clone()

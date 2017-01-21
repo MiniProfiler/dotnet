@@ -14,27 +14,13 @@ namespace StackExchange.Profiling.Data
 , ICloneable
 #endif
     {
-        /// <summary>
-        /// This will be made private; use <see cref="InnerConnection"/>
-        /// </summary>
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "this must be changed in the future.")]
-        // ReSharper disable InconsistentNaming
-        protected DbConnection _connection; // TODO: in MiniProfiler 2.0, make private
-        // ReSharper restore InconsistentNaming
-
+        private DbConnection _connection;
         /// <summary>
         /// Gets the underlying, real database connection to your database provider.
         /// </summary>
         public DbConnection InnerConnection =>  _connection;
-
-        /// <summary>
-        /// This will be made private; use <see cref="Profiler"/>
-        /// </summary>
-        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Suppression is OK here.")]
-        // ReSharper disable InconsistentNaming
-        protected IDbProfiler _profiler; // TODO: in MiniProfiler 2.0, make private
-        // ReSharper restore InconsistentNaming
-
+        
+        private IDbProfiler _profiler;
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>
@@ -167,36 +153,34 @@ namespace StackExchange.Profiling.Data
         protected override bool CanRaiseEvents => true;
 
         /// <summary>
-        /// enlist the transaction.
+        /// Enlist the transaction.
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         public override void EnlistTransaction(System.Transactions.Transaction transaction) =>_connection.EnlistTransaction(transaction);
 
         /// <summary>
-        /// get the schema.
+        /// Gets the database schema.
         /// </summary>
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema() => _connection.GetSchema();
 
         /// <summary>
-        /// get the schema.
+        /// Gets the collection schema.
         /// </summary>
         /// <param name="collectionName">The collection name.</param>
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName) => _connection.GetSchema(collectionName);
 
         /// <summary>
-        /// get the schema.
+        /// Gets the filtered collection schema.
         /// </summary>
         /// <param name="collectionName">The collection name.</param>
         /// <param name="restrictionValues">The restriction values.</param>
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
-#endif
 
-#if NET46
         /// <summary>
-        /// create a clone.
+        /// Creates a clone of this <see cref="ProfiledDbConnection"/>.
         /// </summary>
         /// <returns>The <see cref="ProfiledDbConnection"/>.</returns>
         public ProfiledDbConnection Clone()
@@ -207,7 +191,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// create a clone.
+        /// Creates a clone of this <see cref="ProfiledDbConnection"/>.
         /// </summary>
         /// <returns>The <see cref="object"/>.</returns>
         object ICloneable.Clone() => Clone();
