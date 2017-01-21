@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="RavenDB.Client" Version="3.5.1" />
+    <PackageReference Include="RavenDB.Client" Version="3.5.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="System" />

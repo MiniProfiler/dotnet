@@ -23,7 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="4.0.40804" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
