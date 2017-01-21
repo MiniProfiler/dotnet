@@ -9,7 +9,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class SingletonProfilerProvider : IAsyncProfilerProvider
     {
-        private MiniProfiler _profiler;
+        private static MiniProfiler _profiler;
 
         /// <summary>
         /// The name says it all

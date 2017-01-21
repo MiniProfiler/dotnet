@@ -9,7 +9,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
-        private AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
+        private static readonly AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
 
         private MiniProfiler Profiler
         {
@@ -27,11 +27,13 @@ namespace StackExchange.Profiling
         /// </summary>
         public override MiniProfiler Start(string sessionName = null)
         {
+            Profiler = new MiniProfiler(sessionName ??
 #if NET46
-            Profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
+            AppDomain.CurrentDomain.FriendlyName
 #else       // TODO: Revisit with .NET Standard 2.0
-            Profiler = new MiniProfiler(sessionName ?? nameof(MiniProfiler)) { IsActive = true };
+            nameof(MiniProfiler)
 #endif
+            ) { IsActive = true };
             SetProfilerActive(Profiler);
 
             return Profiler;
