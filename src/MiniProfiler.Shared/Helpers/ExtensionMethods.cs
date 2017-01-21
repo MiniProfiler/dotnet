@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-#if NET45
+#if NET46
 using System.Web.Script.Serialization;
 #else
 using Newtonsoft.Json;
@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.Helpers
         public static string ToJson(this object o)
         {
             return o != null
-#if NET45
+#if NET46
                 ? new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o) : null;
 #else
                 ? JsonConvert.SerializeObject(o) : null;
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling.Helpers
         public static T FromJson<T>(this string s) where T : class
         {
             return s.HasValue()
-#if NET45
+#if NET46
                 ? new JavaScriptSerializer().Deserialize<T>(s) : null;
 #else
                 ? JsonConvert.DeserializeObject<T>(s) : null;

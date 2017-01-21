@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
-#if !NET45
+#if !NET46
 using System.Reflection;
 #endif
 
@@ -127,7 +127,7 @@ namespace StackExchange.Profiling
 
             // we want the integral value of an enum, not its string representation
             var rawType = rawValue.GetType();
-#if NET45
+#if NET46
             if (rawType.IsEnum)
 #else
             if (rawType.GetTypeInfo().IsEnum)

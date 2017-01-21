@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ProfiledDbConnection : DbConnection
-#if NET45
+#if NET46
 , ICloneable
 #endif
     {
@@ -160,7 +160,7 @@ namespace StackExchange.Profiling.Data
         }
 
 // TODO: Retuning in .Net Standard 2.0
-#if NET45
+#if NET46
         /// <summary>
         /// Gets a value indicating whether events can be raised.
         /// </summary>
@@ -194,7 +194,7 @@ namespace StackExchange.Profiling.Data
         public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
 #endif
 
-#if NET45
+#if NET46
         /// <summary>
         /// create a clone.
         /// </summary>

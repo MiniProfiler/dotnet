@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-#if NET45
+#if NET46
 using System.Security;
 using System.Security.Permissions;
 #endif
@@ -79,7 +79,7 @@ namespace StackExchange.Profiling.Data
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;
 
         // TODO: These are added back in netstandard1.7
-#if NET45
+#if NET46
         /// <summary>
         /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
         /// </summary>

@@ -3,7 +3,7 @@
     <RootNamespace>StackExchange.Profiling</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Providers.SqlServer</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>

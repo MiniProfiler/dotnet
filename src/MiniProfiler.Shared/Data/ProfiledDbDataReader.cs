@@ -192,7 +192,7 @@ namespace StackExchange.Profiling.Data
         public override bool Read() => WrappedReader.Read();
 
 // TODO: Revisit in .Net Standard 2.0
-#if NET45
+#if NET46
         /// <summary>Closes the IDataReader Object.</summary>
         public override void Close()
         {

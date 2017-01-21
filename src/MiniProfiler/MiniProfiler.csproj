@@ -3,7 +3,7 @@
     <RootNamespace>StackExchange.Profiling</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net46</TargetFrameworks>
     <AssemblyName>MiniProfiler</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>

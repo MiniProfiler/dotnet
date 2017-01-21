@@ -1,4 +1,4 @@
-﻿#if NET45
+﻿#if NET46
 using System;
 using System.Data;
 using System.Data.Common;

@@ -1,4 +1,4 @@
-﻿#if NET45
+﻿#if NET46
 using System;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
@@ -14,7 +14,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
-#if NET45
+#if NET46
         private const string ContextKey = ":miniprofiler:";
 
         private MiniProfiler Profiler
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public override MiniProfiler Start(string sessionName = null)
         {
-#if NET45
+#if NET46
             Profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else       // TODO: Revisit with .NET Standard 2.0
             Profiler = new MiniProfiler(sessionName ?? nameof(MiniProfiler)) { IsActive = true };
@@ -86,8 +86,7 @@ namespace StackExchange.Profiling
                 Profiler = null;
             }
         }
-
-        private static readonly Task _completed = Task.FromResult(false);
+        
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
@@ -103,7 +102,7 @@ namespace StackExchange.Profiling
                     Profiler = null;
                 }
             }
-            return _completed;
+            return Task.CompletedTask;
         }
     }
 }

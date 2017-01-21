@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public MiniProfiler Start(string sessionName = null)
         {
-#if NET45
+#if NET46
             _profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else // TODO: Revisit with .NET Standard 2.0
             _profiler = new MiniProfiler(sessionName ?? "MiniProfiler") { IsActive = true };
@@ -41,16 +41,13 @@ namespace StackExchange.Profiling
             }
         }
 
-        // .NET 4.5 doesn't have Task.CompletedTask
-        private static Task _completedTask = Task.FromResult(true);
-
         /// <summary>
         /// Asynchronously stops the current profiling session.
         /// </summary>
         public Task StopAsync(bool discardResults)
         {
             Stop(discardResults);
-            return _completedTask;
+            return Task.CompletedTask;
         }
     }
 }

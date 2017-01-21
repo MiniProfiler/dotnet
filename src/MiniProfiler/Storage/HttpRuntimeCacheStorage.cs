@@ -14,8 +14,6 @@ namespace StackExchange.Profiling.Storage
     /// </remarks>
     public class HttpRuntimeCacheStorage : IAsyncStorage
     {
-        private static readonly Task _completed = Task.FromResult(false);
-
         /// <summary>
         /// Identifies a MiniProfiler result and only contains the needed info for sorting a list of profiling sessions.
         /// </summary>
@@ -98,7 +96,7 @@ namespace StackExchange.Profiling.Storage
         public Task SaveAsync(MiniProfiler profiler)
         {
             Save(profiler);
-            return _completed;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -122,7 +120,7 @@ namespace StackExchange.Profiling.Storage
         public Task SetUnviewedAsync(string user, Guid id)
         {
             SetUnviewed(user, id);
-            return _completed;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -144,7 +142,7 @@ namespace StackExchange.Profiling.Storage
         public Task SetViewedAsync(string user, Guid id)
         {
             SetViewed(user, id);
-            return _completed;
+            return Task.CompletedTask;
         }
 
         /// <summary>

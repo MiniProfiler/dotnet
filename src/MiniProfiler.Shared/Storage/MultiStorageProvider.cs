@@ -13,8 +13,6 @@ namespace StackExchange.Profiling.Storage
     /// <example>Ideal usage scenario - you want to store requests in Cache and Sql Server, but only want to retrieve from Cache if it is available</example>
     public class MultiStorageProvider : IAsyncStorage
     {
-        private static readonly Task _completed = Task.FromResult(false);
-
         /// <summary>
         /// The stores that are exposed by this <see cref="MultiStorageProvider"/>
         /// </summary>
@@ -106,7 +104,7 @@ namespace StackExchange.Profiling.Storage
         /// </remarks>
         public Task SaveAsync(MiniProfiler profiler)
         {
-            if (Stores == null) return _completed;
+            if (Stores == null) return Task.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SaveAsync(profiler)));
         }
@@ -178,7 +176,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public Task SetUnviewedAsync(string user, Guid id)
         {
-            if (Stores == null) return _completed;
+            if (Stores == null) return Task.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SetUnviewedAsync(user, id)));
         }
@@ -206,7 +204,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public Task SetViewedAsync(string user, Guid id)
         {
-            if (Stores == null) return _completed;
+            if (Stores == null) return Task.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, id)));
         }

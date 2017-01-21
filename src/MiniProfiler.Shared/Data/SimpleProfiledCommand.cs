@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.Data
     /// to collect profiling information.
     /// </summary>
     public class SimpleProfiledCommand : IDbCommand
-#if NET45
+#if NET46
 , ICloneable
 #endif
     {
@@ -211,7 +211,7 @@ namespace StackExchange.Profiling.Data
             _profiler = null;
         }
 
-#if NET45
+#if NET46
         /// <summary>
         /// clone the command.
         /// </summary>

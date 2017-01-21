@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
 using System.Threading.Tasks;
-#if NET45
+#if NET46
 using System.Web.Script.Serialization;
 #else
 // TODO: Factor these extensions out? That'd be more breaks...
@@ -255,7 +255,7 @@ namespace StackExchange.Profiling
         public static string ToJson(MiniProfiler profiler)
         {
             return profiler != null
-#if NET45
+#if NET46
                 ? GetJsonSerializer().Serialize(profiler) : null;
 #else
                 ? JsonConvert.SerializeObject(profiler) : null;
@@ -268,14 +268,14 @@ namespace StackExchange.Profiling
         public static MiniProfiler FromJson(string json)
         {
             return json.HasValue()
-#if NET45
+#if NET46
                 ? GetJsonSerializer().Deserialize<MiniProfiler>(json) : null;
 #else
                 ? JsonConvert.DeserializeObject<MiniProfiler>(json) : null;
 #endif
         }
 
-#if NET45
+#if NET46
         private static JavaScriptSerializer GetJsonSerializer()
         {
             return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };
@@ -327,7 +327,7 @@ namespace StackExchange.Profiling
             }
         }
 
-#if NET45 // TODO: Revisit in .NET Standard 2.0
+#if NET46 // TODO: Revisit in .NET Standard 2.0
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>

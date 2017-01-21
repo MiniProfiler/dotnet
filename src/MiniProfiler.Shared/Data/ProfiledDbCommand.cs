@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ProfiledDbCommand : DbCommand
-#if NET45
+#if NET46
 , ICloneable
 #endif
     {
@@ -79,7 +79,7 @@ namespace StackExchange.Profiling.Data
             }
 
             var prop = commandType
-#if !NET45 // TODO: Revisit in .NET Standard 2.0
+#if !NET46 // TODO: Revisit in .NET Standard 2.0
                 .GetTypeInfo()
 #endif
                 .GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
@@ -320,7 +320,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public DbCommand InternalCommand => _command;
 
-#if NET45
+#if NET46
         /// <summary>
         /// clone the command, entity framework expects this behaviour.
         /// </summary>
