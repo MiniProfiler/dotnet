@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace StackExchange.Profiling.Helpers
 {
@@ -22,14 +22,14 @@ namespace StackExchange.Profiling.Helpers
 #if NET46
             var frames = new StackTrace().GetFrames();
 #else // TODO: Make this work in .NET Standard, true fix isn't until 2.0 via https://github.com/dotnet/corefx/pull/12527
-            var frames = Enumerable.Empty<StackFrame>();
+            StackFrame[] frames = null;
 #endif
             if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)
             {
                 return "";
             }
 
-            var methods = new List<string>();
+            var sb = new StringBuilder();
             int stackLength = -1; // Starts on -1 instead of zero to compensate for adding 1 first time
 
             foreach (StackFrame t in frames)
@@ -48,12 +48,16 @@ namespace StackExchange.Profiling.Helpers
                     && !MiniProfiler.Settings.AssembliesToExclude.Contains(assembly)
                     && !MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
                 {
-                    methods.Add(method.Name);
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(" ");
+                    }
+                    sb.Append(method.Name);
                     stackLength += method.Name.Length + 1; // 1 added for spaces.
                 }
             }
 
-            return string.Join(" ", methods);
+            return sb.ToString();
         }
 
         private static bool ShouldExcludeType(MethodBase method)
