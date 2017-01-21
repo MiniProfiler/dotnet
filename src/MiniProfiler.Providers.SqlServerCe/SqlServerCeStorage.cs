@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Data.SqlServerCe;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Dapper;
 using StackExchange.Profiling.Helpers;
-using System.Threading.Tasks;
 
 // TODO: More code sharing between providers...not sure on the cleanest approach here.
 namespace StackExchange.Profiling.Storage
@@ -28,9 +28,7 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerCeStorage"/> class with the specified connection string.
         /// </summary>
-        /// <param name="connectionString">
-        /// The connection string to use.
-        /// </param>
+        /// <param name="connectionString">The connection string to use.</param>
         public SqlServerCeStorage(string connectionString) : base(connectionString) { /* base setup */ }
 
         private const string _saveSql =

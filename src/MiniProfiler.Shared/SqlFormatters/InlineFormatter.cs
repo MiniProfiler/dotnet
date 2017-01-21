@@ -17,9 +17,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Creates a new Inline SQL Formatter, optionally including the parameter type info 
         /// in comments beside the replaced value
         /// </summary>
-        /// <param name="includeTypeInfo">
-        /// whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c>
-        /// </param>
+        /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
         public InlineFormatter(bool includeTypeInfo = false)
         {
             InlineFormatter.includeTypeInfo = includeTypeInfo;

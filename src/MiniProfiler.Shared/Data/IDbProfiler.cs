@@ -17,12 +17,8 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Called when a command starts executing
         /// </summary>
-        /// <param name="profiledDbCommand">
-        /// The profiled dB Command.
-        /// </param>
-        /// <param name="executeType">
-        /// The execute Type.
-        /// </param>
+        /// <param name="profiledDbCommand">The profiled dB Command.</param>
+        /// <param name="executeType">The execute Type.</param>
         void ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType);
 
         /// <summary>

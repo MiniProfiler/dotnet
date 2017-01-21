@@ -66,9 +66,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">
-        /// User identified by the current <c>MiniProfiler.Settings.UserProvider</c>
-        /// </param>
+        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
         List<Guid> GetUnviewedIds(string user);
 
         /// <summary>
@@ -112,9 +110,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">
-        /// User identified by the current <c>MiniProfiler.Settings.UserProvider</c>
-        /// </param>
+        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
         Task<List<Guid>> GetUnviewedIdsAsync(string user);
     }
 }

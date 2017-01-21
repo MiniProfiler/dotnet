@@ -31,12 +31,8 @@ namespace StackExchange.Profiling.Data
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
         /// providing query execution profiling. If profiler is null, no profiling will occur.
         /// </summary>
-        /// <param name="connection">
-        /// <c>Your provider-specific flavour of connection, e.g. SqlConnection, OracleConnection</c>
-        /// </param>
-        /// <param name="profiler">
-        /// The currently started <see cref="MiniProfiler"/> or null.
-        /// </param>
+        /// <param name="connection"><c>Your provider-specific flavour of connection, e.g. SqlConnection, OracleConnection</c></param>
+        /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
         public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));

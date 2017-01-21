@@ -45,12 +45,8 @@ namespace StackExchange.Profiling.Data
         /// Initialises a new instance of the <see cref="SimpleProfiledConnection"/> class. 
         /// Creates a simple profiled connection instance.
         /// </summary>
-        /// <param name="connection">
-        /// The database connection to wrap
-        /// </param>
-        /// <param name="profiler">
-        /// The profiler to use
-        /// </param>
+        /// <param name="connection">The database connection to wrap</param>
+        /// <param name="profiler">The profiler to use</param>
         public SimpleProfiledConnection(IDbConnection connection, IDbProfiler profiler)
         {
             _connection = connection;
