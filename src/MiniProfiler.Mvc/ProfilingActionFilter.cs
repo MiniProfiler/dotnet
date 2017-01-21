@@ -46,8 +46,7 @@ namespace StackExchange.Profiling.Mvc
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             base.OnActionExecuted(filterContext);
-            var stack = HttpContext.Current.Items[StackKey] as Stack<IDisposable>;
-            if (stack != null && stack.Count > 0)
+            if (HttpContext.Current.Items[StackKey] is Stack<IDisposable> stack && stack.Count > 0)
             {
                 stack.Pop().Dispose();
             }

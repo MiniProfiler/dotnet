@@ -33,8 +33,10 @@ namespace StackExchange.Profiling.Tests
         private void CreateDbCommand(CommandType commandType)
         {
             var sqlConnection = new SqlConnection("Initial Catalog=TestDatabase");
-            _dbCommand = new SqlCommand(_commandText, sqlConnection);
-            _dbCommand.CommandType = commandType;
+            _dbCommand = new SqlCommand(_commandText, sqlConnection)
+            {
+                CommandType = commandType
+            };
         }
 
         private string GenerateOutput()

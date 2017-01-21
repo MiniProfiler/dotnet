@@ -80,8 +80,7 @@ namespace StackExchange.Profiling.Data
         {
             var wrappedConnection = connection;
 
-            var profiled = connection as ProfiledDbConnection;
-            if (profiled != null)
+            if (connection is ProfiledDbConnection profiled)
             {
                 wrappedConnection = profiled.WrappedConnection;
             }
@@ -148,14 +147,13 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// get the real connection.
+        /// Gets the real connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <returns>the database connection</returns>
         private static DbConnection GetRealConnection(DbConnection connection)
         {
-            var profiled = connection as ProfiledDbConnection;
-            if (profiled != null)
+            if (connection is ProfiledDbConnection profiled)
             {
                 connection = profiled.WrappedConnection;
             }
@@ -165,8 +163,7 @@ namespace StackExchange.Profiling.Data
 
         private static DbDataReader GetSpatialDataReader(DbDataReader fromReader)
         {
-            var profiled = fromReader as ProfiledDbDataReader;
-            if (profiled != null)
+            if (fromReader is ProfiledDbDataReader profiled)
             {
                 fromReader = profiled.WrappedReader;
             }
