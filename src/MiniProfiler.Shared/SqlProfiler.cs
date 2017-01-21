@@ -89,8 +89,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void ExecuteStart(this SqlProfiler sqlProfiler, IDbCommand command, SqlExecuteType type)
         {
-            if (sqlProfiler == null) return;
-            sqlProfiler.ExecuteStartImpl(command, type);
+            sqlProfiler?.ExecuteStartImpl(command, type);
         }
 
         /// <summary>
@@ -102,8 +101,7 @@ namespace StackExchange.Profiling
             SqlExecuteType type,
             DbDataReader reader = null)
         {
-            if (sqlProfiler == null) return;
-            sqlProfiler.ExecuteFinishImpl(command, type, reader);
+            sqlProfiler?.ExecuteFinishImpl(command, type, reader);
         }
 
         /// <summary>
@@ -111,8 +109,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public static void ReaderFinish(this SqlProfiler sqlProfiler, IDataReader reader)
         {
-            if (sqlProfiler == null) return;
-            sqlProfiler.ReaderFinishedImpl(reader);
+            sqlProfiler?.ReaderFinishedImpl(reader);
         }
     }
 }

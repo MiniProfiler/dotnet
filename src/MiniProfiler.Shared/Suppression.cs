@@ -41,7 +41,7 @@ namespace StackExchange.Profiling
 
         void IDisposable.Dispose()
         {
-            if(Profiler != null && _wasSuppressed)
+            if (Profiler != null && _wasSuppressed)
             {
                 Profiler.IsActive = true;
             }

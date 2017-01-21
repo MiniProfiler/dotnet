@@ -43,12 +43,7 @@ namespace StackExchange.Profiling
             Stopwatch = Settings.StopwatchProvider();
             Root = new Timing(this, null, url);
         }
-
-        /// <summary>
-        /// The root.
-        /// </summary>
-        private Timing _root;
-
+        
         /// <summary>
         /// Gets or sets the profiler id.
         /// Identifies this Profiler so it may be stored/cached.
@@ -103,7 +98,8 @@ namespace StackExchange.Profiling
             }
         }
 
-            /// <summary>
+        private Timing _root;
+        /// <summary>
         /// Gets or sets the root timing.
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
         /// All other <see cref="Timing"/>s will be children of this one.
@@ -123,9 +119,7 @@ namespace StackExchange.Profiling
                 if (_root.HasChildren)
                 {
                     var timings = new Stack<Timing>();
-
                     timings.Push(_root);
-
                     while (timings.Count > 0)
                     {
                         var timing = timings.Pop();
@@ -190,8 +184,7 @@ namespace StackExchange.Profiling
         /// Gets the ticks since this MiniProfiler was started.
         /// </summary>
         internal long ElapsedTicks => Stopwatch.ElapsedTicks;
-
-        // TODO: Back to InternalsVisibleTo
+        
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>

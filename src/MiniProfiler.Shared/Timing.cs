@@ -257,7 +257,7 @@ namespace StackExchange.Profiling
                 Children = new List<Timing>();
 
             Children.Add(timing);
-            if(timing.Profiler == null)
+            if (timing.Profiler == null)
                 timing.Profiler = Profiler;
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
