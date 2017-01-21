@@ -191,8 +191,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>true if there are more rows; otherwise, false.</returns>
         public override bool Read() => WrappedReader.Read();
 
-// TODO: Revisit in .Net Standard 2.0
-#if NET46
+#if NET46 // TODO: Revisit in .Net Standard 2.0
         /// <summary>Closes the IDataReader Object.</summary>
         public override void Close()
         {

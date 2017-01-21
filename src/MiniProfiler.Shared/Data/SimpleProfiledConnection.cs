@@ -57,45 +57,45 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// begin the transaction.
+        /// Starts a database transaction.
         /// </summary>
-        /// <returns>The <see cref="IDbTransaction"/>.</returns>
+        /// <returns>An object representing the new transaction.</returns>
         public IDbTransaction BeginTransaction() =>
             new SimpleProfiledTransaction(_connection.BeginTransaction(), this);
 
         /// <summary>
-        /// begin a transaction.
+        /// Starts a database transaction.
         /// </summary>
-        /// <param name="isolationLevel">The isolation Level.</param>
-        /// <returns>the wrapped transaction</returns>
+        /// <param name="isolationLevel">Specifies the isolation level for the transaction.</param>
+        /// <returns>An object representing the new transaction.</returns>
         public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) =>
             new SimpleProfiledTransaction(_connection.BeginTransaction(isolationLevel), this);
 
         /// <summary>
-        /// change the database.
+        /// Changes the current database for an open connection.
         /// </summary>
         /// <param name="databaseName">The database name.</param>
         public void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 
         /// <summary>
-        /// Create a new command.
+        /// Creates and returns a <see cref="IDbCommand"/> object associated with the current connection.
         /// </summary>
-        /// <returns>The <see cref="IDbCommand"/>.</returns>
+        /// <returns>A <see cref="IDbCommand"/> object.</returns>
         public IDbCommand CreateCommand() =>
             new SimpleProfiledCommand(_connection.CreateCommand(), this, _profiler);
 
         /// <summary>
-        /// Close the connection.
+        /// Closes the connection to the database. This is the preferred method of closing any open connection.
         /// </summary>
         public void Close() => _connection.Close();
 
         /// <summary>
-        /// Open the connection.
+        /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
         public void Open() => _connection.Open();
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Releases all resources used by the connection.
         /// </summary>
         public void Dispose()
         {
@@ -104,7 +104,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Releases the unmanaged resources used by the connetion and optionally releases the managed resources.
         /// </summary>
         /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         private void Dispose(bool disposing)

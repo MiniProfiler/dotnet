@@ -78,8 +78,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;
 
-        // TODO: These are added back in netstandard1.7
-#if NET46
+#if NET46 // TODO: These are added back in netstandard1.7
         /// <summary>
         /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
         /// </summary>

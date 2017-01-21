@@ -7,9 +7,6 @@ using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {
-    /// <summary>
-    /// The base test.
-    /// </summary>
     [Collection("Storage")]
     public abstract class BaseTest
     {

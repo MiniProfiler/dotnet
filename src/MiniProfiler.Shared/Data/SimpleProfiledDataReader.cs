@@ -190,7 +190,7 @@ namespace StackExchange.Profiling.Data
         public bool Read() => _reader.Read();
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Releases all resources used by this reader.
         /// </summary>
         public void Dispose()
         {
@@ -199,7 +199,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Releases the managed resources used by this reader and optionally releases the unmanaged resources.
         /// </summary>
         /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         private void Dispose(bool disposing)

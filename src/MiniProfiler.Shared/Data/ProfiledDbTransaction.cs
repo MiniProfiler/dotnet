@@ -39,17 +39,17 @@ namespace StackExchange.Profiling.Data
         public override IsolationLevel IsolationLevel => _transaction.IsolationLevel;
 
         /// <summary>
-        /// Commit the transaction.
+        /// Commits the database transaction.
         /// </summary>
         public override void Commit() => _transaction.Commit();
 
         /// <summary>
-        /// Rollback the transaction.
+        /// Rolls back a transaction from a pending state.
         /// </summary>
         public override void Rollback() => _transaction.Rollback();
 
         /// <summary>
-        /// dispose the transaction and connection.
+        /// Releases the unmanaged resources used by the <see cref="DbTransaction"/>.
         /// </summary>
         /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)

@@ -36,17 +36,17 @@ namespace StackExchange.Profiling.Data
         public IsolationLevel IsolationLevel => WrappedTransaction.IsolationLevel;
 
         /// <summary>
-        /// commit the transaction.
+        /// Commits the database transaction.
         /// </summary>
         public void Commit() => WrappedTransaction.Commit();
 
         /// <summary>
-        /// rollback the transaction
+        /// Rolls back a transaction from a pending state.
         /// </summary>
         public void Rollback() => WrappedTransaction.Rollback();
 
         /// <summary>
-        /// dispose the command / connection and profiler.
+        /// Releases the unmanaged resources used by the <see cref="IDbTransaction"/>.
         /// </summary>
         public void Dispose()
         {
@@ -54,6 +54,10 @@ namespace StackExchange.Profiling.Data
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="IDbTransaction"/>.
+        /// </summary>
+        /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         private void Dispose(bool disposing)
         {
             if (disposing) WrappedTransaction?.Dispose();

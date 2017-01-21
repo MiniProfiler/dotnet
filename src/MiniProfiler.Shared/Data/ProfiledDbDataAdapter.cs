@@ -116,14 +116,13 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataTable"/>. 
         /// </summary>
+        /// <param name="dataTable">The <see cref="T:System.Data.DataTable"/> to use for table mapping.</param>/// <returns>
+        /// The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet"/>. This does not include rows affected by statements that do not return rows.
+        /// </returns>
         /// <remarks>
         /// This function will only work if you are using an <see cref="T:IDbDataAdapter"/> implementation that inherits from <see cref="T:DbDataAdapter"/>. 
         /// This includes <see cref="T:SqlDataAdapter"/> and most other similar classes. 
-        /// </remarks> 
-        /// <returns>
-        /// The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet"/>. This does not include rows affected by statements that do not return rows.
-        /// </returns>
-        /// <param name="dataTable">The <see cref="T:System.Data.DataTable"/> to use for table mapping.</param>
+        /// </remarks>
         /// <exception cref="T:System.InvalidOperationException">The source table is invalid or being used with an <see cref="T:IDbDataAdapter"/> implementation that does not inherit from <see cref="T:DbDataAdapter"/>.</exception>
         public new int Fill(DataTable dataTable)
         {

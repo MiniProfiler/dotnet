@@ -15,11 +15,7 @@ namespace StackExchange.Profiling.Data
 , ICloneable
 #endif
     {
-        /// <summary>
-        /// The bind by name cache.
-        /// </summary>
         private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
-
         private DbCommand _command;
         private DbConnection _connection;
         private DbTransaction _transaction;
@@ -191,7 +187,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// The execute database data reader.
+        /// Executes a database data reader.
         /// </summary>
         /// <param name="behavior">The behaviour.</param>
         /// <returns>the resulting <see cref="DbDataReader"/>.</returns>
@@ -223,9 +219,9 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// execute a non query.
+        /// Executes a SQL statement against a connection object.
         /// </summary>
-        /// <returns>the number of affected records.</returns>
+        /// <returns>The number of rows affected.</returns>
         public override int ExecuteNonQuery()
         {
             if (_profiler == null || !_profiler.IsActive)
@@ -254,11 +250,9 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// execute the scalar.
+        /// Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
+        /// <returns>The first column of the first row in the result set.</returns>
         public override object ExecuteScalar()
         {
             if (_profiler == null || !_profiler.IsActive)
@@ -286,23 +280,23 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// cancel the command.
+        /// Attempts to cancels the execution of this command.
         /// </summary>
         public override void Cancel() => _command.Cancel();
 
         /// <summary>
-        /// prepare the command.
+        /// Creates a prepared (or compiled) version of the command on the data source.
         /// </summary>
         public override void Prepare() => _command.Prepare();
 
         /// <summary>
-        /// create a database parameter.
+        /// Creates a new instance of an <see cref="DbParameter"/> object.
         /// </summary>
         /// <returns>The <see cref="DbParameter"/>.</returns>
         protected override DbParameter CreateDbParameter() => _command.CreateParameter();
 
         /// <summary>
-        /// dispose the command.
+        /// Releases all resources used by this command.
         /// </summary>
         /// <param name="disposing">false if this is being disposed in a <c>finalizer</c>.</param>
         protected override void Dispose(bool disposing)
@@ -322,7 +316,7 @@ namespace StackExchange.Profiling.Data
 
 #if NET46
         /// <summary>
-        /// clone the command, entity framework expects this behaviour.
+        /// Clone this command, entity framework expects this behaviour.
         /// </summary>
         /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
         public ProfiledDbCommand Clone()
@@ -333,11 +327,9 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// The clone.
+        /// Creates a copy of this command.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
+        /// <returns>The <see cref="object"/>.</returns>
         object ICloneable.Clone() => Clone();
 #endif
     }

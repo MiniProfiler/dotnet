@@ -84,7 +84,9 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override ConnectionState State => _connection.State;
 
-        /// <summary>Change the database.</summary>
+        /// <summary>
+        /// Changes the current database for an open connection.
+        /// </summary>
         /// <param name="databaseName">The new database name.</param>
         public override void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 

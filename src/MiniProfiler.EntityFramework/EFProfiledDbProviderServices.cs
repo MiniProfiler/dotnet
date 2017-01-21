@@ -20,10 +20,7 @@ namespace StackExchange.Profiling.Data
         /// Every provider factory must have an Instance public field
         /// </summary>
         public static EFProfiledDbProviderServices<T> Instance = new EFProfiledDbProviderServices<T>();
-
-        /// <summary>
-        /// The tail.
-        /// </summary>
+        
         private readonly T _tail;
 
         /// <summary>
@@ -56,20 +53,16 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="prototype">The prototype.</param>
         /// <returns>the command definition.</returns>
-        public override DbCommandDefinition CreateCommandDefinition(DbCommand prototype)
-        {
-            return _tail.CreateCommandDefinition(prototype);
-        }
+        public override DbCommandDefinition CreateCommandDefinition(DbCommand prototype) =>
+            _tail.CreateCommandDefinition(prototype);
 
         /// <summary>
         /// The get database provider manifest.
         /// </summary>
         /// <param name="manifestToken">The manifest token.</param>
         /// <returns>the provider manifest.</returns>
-        protected override DbProviderManifest GetDbProviderManifest(string manifestToken)
-        {
-            return _tail.GetProviderManifest(manifestToken);
-        }
+        protected override DbProviderManifest GetDbProviderManifest(string manifestToken) =>
+            _tail.GetProviderManifest(manifestToken);
 
         /// <summary>
         /// get the database provider manifest token.
@@ -107,10 +100,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The connection.</param>
         /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="storeItemCollection">The store item collection.</param>
-        protected override void DbCreateDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
-        {
+        protected override void DbCreateDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection) =>
             _tail.CreateDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
-        }
 
         /// <summary>
         /// delete the database.
@@ -118,10 +109,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The connection.</param>
         /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="storeItemCollection">The store item collection.</param>
-        protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
-        {
+        protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection) =>
             _tail.DeleteDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
-        }
 
         /// <summary>
         /// create the database script.
@@ -129,10 +118,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="providerManifestToken">The provider manifest token.</param>
         /// <param name="storeItemCollection">The store item collection.</param>
         /// <returns>a string containing the database script.</returns>
-        protected override string DbCreateDatabaseScript(string providerManifestToken, StoreItemCollection storeItemCollection)
-        {
-            return _tail.CreateDatabaseScript(providerManifestToken, storeItemCollection);
-        }
+        protected override string DbCreateDatabaseScript(string providerManifestToken, StoreItemCollection storeItemCollection) =>
+            _tail.CreateDatabaseScript(providerManifestToken, storeItemCollection);
 
         /// <summary>
         /// test if the database exists.
@@ -141,10 +128,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="storeItemCollection">The store item collection.</param>
         /// <returns>true if the database exists.</returns>
-        protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
-        {
-            return _tail.DatabaseExists(GetRealConnection(connection), commandTimeout, storeItemCollection);
-        }
+        protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection) =>
+            _tail.DatabaseExists(GetRealConnection(connection), commandTimeout, storeItemCollection);
 
         /// <summary>
         /// Gets the real connection.
@@ -170,15 +155,11 @@ namespace StackExchange.Profiling.Data
             return fromReader;
         }
 
-        public override object GetService(Type type, object key)
-        {
-            return _tail.GetService(type, key);
-        }
+        public override object GetService(Type type, object key) =>
+            _tail.GetService(type, key);
 
-        public override IEnumerable<object> GetServices(Type type, object key)
-        {
-            return _tail.GetServices(type, key);
-        }
+        public override IEnumerable<object> GetServices(Type type, object key) =>
+            _tail.GetServices(type, key);
 
         protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken)
         {
@@ -213,9 +194,9 @@ namespace StackExchange.Profiling.Data
             }
 
             // this should never need to be called, but just in case, get the Provider Value
-            if (value is DbGeography)
+            if (value is DbGeography pvalue)
             {
-                value = ((DbGeography)value).ProviderValue;
+                value = pvalue.ProviderValue;
             }
             base.SetDbParameterValue(parameter, parameterType, value);
         }
