@@ -41,7 +41,10 @@ namespace StackExchange.Profiling.Helpers
         }
     }
 
-    public static class ProfilerSortedKeysExtensions
+    /// <summary>
+    /// Helpers for <see cref="ProfilerSortedKey"/>
+    /// </summary>
+    public static class ProfilerSortedKeyExtensions
     {
         /// <summary>
         /// Perform a binary search of the given SortedList.
