@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,6 +11,7 @@ namespace StackExchange.Profiling.Mvc
     public class ProfilingActionFilter : ActionFilterAttribute
     {
         private const string StackKey = "ProfilingActionFilterStack";
+        private static char[] dotSplit = new[] { '.' };
 
         /// <summary>
         /// Happens before the action starts running
@@ -28,14 +28,12 @@ namespace StackExchange.Profiling.Mvc
                     HttpContext.Current.Items[StackKey] = stack;
                 }
 
-                var tokens = filterContext.RouteData.DataTokens;
-                string area = tokens.ContainsKey("area") && !string.IsNullOrWhiteSpace(((string)tokens["area"]))
-                    ? tokens["area"] + "."
-                    : "";
-                string controller = filterContext.Controller.ToString().Split('.').Last() + ".";
-                string action = filterContext.ActionDescriptor.ActionName;
+                var ad = filterContext.ActionDescriptor;
+                var area = filterContext.RouteData.DataTokens.TryGetValue("area", out object areaToken)
+                    ? areaToken as string + "."
+                    : null;
 
-                stack.Push(mp.Step("Controller: " + area + controller + action));
+                stack.Push(mp.Step($"Controller: {area}{ad.ControllerDescriptor.ControllerName}.{ad.ActionName}"));
             }
             base.OnActionExecuting(filterContext);
         }
