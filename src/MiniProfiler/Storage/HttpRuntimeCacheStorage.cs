@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Profiling.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
@@ -14,29 +15,12 @@ namespace StackExchange.Profiling.Storage
     /// </remarks>
     public class HttpRuntimeCacheStorage : IAsyncStorage
     {
-        /// <summary>
-        /// Identifies a MiniProfiler result and only contains the needed info for sorting a list of profiling sessions.
-        /// </summary>
-        /// <remarks>SortedList on uses the comparer for both key lookups and insertion</remarks>
-        private class ProfileInfo : IComparable<ProfileInfo>
-        {
-            public Guid Id { get; set; }
-            public DateTime Started { get; set; }
-
-            public int CompareTo(ProfileInfo other)
-            {
-                var comp = Started.CompareTo(other.Started);
-                if (comp == 0) comp = Id.CompareTo(other.Id);
-                return comp;
-            }
-        }
-
+        private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
+        
         /// <summary>
         /// Syncs access to runtime cache when adding a new list of ids for a user.
         /// </summary>
         private static readonly object AddPerUserUnviewedIdsLock = new object();
-
-        private readonly SortedList<ProfileInfo, object> _profiles = new SortedList<ProfileInfo, object>();
 
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.
@@ -59,17 +43,17 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with <see cref="CacheKeyPrefix"/>
-        /// and the parameter's <see cref="MiniProfiler.Id"/>.
+        /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with 
+        /// <see cref="CacheKeyPrefix"/> and the parameter's <see cref="MiniProfiler.Id"/>.
         /// </summary>
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
 
+            var profileInfo = new ProfilerSortedKey(profiler);
             lock (_profiles)
             {
-                var profileInfo = new ProfileInfo { Id = profiler.Id, Started = profiler.Started };
-                if (_profiles.IndexOfKey(profileInfo) < 0)
+                if (!_profiles.ContainsKey(profileInfo))
                 {
                     _profiles.Add(profileInfo, null);
                 }
@@ -190,7 +174,7 @@ namespace StackExchange.Profiling.Storage
                 onRemoveCallback: null);
         }
 
-        private string GetCacheKey(Guid id) => CacheKeyPrefix + id;
+        private string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
 
         private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
 
@@ -230,8 +214,8 @@ namespace StackExchange.Profiling.Storage
             {
                 int idxStart = 0;
                 int idxFinish = _profiles.Count - 1;
-                if (start != null) idxStart = BinaryClosestSearch(start.Value);
-                if (finish != null) idxFinish = BinaryClosestSearch(finish.Value);
+                if (start != null) idxStart = _profiles.BinaryClosestSearch(start.Value);
+                if (finish != null) idxFinish = _profiles.BinaryClosestSearch(finish.Value);
 
                 if (idxStart < 0) idxStart = 0;
                 if (idxFinish >= _profiles.Count) idxFinish = _profiles.Count - 1;
@@ -266,30 +250,5 @@ namespace StackExchange.Profiling.Storage
             DateTime? start = null,
             DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending) => Task.FromResult(List(maxResults, start, finish, orderBy));
-
-        private int BinaryClosestSearch(DateTime date)
-        {
-            int lower = 0;
-            int upper = _profiles.Count - 1;
-
-            while (lower <= upper)
-            {
-                int adjustedIndex = lower + ((upper - lower) >> 1);
-                int comparison = _profiles.Keys[adjustedIndex].Started.CompareTo(date);
-                if (comparison == 0)
-                {
-                    return adjustedIndex;
-                }
-                if (comparison < 0)
-                {
-                    lower = adjustedIndex + 1;
-                }
-                else
-                {
-                    upper = adjustedIndex - 1;
-                }
-            }
-            return lower;
-        }
     }
 }

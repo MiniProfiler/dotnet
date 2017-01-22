@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Profiling;
+using StackExchange.Profiling.Storage;
+using System;
 
 namespace Samples.AspNetCore
 {
@@ -26,17 +29,19 @@ namespace Samples.AspNetCore
         {
             // Add framework services.
             services.AddMvc();
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IMemoryCache cache)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             app.UseMiniProfiler(new MiniProfilerOptions
             {
-                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter()
+                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
+                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60))
             });
 
             if (env.IsDevelopment())
