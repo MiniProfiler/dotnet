@@ -68,11 +68,11 @@ namespace StackExchange.Profiling
                     break;
 
                 case "results-index":
-                    output = Index(context);
+                    output = ResultsIndex(context);
                     break;
 
                 case "results-list":
-                    output = GetListJson(context);
+                    output = ResultsList(context);
                     break;
 
                 case "results":
@@ -160,7 +160,7 @@ namespace StackExchange.Profiling
             return TryGetResource(Path.GetFileName(path), out string resource) ? resource : NotFound(context);
         }
 
-        private static string Index(HttpContext context)
+        private static string ResultsIndex(HttpContext context)
         {
             if (!AuthorizeRequest(context, isList: true, message: out string message))
             {
@@ -201,7 +201,7 @@ namespace StackExchange.Profiling
             return true;
         }
 
-        private static string GetListJson(HttpContext context)
+        private static string ResultsList(HttpContext context)
         {
             if (!AuthorizeRequest(context, isList: true, message: out string message))
             {

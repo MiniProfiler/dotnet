@@ -7,7 +7,7 @@ using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class Utils
+    public static class Utils
     {
         private static string GetSqlCeFileNameFor<T>() => typeof(T).FullName + ".sdf";
         private static string GetSqlCeConnectionStringFor<T>() => "Data Source = " + GetSqlCeFileNameFor<T>();
