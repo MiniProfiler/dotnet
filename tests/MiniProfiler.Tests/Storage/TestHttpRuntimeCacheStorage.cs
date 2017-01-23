@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Tests.Storage
             storage.Save(profiler);
             storage.Save(profiler);
             var guids = storage.List(100).ToArray();
-            Assert.Equal(profiler.Id, guids.First());
+            Assert.Equal(profiler.Id, guids[0]);
             Assert.Equal(1, guids.Length);
         }
 

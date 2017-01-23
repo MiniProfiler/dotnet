@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Storage
         // The cache cache!
         private IMemoryCache _cache;
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
-        
+
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.
         /// <c>"mini-profiler-ecfb0050-7ce8-4bf1-bf82-2cb38e90e31e".</c>
@@ -62,7 +62,6 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
         public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Task.FromResult(GetUnviewedIds(user));
-
 
         private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
 
@@ -122,7 +121,7 @@ namespace StackExchange.Profiling.Storage
             DateTime? start = null,
             DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending) => Task.FromResult(List(maxResults, start, finish, orderBy));
-        
+
         /// <summary>
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.

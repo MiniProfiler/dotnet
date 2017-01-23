@@ -37,9 +37,7 @@ namespace StackExchange.Profiling
         public void ExecuteStartImpl(IDbCommand command, SqlExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
-            var sqlTiming = new SqlTiming(command, type, Profiler);
-
-            _inProgress[id] = sqlTiming;
+            _inProgress[id] = new SqlTiming(command, type, Profiler);
         }
 
         /// <summary>

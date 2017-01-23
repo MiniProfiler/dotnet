@@ -18,7 +18,9 @@ namespace Samples.Mvc5.Helpers
         /// Initialises a new instance of the <see cref="SqliteMiniProfilerStorage"/> class.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
-        public SqliteMiniProfilerStorage(string connectionString) : base(connectionString) { }
+        public SqliteMiniProfilerStorage(string connectionString) : base(connectionString)
+        {
+        }
 
         /// <summary>
         /// Get the Connection.
@@ -66,7 +68,6 @@ namespace Samples.Mvc5.Helpers
             DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-
             var sb = new StringBuilder(@"
 Select Id
   From MiniProfilers

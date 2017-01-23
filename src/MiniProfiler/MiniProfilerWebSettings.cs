@@ -90,7 +90,7 @@ namespace StackExchange.Profiling
             catch (Exception e)
             {
                 //VersionHash is pre-opopulated
-                Debug.WriteLine($"Error calculating folder hash: {e.ToString()}\n{e.StackTrace}");
+                Debug.WriteLine($"Error calculating folder hash: {e}\n{e.StackTrace}");
             }
         }
     }

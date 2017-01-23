@@ -120,7 +120,7 @@ namespace StackExchange.Profiling.Tests.Data
                 Assert.Equal(profiler.ErrorSql, BadSql);
             }
         }
-        
+
         private CountingConnection GetConnection()
         {
             var connection = Utils.GetOpenSqlCeConnection<DbProfilerTest>();

@@ -41,7 +41,6 @@ namespace Subtext.TestLibrary
         public HttpSimulator(string applicationPath)
             : this(applicationPath, defaultPhysicalAppPath)
         {
-
         }
 
         public HttpSimulator(string applicationPath, string physicalApplicationPath)
@@ -125,10 +124,10 @@ namespace Subtext.TestLibrary
 
             ParseRequestUrl(url);
 
-            if (responseWriter == null)
+            if (ResponseWriter == null)
             {
                 builder = new StringBuilder();
-                responseWriter = new StringWriter(builder);
+                ResponseWriter = new StringWriter(builder);
             }
 
             SetHttpRuntimeInternals();
@@ -144,7 +143,7 @@ namespace Subtext.TestLibrary
             if (headers != null)
                 _headers.Add(headers);
 
-            workerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, responseWriter, host, port, httpVerb.ToString());
+            workerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, ResponseWriter, host, port, httpVerb.ToString());
 
             workerRequest.Form.Add(_formVars);
             workerRequest.Headers.Add(_headers);
@@ -193,7 +192,7 @@ namespace Subtext.TestLibrary
         {
             HttpContext.Current = new HttpContext(workerRequest);
             HttpContext.Current.Items.Clear();
-            HttpSessionState session = (HttpSessionState)ReflectionHelper.Instantiate(typeof(HttpSessionState), new Type[] { typeof(IHttpSessionState) }, new FakeHttpSessionState());
+            var session = (HttpSessionState)ReflectionHelper.Instantiate(typeof(HttpSessionState), new Type[] { typeof(IHttpSessionState) }, new FakeHttpSessionState());
 
             HttpContext.Current.Items.Add("AspSession", session);
         }
@@ -201,281 +200,157 @@ namespace Subtext.TestLibrary
         public class FakeHttpSessionState : NameObjectCollectionBase, IHttpSessionState
         {
             private string sessionID = Guid.NewGuid().ToString();
-            private int timeout = 30; //minutes
             private bool isNewSession = true;
-            private int lcid;
-            private int codePage;
             private HttpStaticObjectsCollection staticObjects = new HttpStaticObjectsCollection();
             private object syncRoot = new Object();
 
-            ///<summary>
-            ///Ends the current session.
-            ///</summary>
-            ///
-            public void Abandon()
-            {
-                BaseClear();
-            }
+            /// <summary>
+            /// Ends the current session.
+            /// </summary>
+            public void Abandon() => BaseClear();
 
-            ///<summary>
-            ///Adds a new item to the session-state collection.
-            ///</summary>
-            ///
-            ///<param name="name">The name of the item to add to the session-state collection. </param>
-            ///<param name="value">The value of the item to add to the session-state collection. </param>
-            public void Add(string name, object value)
-            {
-                BaseAdd(name, value);
-            }
+            /// <summary>
+            /// Adds a new item to the session-state collection.
+            /// </summary>
+            /// <param name="name">The name of the item to add to the session-state collection. </param>
+            /// <param name="value">The value of the item to add to the session-state collection. </param>
+            public void Add(string name, object value) => BaseAdd(name, value);
 
-            ///<summary>
-            ///Deletes an item from the session-state item collection.
-            ///</summary>
-            ///
-            ///<param name="name">The name of the item to delete from the session-state item collection. </param>
-            public void Remove(string name)
-            {
-                BaseRemove(name);
-            }
+            /// <summary>
+            /// Deletes an item from the session-state item collection.
+            /// </summary>
+            /// <param name="name">The name of the item to delete from the session-state item collection. </param>
+            public void Remove(string name) => BaseRemove(name);
 
-            ///<summary>
-            ///Deletes an item at a specified index from the session-state item collection.
-            ///</summary>
-            ///
-            ///<param name="index">The index of the item to remove from the session-state collection. </param>
-            public void RemoveAt(int index)
-            {
-                BaseRemoveAt(index);
-            }
+            /// <summary>
+            /// Deletes an item at a specified index from the session-state item collection.
+            /// </summary>
+            /// <param name="index">The index of the item to remove from the session-state collection. </param>
+            public void RemoveAt(int index) => BaseRemoveAt(index);
 
-            ///<summary>
-            ///Clears all values from the session-state item collection.
-            ///</summary>
-            ///
-            public void Clear()
-            {
-                BaseClear();
-            }
+            /// <summary>
+            /// Clears all values from the session-state item collection.
+            /// </summary>
+            public void Clear() => BaseClear();
 
-            ///<summary>
-            ///Clears all values from the session-state item collection.
-            ///</summary>
-            ///
-            public void RemoveAll()
-            {
-                BaseClear();
-            }
+            /// <summary>
+            /// Clears all values from the session-state item collection.
+            /// </summary>
+            public void RemoveAll() => BaseClear();
 
-            ///<summary>
-            ///Copies the collection of session-state item values to a one-dimensional array, starting at the specified index in the array.
-            ///</summary>
-            ///
-            ///<param name="array">The <see cref="T:System.Array"></see> that receives the session values. </param>
-            ///<param name="index">The index in array where copying starts. </param>
+            /// <summary>
+            /// Copies the collection of session-state item values to a one-dimensional array, starting at the specified index in the array.
+            /// </summary>
+            /// <param name="array">The <see cref="T:System.Array"></see> that receives the session values. </param>
+            /// <param name="index">The index in array where copying starts. </param>
+            ///  <exception cref="NotImplementedException"></exception>
             public void CopyTo(Array array, int index)
             {
                 throw new NotImplementedException();
             }
 
-            ///<summary>
-            ///Gets the unique session identifier for the session.
-            ///</summary>
-            ///
-            ///<returns>
-            ///The session ID.
-            ///</returns>
-            ///
-            public string SessionID
-            {
-                get { return sessionID; }
-            }
+            /// <summary>
+            /// Gets the unique session identifier for the session.
+            /// </summary>
+            /// <returns>The session ID.</returns>
+            public string SessionID => sessionID;
 
-            ///<summary>
-            ///Gets and sets the time-out period (in minutes) allowed between requests before the session-state provider terminates the session.
-            ///</summary>
-            ///
-            ///<returns>
-            ///The time-out period, in minutes.
-            ///</returns>
-            ///
-            public int Timeout
-            {
-                get { return timeout; }
-                set { timeout = value; }
-            }
+            /// <summary>
+            /// Gets and sets the time-out period (in minutes) allowed between requests before the session-state provider terminates the session.
+            /// </summary>
+            /// <returns>The time-out period, in minutes.</returns>
+            public int Timeout { get; set; } = 30;
 
-            ///<summary>
-            ///Gets a value indicating whether the session was created with the current request.
-            ///</summary>
-            ///
-            ///<returns>
-            ///true if the session was created with the current request; otherwise, false.
-            ///</returns>
-            ///
-            public bool IsNewSession
-            {
-                get { return isNewSession; }
-            }
+            /// <summary>
+            /// Gets a value indicating whether the session was created with the current request.
+            /// </summary>
+            /// <returns>true if the session was created with the current request; otherwise, false.</returns>
+            public bool IsNewSession => isNewSession;
 
-            ///<summary>
-            ///Gets the current session-state mode.
-            ///</summary>
-            ///
-            ///<returns>
-            ///One of the <see cref="T:System.Web.SessionState.SessionStateMode"></see> values.
-            ///</returns>
-            ///
-            public SessionStateMode Mode
-            {
-                get { return SessionStateMode.InProc; }
-            }
+            /// <summary>
+            /// Gets the current session-state mode.
+            /// </summary>
+            /// <returns>One of the <see cref="T:System.Web.SessionState.SessionStateMode"></see> values.</returns>
+            public SessionStateMode Mode => SessionStateMode.InProc;
 
-            ///<summary>
-            ///Gets a value indicating whether the session ID is embedded in the URL or stored in an HTTP cookie.
-            ///</summary>
-            ///
-            ///<returns>
-            ///true if the session is embedded in the URL; otherwise, false.
-            ///</returns>
-            ///
-            public bool IsCookieless
-            {
-                get { return false; }
-            }
+            /// <summary>
+            /// Gets a value indicating whether the session ID is embedded in the URL or stored in an HTTP cookie.
+            /// </summary>
+            /// <returns>true if the session is embedded in the URL; otherwise, false.</returns>
+            public bool IsCookieless => false;
 
-            ///<summary>
-            ///Gets a value that indicates whether the application is configured for cookieless sessions.
-            ///</summary>
-            ///
-            ///<returns>
-            ///One of the <see cref="T:System.Web.HttpCookieMode"></see> values that indicate whether the application is configured for cookieless sessions. The default is <see cref="F:System.Web.HttpCookieMode.UseCookies"></see>.
-            ///</returns>
-            ///
-            public HttpCookieMode CookieMode
-            {
-                get { return HttpCookieMode.UseCookies; }
-            }
+            /// <summary>
+            /// Gets a value that indicates whether the application is configured for cookieless sessions.
+            /// </summary>
+            /// <returns>
+            /// One of the <see cref="T:System.Web.HttpCookieMode"></see> values that indicate whether the application is configured for cookieless sessions. 
+            /// The default is <see cref="F:System.Web.HttpCookieMode.UseCookies"></see>.
+            /// </returns>
+            public HttpCookieMode CookieMode => HttpCookieMode.UseCookies;
 
-            ///<summary>
-            ///Gets or sets the locale identifier (LCID) of the current session.
-            ///</summary>
-            ///
-            ///<returns>
-            ///A <see cref="T:System.Globalization.CultureInfo"></see> instance that specifies the culture of the current session.
-            ///</returns>
-            ///
-            public int LCID
-            {
-                get { return lcid; }
-                set { lcid = value; }
-            }
+            /// <summary>
+            /// Gets or sets the locale identifier (LCID) of the current session.
+            /// </summary>
+            /// <returns>
+            /// A <see cref="T:System.Globalization.CultureInfo"></see> instance that specifies the culture of the current session.
+            /// </returns>
+            public int LCID { get; set; }
 
-            ///<summary>
-            ///Gets or sets the code-page identifier for the current session.
-            ///</summary>
-            ///
-            ///<returns>
-            ///The code-page identifier for the current session.
-            ///</returns>
-            ///
-            public int CodePage
-            {
-                get { return codePage; }
-                set { codePage = value; }
-            }
+            /// <summary>
+            /// Gets or sets the code-page identifier for the current session.
+            /// </summary>
+            /// <returns>The code-page identifier for the current session.</returns>
+            public int CodePage { get; set; }
 
-            ///<summary>
-            ///Gets a collection of objects declared by &lt;object Runat="Server" Scope="Session"/&gt; tags within the ASP.NET application file Global.asax.
-            ///</summary>
-            ///
-            ///<returns>
-            ///An <see cref="T:System.Web.HttpStaticObjectsCollection"></see> containing objects declared in the Global.asax file.
-            ///</returns>
-            ///
-            public HttpStaticObjectsCollection StaticObjects
-            {
-                get { return staticObjects; }
-            }
-
-            ///<summary>
-            ///Gets or sets a session-state item value by name.
-            ///</summary>
-            ///
-            ///<returns>
-            ///The session-state item value specified in the name parameter.
-            ///</returns>
-            ///
-            ///<param name="name">The key name of the session-state item value. </param>
+            /// <summary>
+            /// Gets a collection of objects declared by &lt;object Runat="Server" Scope="Session"/&gt; tags within the ASP.NET application file Global.asax.
+            /// </summary>
+            /// <returns>An <see cref="T:System.Web.HttpStaticObjectsCollection"></see> containing objects declared in the Global.asax file.</returns>
+            public HttpStaticObjectsCollection StaticObjects => staticObjects;
+            /// <summary>
+            /// Gets or sets a session-state item value by name.
+            /// </summary>
+            /// <param name="name">The key name of the session-state item value. </param>
+            /// <returns>The session-state item value specified in the name parameter.</returns>
             public object this[string name]
             {
-                get { return BaseGet(name); }
-                set { BaseSet(name, value); }
+                get => BaseGet(name);
+                set => BaseSet(name, value);
             }
 
-            ///<summary>
-            ///Gets or sets a session-state item value by numerical index.
-            ///</summary>
-            ///
-            ///<returns>
-            ///The session-state item value specified in the index parameter.
-            ///</returns>
-            ///
-            ///<param name="index">The numerical index of the session-state item value. </param>
+            /// <summary>
+            /// Gets or sets a session-state item value by numerical index.
+            /// </summary>
+            /// <param name="index">The numerical index of the session-state item value. </param>
+            /// <returns>The session-state item value specified in the index parameter.</returns>
             public object this[int index]
             {
-                get { return BaseGet(index); }
-                set { BaseSet(index, value); }
+                get => BaseGet(index);
+                set => BaseSet(index, value);
             }
 
-            ///<summary>
-            ///Gets an object that can be used to synchronize access to the collection of session-state values.
-            ///</summary>
-            ///
-            ///<returns>
-            ///An object that can be used to synchronize access to the collection.
-            ///</returns>
-            ///
-            public object SyncRoot
-            {
-                get { return syncRoot; }
-            }
+            /// <summary>
+            /// Gets an object that can be used to synchronize access to the collection of session-state values.
+            /// </summary>
+            /// <returns>An object that can be used to synchronize access to the collection.</returns>
+            public object SyncRoot => syncRoot;
 
+            /// <summary>
+            /// Gets a value indicating whether access to the collection of session-state values is synchronized (thread safe).
+            /// </summary>
+            /// <returns>true if access to the collection is synchronized (thread safe); otherwise, false.</returns>
+            public bool IsSynchronized => true;
 
-
-            ///<summary>
-            ///Gets a value indicating whether access to the collection of session-state values is synchronized (thread safe).
-            ///</summary>
-            ///<returns>
-            ///true if access to the collection is synchronized (thread safe); otherwise, false.
-            ///</returns>
-            ///
-            public bool IsSynchronized
-            {
-                get { return true; }
-            }
-
-            ///<summary>
-            ///Gets a value indicating whether the session is read-only.
-            ///</summary>
-            ///
-            ///<returns>
-            ///true if the session is read-only; otherwise, false.
-            ///</returns>
-            ///
-            bool IHttpSessionState.IsReadOnly
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            /// <summary>
+            /// Gets a value indicating whether the session is read-only.
+            /// </summary>
+            /// <returns>true if the session is read-only; otherwise, false.</returns>
+            bool IHttpSessionState.IsReadOnly => true;
         }
 
         /// <summary>
         /// Sets the referer for the request. Uses a fluent interface.
         /// </summary>
-        /// <param name="referer"></param>
-        /// <returns></returns>
         public HttpSimulator SetReferer(Uri referer)
         {
             if (workerRequest != null)
@@ -487,9 +362,6 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Sets a form variable.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public HttpSimulator SetFormVariable(string name, string value)
         {
             //TODO: Change this ordering requirement.
@@ -504,9 +376,6 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Sets a header value.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public HttpSimulator SetHeader(string name, string value)
         {
             //TODO: Change this ordering requirement.
@@ -529,7 +398,7 @@ namespace Subtext.TestLibrary
             physicalPath = Path.Combine(physicalApplicationPath, _page.Replace("/", @"\"));
         }
 
-        static string RightAfter(string original, string search)
+        private static string RightAfter(string original, string search)
         {
             if (search.Length > original.Length || search.Length == 0)
                 return original;
@@ -542,35 +411,19 @@ namespace Subtext.TestLibrary
             return original.Substring(original.IndexOf(search) + search.Length);
         }
 
-        public string Host
-        {
-            get { return host; }
-        }
-
+        public string Host => host;
         private string host;
 
-        public string LocalPath
-        {
-            get { return localPath; }
-        }
-
+        public string LocalPath => localPath;
         private string localPath;
 
-        public int Port
-        {
-            get { return port; }
-        }
-
+        public int Port => port;
         private int port;
 
         /// <summary>
         /// Portion of the URL after the application.
         /// </summary>
-        public string Page
-        {
-            get { return _page; }
-        }
-
+        public string Page => _page;
         private string _page;
 
         /// <summary>
@@ -586,6 +439,7 @@ namespace Subtext.TestLibrary
                 applicationPath = NormalizeSlashes(applicationPath);
             }
         }
+
         private string applicationPath = "/";
 
         /// <summary>
@@ -607,37 +461,17 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Physical path to the requested file (used for simulation purposes).
         /// </summary>
-        public string PhysicalPath
-        {
-            get { return physicalPath; }
-        }
-
+        public string PhysicalPath => physicalPath;
         private string physicalPath = defaultPhysicalAppPath;
 
-        public TextWriter ResponseWriter
-        {
-            get { return responseWriter; }
-            set { responseWriter = value; }
-        }
+        public TextWriter ResponseWriter { get; set; }
 
         /// <summary>
         /// Returns the text from the response to the simulated request.
         /// </summary>
-        public string ResponseText
-        {
-            get
-            {
-                return (builder ?? new StringBuilder()).ToString();
-            }
-        }
+        public string ResponseText => (builder ?? new StringBuilder()).ToString();
 
-        private TextWriter responseWriter;
-
-        public SimulatedHttpRequest WorkerRequest
-        {
-            get { return workerRequest; }
-        }
-
+        public SimulatedHttpRequest WorkerRequest => workerRequest;
         private SimulatedHttpRequest workerRequest;
 
         private static string ExtractQueryStringPart(Uri url)
@@ -648,7 +482,7 @@ namespace Subtext.TestLibrary
             return query;
         }
 
-        void SetHttpRuntimeInternals()
+        private void SetHttpRuntimeInternals()
         {
             //We cheat by using reflection.
 
@@ -658,7 +492,7 @@ namespace Subtext.TestLibrary
             // set app path property value
             ReflectionHelper.SetPrivateInstanceFieldValue("_appDomainAppPath", runtime, PhysicalApplicationPath);
             // set app virtual path property value
-            string vpathTypeName = "System.Web.VirtualPath, System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            const string vpathTypeName = "System.Web.VirtualPath, System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             object virtualPath = ReflectionHelper.Instantiate(vpathTypeName, new Type[] { typeof(string) }, new object[] { ApplicationPath });
             ReflectionHelper.SetPrivateInstanceFieldValue("_appDomainAppVPath", runtime, virtualPath);
 

@@ -53,7 +53,7 @@ namespace StackExchange.Profiling
                 Profiler = null;
             }
         }
-        
+
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>

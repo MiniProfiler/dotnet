@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void GetProfiler_Children()
         {
-            var depth = 5;
+            const int depth = 5;
 
             var mp = GetProfiler(childDepth: depth);
 

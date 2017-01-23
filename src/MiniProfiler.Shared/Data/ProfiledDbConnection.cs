@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Data
         /// Gets the underlying, real database connection to your database provider.
         /// </summary>
         public DbConnection InnerConnection =>  _connection;
-        
+
         private IDbProfiler _profiler;
         /// <summary>
         /// Gets the current profiler instance; could be null.

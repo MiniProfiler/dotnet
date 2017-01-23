@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Storage
     public class HttpRuntimeCacheStorage : IAsyncStorage
     {
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
-        
+
         /// <summary>
         /// Syncs access to runtime cache when adding a new list of ids for a user.
         /// </summary>

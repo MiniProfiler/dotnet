@@ -43,7 +43,7 @@ namespace StackExchange.Profiling
             Stopwatch = Settings.StopwatchProvider();
             Root = new Timing(this, null, url);
         }
-        
+
         /// <summary>
         /// Gets or sets the profiler id.
         /// Identifies this Profiler so it may be stored/cached.
@@ -184,7 +184,7 @@ namespace StackExchange.Profiling
         /// Gets the ticks since this MiniProfiler was started.
         /// </summary>
         internal long ElapsedTicks => Stopwatch.ElapsedTicks;
-        
+
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>
@@ -220,7 +220,7 @@ namespace StackExchange.Profiling
         /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public static void Stop(bool discardResults = false) => 
+        public static void Stop(bool discardResults = false) =>
             Settings.ProfilerProvider.Stop(discardResults);
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Helpers
     /// <summary>
     /// Gets part of a stack trace containing only methods we care about.
     /// </summary>
-    public class StackTraceSnippet
+    public static class StackTraceSnippet
     {
         // TODO: Uhhhhhhh, this isn't gonna work. Let's come back to this. Oh and async. Dammit.
         private const string AspNetEntryPointMethodName = "System.Web.HttpApplication.IExecutionStep.Execute";

@@ -146,7 +146,7 @@ namespace StackExchange.Profiling.SqlFormatters
 	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
         {
             if (parameters == null || parameters.Count == 0) return null;
-            return parameters.FirstOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
+            return parameters.Find(x => x.Direction == ParameterDirection.ReturnValue.ToString());
         }
 
         /// <summary>
