@@ -8,9 +8,9 @@ namespace StackExchange.Profiling.Mvc
     public class WrappedView : IView
     {
         /// <summary>
-        /// MVC IView that is wrapped by the ProfilingViewEngine
+        /// Gets MVC IView that is wrapped by the ProfilingViewEngine.
         /// </summary>
-        private readonly IView _wrapped;
+        public IView Wrapped { get; private set; }
 
         /// <summary>
         /// Gets or sets the wrapped view name.
@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.Mvc
         {
             get
             {
-                var view = _wrapped as RazorView;
+                var view = Wrapped as RazorView;
                 return view != null ? view.ViewPath : null;
             }
         }
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Mvc
         /// </summary>
         public WrappedView(IView wrapped, string name, bool isPartial)
         {
-            _wrapped = wrapped;
+            Wrapped = wrapped;
             Name = name;
             IsPartial = isPartial;
         }
@@ -53,7 +53,7 @@ namespace StackExchange.Profiling.Mvc
             string name = prof != null ? ("Render" + (IsPartial ? " partial" : "") + ": " + Name) : null;
             using (prof.Step(name))
             {
-                _wrapped.Render(viewContext, writer);
+                Wrapped.Render(viewContext, writer);
             }
         }
     }

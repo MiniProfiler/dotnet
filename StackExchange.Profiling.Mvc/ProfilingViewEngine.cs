@@ -77,7 +77,7 @@ namespace StackExchange.Profiling.Mvc
         /// </summary>
         public void ReleaseView(ControllerContext controllerContext, IView view)
         {
-            _wrapped.ReleaseView(controllerContext, view);
+            _wrapped.ReleaseView(controllerContext, ((WrappedView)view).Wrapped);
         }
     }
 }
