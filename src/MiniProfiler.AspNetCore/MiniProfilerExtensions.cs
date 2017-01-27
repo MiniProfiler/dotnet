@@ -27,7 +27,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return HtmlString.Empty;
 
             // TODO: Figure out auth
-            var authorized = true; // _options.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+            var authorized = true; // MiniProfilerMiddleware.Current.Options.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
