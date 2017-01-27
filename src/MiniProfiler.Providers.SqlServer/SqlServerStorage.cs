@@ -93,11 +93,11 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
                     // set the profilerId (isn't needed unless we are storing it)
-                    profiler.ClientTimings.Timings.ForEach(x =>
+                    foreach (var timing in profiler.ClientTimings.Timings)
                     {
-                        x.MiniProfilerId = profiler.Id;
-                        x.Id = Guid.NewGuid();
-                    });
+                        timing.MiniProfilerId = profiler.Id;
+                        timing.Id = Guid.NewGuid();
+                    }
 
                     conn.Execute(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
@@ -156,11 +156,11 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
                     // set the profilerId (isn't needed unless we are storing it)
-                    profiler.ClientTimings.Timings.ForEach(x =>
+                    foreach (var timing in profiler.ClientTimings.Timings)
                     {
-                        x.MiniProfilerId = profiler.Id;
-                        x.Id = Guid.NewGuid();
-                    });
+                        timing.MiniProfilerId = profiler.Id;
+                        timing.Id = Guid.NewGuid();
+                    }
                     await conn.ExecuteAsync(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
                         timing.Id,

@@ -89,18 +89,15 @@ namespace StackExchange.Profiling
         /// JSON representing the Custom Timings associated with this timing.
         /// </summary>
         public string CustomTimingsJson {
-            get { return CustomTimings?.ToJson(); }
-            set { CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>(); }
+            get => CustomTimings?.ToJson();
+            set => CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>();
         }
 
         /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
-        public bool HasCustomTimings
-        {
-            get { return CustomTimings != null && CustomTimings.Any(pair => pair.Value?.Count > 0); }
-        }
-
+        public bool HasCustomTimings => CustomTimings != null && CustomTimings.Any(pair => pair.Value?.Count > 0);
+        
         /// <summary>
         /// Gets or sets Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.
         /// </summary>

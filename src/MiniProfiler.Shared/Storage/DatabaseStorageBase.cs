@@ -133,7 +133,10 @@ namespace StackExchange.Profiling.Storage
                 if (rootTiming != null)
                 {
                     profiler.Root = rootTiming;
-                    timings.ForEach(x => x.Profiler = profiler);
+                    foreach (var timing in timings)
+                    {
+                        timing.Profiler = profiler;
+                    }
                     timings.Remove(rootTiming);
                     var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
                     PopulateChildTimings(rootTiming, timingsLookupByParent);
@@ -175,7 +178,10 @@ namespace StackExchange.Profiling.Storage
             timingsCollection.Add(timing);
             if (timing.HasChildren)
             {
-                timing.Children.ForEach(x => FlattenTimings(x, timingsCollection));
+                foreach (var child in timing.Children)
+                {
+                    FlattenTimings(child, timingsCollection);
+                }
             }
         }
     }

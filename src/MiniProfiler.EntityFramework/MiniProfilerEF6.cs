@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.EntityFramework6
         /// <summary>
         /// A cache so we don't have to do reflection every time someone asks for the MiniProfiler implementation for a DB Provider.
         /// </summary>
-        private static readonly ConcurrentDictionary<DbProviderServices,DbProviderServices> ProviderCache = new ConcurrentDictionary<DbProviderServices, DbProviderServices>(); 
+        private static readonly ConcurrentDictionary<DbProviderServices,DbProviderServices> ProviderCache = new ConcurrentDictionary<DbProviderServices, DbProviderServices>();
 
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.

@@ -91,7 +91,10 @@ namespace StackExchange.Profiling.Storage
             }
             else
             {
-                Stores.ForEach(x => x.Save(profiler));
+                foreach (var s in Stores)
+                {
+                    s.Save(profiler);
+                }
             }
         }
 
@@ -166,7 +169,10 @@ namespace StackExchange.Profiling.Storage
             }
             else
             {
-                Stores.ForEach(x => x.SetUnviewed(user, id));
+                foreach (var s in Stores)
+                {
+                    s.SetUnviewed(user, id);
+                }
             }
         }
 
@@ -194,7 +200,10 @@ namespace StackExchange.Profiling.Storage
             }
             else
             {
-                Stores.ForEach(x => x.SetViewed(user, id));
+                foreach (var s in Stores)
+                {
+                    s.SetViewed(user, id);
+                }
             }
         }
 
@@ -221,11 +230,10 @@ namespace StackExchange.Profiling.Storage
             if (Stores == null) return results;
             if (AllowParallelOps)
             {
-                var locker = new object();
                 Parallel.ForEach(Stores, x =>
                 {
                     var result = x.GetUnviewedIds(user);
-                    lock (locker)
+                    lock (results)
                     {
                         results.AddRange(result);
                     }
@@ -233,7 +241,10 @@ namespace StackExchange.Profiling.Storage
             }
             else
             {
-                Stores.ForEach(x => results.AddRange(x.GetUnviewedIds(user)));
+                foreach (var s in Stores)
+                {
+                    results.AddRange(s.GetUnviewedIds(user));
+                }
             }
             return results.Distinct().ToList(); // get rid of duplicates
         }
@@ -251,7 +262,7 @@ namespace StackExchange.Profiling.Storage
             var tasks = Stores.Select(s => s.GetUnviewedIdsAsync(user));
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
-            foreach(var t in tasks)
+            foreach (var t in tasks)
             {
                 results.AddRange(t.Result);
             }

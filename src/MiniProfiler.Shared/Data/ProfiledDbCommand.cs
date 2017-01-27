@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public bool BindByName
         {
-            get { return _bindByName; }
+            get => _bindByName;
             set
             {
                 if (_bindByName != value)
@@ -106,8 +106,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override string CommandText
         {
-            get { return _command.CommandText; }
-            set { _command.CommandText = value; }
+            get => _command.CommandText;
+            set => _command.CommandText = value;
         }
 
         /// <summary>
@@ -115,8 +115,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override int CommandTimeout
         {
-            get { return _command.CommandTimeout; }
-            set { _command.CommandTimeout = value; }
+            get => _command.CommandTimeout;
+            set => _command.CommandTimeout = value;
         }
 
         /// <summary>
@@ -124,8 +124,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override CommandType CommandType
         {
-            get { return _command.CommandType; }
-            set { _command.CommandType = value; }
+            get => _command.CommandType;
+            set => _command.CommandType = value;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected override DbConnection DbConnection
         {
-            get { return _connection; }
+            get => _connection;
             set
             {
                 // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
@@ -159,7 +159,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected override DbTransaction DbTransaction
         {
-            get { return _transaction; }
+            get => _transaction;
             set
             {
                 _transaction = value;
@@ -173,8 +173,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override bool DesignTimeVisible
         {
-            get { return _command.DesignTimeVisible; }
-            set { _command.DesignTimeVisible = value; }
+            get => _command.DesignTimeVisible;
+            set => _command.DesignTimeVisible = value;
         }
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override UpdateRowSource UpdatedRowSource
         {
-            get { return _command.UpdatedRowSource; }
-            set { _command.UpdatedRowSource = value; }
+            get => _command.UpdatedRowSource;
+            set => _command.UpdatedRowSource = value;
         }
 
         /// <summary>

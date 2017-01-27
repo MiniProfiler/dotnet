@@ -88,9 +88,11 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Json used to store Custom Links. Do not touch.
         /// </summary>
-        public string CustomLinksJson {
-            get { return CustomLinks?.ToJson(); }
-            set {
+        public string CustomLinksJson
+        {
+            get => CustomLinks?.ToJson();
+            set
+            {
                 if (value.HasValue())
                 {
                     CustomLinks = value.FromJson<Dictionary<string, string>>();
@@ -107,7 +109,7 @@ namespace StackExchange.Profiling
         [DataMember(Order = 7)]
         public Timing Root
         {
-            get { return _root; }
+            get => _root;
             set
             {
                 _root = value;

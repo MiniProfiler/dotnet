@@ -188,8 +188,8 @@ namespace StackExchange.Profiling.Data
         /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is Passthrough.</returns>
         public new MissingMappingAction MissingMappingAction
         {
-            get { return InternalAdapter.MissingMappingAction; }
-            set { InternalAdapter.MissingMappingAction = value; }
+            get => InternalAdapter.MissingMappingAction;
+            set => InternalAdapter.MissingMappingAction = value;
         }
 
         /// <summary>
@@ -199,8 +199,8 @@ namespace StackExchange.Profiling.Data
         /// <exception cref="T:System.ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values. </exception>
         public new MissingSchemaAction MissingSchemaAction
         {
-            get { return InternalAdapter.MissingSchemaAction; }
-            set { InternalAdapter.MissingSchemaAction = value; }
+            get => InternalAdapter.MissingSchemaAction;
+            set => InternalAdapter.MissingSchemaAction = value;
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> that is used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to select records from data source for placement in the data set.</returns>
         public new IDbCommand SelectCommand
         {
-            get { return _selectCommand; }
+            get => _selectCommand;
             set
             {
                 _selectCommand = value;
@@ -231,7 +231,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to insert records in the data source for new rows in the data set.</returns>
         public new IDbCommand InsertCommand
         {
-            get { return _insertCommand; }
+            get => _insertCommand;
             set
             {
                 _insertCommand = value;
@@ -247,7 +247,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to update records in the data source for modified rows in the data set.</returns>
         public new IDbCommand UpdateCommand
         {
-            get { return _updateCommand; }
+            get => _updateCommand;
             set
             {
                 _updateCommand = value;
@@ -263,7 +263,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to delete records in the data source for deleted rows in the data set.</returns>
         public new IDbCommand DeleteCommand
         {
-            get { return _deleteCommand; }
+            get => _deleteCommand;
             set
             {
                 _deleteCommand = value;

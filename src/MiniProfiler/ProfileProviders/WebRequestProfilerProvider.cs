@@ -203,7 +203,7 @@ namespace StackExchange.Profiling
         /// </summary>
         private MiniProfiler Current
         {
-            get { return HttpContext.Current?.Items[CacheKey] as MiniProfiler; }
+            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler;
             set
             {
                 var context = HttpContext.Current;

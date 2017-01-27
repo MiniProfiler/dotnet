@@ -115,7 +115,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public IDbConnection Connection
         {
-            get { return _connection; }
+            get => _connection;
             set
             {
                 if (MiniProfiler.Current != null)
@@ -135,7 +135,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public IDbTransaction Transaction
         {
-            get { return _transaction; }
+            get => _transaction;
             set
             {
                 _transaction = value;
@@ -150,8 +150,8 @@ namespace StackExchange.Profiling.Data
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Handled elsewhere.")]
         public string CommandText
         {
-            get { return _command.CommandText; }
-            set { _command.CommandText = value; }
+            get => _command.CommandText;
+            set => _command.CommandText = value;
         }
 
         /// <summary>
@@ -159,8 +159,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public int CommandTimeout
         {
-            get { return _command.CommandTimeout; }
-            set { _command.CommandTimeout = value; }
+            get => _command.CommandTimeout;
+            set => _command.CommandTimeout = value;
         }
 
         /// <summary>
@@ -168,8 +168,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public CommandType CommandType
         {
-            get { return _command.CommandType; }
-            set { _command.CommandType = value; }
+            get => _command.CommandType;
+            set => _command.CommandType = value;
         }
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public UpdateRowSource UpdatedRowSource
         {
-            get { return _command.UpdatedRowSource; }
-            set { _command.UpdatedRowSource = value; }
+            get => _command.UpdatedRowSource;
+            set => _command.UpdatedRowSource = value;
         }
 
         /// <summary>

@@ -52,8 +52,8 @@ namespace StackExchange.Profiling
         /// </remarks>
         public IAsyncStorage Storage
         {
-            get { return MiniProfiler.Settings.Storage; }
-            set { MiniProfiler.Settings.Storage = value; }
+            get => MiniProfiler.Settings.Storage;
+            set => MiniProfiler.Settings.Storage = value;
         }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace StackExchange.Profiling
         /// </summary>
         public ISqlFormatter SqlFormatter
         {
-            get { return MiniProfiler.Settings.SqlFormatter; }
-            set { MiniProfiler.Settings.SqlFormatter = value; }
+            get => MiniProfiler.Settings.SqlFormatter;
+            set => MiniProfiler.Settings.SqlFormatter = value;
         }
 
         /// <summary>
@@ -73,8 +73,8 @@ namespace StackExchange.Profiling
         /// </remarks>
         public IAsyncProfilerProvider ProfilerProvider
         {
-            get { return MiniProfiler.Settings.ProfilerProvider; }
-            set { MiniProfiler.Settings.ProfilerProvider = value; }
+            get => MiniProfiler.Settings.ProfilerProvider;
+            set => MiniProfiler.Settings.ProfilerProvider = value;
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace StackExchange.Profiling
         /// </summary>
         public string RouteBasePath
         {
-            get { return MiniProfiler.Settings.RouteBasePath; }
-            set { MiniProfiler.Settings.RouteBasePath = value; }
+            get => MiniProfiler.Settings.RouteBasePath;
+            set => MiniProfiler.Settings.RouteBasePath = value;
         }
 
         /// <summary>

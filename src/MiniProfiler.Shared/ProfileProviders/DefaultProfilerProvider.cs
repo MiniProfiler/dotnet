@@ -13,8 +13,8 @@ namespace StackExchange.Profiling
 
         private MiniProfiler Profiler
         {
-            get { return _profiler.Value; }
-            set { _profiler.Value = value; }
+            get => _profiler.Value;
+            set => _profiler.Value = value;
         }
 
         /// <summary>

@@ -54,8 +54,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public override string ConnectionString
         {
-            get { return _connection.ConnectionString; }
-            set { _connection.ConnectionString = value; }
+            get => _connection.ConnectionString;
+            set => _connection.ConnectionString = value;
         }
 
         /// <summary>

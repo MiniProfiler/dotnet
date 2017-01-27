@@ -33,15 +33,9 @@ namespace Subtext.TestLibrary
         private NameValueCollection _formVars = new NameValueCollection();
         private NameValueCollection _headers = new NameValueCollection();
 
-        public HttpSimulator()
-            : this("/", defaultPhysicalAppPath)
-        {
-        }
+        public HttpSimulator() : this("/", defaultPhysicalAppPath) { }
 
-        public HttpSimulator(string applicationPath)
-            : this(applicationPath, defaultPhysicalAppPath)
-        {
-        }
+        public HttpSimulator(string applicationPath) : this(applicationPath, defaultPhysicalAppPath) { }
 
         public HttpSimulator(string applicationPath, string physicalApplicationPath)
         {
@@ -55,69 +49,41 @@ namespace Subtext.TestLibrary
         /// <remarks>
         /// Simulates a request to http://localhost/
         /// </remarks>
-        public HttpSimulator SimulateRequest()
-        {
-            return SimulateRequest(new Uri("http://localhost/"));
-        }
+        public HttpSimulator SimulateRequest() => SimulateRequest(new Uri("http://localhost/"));
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a GET request.
         /// </summary>
-        /// <param name="url"></param>
-        public HttpSimulator SimulateRequest(Uri url)
-        {
-            return SimulateRequest(url, HttpVerb.GET);
-        }
+        public HttpSimulator SimulateRequest(Uri url) =>
+            SimulateRequest(url, HttpVerb.GET);
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a request.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="httpVerb"></param>
-        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb)
-        {
-            return SimulateRequest(url, httpVerb, null, null);
-        }
+        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb) =>
+            SimulateRequest(url, httpVerb, null, null);
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a POST request.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="formVariables"></param>
-        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables)
-        {
-            return SimulateRequest(url, HttpVerb.POST, formVariables, null);
-        }
+        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables) =>
+            SimulateRequest(url, HttpVerb.POST, formVariables, null);
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a POST request.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="formVariables"></param>
-        /// <param name="headers"></param>
-        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables, NameValueCollection headers)
-        {
-            return SimulateRequest(url, HttpVerb.POST, formVariables, headers);
-        }
+        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables, NameValueCollection headers) =>
+            SimulateRequest(url, HttpVerb.POST, formVariables, headers);
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a request.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="httpVerb"></param>
-        /// <param name="headers"></param>
-        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb, NameValueCollection headers)
-        {
-            return SimulateRequest(url, httpVerb, null, headers);
-        }
+        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb, NameValueCollection headers) =>
+            SimulateRequest(url, httpVerb, null, headers);
 
         /// <summary>
         /// Sets up the HttpContext objects to simulate a request.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="httpVerb"></param>
-        /// <param name="formVariables"></param>
-        /// <param name="headers"></param>
         protected virtual HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb, NameValueCollection formVariables, NameValueCollection headers)
         {
             HttpContext.Current = null;
@@ -307,6 +273,7 @@ namespace Subtext.TestLibrary
             /// </summary>
             /// <returns>An <see cref="T:System.Web.HttpStaticObjectsCollection"></see> containing objects declared in the Global.asax file.</returns>
             public HttpStaticObjectsCollection StaticObjects => staticObjects;
+
             /// <summary>
             /// Gets or sets a session-state item value by name.
             /// </summary>
@@ -432,7 +399,7 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string ApplicationPath
         {
-            get { return applicationPath; }
+            get => applicationPath;
             set
             {
                 applicationPath = value ?? "/";
@@ -447,7 +414,7 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string PhysicalApplicationPath
         {
-            get { return physicalApplicationPath; }
+            get => physicalApplicationPath;
             set
             {
                 physicalApplicationPath = value ?? defaultPhysicalAppPath;
@@ -523,7 +490,7 @@ namespace Subtext.TestLibrary
         #region --- Text Manipulation Methods for slashes ---
         protected static string NormalizeSlashes(string s)
         {
-            if (String.IsNullOrEmpty(s) || s == "/")
+            if (string.IsNullOrEmpty(s) || s == "/")
                 return "/";
 
             s = s.Replace(@"\", "/");
@@ -537,19 +504,15 @@ namespace Subtext.TestLibrary
             return "/" + normalized;
         }
 
-        protected static string StripPrecedingSlashes(string s)
-        {
-            return Regex.Replace(s, "^/*(.*)", "$1");
-        }
+        protected static string StripPrecedingSlashes(string s) =>
+            Regex.Replace(s, "^/*(.*)", "$1");
 
-        protected static string StripTrailingSlashes(string s)
-        {
-            return Regex.Replace(s, "(.*)/*$", "$1", RegexOptions.RightToLeft);
-        }
+        protected static string StripTrailingSlashes(string s) =>
+            Regex.Replace(s, "(.*)/*$", "$1", RegexOptions.RightToLeft);
 
         protected static string StripTrailingBackSlashes(string s)
         {
-            if (String.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s))
                 return string.Empty;
             return Regex.Replace(s, @"(.*)\\*$", "$1", RegexOptions.RightToLeft);
         }
@@ -594,10 +557,7 @@ namespace Subtext.TestLibrary
                 return Path.Combine(_requestSimulation.PhysicalApplicationPath, page.Replace("/", @"\"));
             }
 
-            public string GetAppPathForPath(string siteID, string path)
-            {
-                return _requestSimulation.ApplicationPath;
-            }
+            public string GetAppPathForPath(string siteID, string path) => _requestSimulation.ApplicationPath;
         }
 
         ///<summary>

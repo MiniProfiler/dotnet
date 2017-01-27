@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Data
         /// Every provider factory must have an Instance public field
         /// </summary>
         public static EFProfiledDbProviderServices<T> Instance = new EFProfiledDbProviderServices<T>();
-        
+
         private readonly T _tail;
 
         /// <summary>
@@ -35,9 +35,8 @@ namespace StackExchange.Profiling.Data
 
             if (_tail == null)
             {
-                FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
-                if(field == null)
-                    field = typeof(T).GetField("Instance", BindingFlags.NonPublic | BindingFlags.Static);
+                FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static)
+                               ?? typeof(T).GetField("Instance", BindingFlags.NonPublic | BindingFlags.Static);
 
                 if(field != null)
                     _tail = (T)field.GetValue(null);
@@ -200,6 +199,5 @@ namespace StackExchange.Profiling.Data
             }
             base.SetDbParameterValue(parameter, parameterType, value);
         }
-        
     }
 }
