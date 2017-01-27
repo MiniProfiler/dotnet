@@ -29,21 +29,21 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected EFProfiledDbProviderServices()
         {
-            PropertyInfo property = typeof(T).GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+            PropertyInfo property = typeof(T).GetProperty(nameof(Instance), BindingFlags.Public | BindingFlags.Static);
             if (property != null)
                 _tail = (T)property.GetValue(null, null);
 
             if (_tail == null)
             {
-                FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static)
-                               ?? typeof(T).GetField("Instance", BindingFlags.NonPublic | BindingFlags.Static);
+                FieldInfo field = typeof(T).GetField(nameof(Instance), BindingFlags.Public | BindingFlags.Static)
+                               ?? typeof(T).GetField(nameof(Instance), BindingFlags.NonPublic | BindingFlags.Static);
 
-                if(field != null)
+                if (field != null)
                     _tail = (T)field.GetValue(null);
             }
             if (_tail == null)
             {
-                throw new Exception(string.Format("Unable to define EFProfiledDbProviderServices class of type '{0}'. Please check that your web.config defines a <DbProviderFactories> section underneath <system.data>.", typeof(T).Name));
+                throw new Exception($"Unable to define EFProfiledDbProviderServices class of type '{typeof(T).Name}'. Please check that your web.config defines a <DbProviderFactories> section underneath <system.data>.");
             }
         }
 
@@ -162,7 +162,7 @@ namespace StackExchange.Profiling.Data
 
         protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken)
         {
-            var setDbParameterValueMethod = _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("GetDbSpatialDataReader"));
+            var setDbParameterValueMethod = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("GetDbSpatialDataReader"));
             var reader = GetSpatialDataReader(fromReader);
 
             if (setDbParameterValueMethod == null)
@@ -177,7 +177,7 @@ namespace StackExchange.Profiling.Data
         [Obsolete("Return DbSpatialServices from the GetService method. See http://go.microsoft.com/fwlink/?LinkId=260882 for more information.")]
         protected override DbSpatialServices DbGetSpatialServices(string manifestToken)
         {
-            var dbGetSpatialServices = _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("DbGetSpatialServices"));
+            var dbGetSpatialServices = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("DbGetSpatialServices"));
             if (dbGetSpatialServices != null) return dbGetSpatialServices.Invoke(_tail, new[] { manifestToken }) as DbSpatialServices;
             return null;
         }
@@ -185,7 +185,7 @@ namespace StackExchange.Profiling.Data
         protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value)
         {
             // if this is available in _tail, use it
-            var setDbParameterValueMethod = _tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name.Equals("SetDbParameterValue"));
+            var setDbParameterValueMethod = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("SetDbParameterValue"));
             if (setDbParameterValueMethod != null)
             {
                 setDbParameterValueMethod.Invoke(_tail, new[] { parameter, parameterType, value });

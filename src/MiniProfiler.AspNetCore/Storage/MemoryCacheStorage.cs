@@ -207,7 +207,6 @@ namespace StackExchange.Profiling.Storage
         public void SetViewed(string user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
-
             lock (ids)
             {
                 ids.Remove(id);
