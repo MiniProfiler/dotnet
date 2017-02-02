@@ -1,35 +1,34 @@
 ﻿<script id="profilerTemplate" type="text/x-jquery-tmpl">
-
   <div class="profiler-result">
-    <div class="profiler-button <% if (HasDuplicateCustomTimings) { %>profiler-warning<% } %>" title="<%= Name %>">
+    <div class="profiler-button{{if HasDuplicateCustomTimings}} profiler-warning{{/if}}" title="${Name}">
       <span class="profiler-number">
-        <%= MiniProfiler.formatDuration(DurationMilliseconds) %> <span class="profiler-unit">ms</span>
+        ${MiniProfiler.formatDuration(DurationMilliseconds)} <span class="profiler-unit">ms</span>
       </span>
-      <% if (HasDuplicateCustomTimings) { %><span class="profiler-nuclear">!</span><% } %>
+      {{if HasDuplicateCustomTimings}}<span class="profiler-nuclear">!</span>{{/if}}
     </div>
 
     <div class="profiler-popup">
       <div class="profiler-info">
         <span class="profiler-name">
-          <%= Name %> <span class="profiler-overall-duration">(<%= MiniProfiler.formatDuration(DurationMilliseconds) %> ms)</span>
+          ${Name} <span class="profiler-overall-duration">(${MiniProfiler.formatDuration(DurationMilliseconds)} ms)</span>
         </span>
-        <span class="profiler-server-time"><%= MachineName %> on <%= Started ? Started.toUTCString() : '' %></span>
+        <span class="profiler-server-time">${MachineName} on ${Started ? Started.toUTCString() : ''}</span>
       </div>
       <div class="profiler-output">
         <table class="profiler-timings">
           <thead>
             <tr>
               <th></th>
-              <th title="in milliseconds">duration</th>
-              <th class="profiler-show-more" title="in milliseconds">with children</th>
-              <th class="time-from-start profiler-show-more" title="in milliseconds">from start</th>
-            <% _.each(CustomTimingStats, function($stat, $name) { %>
-              <th title="in milliseconds (call count)"><%= $name.toLowerCase() %></th>
-            <% }); %>
+              <th>duration (ms)</th>
+              <th class="profiler-show-more">with children (ms)</th>
+              <th class="time-from-start profiler-show-more">from start (ms)</th>
+			  {{each CustomTimingStats}}
+              <th title="call count">${$index.toLowerCase()} (ms)</th>
+			  {{/each}}
             </tr>
           </thead>
           <tbody>
-            <%= MiniProfiler.tmpl("#timingTemplate", {timing:Root, page:_self}) %>
+	    {{tmpl({timing:Root, page:this.data}) "#timingTemplate"}}
           </tbody>
           <tfoot>
             <tr>
@@ -38,70 +37,68 @@
             </tr>
           </tfoot>
         </table>
-
-      <% if (HasCustomTimings) { %>
+		{{if HasCustomTimings}}
         <table class="profiler-custom-timing-overview">
-          <% _.each(CustomTimingStats, function($stat, $name) { %>
-          <tr title="<%= $stat.Count %> <%= $name.toLowerCase() %> calls spent <%= MiniProfiler.formatDuration($stat.Duration) %> ms of total request time">
+		  {{each CustomTimingStats}}
+          <tr title="${$value.Count} ${$index.toLowerCase()} calls spent ${MiniProfiler.formatDuration($value.Duration)} ms of total request time">
             <td class="profiler-number">
-              <%= $name %>:
+              ${$index}:
             </td>
             <td class="profiler-number">
-              <%= MiniProfiler.formatDuration($stat.Duration / DurationMilliseconds * 100) %> <span class="profiler-unit">%</span>
+              ${MiniProfiler.formatDuration($stat.Duration / DurationMilliseconds * 100)} <span class="profiler-unit">%</span>
             </td>
           </tr>
-          <% }); %>
+		  {{/each}}
         </table>
-      <% } %>
+		{{/if}}
 
-      <% if (ClientTimings) { %>
+      {{if ClientTimings}}
         <table class="profiler-timings profiler-client-timings">
           <thead>
             <tr>
               <th style="text-align:left">client event</th>
-              <th>duration</th>
-              <th class="profiler-show-more">from start</th>
+              <th>duration (ms)</th>
+              <th class="profiler-show-more">from start (ms)</th>
             </tr>
           </thead>
           <tbody>
-            <% _.each(MiniProfiler.getClientTimings(ClientTimings), function($value) { %>
-            <tr class="<% if ($value.isTrivial ) { %>profiler-trivial<% } %>">
-              <td class="profiler-label"><%= $value.name %></td>
+			{{each MiniProfiler.getClientTimings(ClientTimings)}}
+            <tr class="{{if $value.isTrivial}}profiler-trivial{{/if}}">
+              <td class="profiler-label">${$value.name}</td>
               <td class="profiler-duration">
-                <% if ($value.duration >= 0) { %>
-                <span class="profiler-unit"></span><%= MiniProfiler.formatDuration($value.duration) %>
-                <% } %>
+				{{if $value.duration >= 0}}
+                <span class="profiler-unit"></span>${MiniProfiler.formatDuration($value.duration)}
+                {{/if}}
               </td>
               <td class="profiler-duration time-from-start profiler-show-more">
-                <span class="profiler-unit">+</span><%= MiniProfiler.formatDuration($value.start) %>
+                <span class="profiler-unit">+</span>${MiniProfiler.formatDuration($value.start)}
               </td>
             </tr>
-            <% }); %>
+            {{/each}}
           </tbody>
         </table>
-      <% } %>
+      {{/if}}
 
       <div class="profiler-links">
-        <a href="<%= MiniProfiler.shareUrl(Id) %>" class="profiler-share-profiler-results" target="_blank">share</a>
-        <% _.each(CustomLinks, function($link, $name) { %>
-          <a href="<%= $link %>" class="profiler-custom-link" target="_blank"><%= $name %></a>
-        <% }); %>
+        <a href="${MiniProfiler.shareUrl(Id)}" class="profiler-share-profiler-results" target="_blank">share</a>
+		{{each CustomLinks}}
+          <a href="${$value}" class="profiler-custom-link" target="_blank">${$index}</a>
+        {{/each}}
         <span class="profiler-toggleable-links">
           <a class="profiler-toggle-hidden-columns" data-toggle-class="profiler-show-more" data-hide-text="fewer columns">
             more columns
           </a>
-          <% if (HasTrivialTimings) { %>
-            <a class="profiler-toggle-trivial" data-toggle-class="profiler-trivial" data-hide-text="hide trivial" title="toggles any rows with &lt; <%= TrivialMilliseconds %> ms duration">
+          {{if HasTrivialTimings}}
+            <a class="profiler-toggle-trivial" data-toggle-class="profiler-trivial" data-hide-text="hide trivial" title="toggles any rows with &lt; ${TrivialMilliseconds} ms duration">
               show trivial
             </a>
-          <% } %>
+          {{/if}}
         </span>
       </div>
-
-      </div>
     </div>
+  </div>
 
-  <% if (HasCustomTimings) { %>
+  {{if HasCustomTimings}}
     <div class="profiler-queries">
       <table>
       <thead>
@@ -111,93 +108,84 @@
         </tr>
       </thead>
       <tbody>
-        <% _.each(MiniProfiler.getCustomTimings(Root), function(s, i) { %>
-          <%= MiniProfiler.tmpl("#customGapTemplate", {g:s.prevGap}) %>
-          <%= MiniProfiler.tmpl("#customTimingTemplate", {i:i, s:s}) %>
-          <% if (s.nextGap) { %>
-            <%= MiniProfiler.tmpl("#customGapTemplate", {g:s.nextGap}) %>
-          <% } %>
-        <% }); %>
+	    {{each MiniProfiler.getCustomTimings(Root)}}
+			{{tmpl({g:$value.prevGap}) "#customGapTemplate"}}
+			{{tmpl({i:$index, s:$value}) "#customTimingTemplate"}}
+			{{if $value.nextGap}}
+			  {{tmpl({g:$value.nextGap}) "#customGapTemplate"}}
+			{{/if}}
+		{{/each}}
       </tbody>
       </table>
       <p class="profiler-trivial-gap-container">
         <a class="profiler-toggle-trivial-gaps" href="#">show trivial gaps</a>
       </p>
     </div>
-  <% } %>
-
+  {{/if}}
   </div>
-
 </script>
 
 <script id="timingTemplate" type="text/x-jquery-tmpl">
-
-  <tr class="<%= timing.IsTrivial ? 'profiler-trivial' : '' %>" data-timing-id="<%= timing.Id %>">
-    <td class="profiler-label" title="<% if (timing.Name && timing.Name.length > 45 ) { %><%= MiniProfiler.safeHtml(timing.Name) %><% } %>">
-      <span class="profiler-indent"><%= MiniProfiler.renderIndent(timing.Depth) %></span> <%= MiniProfiler.safeHtml(timing.Name.slice(0,45)) %><% if (timing.Name && timing.Name.length > 45 ) { %>...<% } %>
+  <tr class="${timing.IsTrivial ? 'profiler-trivial' : ''}" data-timing-id="${timing.Id}">
+    <td class="profiler-label" title="{{if timing.Name && timing.Name.length > 45}}${MiniProfiler.safeHtml(timing.Name)}{{/if}}">
+      <span class="profiler-indent">${MiniProfiler.renderIndent(timing.Depth)}</span> ${timing.Name.slice(0,45)}{{if timing.Name && timing.Name.length > 45}}...{{/if}}
     </td>
     <td class="profiler-duration" title="duration of this step without any children's durations">
-      <%= MiniProfiler.formatDuration(timing.DurationWithoutChildrenMilliseconds) %>
+      ${MiniProfiler.formatDuration(timing.DurationWithoutChildrenMilliseconds)}
     </td>
     <td class="profiler-duration profiler-show-more" title="duration of this step and its children">
-      <%= MiniProfiler.formatDuration(timing.DurationMilliseconds) %>
+      ${MiniProfiler.formatDuration(timing.DurationMilliseconds)}
     </td>
     <td class="profiler-duration profiler-show-more time-from-start" title="time elapsed since profiling started">
-      <span class="profiler-unit">+</span><%= MiniProfiler.formatDuration(timing.StartMilliseconds) %>
+      <span class="profiler-unit">+</span>${MiniProfiler.formatDuration(timing.StartMilliseconds)}
     </td>
-  <% _.each(page && page.CustomTimingStats, function($stat, $name) { %>
-    <% if (timing.CustomTimings[$name]) { %>
-    <td class="profiler-duration <%= timing.HasDuplicateCustomTimings[$name] ? 'profiler-warning' : '' %>">
-      <a class="profiler-queries-show" title="<%= MiniProfiler.formatDuration(timing.CustomTimingStats[$name].Duration) %> ms in <%= timing.CustomTimings[$name].length %> <%= $name %> calls<%= timing.HasDuplicateCustomTimings[$name] ? '; duplicate calls detected!': '' %>">
-        <%= MiniProfiler.formatDuration(timing.CustomTimingStats[$name].Duration) %>
-        (<%= timing.CustomTimings[$name].length %><% if (timing.HasDuplicateCustomTimings[$name]) { %><span class="profiler-nuclear">!</span><% } %>)
+  {{each page && page.CustomTimingStats}}
+	{{if timing.CustomTimings[$index]}}
+    <td class="profiler-duration ${timing.HasDuplicateCustomTimings[$index] ? 'profiler-warning' : ''}">
+      <a class="profiler-queries-show" title="${MiniProfiler.formatDuration(timing.CustomTimingStats[$index].Duration)} ms in ${timing.CustomTimings[$index].length} ${$index} calls${timing.HasDuplicateCustomTimings[$index] ? '; duplicate calls detected!': ''}">
+        ${MiniProfiler.formatDuration(timing.CustomTimingStats[$index].Duration)}
+        (${timing.CustomTimings[$index].length}{{if timing.HasDuplicateCustomTimings[$index]}}<span class="profiler-nuclear">!</span>{{/if}})
       </a>
     </td>
-    <% } else { %>
+    {{else}}
     <td></td>
-    <% } %>
-  <% }); %>
+    {{/if}}
+  {{/each}}
   </tr>
-
-  <% _.each(timing.Children, function($child) { %>
-    <%= MiniProfiler.tmpl("#timingTemplate", {timing: $child, page: page}) %>
-  <% }); %>
-
+  {{each timing.Children}}
+	{{tmpl({timing:$value, page:page}) "#timingTemplate"}}
+  {{/each}}
 </script>
 
 <script id="customTimingTemplate" type="text/x-jquery-tmpl">
-
-  <tr class="<% if (i % 2 == 1) { %>profiler-odd<% } %>" data-timing-id="<%= s.ParentTimingId %>">
+  <tr class="{{if i % 2 == 1}}profiler-odd{{/if}}" data-timing-id="${s.ParentTimingId}">
     <td class="profiler-info">
-      <div><%= s.ParentTimingName %></div>
-      <div class="profiler-number"><span class="profiler-unit">T+</span><%= MiniProfiler.formatDuration(s.StartMilliseconds) %> <span class="profiler-unit">ms</span></div>
+      <div>${s.ParentTimingName}</div>
+      <div class="profiler-number"><span class="profiler-unit">T+</span>${MiniProfiler.formatDuration(s.StartMilliseconds)} <span class="profiler-unit">ms</span></div>
       <div>
-        <% if (s.IsDuplicate) { %><span class="profiler-warning">DUPLICATE</span><% } %>
-        <%= s.CallType %><%= !s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType %>
+        {{if s.IsDuplicate}}<span class="profiler-warning">DUPLICATE</span>{{/if}}
+        ${s.CallType}${!s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType}
       </div>
-      <div title="<% if (s.FirstFetchDurationMilliseconds) { %>first result fetched: <%= s.FirstFetchDurationMilliseconds %>ms<% } %>"><%= MiniProfiler.formatDuration(s.DurationMilliseconds) %> <span class="profiler-unit">ms</span></div>
+      <div title="{{if s.FirstFetchDurationMilliseconds}}first result fetched: ${s.FirstFetchDurationMilliseconds}ms{{/if}}">${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>
     </td>
     <td>
       <div class="query">
-        <pre class="profiler-stack-trace"><%= s.StackTraceSnippet %></pre>
-        <pre class="prettyprint lang-<%= s.CallType %>"><code><%= _.escape(s.CommandString) %></code></pre>
+        <pre class="profiler-stack-trace">${s.StackTraceSnippet}</pre>
+        <pre class="prettyprint lang-${s.CallType}"><code>${s.CommandString}</code></pre>
       </div>
     </td>
   </tr>
-
 </script>
 
 <script id="customGapTemplate" type="text/x-jquery-tmpl">
-
-  <tr class="profiler-gap-info<% if (g.duration < 4) { %> profiler-trivial-gaps<% } %>">
+  <tr class="profiler-gap-info{{if g.duration < 4}} profiler-trivial-gaps{{/if}}">
     <td class="profiler-info">
-      <%= g.duration %> <span class="profiler-unit">ms</span>
+      ${g.duration} <span class="profiler-unit">ms</span>
     </td>
     <td class="query">
-      <div><%= g.topReason.name %> &mdash; <%= g.topReason.duration.toFixed(2) %> <span class="profiler-unit">ms</span></div>
+      <div>${g.topReason.name} &mdash; ${g.topReason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
     </td>
   </tr>
-
 </script>
 
 <script id="tableTemplate" type="text/x-jquery-tmpl">
