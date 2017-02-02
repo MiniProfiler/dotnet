@@ -102,11 +102,11 @@ namespace StackExchange.Profiling
             switch (subPath.Value)
             {
                 case "/results-index":
-                    //result = Index(context);
+                    result = ResultsIndex(context);
                     break;
 
                 case "/results-list":
-                    //result = GetListJson(context);
+                    result = ResultsList(context);
                     break;
 
                 case "/results":
@@ -137,7 +137,7 @@ namespace StackExchange.Profiling
             var authorize = Options.ResultsAuthorize;
             var authorizeList = Options.ResultsListAuthorize;
 
-            if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
+            if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList != null && !authorizeList(context.Request))))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 context.Response.ContentType = "text/plain";
@@ -149,23 +149,84 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Returns the list of profiling sessions
+        /// </summary>
+        private string ResultsIndex(HttpContext context)
+        {
+            if (!AuthorizeRequest(context, isList: true, message: out string message))
+            {
+                return message;
+            }
+
+            context.Response.ContentType = "text/html";
+
+            var path = BasePath.Value.EnsureTrailingSlash();
+            var version = MiniProfiler.Settings.VersionHash;
+            return $@"<html>
+  <head>
+    <title>List of profiling sessions</title>
+    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
+    <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
+    <script>MiniProfiler.list.init({{path: '{path}', version: '{version}'}});</script>
+  </head>
+</html>";
+        }
+        
+        /// <summary>
+        /// Returns the JSON needed for the results list in MiniProfiler
+        /// </summary>
+        private string ResultsList(HttpContext context)
+        {
+            if (!AuthorizeRequest(context, isList: true, message: out string message))
+            {
+                return message;
+            }
+
+            var guids = MiniProfiler.Settings.Storage.List(100);
+
+            if (context.Request.Query.TryGetValue("last-id", out var lastId) && Guid.TryParse(lastId, out var lastGuid))
+            {
+                guids = guids.TakeWhile(g => g != lastGuid);
+            }
+
+            return guids.Reverse()
+                        .Select(g => MiniProfiler.Settings.Storage.Load(g))
+                        .Where(p => p != null)
+                        .Select(p => new
+                        {
+                            p.Id,
+                            p.Name,
+                            p.ClientTimings,
+                            p.Started,
+                            p.HasUserViewed,
+                            p.MachineName,
+                            p.User,
+                            p.DurationMilliseconds
+                        }).ToJson();
+        }
+
+        /// <summary>
         /// Returns either json or full page html of a previous <c>MiniProfiler</c> session, 
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         private string GetSingleProfilerResult(HttpContext context)
         {
-            var form = context.Request.Form;
-
+            var isPost = context.Request.HasFormContentType;
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
-            bool isPopup = form["popup"].FirstOrDefault() == "1";
+            var isPopup = isPost && context.Request.Form["popup"].FirstOrDefault() == "1";
             // this guid is the MiniProfiler.Id property
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
-            if (!Guid.TryParse(form["id"], out var id) && MiniProfiler.Settings.Storage != null)
+            var requestId = isPost
+                ? context.Request.Form["id"]
+                : context.Request.Query["id"];
+
+            if (!Guid.TryParse(requestId, out var id) && MiniProfiler.Settings.Storage != null)
             {
                 id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
             }
+
             if (id == default(Guid))
             {
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
@@ -182,8 +243,9 @@ namespace StackExchange.Profiling
             }
 
             bool needsSave = false;
-            if (profiler.ClientTimings == null)
+            if (profiler.ClientTimings == null && isPost)
             {
+                var form = context.Request.Form;
                 var dict = new Dictionary<string, string>();
                 foreach (var k in form.Keys)
                 {
