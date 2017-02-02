@@ -127,7 +127,7 @@
 
 <script id="timingTemplate" type="text/x-jquery-tmpl">
   <tr class="${timing.IsTrivial ? 'profiler-trivial' : ''}" data-timing-id="${timing.Id}">
-    <td class="profiler-label" title="{{if timing.Name && timing.Name.length > 45}}${MiniProfiler.safeHtml(timing.Name)}{{/if}}">
+    <td class="profiler-label" title="{{if timing.Name && timing.Name.length > 45}}${timing.Name}{{/if}}">
       <span class="profiler-indent">${MiniProfiler.renderIndent(timing.Depth)}</span> ${timing.Name.slice(0,45)}{{if timing.Name && timing.Name.length > 45}}...{{/if}}
     </td>
     <td class="profiler-duration" title="duration of this step without any children's durations">

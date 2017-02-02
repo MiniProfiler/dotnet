@@ -781,7 +781,6 @@ var MiniProfiler = (function () {
         },
 
         getClientTimingByName: function (clientTiming, name) {
-
             for (var i = 0; i < clientTiming.Timings.length; i++) {
                 if (clientTiming.Timings[i].Name == name) {
                     return clientTiming.Timings[i];
@@ -803,10 +802,9 @@ var MiniProfiler = (function () {
         },
 
         getClientTimings: function (clientTimings) {
-            var list = [];
-            var t;
-
             if (!clientTimings.Timings) return [];
+
+            var list = [], t;
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
@@ -968,19 +966,6 @@ var MiniProfiler = (function () {
         formatDuration: function (duration) {
             return (duration || 0).toFixed(1);
         },
-		
-		// do not output raw html http://stackoverflow.com/a/6234804/51
-		safeHtml: function(t) {
-			if (!t) {
-				return t;
-			}			
-			return t
-				 .replace(/&/g, '&amp;')
-				 .replace(/</g, '&lt;')
-				 .replace(/>/g, '&gt;')
-				 .replace(/"/g, '&quot;')
-				 .replace(/'/g, '&#039;');
-		},
 
         fetchResults: fetchResults,
 
@@ -1081,7 +1066,6 @@ PR_TAG:"tag",PR_TYPE:S}})();
 
 // lang-sql.js
 // http://code.google.com/p/google-code-prettify/
-
 PR.registerLangHandler(PR.createSimpleLexer([["pln",/^[\t\n\r \xA0]+/,null,"\t\n\r \u00a0"],["str",/^(?:"(?:[^\"\\]|\\.)*"|'(?:[^\'\\]|\\.)*')/,null,"\"'"]],[["com",/^(?:--[^\r\n]*|\/\*[\s\S]*?(?:\*\/|$))/],["kwd",/^(?:ADD|ALL|ALTER|AND|ANY|AS|ASC|AUTHORIZATION|BACKUP|BEGIN|BETWEEN|BREAK|BROWSE|BULK|BY|CASCADE|CASE|CHECK|CHECKPOINT|CLOSE|CLUSTERED|COALESCE|COLLATE|COLUMN|COMMIT|COMPUTE|CONSTRAINT|CONTAINS|CONTAINSTABLE|CONTINUE|CONVERT|CREATE|CROSS|CURRENT|CURRENT_DATE|CURRENT_TIME|CURRENT_TIMESTAMP|CURRENT_USER|CURSOR|DATABASE|DBCC|DEALLOCATE|DECLARE|DEFAULT|DELETE|DENY|DESC|DISK|DISTINCT|DISTRIBUTED|DOUBLE|DROP|DUMMY|DUMP|ELSE|END|ERRLVL|ESCAPE|EXCEPT|EXEC|EXECUTE|EXISTS|EXIT|FETCH|FILE|FILLFACTOR|FOR|FOREIGN|FREETEXT|FREETEXTTABLE|FROM|FULL|FUNCTION|GOTO|GRANT|GROUP|HAVING|HOLDLOCK|IDENTITY|IDENTITYCOL|IDENTITY_INSERT|IF|IN|INDEX|INNER|INSERT|INTERSECT|INTO|IS|JOIN|KEY|KILL|LEFT|LIKE|LINENO|LOAD|NATIONAL|NOCHECK|NONCLUSTERED|NOT|NULL|NULLIF|OF|OFF|OFFSETS|ON|OPEN|OPENDATASOURCE|OPENQUERY|OPENROWSET|OPENXML|OPTION|OR|ORDER|OUTER|OVER|PERCENT|PLAN|PRECISION|PRIMARY|PRINT|PROC|PROCEDURE|PUBLIC|RAISERROR|READ|READTEXT|RECONFIGURE|REFERENCES|REPLICATION|RESTORE|RESTRICT|RETURN|REVOKE|RIGHT|ROLLBACK|ROWCOUNT|ROWGUIDCOL|RULE|SAVE|SCHEMA|SELECT|SESSION_USER|SET|SETUSER|SHUTDOWN|SOME|STATISTICS|SYSTEM_USER|TABLE|TEXTSIZE|THEN|TO|TOP|TRAN|TRANSACTION|TRIGGER|TRUNCATE|TSEQUAL|UNION|UNIQUE|UPDATE|UPDATETEXT|USE|USER|VALUES|VARYING|VIEW|WAITFOR|WHEN|WHERE|WHILE|WITH|WRITETEXT)(?=[^\w-]|$)/i,
 null],["lit",/^[+-]?(?:0x[\da-f]+|(?:(?:\.\d+|\d+(?:\.\d*)?)(?:e[+\-]?\d+)?))/i],["pln",/^[a-z_][\w-]*/i],["pun",/^[^\w\t\n\r \xA0\"\'][^\w\t\n\r \xA0+\-\"\']*/]]),["sql"]);
 })(window);
