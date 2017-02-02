@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.IO;
+using System.Web.Mvc;
 
 namespace StackExchange.Profiling.Mvc
 {
@@ -30,7 +31,7 @@ namespace StackExchange.Profiling.Mvc
             get
             {
                 var view = _wrapped as RazorView;
-                return view != null ? view.ViewPath : null;
+                return view?.ViewPath;
             }
         }
 
@@ -47,7 +48,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Renders the WrappedView and logs profiling data
         /// </summary>
-        public void Render(ViewContext viewContext, System.IO.TextWriter writer)
+        public void Render(ViewContext viewContext, TextWriter writer)
         {
             var prof = MiniProfiler.Current;
             string name = prof != null ? ("Render" + (IsPartial ? " partial" : "") + ": " + Name) : null;
