@@ -223,7 +223,7 @@
   <tr>
     <td><a href="${MiniProfiler.path}results?id=${Id}">${Name}</a></td>
     <td>${MachineName}</td>
-    <td class="profiler-results-index-date">${MiniProfiler.renderDate(Started)}</td>
+    <td class="profiler-results-index-date">${Started}</td>
     <td class="profiler-results-index-time">${DurationMilliseconds}</td>
     {{if ClientTimings}}
     <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Request Start").Start}</td>

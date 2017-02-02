@@ -1,5 +1,5 @@
 (function(window){
-"use strict";
+'use strict';
 
 // replace the define method from requirejs, if there is any.
 // this is necessary to avoid modifying the minified underscore and jquery source.
@@ -9,7 +9,7 @@ var originalDefine = window.define;
 if (originalDefine) window.define = function nop() { };
 
 var MiniProfiler = (function () {
-    "use strict";
+    'use strict';
     var $, _;
 
     var options,
@@ -118,10 +118,10 @@ var MiniProfiler = (function () {
                     if (window.chrome && window.chrome.loadTimes) {
                       var chromeTimes = window.chrome.loadTimes();
                       if (chromeTimes.firstPaintTime) {
-                        clientPerformance.timing["First Paint Time"] = Math.round(chromeTimes.firstPaintTime * 1000);
+                        clientPerformance.timing['First Paint Time'] = Math.round(chromeTimes.firstPaintTime * 1000);
                       }
                       if (chromeTimes.firstPaintTime) {
-                        clientPerformance.timing["First Paint After Load Time"] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
+                        clientPerformance.timing['First Paint After Load Time'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
                       }
 
                     }
@@ -139,11 +139,11 @@ var MiniProfiler = (function () {
                     data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes, popup: 1 },
                     dataType: 'json',
                     type: 'POST',
-                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     processData: true,
                     success: function (json) {
                         fetchedIds.push(id);
-                        if (json != "hidden") {
+                        if (json != 'hidden') {
                             buttonShow(json);
                         }
                     },
@@ -251,7 +251,7 @@ var MiniProfiler = (function () {
             var html = tmpl(o);
             return html;
         } catch (e) {
-            console.log("error with: " + name + ": " + e);
+            console.log('error with: ' + name + ': ' + e);
         }
     };
 
@@ -358,13 +358,13 @@ var MiniProfiler = (function () {
         var top = button.position().top - 1, // position next to the button we clicked
             windowHeight = $(window).height(),
             maxHeight = windowHeight - top - 40, // make sure the popup doesn't extend below the fold
-            isBottom = options.renderPosition.indexOf("bottom") != -1; // is this rendering on the bottom (if no, then is top by default)
+            isBottom = options.renderPosition.indexOf('bottom') != -1; // is this rendering on the bottom (if no, then is top by default)
 
         if (isBottom) {
             var bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(), // get bottom of button
-                isLeft = options.renderPosition.indexOf("left") != -1;
+                isLeft = options.renderPosition.indexOf('left') != -1;
 
-            var horizontalPosition = isLeft ? "left" : "right";
+            var horizontalPosition = isLeft ? 'left' : 'right';
             popup
                 .css({ 'bottom': bottom, 'max-height': maxHeight })
                 .css(horizontalPosition, button.outerWidth() - 3); // move left or right, based on config
@@ -392,7 +392,7 @@ var MiniProfiler = (function () {
     var resultRemove = function (result) {
         var bg = $('.profiler-queries-bg'),
             queries = result.find('.profiler-queries');
-        var hideQueries = bg.is(':visible') && queries.is(":visible");
+        var hideQueries = bg.is(':visible') && queries.is(':visible');
         if (hideQueries) {
             bg.remove();
         }
@@ -442,7 +442,7 @@ var MiniProfiler = (function () {
             // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
             cell.css({ 'opacity': 1, 'background-color': highlightHex })
                 .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
-                    fx.elem.style['backgroundColor'] = "rgb(" + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(",") + ")";
+                    fx.elem.style['backgroundColor'] = 'rgb(' + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(',') + ')';
                 }
                 });
         });
@@ -481,7 +481,7 @@ var MiniProfiler = (function () {
 
             // this happens on every keystroke, and :visible is crazy expensive in IE <9
             // and in this case, the display:none check is sufficient.
-            var popup = $('.profiler-popup').filter(function () { return $(this).css("display") !== "none"; });
+            var popup = $('.profiler-popup').filter(function () { return $(this).css('display') !== 'none'; });
 
             if (!popup.length) {
                 return;
@@ -531,7 +531,7 @@ var MiniProfiler = (function () {
 
             prettyPrint();
 
-            // since queries are already shown, just highlight and scroll when clicking a "1 sql" link
+            // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
             popup.find('.profiler-queries-show').click(function () {
                 queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
             });
@@ -610,7 +610,7 @@ var MiniProfiler = (function () {
         }
 
         // more Asp.Net callbacks
-        if (typeof (WebForm_ExecuteCallback) == "function") {
+        if (typeof (WebForm_ExecuteCallback) == 'function') {
             WebForm_ExecuteCallback = (function (callbackObject) {
                 // Store original function
                 var original = WebForm_ExecuteCallback;
@@ -711,7 +711,7 @@ var MiniProfiler = (function () {
             container = $('<div class="profiler-results"/>').appendTo('body');
 
             // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-            container.addClass("profiler-" + options.renderPosition);
+            container.addClass('profiler-' + options.renderPosition);
 
             //initialize the controls
             initControls(container);
@@ -788,7 +788,7 @@ var MiniProfiler = (function () {
                 // when rendering a shared, full page, this div will exist
                 container = $('.profiler-result-full');
                 if (container.length) {
-                    if (window.location.href.indexOf("&trivial=1") > 0) {
+                    if (window.location.href.indexOf('&trivial=1') > 0) {
                         options.showTrivial = true
                     }
                     initFullView();
@@ -813,7 +813,7 @@ var MiniProfiler = (function () {
 
             var init = function() {
                 if (options.authorized) {
-                    var url = options.path + "includes.css?v=" + options.version;
+                    var url = options.path + 'includes.css?v=' + options.version;
                     if (document.createStyleSheet) {
                         document.createStyleSheet(url);
                     } else {
@@ -838,13 +838,7 @@ var MiniProfiler = (function () {
                     return clientTiming.Timings[i];
                 }
             }
-            return { Name: name, Duration: "", Start: "" };
-        },
-
-        renderDate: function (jsonDate) { // JavaScriptSerializer sends dates as /Date(1308024322065)/
-            if (jsonDate) {
-                return (typeof jsonDate === 'string') ? new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10)).toISOString() : jsonDate;
-            }
+            return { Name: name, Duration: '', Start: '' };
         },
 
         renderIndent: function (depth) {
@@ -867,7 +861,7 @@ var MiniProfiler = (function () {
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
-                var trivial = t.Name != "Dom Complete" && t.Name != "Response" && t.Name != "First Paint Time";
+                var trivial = t.Name != 'Dom Complete' && t.Name != 'Response' && t.Name != 'First Paint Time';
                 trivial = t.Duration < 2 ? trivial : false;
                 list.push(
                 {
@@ -1032,11 +1026,11 @@ var MiniProfiler = (function () {
 				return t;
 			}			
 			return t
-				 .replace(/&/g, "&amp;")
-				 .replace(/</g, "&lt;")
-				 .replace(/>/g, "&gt;")
-				 .replace(/"/g, "&quot;")
-				 .replace(/'/g, "&#039;");
+				 .replace(/&/g, '&amp;')
+				 .replace(/</g, '&lt;')
+				 .replace(/>/g, '&gt;')
+				 .replace(/"/g, '&quot;')
+				 .replace(/'/g, '&#039;');
 		},
 
         fetchResults: fetchResults,
@@ -1048,11 +1042,11 @@ var MiniProfiler = (function () {
                 var updateGrid = function (id) {
                     $.ajax({
                         url: options.path + 'results-list',
-                        data: { "last-id": id },
+                        data: { 'last-id': id },
                         dataType: 'json',
                         type: 'GET',
                         success: function (data) {
-                            $('table tbody').append($("#rowTemplate").tmpl(data));
+                            $('table tbody').append($('#rowTemplate').tmpl(data));
                             var oldId = id;
                             var oldData = data;
                             setTimeout(function () {
