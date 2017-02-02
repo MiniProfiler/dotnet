@@ -116,7 +116,7 @@ namespace Subtext.TestLibrary
 
             MethodInfo method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static, null, paramTypes, null);
             if (method == null)
-                throw new ArgumentException($"Could not find a method with the name '{methodName}'", "method");
+                throw new ArgumentException($"Could not find a method with the name '{methodName}'", nameof(method));
 
             return (TReturn)method.Invoke(null, parameters);
         }
@@ -127,7 +127,7 @@ namespace Subtext.TestLibrary
 
             MethodInfo method = source.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance, null, paramTypes, null);
             if (method == null)
-                throw new ArgumentException($"Could not find a method with the name '{methodName}'", "method");
+                throw new ArgumentException($"Could not find a method with the name '{methodName}'", nameof(method));
 
             return (TReturn)method.Invoke(source, parameters);
         }
