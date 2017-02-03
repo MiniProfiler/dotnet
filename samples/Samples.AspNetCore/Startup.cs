@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StackExchange.Profiling;
+using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using System;
 
@@ -28,7 +29,10 @@ namespace Samples.AspNetCore
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new ProfilingActionFilter());
+            });
             services.AddMemoryCache();
         }
 
@@ -37,12 +41,6 @@ namespace Samples.AspNetCore
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-            app.UseMiniProfiler(new MiniProfilerOptions
-            {
-                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
-                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60))
-            });
 
             if (env.IsDevelopment())
             {
@@ -55,6 +53,12 @@ namespace Samples.AspNetCore
             }
 
             app.UseStaticFiles();
+
+            app.UseMiniProfiler(new MiniProfilerOptions
+            {
+                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
+                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60))
+            });
 
             app.UseMvc(routes =>
             {
