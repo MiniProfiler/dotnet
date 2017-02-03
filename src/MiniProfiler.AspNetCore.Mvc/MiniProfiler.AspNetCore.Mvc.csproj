@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>MiniProfiler.AspNetCore.Mvc</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <Authors>Nick Craver</Authors>
+    <Description>Lightweight mini-profiler, in particular designed for ASP.NET Core MVC (not System.Web) sites</Description>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageVersion>4.0.0-alpha1</PackageVersion>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
+    <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
+    <PackageTags>profiler sql mvc asp.net performance profiling timing</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
+  </ItemGroup>
+</Project>
