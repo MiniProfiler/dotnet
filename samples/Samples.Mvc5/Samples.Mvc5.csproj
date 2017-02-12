@@ -8,6 +8,7 @@
     <TargetFramework>net462</TargetFramework>
     <UseIISExpress>true</UseIISExpress>
     <OutputPath>bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFramework\MiniProfiler.EntityFramework.csproj" />
