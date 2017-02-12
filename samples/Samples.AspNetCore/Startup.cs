@@ -8,6 +8,7 @@ using StackExchange.Profiling;
 using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using System;
+using System.Linq;
 
 namespace Samples.AspNetCore
 {
@@ -32,6 +33,14 @@ namespace Samples.AspNetCore
             services.AddMvc(options =>
             {
                 options.Filters.Add(new ProfilingActionFilter());
+            }).AddViewOptions(options =>
+            {
+                var copy = options.ViewEngines.ToList();
+                options.ViewEngines.Clear();
+                foreach (var item in copy)
+                {
+                    options.ViewEngines.Add(new ProfilingViewEngine(item));
+                }
             });
             services.AddMemoryCache();
         }

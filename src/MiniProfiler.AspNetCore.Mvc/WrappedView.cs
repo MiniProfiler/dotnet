@@ -1,0 +1,44 @@
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using System.Threading.Tasks;
+
+namespace StackExchange.Profiling.Mvc
+{
+    /// <summary>
+    /// Wrapped MVC View that ProfilingViewEngine uses to log profiling data
+    /// </summary>
+    public class WrappedView : IView
+    {
+        /// <summary>
+        /// MVC IView that is wrapped by the ProfilingViewEngine
+        /// </summary>
+        private readonly IView _wrapped;
+
+        /// <summary>
+        /// Gets the wrapped view path.
+        /// </summary>
+        public string Path => _wrapped.Path;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="WrappedView"/> class. 
+        /// </summary>
+        public WrappedView(IView wrapped)
+        {
+            _wrapped = wrapped;
+        }
+
+        /// <summary>
+        /// Renders the WrappedView and logs profiling data
+        /// </summary>
+        /// <param name="context">Context to render</param>
+        public async Task RenderAsync(ViewContext context)
+        {
+            var prof = MiniProfiler.Current;
+            string name = prof != null ? ("Render: " + Path) : null;
+            using (prof.Step(name))
+            {
+                await _wrapped.RenderAsync(context);
+            }
+        }
+    }
+}
