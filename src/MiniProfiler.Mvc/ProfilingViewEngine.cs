@@ -36,7 +36,7 @@ namespace StackExchange.Profiling.Mvc
             }
 
             var found = finder();
-            if (found != null && found.View != null)
+            if (found?.View != null)
             {
                 found = new ViewEngineResult(new WrappedView(found.View, name, isPartial), this);
 
@@ -59,25 +59,19 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Find a partial
         /// </summary>
-        public ViewEngineResult FindPartialView(ControllerContext ctx, string partialViewName, bool useCache)
-        {
-            return Find(partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
-        }
+        public ViewEngineResult FindPartialView(ControllerContext ctx, string partialViewName, bool useCache) =>
+            Find(partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
 
         /// <summary>
         /// Find a view
         /// </summary>
-        public ViewEngineResult FindView(ControllerContext ctx, string viewName, string masterName, bool useCache)
-        {
-            return Find(viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
-        }
+        public ViewEngineResult FindView(ControllerContext ctx, string viewName, string masterName, bool useCache) =>
+            Find(viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
 
         /// <summary>
         /// Find a partial
         /// </summary>
-        public void ReleaseView(ControllerContext controllerContext, IView view)
-        {
+        public void ReleaseView(ControllerContext controllerContext, IView view) => 
             _wrapped.ReleaseView(controllerContext, view);
-        }
     }
 }

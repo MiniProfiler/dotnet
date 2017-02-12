@@ -26,14 +26,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Gets the wrapped view path.
         /// </summary>
-        public string ViewPath
-        {
-            get
-            {
-                var view = _wrapped as RazorView;
-                return view?.ViewPath;
-            }
-        }
+        public string ViewPath => (_wrapped as RazorView)?.ViewPath;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="WrappedView"/> class. 

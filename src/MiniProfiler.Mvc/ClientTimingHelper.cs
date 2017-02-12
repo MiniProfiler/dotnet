@@ -12,35 +12,35 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// This needs to be called at the beginning of the layout for client side probe support, returns nothing if mini profiler is not enabled
         /// </summary>
-        public static IHtmlString InitClientTimings(this WebPageBase page)
-        {
-            if (MiniProfiler.Current == null) return null;
-            return new HtmlString(ClientTimingHelper.InitScript);
-        }
+        /// <param name="page">Page being timed</param>
+        public static IHtmlString InitClientTimings(this WebPageBase page) =>
+            MiniProfiler.Current == null ? null : new HtmlString(ClientTimingHelper.InitScript);
 
         /// <summary>
         /// To be used inline in razor pages - times a script be sure to call <c>InitClientTimings</c> first
         /// </summary>
-        public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> html)
-        {
-            var result = html(null).ToHtmlString();
-            return new HtmlString(ClientTimingHelper.TimeScript(name, result));
-        }
+        /// <param name="page">Page being timed</param>
+        /// <param name="name">Name of the script</param>
+        /// <param name="html">Html helper to render</param>
+        public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> html) =>
+            new HtmlString(ClientTimingHelper.TimeScript(name, html(null).ToHtmlString()));
 
         /// <summary>
         /// To be used inline in razor pages - times a script be sure to call <c>InitClientTimings</c> first
         /// </summary>
-        public static IHtmlString TimeScript(this WebPageBase page, string name, IHtmlString html)
-        {
-            return new HtmlString(ClientTimingHelper.TimeScript(name, html.ToHtmlString()));
-        }
+        /// <param name="page">Page being timed</param>
+        /// <param name="name">Name of the script</param>
+        /// <param name="html">Html to render</param>
+        public static IHtmlString TimeScript(this WebPageBase page, string name, IHtmlString html) =>
+            new HtmlString(ClientTimingHelper.TimeScript(name, html.ToHtmlString()));
 
         /// <summary>
         /// To be used inline in razor pages - times a script be sure to call <c>InitClientTimings</c> first
         /// </summary>
-        public static IHtmlString TimeScript(this WebPageBase page, string name, string html)
-        {
-            return new HtmlString(ClientTimingHelper.TimeScript(name, html));
-        }
+        /// <param name="page">Page being timed</param>
+        /// <param name="name">Name of the script</param>
+        /// <param name="html">Html to render</param>
+        public static IHtmlString TimeScript(this WebPageBase page, string name, string html) =>
+            new HtmlString(ClientTimingHelper.TimeScript(name, html));
     }
 }
