@@ -12,12 +12,12 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Ascending Order
         /// </summary>
-        Ascending,
+        Ascending = 0,
 
         /// <summary>
         /// Descending Order
         /// </summary>
-        Descending
+        Descending = 1
     }
 
     /// <summary>

@@ -71,7 +71,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Find a partial
         /// </summary>
-        public void ReleaseView(ControllerContext controllerContext, IView view) => 
+        public void ReleaseView(ControllerContext controllerContext, IView view) =>
             _wrapped.ReleaseView(controllerContext, view);
     }
 }

@@ -28,11 +28,11 @@ namespace StackExchange.Profiling.Mvc
                     stack = new Stack<IDisposable>();
                     filterContext.HttpContext.Items[StackKey] = stack;
                 }
-                
+
                 var area = filterContext.RouteData.DataTokens.TryGetValue("area", out object areaToken)
                     ? areaToken as string + "."
                     : null;
-                
+
                 switch (filterContext.ActionDescriptor)
                 {
                     case ControllerActionDescriptor cd:
@@ -42,7 +42,6 @@ namespace StackExchange.Profiling.Mvc
                         stack.Push(mp.Step($"Controller: {area}{ad.DisplayName}"));
                         break;
                 }
-
             }
             base.OnActionExecuting(filterContext);
         }

@@ -90,21 +90,16 @@ namespace StackExchange.Profiling.SqlFormatters
                 buffer.Append(commandText);
             }
 
-            string formattedText = TerminateSqlStatement(buffer.ToString());
-            return formattedText;
+            return TerminateSqlStatement(buffer.ToString());
         }
 
-		private string EnsureParameterPrefix(string name)
-		{
-			return !name.StartsWith("@") ? "@" + name : name;
-		}
+        private string EnsureParameterPrefix(string name) =>
+            !name.StartsWith("@") ? "@" + name : name;
 
-		private string RemoveParameterPrefix(string name)
-		{
-			return name.StartsWith("@") ? name.Substring(1) : name;
-		}
+        private string RemoveParameterPrefix(string name) =>
+            name.StartsWith("@") ? name.Substring(1) : name;
 
-	    private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
+        private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
         {
             buffer.Append("EXEC ");
 

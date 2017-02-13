@@ -48,7 +48,7 @@ namespace StackExchange.Profiling.Storage
                 foreach (var store in Stores)
                 {
                     var results = store.List(maxResults, start, finish, orderBy);
-                    if (results != null && results.Any())
+                    if (results?.Any() == true)
                     {
                         return results;
                     }
