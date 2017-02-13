@@ -15,11 +15,11 @@ namespace StackExchange.Profiling.Mvc
         /// </summary>
         /// <param name="services">The services collection to configure</param>
         public static IServiceCollection AddMiniProfiler(this IServiceCollection services) =>
-            services.AddTransient<IConfigureOptions<MvcOptions>, MiniPofilerSetup>()
-                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniPofilerSetup>();
+            services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
+                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
     }
 
-    internal class MiniPofilerSetup : IConfigureOptions<MvcViewOptions>, IConfigureOptions<MvcOptions>
+    internal class MiniProfilerSetup : IConfigureOptions<MvcViewOptions>, IConfigureOptions<MvcOptions>
     {
         public void Configure(MvcViewOptions options)
         {
