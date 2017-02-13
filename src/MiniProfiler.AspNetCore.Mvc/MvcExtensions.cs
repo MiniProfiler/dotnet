@@ -23,11 +23,9 @@ namespace StackExchange.Profiling.Mvc
     {
         public void Configure(MvcViewOptions options)
         {
-            var copy = options.ViewEngines.ToList();
-            options.ViewEngines.Clear();
-            foreach (var item in copy)
+            for (var i = 0; i < options.ViewEngines.Count; i++)
             {
-                options.ViewEngines.Add(new ProfilingViewEngine(item));
+                options.ViewEngines[i] = new ProfilingViewEngine(options.ViewEngines[i]);
             }
         }
 
