@@ -30,18 +30,8 @@ namespace Samples.AspNetCore
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(new ProfilingActionFilter());
-            }).AddViewOptions(options =>
-            {
-                var copy = options.ViewEngines.ToList();
-                options.ViewEngines.Clear();
-                foreach (var item in copy)
-                {
-                    options.ViewEngines.Add(new ProfilingViewEngine(item));
-                }
-            });
+            services.AddMvc();
+            services.AddMiniProfiler();
             services.AddMemoryCache();
         }
 
