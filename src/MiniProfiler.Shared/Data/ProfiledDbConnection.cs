@@ -128,9 +128,9 @@ namespace StackExchange.Profiling.Data
                 _connection.StateChange -= StateChangeHandler;
                 _connection.Dispose();
             }
+            base.Dispose(disposing);
             _connection = null;
             _profiler = null;
-            base.Dispose(disposing);
         }
 
         /// <summary>
