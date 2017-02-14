@@ -77,15 +77,38 @@ namespace StackExchange.Profiling
             // Otherwise this is an app request, profile it!
             if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
             {
-                MiniProfiler.Start();
+                var mp = MiniProfiler.Start();
                 await _next(context);
                 await MiniProfiler.StopAsync();
+                // This approach won't work in Core (as headers are long-since sent...need to figure out)
+                //await AppendHeadersAsync(context, mp).ConfigureAwait(false);
             }
             else
             {
                 // Don't profile, only relay
                 await _next(context);
             }
+        }
+
+        private async Task AppendHeadersAsync(HttpContext context, MiniProfiler current)
+        {
+            try
+            {
+                var arrayOfIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false);
+                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
+                {
+                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
+                    {
+                        await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
+                    }
+                }
+                
+                if (arrayOfIds?.Count > 0)
+                {
+                    context.Response.Headers.Add("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                }
+            }
+            catch { /* oh no! headers blew up */ }
         }
 
         private async Task HandleRequest(HttpContext context, PathString subPath)
