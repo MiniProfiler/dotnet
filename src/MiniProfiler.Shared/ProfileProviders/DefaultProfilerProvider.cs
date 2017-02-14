@@ -57,19 +57,18 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
-        public override Task StopAsync(bool discardResults)
+        public override async Task StopAsync(bool discardResults)
         {
             var profiler = Profiler;
             if (profiler != null)
             {
                 StopProfiler(profiler);
-                SaveProfiler(profiler);
+                await SaveProfilerAsync(profiler).ConfigureAwait(false);
                 if (discardResults)
                 {
                     Profiler = null;
                 }
             }
-            return Task.CompletedTask;
         }
     }
 }

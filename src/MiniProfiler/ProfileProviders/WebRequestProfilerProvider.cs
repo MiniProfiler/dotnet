@@ -12,7 +12,7 @@ namespace StackExchange.Profiling
     /// The current profiler is associated with a HttpContext.Current ensuring that profilers are 
     /// specific to a individual HttpRequest.
     /// </summary>
-    public partial class WebRequestProfilerProvider : BaseProfilerProvider
+    public class WebRequestProfilerProvider : BaseProfilerProvider
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="WebRequestProfilerProvider"/> class. 
@@ -144,7 +144,7 @@ namespace StackExchange.Profiling
 
             try
             {
-                var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
+                var arrayOfIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false);
                 if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
                 {
                     foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
