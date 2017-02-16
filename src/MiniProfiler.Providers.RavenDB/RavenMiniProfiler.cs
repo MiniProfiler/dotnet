@@ -1,168 +1,97 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using Raven.Client.Document;
+
+using Raven.Client;
 using Raven.Client.Connection.Profiling;
+using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling.RavenDb
 {
-    // TODO: this needs a complete overhaul for v4 and ASP.NET Core
     /// <summary>
-    /// Old MiniProfiler raven functionality
+    /// MiniProfiler RavenDB support
     /// </summary>
     public static class MiniProfilerRaven
     {
-        private const string RavenHandledRequestMarker = "__MiniProfiler.Raven_handled";
-        private const string RavenRequestPrefix = "__MiniProfiler.Raven.Request.";
-        private const string RavenRequestPending = "Pending";
-        private const string RavenRequestHandled = "Handled";
-
-        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/[A-Za-z/]+");
+        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/([A-Za-z/]+)");
 
         /// <summary>
         /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)
         /// </summary>
-        /// <param name="store">The <see cref="DocumentStore"/> to attach to</param>
-        public static void InitializeFor(DocumentStore store)
+        /// <param name="store">The <see cref="IDocumentStore"/> to attach to</param>
+        public static IDocumentStore AddMiniProfiler(this IDocumentStore store)
         {
-#if NET46 // TODO: netstandard
-            if (store?.JsonRequestFactory != null)
+            if (store?.HasJsonRequestFactory ?? false)
             {
-                store.JsonRequestFactory.ConfigureRequest += (sender, args) =>
+                // TODO: MiniProfiler 4.1 release
+                // Note: this is a terrible approach - it logs the endpoint in relation to 
+                // the tree position as-of the end of the request. This may be incorrect, and the
+                // start position is at best calculated. We'll need to research if there's a better way
+                // to hook into profiling here. The built-in profiling is all-or-nothing session based
+                // but may still be the best (or only) available (correct) option.
+                store.JsonRequestFactory.LogRequest += (sender, args) =>
                 {
-                    EventHandler<RequestResultArgs> handler = null;
-
                     var profiler = MiniProfiler.Current;
-                    var httpContext = System.Web.HttpContext.Current;
-
-                    if (profiler?.Head != null && httpContext != null)
+                    var head = profiler?.Head;
+                    if (head != null)
                     {
-                        var requestId = Guid.NewGuid();
+                        var formattedRequest = JsonFormatter.FormatRequest(args);
+                        var duration = (decimal)formattedRequest.DurationMilliseconds;
 
-                        // assign a unique request ID to this context since
-                        // HttpContext may be shared across events, due to singleton-nature
-                        // of DocumentStore
-                        if (!httpContext.Items.Contains(RavenRequestPrefix + requestId))
+                        head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
                         {
-                            httpContext.Items[RavenRequestPrefix + requestId] = RavenRequestPending;
-                        }
-
-                        handler = (s, r) =>
-                        {
-                            store.JsonRequestFactory.LogRequest -= handler;
-
-                            // add a "handled" marker because not every ConfigureRequest event is for a single query
-                            // so if we've already timed this request, ignore otherwise we will have dup timings                            
-                            if (r.AdditionalInformation.ContainsKey(RavenHandledRequestMarker))
-                                return;
-
-                            // have we handled this request on this context?
-                            if ((string)httpContext.Items[RavenRequestPrefix + requestId] == RavenRequestHandled)
-                                return;
-
-                            // add handled marker to request
-                            r.AdditionalInformation.Add(RavenHandledRequestMarker, "");
-
-                            // mark this request as handled on this context
-                            httpContext.Items[RavenRequestPrefix + requestId] = RavenRequestHandled;
-
-                            // add custom timing
-                            IncludeTiming(r, profiler);
-                        };
-
-                        store.JsonRequestFactory.LogRequest += handler;
+                            Id = Guid.NewGuid(),
+                            StartMilliseconds = Math.Max(head.StartMilliseconds - duration, 0),
+                            DurationMilliseconds = duration,
+                            FirstFetchDurationMilliseconds = duration,
+                            ExecuteType = formattedRequest.Status.ToString()
+                        });
                     }
                 };
             }
-#endif
-        }
 
-        private static void IncludeTiming(RequestResultArgs request, MiniProfiler profiler)
-        {
-            if (profiler?.Head == null)
-            {
-                return;
-            }
-
-            var formattedRequest = JsonFormatter.FormatRequest(request);
-
-            profiler.Head.AddCustomTiming("raven", new CustomTiming(profiler, BuildCommandString(formattedRequest))
-            {
-                Id = Guid.NewGuid(),
-                DurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
-                FirstFetchDurationMilliseconds = (decimal)formattedRequest.DurationMilliseconds,
-                ExecuteType = formattedRequest.Status.ToString()
-            });
+            return store;
         }
 
         private static string BuildCommandString(RequestResultArgs request)
         {
-            var url = request.Url;
+            var uri = new Uri(request.Url);
 
-            var commandTextBuilder = new StringBuilder();
-
+            var sb = new StringBuilder();
             // Basic request information
             // HTTP GET - 200 (Cached)
-            commandTextBuilder.AppendFormat("HTTP {0} - {1} ({2})\n",
+            sb.AppendFormat("HTTP {0} - {1} ({2})\n",
                 request.Method,
                 request.HttpResult,
                 request.Status);
 
             // Request URL
-            commandTextBuilder.AppendFormat("{0}\n\n", FormatUrl(url));
-
+            sb.AppendFormat("{0}://{1}{2}\n\n", uri.Scheme, uri.Authority, uri.AbsolutePath);
             // Append query
-            var query = FormatQuery(url);
-            if (!String.IsNullOrWhiteSpace(query))
+            if (uri.Query.HasValue())
             {
-                commandTextBuilder.AppendFormat("{0}\n\n", query);
+                var match = IndexQueryPattern.Match(uri.AbsolutePath);
+                if (match.Success)
+                {
+                    string index = match.Groups[1].Value;
+                    if (index.HasValue())
+                        sb.Append("index=").AppendLine(index);
+                }
+                if (uri.Query.Length > 1)
+                {
+                    var qsValues = Uri.UnescapeDataString(uri.Query.Substring(1).Replace("&", "\n").Trim());
+                    sb.AppendLine(qsValues);
+                }
             }
 
             // Append POSTed data, if any (multi-get, PATCH, etc.)
-            if (!String.IsNullOrWhiteSpace(request.PostedData))
+            if (request.PostedData.HasValue())
             {
-                commandTextBuilder.Append(request.PostedData);
+                sb.Append(request.PostedData);
             }
 
             // Set the command string to a formatted string
-            return commandTextBuilder.ToString();
-        }
-
-        private static string FormatUrl(string requestUrl)
-        {
-            // TODO: Allocations, ugh - refactor all of this
-            var results = requestUrl.Split('?');
-
-            if (results.Length > 0)
-            {
-                return results[0];
-            }
-
-            return String.Empty;
-        }
-
-        private static string FormatQuery(string url)
-        {
-            var results = url.Split('?');
-
-            if (results.Length > 1)
-            {
-                string[] items = results[1].Split('&');
-                string query = String.Join("\r\n", items).Trim();
-
-                var match = IndexQueryPattern.Match(results[0]);
-                if (match.Success)
-                {
-                    string index = match.Value.Replace("/indexes/", "");
-
-                    if (!String.IsNullOrEmpty(index))
-                        query = String.Format("index={0}\r\n", index) + query;
-                }
-
-                return Uri.UnescapeDataString(Uri.UnescapeDataString(query));
-            }
-
-            return String.Empty;
+            return sb.ToString();
         }
     }
 }
