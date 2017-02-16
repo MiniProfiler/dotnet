@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>Tests.RavenDB</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net46</TargetFrameworks>
+    <AssemblyName>MiniProfiler.Providers.RavenDB.Tests</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.RavenDB\MiniProfiler.Providers.RavenDB.csproj" />
+    <PackageReference Include="RavenDB.Client" Version="3.5.3-patch-35187" />
+    <PackageReference Include="xunit" Version="2.2.0-rc2-build3523" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-rc2-build1249" />
+  </ItemGroup>
+</Project>
