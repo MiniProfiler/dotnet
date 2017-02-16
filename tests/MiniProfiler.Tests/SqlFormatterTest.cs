@@ -4,10 +4,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Transactions;
 
+using StackExchange.Profiling;
 using StackExchange.Profiling.SqlFormatters;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     public class SqlFormatterTest
     {

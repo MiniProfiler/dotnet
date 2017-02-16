@@ -1,11 +1,12 @@
-﻿using System;
+﻿using StackExchange.Profiling;
+using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     [Collection("Storage")]
     public abstract class BaseTest
@@ -32,7 +33,7 @@ namespace StackExchange.Profiling.Tests
         protected void SetDefaultProviders()
         {
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
-            MiniProfiler.Settings.Storage = new Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+            MiniProfiler.Settings.Storage = new StackExchange.Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
         }
 
         /// <summary>

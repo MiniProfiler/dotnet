@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Data.SqlServerCe;
 
+using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Storage;
 
-namespace StackExchange.Profiling.Tests.Storage
+namespace Tests.Storage
 {
     public class SqlCeStorageFixture<T> : IDisposable
     {

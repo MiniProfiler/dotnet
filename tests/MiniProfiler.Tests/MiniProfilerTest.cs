@@ -1,7 +1,8 @@
-﻿using System;
+﻿using StackExchange.Profiling;
+using System;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     [Collection("MiniProfiler")] // using that lib's storage provider
     public class MiniProfilerTest : BaseTest
@@ -9,7 +10,7 @@ namespace StackExchange.Profiling.Tests
         public MiniProfilerTest()
         {
             MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
-            MiniProfiler.Settings.Storage = new Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+            MiniProfiler.Settings.Storage = new StackExchange.Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
         }
 
         [Fact]

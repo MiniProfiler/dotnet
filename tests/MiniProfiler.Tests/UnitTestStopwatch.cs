@@ -1,11 +1,12 @@
-﻿using System;
+﻿using StackExchange.Profiling.Helpers;
+using System;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     /// <summary>
     /// The unit test stopwatch.
     /// </summary>
-    public class UnitTestStopwatch : Helpers.IStopwatch
+    public class UnitTestStopwatch : IStopwatch
     {
         private bool _isRunning = true;
 

@@ -1,12 +1,11 @@
 ﻿using System.Data.SqlServerCe;
-using System.Linq;
-
-using Dapper;
-using StackExchange.Profiling.Storage;
-using Xunit;
 using System.Threading.Tasks;
 
-namespace StackExchange.Profiling.Tests.Storage
+using Dapper;
+using StackExchange.Profiling;
+using Xunit;
+
+namespace Tests.Storage
 {
     /// <summary>
     /// The SQL server storage test.

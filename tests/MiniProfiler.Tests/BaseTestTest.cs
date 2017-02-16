@@ -1,6 +1,7 @@
-﻿using Xunit;
+﻿using StackExchange.Profiling;
+using Xunit;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     public class BaseTestTest : BaseTest
     {

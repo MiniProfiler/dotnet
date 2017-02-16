@@ -5,8 +5,9 @@ using System.Web;
 
 using Subtext.TestLibrary;
 using Xunit;
+using StackExchange.Profiling;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     internal class MiniProfilerHandlerTests
     {

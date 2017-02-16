@@ -3,7 +3,7 @@
 using StackExchange.Profiling.Storage;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests.Storage
+namespace Tests.Storage
 {
     /// <summary>
     /// test the HTTP runtime cache storage.

@@ -1,10 +1,11 @@
 ﻿using System.IO;
 
 using Dapper;
+using StackExchange.Profiling;
 using StackExchange.Profiling.SqlFormatters;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     public class ProtobufSerializationTest : BaseTest
     {

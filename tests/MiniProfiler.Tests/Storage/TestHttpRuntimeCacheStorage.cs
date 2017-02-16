@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 
+using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests.Storage
+namespace Tests.Storage
 {
     public class TestHttpRuntimeCacheStorage
     {

@@ -3,9 +3,10 @@ using System.Data.SqlServerCe;
 using System.IO;
 
 using Dapper;
+using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
 
-namespace StackExchange.Profiling.Tests
+namespace Tests
 {
     public static class Utils
     {

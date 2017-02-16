@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 using StackExchange.Profiling.Data;
 
-namespace StackExchange.Profiling.Tests.Data
+namespace Tests.Data
 {
     /// <summary>
     /// The counting profiler.

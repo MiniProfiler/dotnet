@@ -4,7 +4,7 @@ using Dapper;
 using StackExchange.Profiling.Data;
 using Xunit;
 
-namespace StackExchange.Profiling.Tests.Data
+namespace Tests.Data
 {
     /// <summary>
     /// The profiler test.
