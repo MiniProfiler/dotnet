@@ -10,7 +10,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Contains helper code to time SQL statements.
     /// </summary>
-    public class SqlProfiler
+    internal class SqlProfiler
     {
         /// <summary>
         /// Returns a new <c>SqlProfiler</c> to be used in the <paramref name="profiler"/> session.
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
-        public void ExecuteStartImpl(IDbCommand command, SqlExecuteType type)
+        public void ExecuteStart(IDbCommand command, SqlExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
             _inProgress[id] = new SqlTiming(command, type, Profiler);
@@ -43,7 +43,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
-        public void ExecuteFinishImpl(IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
+        public void ExecuteFinish(IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
         {
             var id = Tuple.Create((object)command, type);
             var current = _inProgress[id];
@@ -58,7 +58,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
-        public void ReaderFinishedImpl(IDataReader reader)
+        public void ReaderFinish(IDataReader reader)
         {
             // this reader may have been disposed/closed by reader code, not by our using()
             if (_inProgressReaders.TryGetValue(reader, out var stat))
@@ -74,40 +74,6 @@ namespace StackExchange.Profiling
         public SqlTiming[] GetInProgressCommands()
         {
             return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
-        }
-    }
-
-    /// <summary>
-    /// Helper methods that allow operation on <c>SqlProfilers</c>, regardless of their instantiation.
-    /// </summary>
-    public static class SqlProfilerExtensions
-    {
-        /// <summary>
-        /// Tracks when 'command' is started.
-        /// </summary>
-        public static void ExecuteStart(this SqlProfiler sqlProfiler, IDbCommand command, SqlExecuteType type)
-        {
-            sqlProfiler?.ExecuteStartImpl(command, type);
-        }
-
-        /// <summary>
-        /// Finishes profiling for 'command', recording durations.
-        /// </summary>
-        public static void ExecuteFinish(
-            this SqlProfiler sqlProfiler,
-            IDbCommand command,
-            SqlExecuteType type,
-            DbDataReader reader = null)
-        {
-            sqlProfiler?.ExecuteFinishImpl(command, type, reader);
-        }
-
-        /// <summary>
-        /// Called when 'reader' finishes its iterations and is closed.
-        /// </summary>
-        public static void ReaderFinish(this SqlProfiler sqlProfiler, IDataReader reader)
-        {
-            sqlProfiler?.ReaderFinishedImpl(reader);
         }
     }
 }

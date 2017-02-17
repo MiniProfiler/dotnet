@@ -52,26 +52,19 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a snippet of the SQL command and the duration.
         /// </summary>
-        public override string ToString()
-        {
-            return _customTiming.CommandString.Truncate(30) + " (" + _customTiming.DurationMilliseconds + " ms)";
-        }
+        public override string ToString() =>
+            _customTiming.CommandString.Truncate(30) + " (" + _customTiming.DurationMilliseconds + " ms)";
 
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        public override bool Equals(object other)
-        {
-            return other is SqlTiming && _customTiming.Id.Equals(((SqlTiming)other)._customTiming.Id);
-        }
+        public override bool Equals(object other) =>
+            other is SqlTiming && _customTiming.Id.Equals(((SqlTiming)other)._customTiming.Id);
 
         /// <summary>
         /// Returns hash code of Id.
         /// </summary>
-        public override int GetHashCode()
-        {
-            return _customTiming.Id.GetHashCode();
-        }
+        public override int GetHashCode() => _customTiming.Id.GetHashCode();
 
         /// <summary>
         /// Called when command execution is finished to determine this <c>SqlTiming's</c> duration.
@@ -92,10 +85,7 @@ namespace StackExchange.Profiling
         /// Called when database reader is closed, ending profiling for 
         /// <see cref="SqlExecuteType.Reader"/> <c>SqlTimings</c>.
         /// </summary>
-        public void ReaderFetchComplete()
-        {
-            _customTiming.Stop();
-        }
+        public void ReaderFetchComplete() => _customTiming.Stop();
 
         /// <summary>
         /// Returns the value of <paramref name="parameter"/> suitable for storage/display.
@@ -140,18 +130,14 @@ namespace StackExchange.Profiling
             return rawValue.ToString();
         }
 
-        private static int GetParameterSize(IDbDataParameter parameter)
-        {
-            return parameter.IsNullable && parameter.Value == null ? 0 : parameter.Size;
-        }
+        private static int GetParameterSize(IDbDataParameter parameter) =>
+            parameter.IsNullable && parameter.Value == null ? 0 : parameter.Size;
 
         /// <summary>
         /// To help with display, put some space around crowded commas.
         /// </summary>
-        private string AddSpacesToParameters(string commandString)
-        {
-            return Regex.Replace(commandString, @",([^\s])", ", $1");
-        }
+        private string AddSpacesToParameters(string commandString) =>
+            Regex.Replace(commandString, @",([^\s])", ", $1");
 
         /// <summary>
         /// Returns better parameter information for <paramref name="command"/>.  Returns null if no parameters are present.

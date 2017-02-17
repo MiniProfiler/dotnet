@@ -10,23 +10,16 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Contains information about queries executed during this profiling session.
         /// </summary>
-        internal SqlProfiler SqlProfiler { get; private set; }
+        internal SqlProfiler SqlProfiler { get; }
+        
+        void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType) => 
+            SqlProfiler?.ExecuteStart(profiledDbCommand, executeType);
 
-        // IDbProfiler methods
-        void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
-        {
-            SqlProfiler.ExecuteStart(profiledDbCommand, executeType);
-        }
+        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader) => 
+            SqlProfiler?.ExecuteFinish(profiledDbCommand, executeType, reader);
 
-        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader)
-        {
-            SqlProfiler.ExecuteFinish(profiledDbCommand, executeType, reader);
-        }
-
-        void IDbProfiler.ReaderFinish(IDataReader reader)
-        {
-            SqlProfiler.ReaderFinish(reader);
-        }
+        void IDbProfiler.ReaderFinish(IDataReader reader) => 
+            SqlProfiler?.ReaderFinish(reader);
 
         void IDbProfiler.OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception)
         {
@@ -34,6 +27,5 @@ namespace StackExchange.Profiling
         }
 
         bool IDbProfiler.IsActive => IsActive;
-        internal bool IsActive { get; set; }
     }
 }

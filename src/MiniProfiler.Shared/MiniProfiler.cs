@@ -45,6 +45,11 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Whether the profiler is currently profiling
+        /// </summary>
+        internal bool IsActive { get; set; }
+
+        /// <summary>
         /// Gets or sets the profiler id.
         /// Identifies this Profiler so it may be stored/cached.
         /// </summary>
