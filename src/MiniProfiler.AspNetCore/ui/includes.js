@@ -173,10 +173,14 @@ var MiniProfiler = (function () {
                 json.Started = new Date(json.Started);
                 break;
             case 'string':
-                // .NET's JavaScriptSerializer sends dates as /Date(1308024322065)/
-                var array = /-?\d+/.exec(json.Started);
-                if (array.length == 1) {
-                    json.Started = new Date(parseInt(array[0]));
+                if (json.Started.indexOf('/') == 0) {
+                    // .NET's JavaScriptSerializer sends dates as /Date(1308024322065)/
+                    var array = /-?\d+/.exec(json.Started);
+                    if (array.length == 1) {
+                        json.Started = new Date(parseInt(array[0]));
+                    }
+                } else {
+                    json.Started = new Date(json.Started);
                 }
                 break;
         }

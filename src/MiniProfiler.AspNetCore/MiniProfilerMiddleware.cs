@@ -77,11 +77,14 @@ namespace StackExchange.Profiling
             // Otherwise this is an app request, profile it!
             if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
             {
+                // Wrap the request in this profiler
                 var mp = MiniProfiler.Start();
+                // Always add this profiler's header (and any async requests before it)
+                await AppendHeadersAsync(context, mp).ConfigureAwait(false);
+                // Execute the pipe
                 await _next(context);
-                await MiniProfiler.StopAsync();
-                // This approach won't work in Core (as headers are long-since sent...need to figure out)
-                //await AppendHeadersAsync(context, mp).ConfigureAwait(false);
+                // Stop (and record)
+                await MiniProfiler.StopAsync().ConfigureAwait(false);
             }
             else
             {
