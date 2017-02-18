@@ -48,6 +48,7 @@ namespace StackExchange.Profiling
         /// Returns true if this has the same parent  
         /// <see cref="Name"/> and <see cref="Value"/> as <paramref name="obj"/>.
         /// </summary>
+        /// <param name="obj">The <see cref="object"/> to compare.</param>
         public override bool Equals(object obj)
         {
             var other = obj as SqlTimingParameter;

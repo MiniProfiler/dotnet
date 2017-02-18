@@ -30,6 +30,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns null if there is not client timing stuff
         /// </summary>
+        /// <param name="form">The form to transform to a <see cref="ClientTiming"/>.</param>
         public static ClientTimings FromForm(IDictionary<string, string> form)
         {
             ClientTimings timing = null;

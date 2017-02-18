@@ -106,6 +106,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns null if there is not client timing stuff
         /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/> to get client timings from.</param>
         public static ClientTimings GetClientTimings(this HttpRequest request)
         {
             var dict = new Dictionary<string, string>();

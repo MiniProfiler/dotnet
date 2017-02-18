@@ -31,6 +31,9 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Initialises a new instance of the <see cref="WrappedView"/> class. 
         /// </summary>
+        /// <param name="wrapped">The <see cref="IView"/> to be wrapped (and profiled).</param>
+        /// <param name="name">The name of the view.</param>
+        /// <param name="isPartial">Whether the view is a partial.</param>
         public WrappedView(IView wrapped, string name, bool isPartial)
         {
             _wrapped = wrapped;
@@ -39,8 +42,10 @@ namespace StackExchange.Profiling.Mvc
         }
 
         /// <summary>
-        /// Renders the WrappedView and logs profiling data
+        /// Renders the WrappedView and logs profiling data.
         /// </summary>
+        /// <param name="viewContext">The view context to render.</param>
+        /// <param name="writer">The writer to render the view to.</param>
         public void Render(ViewContext viewContext, TextWriter writer)
         {
             var prof = MiniProfiler.Current;

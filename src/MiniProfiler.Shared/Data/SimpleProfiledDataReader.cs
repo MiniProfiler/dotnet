@@ -16,6 +16,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="profiler">The profiler.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="reader"/> is <c>null</c>.</exception>
         public SimpleProfiledDataReader(IDataReader reader, IDbProfiler profiler)
         {
             _reader = reader ?? throw new ArgumentNullException(nameof(reader));

@@ -11,6 +11,9 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Return SQL the way you want it to look on the in the trace. Usually used to format parameters.
         /// </summary>
+        /// <param name="commandText">The SQL command to format.</param>
+        /// <param name="parameters">The parameters for the SQL command.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
         string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null);
     }
 }

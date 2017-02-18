@@ -14,6 +14,9 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Creates a new wrapped <see cref="IDbTransaction"/>
         /// </summary>
+        /// <param name="transaction">The transaction to wrap.</param>
+        /// <param name="connection">The already-wrapped connection.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="transaction"/> or <paramref name="connection"/> is <c>null</c>.</exception>
         public SimpleProfiledTransaction(IDbTransaction transaction, SimpleProfiledConnection connection)
         {
             WrappedTransaction = transaction ?? throw new ArgumentNullException(nameof(transaction));

@@ -29,13 +29,15 @@ namespace StackExchange.Profiling
         /// <param name="next">The delegate representing the next middleware in the request pipeline.</param>
         /// <param name="hostingEnvironment">The Hosting Environment.</param>
         /// <param name="options">The middleware options, containing the rules to apply.</param>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Throws when <see cref="MiniProfilerOptions.RouteBasePath"/> is <c>null</c> or empty.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
             IHostingEnvironment hostingEnvironment,
             MiniProfilerOptions options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _env = hostingEnvironment ?? throw new ArgumentException(nameof(hostingEnvironment));
+            _env = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             Options = options ?? throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrEmpty(Options.RouteBasePath))
@@ -60,6 +62,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> for the current request.</param>
         /// <returns>A task that represents the execution of the MiniProfiler-wrapped middleware.</returns>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="context"/> is <c>null</c>.</exception>
         public async Task Invoke(HttpContext context)
         {
             if (context == null)
@@ -70,7 +73,7 @@ namespace StackExchange.Profiling
             if (context.Request.Path.StartsWithSegments(BasePath, out PathString subPath))
             {
                 // This is a request in the MiniProfiler path (e.g. one of "our" routes), HANDLE THE SITUATION.
-                await HandleRequest(context, subPath);
+                await HandleRequest(context, subPath).ConfigureAwait(false);
                 return;
             }
 
@@ -143,7 +146,7 @@ namespace StackExchange.Profiling
             result = result ?? NotFound(context);
             context.Response.ContentLength = result.Length;
 
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(result).ConfigureAwait(false);
         }
 
         private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
@@ -157,6 +160,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if the current request is allowed to see the profiler response.
         /// </summary>
+        /// <param name="context">The context to attempt to authroize a user for.</param>
+        /// <param name="isList">Whether this is a list route being accessed.</param>
+        /// <param name="message">The access denied message, if present.</param>
         private bool AuthorizeRequest(HttpContext context, bool isList, out string message)
         {
             message = null;
@@ -177,6 +183,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the list of profiling sessions
         /// </summary>
+        /// <param name="context">The results list HTML, if authorized.</param>
         private string ResultsIndex(HttpContext context)
         {
             if (!AuthorizeRequest(context, isList: true, message: out string message))
@@ -201,6 +208,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the JSON needed for the results list in MiniProfiler
         /// </summary>
+        /// <param name="context">The context to get the results list for.</param>
         private string ResultsList(HttpContext context)
         {
             if (!AuthorizeRequest(context, isList: true, message: out string message))
@@ -235,6 +243,7 @@ namespace StackExchange.Profiling
         /// Returns either json or full page html of a previous <c>MiniProfiler</c> session, 
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
+        /// <param name="context">The context to get a profiler response for.</param>
         private string GetSingleProfilerResult(HttpContext context)
         {
             var isPost = context.Request.HasFormContentType;

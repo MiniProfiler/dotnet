@@ -33,9 +33,13 @@ namespace Subtext.TestLibrary
         private NameValueCollection _formVars = new NameValueCollection();
         private NameValueCollection _headers = new NameValueCollection();
 
-        public HttpSimulator() : this("/", defaultPhysicalAppPath) { }
+        public HttpSimulator() : this("/", defaultPhysicalAppPath)
+        {
+        }
 
-        public HttpSimulator(string applicationPath) : this(applicationPath, defaultPhysicalAppPath) { }
+        public HttpSimulator(string applicationPath) : this(applicationPath, defaultPhysicalAppPath)
+        {
+        }
 
         public HttpSimulator(string applicationPath, string physicalApplicationPath)
         {
@@ -52,39 +56,17 @@ namespace Subtext.TestLibrary
         public HttpSimulator SimulateRequest() => SimulateRequest(new Uri("http://localhost/"));
 
         /// <summary>
-        /// Sets up the HttpContext objects to simulate a GET request.
-        /// </summary>
-        public HttpSimulator SimulateRequest(Uri url) =>
-            SimulateRequest(url, HttpVerb.GET);
-
-        /// <summary>
         /// Sets up the HttpContext objects to simulate a request.
         /// </summary>
-        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb) =>
-            SimulateRequest(url, httpVerb, null, null);
-
-        /// <summary>
-        /// Sets up the HttpContext objects to simulate a POST request.
-        /// </summary>
-        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables) =>
-            SimulateRequest(url, HttpVerb.POST, formVariables, null);
-
-        /// <summary>
-        /// Sets up the HttpContext objects to simulate a POST request.
-        /// </summary>
-        public HttpSimulator SimulateRequest(Uri url, NameValueCollection formVariables, NameValueCollection headers) =>
-            SimulateRequest(url, HttpVerb.POST, formVariables, headers);
-
-        /// <summary>
-        /// Sets up the HttpContext objects to simulate a request.
-        /// </summary>
-        public HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb, NameValueCollection headers) =>
-            SimulateRequest(url, httpVerb, null, headers);
-
-        /// <summary>
-        /// Sets up the HttpContext objects to simulate a request.
-        /// </summary>
-        protected virtual HttpSimulator SimulateRequest(Uri url, HttpVerb httpVerb, NameValueCollection formVariables, NameValueCollection headers)
+        /// <param name="url">The Uri to hit (via POST).</param>
+        /// <param name="httpVerb">The HTTP method to use.</param>
+        /// <param name="formVariables">The form variables to send.</param>
+        /// <param name="headers">The headers to send.</param>
+        public virtual HttpSimulator SimulateRequest(
+            Uri url,
+            HttpVerb httpVerb = HttpVerb.GET,
+            NameValueCollection formVariables = null,
+            NameValueCollection headers = null)
         {
             HttpContext.Current = null;
 
@@ -318,10 +300,10 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Sets the referer for the request. Uses a fluent interface.
         /// </summary>
+        /// <param name="referer">The referer to set.</param>
         public HttpSimulator SetReferer(Uri referer)
         {
-            if (workerRequest != null)
-                workerRequest.SetReferer(referer);
+            workerRequest?.SetReferer(referer);
             _referer = referer;
             return this;
         }
@@ -329,6 +311,9 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Sets a form variable.
         /// </summary>
+        /// <param name="name">The form variable name.</param>
+        /// <param name="value">The form variable value.</param>
+        /// <exception cref="InvalidOperationException">Throws when called after <see cref="Simulate()"/>.</exception>
         public HttpSimulator SetFormVariable(string name, string value)
         {
             //TODO: Change this ordering requirement.
@@ -343,6 +328,9 @@ namespace Subtext.TestLibrary
         /// <summary>
         /// Sets a header value.
         /// </summary>
+        /// <param name="name">The header name.</param>
+        /// <param name="value">The header value.</param>
+        /// <exception cref="InvalidOperationException">Throws when called after <cref="Simulate()"/>.</exception>
         public HttpSimulator SetHeader(string name, string value)
         {
             //TODO: Change this ordering requirement.
@@ -526,6 +514,7 @@ namespace Subtext.TestLibrary
                 _requestSimulation = simulation;
             }
 
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
             public string GetMachineConfigFilename()
             {
                 throw new NotImplementedException();
@@ -550,6 +539,7 @@ namespace Subtext.TestLibrary
             {
                 throw new NotImplementedException();
             }
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
 
             public string MapPath(string siteID, string path)
             {

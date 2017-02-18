@@ -32,6 +32,11 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> this <see cref="Timing"/> belongs to.</param>
+        /// <param name="parent">The <see cref="Timing"/> this <see cref="Timing"/> is a child of.</param>
+        /// <param name="name">The name of this timing.</param>
+        /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
+        /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
         public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {
             Id = Guid.NewGuid();
@@ -208,6 +213,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
+        /// <param name="other">The <see cref="object"/> to comare to.</param>
         public override bool Equals(object other)
         {
             return other is Timing && Id.Equals(((Timing)other).Id);
@@ -245,6 +251,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Add the parameter 'timing' to this Timing's Children collection.
         /// </summary>
+        /// <param name="timing">The child <see cref="Timing"/> to add.</param>
         /// <remarks>
         /// Used outside this assembly for custom deserialization when creating an <see cref="Storage.IAsyncStorage"/> implementation.
         /// </remarks>

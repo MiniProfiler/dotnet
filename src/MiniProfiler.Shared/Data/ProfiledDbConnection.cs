@@ -33,6 +33,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="connection"><c>Your provider-specific flavour of connection, e.g. SqlConnection, OracleConnection</c></param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="connection"/> is <c>null</c>.</exception>
         public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -181,6 +182,7 @@ namespace StackExchange.Profiling.Data
         /// Creates a clone of this <see cref="ProfiledDbConnection"/>.
         /// </summary>
         /// <returns>The <see cref="ProfiledDbConnection"/>.</returns>
+        /// <exception cref="NotSupportedException">Throws when the connection is not <see cref="ICloneable"/></exception>
         public ProfiledDbConnection Clone()
         {
             var tail = _connection as ICloneable;

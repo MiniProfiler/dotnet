@@ -44,10 +44,11 @@ namespace Subtext.TestLibrary
         /// <param name="host">Host.</param>
         /// <param name="port">Port to request.</param>
         /// <param name="verb">The HTTP Verb to use.</param>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="host"/> or <paramref name="applicationPath"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Throws when <paramref name="host"/> is empty.</exception>
 	    public SimulatedHttpRequest(string applicationPath, string physicalAppPath, string physicalFilePath, string page, string query, TextWriter output, string host, int port, string verb) : base(applicationPath, physicalAppPath, page, query, output)
         {
-            if (host == null)
-                throw new ArgumentNullException(nameof(host), "Host cannot be null.");
+            _host = host ?? throw new ArgumentNullException(nameof(host), "Host cannot be null.");
 
             if (host.Length == 0)
                 throw new ArgumentException("Host cannot be empty.", nameof(host));
@@ -55,7 +56,6 @@ namespace Subtext.TestLibrary
             if (applicationPath == null)
                 throw new ArgumentNullException(nameof(applicationPath), "Can't create a request with a null application path. Try empty string.");
 
-            _host = host;
             _verb = verb;
             _port = port;
             _physicalFilePath = physicalFilePath;

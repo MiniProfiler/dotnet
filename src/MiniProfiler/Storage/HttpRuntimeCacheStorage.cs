@@ -37,6 +37,7 @@ namespace StackExchange.Profiling.Storage
         /// Initialises a new instance of the <see cref="HttpRuntimeCacheStorage"/> class. 
         /// Returns a new HttpRuntimeCacheStorage class that will cache MiniProfilers for the specified duration.
         /// </summary>
+        /// <param name="cacheDuration">The duration to store each <see cref="MiniProfiler"/> for, before it expires.</param>
         public HttpRuntimeCacheStorage(TimeSpan cacheDuration)
         {
             CacheDuration = cacheDuration;
@@ -46,6 +47,7 @@ namespace StackExchange.Profiling.Storage
         /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with 
         /// <see cref="CacheKeyPrefix"/> and the parameter's <see cref="MiniProfiler.Id"/>.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public void Save(MiniProfiler profiler)
         {
             InsertIntoCache(GetCacheKey(profiler.Id), profiler);
@@ -77,6 +79,7 @@ namespace StackExchange.Profiling.Storage
         /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with <see cref="CacheKeyPrefix"/>
         /// and the parameter's <see cref="MiniProfiler.Id"/>.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public Task SaveAsync(MiniProfiler profiler)
         {
             Save(profiler);
@@ -86,6 +89,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Set the profile to unviewed for this user
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public void SetUnviewed(string user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
@@ -101,6 +106,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Set the profile to unviewed for this user
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public Task SetUnviewedAsync(string user, Guid id)
         {
             SetUnviewed(user, id);
@@ -110,6 +117,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Set the profile to viewed for this user
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public void SetViewed(string user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
@@ -123,6 +132,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Set the profile to viewed for this user
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public Task SetViewedAsync(string user, Guid id)
         {
             SetViewed(user, id);
@@ -133,12 +144,16 @@ namespace StackExchange.Profiling.Storage
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public MiniProfiler Load(Guid id) => HttpRuntime.Cache[GetCacheKey(id)] as MiniProfiler;
 
         /// <summary>
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
         /// profiler <see cref="MiniProfiler.HasUserViewed"/> to true.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public Task<MiniProfiler> LoadAsync(Guid id) => Task.FromResult(Load(id));
 
         /// <summary>
@@ -203,6 +218,10 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// List the latest profiling results.
         /// </summary>
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
         public IEnumerable<Guid> List(
             int maxResults,
             DateTime? start = null,
@@ -245,6 +264,10 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// List the latest profiling results.
         /// </summary>
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
         public Task<IEnumerable<Guid>> ListAsync(
             int maxResults,
             DateTime? start = null,

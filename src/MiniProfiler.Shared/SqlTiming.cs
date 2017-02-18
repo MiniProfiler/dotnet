@@ -28,6 +28,11 @@ namespace StackExchange.Profiling
         /// Initialises a new instance of the <see cref="SqlTiming"/> class. 
         /// Creates a new <c>SqlTiming</c> to profile 'command'.
         /// </summary>
+        /// <param name="command">The <see cref="DbCommand"/> to time.</param>
+        /// <param name="type">The execution type.</param>
+        /// <param name="profiler">The miniprofiler to attach the timing to.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="profiler"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">Throw if the custom timing can't be created.</exception>
         public SqlTiming(IDbCommand command, SqlExecuteType type, MiniProfiler profiler)
         {
             _profiler = profiler ?? throw new ArgumentNullException(nameof(profiler));
@@ -56,19 +61,21 @@ namespace StackExchange.Profiling
             _customTiming.CommandString.Truncate(30) + " (" + _customTiming.DurationMilliseconds + " ms)";
 
         /// <summary>
-        /// Returns true if Ids match.
+        /// Returns true if IDs match.
         /// </summary>
+        /// <param name="other">The <see cref="object"/> to compare.</param>
         public override bool Equals(object other) =>
             other is SqlTiming && _customTiming.Id.Equals(((SqlTiming)other)._customTiming.Id);
 
         /// <summary>
-        /// Returns hash code of Id.
+        /// Returns hash code of ID.
         /// </summary>
         public override int GetHashCode() => _customTiming.Id.GetHashCode();
 
         /// <summary>
         /// Called when command execution is finished to determine this <c>SqlTiming's</c> duration.
         /// </summary>
+        /// <param name="isReader">Whether the item completing is a <see cref="IDataReader"/>.</param>
         public void ExecutionComplete(bool isReader)
         {
             if (isReader)
@@ -90,6 +97,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the value of <paramref name="parameter"/> suitable for storage/display.
         /// </summary>
+        /// <param name="parameter">The parameter to get a value for.</param>
         private static string GetValue(IDataParameter parameter)
         {
             object rawValue = parameter.Value;
@@ -136,12 +144,15 @@ namespace StackExchange.Profiling
         /// <summary>
         /// To help with display, put some space around crowded commas.
         /// </summary>
+        /// <param name="commandString">The command string to space out.</param>
         private string AddSpacesToParameters(string commandString) =>
             Regex.Replace(commandString, @",([^\s])", ", $1");
 
         /// <summary>
-        /// Returns better parameter information for <paramref name="command"/>.  Returns null if no parameters are present.
+        /// Returns better parameter information for <paramref name="command"/>.
+        /// Returns <c>null</c> if no parameters are present.
         /// </summary>
+        /// <param name="command">The cmmand to get parameters for.</param>
         public static List<SqlTimingParameter> GetCommandParameters(IDbCommand command)
         {
             if (command.Parameters == null || command.Parameters.Count == 0) return null;

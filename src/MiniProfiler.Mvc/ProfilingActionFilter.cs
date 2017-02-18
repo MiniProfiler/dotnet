@@ -16,6 +16,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Happens before the action starts running
         /// </summary>
+        /// <param name="filterContext">The filter context to handle the start of.</param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var mp = MiniProfiler.Current;
@@ -41,6 +42,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Happens after the action executes
         /// </summary>
+        /// <param name="filterContext">The filter context to handle the end of.</param>
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             base.OnActionExecuted(filterContext);

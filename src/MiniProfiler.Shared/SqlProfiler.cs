@@ -15,6 +15,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a new <c>SqlProfiler</c> to be used in the <paramref name="profiler"/> session.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> this SQL timing halper is for.</param>
         public SqlProfiler(MiniProfiler profiler)
         {
             Profiler = profiler;
@@ -34,6 +35,8 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Tracks when 'command' is started.
         /// </summary>
+        /// <param name="command">The <see cref="IDbCommand"/> that started.</param>
+        /// <param name="type">The execution type of the <paramref name="command"/>.</param>
         public void ExecuteStart(IDbCommand command, SqlExecuteType type)
         {
             var id = Tuple.Create((object)command, type);
@@ -43,6 +46,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Finishes profiling for 'command', recording durations.
         /// </summary>
+        /// <param name="command">The <see cref="IDbCommand"/> that finished.</param>
+        /// <param name="type">The execution type of the <paramref name="command"/>.</param>
+        /// <param name="reader">(Optional) the reader piece of the <paramref name="command"/>, if it exists.</param>
         public void ExecuteFinish(IDbCommand command, SqlExecuteType type, DbDataReader reader = null)
         {
             var id = Tuple.Create((object)command, type);
@@ -58,6 +64,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Called when 'reader' finishes its iterations and is closed.
         /// </summary>
+        /// <param name="reader">The <see cref="IDataReader"/> that finished.</param>
         public void ReaderFinish(IDataReader reader)
         {
             // this reader may have been disposed/closed by reader code, not by our using()

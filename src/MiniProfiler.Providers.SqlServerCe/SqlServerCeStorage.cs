@@ -52,7 +52,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
-        /// <param name="profiler">The Mini Profiler</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public override void Save(MiniProfiler profiler)
         {
             using (var conn = GetConnection())
@@ -114,7 +114,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <summary>
         /// Asynchronously stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The Mini Profiler</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public override async Task SaveAsync(MiniProfiler profiler)
         {
             using (var conn = GetConnection())
@@ -174,10 +174,10 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         }
 
         /// <summary>
-        /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
+        /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
         /// </summary>
-        /// <param name="id">The profiler ID</param>
-        /// <returns>The MiniProfiler</returns>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override MiniProfiler Load(Guid id)
         {
             MiniProfiler result;
@@ -198,8 +198,8 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
-        /// <param name="id">The profiler ID</param>
-        /// <returns>The MiniProfiler</returns>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler> LoadAsync(Guid id)
         {
             MiniProfiler result;
@@ -230,15 +230,15 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public override Task SetUnviewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, false);
 
         /// <summary>
@@ -251,8 +251,8 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private const string _toggleViewedSql = @"

@@ -19,12 +19,12 @@ namespace StackExchange.Profiling.Data
         private IDbTransaction _transaction;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleProfiledCommand"/> class. 
-        /// Creates a new wrapped command
+        /// Initialises a new instance of the <see cref="SimpleProfiledCommand"/> class, creating a new wrapped command.
         /// </summary>
-        /// <param name="command">The wrapped command</param>
-        /// <param name="connection">The wrapped connection the command is attached to</param>
-        /// <param name="profiler">The profiler to use</param>
+        /// <param name="command">The wrapped command.</param>
+        /// <param name="connection">The wrapped connection the command is attached to.</param>
+        /// <param name="profiler">The profiler to use.</param>
+        /// <exception cref="ArgumentNullException">Throws then the <paramref name="command"/> is <c>null</c>.</exception>
         public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
@@ -213,6 +213,7 @@ namespace StackExchange.Profiling.Data
         /// Clones this command.
         /// </summary>
         /// <returns>The <see cref="object"/>.</returns>
+        /// <exception cref="NotSupportedException">Throw when the command is not <see cref="ICloneable"/>.</exception>
         public object Clone()
         {
             var tail = _command as ICloneable;

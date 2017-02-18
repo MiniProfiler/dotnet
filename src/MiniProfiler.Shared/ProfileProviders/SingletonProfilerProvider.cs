@@ -19,12 +19,13 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
-        public MiniProfiler Start(string sessionName = null)
+        /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
+        public MiniProfiler Start(string profilerName = null)
         {
 #if NET46
-            _profiler = new MiniProfiler(sessionName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
+            _profiler = new MiniProfiler(profilerName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else // TODO: Revisit with .NET Standard 2.0
-            _profiler = new MiniProfiler(sessionName ?? "MiniProfiler") { IsActive = true };
+            _profiler = new MiniProfiler(profilerName ?? "MiniProfiler") { IsActive = true };
 #endif
             return _profiler;
         }
@@ -32,6 +33,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public void Stop(bool discardResults)
         {
             _profiler?.StopImpl();
@@ -44,6 +49,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Asynchronously stops the current profiling session.
         /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public Task StopAsync(bool discardResults)
         {
             Stop(discardResults);

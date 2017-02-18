@@ -27,6 +27,8 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Formats the SQL in a generic friendly format, including the parameter type information 
         /// in a comment if it was specified in the InlineFormatter constructor
         /// </summary>
+        /// <param name="commandText">The SQL command to format.</param>
+        /// <param name="parameters">The parameters for the SQL command.</param>
         public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
         {
             if (parameters == null || parameters.Count == 0)
@@ -53,11 +55,12 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Returns a string representation of the parameter's value, including the type
         /// </summary>
-        public string GetParameterValue(SqlTimingParameter p)
+        /// <param name="param">The timing parameter to get the value for.</param>
+        public string GetParameterValue(SqlTimingParameter param)
         {
             // TODO: ugh, figure out how to allow different db providers to specify how values are represented (e.g. bit in oracle)
-            var result = p.Value;
-            var type = p.DbType ?? string.Empty;
+            var result = param.Value;
+            var type = param.DbType ?? string.Empty;
 
             switch (type.ToLower())
             {
@@ -87,7 +90,7 @@ namespace StackExchange.Profiling.SqlFormatters
             }
             if (includeTypeInfo)
             {
-                result += " /* " + p.Name + " DbType." + p.DbType + " */";
+                result += " /* " + param.Name + " DbType." + param.DbType + " */";
             }
             return result;
         }

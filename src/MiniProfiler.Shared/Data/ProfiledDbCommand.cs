@@ -50,6 +50,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="command">The command.</param>
         /// <param name="connection">The connection.</param>
         /// <param name="profiler">The profiler.</param>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="command"/> is <c>null</c>.</exception>
         public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
@@ -319,6 +320,7 @@ namespace StackExchange.Profiling.Data
         /// Clone this command, entity framework expects this behaviour.
         /// </summary>
         /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
+        /// <exception cref="NotSupportedException">Throws when te wrapped command is not <see cref="ICloneable"/>.</exception>
         public ProfiledDbCommand Clone()
         { // EF expects ICloneable
             var tail = _command as ICloneable;

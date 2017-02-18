@@ -26,7 +26,8 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
-        public override MiniProfiler Start(string sessionName = null)
+        /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
+        public override MiniProfiler Start(string profilerName = null)
         {
             var context = HttpContext.Current;
             if (context?.Request.AppRelativeCurrentExecutionFilePath == null) return null;
@@ -49,7 +50,7 @@ namespace StackExchange.Profiling
                 return null;
             }
 
-            var result = new MiniProfiler(sessionName ?? url.OriginalString);
+            var result = new MiniProfiler(profilerName ?? url.OriginalString);
             Current = result;
 
             SetProfilerActive(result);
@@ -163,8 +164,10 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Makes sure 'profiler' has a Name, pulling it from route data or url.
+        /// Makes sure <paramref name="profiler"/> has a Name, pulling it from route data or url.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to ensure a name ie set on.</param>
+        /// <param name="request">The <see cref="HttpRequest"/> request to get the name from.</param>
         private static void EnsureName(MiniProfiler profiler, HttpRequest request)
         {
             // also set the profiler name to Controller/Action or /url

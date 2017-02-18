@@ -14,6 +14,7 @@ namespace StackExchange.Profiling
         /// servers and load balancers). This allows us to have a unique per-user view, even
         /// when behind a proxy or load balancer.
         /// </summary>
+        /// <param name="request">The request to get the client IP from.</param>
         public string GetUser(HttpRequest request)
         {
             var xff = request.ServerVariables["HTTP_X_FORWARDED_FOR"];

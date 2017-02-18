@@ -31,9 +31,12 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
+        /// <param name="commandText">The SQL command to format.</param>
+        /// <param name="parameters">The parameters for the SQL command.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
         public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
 
             if (command != null && IncludeMetaData)
             {

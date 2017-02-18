@@ -16,6 +16,7 @@ namespace StackExchange.Profiling
         /// <param name="selector">Method to execute and profile.</param>
         /// <param name="name">The <see cref="Timing"/> step name used to label the profiler results.</param>
         /// <returns>the profiled result.</returns>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="selector"/> is <c>null</c>.</exception>
         public static T Inline<T>(this MiniProfiler profiler, Func<T> selector, string name)
         {
             if (selector == null) throw new ArgumentNullException(nameof(selector));
@@ -111,6 +112,8 @@ namespace StackExchange.Profiling
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,
         /// allowing other threads, remote calls, etc. to be profiled and joined into this profiling session.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to add to.</param>
+        /// <param name="externalProfiler">The <see cref="MiniProfiler"/> to append to <paramref name="profiler"/>'s tree.</param>
         public static void AddProfilerResults(this MiniProfiler profiler, MiniProfiler externalProfiler)
         {
             if (profiler?.Head == null || externalProfiler == null) return;
@@ -121,6 +124,9 @@ namespace StackExchange.Profiling
         /// Adds the <paramref name="text"/> and <paramref name="url"/> pair to <paramref name="profiler"/>'s 
         /// <see cref="MiniProfiler.CustomLinks"/> dictionary; will be displayed on the client in the bottom of the profiler popup.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to add the link to.</param>
+        /// <param name="text">The text label for the link.</param>
+        /// <param name="url">The URL the link goes to.</param>
         public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
         {
             if (profiler == null || !profiler.IsActive) return;

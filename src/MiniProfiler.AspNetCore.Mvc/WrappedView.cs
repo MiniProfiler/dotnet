@@ -22,6 +22,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Initialises a new instance of the <see cref="WrappedView"/> class. 
         /// </summary>
+        /// <param name="wrapped">The view to wrap in a profiler</param>
         public WrappedView(IView wrapped)
         {
             _wrapped = wrapped;

@@ -31,6 +31,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="wrappedAdapter">The wrapped adapter.</param>
         /// <param name="profiler">The profiler.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="wrappedAdapter"/> is <c>null</c>.</exception>
         public ProfiledDbDataAdapter(IDbDataAdapter wrappedAdapter, IDbProfiler profiler = null)
         {
             InternalAdapter = wrappedAdapter ?? throw new ArgumentNullException(nameof(wrappedAdapter));
@@ -123,7 +124,7 @@ namespace StackExchange.Profiling.Data
         /// This function will only work if you are using an <see cref="T:IDbDataAdapter"/> implementation that inherits from <see cref="T:DbDataAdapter"/>. 
         /// This includes <see cref="T:SqlDataAdapter"/> and most other similar classes. 
         /// </remarks>
-        /// <exception cref="T:System.InvalidOperationException">The source table is invalid or being used with an <see cref="T:IDbDataAdapter"/> implementation that does not inherit from <see cref="T:DbDataAdapter"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source table is invalid or being used with an <see cref="IDbDataAdapter"/> implementation that does not inherit from <see cref="DbDataAdapter"/>.</exception>
         public new int Fill(DataTable dataTable)
         {
             var dbDataAdapter = InternalAdapter as DbDataAdapter;
@@ -173,7 +174,8 @@ namespace StackExchange.Profiling.Data
         /// <returns>
         /// The number of rows successfully updated from the <see cref="T:System.Data.DataSet"/>.
         /// </returns>
-        /// <exception cref="T:System.Data.DBConcurrencyException">An attempt to execute an INSERT, UPDATE, or DELETE statement resulted in zero records affected. </exception>
+        /// <exception cref="DBConcurrencyException">An attempt to execute an INSERT, UPDATE, or DELETE statement resulted in zero records affected.</exception>
+        /// <exception cref="NotImplementedException"></exception>
         public new int Update(DataSet dataSet)
         {
             // Don't need this right now and the logic is much more complicated.  Someone else can have at it.
@@ -196,7 +198,7 @@ namespace StackExchange.Profiling.Data
         /// Gets or sets whether missing source tables, columns, and their relationships are added to the dataset schema, ignored, or cause an error to be raised.
         /// </summary>
         /// <returns>One of the <see cref="T:System.Data.MissingSchemaAction"/> values. The default is Add.</returns>
-        /// <exception cref="T:System.ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values. </exception>
+        /// <exception cref="ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values.</exception>
         public new MissingSchemaAction MissingSchemaAction
         {
             get => InternalAdapter.MissingSchemaAction;

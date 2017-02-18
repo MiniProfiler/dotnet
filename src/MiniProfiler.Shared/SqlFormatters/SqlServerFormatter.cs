@@ -59,6 +59,8 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
+        /// <param name="commandText">The SQL command to format.</param>
+        /// <param name="parameters">The parameters for the SQL command.</param>
         public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters)
         {
             return FormatSql(commandText, parameters, null);
@@ -67,6 +69,9 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
         /// </summary>
+        /// <param name="commandText">The SQL command to format.</param>
+        /// <param name="parameters">The parameters for the SQL command.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
         public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
         {
             var buffer = new StringBuilder();
@@ -148,7 +153,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// This function is necessary to always return the sql statement terminated with a semicolon.
         /// Since we're using semicolons, we should also add it to the end.
         /// </summary>
-        private string TerminateSqlStatement(string sqlStatement)
+        /// <param name="sqlStatement">The SQL statement to terminate if necessary</param>
         {
             if (sqlStatement[sqlStatement.Length - 1] != ';')
             {

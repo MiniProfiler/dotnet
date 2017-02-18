@@ -30,9 +30,10 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
-        /// for the root <paramref name="url"/>.
+        /// for the root <paramref name="name"/>.
         /// </summary>
-        public MiniProfiler(string url)
+        /// <param name="name">The name of this <see cref="MiniProfiler"/>, typically a URL.</param>
+        public MiniProfiler(string name)
         {
             Id = Guid.NewGuid();
             SqlProfiler = new SqlProfiler(this);
@@ -41,7 +42,7 @@ namespace StackExchange.Profiling
 
             // stopwatch must start before any child Timings are instantiated
             Stopwatch = Settings.StopwatchProvider();
-            Root = new Timing(this, null, url);
+            Root = new Timing(this, null, name);
         }
 
         /// <summary>
@@ -224,7 +225,7 @@ namespace StackExchange.Profiling
         /// Ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public static void Stop(bool discardResults = false) =>
@@ -235,7 +236,7 @@ namespace StackExchange.Profiling
         /// This invokves async saving all the way down if th providers support it.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public static Task StopAsync(bool discardResults = false) =>
@@ -252,6 +253,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
         public static string ToJson(MiniProfiler profiler)
         {
             return profiler != null
@@ -265,6 +267,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Deserializes the JSON string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
+        /// <param name="json">The string to deserialize int a <see cref="MiniProfiler"/>.</param>
         public static MiniProfiler FromJson(string json)
         {
             return json.HasValue()
@@ -294,6 +297,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
+        /// <param name="other">The <see cref="object"/> to compare to.</param>
         public override bool Equals(object other)
         {
             return other is MiniProfiler && Id.Equals(((MiniProfiler)other).Id);
@@ -369,6 +373,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency, rounded to one decimal place.
         /// </summary>
+        /// <param name="ticks">The tick count to round.</param>
         internal decimal GetRoundedMilliseconds(long ticks)
         {
             long z = 10000 * ticks;
@@ -379,6 +384,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns how many milliseconds have elapsed since <paramref name="startTicks"/> was recorded.
         /// </summary>
+        /// <param name="startTicks">The start tick count.</param>
         internal decimal GetDurationMilliseconds(long startTicks) =>
             GetRoundedMilliseconds(ElapsedTicks - startTicks);
     }

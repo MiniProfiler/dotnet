@@ -13,6 +13,8 @@
         /// <summary>
         /// You can wrap an html block with timing wrappers using this helper
         /// </summary>
+        /// <param name="name">The name of the block to time.</param>
+        /// <param name="html">The html to wrap in this timing.</param>
         public static string TimeScript(string name, string html)
         {
             if (MiniProfiler.Current != null)

@@ -16,6 +16,9 @@ namespace Tests
         /// <summary>
         /// Creates a <c>SqlCe</c> file database named after <typeparamref name="T"/>, returning the connection string to the database.
         /// </summary>
+        /// <typeparam name="T">The type to create a database for (used in file naming)</typeparam>
+        /// <param name="deleteIfExists">Whether to delete the existing database (if present)</param>
+        /// <param name="sqlToExecute">The SQL to run after creating a database</param>
         public static string CreateSqlCeDatabase<T>(bool deleteIfExists = false, string[] sqlToExecute = null)
         {
             var filename = GetSqlCeFileNameFor<T>();

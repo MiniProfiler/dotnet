@@ -13,6 +13,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="builder">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
         /// <param name="options">Options for MiniProfiler.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="options"/> is <c>null</c>.</exception>
         public static IApplicationBuilder UseMiniProfiler(this IApplicationBuilder builder, MiniProfilerOptions options)
         {
             if (builder == null)

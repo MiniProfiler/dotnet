@@ -15,6 +15,8 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Prevents a default instance of the <see cref="EFProfiledSqlClientDbProviderServices"/> class from being created.
         /// </summary>
-        private EFProfiledSqlClientDbProviderServices() { }
+        private EFProfiledSqlClientDbProviderServices()
+        {
+        }
     }
 }

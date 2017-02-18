@@ -15,6 +15,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class. 
         /// </summary>
+        /// <param name="wrapped">The view engine to wrap in profiling.</param>
         public ProfilingViewEngine(IViewEngine wrapped)
         {
             _wrapped = wrapped;
@@ -57,21 +58,30 @@ namespace StackExchange.Profiling.Mvc
         }
 
         /// <summary>
-        /// Find a partial
+        /// Find a partial view
         /// </summary>
-        public ViewEngineResult FindPartialView(ControllerContext ctx, string partialViewName, bool useCache) =>
-            Find(partialViewName, () => _wrapped.FindPartialView(ctx, partialViewName, useCache), isPartial: true);
+        /// <param name="context">The context to search for this partial with.</param>
+        /// <param name="partialViewName">The view name to search for.</param>
+        /// <param name="useCache">Whether to use cached lookups.</param>
+        public ViewEngineResult FindPartialView(ControllerContext context, string partialViewName, bool useCache) =>
+            Find(partialViewName, () => _wrapped.FindPartialView(context, partialViewName, useCache), isPartial: true);
 
         /// <summary>
-        /// Find a view
+        /// Find a full view
         /// </summary>
-        public ViewEngineResult FindView(ControllerContext ctx, string viewName, string masterName, bool useCache) =>
-            Find(viewName, () => _wrapped.FindView(ctx, viewName, masterName, useCache), isPartial: false);
+        /// <param name="context">The context to search for this view with.</param>
+        /// <param name="viewName">The view name to search for.</param>
+        /// <param name="masterName">The master view name.</param>
+        /// <param name="useCache">Whether to use cached lookups.</param>
+        public ViewEngineResult FindView(ControllerContext context, string viewName, string masterName, bool useCache) =>
+            Find(viewName, () => _wrapped.FindView(context, viewName, masterName, useCache), isPartial: false);
 
         /// <summary>
-        /// Find a partial
+        /// Release the rendered view
         /// </summary>
-        public void ReleaseView(ControllerContext controllerContext, IView view) =>
-            _wrapped.ReleaseView(controllerContext, view);
+        /// <param name="context">The controller context the view is in.</param>
+        /// <param name="view">The view to release.</param>
+        public void ReleaseView(ControllerContext context, IView view) =>
+            _wrapped.ReleaseView(context, view);
     }
 }

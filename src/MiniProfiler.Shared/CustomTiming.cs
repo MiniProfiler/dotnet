@@ -21,6 +21,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a new CustomTiming, also initializing its <see cref="Id"/> and, optionally, its <see cref="StackTraceSnippet"/>.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to attach the timing so.</param>
+        /// <param name="commandString">The descriptive command string for this timing, e.g. a URL or database command.</param>
+        /// <param name="minSaveMs">(Optional) The minimum time required to actually save this timing (e.g. do we care?).</param>
         public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs = null)
         {
             _profiler = profiler;

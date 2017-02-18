@@ -28,6 +28,7 @@ namespace StackExchange.Profiling.Storage
         /// Create the <see cref="MultiStorageProvider"/> with the given collection of <see cref="IAsyncStorage"/> objects (order is important!)
         /// </summary>
         /// <param name="stores">The <see cref="IAsyncStorage"/> objects to use for storage (order is important!)</param>
+        /// <exception cref="ArgumentNullException">Throws when there are no Stores.</exception>
         public MultiStorageProvider(params IAsyncStorage[] stores)
         {
             Stores = stores.Where(x => x != null).ToList();
@@ -41,6 +42,10 @@ namespace StackExchange.Profiling.Storage
         /// Run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             if (Stores != null)
@@ -61,13 +66,17 @@ namespace StackExchange.Profiling.Storage
         /// Asynchronously run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
-        public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = default(DateTime?), DateTime? finish = default(DateTime?), ListResultsOrder orderBy = ListResultsOrder.Descending)
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
+        public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             if (Stores == null) return Enumerable.Empty<Guid>();
             foreach (var store in Stores)
             {
                 var results = await store.ListAsync(maxResults, start, finish, orderBy).ConfigureAwait(false);
-                if (results != null && results.Any())
+                if (results?.Any() == true)
                 {
                     return results;
                 }
@@ -78,7 +87,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/> in all of the <see cref="Stores"/>.
         /// </summary>
-        /// <param name="profiler">The results of a profiling session.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
         /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -101,7 +110,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/> in all of the <see cref="Stores"/>.
         /// </summary>
-        /// <param name="profiler">The results of a profiling session.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
         /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -117,6 +126,8 @@ namespace StackExchange.Profiling.Storage
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -139,6 +150,8 @@ namespace StackExchange.Profiling.Storage
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -160,6 +173,8 @@ namespace StackExchange.Profiling.Storage
         /// Sets a particular profiler session so it is considered "un-viewed".
         /// Will set this to all <see cref="IAsyncStorage"/> items in <see cref="Stores"/>
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public void SetUnviewed(string user, Guid id)
         {
             if (Stores == null) return;
@@ -180,6 +195,8 @@ namespace StackExchange.Profiling.Storage
         /// Asynchronously sets a particular profiler session so it is considered "un-viewed".
         /// Will set this to all <see cref="IAsyncStorage"/> items in <see cref="Stores"/>
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public Task SetUnviewedAsync(string user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;
@@ -191,6 +208,8 @@ namespace StackExchange.Profiling.Storage
         /// Sets a particular profiler session to "viewed".
         /// Will set this to all <see cref="IAsyncStorage"/> items in <see cref="Stores"/>
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public void SetViewed(string user, Guid id)
         {
             if (Stores == null) return;
@@ -209,8 +228,10 @@ namespace StackExchange.Profiling.Storage
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed".
-        /// Will set this to all <see cref="IAsyncStorage"/> items in <see cref="Stores"/>
+        /// This sets viewed on all <see cref="IAsyncStorage"/> items in <see cref="Stores"/>.
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public Task SetViewedAsync(string user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;

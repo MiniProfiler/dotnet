@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         /// Ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         void Stop(bool discardResults);
@@ -30,7 +30,7 @@ namespace StackExchange.Profiling
         /// Asynconrously ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         Task StopAsync(bool discardResults);

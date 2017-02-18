@@ -25,9 +25,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
-        public override MiniProfiler Start(string sessionName = null)
+        /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
+        public override MiniProfiler Start(string profilerName = null)
         {
-            Profiler = new MiniProfiler(sessionName ??
+            Profiler = new MiniProfiler(profilerName ??
 #if NET46
             AppDomain.CurrentDomain.FriendlyName
 #else       // TODO: Revisit with .NET Standard 2.0
@@ -42,6 +43,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public override void Stop(bool discardResults)
         {
             var profiler = Profiler;
@@ -57,6 +62,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public override async Task StopAsync(bool discardResults)
         {
             var profiler = Profiler;

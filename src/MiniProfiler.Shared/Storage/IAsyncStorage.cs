@@ -28,6 +28,10 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// List the latest profiling results.
         /// </summary>
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
         IEnumerable<Guid> List(
             int maxResults,
             DateTime? start = null,
@@ -37,7 +41,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The results of a profiling session.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
         /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -47,6 +51,8 @@ namespace StackExchange.Profiling.Storage
         /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its 
         /// profiling <see cref="MiniProfiler.User"/>.
@@ -56,11 +62,15 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         void SetUnviewed(string user, Guid id);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         void SetViewed(string user, Guid id);
 
         /// <summary>
@@ -72,6 +82,10 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously list the latest profiling results.
         /// </summary>
+        /// <param name="maxResults">The maximum number of results to return.</param>
+        /// <param name="start">(Optional) The start of the date range to fetch.</param>
+        /// <param name="finish">(Optional) The end of the date range to fetch.</param>
+        /// <param name="orderBy">(Optional) The order to fetch profiler IDs in.</param>
         Task<IEnumerable<Guid>> ListAsync(
             int maxResults,
             DateTime? start = null,
@@ -81,7 +95,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously stores <paramref name="profiler"/> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The results of a profiling session.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
         /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
@@ -91,6 +105,8 @@ namespace StackExchange.Profiling.Storage
         /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its 
         /// profiling <see cref="MiniProfiler.User"/>.
@@ -100,11 +116,15 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         Task SetUnviewedAsync(string user, Guid id);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         Task SetViewedAsync(string user, Guid id);
 
         /// <summary>

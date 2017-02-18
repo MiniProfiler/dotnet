@@ -2,18 +2,22 @@
 
 namespace StackExchange.Profiling.Data
 {
+#pragma warning disable RCS1158 // Avoid static members in generic types.
     /// <summary>
     /// This is a micro-cache; suitable when the number of terms is controllable (a few hundred, for example),
     /// and strictly append-only; you cannot change existing values. All key matches are on **REFERENCE**
     /// equality. The type is fully thread-safe.
     /// </summary>
-    /// <typeparam name="TKey">the key type</typeparam>
-    /// <typeparam name="TValue">the value type</typeparam>
+    /// <typeparam name="TKey">The key type.</typeparam>
+    /// <typeparam name="TValue">The value type.</typeparam>
     public class Link<TKey, TValue> where TKey : class
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="Link{TKey,TValue}"/> class.
         /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="tail">The tail linkage.</param>
         private Link(TKey key, TValue value, Link<TKey, TValue> tail)
         {
             Key = key;
@@ -41,7 +45,10 @@ namespace StackExchange.Profiling.Data
         /// the default value is returned if no match is found.
         /// An exception is not thrown.
         /// </summary>
-        /// <returns>return true if a value is located.</returns>
+        /// <param name="link">The link to search.</param>
+        /// <param name="key">The key to look for.</param>
+        /// <param name="value">The value, if found.</param>
+        /// <returns>true if a value is located.</returns>
         public static bool TryGet(Link<TKey, TValue> link, TKey key, out TValue value)
         {
             while (link != null)

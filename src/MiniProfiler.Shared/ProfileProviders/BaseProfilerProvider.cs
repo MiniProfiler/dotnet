@@ -16,20 +16,27 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
-        public abstract MiniProfiler Start(string sessionName = null);
+        /// <param name="profilerName">The name for the <see cref="MiniProfiler"/>.</param>
+        public abstract MiniProfiler Start(string profilerName = null);
 
         /// <summary>
         /// Stops the current MiniProfiler (if any is currently running).
         /// <see cref="SaveProfiler"/> should be called if <paramref name="discardResults"/> is false
         /// </summary>
-        /// <param name="discardResults">If true, any current results will be thrown away and nothing saved</param>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public abstract void Stop(bool discardResults);
 
         /// <summary>
         /// Asynchronously stops the current MiniProfiler (if any is currently running).
         /// <see cref="SaveProfiler"/> should be called if <paramref name="discardResults"/> is false
         /// </summary>
-        /// <param name="discardResults">If true, any current results will be thrown away and nothing saved</param>
+        /// <param name="discardResults">
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
+        /// </param>
         public abstract Task StopAsync(bool discardResults);
 
         /// <summary>
@@ -41,7 +48,8 @@ namespace StackExchange.Profiling
         /// Sets <paramref name="profiler"/> to be active (read to start profiling)
         /// This should be called once a new MiniProfiler has been created.
         /// </summary>
-        /// <exception cref="ArgumentNullException">If <paramref name="profiler"/> is null</exception>
+        /// <param name="profiler">Sets a <see cref="MiniProfiler"/> to active/enabled.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="profiler"/> is <c>null</c>.</exception>
         protected static void SetProfilerActive(MiniProfiler profiler)
         {
             if (profiler == null)
@@ -53,8 +61,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Stops the profiler and marks it as inactive.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <returns>True if successful, false if Stop had previously been called on this profiler</returns>
-        /// <exception cref="ArgumentNullException">If <paramref name="profiler"/> is null</exception>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="profiler"/> is <c>null</c>.</exception>
         protected static bool StopProfiler(MiniProfiler profiler)
         {
             if (profiler == null)
@@ -72,6 +81,7 @@ namespace StackExchange.Profiling
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
+        /// <param name="current">The <see cref="MiniProfiler"/> to save.</param>
         protected static void SaveProfiler(MiniProfiler current)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
@@ -89,6 +99,7 @@ namespace StackExchange.Profiling
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
+        /// <param name="current">The <see cref="MiniProfiler"/> to save.</param>
         protected static async Task SaveProfilerAsync(MiniProfiler current)
         {
             var storage = current.Storage ?? MiniProfiler.Settings.Storage;

@@ -16,6 +16,7 @@ namespace StackExchange.Profiling.Data
     /// <typeparam name="T">the factory type.</typeparam>
     public class EFProfiledDbProviderServices<T> : DbProviderServices where T : DbProviderServices
     {
+#pragma warning disable RCS1158 // Avoid static members in generic types.
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
@@ -27,6 +28,7 @@ namespace StackExchange.Profiling.Data
         /// Initialises a new instance of the <see cref="EFProfiledDbProviderServices{T}"/> class. 
         /// Used for DB provider APIS internally 
         /// </summary>
+        /// <exception cref="Exception">Throws when the Instance is inaccessible.</exception>
         protected EFProfiledDbProviderServices()
         {
             PropertyInfo property = typeof(T).GetProperty(nameof(Instance), BindingFlags.Public | BindingFlags.Static);

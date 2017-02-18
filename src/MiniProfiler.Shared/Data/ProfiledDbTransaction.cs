@@ -17,6 +17,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="connection">The connection.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="transaction"/> or <paramref name="connection"/> is <c>null</c>.</exception>
         public ProfiledDbTransaction(DbTransaction transaction, ProfiledDbConnection connection)
         {
             _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));

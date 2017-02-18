@@ -61,9 +61,10 @@ namespace Tests
         /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
-        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
-        /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
-        /// <returns>the mini profiler</returns>
+        /// <param name="url">The uri of the request.</param>
+        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
+        /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step.</param>
+        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
         public static MiniProfiler GetProfiler(
             string url = DefaultRequestUrl,
             int childDepth = 0,
@@ -100,9 +101,10 @@ namespace Tests
         /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
+        /// <param name="url">The uri of the request.</param>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
-        /// <returns>the mini profiler</returns>
+        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
         public static async Task<MiniProfiler> GetProfilerAsync(
             string url = DefaultRequestUrl,
             int childDepth = 0,
@@ -201,6 +203,9 @@ namespace Tests
         /// <summary>
         /// Doesn't handle collection properties!
         /// </summary>
+        /// <typeparam name="T">The argument type to compare.</typeparam>
+        /// <param name="t1">The first object to compare.</param>
+        /// <param name="t2">The second object to compare.</param>
         protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2)
         {
             Assert.NotNull(t1);

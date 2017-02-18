@@ -22,6 +22,8 @@ namespace StackExchange.Profiling
         /// Initialises a new instance of the <see cref="Suppression"/> class. 
         /// Creates a new Suppression to deactive profiling while alive
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to suppress.</param>
+        /// <exception cref="ArgumentNullException">Throws when the <paramref name="profiler"/> is <c>null</c>.</exception>
         public Suppression(MiniProfiler profiler)
         {
             Profiler = profiler ?? throw new ArgumentNullException(nameof(profiler));

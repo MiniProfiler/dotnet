@@ -34,55 +34,55 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The profiler</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public abstract void Save(MiniProfiler profiler);
 
         /// <summary>
         /// Asynchronously saves 'profiler' to a database under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
-        /// <param name="profiler">The profiler</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public abstract Task SaveAsync(MiniProfiler profiler);
 
         /// <summary>
         /// Returns the MiniProfiler identified by 'id' from the database or null when no MiniProfiler exists under that 'id'.
         /// </summary>
-        /// <param name="id">The profiler ID</param>
-        /// <returns>The profiler</returns>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public abstract MiniProfiler Load(Guid id);
 
         /// <summary>
         /// Asynchronously returns the MiniProfiler identified by 'id' from the database or null when no MiniProfiler exists under that 'id'.
         /// </summary>
-        /// <param name="id">The profiler ID</param>
-        /// <returns>The MiniProfiler</returns>
+        /// <param name="id">The profiler ID to load.</param>
+        /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public abstract Task<MiniProfiler> LoadAsync(Guid id);
 
         /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public abstract void SetUnviewed(string user, Guid id);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as unviewed for.</param>
+        /// <param name="id">The profiler ID to set unviewed.</param>
         public abstract Task SetUnviewedAsync(string user, Guid id);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public abstract void SetViewed(string user, Guid id);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
-        /// <param name="user">The user</param>
-        /// <param name="id">The profiler ID</param>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="id">The profiler ID to set viewed.</param>
         public abstract Task SetViewedAsync(string user, Guid id);
 
         /// <summary>
@@ -173,6 +173,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Flattems the timings down into a single list.
         /// </summary>
+        /// <param name="timing">The <see cref="Timing"/> to flatten into <paramref name="timingsCollection"/>.</param>
+        /// <param name="timingsCollection">The collection to add all timings in the <paramref name="timing"/> tree to.</param>
         protected void FlattenTimings(Timing timing, List<Timing> timingsCollection)
         {
             timingsCollection.Add(timing);
