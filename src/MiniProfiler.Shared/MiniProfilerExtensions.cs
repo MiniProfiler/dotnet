@@ -28,26 +28,26 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
+        /// Returns an <see cref="Timing"/> (<see cref="IDisposable"/>) that will time the code between its creation and disposal.
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
-        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting Timing's lifetime.</param>
         /// <returns>the profile step</returns>
-        public static IDisposable Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name);
+        public static Timing Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name);
 
         /// <summary>
-        /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal.
+        /// Returns an <see cref="Timing"/> (<see cref="IDisposable"/>) that will time the code between its creation and disposal.
         /// Will only save the <see cref="Timing"/> if total time taken exceeds <paramref name="minSaveMs" />.
         /// </summary>
-        /// <param name="profiler">The current profiling session or null.</param>
-        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting IDisposable's lifetime.</param>
+        /// <param name="profiler">The current profiling session or <c>null</c>.</param>
+        /// <param name="name">A descriptive name for the code that is encapsulated by the resulting Timing's lifetime.</param>
         /// <param name="minSaveMs">The minimum amount of time that needs to elapse in order for this result to be recorded.</param>
         /// <param name="includeChildren">Should the amount of time spent in child timings be included when comparing total time
         /// profiled with <paramref name="minSaveMs"/>? If true, will include children. If false will ignore children.</param>
         /// <returns></returns>
         /// <remarks>If <paramref name="includeChildren"/> is set to true and a child is removed due to its use of StepIf, then the 
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
-        public static IDisposable StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
+        public static Timing StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
         {
             return profiler?.StepImpl(name, minSaveMs, includeChildren);
         }

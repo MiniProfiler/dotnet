@@ -355,7 +355,7 @@ namespace StackExchange.Profiling
         }
 #endif
 
-        internal IDisposable StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
+        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {
             return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
         }
