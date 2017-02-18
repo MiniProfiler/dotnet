@@ -12,11 +12,11 @@ namespace Subtext.TestLibrary
 {
     public enum HttpVerb
     {
-        GET,
-        HEAD,
-        POST,
-        PUT,
-        DELETE,
+        GET = 0,
+        HEAD = 1,
+        POST = 2,
+        PUT = 3,
+        DELETE = 4,
     }
 
     /// <summary>

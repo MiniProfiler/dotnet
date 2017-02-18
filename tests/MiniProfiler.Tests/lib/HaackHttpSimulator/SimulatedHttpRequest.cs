@@ -124,16 +124,6 @@ namespace Subtext.TestLibrary
             return base.GetKnownRequestHeader(index);
         }
 
-        /// <summary>
-        /// Returns the virtual path to the currently executing server application.
-        /// </summary>
-        /// <returns>The virtual path of the current application.</returns>
-        public override string GetAppPath() => base.GetAppPath();
-
-        public override string GetAppPathTranslated() => base.GetAppPathTranslated();
-
-        public override string GetUriPath() => base.GetUriPath();
-
         public override string GetFilePathTranslated() => _physicalFilePath;
 
         /// <summary>

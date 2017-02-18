@@ -105,7 +105,7 @@ namespace StackExchange.Profiling
                         await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
                     }
                 }
-                
+
                 if (arrayOfIds?.Count > 0)
                 {
                     context.Response.Headers.Add("X-MiniProfiler-Ids", arrayOfIds.ToJson());
@@ -197,7 +197,7 @@ namespace StackExchange.Profiling
   </head>
 </html>";
         }
-        
+
         /// <summary>
         /// Returns the JSON needed for the results list in MiniProfiler
         /// </summary>

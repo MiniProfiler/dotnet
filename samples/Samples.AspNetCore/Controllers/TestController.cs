@@ -52,7 +52,7 @@ namespace Samples.AspNetCore.Controllers
                 return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
         }
-        
+
         public IActionResult MassiveNesting()
         {
             var i = 0;
@@ -62,7 +62,7 @@ namespace Samples.AspNetCore.Controllers
             }
             return Content("Massive Nesting completed");
         }
-        
+
         public IActionResult MassiveNesting2()
         {
             for (int i = 0; i < 6; i++)
@@ -71,7 +71,7 @@ namespace Samples.AspNetCore.Controllers
             }
             return Content("Massive Nesting 2 completed");
         }
-        
+
         private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler profiler)
         {
             Thread.Sleep(5); // ensure we show up in the profiler
@@ -162,6 +162,7 @@ namespace Samples.AspNetCore.Controllers
                 RecursiveMethod(ref depth, connection, profiler);
             }
         }
+
         public IActionResult MinSaveMs()
         {
             var profiler = MiniProfiler.Current;

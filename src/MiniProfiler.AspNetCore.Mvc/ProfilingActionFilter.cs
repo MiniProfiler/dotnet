@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Mvc
         {
             var mp = MiniProfiler.Current;
             if (mp != null)
-            {   
+            {
                 var stack = filterContext.HttpContext.Items[StackKey] as Stack<IDisposable>;
                 if (stack == null)
                 {

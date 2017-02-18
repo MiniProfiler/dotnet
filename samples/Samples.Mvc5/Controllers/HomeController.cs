@@ -29,7 +29,7 @@ namespace Samples.Mvc5.Controllers
         /// disable the profiling UI.
         /// </summary>
         /// <returns>disable profiling the UI</returns>
-        public ActionResult DisableProfilingUI() 
+        public ActionResult DisableProfilingUI()
         {
             MvcApplication.DisableProfilingResults = true;
             return Redirect("/");
@@ -231,7 +231,7 @@ namespace Samples.Mvc5.Controllers
                 try
                 {
                     using (MiniProfiler.Current.Step("Create Context"))
-                        context = new SampleEfModelFirstEntities(); 
+                        context = new SampleEfModelFirstEntities();
 
                     // this is not correct, as the count from this assignment is never actually used
                     using (MiniProfiler.Current.Step("First count"))
@@ -306,7 +306,6 @@ namespace Samples.Mvc5.Controllers
                             conn.Close();
                         }
                     }
-
                 }
                 finally
                 {
@@ -452,7 +451,7 @@ namespace Samples.Mvc5.Controllers
                                 from   RouteHits
                                 where  HitCount > 100)
                         order  by RouteName");
-                
+
                 // need a long title to test max-width
                 using (profiler.Step("Incrementing a reference parameter named i"))
                 {
