@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
+using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling.Mvc
 {
@@ -21,7 +22,7 @@ namespace StackExchange.Profiling.Mvc
         {
             var mp = MiniProfiler.Current;
             if (mp != null)
-            {
+            {   
                 var stack = filterContext.HttpContext.Items[StackKey] as Stack<IDisposable>;
                 if (stack == null)
                 {
@@ -36,9 +37,17 @@ namespace StackExchange.Profiling.Mvc
                 switch (filterContext.ActionDescriptor)
                 {
                     case ControllerActionDescriptor cd:
+                        if (mp.Name.IsNullOrWhiteSpace())
+                        {
+                            mp.Name = $"{cd.ControllerName}/{cd.MethodInfo.Name}";
+                        }
                         stack.Push(mp.Step($"Controller: {area}{cd.ControllerName}.{cd.MethodInfo.Name}"));
                         break;
                     case ActionDescriptor ad:
+                        if (mp.Name.IsNullOrWhiteSpace())
+                        {
+                            mp.Name = ad.DisplayName;
+                        }
                         stack.Push(mp.Step($"Controller: {area}{ad.DisplayName}"));
                         break;
                 }
