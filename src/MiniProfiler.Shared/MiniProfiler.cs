@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Storage;
-using System.Threading.Tasks;
 #if NET46
+using System.IO;
 using System.Web.Script.Serialization;
 #else
 // TODO: Factor these extensions out? That'd be more breaks...
@@ -183,10 +184,17 @@ namespace StackExchange.Profiling
         [DataMember(Order = 10)]
         public bool HasUserViewed { get; set; }
 
+        // Allows async to properly track the attachment point
+        private readonly AsyncLocal<Timing> _head = new AsyncLocal<Timing>();
+
         /// <summary>
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
-        public Timing Head { get; set; }
+        public Timing Head
+        {
+            get => _head.Value;
+            set => _head.Value = value;
+        }
 
         /// <summary>
         /// Gets the ticks since this MiniProfiler was started.
