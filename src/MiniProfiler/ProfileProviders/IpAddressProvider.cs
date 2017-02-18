@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using StackExchange.Profiling.Helpers;
+using System.Web;
 
 namespace StackExchange.Profiling
 {
@@ -21,7 +22,7 @@ namespace StackExchange.Profiling
             var remoteAddr = request.ServerVariables["REMOTE_ADDR"] ?? "";
 
             // If there's no X_FORWARDED_FOR header, just return REMOTE_ADDR
-            if (string.IsNullOrWhiteSpace(xff))
+            if (xff.IsNullOrWhiteSpace())
             {
                 return remoteAddr;
             }

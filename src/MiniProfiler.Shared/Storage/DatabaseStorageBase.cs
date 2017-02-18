@@ -127,7 +127,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="clientTimings">The client timings to connect to the profiler</param>
         protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
         {
-            if (profiler != null && profiler.RootTimingId.HasValue && timings.Count > 0)
+            if (profiler?.RootTimingId.HasValue == true && timings.Count > 0)
             {
                 var rootTiming = timings.SingleOrDefault(x => x.Id == profiler.RootTimingId.Value);
                 if (rootTiming != null)

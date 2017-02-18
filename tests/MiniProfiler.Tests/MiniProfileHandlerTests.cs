@@ -84,10 +84,11 @@ namespace Tests
 
         private static Type GetRequestResponseEncoding(MiniProfilerHandler handler, string resourceName, string encoding)
         {
-	        var headers = new NameValueCollection();
-	        headers.Add("Accept-encoding", encoding);
-
-	        using (new HttpSimulator("/mini-profiler-resources/", @"c:\").SimulateRequest(new Uri("http://localhost/mini-profiler-resources"+resourceName), HttpVerb.GET, headers))
+            var headers = new NameValueCollection
+            {
+                ["Accept-encoding"] = encoding
+            };
+            using (new HttpSimulator("/mini-profiler-resources/", @"c:\").SimulateRequest(new Uri("http://localhost/mini-profiler-resources"+resourceName), headers: headers))
             {
                 handler.ProcessRequest(HttpContext.Current);
 

@@ -83,7 +83,7 @@ namespace StackExchange.Profiling.Data
             action = null;
             ParameterInfo[] indexers;
             MethodInfo setter;
-            if (prop != null && prop.CanWrite && prop.PropertyType == typeof(bool)
+            if (prop?.CanWrite == true && prop.PropertyType == typeof(bool)
                 && ((indexers = prop.GetIndexParameters()) == null || indexers.Length == 0)
                 && (setter = prop.GetSetMethod()) != null)
             {

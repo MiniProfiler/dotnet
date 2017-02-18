@@ -86,7 +86,7 @@ namespace StackExchange.Profiling.SqlFormatters
             }
 
             // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' or 'StoredProcedure'
-            if (command != null && command.CommandType == CommandType.StoredProcedure)
+            if (command?.CommandType == CommandType.StoredProcedure)
             {
                 GenerateStoreProcedureCall(commandText, parameters, buffer);
             }
@@ -95,7 +95,8 @@ namespace StackExchange.Profiling.SqlFormatters
                 buffer.Append(commandText);
             }
 
-            return TerminateSqlStatement(buffer.ToString());
+            TerminateSqlStatement(buffer);
+            return buffer.ToString();
         }
 
         private string EnsureParameterPrefix(string name) =>
@@ -154,12 +155,12 @@ namespace StackExchange.Profiling.SqlFormatters
         /// Since we're using semicolons, we should also add it to the end.
         /// </summary>
         /// <param name="sqlStatement">The SQL statement to terminate if necessary</param>
+        private void TerminateSqlStatement(StringBuilder sqlStatement)
         {
             if (sqlStatement[sqlStatement.Length - 1] != ';')
             {
-                return sqlStatement + ";";
+                sqlStatement.Append(";");
             }
-            return sqlStatement;
         }
 
         private void GenerateStoredProcedureParameters(StringBuilder buffer, List<SqlTimingParameter> parameters)
