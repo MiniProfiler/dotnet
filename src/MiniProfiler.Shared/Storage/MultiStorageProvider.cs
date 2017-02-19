@@ -36,6 +36,7 @@ namespace StackExchange.Profiling.Storage
             {
                 throw new ArgumentNullException(nameof(stores), "Please include at least one IAsyncStorage object when initializing a MultiStorageProvider");
             }
+            SetUnviewedAfterSave = Stores.Any(s => s.SetUnviewedAfterSave);
         }
 
         /// <summary>
@@ -168,6 +169,11 @@ namespace StackExchange.Profiling.Storage
             }
             return null;
         }
+
+        /// <summary>
+        /// Whether any of the underlying providers should call SetUnviewed methods after saving.
+        /// </summary>
+        public bool SetUnviewedAfterSave { get; }
 
         /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed".

@@ -86,6 +86,8 @@ namespace StackExchange.Profiling.Storage
             return Task.CompletedTask;
         }
 
+        bool IAsyncStorage.SetUnviewedAfterSave => true;
+
         /// <summary>
         /// Set the profile to unviewed for this user
         /// </summary>

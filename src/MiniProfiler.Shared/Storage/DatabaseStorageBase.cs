@@ -58,6 +58,11 @@ namespace StackExchange.Profiling.Storage
         public abstract Task<MiniProfiler> LoadAsync(Guid id);
 
         /// <summary>
+        /// Whether this storage provider should call SetUnviewed methods (separately) after saving.
+        /// </summary>
+        public virtual bool SetUnviewedAfterSave => false;
+
+        /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>

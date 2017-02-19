@@ -60,6 +60,14 @@ namespace StackExchange.Profiling.Storage
         MiniProfiler Load(Guid id);
 
         /// <summary>
+        /// Returns whether or not the storage implementation needs to call <see cref="SetUnviewed(string, Guid)"/>
+        /// or <see cref="SetUnviewedAsync(string, Guid)"/> after the initial <see cref="Save(MiniProfiler)"/> or
+        /// <see cref="SaveAsync(MiniProfiler)"/> call. For example in a database this is likely false, whereas in
+        /// Redis and similar it's likely true (e.g. separately adding the profiler ID to a list).
+        /// </summary>
+        bool SetUnviewedAfterSave { get; }
+
+        /// <summary>
         /// Sets a particular profiler session so it is considered "un-viewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>

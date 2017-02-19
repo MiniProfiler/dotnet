@@ -24,6 +24,7 @@ namespace StackExchange.Profiling.Storage
         public Task SaveAsync(MiniProfiler profiler) => Task.CompletedTask;
         public MiniProfiler Load(Guid id) => null;
         public Task<MiniProfiler> LoadAsync(Guid id) => Task.FromResult((MiniProfiler)null);
+        public bool SetUnviewedAfterSave => false;
         public void SetUnviewed(string user, Guid id) { /* no-op */ }
         public Task SetUnviewedAsync(string user, Guid id) => Task.CompletedTask;
         public void SetViewed(string user, Guid id) { /* no-op */ }

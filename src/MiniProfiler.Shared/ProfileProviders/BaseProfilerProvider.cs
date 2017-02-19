@@ -88,7 +88,7 @@ namespace StackExchange.Profiling
             // If the current MiniProfiler object has a custom IAsyncStorage set in the Storage property, use it. Else use the Global Storage.
             var storage = current.Storage ?? MiniProfiler.Settings.Storage;
             storage.Save(current);
-            if (!current.HasUserViewed)
+            if (storage.SetUnviewedAfterSave && !current.HasUserViewed)
             {
                 storage.SetUnviewed(current.User, current.Id);
             }
@@ -104,7 +104,7 @@ namespace StackExchange.Profiling
         {
             var storage = current.Storage ?? MiniProfiler.Settings.Storage;
             await storage.SaveAsync(current).ConfigureAwait(false);
-            if (!current.HasUserViewed)
+            if (storage.SetUnviewedAfterSave && !current.HasUserViewed)
             {
                 await storage.SetUnviewedAsync(current.User, current.Id).ConfigureAwait(false);
             }
