@@ -22,3 +22,4 @@ Sample.Wcf/x64/
 Sample.Wcf/x86/
 packages/**/*.*
 .vs/*
+samples/Samples.Mvc5/Properties/launchSettings.json
