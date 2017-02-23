@@ -9,24 +9,23 @@ namespace Tests.Storage
 {
     public class SqlCeStorageFixture<T> : IDisposable
     {
-        public SqlCeConnection Conn { get; private set; }
+        public SqlCeConnection Conn { get; }
+        public IAsyncStorage Storage { get; }
+        public string ConnectionString { get; }
 
         public SqlCeStorageFixture()
         {
-            var connStr = Utils.CreateSqlCeDatabase<T>(deleteIfExists: true, sqlToExecute: SqlServerCeStorage.TableCreationScripts);
-            MiniProfiler.Settings.Storage = new SqlServerCeStorage(connStr);
+            ConnectionString = Utils.CreateSqlCeDatabase<T>(deleteIfExists: true, sqlToExecute: SqlServerCeStorage.TableCreationScripts);
+            Storage = new SqlServerCeStorage(ConnectionString);
             Conn = Utils.GetOpenSqlCeConnection<T>();
         }
 
-        private ProfiledDbConnection GetProfiledConnection()
-        {
-            return new ProfiledDbConnection(Utils.GetOpenSqlCeConnection<T>(), MiniProfiler.Current);
-        }
+        private ProfiledDbConnection GetProfiledConnection() => 
+            new ProfiledDbConnection(Utils.GetOpenSqlCeConnection<T>(), MiniProfiler.Current);
 
         public void Dispose()
         {
             Conn.Dispose();
-            MiniProfiler.Settings.Storage = null;
         }
     }
 }

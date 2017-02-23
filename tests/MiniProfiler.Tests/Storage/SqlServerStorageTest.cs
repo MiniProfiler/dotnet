@@ -10,6 +10,7 @@ namespace Tests.Storage
     /// <summary>
     /// The SQL server storage test.
     /// </summary>
+    [Collection("SQLServer")]
     public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture<SqlServerStorageTest>>
     {
         private SqlCeConnection _conn;
@@ -17,6 +18,7 @@ namespace Tests.Storage
         public SqlServerStorageTest(SqlCeStorageFixture<SqlServerStorageTest> fixture)
         {
             _conn = fixture.Conn;
+            _testStorage = fixture.Storage;
         }
 
         [Fact]
@@ -26,7 +28,7 @@ namespace Tests.Storage
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 1);
 
-            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            var mp2 = _testStorage.Load(mp.Id);
             AssertProfilersAreEqual(mp, mp2);
         }
 
@@ -37,7 +39,7 @@ namespace Tests.Storage
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 1);
 
-            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id).ConfigureAwait(false);
+            var mp2 = await _testStorage.LoadAsync(mp.Id).ConfigureAwait(false);
             AssertProfilersAreEqual(mp, mp2);
         }
 
@@ -48,7 +50,7 @@ namespace Tests.Storage
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 6);
 
-            var mp2 = MiniProfiler.Settings.Storage.Load(mp.Id);
+            var mp2 = _testStorage.Load(mp.Id);
             AssertProfilersAreEqual(mp, mp2);
         }
 
@@ -59,7 +61,7 @@ namespace Tests.Storage
             AssertMiniProfilerExists(mp);
             AssertTimingsExist(mp, 6);
 
-            var mp2 = await MiniProfiler.Settings.Storage.LoadAsync(mp.Id).ConfigureAwait(false);
+            var mp2 = await _testStorage.LoadAsync(mp.Id).ConfigureAwait(false);
             AssertProfilersAreEqual(mp, mp2);
         }
 

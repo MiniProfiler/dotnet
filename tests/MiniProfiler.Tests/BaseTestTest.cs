@@ -42,7 +42,7 @@ namespace Tests
             MiniProfiler mp;
             using (GetRequest())
             {
-                IncrementStopwatch();
+                Increment();
                 mp = MiniProfiler.Current;
             }
 

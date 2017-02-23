@@ -9,18 +9,68 @@ using StackExchange.Profiling.Helpers;
 
 using Xunit;
 
-namespace Tests
+namespace Tests.Async
 {
-    public class MiniProfilerConcurrencyTest : BaseTest
+    public class AsyncTests : BaseTest
     {
+        [Fact]
+        public async Task SimpleAsync()
+        {
+            var profiler = MiniProfiler.Start("root");
+
+            // Add 100ms to root
+            await IncrementAsync(100);
+
+            // 100ms + 100ms = 200ms
+            var step1 = Task.Run(async () =>
+            {
+                using (profiler.Step("step1.0"))
+                {
+                    await IncrementAsync(100);
+
+                    await Task.Run(async () =>
+                    {
+                        using (profiler.Step("step1.1"))
+                        {
+                            await IncrementAsync(100);
+                        }
+                    });
+                }
+            });
+
+            // 100ms
+            var step2 = Task.Run(async () =>
+            {
+                using (profiler.Step("step2.0"))
+                {
+                    await IncrementAsync(100);
+                }
+            });
+
+            // Longest task is 200ms
+            await Task.WhenAll(step1, step2);
+
+            MiniProfiler.Stop();
+
+            Console.WriteLine(profiler.RenderPlainText());
+            //   root = 330.9ms
+            //  > step2.0 = 107.6ms
+            //  > step1.0 = 212.1ms
+            //  >> step1.1 = 107ms
+        }
+
         [Fact]
         public async Task Step_WithParallelTasks_RealTime()
         {
-            MiniProfiler.Settings.StopwatchProvider = StopwatchWrapper.StartNew;
-
             var profiler = MiniProfiler.Start("root");
+            profiler.Stopwatch = StopwatchWrapper.StartNew();
 
-            Timing timing10 = null, timing11 = null, timing20 = null, timing21 = null, timing30 = null, timing31 = null;
+            Timing timing10 = null,
+                timing11 = null,
+                timing20 = null,
+                timing21 = null,
+                timing30 = null,
+                timing31 = null;
 
             // Act
 
@@ -102,17 +152,16 @@ namespace Tests
         [Fact]
         public void Step_WithParallelThreads_RealTime()
         {
-            MiniProfiler.Settings.StopwatchProvider = StopwatchWrapper.StartNew;
             var profiler = MiniProfiler.Start("root");
-
-            // Act
-
+            // Need real wall-time here - hard to simulate in a fake
+            profiler.Stopwatch = StopwatchWrapper.StartNew();
+            
             // Add 100ms to root just to offset the starting point
-            Task.Delay(100).Wait();
+            Thread.Sleep(100);
 
-            // Run up to 10 threads at a time (system and scheduler dependent),
+            // Run up to 3 threads at a time (system and scheduler dependent),
             // each waiting 10 * 50 ms = 500 ms
-            Parallel.For(0, 10, i =>
+            Parallel.For(0, 3, i =>
             {
                 using (profiler.Step($"thread[{i}]"))
                 {
@@ -134,13 +183,13 @@ namespace Tests
             // The total run time is non-deterministic and depends
             // on the system and the scheduler, so we can only assert
             // each thread's duration
-            foreach (var timing in profiler.GetTimingHierarchy())
+            var hierarchy = profiler.GetTimingHierarchy().ToList();
+            foreach (var timing in hierarchy)
             {
-
                 if (timing.Name.StartsWith("thread"))
                 {
-                    // 10 work items, 50 ms each
-                    AssertNear(500, timing.DurationMilliseconds, 20);
+                    // 3 work items, 50 ms each
+                    AssertNear(500, timing.DurationMilliseconds, 100);
                 }
                 else if (timing.Name.StartsWith("work"))
                 {
@@ -153,16 +202,13 @@ namespace Tests
         [Fact]
         public async Task Step_WithParallelTasks_SimulatedTime()
         {
-            MiniProfiler.Settings.StopwatchProvider = () => new UnitTestStopwatch();
             var profiler = MiniProfiler.Start("root");
 
             var waiters = new ConcurrentBag<CountdownEvent>();
             Timing timing10 = null, timing11 = null, timing20 = null, timing21 = null, timing30 = null, timing31 = null;
-
-            // Act
-
+            
             // Add 1ms to root
-            IncrementStopwatch();
+            Increment();
 
             // Start tasks in parallel
             var whenAllTask = Task.WhenAll(
@@ -171,7 +217,6 @@ namespace Tests
                     // timing10: 1 + 1 = 2 ms
                     using (timing10 = profiler.Step("step1.0 (Task.Run)"))
                     {
-
                         var ce = new CountdownEvent(1);
                         waiters.Add(ce);
                         ce.Wait();
@@ -239,7 +284,7 @@ namespace Tests
             List<CountdownEvent> handlers;
             while (hasPendingTasks(handlers = waiters.ToList()))
             {
-                IncrementStopwatch();
+                Increment();
                 handlers.ForEach(x =>
                 {
                     if (!x.IsSet) x.Signal();

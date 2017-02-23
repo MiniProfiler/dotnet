@@ -1,4 +1,5 @@
 ﻿using StackExchange.Profiling;
+using StackExchange.Profiling.Storage;
 using System;
 using System.Collections;
 using System.Linq;
@@ -21,19 +22,18 @@ namespace Tests
         /// </summary>
         public const string DefaultRequestUrl = "http://localhost/Test.aspx";
 
-        /// <summary>
-        /// Initialises static members of the <see cref="BaseTest"/> class.
-        /// </summary>
-        static BaseTest()
+        protected IAsyncStorage _testStorage { get; set; }
+        protected IAsyncProfilerProvider _provider { get; set; }
+        
+        // Reset for each inheritor
+        public BaseTest() => ResetProviders();
+
+        public void ResetProviders()
         {
             // allows us to manually set ticks during tests
             MiniProfiler.Settings.StopwatchProvider = () => new UnitTestStopwatch();
-        }
-
-        protected void SetDefaultProviders()
-        {
-            MiniProfiler.Settings.ProfilerProvider = new WebRequestProfilerProvider();
-            MiniProfiler.Settings.Storage = new StackExchange.Profiling.Storage.HttpRuntimeCacheStorage(TimeSpan.FromDays(1));
+            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
+            MiniProfiler.Settings.Storage = new MemoryCacheStorage(TimeSpan.FromDays(1));
         }
 
         /// <summary>
@@ -65,10 +65,11 @@ namespace Tests
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step.</param>
         /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public static MiniProfiler GetProfiler(
+        public MiniProfiler GetProfiler(
             string url = DefaultRequestUrl,
             int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds,
+            IAsyncStorage storage = null)
         {
             MiniProfiler result = null;
             Action step = null;
@@ -81,7 +82,7 @@ namespace Tests
                 {
                     using (result.Step("Depth " + curDepth))
                     {
-                        IncrementStopwatch(stepsEachTakeMilliseconds);
+                        Increment(stepsEachTakeMilliseconds);
                         step();
                     }
                 }
@@ -91,6 +92,12 @@ namespace Tests
             {
                 result = MiniProfiler.Start();
                 step();
+
+                if ((storage ?? _testStorage) != null)
+                {
+                    result.Storage = storage ?? _testStorage;
+                }
+
                 MiniProfiler.Stop();
             }
 
@@ -105,10 +112,11 @@ namespace Tests
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
         /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
         /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public static async Task<MiniProfiler> GetProfilerAsync(
+        public async Task<MiniProfiler> GetProfilerAsync(
             string url = DefaultRequestUrl,
             int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds,
+            IAsyncStorage storage = null)
         {
             // TODO: Consolidate with above, maybe some out params
             MiniProfiler result = null;
@@ -122,7 +130,7 @@ namespace Tests
                 {
                     using (result.Step("Depth " + curDepth))
                     {
-                        IncrementStopwatch(stepsEachTakeMilliseconds);
+                        Increment(stepsEachTakeMilliseconds);
                         step();
                     }
                 }
@@ -132,6 +140,12 @@ namespace Tests
             {
                 result = MiniProfiler.Start();
                 step();
+
+                if ((storage ?? _testStorage) != null)
+                {
+                    result.Storage = storage ?? _testStorage;
+                }
+
                 await MiniProfiler.StopAsync().ConfigureAwait(false);
             }
 
@@ -142,11 +156,19 @@ namespace Tests
         /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
         /// </summary>
         /// <param name="milliseconds">The milliseconds.</param>
-        public static void IncrementStopwatch(int milliseconds = StepTimeMilliseconds)
+        public void Increment(int milliseconds = StepTimeMilliseconds)
         {
-            var sw = (UnitTestStopwatch)MiniProfiler.Current.Stopwatch;
+            var mp = _provider?.GetCurrentProfiler() ?? MiniProfiler.Current;
+            var sw = (UnitTestStopwatch)mp.Stopwatch;
             sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
         }
+
+        /// <summary>
+        /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
+        /// </summary>
+        /// <param name="milliseconds">The milliseconds.</param>
+        public Task IncrementAsync(int milliseconds = StepTimeMilliseconds) =>
+            Task.Run(() => Increment(milliseconds));
 
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
