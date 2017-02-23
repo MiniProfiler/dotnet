@@ -57,6 +57,10 @@ namespace StackExchange.Profiling
             {
                 Profiler = null;
             }
+            else
+            {
+                SaveProfiler(profiler);
+            }
         }
 
         /// <summary>
@@ -72,10 +76,13 @@ namespace StackExchange.Profiling
             if (profiler != null)
             {
                 StopProfiler(profiler);
-                await SaveProfilerAsync(profiler).ConfigureAwait(false);
                 if (discardResults)
                 {
                     Profiler = null;
+                }
+                else
+                {
+                    await SaveProfilerAsync(profiler).ConfigureAwait(false);
                 }
             }
         }
