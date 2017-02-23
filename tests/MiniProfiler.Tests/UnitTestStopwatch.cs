@@ -13,12 +13,12 @@ namespace Tests
         /// <summary>
         /// The ticks per second.
         /// </summary>
-        public static readonly long TicksPerSecond = TimeSpan.FromSeconds(1).Ticks;
+        public static readonly long TicksPerSecond = TimeSpan.TicksPerSecond;
 
         /// <summary>
         /// The ticks per millisecond.
         /// </summary>
-        public static readonly long TicksPerMillisecond = TimeSpan.FromMilliseconds(1).Ticks;
+        public static readonly long TicksPerMillisecond = TimeSpan.TicksPerMillisecond;
 
         /// <summary>
         /// Gets or sets the elapsed ticks.
