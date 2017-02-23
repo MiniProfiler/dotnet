@@ -382,7 +382,7 @@ Select Top {=maxResults} Id
                      RowId                                integer not null identity,
                      Id                                   uniqueidentifier not null,
                      RootTimingId                         uniqueidentifier null,
-                     Name                                 nvarchar(200) not null,
+                     Name                                 nvarchar(200) null,
                      Started                              datetime not null,
                      DurationMilliseconds                 decimal(7, 1) not null,
                      [User]                               nvarchar(100) null,

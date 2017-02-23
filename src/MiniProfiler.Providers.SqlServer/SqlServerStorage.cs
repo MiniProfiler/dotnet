@@ -405,7 +405,7 @@ Select Top {=maxResults} Id
                      RowId                                integer not null identity constraint PK_MiniProfilers primary key clustered, -- Need a clustered primary key for SQL Azure
                      Id                                   uniqueidentifier not null, -- don't cluster on a guid
                      RootTimingId                         uniqueidentifier null,
-                     Name                                 nvarchar(200) not null,
+                     Name                                 nvarchar(200) null,
                      Started                              datetime not null,
                      DurationMilliseconds                 decimal(7, 1) not null,
                      [User]                               nvarchar(100) null,
