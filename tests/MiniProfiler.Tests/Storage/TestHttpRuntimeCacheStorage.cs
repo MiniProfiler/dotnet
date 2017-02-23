@@ -7,13 +7,13 @@ using Xunit;
 
 namespace Tests.Storage
 {
-    public class TestHttpRuntimeCacheStorage
+    public class TestMemoryCacheStorage
     {
         [Fact]
         public void TestWeCanSaveTheSameProfilerTwice()
         {
             var profiler = new MiniProfiler("/") { Started = DateTime.UtcNow, Id = Guid.NewGuid() };
-            var storage = new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0));
+            var storage = new MemoryCacheStorage(new TimeSpan(1, 0, 0));
             storage.Save(profiler);
             storage.Save(profiler);
             var guids = storage.List(100).ToArray();
@@ -33,7 +33,7 @@ namespace Tests.Storage
             var profiler2 = new MiniProfiler("/") { Started = in2Secs, Id = Guid.NewGuid() };
             var profiler3 = new MiniProfiler("/") { Started = in3Secs, Id = Guid.NewGuid() };
 
-            var storage = new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0));
+            var storage = new MemoryCacheStorage(new TimeSpan(1, 0, 0));
 
             storage.Save(profiler);
             storage.Save(profiler3);
