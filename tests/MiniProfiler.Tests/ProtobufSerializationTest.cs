@@ -15,7 +15,7 @@ namespace Tests
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
                 MiniProfiler.Start();
-                IncrementStopwatch(); // 1 ms
+                Increment(); // 1 ms
                 MiniProfiler.Stop();
 
                 var mp1 = MiniProfiler.Current;
@@ -37,15 +37,15 @@ namespace Tests
                 MiniProfiler.Start();
                 var mp1 = MiniProfiler.Current;
 
-                IncrementStopwatch(); // 1 ms
+                Increment(); // 1 ms
 
                 using (mp1.Step("Child one"))
                 {
-                    IncrementStopwatch();
+                    Increment();
 
                     using (mp1.CustomTiming("http", "GET http://google.com"))
                     {
-                        IncrementStopwatch();
+                        Increment();
                     }
 
                     using (var conn = Utils.GetSqliteConnection())

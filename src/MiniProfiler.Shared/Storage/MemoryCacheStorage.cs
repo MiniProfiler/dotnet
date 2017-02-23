@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Profiling.Helpers;
+#if NET46
+using System.Runtime.Caching;
+#else
+using Microsoft.Extensions.Caching.Memory;
+#endif
 
 namespace StackExchange.Profiling.Storage
 {
-    // TODO: Finish implementing
     /// <summary>
-    /// A IMemoryCache-based provider for storing MiniProfiler instances
+    /// A IMemoryCache-based provider for storing MiniProfiler instances (based on System.Runtime.Caching.MemoryCache)
     /// </summary>
     public class MemoryCacheStorage : IAsyncStorage
     {
-        // The cache cache!
+#if NET46
+        private MemoryCache _cache;
+#else
         private IMemoryCache _cache;
+        private MemoryCacheEntryOptions CacheEntryOptions { get; }
+#endif
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
 
         /// <summary>
@@ -28,8 +34,17 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public TimeSpan CacheDuration { get; }
 
-        private MemoryCacheEntryOptions CacheEntryOptions { get; }
-
+#if NET46
+        /// <summary>
+        /// Creates a memory cache provider, storing each result in a MemoryCache for the specified duration.
+        /// </summary>
+        /// <param name="cacheDuration">The duration to cache each profiler, before it expires from cache.</param>
+        public MemoryCacheStorage(TimeSpan cacheDuration)
+        {
+            _cache = new MemoryCache("MiniProfilerCache");
+            CacheDuration = cacheDuration;
+        }
+#else
         /// <summary>
         /// Creates a memory cache provider, storing each result in the provided IMemoryCache
         /// for the specified duration.
@@ -43,6 +58,7 @@ namespace StackExchange.Profiling.Storage
             CacheDuration = cacheDuration;
             CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
         }
+#endif
 
         private string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
 
@@ -69,7 +85,7 @@ namespace StackExchange.Profiling.Storage
         private List<Guid> GetPerUserUnviewedIds(string user)
         {
             var key = GetPerUserUnviewedCacheKey(user);
-            return _cache.GetOrCreate(key, ce => new List<Guid>());
+            return _cache.Get(key) as List<Guid> ?? new List<Guid>();
         }
 
         /// <summary>
@@ -137,7 +153,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler Load(Guid id) => _cache.Get<MiniProfiler>(GetCacheKey(id));
+        public MiniProfiler Load(Guid id) => _cache.Get(GetCacheKey(id)) as MiniProfiler;
 
         /// <summary>
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
@@ -157,7 +173,7 @@ namespace StackExchange.Profiling.Storage
             if (profiler == null) return;
 
             // use insert instead of add; add fails if the item already exists
-            _cache.Set(GetCacheKey(profiler.Id), profiler, CacheDuration);
+            _cache.Set(GetCacheKey(profiler.Id), profiler, DateTime.UtcNow + CacheDuration);
 
             var profileInfo = new ProfilerSortedKey(profiler);
             lock (_profiles)

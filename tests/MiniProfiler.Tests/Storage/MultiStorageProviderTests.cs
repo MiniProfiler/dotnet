@@ -16,7 +16,7 @@ namespace Tests.Storage
             bool errorCaught = false;
             try
             {
-                MultiStorageProvider p = new MultiStorageProvider();
+                var p = new MultiStorageProvider();
             }
             catch (ArgumentNullException ex)
             {
@@ -32,7 +32,7 @@ namespace Tests.Storage
             bool errorCaught = false;
             try
             {
-                MultiStorageProvider p = new MultiStorageProvider(null, null);
+                var p = new MultiStorageProvider(null, null);
             }
             catch (ArgumentNullException ex)
             {
@@ -45,9 +45,9 @@ namespace Tests.Storage
         [Fact]
         public void Constructor_LoadStores_MaintainOrder()
         {
-            MultiStorageProvider p = new MultiStorageProvider(new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0)), new SqlServerStorage(""));
+            var p = new MultiStorageProvider(new MemoryCacheStorage(new TimeSpan(1, 0, 0)), new SqlServerStorage(""));
             Assert.Equal(2, p.Stores.Count);
-            Assert.True(p.Stores[0].GetType() == typeof(HttpRuntimeCacheStorage));
+            Assert.True(p.Stores[0].GetType() == typeof(MemoryCacheStorage));
             Assert.True(p.Stores[1].GetType() == typeof(SqlServerStorage));
         }
     }

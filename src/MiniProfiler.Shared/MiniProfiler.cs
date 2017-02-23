@@ -204,7 +204,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the timer, for unit testing, returns the timer.
         /// </summary>
-        public IStopwatch Stopwatch { get; }
+        internal IStopwatch Stopwatch { get; set; }
 
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
@@ -229,6 +229,10 @@ namespace StackExchange.Profiling
         public static MiniProfiler Start(string sessionName = null) =>
             Settings.ProfilerProvider.Start(sessionName);
 
+        // Unit test hook
+        internal static MiniProfiler Start(string sessionName, IAsyncProfilerProvider provider) =>
+            provider.Start(sessionName);
+
         /// <summary>
         /// Ends the current profiling session, if one exists.
         /// </summary>
@@ -238,6 +242,10 @@ namespace StackExchange.Profiling
         /// </param>
         public static void Stop(bool discardResults = false) =>
             Settings.ProfilerProvider.Stop(discardResults);
+
+        // Unit test hook
+        internal static void Stop(bool discardResults, IAsyncProfilerProvider provider) =>
+            provider.Stop(discardResults);
 
         /// <summary>
         /// Asynchronously ends the current profiling session, if one exists. 
@@ -249,6 +257,10 @@ namespace StackExchange.Profiling
         /// </param>
         public static Task StopAsync(bool discardResults = false) =>
             Settings.ProfilerProvider.StopAsync(discardResults);
+
+        // Unit test hook
+        internal static void StopAsync(bool discardResults, IAsyncProfilerProvider provider) =>
+            provider.StopAsync(discardResults);
 
         /// <summary>
         /// Returns an <see cref="IDisposable"/> that will time the code between its creation and disposal. Use this method when you

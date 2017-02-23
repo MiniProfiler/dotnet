@@ -100,9 +100,9 @@ namespace Samples.Mvc5
             // 
             // let's rig up serialization of our profiler results to a database, so they survive app restarts.
 
-            // Setting up a MultiStorage provider. This will store results in the HttpRuntimeCache (normally the default) and in SqlLite as well.
+            // Setting up a MultiStorage provider. This will store results in the MemoryCacheStorage (normally the default) and in SqlLite as well.
             MiniProfiler.Settings.Storage = new MultiStorageProvider(
-                new HttpRuntimeCacheStorage(new TimeSpan(1, 0, 0)),
+                new MemoryCacheStorage(new TimeSpan(1, 0, 0)),
                 new SqliteMiniProfilerStorage(ConnectionString)
                 );
 
