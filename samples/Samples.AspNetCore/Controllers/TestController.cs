@@ -17,7 +17,7 @@ namespace Samples.AspNetCore.Controllers
         public string ConnectionString =>
             "Data Source = " + Path.Combine(_env.ContentRootPath, @"App_Data\TestMiniProfiler.sqlite");
 
-        private IHostingEnvironment _env;
+        private readonly IHostingEnvironment _env;
         public TestController(IHostingEnvironment env)
         {
             _env = env;

@@ -27,10 +27,10 @@ namespace Subtext.TestLibrary
     public class SimulatedHttpRequest : SimpleWorkerRequest
     {
         private Uri _referer;
-        private string _host;
-        private string _verb;
-        private int _port;
-        private string _physicalFilePath;
+        private readonly string _host;
+        private readonly string _verb;
+        private readonly int _port;
+        private readonly string _physicalFilePath;
 
         /// <summary>
         /// Creates a new <see cref="SimulatedHttpRequest"/> instance.
@@ -81,19 +81,21 @@ namespace Subtext.TestLibrary
 
         public override int GetLocalPort() => _port;
 
-        private NameValueCollection headers = new NameValueCollection();
+        private readonly NameValueCollection headers = new NameValueCollection();
         /// <summary>
         /// Gets the headers.
         /// </summary>
         /// <value>The headers.</value>
-        public NameValueCollection Headers => headers;
+        public NameValueCollection Headers => Headers1;
 
-        private NameValueCollection formVariables = new NameValueCollection();
+        private readonly NameValueCollection formVariables = new NameValueCollection();
         /// <summary>
         /// Gets the format exception.
         /// </summary>
         /// <value>The format exception.</value>
         public NameValueCollection Form => formVariables;
+
+        public NameValueCollection Headers1 => headers;
 
         /// <summary>
         /// Get all nonstandard HTTP header name-value pairs.
@@ -101,14 +103,14 @@ namespace Subtext.TestLibrary
         /// <returns>An array of header name-value pairs.</returns>
         public override string[][] GetUnknownRequestHeaders()
         {
-            if (headers == null || headers.Count == 0)
+            if (Headers1 == null || Headers1.Count == 0)
             {
                 return null;
             }
-            var headersArray = new string[headers.Count][];
-            for (int i = 0; i < headers.Count; i++)
+            var headersArray = new string[Headers1.Count][];
+            for (int i = 0; i < Headers1.Count; i++)
             {
-                headersArray[i] = new string[2] { headers.Keys[i], headers[i] };
+                headersArray[i] = new string[2] { Headers1.Keys[i], Headers1[i] };
             }
             return headersArray;
         }

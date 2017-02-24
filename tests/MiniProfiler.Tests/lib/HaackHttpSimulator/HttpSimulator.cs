@@ -30,8 +30,8 @@ namespace Subtext.TestLibrary
         private const string defaultPhysicalAppPath = @"c:\InetPub\wwwRoot\";
         private StringBuilder builder;
         private Uri _referer;
-        private NameValueCollection _formVars = new NameValueCollection();
-        private NameValueCollection _headers = new NameValueCollection();
+        private readonly NameValueCollection _formVars = new NameValueCollection();
+        private readonly NameValueCollection _headers = new NameValueCollection();
 
         public HttpSimulator() : this("/", defaultPhysicalAppPath)
         {
@@ -147,10 +147,10 @@ namespace Subtext.TestLibrary
 
         public class FakeHttpSessionState : NameObjectCollectionBase, IHttpSessionState
         {
-            private string sessionID = Guid.NewGuid().ToString();
-            private bool isNewSession = true;
-            private HttpStaticObjectsCollection staticObjects = new HttpStaticObjectsCollection();
-            private object syncRoot = new Object();
+            private readonly string sessionID = Guid.NewGuid().ToString();
+            private readonly bool isNewSession = true;
+            private readonly HttpStaticObjectsCollection staticObjects = new HttpStaticObjectsCollection();
+            private readonly object syncRoot = new Object();
 
             /// <summary>
             /// Ends the current session.
@@ -508,7 +508,7 @@ namespace Subtext.TestLibrary
 
         internal class ConfigMapPath : IConfigMapPath
         {
-            private HttpSimulator _requestSimulation;
+            private readonly HttpSimulator _requestSimulation;
             public ConfigMapPath(HttpSimulator simulation)
             {
                 _requestSimulation = simulation;

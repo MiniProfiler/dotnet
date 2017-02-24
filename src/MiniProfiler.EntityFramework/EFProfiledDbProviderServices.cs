@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
-        public static EFProfiledDbProviderServices<T> Instance = new EFProfiledDbProviderServices<T>();
+        public static readonly EFProfiledDbProviderServices<T> Instance = new EFProfiledDbProviderServices<T>();
 
         private readonly T _tail;
 

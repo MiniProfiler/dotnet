@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
-        public static new EFProfiledSqlClientDbProviderServices Instance = new EFProfiledSqlClientDbProviderServices();
+        public static readonly new EFProfiledSqlClientDbProviderServices Instance = new EFProfiledSqlClientDbProviderServices();
 
         /// <summary>
         /// Prevents a default instance of the <see cref="EFProfiledSqlClientDbProviderServices"/> class from being created.

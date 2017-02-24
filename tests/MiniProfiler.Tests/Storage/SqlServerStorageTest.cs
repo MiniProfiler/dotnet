@@ -13,7 +13,7 @@ namespace Tests.Storage
     [Collection("SQLServer")]
     public class SqlServerStorageTest : BaseTest, IClassFixture<SqlCeStorageFixture<SqlServerStorageTest>>
     {
-        private SqlCeConnection _conn;
+        private readonly SqlCeConnection _conn;
 
         public SqlServerStorageTest(SqlCeStorageFixture<SqlServerStorageTest> fixture)
         {

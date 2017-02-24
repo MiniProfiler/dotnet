@@ -12,8 +12,8 @@ namespace StackExchange.Profiling
         /// Embedded resource contents keyed by filename.
         /// </summary>
         private ConcurrentDictionary<string, string> _resourceCache { get; } = new ConcurrentDictionary<string, string>();
-        private IHostingEnvironment _env;
-        private MiniProfilerOptions _options;
+        private readonly IHostingEnvironment _env;
+        private readonly MiniProfilerOptions _options;
 
         public EmbeddedProvider(MiniProfilerOptions options, IHostingEnvironment env)
         {

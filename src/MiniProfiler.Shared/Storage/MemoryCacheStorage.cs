@@ -16,9 +16,9 @@ namespace StackExchange.Profiling.Storage
     public class MemoryCacheStorage : IAsyncStorage
     {
 #if NET46
-        private MemoryCache _cache;
+        private readonly MemoryCache _cache;
 #else
-        private IMemoryCache _cache;
+        private readonly IMemoryCache _cache;
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
 #endif
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
