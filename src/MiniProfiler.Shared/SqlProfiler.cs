@@ -30,7 +30,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the profiling session this <c>SqlProfiler</c> is part of.
         /// </summary>
-        public MiniProfiler Profiler { get; private set; }
+        public MiniProfiler Profiler { get; }
 
         /// <summary>
         /// Tracks when 'command' is started.

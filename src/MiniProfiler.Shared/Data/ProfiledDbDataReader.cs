@@ -16,9 +16,8 @@ namespace StackExchange.Profiling.Data
         /// Initialises a new instance of the <see cref="ProfiledDbDataReader"/> class.
         /// </summary>
         /// <param name="reader">The reader.</param>
-        /// <param name="connection">The connection.</param>
         /// <param name="profiler">The profiler.</param>
-        public ProfiledDbDataReader(DbDataReader reader, DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbDataReader(DbDataReader reader, IDbProfiler profiler)
         {
             WrappedReader = reader;
 

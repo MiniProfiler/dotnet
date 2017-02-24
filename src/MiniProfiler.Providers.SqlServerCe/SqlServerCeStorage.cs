@@ -322,7 +322,7 @@ Order By Started";
         {
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(maxResults, start, finish, orderBy);
+                var query = BuildListQuery(start, finish, orderBy);
                 return conn.Query<Guid>(query, new { maxResults, start, finish }).AsList();
             }
         }
@@ -339,12 +339,12 @@ Order By Started";
         {
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(maxResults, start, finish, orderBy);
+                var query = BuildListQuery(start, finish, orderBy);
                 return await conn.QueryAsync<Guid>(query, new { maxResults, start, finish }).ConfigureAwait(false);
             }
         }
 
-        private string BuildListQuery(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
+        private string BuildListQuery(DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var sb = new StringBuilder(@"
 Select Top {=maxResults} Id

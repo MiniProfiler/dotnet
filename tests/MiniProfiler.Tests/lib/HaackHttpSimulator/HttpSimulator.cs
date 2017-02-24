@@ -147,10 +147,6 @@ namespace Subtext.TestLibrary
 
         public class FakeHttpSessionState : NameObjectCollectionBase, IHttpSessionState
         {
-            private readonly string sessionID = Guid.NewGuid().ToString();
-            private readonly bool isNewSession = true;
-            private readonly HttpStaticObjectsCollection staticObjects = new HttpStaticObjectsCollection();
-            private readonly object syncRoot = new Object();
 
             /// <summary>
             /// Ends the current session.
@@ -201,7 +197,7 @@ namespace Subtext.TestLibrary
             /// Gets the unique session identifier for the session.
             /// </summary>
             /// <returns>The session ID.</returns>
-            public string SessionID => sessionID;
+            public string SessionID { get; } = Guid.NewGuid().ToString();
 
             /// <summary>
             /// Gets and sets the time-out period (in minutes) allowed between requests before the session-state provider terminates the session.
@@ -213,7 +209,7 @@ namespace Subtext.TestLibrary
             /// Gets a value indicating whether the session was created with the current request.
             /// </summary>
             /// <returns>true if the session was created with the current request; otherwise, false.</returns>
-            public bool IsNewSession => isNewSession;
+            public bool IsNewSession { get; } = true;
 
             /// <summary>
             /// Gets the current session-state mode.
@@ -254,7 +250,7 @@ namespace Subtext.TestLibrary
             /// Gets a collection of objects declared by &lt;object Runat="Server" Scope="Session"/&gt; tags within the ASP.NET application file Global.asax.
             /// </summary>
             /// <returns>An <see cref="T:System.Web.HttpStaticObjectsCollection"></see> containing objects declared in the Global.asax file.</returns>
-            public HttpStaticObjectsCollection StaticObjects => staticObjects;
+            public HttpStaticObjectsCollection StaticObjects { get; } = new HttpStaticObjectsCollection();
 
             /// <summary>
             /// Gets or sets a session-state item value by name.
@@ -282,7 +278,7 @@ namespace Subtext.TestLibrary
             /// Gets an object that can be used to synchronize access to the collection of session-state values.
             /// </summary>
             /// <returns>An object that can be used to synchronize access to the collection.</returns>
-            public object SyncRoot => syncRoot;
+            public object SyncRoot { get; } = new Object();
 
             /// <summary>
             /// Gets a value indicating whether access to the collection of session-state values is synchronized (thread safe).

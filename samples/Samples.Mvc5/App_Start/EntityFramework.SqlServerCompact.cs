@@ -3,12 +3,12 @@ using System.Data.Entity.Infrastructure;
 
 //[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Samples.Mvc5.App_Start.EntityFrameworkSqlServerCompact), "Start")]
 
-namespace Samples.Mvc5.App_Start 
+namespace Samples.Mvc5.App_Start
 {
     /// <summary>
     /// web server activation point where the connection factory is configured.
     /// </summary>
-    public static class EntityFrameworkSqlServerCompact 
+    public static class EntityFrameworkSqlServerCompact
     {
         /// <summary>
         /// set the default connection factory.

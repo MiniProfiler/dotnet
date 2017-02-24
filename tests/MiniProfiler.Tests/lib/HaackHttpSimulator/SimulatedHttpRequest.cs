@@ -80,22 +80,18 @@ namespace Subtext.TestLibrary
         public override string GetServerName() => _host;
 
         public override int GetLocalPort() => _port;
-
-        private readonly NameValueCollection headers = new NameValueCollection();
         /// <summary>
         /// Gets the headers.
         /// </summary>
         /// <value>The headers.</value>
         public NameValueCollection Headers => Headers1;
-
-        private readonly NameValueCollection formVariables = new NameValueCollection();
         /// <summary>
         /// Gets the format exception.
         /// </summary>
         /// <value>The format exception.</value>
-        public NameValueCollection Form => formVariables;
+        public NameValueCollection Form { get; } = new NameValueCollection();
 
-        public NameValueCollection Headers1 => headers;
+        public NameValueCollection Headers1 { get; } = new NameValueCollection();
 
         /// <summary>
         /// Get all nonstandard HTTP header name-value pairs.
@@ -136,9 +132,9 @@ namespace Subtext.TestLibrary
         {
             var sb = new StringBuilder();
 
-            foreach (string key in formVariables.Keys)
+            foreach (string key in Form.Keys)
             {
-                sb.Append(key).Append("=").Append(formVariables[key]).Append("&");
+                sb.Append(key).Append("=").Append(Form[key]).Append("&");
             }
 
             return Encoding.UTF8.GetBytes(sb.ToString());

@@ -20,7 +20,7 @@ namespace Tests.Storage
             Conn = Utils.GetOpenSqlCeConnection<T>();
         }
 
-        private ProfiledDbConnection GetProfiledConnection() => 
+        private ProfiledDbConnection GetProfiledConnection() =>
             new ProfiledDbConnection(Utils.GetOpenSqlCeConnection<T>(), MiniProfiler.Current);
 
         public void Dispose()

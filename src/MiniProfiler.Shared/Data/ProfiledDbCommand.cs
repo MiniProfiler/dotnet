@@ -204,7 +204,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = _command.ExecuteReader(behavior);
-                result = new ProfiledDbDataReader(result, _connection, _profiler);
+                result = new ProfiledDbDataReader(result, _profiler);
             }
             catch (Exception e)
             {

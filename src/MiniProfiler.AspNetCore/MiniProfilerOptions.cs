@@ -80,7 +80,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Assembly version of this dank MiniProfiler.
         /// </summary>
-        public string Version { get; private set; }
+        public string Version { get; }
 
         /// <summary>
         /// The base path for all MiniProfiler Middleware requests, defaults to ~/mini-profiler-resources
