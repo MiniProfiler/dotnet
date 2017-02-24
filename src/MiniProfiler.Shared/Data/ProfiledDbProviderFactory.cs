@@ -13,21 +13,31 @@ namespace StackExchange.Profiling.Data
     public class ProfiledDbProviderFactory : DbProviderFactory
     {
         private DbProviderFactory _tail;
+        private readonly bool _alwaysWrap;
 
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "This does not appear to be used anywhere, we need to refactor it.")]
-        public static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
+        public readonly static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ProfiledDbProviderFactory"/> class.
         /// A proxy provider factory
         /// </summary>
         /// <param name="tail">The provider factory to wrap.</param>
-        public ProfiledDbProviderFactory(DbProviderFactory tail)
+        /// <param name="alwaysWrap">Whether ti always wrap results in Profiled equivalents, even if there's no active profiler</param>
+        /// <remarks>
+        /// This exists for places where extremely consistent behavior is desired. Primarily assigning profiled
+        /// elements to others, where such an assignment would be invalid without the wrapping.
+        /// Example: when MiniProfiler.Current is null:
+        ///     alwaysWrap == false: CreateCommand returns (type), e.g. SqlCommand
+        ///     alwaysWrap == true: CreateCommand  return ProfiledDbCommand
+        /// </remarks>
+        public ProfiledDbProviderFactory(DbProviderFactory tail, bool alwaysWrap = false)
         {
             _tail = tail;
+            _alwaysWrap = alwaysWrap;
         }
 
         /// <summary>
@@ -42,12 +52,11 @@ namespace StackExchange.Profiling.Data
         /// <returns>A new instance of <see cref="DbCommand"/>.</returns>
         public override DbCommand CreateCommand()
         {
+            var command = _tail.CreateCommand();
             var profiler = MiniProfiler.Current;
 
-            var command = _tail.CreateCommand();
-
-            return profiler != null
-                ? new ProfiledDbCommand(command, null, MiniProfiler.Current)
+            return profiler != null || _alwaysWrap
+                ? new ProfiledDbCommand(command, null, profiler)
                 : command;
         }
 
@@ -55,12 +64,11 @@ namespace StackExchange.Profiling.Data
         /// <returns>A new instance of <see cref="DbConnection"/>.</returns>
         public override DbConnection CreateConnection()
         {
+            var connection = _tail.CreateConnection();
             var profiler = MiniProfiler.Current;
 
-            var connection = _tail.CreateConnection();
-
-            return profiler != null
-                ? new ProfiledDbConnection(connection, MiniProfiler.Current)
+            return profiler != null || _alwaysWrap
+                ? new ProfiledDbConnection(connection, profiler)
                 : connection;
         }
 
@@ -96,8 +104,8 @@ namespace StackExchange.Profiling.Data
 
             var dataAdapter = _tail.CreateDataAdapter();
 
-            return profiler != null
-                ? new ProfiledDbDataAdapter(dataAdapter, MiniProfiler.Current)
+            return profiler != null || _alwaysWrap
+                ? new ProfiledDbDataAdapter(dataAdapter, profiler)
                 : dataAdapter;
         }
 
