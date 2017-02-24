@@ -259,7 +259,7 @@ namespace StackExchange.Profiling
             Settings.ProfilerProvider.StopAsync(discardResults);
 
         // Unit test hook
-        internal static void StopAsync(bool discardResults, IAsyncProfilerProvider provider) =>
+        internal static Task StopAsync(bool discardResults, IAsyncProfilerProvider provider) =>
             provider.StopAsync(discardResults);
 
         /// <summary>
