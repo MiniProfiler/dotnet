@@ -8,7 +8,6 @@ using StackExchange.Profiling;
 using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using System;
-using System.Linq;
 
 namespace Samples.AspNetCore
 {
@@ -55,6 +54,7 @@ namespace Samples.AspNetCore
 
             app.UseMiniProfiler(new MiniProfilerOptions
             {
+                RouteBasePath = "~/profiler",
                 SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
                 Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60))
             });
