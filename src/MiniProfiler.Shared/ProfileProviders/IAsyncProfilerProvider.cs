@@ -11,11 +11,11 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
         /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler.
         /// </summary>
-        /// <param name="sessionName">
+        /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the url will be used for the overall session name.
         /// </param>
-        MiniProfiler Start(string sessionName = null);
+        MiniProfiler Start(string profilerName = null);
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
@@ -36,7 +36,7 @@ namespace StackExchange.Profiling
         Task StopAsync(bool discardResults);
 
         /// <summary>
-        /// Returns the current MiniProfiler.  This is used by <see cref="MiniProfiler.Current"/>.
+        /// Returns the current MiniProfiler. This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
         MiniProfiler GetCurrentProfiler();
     }

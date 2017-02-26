@@ -81,16 +81,16 @@ namespace StackExchange.Profiling
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
-        /// <param name="current">The <see cref="MiniProfiler"/> to save.</param>
-        protected static void SaveProfiler(MiniProfiler current)
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
+        protected static void SaveProfiler(MiniProfiler profiler)
         {
             // because we fetch profiler results after the page loads, we have to put them somewhere in the meantime
             // If the current MiniProfiler object has a custom IAsyncStorage set in the Storage property, use it. Else use the Global Storage.
-            var storage = current.Storage ?? MiniProfiler.Settings.Storage;
-            storage.Save(current);
-            if (storage.SetUnviewedAfterSave && !current.HasUserViewed)
+            var storage = profiler.Storage ?? MiniProfiler.Settings.Storage;
+            storage.Save(profiler);
+            if (storage.SetUnviewedAfterSave && !profiler.HasUserViewed)
             {
-                storage.SetUnviewed(current.User, current.Id);
+                storage.SetUnviewed(profiler.User, profiler.Id);
             }
         }
 
@@ -99,14 +99,14 @@ namespace StackExchange.Profiling
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
-        /// <param name="current">The <see cref="MiniProfiler"/> to save.</param>
-        protected static async Task SaveProfilerAsync(MiniProfiler current)
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
+        protected static async Task SaveProfilerAsync(MiniProfiler profiler)
         {
-            var storage = current.Storage ?? MiniProfiler.Settings.Storage;
-            await storage.SaveAsync(current).ConfigureAwait(false);
-            if (storage.SetUnviewedAfterSave && !current.HasUserViewed)
+            var storage = profiler.Storage ?? MiniProfiler.Settings.Storage;
+            await storage.SaveAsync(profiler).ConfigureAwait(false);
+            if (storage.SetUnviewedAfterSave && !profiler.HasUserViewed)
             {
-                await storage.SetUnviewedAsync(current.User, current.Id).ConfigureAwait(false);
+                await storage.SetUnviewedAsync(profiler.User, profiler.Id).ConfigureAwait(false);
             }
         }
     }
