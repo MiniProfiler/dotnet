@@ -101,6 +101,8 @@ namespace StackExchange.Profiling
             try
             {
                 var arrayOfIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false);
+                arrayOfIds = arrayOfIds ?? new List<Guid>();
+                arrayOfIds.Add(current.Id); // Always add the current
                 if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
                 {
                     foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
