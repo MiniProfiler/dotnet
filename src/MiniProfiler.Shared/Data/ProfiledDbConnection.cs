@@ -12,9 +12,6 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ProfiledDbConnection : DbConnection
-#if NET46
-, ICloneable
-#endif
     {
         private DbConnection _connection;
         /// <summary>
@@ -185,24 +182,6 @@ namespace StackExchange.Profiling.Data
         /// <param name="restrictionValues">The restriction values.</param>
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
-
-        /// <summary>
-        /// Creates a clone of this <see cref="ProfiledDbConnection"/>.
-        /// </summary>
-        /// <returns>The <see cref="ProfiledDbConnection"/>.</returns>
-        /// <exception cref="NotSupportedException">Throws when the connection is not <see cref="ICloneable"/></exception>
-        public ProfiledDbConnection Clone()
-        {
-            var tail = _connection as ICloneable;
-            if (tail == null) throw new NotSupportedException("Underlying " + _connection.GetType().Name + " is not cloneable");
-            return new ProfiledDbConnection((DbConnection)tail.Clone(), _profiler);
-        }
-
-        /// <summary>
-        /// Creates a clone of this <see cref="ProfiledDbConnection"/>.
-        /// </summary>
-        /// <returns>The <see cref="object"/>.</returns>
-        object ICloneable.Clone() => Clone();
 #endif
     }
 }

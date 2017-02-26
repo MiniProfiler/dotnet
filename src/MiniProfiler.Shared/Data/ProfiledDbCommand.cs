@@ -13,9 +13,6 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ProfiledDbCommand : DbCommand
-#if NET46
-, ICloneable
-#endif
     {
         private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
         private DbCommand _command;
@@ -412,25 +409,5 @@ namespace StackExchange.Profiling.Data
         /// Gets the internal command.
         /// </summary>
         public DbCommand InternalCommand => _command;
-
-#if NET46
-        /// <summary>
-        /// Clone this command, entity framework expects this behaviour.
-        /// </summary>
-        /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
-        /// <exception cref="NotSupportedException">Throws when te wrapped command is not <see cref="ICloneable"/>.</exception>
-        public ProfiledDbCommand Clone()
-        { // EF expects ICloneable
-            var tail = _command as ICloneable;
-            if (tail == null) throw new NotSupportedException("Underlying " + _command.GetType().Name + " is not cloneable");
-            return new ProfiledDbCommand((DbCommand)tail.Clone(), _connection, _profiler);
-        }
-
-        /// <summary>
-        /// Creates a copy of this command.
-        /// </summary>
-        /// <returns>The <see cref="object"/>.</returns>
-        object ICloneable.Clone() => Clone();
-#endif
     }
 }

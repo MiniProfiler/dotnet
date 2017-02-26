@@ -9,9 +9,6 @@ namespace StackExchange.Profiling.Data
     /// to collect profiling information.
     /// </summary>
     public class SimpleProfiledCommand : IDbCommand
-#if NET46
-, ICloneable
-#endif
     {
         private IDbCommand _command;
         private IDbConnection _connection;
@@ -207,21 +204,5 @@ namespace StackExchange.Profiling.Data
             _connection = null;
             _profiler = null;
         }
-
-#if NET46
-        /// <summary>
-        /// Clones this command.
-        /// </summary>
-        /// <returns>The <see cref="object"/>.</returns>
-        /// <exception cref="NotSupportedException">Throw when the command is not <see cref="ICloneable"/>.</exception>
-        public object Clone()
-        {
-            var tail = _command as ICloneable;
-            if (tail == null)
-                throw new NotSupportedException("Underlying " + _command.GetType().Name + " is not cloneable.");
-
-            return new SimpleProfiledCommand((IDbCommand)tail.Clone(), _connection, _profiler);
-        }
-#endif
     }
 }
