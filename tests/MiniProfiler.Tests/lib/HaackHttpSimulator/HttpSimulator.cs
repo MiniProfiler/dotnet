@@ -147,7 +147,6 @@ namespace Subtext.TestLibrary
 
         public class FakeHttpSessionState : NameObjectCollectionBase, IHttpSessionState
         {
-
             /// <summary>
             /// Ends the current session.
             /// </summary>

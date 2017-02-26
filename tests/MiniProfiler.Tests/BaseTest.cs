@@ -24,9 +24,9 @@ namespace Tests
 
         protected IAsyncStorage _testStorage { get; set; }
         protected IAsyncProfilerProvider _provider { get; set; }
-        
+
         // Reset for each inheritor
-        public BaseTest() => ResetProviders();
+        protected BaseTest() => ResetProviders();
 
         public void ResetProviders()
         {
@@ -68,8 +68,7 @@ namespace Tests
         public MiniProfiler GetProfiler(
             string url = DefaultRequestUrl,
             int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds,
-            IAsyncStorage storage = null)
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             MiniProfiler result = null;
             Action step = null;
@@ -93,9 +92,9 @@ namespace Tests
                 result = MiniProfiler.Start();
                 step();
 
-                if ((storage ?? _testStorage) != null)
+                if (_testStorage != null)
                 {
-                    result.Storage = storage ?? _testStorage;
+                    result.Storage = _testStorage;
                 }
 
                 MiniProfiler.Stop();
@@ -115,8 +114,7 @@ namespace Tests
         public async Task<MiniProfiler> GetProfilerAsync(
             string url = DefaultRequestUrl,
             int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds,
-            IAsyncStorage storage = null)
+            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
         {
             // TODO: Consolidate with above, maybe some out params
             MiniProfiler result = null;
@@ -141,9 +139,9 @@ namespace Tests
                 result = MiniProfiler.Start();
                 step();
 
-                if ((storage ?? _testStorage) != null)
+                if (_testStorage != null)
                 {
-                    result.Storage = storage ?? _testStorage;
+                    result.Storage = _testStorage;
                 }
 
                 await MiniProfiler.StopAsync().ConfigureAwait(false);

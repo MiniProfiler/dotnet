@@ -19,22 +19,22 @@ namespace Tests.Async
             var profiler = MiniProfiler.Start("root");
 
             // Add 100ms to root
-            await IncrementAsync(100);
+            await IncrementAsync(100).ConfigureAwait(false);
 
             // 100ms + 100ms = 200ms
             var step1 = Task.Run(async () =>
             {
                 using (profiler.Step("step1.0"))
                 {
-                    await IncrementAsync(100);
+                    await IncrementAsync(100).ConfigureAwait(false);
 
                     await Task.Run(async () =>
                     {
                         using (profiler.Step("step1.1"))
                         {
-                            await IncrementAsync(100);
+                            await IncrementAsync(100).ConfigureAwait(false);
                         }
-                    });
+                    }).ConfigureAwait(false);
                 }
             });
 
@@ -43,12 +43,12 @@ namespace Tests.Async
             {
                 using (profiler.Step("step2.0"))
                 {
-                    await IncrementAsync(100);
+                    await IncrementAsync(100).ConfigureAwait(false);
                 }
             });
 
             // Longest task is 200ms
-            await Task.WhenAll(step1, step2);
+            await Task.WhenAll(step1, step2).ConfigureAwait(false);
 
             MiniProfiler.Stop();
 
@@ -75,7 +75,7 @@ namespace Tests.Async
             // Act
 
             // Add 100ms to root
-            await Task.Delay(100);
+            await Task.Delay(100).ConfigureAwait(false);
 
             // Start tasks in parallel
             var whenAllTask = Task.WhenAll(
@@ -84,14 +84,14 @@ namespace Tests.Async
                     // timing10: 100 + 100 = 200 ms
                     using (timing10 = profiler.Step("step1.0 (Task.Run)"))
                     {
-                        await Task.Delay(100);
+                        await Task.Delay(100).ConfigureAwait(false);
                         await Task.Run(async () =>
                         {
                             using (timing11 = profiler.Step("step1.1 (Task.Run)"))
                             {
-                                await Task.Delay(100);
+                                await Task.Delay(100).ConfigureAwait(false);
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                 }),
                 Task.Factory.StartNew(async () =>
@@ -99,14 +99,14 @@ namespace Tests.Async
                     // timing20: 200 + 100 = 300 ms
                     using (timing20 = profiler.Step("step2.0 (Task.Factory.StartNew)"))
                     {
-                        await Task.Delay(200);
+                        await Task.Delay(200).ConfigureAwait(false);
                         await Task.Run(async () =>
                         {
                             using (timing21 = profiler.Step("step2.1 (Task.Run)"))
                             {
-                                await Task.Delay(100);
+                                await Task.Delay(100).ConfigureAwait(false);
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                     // Important to Unwrap() when using the not-for-mortals StartNew()
                 }).Unwrap(),
@@ -115,14 +115,14 @@ namespace Tests.Async
                     // timing30: 300 + 100 = 400 ms
                     using (timing30 = profiler.Step("step3.0 (Task.Factory.StartNew:LongRunning)"))
                     {
-                        await Task.Delay(300);
+                        await Task.Delay(300).ConfigureAwait(false);
                         await Task.Run(async () =>
                         {
                             using (timing31 = profiler.Step("step3.1 (Task.Run)"))
                             {
-                                await Task.Delay(100);
+                                await Task.Delay(100).ConfigureAwait(false);
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                     // Important to Unwrap() when using the not-for-mortals StartNew()
                 }, TaskCreationOptions.LongRunning).Unwrap()
@@ -155,7 +155,7 @@ namespace Tests.Async
             var profiler = MiniProfiler.Start("root");
             // Need real wall-time here - hard to simulate in a fake
             profiler.Stopwatch = StopwatchWrapper.StartNew();
-            
+
             // Add 100ms to root just to offset the starting point
             Thread.Sleep(100);
 
@@ -206,7 +206,7 @@ namespace Tests.Async
 
             var waiters = new ConcurrentBag<CountdownEvent>();
             Timing timing10 = null, timing11 = null, timing20 = null, timing21 = null, timing30 = null, timing31 = null;
-            
+
             // Add 1ms to root
             Increment();
 
@@ -229,7 +229,7 @@ namespace Tests.Async
                                 waiters.Add(ce2);
                                 ce2.Wait();
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                 }),
                 Task.Factory.StartNew(async () =>
@@ -249,7 +249,7 @@ namespace Tests.Async
                                 waiters.Add(ce2);
                                 ce2.Wait();
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                 }),
                 Task.Factory.StartNew(async () =>
@@ -269,7 +269,7 @@ namespace Tests.Async
                                 waiters.Add(ce2);
                                 ce2.Wait();
                             }
-                        });
+                        }).ConfigureAwait(false);
                     }
                 }, TaskCreationOptions.LongRunning)
             );
