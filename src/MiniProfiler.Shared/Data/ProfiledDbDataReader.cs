@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Data
 {
@@ -127,6 +129,19 @@ namespace StackExchange.Profiling.Data
         /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</returns>
         public override Type GetFieldType(int ordinal) => WrappedReader.GetFieldType(ordinal);
 
+        /// <summary>Synchrnously gets the value of the specified column as a type.</summary>
+        /// <typeparam name="T">The type of the value to be returned.</typeparam>
+        /// <param name="ordinal">The column to be retrieved.</param>
+        /// <returns>The typed object.</returns>
+        public override T GetFieldValue<T>(int ordinal) => WrappedReader.GetFieldValue<T>(ordinal);
+
+        /// <summary>Synchrnously gets the value of the specified column as a type.</summary>
+        /// <typeparam name="T">The type of the value to be returned.</typeparam>
+        /// <param name="ordinal">The column to be retrieved.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>The typed object.</returns>
+        public override Task<T> GetFieldValueAsync<T>(int ordinal, CancellationToken cancellationToken) => WrappedReader.GetFieldValueAsync<T>(ordinal, cancellationToken);
+
         /// <summary>Gets the single-precision floating point number of the specified field.</summary>
         /// <param name="ordinal">The index of the field to find.</param>
         /// <returns>The single-precision floating point number of the specified field.</returns>
@@ -177,18 +192,34 @@ namespace StackExchange.Profiling.Data
         /// <returns>The number of instances of <see cref="object"/> in the array.</returns>
         public override int GetValues(object[] values) => WrappedReader.GetValues(values);
 
-        /// <summary>Return whether the specified field is set to null.</summary>
+        /// <summary>Returns whether the specified field is set to null.</summary>
         /// <param name="ordinal">The index of the field to find.</param>
         /// <returns>true if the specified field is set to null; otherwise, false.</returns>
         public override bool IsDBNull(int ordinal) => WrappedReader.IsDBNull(ordinal);
+
+        /// <summary>Asynchronously returns whether the specified field is set to null.</summary>
+        /// <param name="ordinal">The index of the field to find.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>true if the specified field is set to null; otherwise, false.</returns>
+        public override Task<bool> IsDBNullAsync(int ordinal, CancellationToken cancellationToken) => WrappedReader.IsDBNullAsync(ordinal, cancellationToken);
 
         /// <summary>Advances the data reader to the next result, when reading the results of batch SQL statements.</summary>
         /// <returns>true if there are more rows; otherwise, false.</returns>
         public override bool NextResult() => WrappedReader.NextResult();
 
+        /// <summary>Asynchronously advances the data reader to the next result, when reading the results of batch SQL statements.</summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>true if there are more rows; otherwise, false.</returns>
+        public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => WrappedReader.NextResultAsync(cancellationToken);
+
         /// <summary>Advances the IDataReader to the next record.</summary>
         /// <returns>true if there are more rows; otherwise, false.</returns>
         public override bool Read() => WrappedReader.Read();
+
+        /// <summary>Asynchronously advances the IDataReader to the next record.</summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>true if there are more rows; otherwise, false.</returns>
+        public override Task<bool> ReadAsync(CancellationToken cancellationToken) => WrappedReader.ReadAsync(cancellationToken);
 
 #if NET46 // TODO: Revisit in .Net Standard 2.0
         /// <summary>Closes the IDataReader Object.</summary>

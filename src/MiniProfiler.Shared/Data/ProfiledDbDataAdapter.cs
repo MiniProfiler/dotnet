@@ -16,10 +16,7 @@ namespace StackExchange.Profiling.Data
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
         private readonly IDbProfiler _profiler;
-        private IDbCommand _selectCommand;
-        private IDbCommand _insertCommand;
-        private IDbCommand _updateCommand;
-        private IDbCommand _deleteCommand;
+        private IDbCommand _selectCommand, _insertCommand, _updateCommand, _deleteCommand;
 
         /// <summary>
         /// Gets the underlying adapter.  Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).

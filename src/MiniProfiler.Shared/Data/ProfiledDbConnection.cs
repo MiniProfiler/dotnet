@@ -2,6 +2,8 @@
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Data
 {
@@ -101,6 +103,12 @@ namespace StackExchange.Profiling.Data
         /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
         public override void Open() => _connection.Open();
+
+        /// <summary>
+        /// Asynchronously opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
+        /// </summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        public override Task OpenAsync(CancellationToken cancellationToken) => _connection.OpenAsync(cancellationToken);
 
         /// <summary>
         /// Starts a database transaction.

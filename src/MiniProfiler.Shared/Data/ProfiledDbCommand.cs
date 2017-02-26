@@ -3,6 +3,8 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Data
 {
@@ -190,8 +192,8 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Executes a database data reader.
         /// </summary>
-        /// <param name="behavior">The behaviour.</param>
-        /// <returns>the resulting <see cref="DbDataReader"/>.</returns>
+        /// <param name="behavior">The command behavior to use.</param>
+        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
             if (_profiler == null || !_profiler.IsActive)
@@ -220,6 +222,39 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
+        /// Executes a database data reader asynchronously.
+        /// </summary>
+        /// <param name="behavior">The command behavior to use.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
+        protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
+            }
+
+            DbDataReader result = null;
+            _profiler.ExecuteStart(this, SqlExecuteType.Reader);
+            try
+            {
+                result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
+                result = new ProfiledDbDataReader(result, _profiler);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.Reader, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.Reader, result);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Executes a SQL statement against a connection object.
         /// </summary>
         /// <returns>The number of rows affected.</returns>
@@ -231,7 +266,6 @@ namespace StackExchange.Profiling.Data
             }
 
             int result;
-
             _profiler.ExecuteStart(this, SqlExecuteType.NonQuery);
             try
             {
@@ -251,7 +285,39 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Executes the query, and returns the first column of the first row in the result set returned by the query. Additional columns or rows are ignored.
+        /// Asynchronously executes a SQL statement against a connection object asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>The number of rows affected.</returns>
+        public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            int result;
+            _profiler.ExecuteStart(this, SqlExecuteType.NonQuery);
+            try
+            {
+                result = await _command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.NonQuery, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.NonQuery, null);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
+        /// Additional columns or rows are ignored.
         /// </summary>
         /// <returns>The first column of the first row in the result set.</returns>
         public override object ExecuteScalar()
@@ -266,6 +332,38 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = _command.ExecuteScalar();
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(this, SqlExecuteType.Scalar, e);
+                throw;
+            }
+            finally
+            {
+                _profiler.ExecuteFinish(this, SqlExecuteType.Scalar, null);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Asynchronously executes the query, and returns the first column of the first row in the result set returned by the query. 
+        /// Additional columns or rows are ignored.
+        /// </summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <returns>The first column of the first row in the result set.</returns>
+        public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await _command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            object result;
+            _profiler.ExecuteStart(this, SqlExecuteType.Scalar);
+            try
+            {
+                result = await _command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
