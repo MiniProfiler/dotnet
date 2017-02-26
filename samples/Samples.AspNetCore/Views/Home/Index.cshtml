@@ -7,46 +7,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-primary ajax-requests">
-            <div class="panel-heading">Click the links below to see it profile ajax requests</div>
-            <div class="panel-body">
-                <ul>
-                    <li><a asp-controller="Test" asp-action="DuplicatedQueries">Duplicated Queries (N+1)</a></li>
-                    <li><a asp-controller="Test" asp-action="MassiveNesting">Massive Nesting</a></li>
-                    <li><a asp-controller="Test" asp-action="MassiveNesting2">Massive Nesting 2</a></li>
-                    <li><a asp-controller="Test" asp-action="ParameterizedSqlWithEnums">Parameterized SQL with Enums</a></li>
-                    <li><a asp-controller="Test" asp-action="MinSaveMs">Test Min Save Ms</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">You can also...</div>
-            <div class="panel-body">
-                <ul>
-                    @if (Program.DisableProfilingResults)
-                    {
-                        <li><a asp-controller="Test" asp-action="EnableProfilingUI">Enable profiling UI</a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-controller="Test" asp-action="DisableProfilingUI">Disable profiling UI</a></li>
-                    }
-                    <li><a href="/mini-profiler-resources/results-index">Show all profiling sessions</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">Results from ajax requests</div>
-            <div class="panel-body ajax-results">
-            </div>
-        </div>
-    </div>
+    @Html.Partial("Index.LeftPanel")
+    @Html.Partial("Index.RightPanel")
 </div>
 @section scripts {
-
 <script>
     $(function () {
         // these links should fire ajax requests, not do navigation

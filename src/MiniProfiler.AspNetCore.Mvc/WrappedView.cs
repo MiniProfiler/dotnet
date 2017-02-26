@@ -38,7 +38,7 @@ namespace StackExchange.Profiling.Mvc
             string name = prof != null ? ("Render: " + Path) : null;
             using (prof.Step(name))
             {
-                await _wrapped.RenderAsync(context);
+                await _wrapped.RenderAsync(context).ConfigureAwait(false);
             }
         }
     }
