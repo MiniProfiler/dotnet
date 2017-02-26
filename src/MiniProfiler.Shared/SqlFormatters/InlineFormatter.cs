@@ -84,10 +84,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     break;
             }
 
-            if (result == null)
-            {
-                result = "null";
-            }
+            result = result ?? "null";
             if (includeTypeInfo)
             {
                 result += " /* " + param.Name + " DbType." + param.DbType + " */";

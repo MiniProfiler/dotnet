@@ -133,10 +133,7 @@ namespace StackExchange.Profiling
 
             lock (profiler)
             {
-                if (profiler.CustomLinks == null)
-                {
-                    profiler.CustomLinks = new Dictionary<string, string>();
-                }
+                profiler.CustomLinks = profiler.CustomLinks ?? new Dictionary<string, string>();
             }
 
             profiler.CustomLinks[text] = url;

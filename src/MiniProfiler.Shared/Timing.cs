@@ -257,12 +257,10 @@ namespace StackExchange.Profiling
         /// </remarks>
         public void AddChild(Timing timing)
         {
-            if (Children == null)
-                Children = new List<Timing>();
+            Children = Children ?? new List<Timing>();
 
             Children.Add(timing);
-            if (timing.Profiler == null)
-                timing.Profiler = Profiler;
+            timing.Profiler = timing.Profiler ?? Profiler;
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
             if (Profiler != null)
@@ -298,8 +296,7 @@ namespace StackExchange.Profiling
         {
             lock (_lockObject)
             {
-                if (CustomTimings == null)
-                    CustomTimings = new Dictionary<string, List<CustomTiming>>();
+                CustomTimings = CustomTimings ?? new Dictionary<string, List<CustomTiming>>();
             }
 
             List<CustomTiming> result;

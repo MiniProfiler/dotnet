@@ -95,10 +95,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public void FirstFetchCompleted()
         {
-            if (FirstFetchDurationMilliseconds == null)
-            {
-                FirstFetchDurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
-            }
+            FirstFetchDurationMilliseconds = FirstFetchDurationMilliseconds ?? _profiler.GetDurationMilliseconds(_startTicks);
         }
 
         /// <summary>
@@ -106,17 +103,11 @@ namespace StackExchange.Profiling
         /// </summary>
         public void Stop()
         {
-            if (DurationMilliseconds == null)
-            {
-                DurationMilliseconds = _profiler.GetDurationMilliseconds(_startTicks);
-            }
+            DurationMilliseconds = DurationMilliseconds ?? _profiler.GetDurationMilliseconds(_startTicks);
 
-            if (_minSaveMs.HasValue && _minSaveMs.Value > 0)
+            if (_minSaveMs.HasValue && _minSaveMs.Value > 0 && DurationMilliseconds < _minSaveMs.Value)
             {
-                if (DurationMilliseconds < _minSaveMs.Value)
-                {
-                    _profiler.Head.RemoveCustomTiming(Category, this);
-                }
+                _profiler.Head.RemoveCustomTiming(Category, this);
             }
         }
 
