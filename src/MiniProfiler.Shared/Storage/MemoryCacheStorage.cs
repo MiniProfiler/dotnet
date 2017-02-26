@@ -226,6 +226,8 @@ namespace StackExchange.Profiling.Storage
                     ids.Add(id);
                 }
             }
+            var key = GetPerUserUnviewedCacheKey(user);
+            _cache.Set(key, ids, DateTime.UtcNow + CacheDuration);
         }
 
         /// <summary>
