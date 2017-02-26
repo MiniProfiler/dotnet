@@ -227,6 +227,10 @@ namespace Samples.AspNetCore.Controllers
             }
         }
 
+        public RedirectToActionResult MultipleRedirect() => RedirectToAction(nameof(MultipleRedirectChild));
+        public RedirectToActionResult MultipleRedirectChild() => RedirectToAction(nameof(MultipleRedirectChildChild));
+        public IActionResult MultipleRedirectChildChild() => Content("You should see 3 MiniProfilers from that.");
+
         /// <summary>
         /// Returns an open connection that will have its queries profiled.
         /// </summary>

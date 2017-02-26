@@ -1,0 +1,19 @@
+﻿@using StackExchange.Profiling
+@functions{
+    public string GetVal(object o) =>
+        o?.ToString().Replace("StackExchange.Profiling.", "");
+}
+<div class="panel panel-default">
+    <div class="panel-heading">MiniProfiler Info</div>
+    <div class="panel-body">
+        <ul>
+            <li><label>Version</label>: @GetVal(MiniProfiler.Settings.Version)</li>
+            <li><label>Path</label>: @GetVal(MiniProfiler.Settings.RouteBasePath)</li>
+            <li><label>Provider</label>: @GetVal(MiniProfiler.Settings.ProfilerProvider)</li>
+            <li><label>Storage</label>: @GetVal(MiniProfiler.Settings.Storage)</li>
+            <li><label>SQL Formatter</label>: @GetVal(MiniProfiler.Settings.SqlFormatter)</li>
+            <li><label>Trivial Threshold (ms)</label>: @GetVal(MiniProfiler.Settings.TrivialDurationThresholdMilliseconds)</li>
+            <li><label>Toggle Shortcut</label>: @GetVal(MiniProfiler.Settings.PopupToggleKeyboardShortcut)</li>
+        </ul>
+    </div>
+</div>

@@ -77,6 +77,7 @@ namespace StackExchange.Profiling
                 return;
             }
 
+#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
             // Otherwise this is an app request, profile it!
             if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
             {
@@ -94,26 +95,40 @@ namespace StackExchange.Profiling
                 // Don't profile, only relay
                 await _next(context);
             }
+#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
         }
 
         private async Task AppendHeadersAsync(HttpContext context, MiniProfiler current)
         {
             try
             {
-                var arrayOfIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false);
-                arrayOfIds = arrayOfIds ?? new List<Guid>();
-                arrayOfIds.Add(current.Id); // Always add the current
-                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
+                // Grab any past profilers (e.g. from a previous redirect)
+                var profilerIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false)
+                                 ?? new List<Guid>(1);
+
+                // Always add the current
+                profilerIds.Add(current.Id);
+
+                // Cap us down to MaxUnviewedProfiles
+                if (profilerIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
                 {
-                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
+                    foreach (var id in profilerIds.Take(profilerIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
                     {
                         await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
                     }
                 }
 
-                if (arrayOfIds?.Count > 0)
+                if (profilerIds?.Count > 0)
                 {
-                    context.Response.Headers.Add("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                    // Yes we're making JSON, but it's *really simple* JSON...don't go serializer crazy here.
+                    var sb = new StringBuilder("[");
+                    for (var i = 0; i < profilerIds.Count; i++)
+                    {
+                        sb.Append("\"").Append(profilerIds[i]).Append("\"");
+                        if (i < profilerIds.Count - 1) sb.Append(",");
+                    }
+                    sb.Append("]");
+                    context.Response.Headers.Add("X-MiniProfiler-Ids", sb.ToString());
                 }
             }
             catch { /* oh no! headers blew up */ }
