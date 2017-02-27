@@ -60,28 +60,28 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Find a partial view
         /// </summary>
-        /// <param name="context">The context to search for this partial with.</param>
+        /// <param name="controllerContext">The context to search for this partial with.</param>
         /// <param name="partialViewName">The view name to search for.</param>
         /// <param name="useCache">Whether to use cached lookups.</param>
-        public ViewEngineResult FindPartialView(ControllerContext context, string partialViewName, bool useCache) =>
-            Find(partialViewName, () => _wrapped.FindPartialView(context, partialViewName, useCache), isPartial: true);
+        public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache) =>
+            Find(partialViewName, () => _wrapped.FindPartialView(controllerContext, partialViewName, useCache), isPartial: true);
 
         /// <summary>
         /// Find a full view
         /// </summary>
-        /// <param name="context">The context to search for this view with.</param>
+        /// <param name="controllerContext">The context to search for this view with.</param>
         /// <param name="viewName">The view name to search for.</param>
         /// <param name="masterName">The master view name.</param>
         /// <param name="useCache">Whether to use cached lookups.</param>
-        public ViewEngineResult FindView(ControllerContext context, string viewName, string masterName, bool useCache) =>
-            Find(viewName, () => _wrapped.FindView(context, viewName, masterName, useCache), isPartial: false);
+        public ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache) =>
+            Find(viewName, () => _wrapped.FindView(controllerContext, viewName, masterName, useCache), isPartial: false);
 
         /// <summary>
         /// Release the rendered view
         /// </summary>
-        /// <param name="context">The controller context the view is in.</param>
+        /// <param name="controllerContext">The controller context the view is in.</param>
         /// <param name="view">The view to release.</param>
-        public void ReleaseView(ControllerContext context, IView view) =>
-            _wrapped.ReleaseView(context, view);
+        public void ReleaseView(ControllerContext controllerContext, IView view) =>
+            _wrapped.ReleaseView(controllerContext, view);
     }
 }

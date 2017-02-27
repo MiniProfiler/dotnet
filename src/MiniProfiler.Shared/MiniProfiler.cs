@@ -317,10 +317,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        /// <param name="other">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object other)
+        /// <param name="obj">The <see cref="object"/> to compare to.</param>
+        public override bool Equals(object obj)
         {
-            return other is MiniProfiler && Id.Equals(((MiniProfiler)other).Id);
+            return obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
         }
 
         /// <summary>

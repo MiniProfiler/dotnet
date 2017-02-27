@@ -63,9 +63,9 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if IDs match.
         /// </summary>
-        /// <param name="other">The <see cref="object"/> to compare.</param>
-        public override bool Equals(object other) =>
-            other is SqlTiming && _customTiming.Id.Equals(((SqlTiming)other)._customTiming.Id);
+        /// <param name="obj">The <see cref="object"/> to compare.</param>
+        public override bool Equals(object obj) =>
+            obj is SqlTiming && _customTiming.Id.Equals(((SqlTiming)obj)._customTiming.Id);
 
         /// <summary>
         /// Returns hash code of ID.

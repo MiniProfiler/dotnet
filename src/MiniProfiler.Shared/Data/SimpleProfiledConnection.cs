@@ -66,10 +66,10 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Starts a database transaction.
         /// </summary>
-        /// <param name="isolationLevel">Specifies the isolation level for the transaction.</param>
+        /// <param name="il">Specifies the isolation level for the transaction.</param>
         /// <returns>An object representing the new transaction.</returns>
-        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel) =>
-            new SimpleProfiledTransaction(_connection.BeginTransaction(isolationLevel), this);
+        public IDbTransaction BeginTransaction(IsolationLevel il) =>
+            new SimpleProfiledTransaction(_connection.BeginTransaction(il), this);
 
         /// <summary>
         /// Changes the current database for an open connection.

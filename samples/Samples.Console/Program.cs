@@ -12,13 +12,13 @@ namespace Samples.Console
     /// <summary>
     /// simple sample console application.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// application entry point.
         /// </summary>
         /// <param name="args">application command line arguments.</param>
-        public static void Main(string[] args)
+        public static void Main()
         {
             try
             {

@@ -18,24 +18,24 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Happens before the action starts running
         /// </summary>
-        /// <param name="filterContext">The filter context to handle the start of.</param>
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        /// <param name="context">The filter context to handle the start of.</param>
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             var mp = MiniProfiler.Current;
             if (mp != null)
             {
-                var stack = filterContext.HttpContext.Items[StackKey] as Stack<IDisposable>;
+                var stack = context.HttpContext.Items[StackKey] as Stack<IDisposable>;
                 if (stack == null)
                 {
                     stack = new Stack<IDisposable>();
-                    filterContext.HttpContext.Items[StackKey] = stack;
+                    context.HttpContext.Items[StackKey] = stack;
                 }
 
-                var area = filterContext.RouteData.DataTokens.TryGetValue("area", out object areaToken)
+                var area = context.RouteData.DataTokens.TryGetValue("area", out object areaToken)
                     ? areaToken as string + "."
                     : null;
 
-                switch (filterContext.ActionDescriptor)
+                switch (context.ActionDescriptor)
                 {
                     case ControllerActionDescriptor cd:
                         if (mp.Name.IsNullOrWhiteSpace())
@@ -53,17 +53,17 @@ namespace StackExchange.Profiling.Mvc
                         break;
                 }
             }
-            base.OnActionExecuting(filterContext);
+            base.OnActionExecuting(context);
         }
 
         /// <summary>
         /// Happens after the action executes
         /// </summary>
-        /// <param name="filterContext">The filter context to handle the end of.</param>
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        /// <param name="context">The filter context to handle the end of.</param>
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
-            base.OnActionExecuted(filterContext);
-            if (filterContext.HttpContext.Items[StackKey] is Stack<IDisposable> stack && stack.Count > 0)
+            base.OnActionExecuted(context);
+            if (context.HttpContext.Items[StackKey] is Stack<IDisposable> stack && stack.Count > 0)
             {
                 stack.Pop().Dispose();
             }
