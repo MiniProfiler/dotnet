@@ -694,52 +694,28 @@ var MiniProfiler = (function () {
     return {
 
         init: function () {
-            var script = document.getElementById('mini-profiler');
-            if (!script || !script.getAttribute) return;
-
             $ = MiniProfiler.$;
 
-            options = (function () {
-                var version = script.getAttribute('data-version');
-                var path = script.getAttribute('data-path');
+            var script = $('#mini-profiler');
+            if (!script.length) return;
 
-                var currentId = script.getAttribute('data-current-id');
+            var data = script.data();
 
-                var ids = script.getAttribute('data-ids');
-                if (ids)  ids = ids.split(',');
-
-                var position = script.getAttribute('data-position');
-
-                var toggleShortcut = script.getAttribute('data-toggle-shortcut');
-
-                if (script.getAttribute('data-max-traces'))
-                    var maxTraces = parseInt(script.getAttribute('data-max-traces'));
-
-                if (script.getAttribute('data-trivial-milliseconds'))
-                    var trivialMilliseconds = parseInt(script.getAttribute('data-trivial-milliseconds'));
-
-                if (script.getAttribute('data-trivial') === 'true') var trivial = true;
-                if (script.getAttribute('data-children') == 'true') var children = true;
-                if (script.getAttribute('data-controls') == 'true') var controls = true;
-                if (script.getAttribute('data-authorized') == 'true') var authorized = true;
-                if (script.getAttribute('data-start-hidden') == 'true') var startHidden = true;
-
-                return {
-                    ids: ids,
-                    path: path,
-                    version: version,
-                    renderPosition: position,
-                    showTrivial: trivial,
-                    trivialMilliseconds: trivialMilliseconds,
-                    showChildrenTime: children,
-                    maxTracesToShow: maxTraces,
-                    showControls: controls,
-                    currentId: currentId,
-                    authorized: authorized,
-                    toggleShortcut: toggleShortcut,
-                    startHidden: startHidden
-                }
-            })();
+            options = {
+                ids: data.ids.split(','),
+                path: data.path,
+                version: data.version,
+                renderPosition: data.position,
+                showTrivial: data.trivial,
+                trivialMilliseconds: data.trivialMilliseconds,
+                showChildrenTime: data.children,
+                maxTracesToShow: data.maxTraces,
+                showControls: data.controls,
+                currentId: data.currentId,
+                authorized: data.authorized,
+                toggleShortcut: data.toggleShortcut,
+                startHidden: data.startHidden
+            };
 
             var doInit = function () {
                 // when rendering a shared, full page, this div will exist
