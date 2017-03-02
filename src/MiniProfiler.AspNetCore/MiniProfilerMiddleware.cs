@@ -112,7 +112,7 @@ namespace StackExchange.Profiling
                 profilerIds.Add(current.Id);
 
                 // Cap us down to MaxUnviewedProfiles
-                if (profilerIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
+                if (profilerIds.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
                 {
                     foreach (var id in profilerIds.Take(profilerIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
                     {
@@ -120,17 +120,9 @@ namespace StackExchange.Profiling
                     }
                 }
 
-                if (profilerIds?.Count > 0)
+                if (profilerIds.Count > 0)
                 {
-                    // Yes we're making JSON, but it's *really simple* JSON...don't go serializer crazy here.
-                    var sb = new StringBuilder("[");
-                    for (var i = 0; i < profilerIds.Count; i++)
-                    {
-                        sb.Append("\"").Append(profilerIds[i]).Append("\"");
-                        if (i < profilerIds.Count - 1) sb.Append(",");
-                    }
-                    sb.Append("]");
-                    context.Response.Headers.Add("X-MiniProfiler-Ids", sb.ToString());
+                    context.Response.Headers.Add("X-MiniProfiler-Ids", profilerIds.ToJson());
                 }
             }
             catch { /* oh no! headers blew up */ }
