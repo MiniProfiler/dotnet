@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using StackExchange.Profiling.Helpers;
 using System;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace StackExchange.Profiling
         /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfiler.Settings.PopupStartHidden"/>).</param>
         public static HtmlString RenderIncludes(
             this MiniProfiler profiler,
+            HttpContext context,
             RenderPosition? position = null,
             bool? showTrivial = null,
             bool? showTimeWithChildren = null,
@@ -36,7 +38,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return HtmlString.Empty;
 
             // This is populated in Middleware by SetHeadersAndState
-            var state = profiler.RequestState as RequestState;
+            var state = context.Items["RequestState"] as RequestState;
 
             // Is the user authroized to see the results of the current MiniProfiler?
             var authorized = state?.IsAuthroized ?? false;

@@ -129,7 +129,7 @@ namespace StackExchange.Profiling
                 }
 
                 // Set the state to use in RenderIncludes() down the pipe later
-                current.RequestState = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
+                context.Items["RequestState"] = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
             }
             catch { /* oh no! headers blew up */ }
         }
@@ -347,7 +347,7 @@ namespace StackExchange.Profiling
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
               .Replace("{path}", BasePath.Value.EnsureTrailingSlash())
               .Replace("{json}", MiniProfiler.ToJson(profiler))
-              .Replace("{includes}", profiler.RenderIncludes().ToString())
+              .Replace("{includes}", profiler.RenderIncludes(context).ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);
             return sb.ToString();
         }

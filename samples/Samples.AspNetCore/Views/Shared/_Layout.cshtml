@@ -1,5 +1,4 @@
-﻿@using StackExchange.Profiling;
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -64,6 +63,7 @@
     </environment>
 
     @RenderSection("scripts", required: false)
-    @MiniProfiler.Current.RenderIncludes(RenderPosition.Right)
+
+    <mini-profiler position="Right" />
 </body>
 </html>
