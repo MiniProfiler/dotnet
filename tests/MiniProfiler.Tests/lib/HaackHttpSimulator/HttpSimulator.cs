@@ -189,7 +189,9 @@ namespace Subtext.TestLibrary
             ///  <exception cref="NotImplementedException"></exception>
             public void CopyTo(Array array, int index)
             {
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
                 throw new NotImplementedException();
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
             }
 
             /// <summary>

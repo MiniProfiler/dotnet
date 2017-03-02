@@ -77,7 +77,6 @@ namespace StackExchange.Profiling
                 return;
             }
 
-#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
             // Otherwise this is an app request, profile it!
             if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
             {
@@ -86,16 +85,19 @@ namespace StackExchange.Profiling
                 // Always add this profiler's header (and any async requests before it)
                 await AppendHeadersAsync(context, mp).ConfigureAwait(false);
                 // Execute the pipe
+#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
+#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
                 // Stop (and record)
                 await MiniProfiler.StopAsync().ConfigureAwait(false);
             }
             else
             {
                 // Don't profile, only relay
+#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
-            }
 #pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
+            }
         }
 
         private async Task AppendHeadersAsync(HttpContext context, MiniProfiler current)

@@ -178,7 +178,9 @@ namespace StackExchange.Profiling.Data
             // Don't need this right now and the logic is much more complicated.  Someone else can have at it.
             //	It looks like you could use the SqlDataAdapter RowUpdating and RowUpdated events but that would be provider-specific
             //	and be a pain to maintain.
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
             throw new NotImplementedException();
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
         }
 
         /// <summary>
