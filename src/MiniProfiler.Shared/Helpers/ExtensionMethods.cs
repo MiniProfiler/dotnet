@@ -1,4 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+using System.Text;
+using System;
+using System.Collections.Generic;
 #if NET46
 using System.Web.Script.Serialization;
 #else
@@ -42,6 +45,29 @@ namespace StackExchange.Profiling.Helpers
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "/+$", string.Empty) + "/";
+        }
+
+        /// <summary>
+        /// Converts a List{Guid} into a JSON representation
+        /// </summary>
+        /// <param name="guids">The guids to convert.</param>
+        /// <returns>A JSON representation of the guids.</returns>
+        public static string ToJson(this List<Guid> guids)
+        {
+            if (guids == null || guids.Count == 0)
+            {
+                return "[]";
+            }
+
+            // Yes we're making JSON, but it's *really simple* JSON...don't go serializer crazy here.
+            var sb = new StringBuilder("[");
+            for (var i = 0; i < guids.Count; i++)
+            {
+                sb.Append("\"").Append(guids[i]).Append("\"");
+                if (i < guids.Count - 1) sb.Append(",");
+            }
+            sb.Append("]");
+            return sb.ToString();
         }
 
         /// <summary>
