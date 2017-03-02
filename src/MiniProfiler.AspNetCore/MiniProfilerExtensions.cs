@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using StackExchange.Profiling.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -19,6 +19,7 @@ namespace StackExchange.Profiling
         /// Renders script tag found in "include.partial.html".
         /// </summary>
         /// <param name="profiler">The profiler to render a tag for.</param>
+        /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
         /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfiler.Settings.PopupRenderPosition"/>).</param>
         /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTrivial"/>).</param>
         /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTimeWithChildren"/>).</param>
@@ -27,6 +28,7 @@ namespace StackExchange.Profiling
         /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfiler.Settings.PopupStartHidden"/>).</param>
         public static HtmlString RenderIncludes(
             this MiniProfiler profiler,
+            HttpContext context,
             RenderPosition? position = null,
             bool? showTrivial = null,
             bool? showTimeWithChildren = null,
@@ -36,13 +38,12 @@ namespace StackExchange.Profiling
         {
             if (profiler == null) return HtmlString.Empty;
 
-            // TODO: Figure out auth
-            var authorized = true; // MiniProfilerMiddleware.Current.Options.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+            // This is populated in Middleware by SetHeadersAndState
+            var state = context.Items[RequestState.HttpContextKey] as RequestState;
 
-            // unviewed ids are added to this list during Storage.Save, but we know we haven't 
-            // seen the current one yet, so go ahead and add it to the end 
-            var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
-            ids.Add(profiler.Id);
+            // Is the user authroized to see the results of the current MiniProfiler?
+            var authorized = state?.IsAuthorized ?? false;
+            var ids = state?.RequestIDs ?? Enumerable.Empty<Guid>();
 
             if (!MiniProfilerMiddleware.Current.Embedded.TryGetResource("include.partial.html", out string format))
             {
