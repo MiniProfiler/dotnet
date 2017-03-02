@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Stores the request state (for usage in <see cref="MiniProfiler.RequestState"/>)
+    /// Stores the request state
     /// </summary>
     public class RequestState
     {
