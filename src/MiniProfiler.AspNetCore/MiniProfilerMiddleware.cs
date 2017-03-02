@@ -83,7 +83,7 @@ namespace StackExchange.Profiling
                 // Wrap the request in this profiler
                 var mp = MiniProfiler.Start();
                 // Always add this profiler's header (and any async requests before it)
-                await AppendHeadersAsync(context, mp).ConfigureAwait(false);
+                await SetHeadersAndState(context, mp).ConfigureAwait(false);
                 // Execute the pipe
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
@@ -100,12 +100,15 @@ namespace StackExchange.Profiling
             }
         }
 
-        private async Task AppendHeadersAsync(HttpContext context, MiniProfiler current)
+        private async Task SetHeadersAndState(HttpContext context, MiniProfiler current)
         {
             try
             {
+                // Are we authorized???
+                var isAuthroized = Options.ResultsAuthorize?.Invoke(context.Request) ?? true;
+
                 // Grab any past profilers (e.g. from a previous redirect)
-                var profilerIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false)
+                var profilerIds = (isAuthroized ? await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false) : null)
                                  ?? new List<Guid>(1);
 
                 // Always add the current
@@ -124,6 +127,9 @@ namespace StackExchange.Profiling
                 {
                     context.Response.Headers.Add("X-MiniProfiler-Ids", profilerIds.ToJson());
                 }
+
+                // Set the state to use in RenderIncludes() down the pipe later
+                current.RequestState = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
             }
             catch { /* oh no! headers blew up */ }
         }
