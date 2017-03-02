@@ -14,7 +14,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Is the user authorized to see this MiniProfiler?
         /// </summary>
-        public bool IsAuthroized { get; set; }
+        public bool IsAuthorized { get; set; }
 
         /// <summary>
         /// Store this as a string so we generate it once

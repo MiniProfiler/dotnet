@@ -42,7 +42,7 @@ namespace StackExchange.Profiling
             var state = context.Items[RequestState.HttpContextKey] as RequestState;
 
             // Is the user authroized to see the results of the current MiniProfiler?
-            var authorized = state?.IsAuthroized ?? false;
+            var authorized = state?.IsAuthorized ?? false;
             var ids = state?.RequestIDs ?? Enumerable.Empty<Guid>();
 
             if (!MiniProfilerMiddleware.Current.Embedded.TryGetResource("include.partial.html", out string format))

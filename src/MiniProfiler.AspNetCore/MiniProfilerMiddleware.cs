@@ -105,10 +105,10 @@ namespace StackExchange.Profiling
             try
             {
                 // Are we authorized???
-                var isAuthroized = Options.ResultsAuthorize?.Invoke(context.Request) ?? true;
+                var isAuthorized = Options.ResultsAuthorize?.Invoke(context.Request) ?? true;
 
                 // Grab any past profilers (e.g. from a previous redirect)
-                var profilerIds = (isAuthroized ? await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false) : null)
+                var profilerIds = (isAuthorized ? await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false) : null)
                                  ?? new List<Guid>(1);
 
                 // Always add the current
@@ -129,7 +129,7 @@ namespace StackExchange.Profiling
                 }
 
                 // Set the state to use in RenderIncludes() down the pipe later
-                context.Items[RequestState.HttpContextKey] = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
+                context.Items[RequestState.HttpContextKey] = new RequestState { IsAuthorized = isAuthorized, RequestIDs = profilerIds };
             }
             catch { /* oh no! headers blew up */ }
         }
