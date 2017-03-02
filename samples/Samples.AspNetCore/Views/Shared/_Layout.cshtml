@@ -1,4 +1,5 @@
-﻿@addTagHelper "*, MiniProfiler.AspNetCore.Mvc"
+﻿@using StackExchange.Profiling;
+@addTagHelper "*, MiniProfiler.AspNetCore.Mvc"
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,6 +65,7 @@
     </environment>
 
     @RenderSection("scripts", required: false)
-    <mini-profiler position="@StackExchange.Profiling.RenderPosition.Right" />
+
+    <mini-profiler position="@RenderPosition.Right" max-traces="5" />
 </body>
 </html>
