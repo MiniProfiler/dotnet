@@ -12,6 +12,9 @@ namespace StackExchange.Profiling
     /// </summary>
     public static class MiniProfilerExtensions
     {
+        // don't allocate this every time...
+        private static readonly HtmlString includeNotFound = new HtmlString("<!-- Could not find 'include.partial.html' -->");
+
         /// <summary>
         /// Renders script tag found in "include.partial.html".
         /// </summary>
@@ -43,7 +46,7 @@ namespace StackExchange.Profiling
 
             if (!MiniProfilerMiddleware.Current.Embedded.TryGetResource("include.partial.html", out string format))
             {
-                return new HtmlString("<!-- Could not find 'include.partial.html' -->");
+                return includeNotFound;
             }
 
             Func<bool, string> toJs = b => b ? "true" : "false";
