@@ -19,6 +19,7 @@ namespace StackExchange.Profiling
         /// Renders script tag found in "include.partial.html".
         /// </summary>
         /// <param name="profiler">The profiler to render a tag for.</param>
+        /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
         /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfiler.Settings.PopupRenderPosition"/>).</param>
         /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTrivial"/>).</param>
         /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTimeWithChildren"/>).</param>
@@ -38,7 +39,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return HtmlString.Empty;
 
             // This is populated in Middleware by SetHeadersAndState
-            var state = context.Items["RequestState"] as RequestState;
+            var state = context.Items[RequestState.HttpContextKey] as RequestState;
 
             // Is the user authroized to see the results of the current MiniProfiler?
             var authorized = state?.IsAuthroized ?? false;

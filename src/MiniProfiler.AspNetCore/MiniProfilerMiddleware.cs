@@ -129,7 +129,7 @@ namespace StackExchange.Profiling
                 }
 
                 // Set the state to use in RenderIncludes() down the pipe later
-                context.Items["RequestState"] = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
+                context.Items[RequestState.HttpContextKey] = new RequestState { IsAuthroized = isAuthroized, RequestIDs = profilerIds };
             }
             catch { /* oh no! headers blew up */ }
         }

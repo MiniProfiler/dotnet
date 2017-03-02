@@ -1,13 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Stores the request state
+    /// Stores the request state, passed down in the <see cref="HttpContext"/>
     /// </summary>
-    public class RequestState
+    internal class RequestState
     {
+        internal const string HttpContextKey = "__MiniProfiler.RequestState";
+
         /// <summary>
         /// Is the user authorized to see this MiniProfiler?
         /// </summary>
