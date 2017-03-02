@@ -327,7 +327,7 @@ namespace StackExchange.Profiling
             if (!AuthorizeRequest(context, isList: false, message: out string authorizeMessage))
             {
                 context.Response.ContentType = "application/json";
-                return "hidden".ToJson();
+                return "\"hidden\""; // JSON
             }
 
             return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
