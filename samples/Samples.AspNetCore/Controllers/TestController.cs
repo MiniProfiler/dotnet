@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Samples.AspNetCore.Controllers
 {
@@ -47,7 +48,21 @@ namespace Samples.AspNetCore.Controllers
 
                 for (int i = 0; i < 20; i++)
                 {
-                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+                    total += conn.QueryFirst<long>("select count(1) from RouteHits where HitCount = @i", new { i });
+                }
+                return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+            }
+        }
+        
+        public async Task<IActionResult> DuplicatedQueriesAsync()
+        {
+            using (var conn = await GetConnectionAsync())
+            {
+                long total = 0;
+
+                for (int i = 0; i < 20; i++)
+                {
+                    total += await conn.QueryFirstAsync<long>("select count(1) from RouteHits where HitCount = @i", new { i });
                 }
                 return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
@@ -250,6 +265,29 @@ namespace Samples.AspNetCore.Controllers
                 }
 
                 cnn.Open();
+                return cnn;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously returns an open connection that will have its queries profiled.
+        /// </summary>
+        /// <param name="profiler">The mini profiler.</param>
+        /// <returns>the data connection abstraction.</returns>
+        public async Task<DbConnection> GetConnectionAsync(MiniProfiler profiler = null)
+        {
+            using (profiler.Step("GetOpenConnectionAsync"))
+            {
+                DbConnection cnn = new SqliteConnection(ConnectionString);
+
+                // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
+                // when MiniProfiler.Current is null, this connection will not record any database timings
+                if (MiniProfiler.Current != null)
+                {
+                    cnn = new ProfiledDbConnection(cnn, MiniProfiler.Current);
+                }
+
+                await cnn.OpenAsync();
                 return cnn;
             }
         }

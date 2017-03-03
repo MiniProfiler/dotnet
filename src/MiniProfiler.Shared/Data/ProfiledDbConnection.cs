@@ -98,13 +98,38 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
-        public override void Open() => _connection.Open();
+        public override void Open()
+        {
+            var miniProfiler = _profiler as MiniProfiler;
+            if (miniProfiler == null || !miniProfiler.IsActive)
+            {
+                _connection.Open();
+                return;
+            }
+
+            using (miniProfiler.CustomTiming("sql", "Connection Open()", "Open"))
+            {
+                _connection.Open();
+            }
+        }
 
         /// <summary>
         /// Asynchronously opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        public override Task OpenAsync(CancellationToken cancellationToken) => _connection.OpenAsync(cancellationToken);
+        public override Task OpenAsync(CancellationToken cancellationToken)
+        {
+            var miniProfiler = _profiler as MiniProfiler;
+            if (miniProfiler == null || !miniProfiler.IsActive)
+            {
+                return _connection.OpenAsync(cancellationToken);
+            }
+
+            using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", "OpenAsync"))
+            {
+                return _connection.OpenAsync(cancellationToken);
+            }            
+        }
 
         /// <summary>
         /// Starts a database transaction.
