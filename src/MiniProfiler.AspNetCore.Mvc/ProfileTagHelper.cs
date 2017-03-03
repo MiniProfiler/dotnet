@@ -25,7 +25,7 @@ namespace StackExchange.Profiling
         /// <param name="output">The output to render to.</param>
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            using(MiniProfiler.Current.Step(Name))
+            using (MiniProfiler.Current.Step(Name))
             {
                 output.Content = await output.GetChildContentAsync();
             }
