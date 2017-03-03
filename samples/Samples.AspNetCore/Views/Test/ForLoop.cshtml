@@ -1,0 +1,23 @@
+﻿@{ 
+    Layout = null;
+}
+@using (MiniProfiler.Current.Step("For Loop - using()"))
+{
+    int dontCare = 0;
+    for (var i = 0; i < 10000000; i++)
+    {
+        dontCare++;
+    }
+    @:@dontCare <code>using</code> loops complete.
+}
+<br/>
+<profile name="For Loop - <profile> Tag">
+    @{
+        int stillDontCare = 0;
+        for (var i = 0; i < 10000000; i++)
+        {
+            stillDontCare++;
+        }
+    }
+    <span>@stillDontCare <code>&lt;profile&gt;</code> loops complete.</span>
+</profile>

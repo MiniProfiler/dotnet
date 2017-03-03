@@ -246,6 +246,8 @@ namespace Samples.AspNetCore.Controllers
         public RedirectToActionResult MultipleRedirectChild() => RedirectToAction(nameof(MultipleRedirectChildChild));
         public IActionResult MultipleRedirectChildChild() => Content("You should see 3 MiniProfilers from that.");
 
+        public IActionResult ViewProfiling() => View("ForLoop");
+
         /// <summary>
         /// Returns an open connection that will have its queries profiled.
         /// </summary>
