@@ -700,7 +700,7 @@ var MiniProfiler = (function () {
                 version: data.version,
                 renderPosition: data.position,
                 showTrivial: data.trivial,
-                trivialMilliseconds: data.trivialMilliseconds,
+                trivialMilliseconds: parseFloat(data.trivialMilliseconds, 10),
                 showChildrenTime: data.children,
                 maxTracesToShow: data.maxTraces,
                 showControls: data.controls,
