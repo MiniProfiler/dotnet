@@ -152,21 +152,21 @@ namespace StackExchange.Profiling
                     break;
 
                 case "/results-list":
-                    result = ResultsList(context);
+                    result = await ResultsListAsync(context).ConfigureAwait(false);
                     break;
 
                 case "/results":
-                    result = GetSingleProfilerResult(context);
+                    result = await GetSingleProfilerResultAsync(context).ConfigureAwait(false);
                     break;
             }
 
-            result = result ?? NotFound(context);
-            context.Response.ContentLength = result.Length;
+            result = result ?? NotFound(context, "Not Found: " + subPath);
+            context.Response.ContentLength = result?.Length ?? 0;
 
             await context.Response.WriteAsync(result).ConfigureAwait(false);
         }
 
-        private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
+        private static string NotFound(HttpContext context, string message = null, string contentType = "text/plain")
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             context.Response.ContentType = contentType;
@@ -226,14 +226,14 @@ namespace StackExchange.Profiling
         /// Returns the JSON needed for the results list in MiniProfiler
         /// </summary>
         /// <param name="context">The context to get the results list for.</param>
-        private string ResultsList(HttpContext context)
+        private async Task<string> ResultsListAsync(HttpContext context)
         {
             if (!AuthorizeRequest(context, isList: true, message: out string message))
             {
                 return message;
             }
 
-            var guids = MiniProfiler.Settings.Storage.List(100);
+            var guids = await MiniProfiler.Settings.Storage.ListAsync(100).ConfigureAwait(false);
 
             if (context.Request.Query.TryGetValue("last-id", out var lastId) && Guid.TryParse(lastId, out var lastGuid))
             {
@@ -261,7 +261,7 @@ namespace StackExchange.Profiling
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>
-        private string GetSingleProfilerResult(HttpContext context)
+        private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
         {
             var isPost = context.Request.HasFormContentType;
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
@@ -276,22 +276,22 @@ namespace StackExchange.Profiling
 
             if (!Guid.TryParse(requestId, out var id) && MiniProfiler.Settings.Storage != null)
             {
-                id = MiniProfiler.Settings.Storage.List(1).FirstOrDefault();
+                id = (await MiniProfiler.Settings.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
             }
 
             if (id == default(Guid))
             {
-                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
+                return isPopup ? NotFound(context) : NotFound(context, "No GUID id specified on the query string");
             }
 
-            var profiler = MiniProfiler.Settings.Storage.Load(id);
+            var profiler = await MiniProfiler.Settings.Storage.LoadAsync(id).ConfigureAwait(false);
             string user = Options.UserIdProvider?.Invoke(context.Request);
 
-            MiniProfiler.Settings.Storage.SetViewed(user, id);
+            await MiniProfiler.Settings.Storage.SetUnviewedAsync(user, id).ConfigureAwait(false);
 
             if (profiler == null)
             {
-                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
+                return isPopup ? NotFound(context) : NotFound(context, "No MiniProfiler results found with Id=" + id.ToString());
             }
 
             bool needsSave = false;
@@ -319,7 +319,7 @@ namespace StackExchange.Profiling
 
             if (needsSave)
             {
-                MiniProfiler.Settings.Storage.Save(profiler);
+                await MiniProfiler.Settings.Storage.SaveAsync(profiler).ConfigureAwait(false);
             }
 
             if (!AuthorizeRequest(context, isList: false, message: out string authorizeMessage))
@@ -343,7 +343,7 @@ namespace StackExchange.Profiling
 
             context.Response.ContentType = "text/html";
             if (!Embedded.TryGetResource("share.html", out string template))
-                return NotFound(context);
+                return NotFound(context, "Share.html was not found");
             var sb = new StringBuilder(template);
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
