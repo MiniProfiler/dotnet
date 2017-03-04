@@ -128,7 +128,7 @@ namespace StackExchange.Profiling.Data
             using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", "OpenAsync"))
             {
                 return _connection.OpenAsync(cancellationToken);
-            }            
+            }
         }
 
         /// <summary>

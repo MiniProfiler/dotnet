@@ -113,7 +113,7 @@ namespace StackExchange.Profiling
             bool? showControls = null,
             bool? startHidden = null)
         {
-            if (profiler == null) return new HtmlString("");
+            if (profiler == null) return new HtmlString(string.Empty);
 
             var authorized = MiniProfilerWebSettings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
 

@@ -1,7 +1,7 @@
 ﻿@using StackExchange.Profiling
 @functions{
     public string GetVal(object o) =>
-        o?.ToString().Replace("StackExchange.Profiling.", "");
+        o?.ToString().Replace("StackExchange.Profiling.", string.Empty);
 }
 <div class="panel panel-default">
     <div class="panel-heading">MiniProfiler Info</div>

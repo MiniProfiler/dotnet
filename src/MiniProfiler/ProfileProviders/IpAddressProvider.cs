@@ -19,7 +19,7 @@ namespace StackExchange.Profiling
         public string GetUser(HttpRequest request)
         {
             var xff = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-            var remoteAddr = request.ServerVariables["REMOTE_ADDR"] ?? "";
+            var remoteAddr = request.ServerVariables["REMOTE_ADDR"] ?? string.Empty;
 
             // If there's no X_FORWARDED_FOR header, just return REMOTE_ADDR
             if (xff.IsNullOrWhiteSpace())

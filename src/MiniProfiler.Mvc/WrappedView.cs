@@ -49,7 +49,7 @@ namespace StackExchange.Profiling.Mvc
         public void Render(ViewContext viewContext, TextWriter writer)
         {
             var prof = MiniProfiler.Current;
-            string name = prof != null ? ("Render" + (IsPartial ? " partial" : "") + ": " + Name) : null;
+            string name = prof != null ? ("Render" + (IsPartial ? " partial" : string.Empty) + ": " + Name) : null;
             using (prof.Step(name))
             {
                 _wrapped.Render(viewContext, writer);

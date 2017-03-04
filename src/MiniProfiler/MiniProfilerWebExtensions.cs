@@ -87,7 +87,7 @@ namespace StackExchange.Profiling
                             type,
                             customTimings.Sum(ct => ct.DurationMilliseconds),
                             customTimings.Count,
-                            customTimings.Count == 1 ? "" : "s");
+                            customTimings.Count == 1 ? string.Empty : "s");
                     }
                 }
 

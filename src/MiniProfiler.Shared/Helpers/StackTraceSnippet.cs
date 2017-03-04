@@ -25,7 +25,7 @@ namespace StackExchange.Profiling.Helpers
 #endif
             if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)
             {
-                return "";
+                return string.Empty;
             }
 
             var sb = new StringBuilder();

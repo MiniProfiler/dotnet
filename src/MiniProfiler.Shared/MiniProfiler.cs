@@ -309,19 +309,13 @@ namespace StackExchange.Profiling
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
         /// </summary>
         /// <returns>a string containing the recording information</returns>
-        public override string ToString()
-        {
-            return Root != null ? Root.Name + " (" + DurationMilliseconds + " ms)" : "";
-        }
+        public override string ToString() => Root != null ? Root.Name + " (" + DurationMilliseconds + " ms)" : string.Empty;
 
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object obj)
-        {
-            return obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
-        }
+        public override bool Equals(object obj) => obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
 
         /// <summary>
         /// Returns hash code of Id.
