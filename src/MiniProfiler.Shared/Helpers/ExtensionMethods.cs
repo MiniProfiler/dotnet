@@ -71,17 +71,31 @@ namespace StackExchange.Profiling.Helpers
         }
 
         /// <summary>
+        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
+        public static string ToJson(this MiniProfiler profiler)
+        {
+            if (profiler == null) return null;
+#if NET46
+            return new JavaScriptSerializer { MaxJsonLength = MiniProfiler.Settings.MaxJsonResponseSize }.Serialize(profiler);
+#else
+            return JsonConvert.SerializeObject(profiler);
+#endif
+        }
+
+        /// <summary>
         /// Serializes <paramref name="o"/> to a JSON string.
         /// </summary>
         /// <param name="o">the instance to serialise</param>
         /// <returns>the resulting JSON object as a string</returns>
         public static string ToJson(this object o)
         {
-            return o != null
+            if (o == null) return null;
 #if NET46
-                ? new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o) : null;
+            return new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o);
 #else
-                ? JsonConvert.SerializeObject(o) : null;
+            return JsonConvert.SerializeObject(o);
 #endif
         }
 
@@ -93,11 +107,11 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>The object resulting from the given string</returns>
         public static T FromJson<T>(this string s) where T : class
         {
-            return s.HasValue()
+            if (string.IsNullOrEmpty(s)) return null;
 #if NET46
-                ? new JavaScriptSerializer().Deserialize<T>(s) : null;
+            return new JavaScriptSerializer().Deserialize<T>(s);
 #else
-                ? JsonConvert.DeserializeObject<T>(s) : null;
+            return JsonConvert.DeserializeObject<T>(s);
 #endif
         }
     }

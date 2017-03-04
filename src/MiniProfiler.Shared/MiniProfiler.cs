@@ -8,9 +8,6 @@ using StackExchange.Profiling.Storage;
 #if NET46
 using System.IO;
 using System.Web.Script.Serialization;
-#else
-// TODO: Factor these extensions out? That'd be more breaks...
-using Newtonsoft.Json;
 #endif
 
 namespace StackExchange.Profiling
@@ -271,39 +268,10 @@ namespace StackExchange.Profiling
         public static IDisposable StepStatic(string name) => Current.Step(name);
 
         /// <summary>
-        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
-        /// </summary>
-        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
-        public static string ToJson(MiniProfiler profiler)
-        {
-            return profiler != null
-#if NET46
-                ? GetJsonSerializer().Serialize(profiler) : null;
-#else
-                ? JsonConvert.SerializeObject(profiler) : null;
-#endif
-        }
-
-        /// <summary>
         /// Deserializes the JSON string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
         /// <param name="json">The string to deserialize int a <see cref="MiniProfiler"/>.</param>
-        public static MiniProfiler FromJson(string json)
-        {
-            return json.HasValue()
-#if NET46
-                ? GetJsonSerializer().Deserialize<MiniProfiler>(json) : null;
-#else
-                ? JsonConvert.DeserializeObject<MiniProfiler>(json) : null;
-#endif
-        }
-
-#if NET46
-        private static JavaScriptSerializer GetJsonSerializer()
-        {
-            return new JavaScriptSerializer { MaxJsonLength = Settings.MaxJsonResponseSize };
-        }
-#endif
+        public static MiniProfiler FromJson(string json) => json.FromJson<MiniProfiler>();
 
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.

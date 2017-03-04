@@ -307,7 +307,7 @@ namespace StackExchange.Profiling
         private static string ResultsJson(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "application/json";
-            return MiniProfiler.ToJson(profiler);
+            return profiler.ToJson();
         }
 
         private static string ResultsFullPage(HttpContext context, MiniProfiler profiler)
@@ -319,7 +319,7 @@ namespace StackExchange.Profiling
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
               .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
-              .Replace("{json}", MiniProfiler.ToJson(profiler))
+              .Replace("{json}", profiler.ToJson())
               .Replace("{includes}", RenderIncludes(profiler).ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);
             return sb.ToString();
