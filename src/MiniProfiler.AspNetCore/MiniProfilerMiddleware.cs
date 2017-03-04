@@ -129,7 +129,7 @@ namespace StackExchange.Profiling
                 }
 
                 // Set the state to use in RenderIncludes() down the pipe later
-                context.Items[RequestState.HttpContextKey] = new RequestState { IsAuthorized = isAuthorized, RequestIDs = profilerIds };
+                new RequestState { IsAuthorized = isAuthorized, RequestIDs = profilerIds }.Store(context);
             }
             catch { /* oh no! headers blew up */ }
         }
@@ -339,6 +339,8 @@ namespace StackExchange.Profiling
 
         private string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
+            new RequestState { IsAuthorized = true }.Store(context);
+
             context.Response.ContentType = "text/html";
             if (!Embedded.TryGetResource("share.html", out string template))
                 return NotFound(context);

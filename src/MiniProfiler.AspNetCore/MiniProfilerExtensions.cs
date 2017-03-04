@@ -39,7 +39,7 @@ namespace StackExchange.Profiling
             if (profiler == null) return HtmlString.Empty;
 
             // This is populated in Middleware by SetHeadersAndState
-            var state = context.Items[RequestState.HttpContextKey] as RequestState;
+            var state = RequestState.Get(context);
 
             // Is the user authroized to see the results of the current MiniProfiler?
             var authorized = state?.IsAuthorized ?? false;
