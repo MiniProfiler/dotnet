@@ -18,8 +18,10 @@ namespace StackExchange.Profiling
                 {
                     // our assembly
                     "MiniProfiler",
+                    "MiniProfiler.Mvc",
                     "MiniProfiler.Shared",
                     "MiniProfiler.AspNetCore",
+                    "MiniProfiler.AspNetCore.Mvc",
                     // reflection emit
                     "Anonymously Hosted DynamicMethods Assembly",
                     // the man
@@ -68,19 +70,19 @@ namespace StackExchange.Profiling
             /// Assemblies to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeAssembly"/> method.
             /// </summary>
-            public static IEnumerable<string> AssembliesToExclude => assembliesToExclude;
+            public static HashSet<string> AssembliesToExclude => assembliesToExclude;
 
             /// <summary>
             /// Types to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeType"/> method.
             /// </summary>
-            public static IEnumerable<string> TypesToExclude => typesToExclude;
+            public static HashSet<string> TypesToExclude => typesToExclude;
 
             /// <summary>
             /// Methods to exclude from the stack trace report.
             /// Add to this using the <see cref="ExcludeMethod"/> method.
             /// </summary>
-            public static IEnumerable<string> MethodsToExclude => methodsToExclude;
+            public static HashSet<string> MethodsToExclude => methodsToExclude;
 
             /// <summary>
             /// Excludes the specified assembly from the stack trace output.
