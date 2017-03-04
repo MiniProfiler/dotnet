@@ -53,16 +53,16 @@ namespace Samples.AspNetCore.Controllers
                 return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
         }
-        
+
         public async Task<IActionResult> DuplicatedQueriesAsync()
         {
-            using (var conn = await GetConnectionAsync())
+            using (var conn = await GetConnectionAsync().ConfigureAwait(false))
             {
                 long total = 0;
 
                 for (int i = 0; i < 20; i++)
                 {
-                    total += await conn.QueryFirstAsync<long>("select count(1) from RouteHits where HitCount = @i", new { i });
+                    total += await conn.QueryFirstAsync<long>("select count(1) from RouteHits where HitCount = @i", new { i }).ConfigureAwait(false);
                 }
                 return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
@@ -289,7 +289,7 @@ namespace Samples.AspNetCore.Controllers
                     cnn = new ProfiledDbConnection(cnn, MiniProfiler.Current);
                 }
 
-                await cnn.OpenAsync();
+                await cnn.OpenAsync().ConfigureAwait(false);
                 return cnn;
             }
         }
