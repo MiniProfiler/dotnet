@@ -101,7 +101,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
-        public bool HasCustomTimings => CustomTimings?.Any(pair => pair.Value?.Count > 0) ?? false;
+        public bool HasCustomTimings => CustomTimings?.Values.Any(v => v?.Count > 0) ?? false;
 
         /// <summary>
         /// Gets or sets Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.

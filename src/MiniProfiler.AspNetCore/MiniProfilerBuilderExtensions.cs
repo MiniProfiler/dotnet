@@ -1,5 +1,5 @@
-﻿using System;
-using StackExchange.Profiling;
+﻿using StackExchange.Profiling;
+using System;
 
 namespace Microsoft.AspNetCore.Builder
 {

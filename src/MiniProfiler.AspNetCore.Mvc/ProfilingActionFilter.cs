@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using StackExchange.Profiling.Helpers;
 using System;
 using System.Collections.Generic;
-using StackExchange.Profiling.Helpers;
 
 namespace StackExchange.Profiling.Mvc
 {

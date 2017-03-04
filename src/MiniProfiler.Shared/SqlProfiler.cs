@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling
@@ -73,14 +72,6 @@ namespace StackExchange.Profiling
                 stat.ReaderFetchComplete();
                 _inProgressReaders.TryRemove(reader, out var ignore);
             }
-        }
-
-        /// <summary>
-        /// Returns all currently open commands on this connection
-        /// </summary>
-        public SqlTiming[] GetInProgressCommands()
-        {
-            return _inProgress.Values.OrderBy(x => x.StartMilliseconds).ToArray();
         }
     }
 }
