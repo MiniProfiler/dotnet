@@ -161,13 +161,16 @@ float:right;
   background-color: #fff;
   border-bottom: 1px solid #555;
   font-weight: bold;
-  padding: 15px;
+  padding: 8px;
   white-space: nowrap;
 }
 .profiler-result .profiler-queries td {
   padding: 15px;
   text-align: left;
   background-color: #fff;
+}
+.profiler-result .profiler-queries td:first-child {
+    width: 250px;
 }
 .profiler-result .profiler-queries td:last-child {
   padding-right: 25px;
@@ -183,7 +186,6 @@ float:right;
   text-align: right;
   margin-bottom: 5px;
   word-break: break-all;
-  max-width: 300px;
 }
 .profiler-result .profiler-queries .profiler-gap-info,
 .profiler-result .profiler-queries .profiler-gap-info td {
