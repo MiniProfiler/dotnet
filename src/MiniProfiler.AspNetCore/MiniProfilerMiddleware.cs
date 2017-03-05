@@ -83,7 +83,10 @@ namespace StackExchange.Profiling
                 // Wrap the request in this profiler
                 var mp = MiniProfiler.Start();
                 // Always add this profiler's header (and any async requests before it)
-                await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                using (mp.Step("MiniProfiler Prep"))
+                {
+                    await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                }
                 // Execute the pipe
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
