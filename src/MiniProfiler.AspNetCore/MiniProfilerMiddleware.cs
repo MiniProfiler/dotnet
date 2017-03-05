@@ -287,7 +287,7 @@ namespace StackExchange.Profiling
             var profiler = await MiniProfiler.Settings.Storage.LoadAsync(id).ConfigureAwait(false);
             string user = Options.UserIdProvider?.Invoke(context.Request);
 
-            await MiniProfiler.Settings.Storage.SetUnviewedAsync(user, id).ConfigureAwait(false);
+            await MiniProfiler.Settings.Storage.SetViewedAsync(user, id).ConfigureAwait(false);
 
             if (profiler == null)
             {
