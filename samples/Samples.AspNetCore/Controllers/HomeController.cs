@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Profiling;
-using System.Threading;
 
 namespace Samples.AspNetCore.Controllers
 {
@@ -8,15 +7,17 @@ namespace Samples.AspNetCore.Controllers
     {
         public IActionResult Index()
         {
-            using (MiniProfiler.Current.Step("Delay Step"))
+            using (MiniProfiler.Current.Step("Example Step"))
             {
-                Thread.Sleep(50);
                 using (MiniProfiler.Current.Step("Sub timing"))
                 {
-                    Thread.Sleep(65);
+                    // Not trying to delay the page load here, only serve as an example
+                }
+                using (MiniProfiler.Current.Step("Sub timing 2"))
+                {
+                    // Not trying to delay the page load here, only serve as an example
                 }
             }
-
             return View();
         }
 
