@@ -1,0 +1,627 @@
+@results-border: solid 1px #888888;
+@color-nuclear: #f00;
+@results-border-radius: 10px;
+
+.profiler-result, .profiler-queries {
+    color: #555;
+    line-height: 1;
+    font-size: 12px;
+
+    pre, code, label, table, tbody, thead, tfoot, tr, th, td {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+        background-color: transparent;
+        overflow: visible;
+        max-height: none;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+    a {
+        cursor: pointer;
+        color: #0077cc;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.profiler-result {
+    font-family: Helvetica, Arial, sans-serif;
+
+    table.profiler-client-timings {
+        margin-top: 10px;
+    }
+
+    .profiler-label {
+        color: #555555;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profiler-unit {
+        color: #aaaaaa;
+    }
+
+    .profiler-trivial {
+        display: none;
+
+        td, td * {
+            color: #aaaaaa !important;
+        }
+    }
+
+    pre, code, .profiler-number, .profiler-unit {
+        font-family: Consolas, monospace, serif;
+    }
+
+    .profiler-number {
+        color: #111111;
+    }
+
+    .profiler-info {
+        text-align: right;
+
+        .profiler-name {
+            float: left;
+        }
+
+        .profiler-server-time {
+            white-space: nowrap;
+        }
+    }
+
+    .profiler-timings {
+        th {
+            background-color: #fff;
+            color: #aaaaaa;
+            text-align: right;
+        }
+
+        th, td {
+            white-space: nowrap;
+        }
+
+        .profiler-show-more {
+            display: none;
+        }
+
+        .profiler-duration {
+            font-family: Consolas, monospace, serif;
+            color: #111111;
+            text-align: right;
+        }
+
+        .profiler-indent {
+            letter-spacing: 4px;
+        }
+
+        .profiler-queries-show {
+            .profiler-number, .profiler-unit {
+                color: #0077cc;
+            }
+        }
+
+        .profiler-queries-duration {
+            padding-left: 6px;
+        }
+    }
+
+    .profiler-custom-timing-overview {
+        float: right;
+        margin: 10px 0;
+
+        td {
+            white-space: nowrap;
+            text-align: right;
+
+            &:last-child {
+                padding-left: 8px;
+            }
+        }
+    }
+
+    .profiler-links {
+        margin-top: 10px;
+        clear: both;
+
+        a {
+            font-size: 95%;
+            display: inline-block;
+            margin-left: 12px;
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+
+    .profiler-toggleable-links {
+        float: right;
+    }
+
+    .profiler-queries {
+        font-family: Helvetica, Arial, sans-serif;
+
+        .profiler-stack-trace {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            font-family: Consolas, monospace, serif;
+            white-space: pre-wrap;
+        }
+
+        th {
+            background-color: #fff;
+            border-bottom: 1px solid #555;
+            font-weight: bold;
+            padding: 8px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 8px;
+            text-align: left;
+            background-color: #fff;
+
+            &:first-child {
+                width: 250px;
+            }
+
+            &:last-child {
+                padding-right: 15px;
+            }
+        }
+
+        .profiler-odd td {
+            background-color: #e5e5e5;
+        }
+
+        .profiler-since-start, .profiler-duration {
+            text-align: right;
+        }
+
+        .profiler-info div {
+            text-align: right;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .profiler-gap-info {
+            &, td {
+                background-color: #ccc;
+
+                &.query {
+                    word-break: break-all;
+                }
+            }
+
+            .profiler-unit {
+                color: #777;
+            }
+
+            .profiler-info {
+                text-align: right;
+            }
+
+            &.profiler-trivial-gaps {
+                display: none;
+            }
+        }
+
+        .profiler-trivial-gap-container {
+            text-align: center;
+        }
+
+        .str {
+            color: #800000;
+        }
+
+        .kwd {
+            color: #00008b;
+        }
+
+        .com {
+            color: #808080;
+        }
+
+        .typ {
+            color: #2b91af;
+        }
+
+        .lit {
+            color: #800000;
+        }
+
+        .pun {
+            color: #000000;
+        }
+
+        .pln {
+            color: #000000;
+        }
+
+        .tag {
+            color: #800000;
+        }
+
+        .atn {
+            color: #ff0000;
+        }
+
+        .atv {
+            color: #0000ff;
+        }
+
+        .dec {
+            color: #800080;
+        }
+    }
+
+    .profiler-warning {
+        &, *, .profiler-queries-show, .profiler-queries-show .profiler-unit {
+            color: @color-nuclear;
+
+            &:hover {
+                color: @color-nuclear;
+            }
+        }
+    }
+
+    .profiler-nuclear {
+        color: @color-nuclear;
+        font-weight: bold;
+
+        &:hover {
+            color: @color-nuclear;
+        }
+    }
+}
+
+.profiler-results {
+    z-index: 2147483643;
+    position: fixed;
+    top: 0;
+
+    &.profiler-left, &.profiler-bottomleft {
+        left: 0;
+    }
+
+    &.profiler-left {
+        .profiler-controls, &.profiler-no-controls .profiler-result:last-child .profiler-button {
+            border-bottom-right-radius: @results-border-radius;
+        }
+
+        .profiler-button, .profiler-controls {
+            border-right: @results-border;
+        }
+    }
+
+    &.profiler-right {
+        right: 0;
+
+        .profiler-controls, &.profiler-no-controls .profiler-result:last-child .profiler-button {
+            border-bottom-left-radius: @results-border-radius;
+        }
+
+        .profiler-button, .profiler-controls {
+            border-left: @results-border;
+        }
+    }
+
+    &.profiler-bottomleft {
+        top: inherit;
+        bottom: 0;
+
+        .profiler-result:first-child .profiler-button {
+            border-top-right-radius: @results-border-radius;
+        }
+
+        .profiler-button, .profiler-controls {
+            border-right: @results-border;
+        }
+
+        .profiler-result .profiler-button, .profiler-controls {
+            border-bottom: 0;
+            border-top: @results-border;
+        }
+    }
+
+    &.profiler-bottomright {
+        top: inherit;
+        bottom: 0;
+        right: 0;
+
+        .profiler-result:first-child .profiler-button {
+            border-top-left-radius: @results-border-radius;
+        }
+
+        .profiler-button, .profiler-controls {
+            border-left: @results-border;
+        }
+
+        .profiler-result .profiler-button, .profiler-controls {
+            border-bottom: 0;
+            border-top: @results-border;
+        }
+    }
+
+    .profiler-button, .profiler-controls {
+        display: none;
+        z-index: 2147483640;
+        border-bottom: @results-border;
+        background-color: #fff;
+        animation: new-entry 5s 1;
+        padding: 4px 7px;
+        text-align: right;
+        cursor: pointer;
+    }
+
+    .profiler-button, .profiler-controls {
+        &.profiler-button-active {
+            background-color: maroon;
+
+            .profiler-number, .profiler-nuclear {
+                color: #fff;
+                font-weight: bold;
+            }
+
+            .profiler-unit {
+                color: #fff;
+                font-weight: normal;
+            }
+        }
+    }
+
+    .profiler-controls {
+        display: block;
+        font-size: 12px;
+        font-family: Consolas, monospace, serif;
+        cursor: default;
+        text-align: center;
+
+        span {
+            border-right: 1px solid #aaaaaa;
+            padding-right: 5px;
+            margin-right: 5px;
+            cursor: pointer;
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+    }
+
+    .profiler-popup {
+        display: none;
+        z-index: 2147483641;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #aaa;
+        padding: 5px 10px;
+        text-align: left;
+        line-height: 18px;
+        overflow: auto;
+        box-shadow: 0 1px 15px #555555;
+
+        .profiler-info {
+            margin-bottom: 3px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #ddd;
+
+            .profiler-name {
+                font-size: 110%;
+                font-weight: bold;
+
+                .profiler-overall-duration {
+                    display: none;
+                }
+            }
+
+            .profiler-server-time {
+                font-size: 95%;
+            }
+        }
+
+        .profiler-timings {
+            th, td {
+                padding: 0 6px;
+            }
+
+            th {
+                font-size: 95%;
+                padding-bottom: 3px;
+            }
+
+            .profiler-label {
+                max-width: 275px;
+            }
+        }
+    }
+
+    .profiler-queries {
+        display: none;
+        z-index: 2147483643;
+        top: 30px;
+        left: 30px;
+        right: 30px;
+        position: fixed;
+        overflow-y: auto;
+        overflow-x: auto;
+        background-color: #fff;
+
+        th {
+            font-size: 17px;
+        }
+    }
+
+    &.profiler-min {
+        .profiler-result {
+            display: none;
+        }
+
+        .profiler-controls span {
+            display: none;
+        }
+
+        .profiler-controls .profiler-min-max {
+            border-right: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.profiler-queries-bg {
+    z-index: 2147483642;
+    display: none;
+    background: #000;
+    opacity: 0.7;
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+}
+
+.profiler-result-full {
+    .profiler-result {
+        width: 950px;
+        margin: 30px auto;
+
+        .profiler-button {
+            display: none;
+        }
+
+        .profiler-popup {
+            .profiler-info {
+                font-size: 25px;
+                border-bottom: 1px solid #aaaaaa;
+                padding-bottom: 3px;
+                margin-bottom: 25px;
+
+                .profiler-overall-duration {
+                    padding-right: 20px;
+                    font-size: 80%;
+                    color: #888;
+                }
+            }
+
+            .profiler-timings {
+                td, th {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+
+                th {
+                    padding-bottom: 7px;
+                }
+
+                td {
+                    font-size: 14px;
+                    padding-bottom: 4px;
+
+                    &:first-child {
+                        padding-left: 10px;
+                    }
+                }
+
+                .profiler-label {
+                    max-width: 550px;
+                }
+            }
+        }
+
+        .profiler-queries {
+            margin: 25px 0;
+
+            table {
+                width: 100%;
+            }
+
+            th {
+                font-size: 16px;
+                color: #555;
+                line-height: 20px;
+            }
+
+            td {
+                padding: 15px 10px;
+                text-align: left;
+            }
+
+            .profiler-info div {
+                text-align: right;
+                margin-bottom: 5px;
+            }
+        }
+    }
+}
+
+table.profiler-results-index {
+    border: 0;
+    border-spacing: 0;
+
+    tbody {
+        tr:nth-child(odd) {
+            background-color: #eee;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fff;
+        }
+    }
+
+    tr {
+        border: 0;
+    }
+
+    thead tr {
+        background-color: #bbb;
+        color: #444;
+        font-size: 12px;
+
+        th {
+            padding: 5px 15px;
+        }
+    }
+
+    td {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+.profiler-results-index-date {
+    font-size: 11px;
+    color: #666;
+}
+
+.profiler-results-index-time {
+    text-align: center;
+}
+
+.profiler-results-none {
+    color: #888;
+    text-align: center;
+}
+
+@keyframes new-entry {
+    0% {
+        background-color: #FFFAAA;
+    }
+
+    100% {
+        background-color: #FFF;
+    }
+}

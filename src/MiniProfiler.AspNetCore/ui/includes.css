@@ -41,14 +41,9 @@
   width: 100%;
 }
 .profiler-result a,
-.profiler-queries a,
-.profiler-result a:hover,
-.profiler-queries a:hover {
+.profiler-queries a {
   cursor: pointer;
   color: #0077cc;
-}
-.profiler-result a,
-.profiler-queries a {
   text-decoration: none;
 }
 .profiler-result a:hover,
@@ -122,19 +117,19 @@
   padding-left: 6px;
 }
 .profiler-result .profiler-custom-timing-overview {
-    float:right;
-    margin:10px 0;
+  float: right;
+  margin: 10px 0;
 }
 .profiler-result .profiler-custom-timing-overview td {
   white-space: nowrap;
   text-align: right;
 }
 .profiler-result .profiler-custom-timing-overview td:last-child {
-    padding-left: 8px;
+  padding-left: 8px;
 }
 .profiler-result .profiler-links {
   margin-top: 10px;
-  clear:both;
+  clear: both;
 }
 .profiler-result .profiler-links a {
   font-size: 95%;
@@ -142,10 +137,10 @@
   margin-left: 12px;
 }
 .profiler-result .profiler-links a:first-child {
-    margin-left: 0;
+  margin-left: 0;
 }
 .profiler-result .profiler-toggleable-links {
-float:right;   
+  float: right;
 }
 .profiler-result .profiler-queries {
   font-family: Helvetica, Arial, sans-serif;
@@ -165,15 +160,15 @@ float:right;
   white-space: nowrap;
 }
 .profiler-result .profiler-queries td {
-  padding: 15px;
+  padding: 8px;
   text-align: left;
   background-color: #fff;
 }
 .profiler-result .profiler-queries td:first-child {
-    width: 250px;
+  width: 250px;
 }
 .profiler-result .profiler-queries td:last-child {
-  padding-right: 25px;
+  padding-right: 15px;
 }
 .profiler-result .profiler-queries .profiler-odd td {
   background-color: #e5e5e5;
@@ -191,6 +186,7 @@ float:right;
 .profiler-result .profiler-queries .profiler-gap-info td {
   background-color: #ccc;
 }
+.profiler-result .profiler-queries .profiler-gap-info.query,
 .profiler-result .profiler-queries .profiler-gap-info td.query {
   word-break: break-all;
 }
@@ -263,65 +259,70 @@ float:right;
   position: fixed;
   top: 0;
 }
-.profiler-results.profiler-left, .profiler-results.profiler-bottomleft {
+.profiler-results.profiler-left,
+.profiler-results.profiler-bottomleft {
   left: 0;
 }
-.profiler-results.profiler-left.profiler-no-controls .profiler-result:last-child .profiler-button,
-.profiler-results.profiler-left .profiler-controls {
-  -webkit-border-bottom-right-radius: 10px;
-  -moz-border-radius-bottomright: 10px;
+.profiler-results.profiler-left .profiler-controls,
+.profiler-results.profiler-left.profiler-no-controls .profiler-result:last-child .profiler-button {
   border-bottom-right-radius: 10px;
 }
 .profiler-results.profiler-left .profiler-button,
-.profiler-results.profiler-left .profiler-controls,
-.profiler-results.profiler-bottomleft .profiler-button,
-.profiler-results.profiler-bottomleft .profiler-controls {
-  border-right: 1px solid #888888;
+.profiler-results.profiler-left .profiler-controls {
+  border-right: solid 1px #888888;
 }
-.profiler-results.profiler-right, .profiler-results.profiler-bottomright  {
+.profiler-results.profiler-right {
   right: 0;
 }
-.profiler-results.profiler-right.profiler-no-controls .profiler-result:last-child .profiler-button,
-.profiler-results.profiler-right .profiler-controls {
-  -webkit-border-bottom-left-radius: 10px;
-  -moz-border-radius-bottomleft: 10px;
+.profiler-results.profiler-right .profiler-controls,
+.profiler-results.profiler-right.profiler-no-controls .profiler-result:last-child .profiler-button {
   border-bottom-left-radius: 10px;
 }
 .profiler-results.profiler-right .profiler-button,
-.profiler-results.profiler-right .profiler-controls,
-.profiler-results.profiler-bottomright .profiler-button,
-.profiler-results.profiler-bottomright .profiler-controls {
-  border-left: 1px solid #888888;
+.profiler-results.profiler-right .profiler-controls {
+  border-left: solid 1px #888888;
 }
-.profiler-results.profiler-bottomleft .profiler-result .profiler-button,
-.profiler-results.profiler-bottomleft .profiler-controls,
-.profiler-results.profiler-bottomright .profiler-result .profiler-button,
-.profiler-results.profiler-bottomright .profiler-controls {
-	border-bottom: 0;
-	border-top: 1px solid #888888;
-}
-.profiler-results.profiler-bottomleft, .profiler-results.profiler-bottomright {
+.profiler-results.profiler-bottomleft {
   top: inherit;
   bottom: 0;
 }
 .profiler-results.profiler-bottomleft .profiler-result:first-child .profiler-button {
-  -webkit-border-top-right-radius: 10px;
-  -moz-border-radius-topright: 10px;
   border-top-right-radius: 10px;
 }
+.profiler-results.profiler-bottomleft .profiler-button,
+.profiler-results.profiler-bottomleft .profiler-controls {
+  border-right: solid 1px #888888;
+}
+.profiler-results.profiler-bottomleft .profiler-result .profiler-button,
+.profiler-results.profiler-bottomleft .profiler-controls {
+  border-bottom: 0;
+  border-top: solid 1px #888888;
+}
+.profiler-results.profiler-bottomright {
+  top: inherit;
+  bottom: 0;
+  right: 0;
+}
 .profiler-results.profiler-bottomright .profiler-result:first-child .profiler-button {
-  -webkit-border-top-left-radius: 10px;
-  -moz-border-radius-topleft: 10px;
   border-top-left-radius: 10px;
 }
-
+.profiler-results.profiler-bottomright .profiler-button,
+.profiler-results.profiler-bottomright .profiler-controls {
+  border-left: solid 1px #888888;
+}
+.profiler-results.profiler-bottomright .profiler-result .profiler-button,
+.profiler-results.profiler-bottomright .profiler-controls {
+  border-bottom: 0;
+  border-top: solid 1px #888888;
+}
 .profiler-results .profiler-button,
 .profiler-results .profiler-controls {
   display: none;
   z-index: 2147483640;
-  border-bottom: 1px solid #888888;
+  border-bottom: solid 1px #888888;
   background-color: #fff;
-  animation: new-entry 5s 1;
+  -webkit-animation: new-entry 5s 1;
+          animation: new-entry 5s 1;
   padding: 4px 7px;
   text-align: right;
   cursor: pointer;
@@ -368,8 +369,6 @@ float:right;
   text-align: left;
   line-height: 18px;
   overflow: auto;
-  -moz-box-shadow: 0 1px 15px #555555;
-  -webkit-box-shadow: 0 1px 15px #555555;
   box-shadow: 0 1px 15px #555555;
 }
 .profiler-results .profiler-popup .profiler-info {
@@ -488,17 +487,50 @@ float:right;
   text-align: right;
   margin-bottom: 5px;
 }
-table.profiler-results-index  { border: 0; border-spacing:0;}
-table.profiler-results-index tbody tr:nth-child(odd) { background-color:#eee; }
-table.profiler-results-index tbody tr:nth-child(even) { background-color:#fff; }
-table.profiler-results-index tr {border: 0;}
-table.profiler-results-index thead tr {background-color: #bbb; color: #444; font-size: 12px;}
-table.profiler-results-index thead tr th { padding: 5px 15px;}
-table.profiler-results-index td {padding: 8px; font-size: 12px;}
-.profiler-results-index-date {font-size: 11px; color: #666;}
-.profiler-results-index-time {text-align:center;}
-.profiler-results-none { color: #888; text-align: center; }
-
+table.profiler-results-index {
+  border: 0;
+  border-spacing: 0;
+}
+table.profiler-results-index tbody tr:nth-child(odd) {
+  background-color: #eee;
+}
+table.profiler-results-index tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+table.profiler-results-index tr {
+  border: 0;
+}
+table.profiler-results-index thead tr {
+  background-color: #bbb;
+  color: #444;
+  font-size: 12px;
+}
+table.profiler-results-index thead tr th {
+  padding: 5px 15px;
+}
+table.profiler-results-index td {
+  padding: 8px;
+  font-size: 12px;
+}
+.profiler-results-index-date {
+  font-size: 11px;
+  color: #666;
+}
+.profiler-results-index-time {
+  text-align: center;
+}
+.profiler-results-none {
+  color: #888;
+  text-align: center;
+}
+@-webkit-keyframes new-entry {
+  0% {
+    background-color: #FFFAAA;
+  }
+  100% {
+    background-color: #FFF;
+  }
+}
 @keyframes new-entry {
   0% {
     background-color: #FFFAAA;

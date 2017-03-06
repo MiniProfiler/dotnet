@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26206.0
+VisualStudioVersion = 15.0.26228.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -126,6 +126,9 @@ Global
 		{6A2B5B70-1C32-482F-B5C6-0597E2D4E376} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{C7E9334A-6BFA-43A7-8FE4-393AC17DD7C1} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{880EFCA6-C791-464C-A416-EFAFB1FCC28C} = {33644D67-D9BB-4989-9B7A-98D51967059B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
