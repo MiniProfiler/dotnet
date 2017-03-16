@@ -21,16 +21,6 @@
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="ui\includes.less" />
-    <EmbeddedResource Include="ui\*.*" />
-    <EmbeddedResource Update="ui\includes.css">
-      <DependentUpon>includes.less</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ui\includes.min.css">
-      <DependentUpon>includes.css</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.0" />

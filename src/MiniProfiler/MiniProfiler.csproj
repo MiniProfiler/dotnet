@@ -22,9 +22,6 @@
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ui/*.*" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>

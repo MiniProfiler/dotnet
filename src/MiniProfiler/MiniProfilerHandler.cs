@@ -362,7 +362,7 @@ namespace StackExchange.Profiling
                 }
                 else
                 {
-                    using (var stream = typeof(MiniProfilerHandler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
+                    using (var stream = typeof(MiniProfiler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
                     {
                         if (stream == null)
                         {

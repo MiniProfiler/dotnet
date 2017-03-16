@@ -45,4 +45,14 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ui\includes.less" />
+    <EmbeddedResource Include="ui\*.*" />
+    <EmbeddedResource Update="ui\includes.css">
+      <DependentUpon>includes.less</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ui\includes.min.css">
+      <DependentUpon>includes.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
