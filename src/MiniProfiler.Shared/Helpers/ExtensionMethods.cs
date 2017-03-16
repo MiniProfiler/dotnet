@@ -32,10 +32,8 @@ namespace StackExchange.Profiling.Helpers
         /// </summary>
         /// <param name="s">The string to truncate.</param>
         /// <param name="maxLength">The length to truncate to.</param>
-        public static string Truncate(this string s, int maxLength)
-        {
-            return s?.Length > maxLength ? s.Substring(0, maxLength) : s;
-        }
+        public static string Truncate(this string s, int maxLength) =>
+            s?.Length > maxLength ? s.Substring(0, maxLength) : s;
 
         /// <summary>
         /// Removes trailing / characters from a path and leaves just one
