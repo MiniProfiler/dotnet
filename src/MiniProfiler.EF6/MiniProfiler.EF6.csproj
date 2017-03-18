@@ -4,7 +4,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <AssemblyName>MiniProfiler.EntityFramework</AssemblyName>
+    <AssemblyName>MiniProfiler.EF6</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>

@@ -4,13 +4,14 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net46</TargetFrameworks>
-    <AssemblyName>MiniProfiler.Mvc</AssemblyName>
+    <AssemblyName>MiniProfiler.Mvc5</AssemblyName>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <!-- .nupkg Metadata -->
+    <Title>MiniProfiler for MVC 5</Title>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>MiniProfiler: Extensions and helpers for ASP.NET MVC 5+ (non-.NET Core)</Description>
     <PackageId>$(AssemblyName)</PackageId>

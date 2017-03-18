@@ -1,4 +1,0 @@
-nuget pack MiniProfiler.nuspec
-nuget pack MiniProfiler.MVC3.nuspec
-nuget pack MiniProfiler.EF.nuspec
-nuget pack MiniProfiler.WCF.nuspec

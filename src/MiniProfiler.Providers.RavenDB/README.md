@@ -1,20 +1,18 @@
-﻿## MiniProfiler for RavenDB
+﻿# MiniProfiler for RavenDB
 
-This package allows you to profile your RavenDB requests
-using MiniProfiler.
+This package allows you to profile your RavenDB requests using MiniProfiler.
 
 Simply call `MiniProfilerRaven.InitializeFor(store)` when you initialize
-your Raven `DocumentStore` (please note that `EmbeddableDocumentStore`
-is not supported).
+your Raven `DocumentStore` (please note that `EmbeddableDocumentStore` is not supported).
 
-	var store = new DocumentStore();
-	store.Initialize();
+```c#
+var store = new DocumentStore();
+store.Initialize();
 
-	// Initialize MiniProfiler
-	MiniProfilerRaven.InitializeFor(store);
+// Initialize MiniProfiler
+MiniProfilerRaven.InitializeFor(store);
+```
 
-A new column will appear on MiniProfiler that provides detail
-on your Raven requests, including POSTed data.
+A new column will appear on MiniProfiler that provides detail on your Raven requests, including `POST`ed data.
 
-All of the existing settings and functionality of MiniProfiler
-can be taken advantage of.
+All of the existing settings and functionality of MiniProfiler can be taken advantage of.

@@ -1,8 +1,7 @@
 $projectsToBuild =
     'MiniProfiler.Shared',
     'MiniProfiler',
-    #'MiniProfiler.EntityFramework',
-    #'MiniProfiler.MongoDB',
+    #'MiniProfiler.EF6',
     'MiniProfiler.Mvc',
     'MiniProfiler.Providers.RavenDB',
     'MiniProfiler.Providers.SqlServer',

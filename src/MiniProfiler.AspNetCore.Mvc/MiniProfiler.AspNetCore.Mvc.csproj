@@ -10,6 +10,7 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <Title>MiniProfiler for ASP.NET Core MVC</Title>
     <Authors>Nick Craver</Authors>
     <Description>Lightweight mini-profiler, in particular designed for ASP.NET Core MVC (not System.Web) sites</Description>
     <PackageId>$(AssemblyName)</PackageId>
