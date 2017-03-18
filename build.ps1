@@ -1,5 +1,7 @@
 param(
-    [parameter(Position=0,Mandatory=$true)][string] $Version = ''
+    [parameter(Position=0,Mandatory=$true)]
+    [AllowEmptyString()]
+    [string] $VersionSuffix
 )
 $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
@@ -28,10 +30,10 @@ foreach ($project in $projectsToBuild) {
     Write-Host "Restoring $project..." -ForegroundColor "Magenta"
     dotnet restore ".\src\$project"
 
-    Write-Host "Packing $project... (Version:" -NoNewline -ForegroundColor "Magenta"
-    Write-Host $Version -NoNewline -ForegroundColor "Cyan"
+    Write-Host "Packing $project... (Suffix:" -NoNewline -ForegroundColor "Magenta"
+    Write-Host $VersionSuffix -NoNewline -ForegroundColor "Cyan"
     Write-Host ")" -ForegroundColor "Magenta"
-    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --include-symbols /p:PackageVersion=$Version
+    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --include-symbols --version-suffix=$VersionSuffix
 
     Write-Host "Done."
     wRite-Host ""

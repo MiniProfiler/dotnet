@@ -3,6 +3,7 @@
     <RootNamespace>StackExchange.Profiling</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
+    <VersionPrefix>4.0.0</VersionPrefix>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Providers.RavenDB</AssemblyName>
     <OutputType>Library</OutputType>
@@ -14,7 +15,6 @@
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>MiniProfiler: Profilers for RavenDB</Description>
     <PackageId>$(AssemblyName)</PackageId>
-    <PackageVersion>4.0.0</PackageVersion>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
