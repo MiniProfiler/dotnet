@@ -1,27 +1,38 @@
+param(
+    [parameter(Position=0,Mandatory=$true)][string] $Version = ''
+)
+$packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
     'MiniProfiler.Shared',
     'MiniProfiler',
     #'MiniProfiler.EF6',
-    'MiniProfiler.Mvc',
-    'MiniProfiler.Providers.RavenDB',
+    'MiniProfiler.Mvc5',
+    'MiniProfiler.AspNetCore',
+    'MiniProfiler.AspNetCore.Mvc',
+    #'MiniProfiler.Providers.RavenDB',
     'MiniProfiler.Providers.SqlServer',
     'MiniProfiler.Providers.SqlServerCe'
 
 Write-Host "Hello and welcome to our elaborate build!"
 Write-Host "Just kidding, this is a sanity check at the moment, it'll get more detailed."
 
+Write-Host "Clearing existing $packageOutputFolder..." -NoNewline
+Get-ChildItem $packageOutputFolder | Remove-Item
+Write-Host "done." -ForegroundColor "Green"
+
+Write-Host "Building Version $Version of all packages" -ForegroundColor "Green"
+
 foreach ($project in $projectsToBuild) {
     Write-Host "Working on $project`:" -ForegroundColor "Magenta"
-    Push-Location ".\src\$project"
 
     Write-Host "Restoring $project..." -ForegroundColor "Magenta"
-    dotnet restore
-    Write-Host "Building $project..." -ForegroundColor "Magenta"
-    dotnet build
-    Write-Host "Packing $project..." -ForegroundColor "Magenta"
-    dotnet pack
+    dotnet restore ".\src\$project"
+
+    Write-Host "Packing $project... (Version:" -NoNewline -ForegroundColor "Magenta"
+    Write-Host $Version -NoNewline -ForegroundColor "Cyan"
+    Write-Host ")" -ForegroundColor "Magenta"
+    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --include-symbols /p:PackageVersion=$Version
 
     Write-Host "Done."
     wRite-Host ""
-    Pop-Location
 }

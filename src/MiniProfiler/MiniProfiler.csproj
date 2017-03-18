@@ -11,10 +11,11 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <!-- .nupkg Metadata -->
+    <Title>MiniProfiler</Title>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>Lightweight mini-profiler, in particular designed for ASP.NET MVC (non-.NET Core) sites</Description>
     <PackageId>$(AssemblyName)</PackageId>
-    <PackageVersion>4.0.0-alpha1</PackageVersion>
+    <PackageVersion>4.0.0</PackageVersion>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>

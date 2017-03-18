@@ -5,7 +5,7 @@ obj
 *.sqlite
 *.user
 *.sdf
-*.nupkg
+*.nupkgs
 nuget.exe
 *.*~
 *.swp
@@ -17,9 +17,6 @@ tmp
 *.ncrunchsolution
 *.GhostDoc.xml
 *.ncrunchproject
-nupkg
-Sample.Wcf/x64/
-Sample.Wcf/x86/
 packages/**/*.*
 .vs/*
 samples/Samples.Mvc5/Properties/launchSettings.json
