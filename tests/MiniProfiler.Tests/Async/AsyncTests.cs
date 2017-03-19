@@ -186,12 +186,12 @@ namespace Tests.Async
             var hierarchy = profiler.GetTimingHierarchy().ToList();
             foreach (var timing in hierarchy)
             {
-                if (timing.Name.StartsWith("thread"))
+                if (timing.Name.StartsWith("thread", StringComparison.Ordinal))
                 {
                     // 3 work items, 50 ms each
                     AssertNear(500, timing.DurationMilliseconds, 100);
                 }
-                else if (timing.Name.StartsWith("work"))
+                else if (timing.Name.StartsWith("work", StringComparison.Ordinal))
                 {
                     // 50 ms each work item
                     AssertNear(50, timing.DurationMilliseconds, 20);

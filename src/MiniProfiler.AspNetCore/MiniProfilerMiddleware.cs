@@ -47,8 +47,8 @@ namespace StackExchange.Profiling
 
             var basePath = Options.RouteBasePath;
             // Example transform: ~/mini-profiler-results/ to /mini-profiler-results
-            if (basePath.StartsWith("~/")) basePath = basePath.Substring(1);
-            if (basePath.EndsWith("/") && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
+            if (basePath.StartsWith("~/", StringComparison.Ordinal)) basePath = basePath.Substring(1);
+            if (basePath.EndsWith("/", StringComparison.Ordinal) && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
 
             BasePath = new PathString(basePath);
             Embedded = new EmbeddedProvider(Options, _env);
@@ -143,7 +143,7 @@ namespace StackExchange.Profiling
             string result = null;
 
             // File embed
-            if (subPath.Value.StartsWith("/includes"))
+            if (subPath.Value.StartsWith("/includes", StringComparison.Ordinal))
             {
                 result = Embedded.GetFile(context, subPath);
             }

@@ -100,10 +100,10 @@ namespace StackExchange.Profiling.SqlFormatters
         }
 
         private string EnsureParameterPrefix(string name) =>
-            !name.StartsWith("@") ? "@" + name : name;
+            !name.StartsWith("@", StringComparison.Ordinal) ? "@" + name : name;
 
         private string RemoveParameterPrefix(string name) =>
-            name.StartsWith("@") ? name.Substring(1) : name;
+            name.StartsWith("@", StringComparison.Ordinal) ? name.Substring(1) : name;
 
         private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
         {
