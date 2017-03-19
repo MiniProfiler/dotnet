@@ -43,4 +43,4 @@ MiniProfiler is made of of several libraries, but you likely only need to refere
     * [MiniProfiler.MVC3](https://www.nuget.org/packages/MiniProfiler.MVC3/) - ASP.NET MVC 3 Integration
 	    * May [have issues](https://github.com/MiniProfiler/dotnet/issues/81) working with the EF6 nuget or other nugets requiring MiniProfiler v3 (like Raven and Mongo).
 
-Licensed under [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0)
+Licensed under [MIT license](LICENSE.txt)
