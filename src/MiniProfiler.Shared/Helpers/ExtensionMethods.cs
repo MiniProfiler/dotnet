@@ -68,19 +68,25 @@ namespace StackExchange.Profiling.Helpers
             return sb.ToString();
         }
 
+#if NET46
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
-        public static string ToJson(this MiniProfiler profiler)
+        /// <param name="limitSize">Whether to limit the maximum length of JSON to <see cref="MiniProfiler.Settings.MaxJsonResponseSize"/></param>
+        public static string ToJson(this MiniProfiler profiler, bool limitSize = true)
         {
             if (profiler == null) return null;
-#if NET46
-            return new JavaScriptSerializer { MaxJsonLength = MiniProfiler.Settings.MaxJsonResponseSize }.Serialize(profiler);
-#else
-            return JsonConvert.SerializeObject(profiler);
-#endif
+            return new JavaScriptSerializer { MaxJsonLength = limitSize ? MiniProfiler.Settings.MaxJsonResponseSize : int.MaxValue }.Serialize(profiler);
         }
+#else
+        /// <summary>
+        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
+        public static string ToJson(this MiniProfiler profiler) =>
+            profiler != null ? JsonConvert.SerializeObject(profiler) : null;
+#endif
 
         /// <summary>
         /// Serializes <paramref name="o"/> to a JSON string.

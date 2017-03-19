@@ -319,7 +319,7 @@ namespace StackExchange.Profiling
             sb.Replace("{name}", profiler.Name)
               .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
               .Replace("{path}", VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash())
-              .Replace("{json}", profiler.ToJson())
+              .Replace("{json}", profiler.ToJson(false))
               .Replace("{includes}", RenderIncludes(profiler).ToString())
               .Replace("{version}", MiniProfiler.Settings.VersionHash);
             return sb.ToString();
