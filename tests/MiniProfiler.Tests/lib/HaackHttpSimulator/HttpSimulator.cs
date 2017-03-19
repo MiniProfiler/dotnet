@@ -355,7 +355,7 @@ namespace Subtext.TestLibrary
             if (search.Length > original.Length || search.Length == 0)
                 return original;
 
-            int searchIndex = original.IndexOf(search, 0, StringComparison.InvariantCultureIgnoreCase);
+            int searchIndex = original.IndexOf(search, 0, StringComparison.OrdinalIgnoreCase);
 
             if (searchIndex < 0)
                 return original;
