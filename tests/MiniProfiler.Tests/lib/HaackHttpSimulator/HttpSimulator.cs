@@ -360,7 +360,7 @@ namespace Subtext.TestLibrary
             if (searchIndex < 0)
                 return original;
 
-            return original.Substring(original.IndexOf(search) + search.Length);
+            return original.Substring(original.IndexOf(search, 0, StringComparison.Ordinal) + search.Length);
         }
 
         public string Host => host;
@@ -429,7 +429,7 @@ namespace Subtext.TestLibrary
         private static string ExtractQueryStringPart(Uri url)
         {
             string query = url.Query ?? string.Empty;
-            if (query.StartsWith("?"))
+            if (query.StartsWith("?", StringComparison.Ordinal))
                 return query.Substring(1);
             return query;
         }

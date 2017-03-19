@@ -51,7 +51,7 @@ namespace StackExchange.Profiling
                         form.Keys.Cast<string>()
                                .OrderBy(i => i.IndexOf("Start]", StringComparison.Ordinal) > 0 ? "_" + i : i))
                 {
-                    if (key.StartsWith(TimingPrefix))
+                    if (key.StartsWith(TimingPrefix, StringComparison.Ordinal))
                     {
                         long.TryParse(form[key], out long val);
                         val -= navigationStart;
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling
                         // just ignore stuff that is negative ... not relevant
                         if (val > 0)
                         {
-                            if (parsedName.EndsWith("Start"))
+                            if (parsedName.EndsWith("Start", StringComparison.Ordinal))
                             {
                                 var shortName = parsedName.Substring(0, parsedName.Length - 5);
                                 clientPerf[shortName] = new ClientTiming
@@ -72,7 +72,7 @@ namespace StackExchange.Profiling
                                     Start = val
                                 };
                             }
-                            else if (parsedName.EndsWith("End"))
+                            else if (parsedName.EndsWith("End", StringComparison.Ordinal))
                             {
                                 var shortName = parsedName.Substring(0, parsedName.Length - 3);
                                 if (clientPerf.TryGetValue(shortName, out var t))
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling
                         }
                     }
 
-                    if (key.StartsWith(ProbesPrefix))
+                    if (key.StartsWith(ProbesPrefix, StringComparison.Ordinal))
                     {
                         if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ProbesPrefix.Length), out int probeId))
                         {
@@ -98,12 +98,12 @@ namespace StackExchange.Profiling
                                 clientProbes.Add(probeId, t);
                             }
 
-                            if (key.EndsWith("[n]"))
+                            if (key.EndsWith("[n]", StringComparison.Ordinal))
                             {
                                 t.Name = form[key];
                             }
 
-                            if (key.EndsWith("[d]"))
+                            if (key.EndsWith("[d]", StringComparison.Ordinal))
                             {
                                 long.TryParse(form[key], out long val);
                                 if (val > 0)
