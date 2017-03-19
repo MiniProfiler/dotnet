@@ -1,0 +1,36 @@
+image: Visual Studio 2017
+
+init:
+  - git config --global core.autocrlf input
+
+skip_branch_with_pr: true
+
+only_commits:
+  files:
+    - src/**/*
+    - tests/**/*
+
+skip_tags: true
+
+skip_commits:
+  files:
+    - '**/*.md'
+
+nuget:
+  disable_publish_on_pr: true
+
+build_script:
+  - ps: .\build.ps1
+
+test: off
+artifacts:
+- path: .\.nupkgs\*.nupkg
+  
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/miniprofiler/api/v2
+  on:
+    branch: master  
+  api_key:
+    secure: LLyiHXh/pU4i8H2Cn74C5sXNV+5MX0gpJZuunTnXv/KoafhfmkB/65/TcV4B7kj2
+  symbol_server: https://www.myget.org/F/miniprofiler/symbols/api/v2/package
