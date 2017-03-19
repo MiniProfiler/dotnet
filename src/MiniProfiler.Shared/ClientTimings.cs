@@ -48,8 +48,7 @@ namespace StackExchange.Profiling
                 var clientProbes = new Dictionary<int, ClientTiming>();
 
                 foreach (string key in
-                        form.Keys.Cast<string>()
-                               .OrderBy(i => i.IndexOf("Start]", StringComparison.Ordinal) > 0 ? "_" + i : i))
+                        form.Keys.OrderBy(i => i.IndexOf("Start]", StringComparison.Ordinal) > 0 ? "_" + i : i))
                 {
                     if (key.StartsWith(TimingPrefix))
                     {
