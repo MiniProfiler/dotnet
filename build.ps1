@@ -18,6 +18,8 @@ $projectsToBuild =
 Write-Host "Hello and welcome to our elaborate build!"
 Write-Host "Just kidding, this is a sanity check at the moment, it'll get more detailed."
 
+md -Force $packageOutputFolder
+
 Write-Host "Clearing existing $packageOutputFolder..." -NoNewline
 Get-ChildItem $packageOutputFolder | Remove-Item
 Write-Host "done." -ForegroundColor "Green"
@@ -33,7 +35,7 @@ foreach ($project in $projectsToBuild) {
     Write-Host "Packing $project... (Suffix:" -NoNewline -ForegroundColor "Magenta"
     Write-Host $VersionSuffix -NoNewline -ForegroundColor "Cyan"
     Write-Host ")" -ForegroundColor "Magenta"
-    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --include-symbols --version-suffix=$VersionSuffix
+    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --version-suffix=$VersionSuffix /p:CI=true
 
     Write-Host "Done."
     wRite-Host ""

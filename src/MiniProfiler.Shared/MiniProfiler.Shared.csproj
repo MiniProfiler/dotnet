@@ -1,25 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup Label="Configuration">
-    <RootNamespace>StackExchange.Profiling</RootNamespace>
-  </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>4.0.0</VersionPrefix>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
-    <OutputType>Library</OutputType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <Title>MiniProfiler.Shared</Title>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>Shared library for all MiniProfiler libraries</Description>
-    <PackageId>MiniProfiler.Shared</PackageId>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
-    <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
-    <PackageTags />
-    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.0" />

@@ -1,31 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup Label="Configuration">
-    <RootNamespace>StackExchange.Profiling</RootNamespace>
-  </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>4.0.0</VersionPrefix>
-    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
     <AssemblyName>MiniProfiler.Providers.SqlServer</AssemblyName>
-    <OutputType>Library</OutputType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <Title>MiniProfiler.Providers.SqlServer</Title>
+    <Description>MiniProfiler: Profiler storage for SQL Server</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <Description>MiniProfiler: Enables storing MiniProfilers in SQL Server</Description>
-    <PackageId>$(AssemblyName)</PackageId>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
-    <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
     <PackageTags>profiler sql mvc performance profiling timing</PackageTags>
-    <IncludeSymbols>true</IncludeSymbols>
+    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />

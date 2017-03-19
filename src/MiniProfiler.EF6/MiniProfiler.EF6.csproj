@@ -1,23 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.EF6</AssemblyName>
+    <Title>MiniProfiler for Entity Framework 6</Title>
+    <Description>MiniProfiler: integration for Entity Framework 6</Description>
+    <Authors>Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
+    <PackageTags>profiler sql mvc asp.net performance profiling timing entityframework</PackageTags>
+    <TargetFramework>net46</TargetFramework>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
-    <AssemblyName>MiniProfiler.EF6</AssemblyName>
-    <OutputType>Library</OutputType>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="EntityFramework" Version="6.1.3" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="System" />
     <Reference Include="System.Data" />
   </ItemGroup>
