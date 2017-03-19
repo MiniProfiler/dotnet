@@ -15,7 +15,22 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// Lookup a function for translating a parameter by parameter type
         /// </summary>
-        protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator;
+        protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
+        {
+            [DbType.AnsiString] = GetWithLenFormatter("varchar"),
+            [DbType.String] = GetWithLenFormatter("nvarchar"),
+            [DbType.AnsiStringFixedLength] = GetWithLenFormatter("char"),
+            [DbType.StringFixedLength] = GetWithLenFormatter("nchar"),
+            [DbType.Byte] = p => "tinyint",
+            [DbType.Int16] = p => "smallint",
+            [DbType.Int32] = p => "int",
+            [DbType.Int64] = p => "bigint",
+            [DbType.DateTime] = p => "datetime",
+            [DbType.Guid] = p => "uniqueidentifier",
+            [DbType.Boolean] = p => "bit",
+            [DbType.Binary] = GetWithLenFormatter("varbinary"),
+        };
+
         /// <summary>
         /// What data types should not be quoted when used in parameters
         /// </summary>
@@ -32,28 +47,6 @@ namespace StackExchange.Profiling.SqlFormatters
                         return capture;
                     return capture + "(" + (p.Size > 8000 ? "max" : p.Size.ToString(CultureInfo.InvariantCulture)) + ")";
                 };
-        }
-
-        /// <summary>
-        /// Initialises static members of the <see cref="SqlServerFormatter"/> class.
-        /// </summary>
-        static SqlServerFormatter()
-        {
-            ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
-            {
-                [DbType.AnsiString] = GetWithLenFormatter("varchar"),
-                [DbType.String] = GetWithLenFormatter("nvarchar"),
-                [DbType.AnsiStringFixedLength] = GetWithLenFormatter("char"),
-                [DbType.StringFixedLength] = GetWithLenFormatter("nchar"),
-                [DbType.Byte] = p => "tinyint",
-                [DbType.Int16] = p => "smallint",
-                [DbType.Int32] = p => "int",
-                [DbType.Int64] = p => "bigint",
-                [DbType.DateTime] = p => "datetime",
-                [DbType.Guid] = p => "uniqueidentifier",
-                [DbType.Boolean] = p => "bit",
-                [DbType.Binary] = GetWithLenFormatter("varbinary"),
-            };
         }
 
         /// <summary>
