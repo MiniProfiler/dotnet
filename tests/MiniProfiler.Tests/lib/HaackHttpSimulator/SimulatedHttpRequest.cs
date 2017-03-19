@@ -134,7 +134,7 @@ namespace Subtext.TestLibrary
 
             foreach (string key in Form.Keys)
             {
-                sb.Append(key).Append("=").Append(Form[key]).Append("&");
+                sb.Append(key).Append('=').Append(Form[key]).Append('&');
             }
 
             return Encoding.UTF8.GetBytes(sb.ToString());

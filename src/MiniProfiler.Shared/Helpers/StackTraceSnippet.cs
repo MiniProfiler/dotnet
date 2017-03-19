@@ -49,7 +49,7 @@ namespace StackExchange.Profiling.Helpers
                 {
                     if (sb.Length > 0)
                     {
-                        sb.Append(" ");
+                        sb.Append(' ');
                     }
                     sb.Append(method.Name);
                     stackLength += method.Name.Length + 1; // 1 added for spaces.
