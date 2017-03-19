@@ -89,7 +89,8 @@ namespace StackExchange.Profiling
 
                     if (key.StartsWith(ProbesPrefix, StringComparison.Ordinal))
                     {
-                        if (key.IndexOf("]", StringComparison.Ordinal) > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, key.IndexOf("]", StringComparison.Ordinal) - ProbesPrefix.Length), out int probeId))
+                        int endBracketIndex = key.IndexOf(']');
+                        if (endBracketIndex > 0 && int.TryParse(key.Substring(ProbesPrefix.Length, endBracketIndex - ProbesPrefix.Length), out int probeId))
                         {
                             if (!clientProbes.TryGetValue(probeId, out var t))
                             {
