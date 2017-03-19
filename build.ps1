@@ -18,7 +18,7 @@ $projectsToBuild =
 Write-Host "Hello and welcome to our elaborate build!"
 Write-Host "Just kidding, this is a sanity check at the moment, it'll get more detailed."
 
-md -Force $packageOutputFolder
+mkdir -Force $packageOutputFolder | Out-Null
 
 Write-Host "Clearing existing $packageOutputFolder..." -NoNewline
 Get-ChildItem $packageOutputFolder | Remove-Item
