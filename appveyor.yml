@@ -14,7 +14,7 @@ nuget:
   disable_publish_on_pr: true
 
 build_script:
-  - ps: .\build.ps1 -VersionSuffix "alpha$env:appveyor_build_number""
+  - ps: .\build.ps1 -VersionSuffix "alpha$env:appveyor_build_number"
 
 test: off
 artifacts:
