@@ -2,9 +2,9 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.AspNetCore</AssemblyName>
     <Title>MiniProfiler for ASP.NET Core</Title>
-    <Description>Lightweight mini-profiler, designed for ASP.NET Core (not System.Web) sites</Description>
+    <Description>Lightweight mini-profiler, designed for ASP.NET Core (not System.Web) websites</Description>
     <Authors>Nick Craver</Authors>
-    <PackageTags>profiler sql mvc asp.net performance profiling timing</PackageTags>
+    <PackageTags>ASP.NET Core;$(PackageBaseTags)</PackageTags>
     <TargetFramework>netstandard1.5</TargetFramework>
   </PropertyGroup>
   <ItemGroup>

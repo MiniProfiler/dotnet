@@ -4,7 +4,7 @@
     <Title>MiniProfiler.Providers.SqlServer</Title>
     <Description>MiniProfiler: Profiler storage for SQL Server</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <PackageTags>profiler sql mvc performance profiling timing</PackageTags>
+    <PackageTags>SQL;SQL Server;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>

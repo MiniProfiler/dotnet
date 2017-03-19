@@ -4,7 +4,7 @@
     <AssemblyName>MiniProfiler.Shared</AssemblyName>
     <Title>MiniProfiler.Shared</Title>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <Description>Shared library for all MiniProfiler libraries</Description>
+    <Description>You shouldn't reference this - MiniProfiler's shared library for all frameworks</Description>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.0" />

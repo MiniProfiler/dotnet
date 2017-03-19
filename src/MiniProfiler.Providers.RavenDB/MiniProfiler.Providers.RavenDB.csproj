@@ -4,7 +4,7 @@
     <Title>MiniProfiler for RavenDB</Title>
     <Description>MiniProfiler: Profilers for RavenDB</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <PackageTags>profiler performance profiling timing raven ravendb</PackageTags>
+    <PackageTags>Raven;RavenDB;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>

@@ -2,9 +2,9 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.EF6</AssemblyName>
     <Title>MiniProfiler for Entity Framework 6</Title>
-    <Description>MiniProfiler: integration for Entity Framework 6</Description>
+    <Description>MiniProfiler: Integration for Entity Framework 6</Description>
     <Authors>Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
-    <PackageTags>profiler sql mvc asp.net performance profiling timing entityframework</PackageTags>
+    <PackageTags>Entity Framework;Entity Framework 6;$(PackageBaseTags)</PackageTags>
     <TargetFramework>net46</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">

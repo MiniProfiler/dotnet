@@ -14,6 +14,7 @@
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
+    <PackageBaseTags>Profiler;Performance;Profiling;Timing</PackageBaseTags>
     
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
