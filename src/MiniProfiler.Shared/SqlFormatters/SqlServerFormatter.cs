@@ -80,7 +80,7 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 GenerateParamText(buffer, parameters);
                 // finish the parameter declaration
-                buffer.Append(";")
+                buffer.Append(';')
                     .AppendLine()
                     .AppendLine();
             }
@@ -118,7 +118,7 @@ namespace StackExchange.Profiling.SqlFormatters
             buffer.Append(commandText);
 
             GenerateStoredProcedureParameters(buffer, parameters);
-            buffer.Append(";");
+            buffer.Append(';');
 
 	        GenerateSelectStatement(buffer, parameters);
         }
@@ -141,7 +141,7 @@ namespace StackExchange.Profiling.SqlFormatters
 
 		    if (parametersToSelect.Count == 0) return;
 
-			buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(";");
+			buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
 	    }
 
 	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
@@ -159,7 +159,7 @@ namespace StackExchange.Profiling.SqlFormatters
         {
             if (sqlStatement[sqlStatement.Length - 1] != ';')
             {
-                sqlStatement.Append(";");
+                sqlStatement.Append(';');
             }
         }
 
@@ -177,11 +177,11 @@ namespace StackExchange.Profiling.SqlFormatters
 
                 if (!firstParameter)
                 {
-                    buffer.Append(",");
+                    buffer.Append(',');
                 }
 
                 firstParameter = false;
-                buffer.Append(" ").Append(EnsureParameterPrefix(parameter.Name)).Append(" = ").Append(EnsureParameterPrefix(parameter.Name));
+                buffer.Append(' ').Append(EnsureParameterPrefix(parameter.Name)).Append(" = ").Append(EnsureParameterPrefix(parameter.Name));
 
                 // Output and InputOutput directions treated equally on the database side.
                 if (parameter.Direction == ParameterDirection.Output.ToString()
@@ -232,7 +232,7 @@ namespace StackExchange.Profiling.SqlFormatters
 
                     var niceName = EnsureParameterPrefix(parameter.Name);
 
-                    buffer.Append(niceName).Append(" ").Append(resolvedType);
+                    buffer.Append(niceName).Append(' ').Append(resolvedType);
 
                     // return values don't have a value assignment
                     if (parameter.Direction != ParameterDirection.ReturnValue.ToString())
