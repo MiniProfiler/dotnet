@@ -5,7 +5,7 @@
     <Description>Lightweight mini-profiler, designed for ASP.NET Core (not System.Web) websites</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>ASP.NET Core;$(PackageBaseTags)</PackageTags>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.0" />

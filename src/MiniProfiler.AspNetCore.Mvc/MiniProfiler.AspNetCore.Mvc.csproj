@@ -5,7 +5,7 @@
     <Description>Lightweight mini-profiler, designed for ASP.NET Core MVC (*not* System.Web) websites</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>ASP.NET Core;MVC;MVC Core;$(PackageBaseTags)</PackageTags>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>net46;netstandard1.6</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.1" />
