@@ -1,5 +1,7 @@
 ## MiniProfiler for .NET (and .NET Standard)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
+
 * See the home page at: [miniprofiler.com](http://miniprofiler.com) for more info on how to set things up.
 * We accept [pull requests](https://github.com/MiniProfiler/dotnet/pulls) here.
 * Any issues can be reported in [GitHub Issues](https://github.com/MiniProfiler/dotnet/issues) or on the [Community Site](http://community.miniprofiler.com/).
@@ -24,6 +26,10 @@ In-progress (currently supported in v3):
   * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
   * [MiniProfiler.Providers.EntityFrameworkCore](https://www.nuget.org/packages/MiniProfiler.Providers.EntityFrameworkCore/) - Entity Framework Core Integration
   * [MiniProfiler.Raven](https://www.nuget.org/packages/MiniProfiler.Raven/) - [RavenDb](https://ravendb.net) Integration
+
+Alpha and Beta builds are available earlier via MyGet
+  * NuGet v3 MyGet Feed: `https://www.myget.org/F/miniprofiler/api/v3/index.json` (Visual Studio 2015+)
+  * NuGet v2 MyGet Feed: `https://www.myget.org/F/miniprofiler/api/v2` (Visual Studio 2012+)
 
 ### Providers
 MiniProfiler is made of of several libraries, but you likely only need to reference 1 or 2 packages. For example:  
