@@ -136,16 +136,16 @@ namespace StackExchange.Profiling.Data
             get => _connection;
             set
             {
-                // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
-                // allow for command reuse, it is clear the connection is going to need to be reset
-                if (MiniProfiler.Current != null)
-                {
-                    _profiler = MiniProfiler.Current;
-                }
-
                 _connection = value;
-                var awesomeConn = value as ProfiledDbConnection;
-                _command.Connection = awesomeConn == null ? value : awesomeConn.WrappedConnection;
+                if (value is ProfiledDbConnection profiledConn)
+                {
+                    _profiler = profiledConn.Profiler;
+                    _command.Connection = profiledConn.WrappedConnection;
+                }
+                else
+                {
+                    _command.Connection = value;
+                }
             }
         }
 
