@@ -28,15 +28,17 @@ Write-Host "Building Version $Version of all packages" -ForegroundColor "Green"
 
 foreach ($project in $projectsToBuild) {
     Write-Host "Working on $project`:" -ForegroundColor "Magenta"
+	
+	Push-Location ".\src\$project"
 
-    Write-Host "Restoring $project..." -ForegroundColor "Magenta"
-    dotnet restore ".\src\$project"
-
-    Write-Host "Packing $project... (Suffix:" -NoNewline -ForegroundColor "Magenta"
+    Write-Host "  Restoring and packing $project... (Suffix:" -NoNewline -ForegroundColor "Magenta"
     Write-Host $VersionSuffix -NoNewline -ForegroundColor "Cyan"
     Write-Host ")" -ForegroundColor "Magenta"
-    dotnet pack ".\src\$project" -c Release -o $packageOutputFolder --version-suffix=$VersionSuffix /p:CI=true
+
+	dotnet msbuild "/t:Restore;Pack" "/p:Configuration=Release" "/p:VersionSuffix=$VersionSuffix" "/p:PackageOutputPath=$packageOutputFolder" "/p:CI=true"
+
+	Pop-Location
 
     Write-Host "Done."
-    wRite-Host ""
+    Write-Host ""
 }
