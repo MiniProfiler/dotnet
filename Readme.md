@@ -18,12 +18,12 @@ MiniProfiler v4 runs on .NET 4.6 and above or .NET Standard 1.5 and above. .NET 
       * **[MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/)** - The core functionality (for .NET Standard applications)
       * [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) - ASP.NET Core MVC Integration 
   * [MiniProfiler.Shared](https://www.nuget.org/packages/MiniProfiler.Shared/) - Core, shared functionality for all platform-specific packages above
+  * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
   *  Storage and Profiling Providers
       * [MiniProfiler.Providers.SqlServer](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer/) - SQL Server MiniProfiler Storage
       * [MiniProfiler.Providers.SqlServerCe](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServerCe/) - SQL Server CS MiniProfiler Storage
 
-In-progress (currently supported in v3):  
-  * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
+In-progress (not yet available for v4):  
   * [MiniProfiler.Providers.EntityFrameworkCore](https://www.nuget.org/packages/MiniProfiler.Providers.EntityFrameworkCore/) - Entity Framework Core Integration
   * [MiniProfiler.Raven](https://www.nuget.org/packages/MiniProfiler.Raven/) - [RavenDb](https://ravendb.net) Integration
 

@@ -7,7 +7,7 @@ $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
     'MiniProfiler.Shared',
     'MiniProfiler',
-    #'MiniProfiler.EF6',
+    'MiniProfiler.EF6',
     'MiniProfiler.Mvc5',
     'MiniProfiler.AspNetCore',
     'MiniProfiler.AspNetCore.Mvc',
