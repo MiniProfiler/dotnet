@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Transactions;
 
-using StackExchange.Profiling;
+using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.SqlFormatters;
 using Xunit;
 
@@ -42,7 +42,7 @@ namespace Tests
 
         private string GenerateOutput()
         {
-            var sqlParameters = SqlTiming.GetCommandParameters(_dbCommand);
+            var sqlParameters = _dbCommand.GetParameters();
             return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 

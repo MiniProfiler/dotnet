@@ -24,7 +24,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets or sets a value indicating whether or not to bind by name.
         /// If the underlying command supports BindByName, this sets/clears the underlying
-        /// implementation accordingly. This is required to support OracleCommand from dapper-dot-net
+        /// implementation accordingly. This is required to support OracleCommand from Dapper
         /// </summary>
         public bool BindByName
         {

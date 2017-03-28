@@ -87,6 +87,12 @@ namespace StackExchange.Profiling
         [DataMember(Order = 7)]
         public decimal? FirstFetchDurationMilliseconds { get; set; }
 
+        /// <summary>
+        /// Whether this operation errored.
+        /// </summary>
+        [DataMember(Order = 8)]
+        public bool Errored { get; set; }
+
         internal string Category { get; set; }
 
         /// <summary>

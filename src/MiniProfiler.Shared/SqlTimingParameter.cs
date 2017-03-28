@@ -9,6 +9,11 @@ namespace StackExchange.Profiling
     public class SqlTimingParameter
     {
         /// <summary>
+        /// Holds the maximum size that will be stored for byte[] parameters
+        /// </summary>
+        internal const int MaxByteParameterSize = 512;
+
+        /// <summary>
         /// Parameter name, e.g. "routeName"
         /// </summary>
         [DataMember(Order = 1)]
