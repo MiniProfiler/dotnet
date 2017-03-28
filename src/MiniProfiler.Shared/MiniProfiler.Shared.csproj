@@ -7,7 +7,7 @@
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />

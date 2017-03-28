@@ -5,6 +5,7 @@
     <Description>MiniProfiler: Profilers for RavenDB</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>Raven;RavenDB;$(PackageBaseTags)</PackageTags>
+    <SignAssembly>false</SignAssembly>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
