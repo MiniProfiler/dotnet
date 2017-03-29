@@ -67,11 +67,11 @@ namespace StackExchange.Profiling.Storage
             switch (orderBy)
             {
                 case ListResultsOrder.Ascending:
-                    ids = _database.ListRange(ProfilerResultListKey, 0, maxResults - 1);
+                    ids = _database.ListRange(ProfilerResultListKey, maxResults + 1, -1).Reverse();
                     break;
                 case ListResultsOrder.Descending:
                 default:
-                    ids = _database.ListRange(ProfilerResultListKey, maxResults + 1, -1).Reverse();
+                    ids = _database.ListRange(ProfilerResultListKey, 0, maxResults - 1);
                     break;
             }
             return ids.Select(x => Guid.Parse(x));
@@ -92,19 +92,19 @@ namespace StackExchange.Profiling.Storage
 
             _database.StringSet(key, value, expiry: CacheDuration);
 
-            _database.ListRightPush(ProfilerResultListKey, id);
-            _database.ListTrim(ProfilerResultListKey, (-1 - ResultListMaxLength), -1);
+            _database.ListLeftPush(ProfilerResultListKey, id);
+            _database.ListTrim(ProfilerResultListKey, 0, ResultListMaxLength - 1);
             _database.KeyExpire(ProfilerResultListKey, CacheDuration);
         }
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
-        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         public MiniProfiler Load(Guid id)
@@ -123,7 +123,7 @@ namespace StackExchange.Profiling.Storage
         public bool SetUnviewedAfterSave => true;
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "un-viewed"  
+        /// Sets a particular profiler session so it is considered "un-viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -177,11 +177,11 @@ namespace StackExchange.Profiling.Storage
             switch (orderBy)
             {
                 case ListResultsOrder.Ascending:
-                    ids = await _database.ListRangeAsync(ProfilerResultListKey, 0, maxResults - 1).ConfigureAwait(false);
+                    ids = (await _database.ListRangeAsync(ProfilerResultListKey, maxResults + 1, -1).ConfigureAwait(false)).Reverse();
                     break;
                 case ListResultsOrder.Descending:
                 default:
-                    ids = (await _database.ListRangeAsync(ProfilerResultListKey, maxResults + 1, -1).ConfigureAwait(false)).Reverse();
+                    ids = await _database.ListRangeAsync(ProfilerResultListKey, 0, maxResults - 1).ConfigureAwait(false);
                     break;
             }
             return ids.Select(x => Guid.Parse(x));
@@ -202,19 +202,19 @@ namespace StackExchange.Profiling.Storage
 
             await _database.StringSetAsync(key, value, expiry: CacheDuration).ConfigureAwait(false);
 
-            await _database.ListRightPushAsync(ProfilerResultListKey, id).ConfigureAwait(false);
-            await _database.ListTrimAsync(ProfilerResultListKey, (-1 - ResultListMaxLength), -1).ConfigureAwait(false);
+            await _database.ListLeftPushAsync(ProfilerResultListKey, id).ConfigureAwait(false);
+            await _database.ListTrimAsync(ProfilerResultListKey, 0, ResultListMaxLength - 1).ConfigureAwait(false);
             await _database.KeyExpireAsync(ProfilerResultListKey, CacheDuration).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
-        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         public async Task<MiniProfiler> LoadAsync(Guid id)
@@ -225,7 +225,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
