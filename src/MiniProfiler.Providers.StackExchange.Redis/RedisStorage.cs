@@ -7,6 +7,9 @@ using StackExchange.Redis;
 
 namespace StackExchange.Profiling.Storage
 {
+    /// <summary>
+    /// StackExchange.Redis based storage provider for <see cref="MiniProfiler"/> results.
+    /// </summary>
     public class RedisStorage : IAsyncStorage
     {
         private readonly IDatabase _database;
