@@ -242,11 +242,11 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public async Task SetViewedAsync(string user, Guid id)
+        public Task SetViewedAsync(string user, Guid id)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
             RedisValue value = id.ToString();
-            await _database.SetRemoveAsync(key, value).ConfigureAwait(false);
+            return _database.SetRemoveAsync(key, value);
         }
 
         /// <summary>
