@@ -8,6 +8,10 @@ using System.Text.RegularExpressions;
 
 namespace StackExchange.Profiling.Internal
 {
+    /// <summary>
+    /// Internal MiniProfiler extensions, not meant for consumption.
+    /// This can and probably will break without warning. Don't use the .Internal namespace directly.
+    /// </summary>
     public static class IDbCommandExtensions
     {
         private static readonly Regex commandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);

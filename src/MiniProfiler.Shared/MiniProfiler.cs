@@ -34,7 +34,6 @@ namespace StackExchange.Profiling
         public MiniProfiler(string name)
         {
             Id = Guid.NewGuid();
-            SqlProfiler = new SqlProfiler(this);
             MachineName = Environment.MachineName;
             Started = DateTime.UtcNow;
 
