@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using System.Threading.Tasks;
 
-namespace StackExchange.Profiling.Mvc
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
+    /// Internal MiniProfiler architecture, not meant for consumption.
+    /// This can and probably will break without warning. Don't use the .Internal namespace directly.
     /// Wrapped MVC View that ProfilingViewEngine uses to log profiling data
     /// </summary>
-    public class WrappedView : IView
+    internal class WrappedView : IView
     {
         /// <summary>
         /// MVC IView that is wrapped by the ProfilingViewEngine

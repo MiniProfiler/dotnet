@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using StackExchange.Profiling.Internal;
 
-namespace StackExchange.Profiling.Mvc
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Extension methods for configuring MiniProfiler for MVC
@@ -13,9 +13,12 @@ namespace StackExchange.Profiling.Mvc
         /// Adds MiniProfiler timings for actions and views
         /// </summary>
         /// <param name="services">The services collection to configure</param>
-        public static IServiceCollection AddMiniProfiler(this IServiceCollection services) =>
+        public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services)
+        {
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
                     .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
+            return new MiniProfilerBuilder(services);
+        }
     }
 
     internal class MiniProfilerSetup : IConfigureOptions<MvcViewOptions>, IConfigureOptions<MvcOptions>

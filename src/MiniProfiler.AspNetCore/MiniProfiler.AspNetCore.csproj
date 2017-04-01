@@ -8,9 +8,11 @@
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="1.1.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.3.0" />
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

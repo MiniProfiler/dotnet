@@ -1,4 +1,6 @@
-﻿using StackExchange.Profiling;
+﻿using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Profiling;
+using StackExchange.Profiling.Internal;
 using System;
 
 namespace Microsoft.AspNetCore.Builder
@@ -24,6 +26,11 @@ namespace Microsoft.AspNetCore.Builder
             {
                 throw new ArgumentNullException(nameof(options));
             }
+
+            // Register all IMiniProfilerDiagnosticListeners that were registered, e.g. EntityFramework
+            var listeners = builder.ApplicationServices.GetServices<IMiniProfilerDiagnosticListener>();
+            var initializer = new DiagnosticInitializer(listeners);
+            initializer.Start();
 
             return builder.UseMiddleware<MiniProfilerMiddleware>(options);
         }

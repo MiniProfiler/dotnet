@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 
-namespace StackExchange.Profiling.Mvc
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
-    /// You can wrap your view engines with this view to enable profiling on views and partial
+    /// Internal MiniProfiler architecture, not meant for consumption.
+    /// This can and probably will break without warning. Don't use the .Internal namespace directly.
+    /// You can wrap your view engines with this view to enable profiling on views and partial.
     /// </summary>
-    public class ProfilingViewEngine : IViewEngine
+    internal class ProfilingViewEngine : IViewEngine
     {
         private readonly IViewEngine _wrapped;
 

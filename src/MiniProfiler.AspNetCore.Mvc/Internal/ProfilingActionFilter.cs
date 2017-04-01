@@ -5,12 +5,14 @@ using StackExchange.Profiling.Helpers;
 using System;
 using System.Collections.Generic;
 
-namespace StackExchange.Profiling.Mvc
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
-    /// This filter can be applied globally to hook up automatic action profiling
+    /// Internal MiniProfiler architecture, not meant for consumption.
+    /// This can and probably will break without warning. Don't use the .Internal namespace directly.
+    /// This filter can be applied globally to hook up automatic action profiling.
     /// </summary>
-    public class ProfilingActionFilter : ActionFilterAttribute
+    internal class ProfilingActionFilter : ActionFilterAttribute
     {
         private const string StackKey = "ProfilingActionFilterStack";
 
