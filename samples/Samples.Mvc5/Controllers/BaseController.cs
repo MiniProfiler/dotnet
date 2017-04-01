@@ -75,8 +75,7 @@ namespace Samples.Mvc5.Controllers
         /// <param name="filterContext">The filter context.</param>
         protected override void OnResultExecuted(ResultExecutedContext filterContext)
         {
-            if (_resultExecutingToExecuted != null)
-                _resultExecutingToExecuted.Dispose();
+            _resultExecutingToExecuted?.Dispose();
 
             base.OnResultExecuted(filterContext);
         }
