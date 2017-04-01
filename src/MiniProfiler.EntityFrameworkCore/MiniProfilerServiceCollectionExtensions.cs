@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds Entity Framework Core profiling for MiniProfiler via DiagnosticListener.
         /// </summary>
         /// <param name="builder">The <see cref="IMiniProfilerBuilder" /> to add services to.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="services"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <c>null</c>.</exception>
         public static IMiniProfilerBuilder AddEntityFramework(this IMiniProfilerBuilder builder)
         {
             if (builder == null)
