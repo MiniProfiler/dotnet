@@ -71,14 +71,12 @@ namespace StackExchange.Profiling.Data
         /// <returns>a string containing the token.</returns>
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
-            var wrappedConnection = connection;
-
             if (connection is ProfiledDbConnection profiled)
             {
-                wrappedConnection = profiled.WrappedConnection;
+                connection = profiled.WrappedConnection;
             }
 
-            return _tail.GetProviderManifestToken(wrappedConnection);
+            return _tail.GetProviderManifestToken(connection);
         }
 
         /// <summary>
@@ -136,31 +134,42 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <returns>the database connection</returns>
-        private static DbConnection GetRealConnection(DbConnection connection)
-        {
-            if (connection is ProfiledDbConnection profiled)
-            {
-                connection = profiled.WrappedConnection;
-            }
+        private static DbConnection GetRealConnection(DbConnection connection) =>
+            connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection;
 
-            return connection;
-        }
+        private static DbDataReader GetSpatialDataReader(DbDataReader fromReader) =>
+            fromReader is ProfiledDbDataReader profiled ? profiled.WrappedReader : fromReader;
 
-        private static DbDataReader GetSpatialDataReader(DbDataReader fromReader)
-        {
-            if (fromReader is ProfiledDbDataReader profiled)
-            {
-                fromReader = profiled.WrappedReader;
-            }
-            return fromReader;
-        }
-
+        /// <summary>
+        /// Called to resolve additional default provider services when a derived type is registered 
+        /// as an EF provider either using an entry in the application's config file or through code-based 
+        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers 
+        /// added with the AddDependencyResolver method to resolve dependencies.
+        /// </summary>
+        /// <param name="type">The type of the service to be resolved.</param>
+        /// <param name="key">An optional key providing additional information for resolving the service.</param>
+        /// <returns>An instance of the given type, or null if the service could not be resolved.</returns>
         public override object GetService(Type type, object key) =>
             _tail.GetService(type, key);
 
+        /// <summary>
+        /// Called to resolve additional default provider services when a derived type is registered 
+        /// as an EF provider either using an entry in the application's config file or through code-based 
+        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers 
+        /// added with the AddDependencyResolver method to resolve dependencies.
+        /// </summary>
+        /// <param name="type">The type of the service to be resolved.</param>
+        /// <param name="key">An optional key providing additional information for resolving the service.</param>
+        /// <returns>All registered services that satisfy the given type and key, or an empty enumeration if there are none.</returns>
         public override IEnumerable<object> GetServices(Type type, object key) =>
             _tail.GetServices(type, key);
 
+        /// <summary>
+        /// Gets the spatial data reader for the DbProviderServices.
+        /// </summary>
+        /// <param name="fromReader">The reader where the spatial data came from.</param>
+        /// <param name="manifestToken">The token information associated with the provider manifest.</param>
+        /// <returns>The spatial data reader.</returns>
         protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken)
         {
             var setDbParameterValueMethod = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("GetDbSpatialDataReader"));
@@ -175,6 +184,11 @@ namespace StackExchange.Profiling.Data
             return result as DbSpatialDataReader;
         }
 
+        /// <summary>
+        /// Gets the spatial services for the <c>DbProviderServices</c>.
+        /// </summary>
+        /// <param name="manifestToken">The token information associated with the provider manifest.</param>
+        /// <returns>The spatial services.</returns>
         [Obsolete("Return DbSpatialServices from the GetService method. See http://go.microsoft.com/fwlink/?LinkId=260882 for more information.")]
         protected override DbSpatialServices DbGetSpatialServices(string manifestToken)
         {
@@ -183,6 +197,12 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
+        /// <summary>
+        /// Sets the parameter value and appropriate facets for the given <c>TypeUsage</c>.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="parameterType">The type of parameter.</param>
+        /// <param name="value">The value of the parameter.</param>
         protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value)
         {
             // if this is available in _tail, use it

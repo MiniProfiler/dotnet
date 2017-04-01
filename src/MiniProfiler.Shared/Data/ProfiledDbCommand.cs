@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.Data
     /// The profiled database command.
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
-    public class ProfiledDbCommand : DbCommand
+    public partial class ProfiledDbCommand : DbCommand
     {
         private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
         private DbCommand _command;

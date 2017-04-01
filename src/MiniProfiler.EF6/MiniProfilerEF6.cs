@@ -1,15 +1,13 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections.Concurrent;
+using System.Data.Entity;
+using System.Data.Entity.Core.Common;
+using System.Data.SqlClient;
+using System.Reflection;
+
+using StackExchange.Profiling.Data;
 
 namespace StackExchange.Profiling.EntityFramework6
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Data.Entity;
-    using System.Data.Entity.Core.Common;
-    using System.Reflection;
-
-    using StackExchange.Profiling.Data;
-
     /// <summary>
     /// Provides helper methods to help with initializing the MiniProfiler for Entity Framework 6.
     /// </summary>
@@ -51,9 +49,9 @@ namespace StackExchange.Profiling.EntityFramework6
         private static DbProviderServices WrapProviderService(DbProviderServices services)
         {
             // First let's check our cache.
-            if (ProviderCache.ContainsKey(services))
+            if (ProviderCache.TryGetValue(services, out var result))
             {
-                return ProviderCache[services];
+                return result;
             }
 
             // Then let's see if our type is already wrapped.
@@ -63,21 +61,15 @@ namespace StackExchange.Profiling.EntityFramework6
                 if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(EFProfiledDbProviderServices<>))
                 {
                     // Add it to the cache and return it.
-                    ProviderCache[services] = services;
-                    return services;
+                    return ProviderCache[services] = services;
                 }
-
                 serviceType = serviceType.BaseType;
             }
 
             // Finally let's wrap it.
-            var genericType = typeof(EFProfiledDbProviderServices<>);
-            Type[] typeArgs = { services.GetType() };
-            var createdType = genericType.MakeGenericType(typeArgs);
+            var createdType = typeof(EFProfiledDbProviderServices<>).MakeGenericType(new[] { services.GetType() });
             var instanceProperty = createdType.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
-            var instance = instanceProperty.GetValue(null) as DbProviderServices;
-            ProviderCache[services] = instance;
-            return instance;
+            return ProviderCache[services] = instanceProperty.GetValue(null) as DbProviderServices;
         }
 
         private static void ExcludeEntityFrameworkAssemblies()
