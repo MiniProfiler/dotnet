@@ -1,12 +1,11 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Samples.AspNetCore.Models;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
 using System;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,15 +14,6 @@ namespace Samples.AspNetCore.Controllers
 {
     public class TestController : Controller
     {
-        public string ConnectionString =>
-            "Data Source = " + Path.Combine(_env.ContentRootPath, @"App_Data\TestMiniProfiler.sqlite");
-
-        private readonly IHostingEnvironment _env;
-        public TestController(IHostingEnvironment env)
-        {
-            _env = env;
-        }
-
         public ActionResult EnableProfilingUI()
         {
             Program.DisableProfilingResults = false;
@@ -85,6 +75,53 @@ namespace Samples.AspNetCore.Controllers
                 MassiveNesting();
             }
             return Content("Massive Nesting 2 completed");
+        }
+
+        public IActionResult EntityFrameworkCore()
+        {
+            int count;
+            RouteHit hit;
+            SampleContext context = null;
+            using (MiniProfiler.Current.Step("EF Core Stuff"))
+            {
+                const string name = "Test/EntityFrameworkCore";
+                try
+                {
+                    using (MiniProfiler.Current.Step("Create Context"))
+                    {
+                        context = new SampleContext();
+                    }
+
+                    using (MiniProfiler.Current.Step("Get Existing"))
+                    {
+                        hit = context.RouteHits.FirstOrDefault(h => h.RouteName == name);
+                    }
+
+                    if (hit == null)
+                    {
+                        using (MiniProfiler.Current.Step("Insertion"))
+                        {
+                            context.RouteHits.Add(new RouteHit { RouteName = name, HitCount = 1 });
+                            context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        using (MiniProfiler.Current.Step("Update"))
+                        {
+                            hit.HitCount++;
+                            context.SaveChanges();
+                        }
+                    }
+                    count = hit.HitCount;
+                }
+                finally
+                {
+                    context?.Dispose();
+                }
+            }
+
+            return Content("EF complete - count: " + count);
         }
 
         private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler profiler)
@@ -257,7 +294,7 @@ namespace Samples.AspNetCore.Controllers
         {
             using (profiler.Step("GetOpenConnection"))
             {
-                DbConnection cnn = new SqliteConnection(ConnectionString);
+                DbConnection cnn = new SqliteConnection(Startup.SqliteConnectionString);
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
                 // when MiniProfiler.Current is null, this connection will not record any database timings
@@ -280,7 +317,7 @@ namespace Samples.AspNetCore.Controllers
         {
             using (profiler.Step("GetOpenConnectionAsync"))
             {
-                DbConnection cnn = new SqliteConnection(ConnectionString);
+                DbConnection cnn = new SqliteConnection(Startup.SqliteConnectionString);
 
                 // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
                 // when MiniProfiler.Current is null, this connection will not record any database timings

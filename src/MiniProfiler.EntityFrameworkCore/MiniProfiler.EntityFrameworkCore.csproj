@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.EntityFrameworkCore</AssemblyName>
+    <Title>MiniProfiler for Entity Framework Core</Title>
+    <Description>MiniProfiler: Integration for Entity Framework Core</Description>
+    <Authors>Nick Craver</Authors>
+    <PackageTags>Entity Framework;Entity Framework Core;$(PackageBaseTags)</PackageTags>
+    <TargetFramework>netstandard1.5</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="1.1.0" />
+  </ItemGroup>
+</Project>

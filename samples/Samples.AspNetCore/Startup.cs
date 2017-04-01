@@ -4,17 +4,21 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Samples.AspNetCore.Models;
 using StackExchange.Profiling;
-using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using System;
+using System.IO;
 
 namespace Samples.AspNetCore
 {
     public class Startup
     {
+        public static string SqliteConnectionString { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
+            SqliteConnectionString = "Data Source = " + Path.Combine(env.ContentRootPath, @"App_Data\TestMiniProfiler.sqlite");
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -29,8 +33,10 @@ namespace Samples.AspNetCore
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddDbContext<SampleContext>();
+
             services.AddMvc();
-            services.AddMiniProfiler();
+            services.AddMiniProfiler().AddEntityFramework();
             services.AddMemoryCache();
         }
 
