@@ -129,7 +129,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set unviewed.</param>
         public void SetUnviewed(string user, Guid id)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
             _database.SetAdd(key, value);
             _database.KeyExpire(key, CacheDuration);
@@ -142,7 +142,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set viewed.</param>
         public void SetViewed(string user, Guid id)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
             _database.SetRemove(key, value);
         }
@@ -153,7 +153,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
         public List<Guid> GetUnviewedIds(string user)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             var ids = _database.SetMembers(key);
             return ids.Select(x => Guid.Parse(x)).ToList();
         }
@@ -231,7 +231,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set unviewed.</param>
         public async Task SetUnviewedAsync(string user, Guid id)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
             await _database.SetAddAsync(key, value).ConfigureAwait(false);
             await _database.KeyExpireAsync(key, CacheDuration).ConfigureAwait(false);
@@ -244,7 +244,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set viewed.</param>
         public Task SetViewedAsync(string user, Guid id)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
             return _database.SetRemoveAsync(key, value);
         }
@@ -255,7 +255,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
         public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {
-            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user);
+            RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             var ids = await _database.SetMembersAsync(key).ConfigureAwait(false);
             return ids.Select(x => Guid.Parse(x)).ToList();
         }
