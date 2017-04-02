@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using StackExchange.Profiling.Helpers;
 using StackExchange.Redis;
 
 namespace StackExchange.Profiling.Storage
@@ -81,7 +80,7 @@ namespace StackExchange.Profiling.Storage
         {
             var id = profiler.Id.ToString();
             RedisKey key = ProfilerResultKeyPrefix.Append(id);
-            RedisValue value = profiler.ToJson();
+            RedisValue value = profiler.ToRedisValue();
 
             _database.StringSet(key, value, expiry: CacheDuration);
 
@@ -105,7 +104,7 @@ namespace StackExchange.Profiling.Storage
         {
             RedisKey key = ProfilerResultKeyPrefix.Append(id.ToString());
             RedisValue value = _database.StringGet(key);
-            return MiniProfiler.FromJson(value);
+            return value.ToMiniProfiler();
         }
 
         /// <summary>
@@ -185,7 +184,7 @@ namespace StackExchange.Profiling.Storage
         {
             var id = profiler.Id.ToString();
             RedisKey key = ProfilerResultKeyPrefix.Append(id);
-            RedisValue value = profiler.ToJson();
+            RedisValue value = profiler.ToRedisValue();
 
             await _database.StringSetAsync(key, value, expiry: CacheDuration).ConfigureAwait(false);
 
@@ -209,7 +208,7 @@ namespace StackExchange.Profiling.Storage
         {
             RedisKey key = ProfilerResultKeyPrefix.Append(id.ToString());
             RedisValue value = await _database.StringGetAsync(key).ConfigureAwait(false); ;
-            return MiniProfiler.FromJson(value);
+            return value.ToMiniProfiler();
         }
 
         /// <summary>

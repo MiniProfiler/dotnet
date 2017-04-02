@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="StackExchange.Redis.StrongName" Version="1.2.1" />
+    <PackageReference Include="protobuf-net" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <Reference Include="System" />
