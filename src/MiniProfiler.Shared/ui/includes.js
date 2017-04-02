@@ -598,6 +598,21 @@ var MiniProfiler = (function () {
             });
         }
 
+        if (typeof (Sys) != 'undefined' && typeof (Sys.Net) != 'undefined' && typeof (Sys.Net.WebRequestManager) != 'undefined') {
+            Sys.Net.WebRequestManager.add_completedRequest(function (sender, args) {
+                if (sender) {
+                    var webRequestExecutor = sender;
+                    if (webRequestExecutor.get_responseAvailable()) {
+                        var stringIds = webRequestExecutor.getResponseHeader('X-MiniProfiler-Ids');
+                        if (stringIds) {
+                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
+                            MiniProfiler.fetchResults(ids);
+                        }
+                    }
+                }
+            });
+        }
+
         // more Asp.Net callbacks
         if (typeof (WebForm_ExecuteCallback) == "function") {
             WebForm_ExecuteCallback = (function (callbackObject) {
