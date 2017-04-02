@@ -42,7 +42,11 @@ namespace StackExchange.Profiling.Data
         public void OnBeforeExecuteCommand(DbCommand command, string executeMethod, Guid instanceId, bool async)
         {
             // Available: Guid connectionId, DbCommand command, string executeMethod, Guid instanceId, long startTimestamp, bool async
-            _commands[instanceId] = command.GetTiming(executeMethod + (async ? " (Async)" : null), MiniProfiler.Current);
+            var timing = command.GetTiming(executeMethod + (async ? " (Async)" : null), MiniProfiler.Current);
+            if (timing != null)
+            {
+                _commands[instanceId] = timing;
+            }
         }
 
         /// <summary>

@@ -24,10 +24,9 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The miniprofiler to attach the timing to.</param>
         /// <param name="customType">The type for this command to show up as (which custom column).</param>
         /// <returns>A custom timing (which should be disposed or stopped!) for <paramref name="command"/>.</returns>
-        /// <exception cref="ArgumentNullException">Throws when the <paramref name="profiler"/> is <c>null</c>.</exception>
         public static CustomTiming GetTiming(this IDbCommand command, string commandType, MiniProfiler profiler, string customType = "sql")
         {
-            profiler = profiler ?? throw new ArgumentNullException(nameof(profiler));
+            if (command == null || profiler == null) return null;
 
             var commandText = command.GetReadableCommand();
             var parameters = command.GetParameters();
