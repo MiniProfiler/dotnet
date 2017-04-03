@@ -705,6 +705,21 @@ var MiniProfiler = (function () {
           }
         }
 
+        // wrap fetch
+        if (window.fetch) {
+            var windowFetch = window.fetch;
+            window.fetch = function (input, init) {
+                return windowFetch(input, init).then(function (response) {
+                    var stringIds = response.headers.get('X-MiniProfiler-Ids');
+                    if (stringIds) {
+                        // if fetch exists then JSON.parse does, no need for eval
+                        fetchResults(JSON.parse(stringIds));
+                    }
+                    return response;
+                });
+            };
+        }
+
         // some elements want to be hidden on certain doc events
         bindDocumentEvents();
     };
