@@ -73,15 +73,10 @@ namespace StackExchange.Profiling
             var ids = state?.RequestIDs;
             if (ids != null)
             {
-                var first = true;
                 var length = ids.Count;
                 for (var i = 0; i < length; i++)
                 {
-                    if (first)
-                    {
-                        first = false;
-                    }
-                    else
+                    if (i > 0)
                     {
                         sb.Append(',');
                     }
