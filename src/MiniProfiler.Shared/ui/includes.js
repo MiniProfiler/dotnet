@@ -763,6 +763,7 @@ var MiniProfiler = (function () {
                 }
                 else {
                     initPopupView();
+                    bindDocumentEvents();
                 }
             };
 
@@ -792,7 +793,6 @@ var MiniProfiler = (function () {
             };
 
             $(installAjaxHandlers);
-            $(bindDocumentEvents);
             $(deferInit);
         },
 
