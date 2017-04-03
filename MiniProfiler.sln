@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Rave
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EntityFrameworkCore", "src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj", "{BC36D84D-F5C6-4E12-8BC7-2F1972A00635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Providers.StackExchange.Redis", "src\MiniProfiler.Providers.StackExchange.Redis\MiniProfiler.Providers.StackExchange.Redis.csproj", "{56F62841-5B51-4CA5-9637-96F547DBCAF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Providers.Redis", "src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj", "{56F62841-5B51-4CA5-9637-96F547DBCAF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

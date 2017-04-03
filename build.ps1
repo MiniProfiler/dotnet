@@ -13,9 +13,9 @@ $projectsToBuild =
     'MiniProfiler.AspNetCore',
     'MiniProfiler.AspNetCore.Mvc',
     #'MiniProfiler.Providers.RavenDB',
+    'MiniProfiler.Providers.Redis',
     'MiniProfiler.Providers.SqlServer',
-    'MiniProfiler.Providers.SqlServerCe',
-    'MiniProfiler.Providers.StackExchange.Redis'
+    'MiniProfiler.Providers.SqlServerCe'
 
 Write-Host "Hello and welcome to our elaborate build!"
 Write-Host "Just kidding, this is a sanity check at the moment, it'll get more detailed."

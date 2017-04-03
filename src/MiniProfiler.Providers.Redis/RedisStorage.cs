@@ -207,7 +207,7 @@ namespace StackExchange.Profiling.Storage
         public async Task<MiniProfiler> LoadAsync(Guid id)
         {
             RedisKey key = ProfilerResultKeyPrefix.Append(id.ToString());
-            RedisValue value = await _database.StringGetAsync(key).ConfigureAwait(false); ;
+            RedisValue value = await _database.StringGetAsync(key).ConfigureAwait(false);
             return value.ToMiniProfiler();
         }
 

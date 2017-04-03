@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>MiniProfiler.Providers.StackExchange.Redis</AssemblyName>
-    <Title>MiniProfiler.Providers.StackExchange.Redis</Title>
+    <AssemblyName>MiniProfiler.Providers.Redis</AssemblyName>
+    <Title>MiniProfiler.Providers.Redis</Title>
     <Description>MiniProfiler: Profiler storage for Redis using StackExchange.Redis</Description>
-    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver, Joseph Daigle</Authors>
+    <Authors>Nick Craver, Joseph Daigle</Authors>
     <PackageTags>Redis;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
