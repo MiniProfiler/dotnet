@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Providers.StackExchange.Redis</AssemblyName>
+    <Title>MiniProfiler.Providers.StackExchange.Redis</Title>
+    <Description>MiniProfiler: Profiler storage for Redis using StackExchange.Redis</Description>
+    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver, Joseph Daigle</Authors>
+    <PackageTags>Redis;$(PackageBaseTags)</PackageTags>
+    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="StackExchange.Redis.StrongName" Version="1.2.1" />
+    <PackageReference Include="protobuf-net" Version="2.1.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="System" />
+  </ItemGroup>
+</Project>
