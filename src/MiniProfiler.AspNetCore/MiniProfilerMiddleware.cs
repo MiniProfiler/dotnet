@@ -19,6 +19,7 @@ namespace StackExchange.Profiling
         private readonly IHostingEnvironment _env;
 
         internal readonly PathString BasePath;
+        internal readonly PathString MatchPath;
         internal readonly MiniProfilerOptions Options;
         internal readonly EmbeddedProvider Embedded;
         internal static MiniProfilerMiddleware Current;
@@ -50,7 +51,8 @@ namespace StackExchange.Profiling
             if (basePath.StartsWith("~/", StringComparison.Ordinal)) basePath = basePath.Substring(1);
             if (basePath.EndsWith("/", StringComparison.Ordinal) && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
 
-            BasePath = new PathString(basePath);
+            MatchPath = new PathString(basePath);
+            BasePath = new PathString(basePath.EnsureTrailingSlash());
             Embedded = new EmbeddedProvider(Options, _env);
             // A static reference back to this middleware for property access.
             // Which is probably a crime against humanity in ways I'm ignorant of.
@@ -70,7 +72,7 @@ namespace StackExchange.Profiling
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Request.Path.StartsWithSegments(BasePath, out PathString subPath))
+            if (context.Request.Path.StartsWithSegments(MatchPath, out PathString subPath))
             {
                 // This is a request in the MiniProfiler path (e.g. one of "our" routes), HANDLE THE SITUATION.
                 await HandleRequest(context, subPath).ConfigureAwait(false);
