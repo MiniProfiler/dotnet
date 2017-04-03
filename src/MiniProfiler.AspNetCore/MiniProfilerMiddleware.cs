@@ -266,16 +266,21 @@ namespace StackExchange.Profiling
         /// <param name="context">The context to get a profiler response for.</param>
         private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
         {
-            var isPost = context.Request.HasFormContentType;
-            // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
-            // if it's absent, we're rendering results as a full page for sharing
-            var isPopup = isPost && context.Request.Form["popup"].FirstOrDefault() == "1";
-            // this guid is the MiniProfiler.Id property
-            // if this guid is not supplied, the last set of results needs to be
-            // displayed. The home page doesn't have profiling otherwise.
-            var requestId = isPost
-                ? context.Request.Form["id"]
-                : context.Request.Query["id"];
+            bool jsonRequest = false;
+            IFormCollection form = null;
+
+            // When we're rendering as a button/popup in the corner, we'll pass { popup: 1 } from jQuery
+            // If it's absent, we're rendering results as a full page for sharing.
+            if (context.Request.HasFormContentType)
+            {
+                form = await context.Request.ReadFormAsync().ConfigureAwait(false);
+                // TODO: Get rid of popup and switch to application/json Accept header detection
+                jsonRequest = form["popup"] == "1";
+            }
+
+            // This guid is the MiniProfiler.Id property. If a guid is not supplied, 
+            // the last set of results needs to be displayed.
+            string requestId = form?["id"] ?? context.Request.Query["id"];
 
             if (!Guid.TryParse(requestId, out var id) && MiniProfiler.Settings.Storage != null)
             {
@@ -284,7 +289,7 @@ namespace StackExchange.Profiling
 
             if (id == default(Guid))
             {
-                return isPopup ? NotFound(context) : NotFound(context, "No GUID id specified on the query string");
+                return NotFound(context, jsonRequest ? null : "No GUID id specified on the query string");
             }
 
             var profiler = await MiniProfiler.Settings.Storage.LoadAsync(id).ConfigureAwait(false);
@@ -294,13 +299,12 @@ namespace StackExchange.Profiling
 
             if (profiler == null)
             {
-                return isPopup ? NotFound(context) : NotFound(context, "No MiniProfiler results found with Id=" + id.ToString());
+                return NotFound(context, jsonRequest ? null : "No MiniProfiler results found with Id=" + id.ToString());
             }
 
             bool needsSave = false;
-            if (profiler.ClientTimings == null && isPost)
+            if (profiler.ClientTimings == null && form != null)
             {
-                var form = context.Request.Form;
                 var dict = new Dictionary<string, string>();
                 foreach (var k in form.Keys)
                 {
@@ -331,7 +335,7 @@ namespace StackExchange.Profiling
                 return @"""hidden"""; // JSON
             }
 
-            return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
+            return jsonRequest ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
         }
 
         private string ResultsJson(HttpContext context, MiniProfiler profiler)
