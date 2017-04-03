@@ -465,6 +465,7 @@ var MiniProfiler = (function () {
         return null;
     };
 
+    // some elements want to be hidden on certain doc events
     var bindDocumentEvents = function () {
         $(document).bind('click keyup', function (e) {
 
@@ -556,15 +557,28 @@ var MiniProfiler = (function () {
     };
 
     var installAjaxHandlers = function () {
-        var jQueryAjaxComplete = function (e, xhr, settings) {
-            if (xhr) {
-                // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
-                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
-                if (stringIds) {
-                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                    fetchResults(ids);
-                }
+        // We simply don't support *really* old browsers: http://caniuse.com/#feat=json
+        if (!window.JSON) {
+            return;
+        }
+
+        function handleIds(jsonIds) {
+            if (jsonIds) {
+                var ids = JSON.parse(jsonIds);
+                fetchResults(ids);
             }
+        }
+
+        function handleXHR(xhr) {
+            // iframed file uploads don't have headers
+            if (xhr && xhr.getResponseHeader) {
+                // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
+                handleIds(xhr.getResponseHeader('X-MiniProfiler-Ids'));
+            }
+        }
+
+        var jQueryAjaxComplete = function (e, xhr, settings) {
+            handleXHR(xhr);
         };
 
         // we need to attach our ajax complete handler to the window's (profiled app's) copy, not our internal, no conflict version
@@ -588,11 +602,7 @@ var MiniProfiler = (function () {
                 if (args) {
                     var response = args.get_response();
                     if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
-                        var stringIds = args.get_response().getResponseHeader('X-MiniProfiler-Ids');
-                        if (stringIds) {
-                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                            fetchResults(ids);
-                        }
+                        handleXHR(response);
                     }
                 }
             });
@@ -603,11 +613,7 @@ var MiniProfiler = (function () {
                 if (sender) {
                     var webRequestExecutor = sender;
                     if (webRequestExecutor.get_responseAvailable()) {
-                        var stringIds = webRequestExecutor.getResponseHeader('X-MiniProfiler-Ids');
-                        if (stringIds) {
-                            var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                            MiniProfiler.fetchResults(ids);
-                        }
+                        handleXHR(webRequestExecutor);
                     }
                 }
             });
@@ -621,14 +627,8 @@ var MiniProfiler = (function () {
 
                 return function (callbackObject) {
                     original(callbackObject);
-
-                    var stringIds = callbackObject.xmlRequest.getResponseHeader('X-MiniProfiler-Ids');
-                    if (stringIds) {
-                        var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                        fetchResults(ids);
-                    }
-                }
-
+                    handleXHR(callbackObject.xmlRequest);
+                };
             })();
         }
 
@@ -636,73 +636,54 @@ var MiniProfiler = (function () {
         if (typeof (Ext) != 'undefined' && typeof (Ext.Ajax) != 'undefined' && typeof (Ext.Ajax.on) != 'undefined') {
             // Ext.Ajax is a singleton, so we just have to attach to its 'requestcomplete' event
             Ext.Ajax.on('requestcomplete', function(e, xhr, settings) {
-                //iframed file uploads don't have headers
-                if (!xhr || !xhr.getResponseHeader) {
-                    return;
-                }
-
-                var stringIds = xhr.getResponseHeader('X-MiniProfiler-Ids');
-                if (stringIds) {
-                    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                    fetchResults(ids);
-                }
+                handleXHR(xhr);
             });
         }
 
         if (typeof (MooTools) != 'undefined' && typeof (Request) != 'undefined') {
-          Request.prototype.addEvents({
-            onComplete: function() {
-              var stringIds = this.xhr.getResponseHeader('X-MiniProfiler-Ids');
-              if (stringIds) {
-                var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                fetchResults(ids);
-              }
-            }
-          });
+            Request.prototype.addEvents({
+                onComplete: function () {
+                    handleXHR(this.xhr);
+                }
+            });
         }
 
         // add support for AngularJS, which uses the basic XMLHttpRequest object.
         if (window.angular && typeof (XMLHttpRequest) != 'undefined') {
-          var _send = XMLHttpRequest.prototype.send;
+            var _send = XMLHttpRequest.prototype.send;
 
-          XMLHttpRequest.prototype.send = function sendReplacement(data) {
-            if (this.onreadystatechange) {
-                if (typeof (this.miniprofiler) == 'undefined' || typeof (this.miniprofiler.prev_onreadystatechange) == 'undefined') {
-                    this.miniprofiler = { prev_onreadystatechange: this.onreadystatechange };
+            XMLHttpRequest.prototype.send = function sendReplacement(data) {
+                if (this.onreadystatechange) {
+                    if (typeof (this.miniprofiler) == 'undefined' || typeof (this.miniprofiler.prev_onreadystatechange) == 'undefined') {
+                        this.miniprofiler = { prev_onreadystatechange: this.onreadystatechange };
 
-                    this.onreadystatechange = function onReadyStateChangeReplacement() {
-                        if (this.readyState == 4) {
-                            var stringIds = this.getResponseHeader('X-MiniProfiler-Ids');
-                            if (stringIds) {
-                                var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-                                fetchResults(ids);
+                        this.onreadystatechange = function onReadyStateChangeReplacement() {
+                            if (this.readyState == 4) {
+                                handleXHR(this);
                             }
-                        }
 
-                        if (this.miniprofiler.prev_onreadystatechange != null)
-                            return this.miniprofiler.prev_onreadystatechange.apply(this, arguments);
-                    };
+                            if (this.miniprofiler.prev_onreadystatechange != null) {
+                                return this.miniprofiler.prev_onreadystatechange.apply(this, arguments);
+                            }
+                        };
+                    }
                 }
-            }
-	    else if (this.onload) {
-                if (typeof (this.miniprofiler) == 'undefined' || typeof (this.miniprofiler.prev_onload) == 'undefined') {
-                    this.miniprofiler = { prev_onload: this.onload };
+                else if (this.onload) {
+                    if (typeof (this.miniprofiler) == 'undefined' || typeof (this.miniprofiler.prev_onload) == 'undefined') {
+                        this.miniprofiler = { prev_onload: this.onload };
 
-                    this.onload = function onLoadReplacement() {
-			var stringIds = this.getResponseHeader('X-MiniProfiler-Ids');
-			if (stringIds) {
-			    var ids = typeof JSON != 'undefined' ? JSON.parse(stringIds) : eval(stringIds);
-			    fetchResults(ids);
-			}
+                        this.onload = function onLoadReplacement() {
+                            handleXHR(this);
 
-                        if (this.miniprofiler.prev_onload != null)
-                            return this.miniprofiler.prev_onload.apply(this, arguments);
-                    };
+                            if (this.miniprofiler.prev_onload != null) {
+                                return this.miniprofiler.prev_onload.apply(this, arguments);
+                            }
+                        };
+                    }
                 }
-            }
 
-            return _send.apply(this, arguments);
-          }
+                return _send.apply(this, arguments);
+            }
         }
 
         // wrap fetch
@@ -710,18 +691,11 @@ var MiniProfiler = (function () {
             var windowFetch = window.fetch;
             window.fetch = function (input, init) {
                 return windowFetch(input, init).then(function (response) {
-                    var stringIds = response.headers.get('X-MiniProfiler-Ids');
-                    if (stringIds) {
-                        // if fetch exists then JSON.parse does, no need for eval
-                        fetchResults(JSON.parse(stringIds));
-                    }
+                    handleIds(response.headers.get('X-MiniProfiler-Ids'));
                     return response;
                 });
             };
         }
-
-        // some elements want to be hidden on certain doc events
-        bindDocumentEvents();
     };
 
     var initPopupView = function () {
@@ -818,6 +792,7 @@ var MiniProfiler = (function () {
             };
 
             $(installAjaxHandlers);
+            $(bindDocumentEvents);
             $(deferInit);
         },
 
