@@ -1,4 +1,6 @@
-﻿using System;
+﻿using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,14 +33,29 @@ namespace StackExchange.Profiling
             bool? showControls = null,
             bool? startHidden = null)
         {
-            return MiniProfilerHandler.RenderIncludes(
-                profiler,
-                position,
-                showTrivial,
-                showTimeWithChildren,
-                maxTracesToShow,
-                showControls,
-                startHidden);
+            if (profiler == null) return new HtmlString(string.Empty);
+
+            var authorized = MiniProfilerWebSettings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+
+            // unviewed ids are added to this list during Storage.Save, but we know we haven't 
+            // seen the current one yet, so go ahead and add it to the end 
+            var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
+            ids.Add(profiler.Id);
+
+            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
+
+            var result = profiler.RenderIncludes(
+                path: path,
+                requestIDs: ids,
+                isAuthorized: authorized,
+                position: position,
+                showTrivial: showTrivial,
+                showTimeWithChildren: showTimeWithChildren,
+                maxTracesToShow: maxTracesToShow,
+                showControls: showControls,
+                startHidden: startHidden);
+
+            return new HtmlString(result);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -348,19 +349,8 @@ namespace StackExchange.Profiling
 
         private string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
-            new RequestState { IsAuthorized = true }.Store(context);
-
             context.Response.ContentType = "text/html";
-            if (!Embedded.TryGetResource("share.html", out string template))
-                return NotFound(context, "Share.html was not found");
-            var sb = new StringBuilder(template);
-            sb.Replace("{name}", profiler.Name)
-              .Replace("{duration}", profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture))
-              .Replace("{path}", BasePath.Value.EnsureTrailingSlash())
-              .Replace("{json}", profiler.ToJson())
-              .Replace("{includes}", profiler.RenderIncludes(context).ToString())
-              .Replace("{version}", MiniProfiler.Settings.VersionHash);
-            return sb.ToString();
+            return profiler.RenderResultsHtml(Current.BasePath.Value);
         }
     }
 }
