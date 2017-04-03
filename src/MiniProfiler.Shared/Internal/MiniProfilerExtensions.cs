@@ -66,27 +66,34 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("\" data-position=\"");
             sb.Append((position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower());
+            sb.Append('"');
 
-            sb.Append("\" data-trivial=\"");
-            sb.Append((showTrivial ?? MiniProfiler.Settings.PopupShowTrivial) ? "true" : "false");
+            if (isAuthorized)
+            {
+                sb.Append(" data-authorized=\"true\"");
+            }
+            if (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial)
+            {
+                sb.Append(" data-trivial=\"true\"");
+            }
+            if (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren)
+            {
+                sb.Append(" data-children=\"true\"");
+            }
+            if (showControls ?? MiniProfiler.Settings.ShowControls)
+            {
+                sb.Append(" data-controls=\"true\"");
+            }
+            if (startHidden ?? MiniProfiler.Settings.PopupStartHidden)
+            {
+                sb.Append(" data-start-hidden=\"true\"");
+            }
 
-            sb.Append("\" data-children=\"");
-            sb.Append((showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren) ? "true" : "false");
-
-            sb.Append("\" data-max-traces=\"");
+            sb.Append(" data-max-traces=\"");
             sb.Append((maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString(CultureInfo.InvariantCulture));
-
-            sb.Append("\" data-controls=\"");
-            sb.Append((showControls ?? MiniProfiler.Settings.ShowControls) ? "true" : "false");
-
-            sb.Append("\" data-authorized=\"");
-            sb.Append(isAuthorized ? "true" : "false");
 
             sb.Append("\" data-toggle-shortcut=\"");
             sb.Append(MiniProfiler.Settings.PopupToggleKeyboardShortcut);
-
-            sb.Append("\" data-start-hidden=\"");
-            sb.Append((startHidden ?? MiniProfiler.Settings.PopupStartHidden) ? "true" : "false");
 
             sb.Append("\" data-trivial-milliseconds=\"");
             sb.Append(MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString(CultureInfo.InvariantCulture));
