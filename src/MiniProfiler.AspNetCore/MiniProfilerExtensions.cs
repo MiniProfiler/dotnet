@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Profiling.Helpers;
 using System;
-using System.Linq;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace StackExchange.Profiling
@@ -14,6 +14,19 @@ namespace StackExchange.Profiling
     {
         // don't allocate this every time...
         private static readonly HtmlString includeNotFound = new HtmlString("<!-- Could not find 'include.partial.html' -->");
+
+        [ThreadStatic]
+        private static StringBuilder _stringBuilderCache;
+
+        private static StringBuilder GetStringBuilder() => _stringBuilderCache ?? CreateStringBuilder();
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static StringBuilder CreateStringBuilder()
+        {
+            var sb = new StringBuilder();
+            _stringBuilderCache = sb;
+            return sb;
+        }
 
         /// <summary>
         /// Renders script tag found in "include.partial.html".
@@ -40,33 +53,71 @@ namespace StackExchange.Profiling
 
             // This is populated in Middleware by SetHeadersAndState
             var state = RequestState.Get(context);
+            var path = MiniProfilerMiddleware.Current.BasePath.Value;
+            var version = MiniProfiler.Settings.VersionHash;
 
-            // Is the user authroized to see the results of the current MiniProfiler?
-            var authorized = state?.IsAuthorized ?? false;
-            var ids = state?.RequestIDs ?? Enumerable.Empty<Guid>();
+            var sb = GetStringBuilder();
 
-            if (!MiniProfilerMiddleware.Current.Embedded.TryGetResource("include.partial.html", out string format))
+            sb.Append("<script async id=\"mini-profiler\" src=\"");
+            sb.Append(path);
+            sb.Append("includes.js?v=");
+            sb.Append(version);
+            sb.Append("\" data-version=\"");
+            sb.Append(version);
+            sb.Append("\" data-path=\"");
+            sb.Append(path);
+            sb.Append("\" data-current-id=\"");
+            sb.Append(profiler.Id.ToString());
+
+            sb.Append("\" data-ids=\"");
+            var ids = state?.RequestIDs;
+            if (ids != null)
             {
-                return includeNotFound;
+                var length = ids.Count;
+                for (var i = 0; i < length; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(',');
+                    }
+                    var id = ids[i];
+                    sb.Append(id.ToString());
+                }
             }
 
-            Func<bool, string> toJs = b => b ? "true" : "false";
+            sb.Append("\" data-position=\"");
+            sb.Append((position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower());
 
-            var sb = new StringBuilder(format);
-            sb.Replace("{path}", MiniProfilerMiddleware.Current.BasePath.Value.EnsureTrailingSlash())
-              .Replace("{version}", MiniProfiler.Settings.VersionHash)
-              .Replace("{currentId}", profiler.Id.ToString())
-              .Replace("{ids}", string.Join(",", ids.Select(guid => guid.ToString())))
-              .Replace("{position}", (position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower())
-              .Replace("{showTrivial}", toJs(showTrivial ?? MiniProfiler.Settings.PopupShowTrivial))
-              .Replace("{showChildren}", toJs(showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren))
-              .Replace("{maxTracesToShow}", (maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString())
-              .Replace("{showControls}", toJs(showControls ?? MiniProfiler.Settings.ShowControls))
-              .Replace("{authorized}", toJs(authorized))
-              .Replace("{toggleShortcut}", MiniProfiler.Settings.PopupToggleKeyboardShortcut)
-              .Replace("{startHidden}", toJs(startHidden ?? MiniProfiler.Settings.PopupStartHidden))
-              .Replace("{trivialMilliseconds}", MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString());
-            return new HtmlString(sb.ToString());
+            sb.Append("\" data-trivial=\"");
+            sb.Append((showTrivial ?? MiniProfiler.Settings.PopupShowTrivial) ? "true" : "false");
+
+            sb.Append("\" data-children=\"");
+            sb.Append((showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren) ? "true" : "false");
+
+            sb.Append("\" data-max-traces=\"");
+            sb.Append((maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString(CultureInfo.InvariantCulture));
+
+            sb.Append("\" data-controls=\"");
+            sb.Append((showControls ?? MiniProfiler.Settings.ShowControls) ? "true" : "false");
+
+            sb.Append("\" data-authorized=\"");
+            sb.Append((state?.IsAuthorized ?? false) ? "true" : "false");
+
+            sb.Append("\" data-toggle-shortcut=\"");
+            sb.Append(MiniProfiler.Settings.PopupToggleKeyboardShortcut);
+
+            sb.Append("\" data-start-hidden=\"");
+            sb.Append((startHidden ?? MiniProfiler.Settings.PopupStartHidden) ? "true" : "false");
+
+            sb.Append("\" data-trivial-milliseconds=\"");
+            sb.Append(MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString(CultureInfo.InvariantCulture));
+
+            sb.Append("\"></script>");
+
+            var htmlString = new HtmlString(sb.ToString());
+            // Clear StringBuilder for next use
+            sb.Length = 0;
+            return htmlString;
         }
     }
 }
