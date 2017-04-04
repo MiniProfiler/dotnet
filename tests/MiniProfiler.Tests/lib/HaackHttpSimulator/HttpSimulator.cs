@@ -103,8 +103,8 @@ namespace Subtext.TestLibrary
 
             InitializeApplication();
 
-            #region Console Debug INfo
-
+            #region Console Debug Info
+            
             Console.WriteLine("host: " + host);
             Console.WriteLine("virtualDir: " + applicationPath);
             Console.WriteLine("page: " + localPath);

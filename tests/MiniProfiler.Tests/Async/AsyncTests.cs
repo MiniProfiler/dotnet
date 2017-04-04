@@ -303,17 +303,17 @@ namespace Tests.Async
             Console.WriteLine(profiler.RenderPlainText());
 
             // 1ms added to root
-            AssertNear(5, profiler.DurationMilliseconds);
+            AssertNear(5, profiler.DurationMilliseconds, maxDelta: 2);
 
             // Parent durations are sum of itself and children
-            AssertNear(2, timing10.DurationMilliseconds);
-            AssertNear(1, timing11.DurationMilliseconds);
+            AssertNear(2, timing10.DurationMilliseconds, maxDelta: 2);
+            AssertNear(1, timing11.DurationMilliseconds, maxDelta: 2);
 
-            AssertNear(3, timing20.DurationMilliseconds);
-            AssertNear(1, timing21.DurationMilliseconds);
+            AssertNear(3, timing20.DurationMilliseconds, maxDelta: 2);
+            AssertNear(1, timing21.DurationMilliseconds, maxDelta: 2);
 
-            AssertNear(4, timing30.DurationMilliseconds);
-            AssertNear(1, timing31.DurationMilliseconds);
+            AssertNear(4, timing30.DurationMilliseconds, maxDelta: 2);
+            AssertNear(1, timing31.DurationMilliseconds, maxDelta: 2);
         }
 
         private static void AssertNear(double expected, decimal? actual, double maxDelta = 0.0001)
