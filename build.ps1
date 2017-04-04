@@ -1,3 +1,4 @@
+[CmdletBinding(PositionalBinding=$false)]
 param(
     [string] $Version,
     [string] $BuildNumber,
