@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Extensions and helpers for ASP.NET MVC 5+ (non-.NET Core)</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>ASP.NET;MVC;MVC 5;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net45;net46</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <RootNamespace>StackExchange.Profiling.Mvc</RootNamespace>

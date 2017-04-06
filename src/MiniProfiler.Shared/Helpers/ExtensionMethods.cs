@@ -2,10 +2,10 @@
 using System.Text;
 using System;
 using System.Collections.Generic;
-#if NET46
-using System.Web.Script.Serialization;
-#else
+#if NETSTANDARD1_5
 using Newtonsoft.Json;
+#else
+using System.Web.Script.Serialization;
 #endif
 
 namespace StackExchange.Profiling.Helpers
@@ -68,7 +68,14 @@ namespace StackExchange.Profiling.Helpers
             return sb.ToString();
         }
 
-#if NET46
+#if NETSTANDARD
+        /// <summary>
+        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
+        public static string ToJson(this MiniProfiler profiler) =>
+            profiler != null ? JsonConvert.SerializeObject(profiler) : null;
+#else
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
         /// </summary>
@@ -79,13 +86,6 @@ namespace StackExchange.Profiling.Helpers
             if (profiler == null) return null;
             return new JavaScriptSerializer { MaxJsonLength = limitSize ? MiniProfiler.Settings.MaxJsonResponseSize : int.MaxValue }.Serialize(profiler);
         }
-#else
-        /// <summary>
-        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
-        /// </summary>
-        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
-        public static string ToJson(this MiniProfiler profiler) =>
-            profiler != null ? JsonConvert.SerializeObject(profiler) : null;
 #endif
 
         /// <summary>
@@ -96,10 +96,10 @@ namespace StackExchange.Profiling.Helpers
         public static string ToJson(this object o)
         {
             if (o == null) return null;
-#if NET46
-            return new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o);
-#else
+#if NETSTANDARD1_5
             return JsonConvert.SerializeObject(o);
+#else
+            return new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o);
 #endif
         }
 
@@ -112,10 +112,10 @@ namespace StackExchange.Profiling.Helpers
         public static T FromJson<T>(this string s) where T : class
         {
             if (string.IsNullOrEmpty(s)) return null;
-#if NET46
-            return new JavaScriptSerializer().Deserialize<T>(s);
-#else
+#if NETSTANDARD1_5
             return JsonConvert.DeserializeObject<T>(s);
+#else
+            return new JavaScriptSerializer().Deserialize<T>(s);
 #endif
         }
     }

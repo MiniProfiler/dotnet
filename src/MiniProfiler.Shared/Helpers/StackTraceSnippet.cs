@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>Space separated list of methods</returns>
         public static string Get()
         {
-#if NET46
+#if !NETSTANDARD
             var frames = new StackTrace().GetFrames();
 #else // TODO: Make this work in .NET Standard, true fix isn't until 2.0 via https://github.com/dotnet/corefx/pull/12527
             StackFrame[] frames = null;

@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Profiler storage for SQL Server Compact Edition</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>SQL Server CE;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net45;net46</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />

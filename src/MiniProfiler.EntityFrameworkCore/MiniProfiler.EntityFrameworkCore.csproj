@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Integration for Entity Framework Core</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>Entity Framework;Entity Framework Core;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net46;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>net451;net46;netstandard1.5</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <RootNamespace>StackExchange.Profiling.Data</RootNamespace>

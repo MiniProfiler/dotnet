@@ -174,7 +174,7 @@ namespace StackExchange.Profiling.Data
         }
 
 // TODO: Retuning in .Net Standard 2.0
-#if NET46
+#if !NETSTANDARD
         /// <summary>
         /// Gets a value indicating whether events can be raised.
         /// </summary>

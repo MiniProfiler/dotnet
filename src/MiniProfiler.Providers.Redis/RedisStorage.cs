@@ -62,8 +62,8 @@ namespace StackExchange.Profiling.Storage
         {
             var redisOrder = orderBy == ListResultsOrder.Ascending ? Order.Ascending : Order.Descending;
 
-            var startScore = start.HasValue ? new DateTimeOffset(start.Value).ToUnixTimeSeconds() : int.MinValue;
-            var finishScore = finish.HasValue ? new DateTimeOffset(finish.Value).ToUnixTimeSeconds() : int.MaxValue;
+            double startScore = start.HasValue ? ToEpoch(start.Value) : double.NegativeInfinity;
+            double finishScore = finish.HasValue ? ToEpoch(finish.Value) : double.PositiveInfinity;
 
             return _database.SortedSetRangeByScore(ProfilerResultSetKey, startScore, finishScore, order: redisOrder, take: maxResults)
                             .Select(x => Guid.Parse(x));
@@ -84,7 +84,7 @@ namespace StackExchange.Profiling.Storage
 
             _database.StringSet(key, value, expiry: CacheDuration);
 
-            var score = new DateTimeOffset(profiler.Started).ToUnixTimeSeconds();
+            var score = ToEpoch(profiler.Started);
             _database.SortedSetAdd(ProfilerResultSetKey, id, score);
             _database.SortedSetRemoveRangeByRank(ProfilerResultSetKey, 0, -1 - 1 - ResultListMaxLength);
             _database.KeyExpire(ProfilerResultSetKey, CacheDuration);
@@ -166,8 +166,8 @@ namespace StackExchange.Profiling.Storage
         {
             var redisOrder = orderBy == ListResultsOrder.Ascending ? Order.Ascending : Order.Descending;
 
-            var startScore = start.HasValue ? new DateTimeOffset(start.Value).ToUnixTimeSeconds() : int.MinValue;
-            var finishScore = finish.HasValue ? new DateTimeOffset(finish.Value).ToUnixTimeSeconds() : int.MaxValue;
+            double startScore = start.HasValue ? ToEpoch(start.Value) : double.NegativeInfinity;
+            double finishScore = finish.HasValue ? ToEpoch(finish.Value) : double.PositiveInfinity;
 
             var ids = await _database.SortedSetRangeByScoreAsync(ProfilerResultSetKey, startScore, finishScore, order: redisOrder, take: maxResults).ConfigureAwait(false);
             return ids.Select(x => Guid.Parse(x));
@@ -188,7 +188,7 @@ namespace StackExchange.Profiling.Storage
 
             await _database.StringSetAsync(key, value, expiry: CacheDuration).ConfigureAwait(false);
 
-            var score = new DateTimeOffset(profiler.Started).ToUnixTimeSeconds();
+            var score = ToEpoch(profiler.Started);
             await _database.SortedSetAddAsync(ProfilerResultSetKey, id, score).ConfigureAwait(false);
             await _database.SortedSetRemoveRangeByRankAsync(ProfilerResultSetKey, 0, -1 - 1 - ResultListMaxLength).ConfigureAwait(false);
             await _database.KeyExpireAsync(ProfilerResultSetKey, CacheDuration).ConfigureAwait(false);
@@ -246,5 +246,8 @@ namespace StackExchange.Profiling.Storage
             var ids = await _database.SetMembersAsync(key).ConfigureAwait(false);
             return ids.Select(x => Guid.Parse(x)).ToList();
         }
+
+        private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static double ToEpoch(DateTime date) => Convert.ToInt64((date - _epoch).TotalSeconds);
     }
 }

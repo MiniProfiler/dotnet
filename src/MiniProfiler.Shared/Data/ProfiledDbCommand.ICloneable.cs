@@ -1,5 +1,5 @@
 ﻿// Entity Framework 6 needs ICloneable
-#if NET46
+#if !NETSTANDARD
 using System;
 using System.Data.Common;
 

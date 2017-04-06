@@ -221,7 +221,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>true if there are more rows; otherwise, false.</returns>
         public override Task<bool> ReadAsync(CancellationToken cancellationToken) => WrappedReader.ReadAsync(cancellationToken);
 
-#if NET46 // TODO: Revisit in .Net Standard 2.0
+#if !NETSTANDARD // TODO: Revisit in .Net Standard 2.0
         /// <summary>Closes the IDataReader Object.</summary>
         public override void Close()
         {

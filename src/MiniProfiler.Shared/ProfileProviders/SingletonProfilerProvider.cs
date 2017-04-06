@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Profiling.Internal;
+using System;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
@@ -22,7 +23,7 @@ namespace StackExchange.Profiling
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
         public MiniProfiler Start(string profilerName = null)
         {
-#if NET46
+#if !NETSTANDARD
             _profiler = new MiniProfiler(profilerName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else // TODO: Revisit with .NET Standard 2.0
             _profiler = new MiniProfiler(profilerName ?? "MiniProfiler") { IsActive = true };
@@ -56,7 +57,7 @@ namespace StackExchange.Profiling
         public Task StopAsync(bool discardResults)
         {
             Stop(discardResults);
-            return Task.CompletedTask;
+            return Polyfills.CompletedTask;
         }
     }
 }

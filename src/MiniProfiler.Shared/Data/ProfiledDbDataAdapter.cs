@@ -1,5 +1,5 @@
 ﻿// Only in .NET 4.6 until netstandard 2.0 timeframe
-#if NET46
+#if !NETSTANDARD
 using System;
 using System.Data;
 using System.Data.Common;

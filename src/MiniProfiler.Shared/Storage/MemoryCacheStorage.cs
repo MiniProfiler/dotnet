@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
-#if NET46
-using System.Runtime.Caching;
-#else
+using StackExchange.Profiling.Internal;
+#if NETSTANDARD1_5
 using Microsoft.Extensions.Caching.Memory;
+#else
+using System.Runtime.Caching;
 #endif
 
 namespace StackExchange.Profiling.Storage
@@ -15,11 +16,11 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class MemoryCacheStorage : IAsyncStorage
     {
-#if NET46
-        private readonly MemoryCache _cache;
-#else
+#if NETSTANDARD1_5
         private readonly IMemoryCache _cache;
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
+#else
+        private readonly MemoryCache _cache;
 #endif
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
 
@@ -34,17 +35,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public TimeSpan CacheDuration { get; }
 
-#if NET46
-        /// <summary>
-        /// Creates a memory cache provider, storing each result in a MemoryCache for the specified duration.
-        /// </summary>
-        /// <param name="cacheDuration">The duration to cache each profiler, before it expires from cache.</param>
-        public MemoryCacheStorage(TimeSpan cacheDuration)
-        {
-            _cache = new MemoryCache("MiniProfilerCache");
-            CacheDuration = cacheDuration;
-        }
-#else
+#if NETSTANDARD1_5
         /// <summary>
         /// Creates a memory cache provider, storing each result in the provided IMemoryCache
         /// for the specified duration.
@@ -57,6 +48,16 @@ namespace StackExchange.Profiling.Storage
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             CacheDuration = cacheDuration;
             CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
+        }
+#else
+        /// <summary>
+        /// Creates a memory cache provider, storing each result in a MemoryCache for the specified duration.
+        /// </summary>
+        /// <param name="cacheDuration">The duration to cache each profiler, before it expires from cache.</param>
+        public MemoryCacheStorage(TimeSpan cacheDuration)
+        {
+            _cache = new MemoryCache("MiniProfilerCache");
+            CacheDuration = cacheDuration;
         }
 #endif
 
@@ -74,6 +75,7 @@ namespace StackExchange.Profiling.Storage
                 return new List<Guid>(ids);
             }
         }
+
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
@@ -206,7 +208,7 @@ namespace StackExchange.Profiling.Storage
         public Task SaveAsync(MiniProfiler profiler)
         {
             Save(profiler);
-            return Task.CompletedTask;
+            return Polyfills.CompletedTask;
         }
 
         bool IAsyncStorage.SetUnviewedAfterSave => true;
@@ -238,7 +240,7 @@ namespace StackExchange.Profiling.Storage
         public Task SetUnviewedAsync(string user, Guid id)
         {
             SetUnviewed(user, id);
-            return Task.CompletedTask;
+            return Polyfills.CompletedTask;
         }
 
         /// <summary>
@@ -263,7 +265,7 @@ namespace StackExchange.Profiling.Storage
         public Task SetViewedAsync(string user, Guid id)
         {
             SetViewed(user, id);
-            return Task.CompletedTask;
+            return Polyfills.CompletedTask;
         }
     }
 }

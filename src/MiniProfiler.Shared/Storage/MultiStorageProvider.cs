@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Profiling.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -117,7 +118,7 @@ namespace StackExchange.Profiling.Storage
         /// </remarks>
         public Task SaveAsync(MiniProfiler profiler)
         {
-            if (Stores == null) return Task.CompletedTask;
+            if (Stores == null) return Polyfills.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SaveAsync(profiler)));
         }
@@ -205,7 +206,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set unviewed.</param>
         public Task SetUnviewedAsync(string user, Guid id)
         {
-            if (Stores == null) return Task.CompletedTask;
+            if (Stores == null) return Polyfills.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SetUnviewedAsync(user, id)));
         }
@@ -240,7 +241,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="id">The profiler ID to set viewed.</param>
         public Task SetViewedAsync(string user, Guid id)
         {
-            if (Stores == null) return Task.CompletedTask;
+            if (Stores == null) return Polyfills.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, id)));
         }

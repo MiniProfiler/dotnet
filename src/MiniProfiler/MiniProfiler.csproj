@@ -5,7 +5,7 @@
     <Description>Lightweight mini-profiler, designed for ASP.NET (including MVC) (non-.NET Core) websites</Description>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>ASP.NET;SQL;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net45;net46</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />

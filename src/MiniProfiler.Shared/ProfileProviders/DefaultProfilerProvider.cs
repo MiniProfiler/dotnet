@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using StackExchange.Profiling.Internal;
 using System.Threading.Tasks;
-#if NET46
+#if !NETSTANDARD
 using System;
 #endif
 
@@ -11,7 +11,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : BaseProfilerProvider
     {
-        private static readonly AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
+        private static readonly FlowData<MiniProfiler> _profiler = new FlowData<MiniProfiler>();
 
         private MiniProfiler Profiler
         {
@@ -31,7 +31,7 @@ namespace StackExchange.Profiling
         public override MiniProfiler Start(string profilerName = null)
         {
             Profiler = new MiniProfiler(profilerName ??
-#if NET46
+#if !NETSTANDARD
             AppDomain.CurrentDomain.FriendlyName
 #else       // TODO: Revisit with .NET Standard 2.0
             nameof(MiniProfiler)

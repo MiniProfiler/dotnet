@@ -3,7 +3,7 @@ using System.Data;
 using System.Text;
 
 // TODO: Revisit with .NET Standard 2.0
-#if NET46
+#if !NETSTANDARD
 using System.Transactions;
 #endif
 
@@ -42,7 +42,7 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 buffer.AppendLine("-- Command Type: " + command.CommandType);
                 buffer.AppendLine("-- Database: " + command.Connection.Database);
-#if NET46
+#if !NETSTANDARD
                 if (command.Transaction != null)
                 {
                     buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);

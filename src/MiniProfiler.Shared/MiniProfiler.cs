@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
-#if NET46
+#if !NETSTANDARD
 using System.IO;
 using System.Web.Script.Serialization;
 #endif
@@ -186,7 +186,7 @@ namespace StackExchange.Profiling
         public bool HasUserViewed { get; set; }
 
         // Allows async to properly track the attachment point
-        private readonly AsyncLocal<Timing> _head = new AsyncLocal<Timing>();
+        private readonly FlowData<Timing> _head = new FlowData<Timing>();
 
         /// <summary>
         /// Gets or sets points to the currently executing Timing. 
@@ -317,7 +317,7 @@ namespace StackExchange.Profiling
             }
         }
 
-#if NET46 // TODO: Revisit in .NET Standard 2.0
+#if !NETSTANDARD // TODO: Revisit in .NET Standard 2.0
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>

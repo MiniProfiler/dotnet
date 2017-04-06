@@ -158,7 +158,7 @@ namespace StackExchange.Profiling
             /// </summary>
             public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; } = false;
 
-#if NET46
+#if !NETSTANDARD
             /// <summary>
             /// Maximum payload size for json responses in bytes defaults to 2097152 characters, which is equivalent to 4 MB of Unicode string data.
             /// </summary>
