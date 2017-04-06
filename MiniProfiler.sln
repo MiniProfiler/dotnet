@@ -37,6 +37,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.AspNetCore", "src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj", "{6A2B5B70-1C32-482F-B5C6-0597E2D4E376}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A510DBF-E85F-4D2C-B8F7-006DA31B3418}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.build.props = src\Directory.build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33644D67-D9BB-4989-9B7A-98D51967059B}"
 EndProject

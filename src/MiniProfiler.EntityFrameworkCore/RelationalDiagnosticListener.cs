@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Data
         /// Diagnostic Listener name to handle
         /// </summary>
         public string ListenerName => "Microsoft.EntityFrameworkCore";
-        
+
         // Tracking currently open items, connections, and transactions, for logging upon their completion or error
         private readonly ConcurrentDictionary<Guid, CustomTiming>
             _commands = new ConcurrentDictionary<Guid, CustomTiming>(),

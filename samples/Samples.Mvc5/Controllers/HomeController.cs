@@ -219,7 +219,7 @@ namespace Samples.Mvc5.Controllers
         /// The <see cref="ActionResult"/>.
         /// </returns>
         public ActionResult Xhtml() => View();
-        
+
         /// <summary>
         /// The EF code first.
         /// </summary>
