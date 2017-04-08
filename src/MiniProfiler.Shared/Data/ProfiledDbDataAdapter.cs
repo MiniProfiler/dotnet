@@ -166,25 +166,6 @@ namespace StackExchange.Profiling.Data
         public new IDataParameter[] GetFillParameters() => InternalAdapter.GetFillParameters();
 
         /// <summary>
-        /// Calls the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet"/> from a <see cref="T:System.Data.DataTable"/> named "Table".
-        /// </summary>
-        /// <param name="dataSet">The <see cref="T:System.Data.DataSet"/> used to update the data source.</param>
-        /// <returns>
-        /// The number of rows successfully updated from the <see cref="T:System.Data.DataSet"/>.
-        /// </returns>
-        /// <exception cref="DBConcurrencyException">An attempt to execute an INSERT, UPDATE, or DELETE statement resulted in zero records affected.</exception>
-        /// <exception cref="NotImplementedException"></exception>
-        public new int Update(DataSet dataSet)
-        {
-            // Don't need this right now and the logic is much more complicated.  Someone else can have at it.
-            //	It looks like you could use the SqlDataAdapter RowUpdating and RowUpdated events but that would be provider-specific
-            //	and be a pain to maintain.
-#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
-            throw new NotImplementedException();
-#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
-        }
-
-        /// <summary>
         /// Gets or sets whether unmapped source tables or columns are passed with their source names in order to be filtered or to raise an error.
         /// </summary>
         /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is Passthrough.</returns>
