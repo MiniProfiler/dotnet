@@ -3,6 +3,11 @@ image: Visual Studio 2017
 init:
   - git config --global core.autocrlf input
 
+install:
+  - nuget install redis-64 -excludeversion
+  - redis-64\tools\redis-server.exe --service-install
+  - redis-64\tools\redis-server.exe --service-start
+
 skip_branch_with_pr: true
 skip_tags: true
 skip_commits:

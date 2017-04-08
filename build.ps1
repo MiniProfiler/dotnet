@@ -27,7 +27,8 @@ $projectsToBuild =
     'MiniProfiler.Providers.SqlServerCe'
 
 $testsToRun =
-    'MiniProfiler.Tests'
+    'MiniProfiler.Tests',
+    'MiniProfiler.Providers.Redis.Tests'
     
 function CalculateVersion() {
     if ($version) {
@@ -70,10 +71,17 @@ if ($PullRequestNumber) {
 if ($RunTests) {   
     dotnet restore
     foreach ($project in $testsToRun) {
-        Write-Host "Running tests: $project`:" -ForegroundColor "Magenta"
-
+        Write-Host "Running tests: $project (all frameworks)" -ForegroundColor "Magenta"
         Push-Location ".\tests\$project"
-        dotnet test
+
+        dotnet xunit
+        if ($LastExitCode -ne 0) { 
+            Write-Host "Error with tests, aborting build." -Foreground "Red"
+            Pop-Location
+            Exit 1
+        }
+
+        Write-Host "Tests passed!" -ForegroundColor "Green"
 	    Pop-Location
     }
 }

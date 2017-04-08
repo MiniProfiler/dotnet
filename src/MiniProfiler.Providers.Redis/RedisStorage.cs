@@ -9,8 +9,9 @@ namespace StackExchange.Profiling.Storage
     /// <summary>
     /// StackExchange.Redis based storage provider for <see cref="MiniProfiler"/> results.
     /// </summary>
-    public class RedisStorage : IAsyncStorage
+    public class RedisStorage : IAsyncStorage, IDisposable
     {
+        private readonly ConnectionMultiplexer _multiplexer;
         private readonly IDatabase _database;
 
         /// <summary>
@@ -39,13 +40,35 @@ namespace StackExchange.Profiling.Storage
         public int ResultListMaxLength { get; set; } = 100;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisStorage"/> class with the specified Redis database.
+        /// Initializes a new instance of <see cref="RedisStorage"/> class with the specified Redis <see cref="IDatabase"/>.
         /// </summary>
-        /// <param name="database">The Redis database to use.</param>
+        /// <param name="database">The <see cref="IDatabase"/> to use for storage.</param>
         public RedisStorage(IDatabase database)
         {
             _database = database ?? throw new ArgumentNullException(nameof(database));
         }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="RedisStorage"/> class with the specified Redis <see cref="ConnectionMultiplexer"/>.
+        /// </summary>
+        /// <param name="multiplexer">The <see cref="ConnectionMultiplexer"/> to use for storage.</param>
+        public RedisStorage(ConnectionMultiplexer multiplexer) : this (multiplexer.GetDatabase())
+        {
+            _multiplexer = multiplexer ?? throw new ArgumentNullException(nameof(multiplexer));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="RedisStorage"/> class with the specified <see cref="ConfigurationOptions"/>.
+        /// </summary>
+        /// <param name="options">Cofiguration options for the Redis connection.</param>
+        public RedisStorage(ConfigurationOptions options) : this(ConnectionMultiplexer.Connect(options ?? throw new ArgumentNullException(nameof(options)))) { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="RedisStorage"/> class with the specified connection string.
+        /// For available options, see https://stackexchange.github.io/StackExchange.Redis/Configuration#configuration-options
+        /// </summary>
+        /// <param name="configuration">Connection string for the Redis connection.</param>
+        public RedisStorage(string configuration) : this (ConnectionMultiplexer.Connect(configuration ?? throw new ArgumentNullException(nameof(configuration)))) { }
 
         /// <summary>
         /// List the latest profiling results.
@@ -249,5 +272,10 @@ namespace StackExchange.Profiling.Storage
 
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static double ToEpoch(DateTime date) => Convert.ToInt64((date - _epoch).TotalSeconds);
+
+        public void Dispose()
+        {
+            _multiplexer?.Dispose();
+        }
     }
 }

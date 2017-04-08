@@ -1,10 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
@@ -42,6 +43,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A510DBF-E85
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33644D67-D9BB-4989-9B7A-98D51967059B}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.build.props = tests\Directory.build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E0DA4035-4D64-4BB8-8EA1-42197DE62519}"
 EndProject
@@ -52,6 +56,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EntityFrameworkCore", "src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj", "{BC36D84D-F5C6-4E12-8BC7-2F1972A00635}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Providers.Redis", "src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj", "{56F62841-5B51-4CA5-9637-96F547DBCAF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Profilers.Redis.Tests", "tests\MiniProfiler.Providers.Redis.Tests\MiniProfiler.Profilers.Redis.Tests.csproj", "{E2379D6A-5683-4D68-94A4-E0BED3E55949}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +129,10 @@ Global
 		{56F62841-5B51-4CA5-9637-96F547DBCAF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56F62841-5B51-4CA5-9637-96F547DBCAF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56F62841-5B51-4CA5-9637-96F547DBCAF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +154,7 @@ Global
 		{880EFCA6-C791-464C-A416-EFAFB1FCC28C} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 		{BC36D84D-F5C6-4E12-8BC7-2F1972A00635} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{56F62841-5B51-4CA5-9637-96F547DBCAF2} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
+		{E2379D6A-5683-4D68-94A4-E0BED3E55949} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
