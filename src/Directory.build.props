@@ -20,7 +20,6 @@
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
     <IncludeSymbols>false</IncludeSymbols>
-    <IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">

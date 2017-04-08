@@ -165,7 +165,7 @@ namespace Tests.Async
             {
                 using (profiler.Step($"thread[{i}]"))
                 {
-                    foreach (int j in Enumerable.Range(0, 10))
+                    foreach (int j in Enumerable.Range(0, 5))
                     {
                         using (profiler.Step($"work[{i}/{j}]"))
                         {
@@ -189,7 +189,7 @@ namespace Tests.Async
                 if (timing.Name.StartsWith("thread", StringComparison.Ordinal))
                 {
                     // 3 work items, 50 ms each
-                    AssertNear(500, timing.DurationMilliseconds, 100);
+                    AssertNear(250, timing.DurationMilliseconds, 100);
                 }
                 else if (timing.Name.StartsWith("work", StringComparison.Ordinal))
                 {
