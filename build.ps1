@@ -69,7 +69,7 @@ if ($PullRequestNumber) {
 }
 
 if ($RunTests) {   
-    dotnet restore
+    dotnet restore /ConsoleLoggerParameters:Verbosity=Quiet
     foreach ($project in $testsToRun) {
         Write-Host "Running tests: $project (all frameworks)" -ForegroundColor "Magenta"
         Push-Location ".\tests\$project"
