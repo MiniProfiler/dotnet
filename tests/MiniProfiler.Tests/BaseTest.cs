@@ -177,9 +177,6 @@ namespace Tests
 
         protected void AssertTimingsAreEqualAndRecurse(Timing t1, Timing t2)
         {
-            Console.WriteLine();
-            Console.WriteLine();
-
             Assert.NotNull(t1);
             Assert.NotNull(t2);
 
@@ -194,8 +191,6 @@ namespace Tests
 
                 foreach (var pair1 in t1.CustomTimings)
                 {
-                    Console.WriteLine();
-
                     var ct1 = pair1.Value;
                     Assert.True(t2.CustomTimings.TryGetValue(pair1.Key, out var ct2));
 
@@ -253,7 +248,7 @@ namespace Tests
 
                     var name = typeof(T).Name + "." + p.Name;
                     Assert.True(Equals(val1, val2), $"{name} have different values ({val1} vs. {val2}");
-                    Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
+                    //Console.WriteLine("{0, 50}: {1} == {2}", name, val1 ?? "<null>", val2 ?? "<null>");
                 }
                 catch (Xunit.Sdk.TrueException)
                 {

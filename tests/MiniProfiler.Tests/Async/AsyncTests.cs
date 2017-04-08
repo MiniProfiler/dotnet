@@ -52,7 +52,7 @@ namespace Tests.Async
 
             MiniProfiler.Stop();
 
-            Console.WriteLine(profiler.RenderPlainText());
+            //Console.WriteLine(profiler.RenderPlainText());
             //   root = 330.9ms
             //  > step2.0 = 107.6ms
             //  > step1.0 = 212.1ms
@@ -133,7 +133,7 @@ namespace Tests.Async
             MiniProfiler.Stop();
 
             // Assert
-            Console.WriteLine(profiler.RenderPlainText());
+            //Console.WriteLine(profiler.RenderPlainText());
 
             // 100ms + longest running task (step3.0 with 300 + 100 ms) = 500ms
             AssertNear(500, profiler.DurationMilliseconds, 50);
@@ -178,7 +178,7 @@ namespace Tests.Async
             MiniProfiler.Stop();
 
             // Assert
-            Console.WriteLine(profiler.RenderPlainText());
+            //Console.WriteLine(profiler.RenderPlainText());
 
             // The total run time is non-deterministic and depends
             // on the system and the scheduler, so we can only assert
@@ -300,7 +300,7 @@ namespace Tests.Async
             MiniProfiler.Stop();
 
             // Assert
-            Console.WriteLine(profiler.RenderPlainText());
+            //Console.WriteLine(profiler.RenderPlainText());
 
             // 1ms added to root
             AssertNear(5, profiler.DurationMilliseconds, maxDelta: 2);
