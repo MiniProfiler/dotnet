@@ -32,3 +32,12 @@ deploy:
   api_key:
     secure: LLyiHXh/pU4i8H2Cn74C5sXNV+5MX0gpJZuunTnXv/KoafhfmkB/65/TcV4B7kj2
   symbol_server: https://www.myget.org/F/miniprofiler/symbols/api/v2/package
+
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/stackoverflow/api/v2
+  on:
+    branch: master  
+  api_key:
+    secure: P/UHxq2DEs0GI1SoDXDesHjRVsSVgdywz5vmsnhFQQY5aJgO3kP+QfhwfhXz19Rw
+  symbol_server: https://www.myget.org/F/stackoverflow/symbols/api/v2/package
