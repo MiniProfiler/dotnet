@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net46</TargetFrameworks>
+    <AssemblyName>MiniProfiler.Benchmarks</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Benchmarks</RootNamespace>
+    <Configuration>Release</Configuration>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.10.3" />
+    <PackageReference Include="Jil" Version="2.15.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+</Project>

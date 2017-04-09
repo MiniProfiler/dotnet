@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Providers.Redi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Profilers.Redis.Tests", "tests\MiniProfiler.Providers.Redis.Tests\MiniProfiler.Profilers.Redis.Tests.csproj", "{E2379D6A-5683-4D68-94A4-E0BED3E55949}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Benchmarks", "tests\MiniProfiler.Benchmarks\MiniProfiler.Benchmarks.csproj", "{DA643D37-C3DD-41F6-B9BE-09073B65D218}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,10 @@ Global
 		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2379D6A-5683-4D68-94A4-E0BED3E55949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA643D37-C3DD-41F6-B9BE-09073B65D218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA643D37-C3DD-41F6-B9BE-09073B65D218}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA643D37-C3DD-41F6-B9BE-09073B65D218}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA643D37-C3DD-41F6-B9BE-09073B65D218}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,6 +161,7 @@ Global
 		{BC36D84D-F5C6-4E12-8BC7-2F1972A00635} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{56F62841-5B51-4CA5-9637-96F547DBCAF2} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{E2379D6A-5683-4D68-94A4-E0BED3E55949} = {33644D67-D9BB-4989-9B7A-98D51967059B}
+		{DA643D37-C3DD-41F6-B9BE-09073B65D218} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
