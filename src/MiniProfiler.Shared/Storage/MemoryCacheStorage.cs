@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
-#if NETSTANDARD1_5
+#if NETSTANDARD
 using Microsoft.Extensions.Caching.Memory;
 #else
 using System.Runtime.Caching;
@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class MemoryCacheStorage : IAsyncStorage
     {
-#if NETSTANDARD1_5
+#if NETSTANDARD
         private readonly IMemoryCache _cache;
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
 #else
@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         public TimeSpan CacheDuration { get; }
 
-#if NETSTANDARD1_5
+#if NETSTANDARD
         /// <summary>
         /// Creates a memory cache provider, storing each result in the provided IMemoryCache
         /// for the specified duration.

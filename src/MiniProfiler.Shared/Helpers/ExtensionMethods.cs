@@ -2,7 +2,7 @@
 using System.Text;
 using System;
 using System.Collections.Generic;
-#if NETSTANDARD1_5
+#if NETSTANDARD
 using Newtonsoft.Json;
 #else
 using System.Web.Script.Serialization;
@@ -96,7 +96,7 @@ namespace StackExchange.Profiling.Helpers
         public static string ToJson(this object o)
         {
             if (o == null) return null;
-#if NETSTANDARD1_5
+#if NETSTANDARD
             return JsonConvert.SerializeObject(o);
 #else
             return new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o);
@@ -112,7 +112,7 @@ namespace StackExchange.Profiling.Helpers
         public static T FromJson<T>(this string s) where T : class
         {
             if (string.IsNullOrEmpty(s)) return null;
-#if NETSTANDARD1_5
+#if NETSTANDARD
             return JsonConvert.DeserializeObject<T>(s);
 #else
             return new JavaScriptSerializer().Deserialize<T>(s);
