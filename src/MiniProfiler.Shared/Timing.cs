@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Helpers;
-#if !NETSTANDARD
-using System.Web.Script.Serialization;
-#endif
 
 namespace StackExchange.Profiling
 {
@@ -107,25 +104,19 @@ namespace StackExchange.Profiling
         /// Gets or sets Which Timing this Timing is under - the duration that this step takes will be added to its parent's duration.
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public Timing ParentTiming { get; set; }
 
         /// <summary>
         /// The Unique Identifier identifying the parent timing of this Timing. Used for sql server storage.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public Guid ParentTimingId { get; set; }
 
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public decimal DurationWithoutChildrenMilliseconds
         {
             get
@@ -148,33 +139,25 @@ namespace StackExchange.Profiling
         /// Gets a value indicating whether this <see cref="DurationMilliseconds"/> is less than the configured
         /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public bool IsTrivial => DurationMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds;
 
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public bool HasChildren => Children?.Count > 0;
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public bool IsRoot => Equals(Profiler.Root);
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public short Depth
         {
             get
@@ -200,9 +183,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
         /// </summary>
-#if !NETSTANDARD
-        [ScriptIgnore]
-#endif
+        [IgnoreDataMember]
         public Guid MiniProfilerId { get; set; }
 
         /// <summary>

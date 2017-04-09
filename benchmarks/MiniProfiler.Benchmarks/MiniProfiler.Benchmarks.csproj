@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Benchmarks</AssemblyName>
+    <PackageId>MiniProfiler.Benchmarks</PackageId>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Benchmarks</RootNamespace>
+    <Configuration>Release</Configuration>
+    <TargetFrameworks>net46;netcoreapp1.1</TargetFrameworks>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
+    <PackageReference Include="Jil" Version="2.15.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'net452'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+</Project>

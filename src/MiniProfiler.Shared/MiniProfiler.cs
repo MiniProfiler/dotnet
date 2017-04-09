@@ -5,10 +5,6 @@ using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
-#if !NETSTANDARD
-using System.IO;
-using System.Web.Script.Serialization;
-#endif
 
 namespace StackExchange.Profiling
 {
@@ -217,6 +213,7 @@ namespace StackExchange.Profiling
         /// If null, then the <see cref="IAsyncStorage"/> set in <see cref="Settings.Storage"/> will be used.
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
+        [IgnoreDataMember]
         public IAsyncStorage Storage { get; set; }
 
         /// <summary>
@@ -324,7 +321,7 @@ namespace StackExchange.Profiling
         public MiniProfiler Clone()
         {
             var serializer = new DataContractSerializer(typeof(MiniProfiler), null, int.MaxValue, false, true, null);
-            using (var ms = new MemoryStream())
+            using (var ms = new System.IO.MemoryStream())
             {
                 serializer.WriteObject(ms, this);
                 ms.Position = 0;

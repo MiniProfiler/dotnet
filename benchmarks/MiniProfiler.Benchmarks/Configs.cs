@@ -10,7 +10,7 @@ namespace Benchmarks
             public Full()
             {
                 Add(new MemoryDiagnoser());
-                Add(new BenchmarkDotNet.Diagnostics.Windows.InliningDiagnoser());
+                //Add(new BenchmarkDotNet.Diagnostics.Windows.InliningDiagnoser());
             }
         }
 

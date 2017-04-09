@@ -2,11 +2,7 @@
 using System.Text;
 using System;
 using System.Collections.Generic;
-#if NETSTANDARD
 using Newtonsoft.Json;
-#else
-using System.Web.Script.Serialization;
-#endif
 
 namespace StackExchange.Profiling.Helpers
 {
@@ -68,40 +64,20 @@ namespace StackExchange.Profiling.Helpers
             return sb.ToString();
         }
 
-#if NETSTANDARD
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
         public static string ToJson(this MiniProfiler profiler) =>
             profiler != null ? JsonConvert.SerializeObject(profiler) : null;
-#else
-        /// <summary>
-        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
-        /// </summary>
-        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
-        /// <param name="limitSize">Whether to limit the maximum length of JSON to <see cref="MiniProfiler.Settings.MaxJsonResponseSize"/></param>
-        public static string ToJson(this MiniProfiler profiler, bool limitSize = true)
-        {
-            if (profiler == null) return null;
-            return new JavaScriptSerializer { MaxJsonLength = limitSize ? MiniProfiler.Settings.MaxJsonResponseSize : int.MaxValue }.Serialize(profiler);
-        }
-#endif
 
         /// <summary>
         /// Serializes <paramref name="o"/> to a JSON string.
         /// </summary>
         /// <param name="o">the instance to serialise</param>
         /// <returns>the resulting JSON object as a string</returns>
-        public static string ToJson(this object o)
-        {
-            if (o == null) return null;
-#if NETSTANDARD
-            return JsonConvert.SerializeObject(o);
-#else
-            return new JavaScriptSerializer() { MaxJsonLength = int.MaxValue }.Serialize(o);
-#endif
-        }
+        public static string ToJson(this object o) =>
+            o != null ? JsonConvert.SerializeObject(o) : null;
 
         /// <summary>
         /// Deserializes <paramref name="s"/> to an object of type <typeparamref name="T"/>.
@@ -109,14 +85,7 @@ namespace StackExchange.Profiling.Helpers
         /// <typeparam name="T">The type to deserialize to.</typeparam>
         /// <param name="s">The string to deserialize</param>
         /// <returns>The object resulting from the given string</returns>
-        public static T FromJson<T>(this string s) where T : class
-        {
-            if (string.IsNullOrEmpty(s)) return null;
-#if NETSTANDARD
-            return JsonConvert.DeserializeObject<T>(s);
-#else
-            return new JavaScriptSerializer().Deserialize<T>(s);
-#endif
-        }
+        public static T FromJson<T>(this string s) where T : class =>
+            !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s) : null;
     }
 }
