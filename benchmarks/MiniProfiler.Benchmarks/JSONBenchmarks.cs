@@ -27,7 +27,7 @@ namespace Benchmarks
         }
 
         [Benchmark(Description = "System.Ben Baseline")]
-        public string SystemDotBen() { }
+        public void SystemDotBen() { }
 
         [Benchmark(Description = "Serialize: Simple MiniProfiler (.ToJson())")]
         public string SimpleSerialize() => _simpleProfiler.ToJson();

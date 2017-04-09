@@ -1,4 +1,6 @@
 @ECHO OFF
 dotnet build benchmarks\MiniProfiler.Benchmarks\ -c Release
-cls
+if errorlevel 1 goto :end
+:benchmarks
 .\benchmarks\MiniProfiler.Benchmarks\bin\Release\net46\win7-x64\MiniProfiler.Benchmarks.exe %*
+:end

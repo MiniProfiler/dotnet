@@ -8,6 +8,8 @@ namespace Benchmarks
     [Config(typeof(Configs.Full))]
     public class StackTraceSnippetBenchmarks
     {
+        [Benchmark(Description = "System.Ben Baseline")]
+        public void SystemDotBen() { }
         [Benchmark(Description = "StackTraceSnippet.Get()")]
         public string StackTraceSnippetGet() => StackTraceSnippet.Get();
     }
