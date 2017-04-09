@@ -26,6 +26,9 @@ namespace Benchmarks
             JsConfig.DateHandler = DateHandler.ISO8601;
         }
 
+        [Benchmark(Description = "System.Ben Baseline")]
+        public string SystemDotBen() { }
+
         [Benchmark(Description = "Serialize: Simple MiniProfiler (.ToJson())")]
         public string SimpleSerialize() => _simpleProfiler.ToJson();
         [Benchmark(Description = "Serialize: Simple MiniProfiler (Newtonsoft)")]

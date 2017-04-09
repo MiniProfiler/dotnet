@@ -15,6 +15,7 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
     <PackageReference Include="Jil" Version="2.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="System.Ben" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
