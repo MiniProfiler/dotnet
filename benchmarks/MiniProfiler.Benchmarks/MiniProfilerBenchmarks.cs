@@ -1,8 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Jobs;
 using StackExchange.Profiling;
 namespace Benchmarks
 {
-    [Config(typeof(Configs.Full))]
+    [ClrJob, CoreJob]
+    [Config(typeof(Configs.Memory))]
     public class MiniProfilerBenchmarks
     {
         [Benchmark(Description = "new MiniProfiler")]
