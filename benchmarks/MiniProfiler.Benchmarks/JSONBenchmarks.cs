@@ -21,6 +21,8 @@ namespace Benchmarks
 
         static JSONBenchmarks()
         {
+            // Avoid the UTC and back roundtrip
+            JsConfig.SkipDateTimeConversion = true;
             JsConfig.DateHandler = DateHandler.ISO8601;
         }
 
