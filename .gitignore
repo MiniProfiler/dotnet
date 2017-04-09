@@ -19,5 +19,5 @@ tmp
 *.ncrunchproject
 packages/**/*.*
 .vs/*
-BenchmarkDotNet.Artifacts/**/*
+BenchmarkDotNet.Artifacts
 samples/Samples.Mvc5/Properties/launchSettings.json
