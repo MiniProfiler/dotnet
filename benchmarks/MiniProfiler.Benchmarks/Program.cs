@@ -1,10 +1,9 @@
 ﻿using BenchmarkDotNet.Running;
-using System.Linq;
 using System.Reflection;
 
 namespace Benchmarks
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
