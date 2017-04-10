@@ -5,7 +5,7 @@ using Xunit;
 namespace Tests
 {
     [Collection("MiniProfiler")] // using that lib's storage provider
-    public class MiniProfilerTest : BaseTest
+    public class MiniProfilerTests : BaseTest
     {
         [Fact]
         public void Simple()
