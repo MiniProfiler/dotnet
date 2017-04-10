@@ -75,11 +75,26 @@ namespace StackExchange.Profiling
         [DataMember(Order = 4)]
         public decimal StartMilliseconds { get; set; }
 
+        private List<Timing> _children;
         /// <summary>
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public List<Timing> Children { get; set; }
+        public List<Timing> Children
+        {
+            get => _children;
+            set
+            {
+                if (value?.Count > 0)
+                {
+                    foreach (var t in value)
+                    {
+                        t.ParentTiming = this;
+                    }
+                }
+                _children = value;
+            }
+        }
 
         /// <summary>
         /// <see cref="CustomTiming"/> lists keyed by their type, e.g. "sql", "memcache", "redis", "http".

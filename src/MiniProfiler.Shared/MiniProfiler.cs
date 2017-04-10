@@ -113,35 +113,6 @@ namespace StackExchange.Profiling
             {
                 _root = value;
                 RootTimingId = value.Id;
-
-                // TODO: Add serialization tests, then move Timing.Children to get/set
-                // and for() { .ParentTiming = this; } over in the local setter set there
-                // let serialization take care of the tree instead.
-                // I bet the current method doesn't even work, since it depends on .Root being set
-                // last in deserialization order
-                // TL;DR: I bet no one ever checked this, or possible no one cares about parent after deserialization.
-
-                // when being deserialized, we need to go through and set all child timings' parents
-                if (_root.HasChildren)
-                {
-                    var timings = new Stack<Timing>();
-                    timings.Push(_root);
-                    while (timings.Count > 0)
-                    {
-                        var timing = timings.Pop();
-
-                        if (timing.HasChildren)
-                        {
-                            var children = timing.Children;
-
-                            for (int i = children.Count - 1; i >= 0; i--)
-                            {
-                                children[i].ParentTiming = timing;
-                                timings.Push(children[i]); // FLORIDA!  TODO: refactor this and other stack creation methods into one 
-                            }
-                        }
-                    }
-                }
             }
         }
 
