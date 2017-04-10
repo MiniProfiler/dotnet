@@ -10,6 +10,7 @@ using Xunit;
 
 namespace Tests
 {
+    public class SqlFormatterTests
     {
 	    private const string None = "";
 	    private const string At = "@";
@@ -18,6 +19,7 @@ namespace Tests
         private SqlCommand _dbCommand;
         private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap;
 
+        public SqlFormatterTests()
         {
             CreateDbTypeMap();
             _formatter = new SqlServerFormatter();
