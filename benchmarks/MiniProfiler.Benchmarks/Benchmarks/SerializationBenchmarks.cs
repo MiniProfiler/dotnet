@@ -7,7 +7,7 @@ namespace Benchmarks
 {
     [ClrJob, CoreJob]
     [Config(typeof(Configs.Memory))]
-    public class CurrentJSONBenchmarks
+    public class SerializationBenchmarks
     {
         private static readonly MiniProfiler _simpleProfiler = new MiniProfiler("Simple");
         private static readonly string _simpleProfilerJson = _simpleProfiler.ToJson();

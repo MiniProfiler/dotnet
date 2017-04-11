@@ -10,7 +10,7 @@ namespace Benchmarks
 {
     [ClrJob, CoreJob]
     [Config(typeof(Configs.Memory))]
-    public class JSONBenchmarks
+    public class JSONLibBenchmarks
     {
         private static readonly Options JilOptions = Options.ISO8601ExcludeNulls;
 
@@ -19,7 +19,7 @@ namespace Benchmarks
         private static readonly MiniProfiler _complexProfiler = Utils.GetComplexProfiler();
         private static readonly string _complexProfilerJson = _complexProfiler.ToJson();
 
-        static JSONBenchmarks()
+        static JSONLibBenchmarks()
         {
             // Avoid the UTC and back roundtrip
             JsConfig.SkipDateTimeConversion = true;
