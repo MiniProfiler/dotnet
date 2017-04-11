@@ -313,7 +313,6 @@ namespace Subtext.TestLibrary
         /// <exception cref="InvalidOperationException">Throws when called after <see cref="Simulate()"/>.</exception>
         public HttpSimulator SetFormVariable(string name, string value)
         {
-            //TODO: Change this ordering requirement.
             if (workerRequest != null)
                 throw new InvalidOperationException("Cannot set form variables after calling Simulate().");
 
@@ -330,7 +329,6 @@ namespace Subtext.TestLibrary
         /// <exception cref="InvalidOperationException">Throws when called after <cref="Simulate()"/>.</exception>
         public HttpSimulator SetHeader(string name, string value)
         {
-            //TODO: Change this ordering requirement.
             if (workerRequest != null)
                 throw new InvalidOperationException("Cannot set headers after calling Simulate().");
 

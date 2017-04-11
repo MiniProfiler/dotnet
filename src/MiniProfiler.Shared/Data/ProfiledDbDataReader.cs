@@ -92,13 +92,10 @@ namespace StackExchange.Profiling.Data
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) =>
             WrappedReader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
 
-// TODO: GetData()?
-/*
-        /// <summary>Returns an <see cref="IDataReader"/> for the specified column ordinal.</summary>
+        /// <summary>Returns an <see cref="DbDataReader"/> for the specified column ordinal.</summary>
         /// <param name="ordinal">The index of the field to find.</param>
-        /// <returns>The <see cref="IDataReader"/> for the specified column ordinal.</returns>
-        public override string GetData(int ordinal) => _reader.GetData(ordinal);
-*/
+        /// <returns>The <see cref="DbDataReader"/> for the specified column ordinal.</returns>
+        public new DbDataReader GetData(int ordinal) => WrappedReader.GetData(ordinal);
 
         /// <summary>Gets the data type information for the specified field.</summary>
         /// <param name="ordinal">The index of the field to find.</param>

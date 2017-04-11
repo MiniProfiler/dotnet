@@ -273,6 +273,9 @@ namespace StackExchange.Profiling.Storage
         private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static double ToEpoch(DateTime date) => Convert.ToInt64((date - _epoch).TotalSeconds);
 
+        /// <summary>
+        /// Disposes the multiplexer, if present.
+        /// </summary>
         public void Dispose()
         {
             _multiplexer?.Dispose();
