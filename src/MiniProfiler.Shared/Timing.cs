@@ -18,6 +18,7 @@ namespace StackExchange.Profiling
         private readonly long _startTicks;
         private readonly decimal? _minSaveMs;
         private readonly bool _includeChildrenWithMinSave;
+        private readonly object _syncRoot = new object();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="Timing"/> class. 
@@ -87,9 +88,12 @@ namespace StackExchange.Profiling
             {
                 if (value?.Count > 0)
                 {
-                    foreach (var t in value)
+                    lock (value)
                     {
-                        t.ParentTiming = this;
+                        foreach (var t in value)
+                        {
+                            t.ParentTiming = this;
+                        }
                     }
                 }
                 _children = value;
@@ -138,11 +142,14 @@ namespace StackExchange.Profiling
             {
                 var result = DurationMilliseconds.GetValueOrDefault();
 
-                if (HasChildren)
+                if (Children != null)
                 {
-                    foreach (var child in Children)
+                    lock (_syncRoot)
                     {
-                        result -= child.DurationMilliseconds.GetValueOrDefault();
+                        foreach (var child in Children)
+                        {
+                            result -= child.DurationMilliseconds.GetValueOrDefault();
+                        }
                     }
                 }
 
@@ -253,9 +260,11 @@ namespace StackExchange.Profiling
         /// </remarks>
         public void AddChild(Timing timing)
         {
-            Children = Children ?? new List<Timing>();
-
-            Children.Add(timing);
+            lock (_syncRoot)
+            {
+                Children = Children ?? new List<Timing>();
+                Children.Add(timing);
+            }
             timing.Profiler = timing.Profiler ?? Profiler;
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
@@ -263,7 +272,13 @@ namespace StackExchange.Profiling
                 timing.MiniProfilerId = Profiler.Id;
         }
 
-        internal void RemoveChild(Timing timing) => Children?.Remove(timing);
+        internal void RemoveChild(Timing timing)
+        {
+            lock (Children)
+            {
+                Children?.Remove(timing);
+            }
+        }
 
         /// <summary>
         /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of 
@@ -274,15 +289,21 @@ namespace StackExchange.Profiling
         /// <param name="customTiming">Duration and command information</param>
         public void AddCustomTiming(string category, CustomTiming customTiming)
         {
-            GetCustomTimingList(category).Add(customTiming);
+            var ctl = GetCustomTimingList(category);
+            lock (ctl)
+            {
+                ctl.Add(customTiming);
+            }
         }
 
         internal void RemoveCustomTiming(string category, CustomTiming customTiming)
         {
-            GetCustomTimingList(category).Remove(customTiming);
+            var ctl = GetCustomTimingList(category);
+            lock (ctl)
+            {
+                ctl.Remove(customTiming);
+            }
         }
-
-        private readonly object _lockObject = new object();
 
         /// <summary>
         /// Returns the <see cref="CustomTiming"/> list keyed to the <paramref name="category"/>, creating any collections when null.
@@ -290,12 +311,21 @@ namespace StackExchange.Profiling
         /// <param name="category">The kind of custom timings, e.g. "sql", "redis", "memcache"</param>
         private List<CustomTiming> GetCustomTimingList(string category)
         {
-            lock (_lockObject)
+            List<CustomTiming> result;
+            if (CustomTimings == null)
             {
-                CustomTimings = CustomTimings ?? new Dictionary<string, List<CustomTiming>>();
+                lock (_syncRoot)
+                {
+                    // If null, create it to the single entry...no need to go further
+                    if (CustomTimings == null)
+                    {
+                        result = new List<CustomTiming>();
+                        CustomTimings = new Dictionary<string, List<CustomTiming>> { [category] = result };
+                        return result;
+                    }
+                }
             }
 
-            List<CustomTiming> result;
             lock (CustomTimings)
             {
                 if (!CustomTimings.TryGetValue(category, out result))
