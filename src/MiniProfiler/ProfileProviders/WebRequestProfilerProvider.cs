@@ -222,7 +222,20 @@ namespace StackExchange.Profiling
         /// </summary>
         private MiniProfiler Current
         {
-            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler;
+            get
+            {
+                var profiler = HttpContext.Current?.Items[CacheKey] as MiniProfiler;
+                if (profiler != null && profiler.Head == null)
+                {
+                    // 'Head' is backed by 'AsyncLocal<T>', which is attached to the ExecutionContext,
+                    // and doesn't flow between ASP.NET pipeline events (BeginRequest/etc.) if the
+                    // events fire on separate threads.
+                    // This is a hack to ensure the Head is not null after the
+                    // ExecutionContext changes.
+                    profiler.Head = profiler.Root;
+                }
+                return profiler;
+            }
             set
             {
                 var context = HttpContext.Current;
