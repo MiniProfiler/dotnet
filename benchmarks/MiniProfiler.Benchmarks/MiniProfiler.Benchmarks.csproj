@@ -24,5 +24,6 @@
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <PackageReference Include="ServiceStack.Text" Version="4.5.8" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 </Project>
