@@ -36,7 +36,12 @@ namespace Samples.AspNetCore
             services.AddDbContext<SampleContext>();
 
             services.AddMvc();
-            services.AddMiniProfiler().AddEntityFramework();
+            // Add MiniProfiler services
+            // If using Entity Framework Core, add profiling for it as well
+            // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
+            services.AddMiniProfiler()
+                    .AddEntityFramework();
+
             services.AddMemoryCache();
         }
 
@@ -60,9 +65,28 @@ namespace Samples.AspNetCore
 
             app.UseMiniProfiler(new MiniProfilerOptions
             {
+                // Path to use for profiler URLs
                 RouteBasePath = "~/profiler",
+
+                // Control which SQL formatter to use
                 SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
-                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60))
+
+                // Control storage
+                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60)),
+
+                // To control authorization, you can use the Func<HttpRequest, bool> options:
+                //ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
+                //ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
+
+                // To control which requests are profiled, use the Func<HttpRequest, bool> option:
+                //ShouldProfile = request => MyShouldThisBeProfiledFunction(request),
+
+                // Profiles are stored under a user ID, function to get it:
+                //UserIdProvider =  request => MyGetUserIdFunction(request),
+
+                // Optionally swap out the entire profiler provider, if you want
+                // The default handles async and works fine for almost all appliations
+                //ProfilerProvider = new MyProfilerProvider(),
             });
 
             app.UseMvc(routes =>
