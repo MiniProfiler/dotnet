@@ -30,27 +30,27 @@ namespace StackExchange.Profiling
         public override MiniProfiler Start(string profilerName = null)
         {
             var context = HttpContext.Current;
-            if (context?.Request.AppRelativeCurrentExecutionFilePath == null) return null;
+            var path = context?.Request.Path;
+            if (path == null) return null;
 
-            var url = context.Request.Url;
-            var path = context.Request.AppRelativeCurrentExecutionFilePath.Substring(1).ToUpperInvariant();
+            var appRelativePath = GetAppRelativePath(context.Request.ApplicationPath, path).ToUpperInvariant();
 
             // don't profile /content or /scripts, either - happens in web.dev
             if (MiniProfilerWebSettings.IgnoredPaths != null)
             {
                 foreach (var ignored in MiniProfilerWebSettings.IgnoredPaths)
                 {
-                    if (path.Contains((ignored ?? string.Empty).ToUpperInvariant()))
+                    if (appRelativePath.Contains((ignored ?? string.Empty).ToUpperInvariant()))
                         return null;
                 }
             }
 
-            if (context.Request.Path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
 
-            var result = new MiniProfiler(profilerName ?? url.OriginalString);
+            var result = new MiniProfiler(profilerName ?? context.Request.Url.OriginalString);
             Current = result;
 
             SetProfilerActive(result);
@@ -59,6 +59,22 @@ namespace StackExchange.Profiling
             result.User = MiniProfilerWebSettings.UserProvider.GetUser(context.Request);
 
             return result;
+        }
+
+        private static string GetAppRelativePath(string applicationPath, string path)
+        {
+            // A relatively naive implementation that assumes both
+            // applicationPath and path begin with '/'.
+
+            var applicationPathLength = applicationPath.Length;
+            if (applicationPathLength == 1)
+            {
+                // application is hosted in root directory, return entire path
+                return path;
+            }
+
+            // do not need to prepend with '~'.
+            return path.Substring(applicationPathLength);
         }
 
         /// <summary>
