@@ -5,47 +5,26 @@ using System.Data.Entity.Core.Common;
 using System.Data.Entity.Core.Common.CommandTrees;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Spatial;
-using System.Reflection;
 
 namespace StackExchange.Profiling.Data
 {
     /// <summary>
     /// Wrapper for a database provider factory to enable profiling
     /// </summary>
-    /// <typeparam name="T">the factory type.</typeparam>
-    public class EFProfiledDbProviderServices<T> : DbProviderServices where T : DbProviderServices
+    public class EFProfiledDbProviderServices : DbProviderServices
     {
-#pragma warning disable RCS1158 // Avoid static members in generic types.
-        /// <summary>
-        /// Every provider factory must have an Instance public field
-        /// </summary>
-        public static readonly EFProfiledDbProviderServices<T> Instance = new EFProfiledDbProviderServices<T>();
-
-        private readonly T _tail;
+        private readonly DbProviderServices _tail;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="EFProfiledDbProviderServices{T}"/> class. 
+        /// Initialises a new instance of the <see cref="EFProfiledDbProviderServices"/> class. 
         /// Used for DB provider APIS internally 
         /// </summary>
-        /// <exception cref="Exception">Throws when the Instance is inaccessible.</exception>
-        protected EFProfiledDbProviderServices()
+        /// <param name="providerServices">The <see cref="DbProviderServices"/> to wrap.</param>
+        /// <exception cref="Exception">Throws when providerServices is <c>null</c>.</exception>
+        public EFProfiledDbProviderServices(DbProviderServices providerServices)
         {
-            PropertyInfo property = typeof(T).GetProperty(nameof(Instance), BindingFlags.Public | BindingFlags.Static);
-            if (property != null)
-                _tail = (T)property.GetValue(null, null);
-
-            if (_tail == null)
-            {
-                FieldInfo field = typeof(T).GetField(nameof(Instance), BindingFlags.Public | BindingFlags.Static)
-                               ?? typeof(T).GetField(nameof(Instance), BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (field != null)
-                    _tail = (T)field.GetValue(null);
-            }
-            if (_tail == null)
-            {
-                throw new Exception($"Unable to define EFProfiledDbProviderServices class of type '{typeof(T).Name}'. Please check that your web.config defines a <DbProviderFactories> section underneath <system.data>.");
-            }
+            _tail = providerServices ??
+                throw new ArgumentException("providerServices cannot be null. Please check that your web.config defines a <DbProviderFactories> section underneath <system.data>.", nameof(providerServices));
         }
 
         /// <summary>
@@ -69,15 +48,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <returns>a string containing the token.</returns>
-        protected override string GetDbProviderManifestToken(DbConnection connection)
-        {
-            if (connection is ProfiledDbConnection profiled)
-            {
-                connection = profiled.WrappedConnection;
-            }
-
-            return _tail.GetProviderManifestToken(connection);
-        }
+        protected override string GetDbProviderManifestToken(DbConnection connection) =>
+            _tail.GetProviderManifestToken(connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection);
 
         /// <summary>
         /// create the database command definition.
@@ -170,19 +142,8 @@ namespace StackExchange.Profiling.Data
         /// <param name="fromReader">The reader where the spatial data came from.</param>
         /// <param name="manifestToken">The token information associated with the provider manifest.</param>
         /// <returns>The spatial data reader.</returns>
-        protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken)
-        {
-            var setDbParameterValueMethod = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("GetDbSpatialDataReader"));
-            var reader = GetSpatialDataReader(fromReader);
-
-            if (setDbParameterValueMethod == null)
-            {
-                return base.GetDbSpatialDataReader(reader, manifestToken);
-            }
-
-            var result = setDbParameterValueMethod.Invoke(_tail, new object[] { reader, manifestToken });
-            return result as DbSpatialDataReader;
-        }
+        protected override DbSpatialDataReader GetDbSpatialDataReader(DbDataReader fromReader, string manifestToken) =>
+            _tail.GetSpatialDataReader(fromReader is ProfiledDbDataReader profiled ? profiled.WrappedReader : fromReader, manifestToken);
 
         /// <summary>
         /// Gets the spatial services for the <c>DbProviderServices</c>.
@@ -190,12 +151,10 @@ namespace StackExchange.Profiling.Data
         /// <param name="manifestToken">The token information associated with the provider manifest.</param>
         /// <returns>The spatial services.</returns>
         [Obsolete("Return DbSpatialServices from the GetService method. See http://go.microsoft.com/fwlink/?LinkId=260882 for more information.")]
-        protected override DbSpatialServices DbGetSpatialServices(string manifestToken)
-        {
-            var dbGetSpatialServices = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("DbGetSpatialServices"));
-            if (dbGetSpatialServices != null) return dbGetSpatialServices.Invoke(_tail, new[] { manifestToken }) as DbSpatialServices;
-            return null;
-        }
+        protected override DbSpatialServices DbGetSpatialServices(string manifestToken) =>
+#pragma warning disable 618, 672
+            _tail.GetSpatialServices(manifestToken);
+#pragma warning restore 618, 672
 
         /// <summary>
         /// Sets the parameter value and appropriate facets for the given <c>TypeUsage</c>.
@@ -203,22 +162,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterType">The type of parameter.</param>
         /// <param name="value">The value of the parameter.</param>
-        protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value)
-        {
-            // if this is available in _tail, use it
-            var setDbParameterValueMethod = Array.Find(_tail.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic), f => f.Name.Equals("SetDbParameterValue"));
-            if (setDbParameterValueMethod != null)
-            {
-                setDbParameterValueMethod.Invoke(_tail, new[] { parameter, parameterType, value });
-                return;
-            }
-
-            // this should never need to be called, but just in case, get the Provider Value
-            if (value is DbGeography pvalue)
-            {
-                value = pvalue.ProviderValue;
-            }
-            base.SetDbParameterValue(parameter, parameterType, value);
-        }
+        protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value) =>
+            _tail.SetParameterValue(parameter, parameterType, value);
     }
 }
