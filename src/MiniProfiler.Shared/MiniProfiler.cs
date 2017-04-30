@@ -155,13 +155,16 @@ namespace StackExchange.Profiling
         // Allows async to properly track the attachment point
         private readonly FlowData<Timing> _head = new FlowData<Timing>();
 
+        // When async context flows aren't preserved, fallback to enable correct profiling in most cases
+        private Timing _lastSetHead;
+
         /// <summary>
         /// Gets or sets points to the currently executing Timing. 
         /// </summary>
         public Timing Head
         {
-            get => _head.Value;
-            set => _head.Value = value;
+            get => _head.Value ?? _lastSetHead;
+            set => _head.Value = _lastSetHead = value;
         }
 
         /// <summary>
