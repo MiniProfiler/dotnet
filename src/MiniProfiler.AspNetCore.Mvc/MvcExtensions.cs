@@ -15,6 +15,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">The services collection to configure</param>
         public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services)
         {
+            // See https://github.com/MiniProfiler/dotnet/issues/162 for plans
+            // Blocked on https://github.com/aspnet/Mvc/issues/6222
+            //services.AddSingleton<IMiniProfilerDiagnosticListener, MvcViewDiagnosticListener>();
+
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
                     .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
             return new MiniProfilerBuilder(services);
