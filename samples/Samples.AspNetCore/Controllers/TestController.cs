@@ -58,6 +58,8 @@ namespace Samples.AspNetCore.Controllers
             }
         }
 
+        public IActionResult MassiveViewNesting() => View("Tree");
+
         public IActionResult MassiveNesting()
         {
             var i = 0;
