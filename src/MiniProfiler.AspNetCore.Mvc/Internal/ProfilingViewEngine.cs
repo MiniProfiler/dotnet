@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Internal
     /// This can and probably will break without warning. Don't use the .Internal namespace directly.
     /// You can wrap your view engines with this view to enable profiling on views and partial.
     /// </summary>
-    internal class ProfilingViewEngine : IViewEngine
+    public class ProfilingViewEngine : IViewEngine
     {
         private readonly IViewEngine _wrapped;
 

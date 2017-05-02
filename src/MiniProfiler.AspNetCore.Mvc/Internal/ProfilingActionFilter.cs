@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.Internal
     /// This can and probably will break without warning. Don't use the .Internal namespace directly.
     /// This filter can be applied globally to hook up automatic action profiling.
     /// </summary>
-    internal class ProfilingActionFilter : ActionFilterAttribute
+    public class ProfilingActionFilter : ActionFilterAttribute
     {
         private const string StackKey = "ProfilingActionFilterStack";
 
