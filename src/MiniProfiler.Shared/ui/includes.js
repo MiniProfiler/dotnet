@@ -468,6 +468,11 @@ var MiniProfiler = (function () {
     // some elements want to be hidden on certain doc events
     var bindDocumentEvents = function () {
         $(document).bind('click keyup', function (e) {
+            // Don't handle these clicks in the HTML view
+            var fullPage = $('.profiler-result-full');
+            if (fullPage.length) {
+                return;
+            }
 
             // this happens on every keystroke, and :visible is crazy expensive in IE <9
             // and in this case, the display:none check is sufficient.
