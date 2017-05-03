@@ -31,8 +31,8 @@ $testsToRun =
     'MiniProfiler.Providers.Redis.Tests'
     
 function CalculateVersion() {
-    if ($version) {
-        return $version
+    if ($Version) {
+        return $Version
     }
 
     $semVersion = '';
@@ -101,15 +101,17 @@ foreach ($project in $projectsToBuild) {
 	Push-Location ".\src\$project"
 
     $semVer = CalculateVersion
+    $targets = "Restore"
 
-    Write-Host "  Restoring and packing $project... (Version:" -NoNewline -ForegroundColor "Magenta"
+    Write-Host "  Restoring " -NoNewline -ForegroundColor "Magenta"
+    if ($CreatePackages) {
+        $targets += ";Pack"
+		Write-Host "and packing " -NoNewline -ForegroundColor "Magenta"
+    }
+	Write-Host "$project... (Version:" -NoNewline -ForegroundColor "Magenta"
     Write-Host $semVer -NoNewline -ForegroundColor "Cyan"
     Write-Host ")" -ForegroundColor "Magenta"
     
-    $targets = "Restore"
-    if ($CreatePackages) {
-        $targets += ";Pack"
-    }
 
 	dotnet msbuild "/t:$targets" "/p:Configuration=Release" "/p:Version=$semVer" "/p:PackageOutputPath=$packageOutputFolder" "/p:CI=true"
 
