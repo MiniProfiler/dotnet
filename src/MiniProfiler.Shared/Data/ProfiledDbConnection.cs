@@ -117,17 +117,18 @@ namespace StackExchange.Profiling.Data
         /// Asynchronously opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        public override Task OpenAsync(CancellationToken cancellationToken)
+        public override async Task OpenAsync(CancellationToken cancellationToken)
         {
             var miniProfiler = _profiler as MiniProfiler;
             if (miniProfiler == null || !miniProfiler.IsActive)
             {
-                return _connection.OpenAsync(cancellationToken);
+                await _connection.OpenAsync(cancellationToken);
+                return;
             }
 
             using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", "OpenAsync"))
             {
-                return _connection.OpenAsync(cancellationToken);
+                await _connection.OpenAsync(cancellationToken);
             }
         }
 
