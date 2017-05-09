@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace StackExchange.Profiling
@@ -7,7 +8,7 @@ namespace StackExchange.Profiling
     {
         /// <summary>
         /// Gets the Server-Timing header for this profiler, summarizing where time was spent for the browser.
-        /// Example output: sql=0.009; "sql", redis=0.005; "redis", aspnet=0.020; "ASP.NET"
+        /// Example output: sql=9; "sql", redis=5; "redis", aspnet=20; "ASP.NET"
         /// </summary>
         /// <returns>A string, the value to put in a Server-Timing header.</returns>
         public string GetServerTimingHeader()
@@ -37,13 +38,13 @@ namespace StackExchange.Profiling
             var sb = new StringBuilder();
             foreach (var category in summary)
             {
-                sb.Append(category.Key).Append('=').Append(category.Value / 1000)
+                sb.Append(category.Key).Append('=').Append(category.Value.ToString(NumberFormatInfo.InvariantInfo))
                   .Append("; \"").Append(category.Key).Append("\",");
                 total -= category.Value;
             }
-            sb.Append("aspnet=").Append(total <= 0 ? 0 : total / 1000).Append("; \"ASP.NET\"");
+            sb.Append("aspnet=").Append(total.ToString(NumberFormatInfo.InvariantInfo)).Append("; \"ASP.NET\"");
 
-            // Server-Timing: sql=0.009; "sql", redis=0.005; "redis", aspnet=0.020; "ASP.NET"
+            // Server-Timing: sql=9; "sql", redis=5; "redis", aspnet=20; "ASP.NET"
             return sb.ToString();
         }
     }
