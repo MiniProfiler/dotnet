@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-#if NETSTANDARD
+#if NETSTANDARD1_5
 using System.Reflection;
 #endif
 
@@ -43,7 +43,7 @@ namespace StackExchange.Profiling.Internal
 
             // we want the integral value of an enum, not its string representation
             var rawType = rawValue.GetType();
-#if NETSTANDARD
+#if NETSTANDARD1_5
             if (rawType.GetTypeInfo().IsEnum)
 #else
             if (rawType.IsEnum)

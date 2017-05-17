@@ -1,6 +1,6 @@
 ﻿using StackExchange.Profiling.Internal;
 using System.Threading.Tasks;
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
 using System;
 #endif
 
@@ -31,7 +31,7 @@ namespace StackExchange.Profiling
         public override MiniProfiler Start(string profilerName = null)
         {
             Profiler = new MiniProfiler(profilerName ??
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             AppDomain.CurrentDomain.FriendlyName
 #else       // TODO: Revisit with .NET Standard 2.0
             nameof(MiniProfiler)

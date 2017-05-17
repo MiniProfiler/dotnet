@@ -157,14 +157,7 @@ namespace StackExchange.Profiling
             /// will be collected, possibly improving profiler performance.
             /// </summary>
             public static bool ExcludeStackTraceSnippetFromCustomTimings { get; set; } = false;
-
-#if !NETSTANDARD
-            /// <summary>
-            /// Maximum payload size for json responses in bytes defaults to 2097152 characters, which is equivalent to 4 MB of Unicode string data.
-            /// </summary>
-            public static int MaxJsonResponseSize { get; set; } = 2097152;
-#endif
-
+            
             /// <summary>
             /// Understands how to save and load MiniProfilers. Used for caching between when
             /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.

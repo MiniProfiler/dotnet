@@ -174,7 +174,7 @@ namespace StackExchange.Profiling.Data
             OnStateChange(stateChangeEventArguments);
         }
 
-#if !NETSTANDARD // TODO: Retuning in .Net Standard 2.0
+#if !NETSTANDARD1_5 // TODO: Retuning in .Net Standard 2.0
         /// <summary>
         /// Gets a value indicating whether events can be raised.
         /// </summary>

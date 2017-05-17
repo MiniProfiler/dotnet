@@ -23,7 +23,7 @@ namespace StackExchange.Profiling
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
         public MiniProfiler Start(string profilerName = null)
         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             _profiler = new MiniProfiler(profilerName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
 #else // TODO: Revisit with .NET Standard 2.0
             _profiler = new MiniProfiler(profilerName ?? "MiniProfiler") { IsActive = true };

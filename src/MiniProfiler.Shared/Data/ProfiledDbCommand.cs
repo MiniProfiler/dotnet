@@ -75,7 +75,7 @@ namespace StackExchange.Profiling.Data
             }
 
             var prop = commandType
-#if NETSTANDARD // TODO: Revisit in .NET Standard 2.0
+#if NETSTANDARD1_5 // TODO: Revisit in .NET Standard 2.0
                 .GetTypeInfo()
 #endif
                 .GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
