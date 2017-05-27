@@ -20,7 +20,7 @@ namespace StackExchange.Profiling.Helpers
         {
 #if !NETSTANDARD1_5
             var frames = new StackTrace().GetFrames();
-#else // TODO: Make this work in .NET Standard, true fix isn't until 2.0 via https://github.com/dotnet/corefx/pull/12527
+#else // The above works in netstandard2.0 via https://github.com/dotnet/corefx/pull/12527
             StackFrame[] frames = null;
 #endif
             if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)

@@ -37,7 +37,7 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 buffer.AppendLine("-- Command Type: " + command.CommandType);
                 buffer.AppendLine("-- Database: " + command.Connection.Database);
-#if !NETSTANDARD1_5  // TODO: Revisit with .NET Standard 2.0
+#if !NETSTANDARD1_5
                 if (command.Transaction != null)
                 {
                     buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);

@@ -86,7 +86,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;
 
-#if !NETSTANDARD1_5 // TODO: These are added back in netstandard1.7
+#if !NETSTANDARD1_5
         /// <summary>
         /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
         /// </summary>
@@ -113,10 +113,12 @@ namespace StackExchange.Profiling.Data
         /// <returns>A new instance of <see cref="DbDataSourceEnumerator"/>.</returns>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator() => _tail.CreateDataSourceEnumerator();
 
+#if !NETSTANDARD2_0
         /// <summary>Returns a new instance of the provider's class that implements the provider's version of the <see cref="CodeAccessPermission"/> class.</summary>
         /// <param name="state">One of the <see cref="PermissionState"/> values.</param>
         /// <returns>A <see cref="CodeAccessPermission"/> object for the specified <see cref="PermissionState"/>.</returns>
         public override CodeAccessPermission CreatePermission(PermissionState state) => _tail.CreatePermission(state);
+#endif
 #endif
     }
 }

@@ -288,13 +288,18 @@ namespace StackExchange.Profiling
             }
         }
 
-#if !NETSTANDARD1_5 // TODO: Revisit in .NET Standard 2.0
+#if !NETSTANDARD1_5
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>
         public MiniProfiler Clone()
         {
-            var serializer = new DataContractSerializer(typeof(MiniProfiler), null, int.MaxValue, false, true, null);
+            var serializer = new DataContractSerializer(typeof(MiniProfiler), new DataContractSerializerSettings
+            {
+                MaxItemsInObjectGraph = int.MaxValue,
+                IgnoreExtensionDataObject = false,
+                PreserveObjectReferences = true
+            });
             using (var ms = new System.IO.MemoryStream())
             {
                 serializer.WriteObject(ms, this);

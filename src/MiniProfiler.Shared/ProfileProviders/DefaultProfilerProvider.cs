@@ -33,7 +33,7 @@ namespace StackExchange.Profiling
             Profiler = new MiniProfiler(profilerName ??
 #if !NETSTANDARD1_5
             AppDomain.CurrentDomain.FriendlyName
-#else       // TODO: Revisit with .NET Standard 2.0
+#else
             nameof(MiniProfiler)
 #endif
             ) { IsActive = true };

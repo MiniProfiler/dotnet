@@ -25,7 +25,7 @@ namespace StackExchange.Profiling
         {
 #if !NETSTANDARD1_5
             _profiler = new MiniProfiler(profilerName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
-#else // TODO: Revisit with .NET Standard 2.0
+#else
             _profiler = new MiniProfiler(profilerName ?? "MiniProfiler") { IsActive = true };
 #endif
             return _profiler;
