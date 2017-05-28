@@ -9,7 +9,7 @@ namespace Tests
     {
         public WebRequestProfilerTests()
         {
-            _provider = new WebRequestProfilerProvider();
+            _provider = WebRequestProfilerProvider.Setup();
         }
 
         public void Dispose()

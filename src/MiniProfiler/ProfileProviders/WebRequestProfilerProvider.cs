@@ -15,10 +15,46 @@ namespace StackExchange.Profiling
     public class WebRequestProfilerProvider : BaseProfilerProvider
     {
         /// <summary>
+        /// Sets up a WebRequestProfilerProvider with the given parameters.
+        /// This is the recommended provider for ASP.NET MVC 5 and below applications.
+        /// Note that this registers the routes the profiler needs with the path specified 
+        /// by <paramref name="routeBasePath"/> or <see cref="MiniProfiler.Settings.RouteBasePath"/> if not provided.
+        /// </summary>
+        /// <param name="routeBasePath">The route path to use, e.g. "~/profiler"</param>
+        /// <param name="resultsAuthorize">The function to use to authorize a request to access a result. See <see cref="MiniProfilerWebSettings.ResultsAuthorize"/> for details.</param>
+        /// <param name="resultsListAuthorize">The function to use to authorize a request to access the list of results. See <see cref="MiniProfilerWebSettings.ResultsListAuthorize"/> for details.</param>
+        /// <returns>The setup <see cref="WebRequestProfilerProvider"/> for use if needed.</returns>
+        public static WebRequestProfilerProvider Setup(
+            string routeBasePath = null,
+            Func<HttpRequest, bool> resultsAuthorize = null,
+            Func<HttpRequest, bool> resultsListAuthorize = null)
+        {
+            var result = new WebRequestProfilerProvider();
+
+            if (routeBasePath.HasValue())
+            {
+                MiniProfiler.Settings.RouteBasePath = routeBasePath;
+            }
+            if (resultsAuthorize != null)
+            {
+                MiniProfilerWebSettings.ResultsAuthorize = resultsAuthorize;
+            }
+            if (resultsListAuthorize != null)
+            {
+                MiniProfilerWebSettings.ResultsListAuthorize = resultsListAuthorize;
+            }
+            MiniProfilerHandler.RegisterRoutes();
+
+            MiniProfiler.Settings.ProfilerProvider = result;
+
+            return result;
+        }
+
+        /// <summary>
         /// Initialises a new instance of the <see cref="WebRequestProfilerProvider"/> class. 
         /// Public constructor.  This also registers any UI routes needed to display results
         /// </summary>
-        public WebRequestProfilerProvider()
+        internal WebRequestProfilerProvider()
         {
             MiniProfilerHandler.RegisterRoutes();
         }
