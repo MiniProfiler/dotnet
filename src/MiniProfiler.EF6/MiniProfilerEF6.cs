@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Concurrent;
+using System.Data.Entity;
 using System.Data.Entity.Core.Common;
 using System.Data.SqlClient;
 using StackExchange.Profiling.Data;
@@ -10,6 +11,8 @@ namespace StackExchange.Profiling.EntityFramework6
     /// </summary>
     public static class MiniProfilerEF6
     {
+        private static readonly ConcurrentDictionary<object, object>  _resolvedDependenciesCache = new ConcurrentDictionary<object, object>();
+
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
         /// </summary>
@@ -17,8 +20,7 @@ namespace StackExchange.Profiling.EntityFramework6
         {
             try
             {
-                DbConfiguration.Loaded += (_, a) => a.ReplaceService<DbProviderServices>(
-                    (services, o) => new EFProfiledDbProviderServices(services));
+                DbConfiguration.Loaded += (_, a) => a.ReplaceService<DbProviderServices>(WrapDbProviderServices);
 
                 MiniProfiler.Settings.ExcludeAssembly("EntityFramework");
                 MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServer");
@@ -34,6 +36,12 @@ namespace StackExchange.Profiling.EntityFramework6
                     throw;
                 }
             }
+        }
+
+        private static DbProviderServices WrapDbProviderServices(DbProviderServices inner, object key)
+        {
+            var cacheKey = new { type = typeof(DbProviderServices), key }; // TODO: consider using ValueTuple or implementing a similar polyfill
+            return (DbProviderServices)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbProviderServices(inner));
         }
     }
 }
