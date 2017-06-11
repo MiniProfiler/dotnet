@@ -13,11 +13,6 @@ namespace StackExchange.Profiling
     public static class MiniProfilerWebSettings
     {
         /// <summary>
-        /// Provides user identification for a given profiling request.
-        /// </summary>
-        public static IUserProvider UserProvider { get; set; } = new IpAddressIdentity();
-
-        /// <summary>
         /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
         /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
         /// </summary>
@@ -31,6 +26,11 @@ namespace StackExchange.Profiling
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// </summary>
         public static Func<HttpRequest, bool> ResultsListAuthorize { get; set; }
+
+        /// <summary>
+        /// Function to provide the unique user ID based on the request, to store MiniProfiler IDs user
+        /// </summary>
+        public static Func<HttpRequest, string> UserIdProvider { get; set; } = IpAddressIdentity.GetUser;
 
         /// <summary>
         /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling
             {
                 if (HttpContext.Current == null) return;
                 var files = new List<string>();
-
+                
                 var customUITemplatesPath = HttpContext.Current.Server.MapPath(CustomUITemplates);
                 if (Directory.Exists(customUITemplatesPath))
                 {

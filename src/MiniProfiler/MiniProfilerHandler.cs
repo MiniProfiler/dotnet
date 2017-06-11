@@ -215,7 +215,7 @@ namespace StackExchange.Profiling
                 return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             var profiler = MiniProfiler.Settings.Storage.Load(id);
-            string user = MiniProfilerWebSettings.UserProvider?.GetUser(context.Request);
+            string user = MiniProfilerWebSettings.UserIdProvider?.Invoke(context.Request);
 
             MiniProfiler.Settings.Storage.SetViewed(user, id);
 

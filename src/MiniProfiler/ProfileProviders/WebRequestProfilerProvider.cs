@@ -92,7 +92,7 @@ namespace StackExchange.Profiling
             SetProfilerActive(result);
 
             // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
-            result.User = MiniProfilerWebSettings.UserProvider.GetUser(context.Request);
+            result.User = MiniProfilerWebSettings.UserIdProvider?.Invoke(context.Request);
 
             return result;
         }

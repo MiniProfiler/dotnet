@@ -6,7 +6,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Identifies users based on ip address.
     /// </summary>
-    public class IpAddressIdentity : IUserProvider
+    public class IpAddressIdentity
     {
         /// <summary>
         /// Returns the paramter HttpRequest's client ip address.
@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// when behind a proxy or load balancer.
         /// </summary>
         /// <param name="request">The request to get the client IP from.</param>
-        public string GetUser(HttpRequest request)
+        public static string GetUser(HttpRequest request)
         {
             var xff = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
             var remoteAddr = request.ServerVariables["REMOTE_ADDR"] ?? string.Empty;
@@ -27,7 +27,7 @@ namespace StackExchange.Profiling
                 return remoteAddr;
             }
             // Otherwise return the concatenation of the REMOTE_ADDR and the X_FORWARDED_FOR header
-            return $"{remoteAddr} - {remoteAddr}";
+            return $"{remoteAddr} - {xff}";
         }
     }
 }
