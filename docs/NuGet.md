@@ -30,13 +30,13 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
    * [MiniProfiler.Providers.SqlServer](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer/) - SQL Server MiniProfiler Storage
    * [MiniProfiler.Providers.SqlServerCe](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServerCe/) - SQL Server CS MiniProfiler Storage
 
-### Early Access
+#### Early Access
 Alpha and Beta builds are available earlier via MyGet. These are built on every commit.
 
 * NuGet v3 MyGet Feed: [`https://www.myget.org/F/miniprofiler/api/v3/index.json`](https://www.myget.org/F/miniprofiler/api/v3/index.json) (Visual Studio 2015+)
 * NuGet v2 MyGet Feed: [`https://www.myget.org/F/miniprofiler/api/v2`](https://www.myget.org/F/miniprofiler/api/v2) (Visual Studio 2012+)
 
-### Older MiniProfiler Packages
+#### Older MiniProfiler Packages
 The following packages are no longer being actively worked on):
 
 * MiniProfiler v3 Packages
