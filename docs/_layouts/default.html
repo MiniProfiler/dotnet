@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+
+        <title>{{ site.title }}{% if page.title %} : {{ page.title }}{% endif %}</title>
+        <meta name="description" content="{{ site.subtitle }}">
+
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ site.baseurl }}/css/main.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <header class="col-sm-12">
+                    <h4><a class="brand" href="{{ site.baseurl }}/">{{ site.title }}</a>
+                        {% if site.subtitle %}<small>{{ site.subtitle }}</small>{% endif %}
+                    </h4>
+                </header>
+            </div>
+
+            <div class="row">
+                <nav class="col-sm-2">
+                    {% include navigation.html %}
+                </nav>
+
+                <div id="content" class="col-sm-10">
+                    {{ content }}
+                </div>
+            </div>
+
+            <div class="row">
+                <footer class="col-sm-12">
+                    Documentation for <a href="{% if site.codeurl %}{{ site.codeurl }}{% else %}{{ site.baseurl }}{% endif %}">{{ site.title }}</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
