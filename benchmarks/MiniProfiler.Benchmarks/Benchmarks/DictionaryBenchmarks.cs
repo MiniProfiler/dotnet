@@ -14,7 +14,6 @@ namespace Benchmarks.Benchmarks
         public Dictionary<string, CustomTiming> DictionaryCreate() =>
             new Dictionary<string, CustomTiming>();
 
-
         [Benchmark(Description = "new ConcurrentDictionary<string, CustomTiming>")]
         public ConcurrentDictionary<string, CustomTiming> ConcurrentDictionaryCreate() =>
             new ConcurrentDictionary<string, CustomTiming>();

@@ -398,7 +398,7 @@ Select Top {=maxResults} Id
         /// <remarks>
         /// Works in SQL server and <c>sqlite</c> (with documented removals).
         /// </remarks>
-        public static readonly string TableCreationScript =
+        public const string TableCreationScript =
                 @"
                 create table MiniProfilers
                   (

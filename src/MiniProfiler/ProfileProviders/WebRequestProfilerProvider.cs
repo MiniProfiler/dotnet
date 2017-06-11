@@ -233,8 +233,10 @@ namespace StackExchange.Profiling
                     var controller = values["Controller"];
                     var action = values["Action"];
 
+#pragma warning disable RCS1097 // Remove redundant 'ToString' call.
                     if (controller != null && action != null)
                         profiler.Name = controller.ToString() + "/" + action.ToString();
+#pragma warning restore RCS1097 // Remove redundant 'ToString' call.
                 }
 
                 if (profiler.Name.IsNullOrWhiteSpace())
