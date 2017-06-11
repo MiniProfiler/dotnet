@@ -9,8 +9,8 @@ The current major version of MiniProfiler is v4, which is in alpha pre-release w
 #### Handy Links
 
 * Documentation
-  * [Getting started for ASP.NET (*not* .NET Core)](http://miniprofiler.com/dotnet/AspDotNetCore)
-  * [Getting started for ASP.NET Core](http://miniprofiler.com/dotnet/AspDotNet)
+  * [Getting started for ASP.NET (*not* .NET Core)](http://miniprofiler.com/dotnet/AspDotNet)
+  * [Getting started for ASP.NET Core](http://miniprofiler.com/dotnet/AspDotNetCore)
   * [How-To Profile Code](http://miniprofiler.com/dotnet/HowTo/ProfileCode)
   * [NuGet Packages](http://miniprofiler.com/dotnet/NuGet)
   * [How-To Upgrade From MiniProfiler V3](http://miniprofiler.com/dotnet/HowTo/UpgradeFromV3)
