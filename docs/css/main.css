@@ -42,13 +42,23 @@ nav {
     font-size: 0.9em;
 }
 
+nav .nav-header {
+    padding: 5px 0;
+    border-bottom: solid 1px #f0f0f0;
+}
+
 nav > ul.nav > li > a {
     padding: 5px 10px;
 }
 
-nav .nav-header {
-    padding: 5px 0;
-    border-bottom: solid 1px #f0f0f0;
+nav li.active {
+    font-weight: bold;
+    background: #f6f6f6;
+    border-left: solid 2px #999;
+}
+
+nav > ul.nav > li.active > a {
+    padding-left: 8px;
 }
 
 table {

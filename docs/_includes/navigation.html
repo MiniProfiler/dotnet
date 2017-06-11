@@ -1,16 +1,15 @@
 <ul class="nav nav-list">
     <li class="nav-header">Getting Started</li>
-    <li><a href="{{ site.baseurl }}/">Overview</a></li>
-    <li><a href="{{ site.baseurl }}/AspDotNet" title="ASP.NET Full Framework">ASP.NET</a></li>
-    <li><a href="{{ site.baseurl }}/AspDotNetCore">ASP.NET Core</a></li>
+    <li {% if page.url == "/" %}class="active"{% endif %}><a href="{{ site.baseurl }}/">Overview</a></li>
+    <li {% if page.url == "/AspDotNet.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/AspDotNet" title="ASP.NET Full Framework">ASP.NET</a></li>
+    <li {% if page.url == "/AspDotNetCore.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/AspDotNetCore">ASP.NET Core</a></li>
 
     <li class="nav-header">How-To</li>
-    <li><a href="{{ site.baseurl }}/HowTo/ProfileCode">Profile Code</a></li>
-    <li><a href="{{ site.baseurl }}/HowTo/ProfileEF6" title="Profile Entity Framework 6">Profile EF6</a></li>
-    <li><a href="{{ site.baseurl }}/HowTo/ProfileEFCore" title="Profile Entity Framework Code">Profile EF Core</a></li>
-    <li><a href="{{ site.baseurl }}/HowTo/ProfileSql">Profile SQL</a></li>
-    <li><a href="{{ site.baseurl }}/HowTo/UpgradeFromV3">Upgrade From V3</a></li>
-    
+    <li {% if page.url == "/HowTo/ProfileCode.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/HowTo/ProfileCode">Profile Code</a></li>
+    <li {% if page.url == "/HowTo/ProfileEF6.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/HowTo/ProfileEF6" title="Profile Entity Framework 6">Profile EF6</a></li>
+    <li {% if page.url == "/HowTo/ProfileEFCore.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/HowTo/ProfileEFCore" title="Profile Entity Framework Code">Profile EF Core</a></li>
+    <li {% if page.url == "/HowTo/ProfileSql.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/HowTo/ProfileSql">Profile SQL</a></li>
+    <li {% if page.url == "/HowTo/UpgradeFromV3.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/HowTo/UpgradeFromV3">Upgrade From V3</a></li>
     <li class="nav-header">Shared</li>
-    <li><a href="{{ site.baseurl }}/NuGet">NuGet Packages</a></li>
+    <li {% if page.url == "/NuGet.html" %}class="active"{% endif %}><a href="{{ site.baseurl }}/NuGet">NuGet Packages</a></li>
 </ul>
