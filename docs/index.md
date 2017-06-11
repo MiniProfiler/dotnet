@@ -11,7 +11,7 @@ MiniProfiler for .NET now has a few flavors since .NET Core differs quite a bit 
 Once you're setup, see [**how to profile code**]({{ site.baseurl }}/HowTo/ProfileCode) to get some timings up and running.
 
 #### Minimum requirements
-MiniProfiler v4 runs on .NET 4.6 and above or .NET Standard 1.5 and above. .NET 4.6+ is required due to all of the `async` support added in v4. If you are a version earlier than .NET 4.6, MiniProfiler v3.x is for you.
+MiniProfiler v4 runs on .NET 4.6 and above or .NET Standard 1.5 and above. .NET 4.6+ is required due to all of the `async` support added in v4. If you need to use a version earlier than .NET 4.6, MiniProfiler v3.x is for you.
 
 #### Links
 * The MiniProfiler for .NET GitHub repo [is located at MiniProfiler/dotnet](https://github.com/MiniProfiler/dotnet).
