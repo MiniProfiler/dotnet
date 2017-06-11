@@ -13,6 +13,7 @@ skip_tags: true
 skip_commits:
   files:
     - '**/*.md'
+    - docs/*
 
 nuget:
   disable_publish_on_pr: true
