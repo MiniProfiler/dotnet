@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StackExchange.Profiling.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -62,7 +63,7 @@ namespace StackExchange.Profiling
             {
                 if (HttpContext.Current == null) return;
                 var files = new List<string>();
-                
+
                 var customUITemplatesPath = HttpContext.Current.Server.MapPath(CustomUITemplates);
                 if (Directory.Exists(customUITemplatesPath))
                 {
