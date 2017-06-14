@@ -22,6 +22,7 @@ $projectsToBuild =
     'MiniProfiler.Mvc5',
     'MiniProfiler.AspNetCore',
     'MiniProfiler.AspNetCore.Mvc',
+    'MiniProfiler.Providers.MySql',
     'MiniProfiler.Providers.Redis',
     'MiniProfiler.Providers.SqlServer',
     'MiniProfiler.Providers.SqlServerCe'

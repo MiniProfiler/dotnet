@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Providers.MySql</AssemblyName>
+    <Title>MiniProfiler.Providers.MySql</Title>
+    <Description>MiniProfiler: Profiler storage for MySQL</Description>
+    <Authors>Nick Craver, Bradley Grainger</Authors>
+    <PackageTags>SQL;MySQL;$(PackageBaseTags)</PackageTags>
+    <TargetFrameworks>net451;netstandard1.5</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
+    <PackageReference Include="MySqlConnector" Version="0.20.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+</Project>
