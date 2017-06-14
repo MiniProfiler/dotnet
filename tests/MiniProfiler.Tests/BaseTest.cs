@@ -26,7 +26,13 @@ namespace Tests
         protected IAsyncProfilerProvider _provider { get; set; }
 
         // Reset for each inheritor
-        protected BaseTest() => ResetProviders();
+        protected BaseTest()
+        {
+            // instance per class, so multiple tests swapping the provider don't cause issues here
+            // it's not a threading issue of the profiler, but rather tests swapping providers
+            _provider = new DefaultProfilerProvider();
+            ResetProviders();
+        }
 
         public void ResetProviders()
         {
