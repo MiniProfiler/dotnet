@@ -15,6 +15,8 @@ namespace StackExchange.Profiling.Data
         private DbProviderFactory _tail;
         private readonly bool _alwaysWrap;
 
+        public DbProviderFactory InnerDbProviderFactory => _tail;
+
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>

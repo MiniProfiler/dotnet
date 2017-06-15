@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Core.Common;
+using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using StackExchange.Profiling.Data;
 
@@ -20,7 +22,14 @@ namespace StackExchange.Profiling.EntityFramework6
         {
             try
             {
-                DbConfiguration.Loaded += (_, a) => a.ReplaceService<DbProviderServices>(WrapDbProviderServices);
+                DbConfiguration.Loaded += (_, a) =>
+                {
+                    a.ReplaceService<DbProviderServices>(WrapDbProviderServices);
+                    a.ReplaceService<DbProviderFactory>(WrapDbProviderFactory);
+                    a.ReplaceService<IDbProviderFactoryResolver>(WrapIDbProviderFactoryResolver);
+                    a.ReplaceService<IDbConnectionFactory>(WrapIDbConnectionFactory);
+                    a.AddDependencyResolver(new EFProfiledInvariantNameResolver(), false);
+                };
 
                 MiniProfiler.Settings.ExcludeAssembly("EntityFramework");
                 MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServer");
@@ -42,6 +51,24 @@ namespace StackExchange.Profiling.EntityFramework6
         {
             var cacheKey = new { type = typeof(DbProviderServices), key }; // TODO: consider using ValueTuple or implementing a similar polyfill
             return (DbProviderServices)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbProviderServices(inner));
+        }
+
+        private static DbProviderFactory WrapDbProviderFactory(DbProviderFactory inner, object key)
+        {
+            var cacheKey = new { type = typeof(DbProviderFactory), key };
+            return (DbProviderFactory)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new ProfiledDbProviderFactory(inner));
+        }
+
+        private static IDbProviderFactoryResolver WrapIDbProviderFactoryResolver(IDbProviderFactoryResolver inner, object key)
+        {
+            var cacheKey = new { type = typeof(IDbProviderFactoryResolver), key };
+            return (IDbProviderFactoryResolver)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbProviderFactoryResolver(inner));
+        }
+
+        private static IDbConnectionFactory WrapIDbConnectionFactory(IDbConnectionFactory inner, object key)
+        {
+            var cacheKey = new { type = typeof(IDbConnectionFactory), key };
+            return (IDbConnectionFactory)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbConnectionFactory(inner));
         }
     }
 }

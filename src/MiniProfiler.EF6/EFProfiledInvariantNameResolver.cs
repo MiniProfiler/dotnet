@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Infrastructure.DependencyResolution;
+using System.Linq;
+using System.Reflection;
+using StackExchange.Profiling.Data;
+
+namespace StackExchange.Profiling.EntityFramework6
+{
+    /// <summary>
+    /// Replacement for the DefaultInvariantNameResolver which can correctly resolve an IProviderInvariantName given a ProfiledDbProviderFactory.
+    /// </summary>
+    internal class EFProfiledInvariantNameResolver : IDbDependencyResolver
+    {
+        private static ConcurrentDictionary<DbProviderFactory, IProviderInvariantName> _providerInvariantNameCache = new ConcurrentDictionary<DbProviderFactory, IProviderInvariantName>();
+
+        public object GetService(Type type, object key)
+        {
+            if (type != typeof(IProviderInvariantName))
+            {
+                return null;
+            }
+            var factory = key is ProfiledDbProviderFactory profiled ? profiled.InnerDbProviderFactory : key as DbProviderFactory;
+            if (factory == null)
+            {
+                return null;
+            }
+            return _providerInvariantNameCache.GetOrAdd(factory, GetProviderInvariantNameViaReflection);
+        }
+
+        public IEnumerable<object> GetServices(Type type, object key)
+        {
+            var service = GetService(type, key);
+            return service == null ? Enumerable.Empty<object>() : new[] { service };
+        }
+
+        private static IProviderInvariantName GetProviderInvariantNameViaReflection(DbProviderFactory factory)
+        {
+            // Avert your eyes. EF6 implenents a handy helper method to get the Invariant Name given a DbProviderFactory instance,
+            // but of course it is marked internal. Rather than rewrite all of that code, we'll just call into it via reflection and cache the result.
+            var extensionsType = Type.GetType("System.Data.Entity.Utilities.DbProviderFactoryExtensions, EntityFramework");
+            var GetProviderInvariantNameMethod = extensionsType.GetMethod("GetProviderInvariantName", BindingFlags.Static | BindingFlags.Public);
+            try
+            {
+                var providerInvariantName = (string)GetProviderInvariantNameMethod.Invoke(null, new[] { factory });
+                return new ProviderInvariantName(providerInvariantName);
+            }
+            catch (TargetInvocationException ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    throw ex.InnerException;
+                }
+                throw;
+            }
+        }
+
+        private class ProviderInvariantName : IProviderInvariantName
+        {
+            public ProviderInvariantName(string name)
+            {
+                Name = name;
+            }
+
+            public string Name { get; }
+        }
+    }
+}
