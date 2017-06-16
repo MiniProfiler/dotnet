@@ -45,11 +45,11 @@ namespace StackExchange.Profiling.EntityFramework6
             }
         }
 
-        private static readonly ConcurrentDictionary<object, DbProviderServices> _wrappedDbProviderServices = new ConcurrentDictionary<object, DbProviderServices>();
+        private static readonly ConcurrentDictionary<object, DbProviderServices> _wrappedDbProviderServicesCache = new ConcurrentDictionary<object, DbProviderServices>();
 
         private static DbProviderServices WrapDbProviderServices(DbProviderServices inner, object key)
         {
-            return _wrappedDbProviderServices.GetOrAdd(key, _ => new EFProfiledDbProviderServices(inner));
+            return _wrappedDbProviderServicesCache.GetOrAdd(key, _ => new EFProfiledDbProviderServices(inner));
         }
 
         private static readonly ConcurrentDictionary<object, DbProviderFactory> _wrappedDbProviderFactoryCache = new ConcurrentDictionary<object, DbProviderFactory>();
