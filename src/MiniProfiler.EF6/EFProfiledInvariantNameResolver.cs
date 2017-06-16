@@ -41,11 +41,11 @@ namespace StackExchange.Profiling.EntityFramework6
         {
             // Avert your eyes. EF6 implenents a handy helper method to get the Invariant Name given a DbProviderFactory instance,
             // but of course it is marked internal. Rather than rewrite all of that code, we'll just call into it via reflection and cache the result.
-            var extensionsType = Type.GetType("System.Data.Entity.Utilities.DbProviderFactoryExtensions, EntityFramework");
-            var GetProviderInvariantNameMethod = extensionsType.GetMethod("GetProviderInvariantName", BindingFlags.Static | BindingFlags.Public);
             try
             {
-                var providerInvariantName = (string)GetProviderInvariantNameMethod.Invoke(null, new[] { factory });
+                var extensionsType = Type.GetType("System.Data.Entity.Utilities.DbProviderFactoryExtensions, EntityFramework");
+                var getProviderInvariantNameMethod = extensionsType.GetMethod("GetProviderInvariantName", BindingFlags.Static | BindingFlags.Public);
+                var providerInvariantName = (string)getProviderInvariantNameMethod.Invoke(null, new[] { factory });
                 return new ProviderInvariantName(providerInvariantName);
             }
             catch (TargetInvocationException ex)
