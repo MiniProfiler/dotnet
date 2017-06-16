@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.EntityFramework6
 
         private static IProviderInvariantName GetProviderInvariantNameViaReflection(DbProviderFactory factory)
         {
-            // Avert your eyes. EF6 implenents a handy helper method to get the Invariant Name given a DbProviderFactory instance,
+            // Avert your eyes. EF6 implements a handy helper method to get the Invariant Name given a DbProviderFactory instance,
             // but of course it is marked internal. Rather than rewrite all of that code, we'll just call into it via reflection and cache the result.
             try
             {
