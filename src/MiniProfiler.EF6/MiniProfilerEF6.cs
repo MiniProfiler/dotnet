@@ -13,8 +13,6 @@ namespace StackExchange.Profiling.EntityFramework6
     /// </summary>
     public static class MiniProfilerEF6
     {
-        private static readonly ConcurrentDictionary<object, object>  _resolvedDependenciesCache = new ConcurrentDictionary<object, object>();
-
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
         /// </summary>
@@ -47,28 +45,32 @@ namespace StackExchange.Profiling.EntityFramework6
             }
         }
 
+        private static readonly ConcurrentDictionary<object, DbProviderServices> _wrappedDbProviderServices = new ConcurrentDictionary<object, DbProviderServices>();
+
         private static DbProviderServices WrapDbProviderServices(DbProviderServices inner, object key)
         {
-            var cacheKey = new { type = typeof(DbProviderServices), key }; // TODO: consider using ValueTuple or implementing a similar polyfill
-            return (DbProviderServices)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbProviderServices(inner));
+            return _wrappedDbProviderServices.GetOrAdd(key, _ => new EFProfiledDbProviderServices(inner));
         }
+
+        private static readonly ConcurrentDictionary<object, DbProviderFactory> _wrappedDbProviderFactoryCache = new ConcurrentDictionary<object, DbProviderFactory>();
 
         private static DbProviderFactory WrapDbProviderFactory(DbProviderFactory inner, object key)
         {
-            var cacheKey = new { type = typeof(DbProviderFactory), key };
-            return (DbProviderFactory)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new ProfiledDbProviderFactory(inner));
+            return _wrappedDbProviderFactoryCache.GetOrAdd(key, _ => new ProfiledDbProviderFactory(inner));
         }
+
+        private static readonly ConcurrentDictionary<object, IDbProviderFactoryResolver> _wrappedIDbProviderFactoryResolverCache = new ConcurrentDictionary<object, IDbProviderFactoryResolver>();
 
         private static IDbProviderFactoryResolver WrapIDbProviderFactoryResolver(IDbProviderFactoryResolver inner, object key)
         {
-            var cacheKey = new { type = typeof(IDbProviderFactoryResolver), key };
-            return (IDbProviderFactoryResolver)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbProviderFactoryResolver(inner));
+            return _wrappedIDbProviderFactoryResolverCache.GetOrAdd(key, _ => new EFProfiledDbProviderFactoryResolver(inner));
         }
+
+        private static readonly ConcurrentDictionary<object, IDbConnectionFactory> _wrappedIDbConnectionFactoryCache = new ConcurrentDictionary<object, IDbConnectionFactory>();
 
         private static IDbConnectionFactory WrapIDbConnectionFactory(IDbConnectionFactory inner, object key)
         {
-            var cacheKey = new { type = typeof(IDbConnectionFactory), key };
-            return (IDbConnectionFactory)_resolvedDependenciesCache.GetOrAdd(cacheKey, _ => new EFProfiledDbConnectionFactory(inner));
+            return _wrappedIDbConnectionFactoryCache.GetOrAdd(key, _ => new EFProfiledDbConnectionFactory(inner));
         }
     }
 }
