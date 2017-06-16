@@ -11,7 +11,7 @@ using StackExchange.Profiling.Data;
 namespace StackExchange.Profiling.EntityFramework6
 {
     /// <summary>
-    /// Replacement for the DefaultInvariantNameResolver which can correctly resolve an IProviderInvariantName given a ProfiledDbProviderFactory.
+    /// Replacement for the DefaultInvariantNameResolver which can correctly resolve an <see cref="IProviderInvariantName"/> given a <see cref="ProfiledDbProviderFactory"/>.
     /// </summary>
     internal class EFProfiledInvariantNameResolver : IDbDependencyResolver
     {

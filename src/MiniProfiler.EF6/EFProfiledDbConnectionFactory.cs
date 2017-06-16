@@ -5,7 +5,7 @@ using StackExchange.Profiling.Data;
 namespace StackExchange.Profiling.EntityFramework6
 {
     /// <summary>
-    /// Wrapper for an IDbConnectionFactory
+    /// Wrapper for an <see cref="IDbConnectionFactory"/>
     /// </summary>
     public class EFProfiledDbConnectionFactory : IDbConnectionFactory
     {
@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.EntityFramework6
         /// <summary>
         /// Initialises a new instance of the <see cref="EFProfiledDbConnectionFactory"/> class.
         /// </summary>
-        /// <param name="inner">The IDbConnectionFactory to wrap.</param>
+        /// <param name="inner">The <see cref="IDbConnectionFactory"/> to wrap.</param>
         public EFProfiledDbConnectionFactory(IDbConnectionFactory inner)
         {
             _inner = inner;
@@ -24,7 +24,7 @@ namespace StackExchange.Profiling.EntityFramework6
         /// Creates a connection based on the given database name or connection string.
         /// </summary>
         /// <param name="nameOrConnectionString">The database name or connection string.</param>
-        /// <returns>An initialized DbConnection.</returns>
+        /// <returns>An initialized <see cref="DbConnection"/>.</returns>
         public DbConnection CreateConnection(string nameOrConnectionString)
         {
             var connection = _inner.CreateConnection(nameOrConnectionString);
