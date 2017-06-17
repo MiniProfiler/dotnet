@@ -391,8 +391,8 @@ Select Top {=maxResults} Id
                      CustomLinksJson                      ntext,
                      ClientTimingsRedirectCount           int null
                   );",
-            @"create unique nonclustered index IX_MiniProfilers_Id on MiniProfilers (Id);",
-            @"create nonclustered index IX_MiniProfilers_User_HasUserViewed on MiniProfilers ([User], HasUserViewed);",
+            "create unique nonclustered index IX_MiniProfilers_Id on MiniProfilers (Id);",
+            "create nonclustered index IX_MiniProfilers_User_HasUserViewed on MiniProfilers ([User], HasUserViewed);",
             @"create table MiniProfilerTimings
                   (
                      RowId                               integer not null identity,
@@ -406,8 +406,8 @@ Select Top {=maxResults} Id
                      Depth                               smallint not null,
                      CustomTimingsJson                   ntext null
                   );",
-            @"create unique nonclustered index IX_MiniProfilerTimings_Id on MiniProfilerTimings (Id);",
-            @"create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId);",
+            "create unique nonclustered index IX_MiniProfilerTimings_Id on MiniProfilerTimings (Id);",
+            "create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId);",
             @"create table MiniProfilerClientTimings
                   (
                      RowId                               integer not null identity,
@@ -417,8 +417,8 @@ Select Top {=maxResults} Id
                      Start                               decimal(9, 3) not null,
                      Duration                            decimal(9, 3) not null
                   );",
-            @"create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);",
-            @"create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);"
+            "create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);",
+            "create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);"
         };
     }
 }

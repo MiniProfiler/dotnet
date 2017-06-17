@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.Data
             _tail.GetProviderManifest(manifestToken);
 
         /// <summary>
-        /// get the database provider manifest token.
+        /// Get the database provider manifest token.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <returns>a string containing the token.</returns>
@@ -52,7 +52,7 @@ namespace StackExchange.Profiling.Data
             _tail.GetProviderManifestToken(connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection);
 
         /// <summary>
-        /// create the database command definition.
+        /// Create the database command definition.
         /// </summary>
         /// <param name="providerManifest">The provider manifest.</param>
         /// <param name="commandTree">The command tree.</param>
@@ -65,7 +65,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// create the database.
+        /// Create the database.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="commandTimeout">The command timeout.</param>
@@ -74,7 +74,7 @@ namespace StackExchange.Profiling.Data
             _tail.CreateDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
 
         /// <summary>
-        /// delete the database.
+        /// Delete the database.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="commandTimeout">The command timeout.</param>
@@ -83,7 +83,7 @@ namespace StackExchange.Profiling.Data
             _tail.DeleteDatabase(GetRealConnection(connection), commandTimeout, storeItemCollection);
 
         /// <summary>
-        /// create the database script.
+        /// Create the database script.
         /// </summary>
         /// <param name="providerManifestToken">The provider manifest token.</param>
         /// <param name="storeItemCollection">The store item collection.</param>

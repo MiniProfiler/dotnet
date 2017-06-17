@@ -112,7 +112,7 @@ namespace StackExchange.Profiling.Internal
         public static string RenderResultsHtml(this MiniProfiler profiler, string path)
         {
             var sb = StringBuilderCache.Get();
-            sb.Append(@"<html><head><title>");
+            sb.Append("<html><head><title>");
             sb.Append(profiler.Name);
             sb.Append(" (");
             sb.Append(profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture));

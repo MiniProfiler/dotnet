@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.RavenDb
     /// </summary>
     public static class MiniProfilerRaven
     {
-        private static readonly Regex IndexQueryPattern = new Regex(@"/indexes/([A-Za-z/]+)");
+        private static readonly Regex IndexQueryPattern = new Regex("/indexes/([A-Za-z/]+)");
 
         /// <summary>
         /// Initialize MiniProfilerRaven for the given DocumentStore (only call once!)

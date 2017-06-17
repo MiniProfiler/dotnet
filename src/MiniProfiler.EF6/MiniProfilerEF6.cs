@@ -13,6 +13,12 @@ namespace StackExchange.Profiling.EntityFramework6
     /// </summary>
     public static class MiniProfilerEF6
     {
+        private class Lookup<T> : ConcurrentDictionary<object, T> { /* just for brevity */ }
+        private static readonly Lookup<DbProviderServices> _DbProviderServicesCache = new Lookup<DbProviderServices>();
+        private static readonly Lookup<DbProviderFactory> _DbProviderFactoryCache = new Lookup<DbProviderFactory>();
+        private static readonly Lookup<IDbProviderFactoryResolver> _IDbProviderFactoryResolverCache = new Lookup<IDbProviderFactoryResolver>();
+        private static readonly Lookup<IDbConnectionFactory> _IDbConnectionFactoryCache = new Lookup<IDbConnectionFactory>();
+
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
         /// </summary>
@@ -22,10 +28,10 @@ namespace StackExchange.Profiling.EntityFramework6
             {
                 DbConfiguration.Loaded += (_, a) =>
                 {
-                    a.ReplaceService<DbProviderServices>(WrapDbProviderServices);
-                    a.ReplaceService<DbProviderFactory>(WrapDbProviderFactory);
-                    a.ReplaceService<IDbProviderFactoryResolver>(WrapIDbProviderFactoryResolver);
-                    a.ReplaceService<IDbConnectionFactory>(WrapIDbConnectionFactory);
+                    a.ReplaceService((DbProviderServices inner, object key) => _DbProviderServicesCache.GetOrAdd(key, __ => new EFProfiledDbProviderServices(inner)));
+                    a.ReplaceService((DbProviderFactory inner, object key) => _DbProviderFactoryCache.GetOrAdd(key, __ => new ProfiledDbProviderFactory(inner)));
+                    a.ReplaceService((IDbProviderFactoryResolver inner, object key) => _IDbProviderFactoryResolverCache.GetOrAdd(key, __ => new EFProfiledDbProviderFactoryResolver(inner)));
+                    a.ReplaceService((IDbConnectionFactory inner, object key) => _IDbConnectionFactoryCache.GetOrAdd(key, __ => new EFProfiledDbConnectionFactory(inner)));
                     a.AddDependencyResolver(new EFProfiledInvariantNameResolver(), false);
                 };
 
@@ -43,34 +49,6 @@ namespace StackExchange.Profiling.EntityFramework6
                     throw;
                 }
             }
-        }
-
-        private static readonly ConcurrentDictionary<object, DbProviderServices> _wrappedDbProviderServicesCache = new ConcurrentDictionary<object, DbProviderServices>();
-
-        private static DbProviderServices WrapDbProviderServices(DbProviderServices inner, object key)
-        {
-            return _wrappedDbProviderServicesCache.GetOrAdd(key, _ => new EFProfiledDbProviderServices(inner));
-        }
-
-        private static readonly ConcurrentDictionary<object, DbProviderFactory> _wrappedDbProviderFactoryCache = new ConcurrentDictionary<object, DbProviderFactory>();
-
-        private static DbProviderFactory WrapDbProviderFactory(DbProviderFactory inner, object key)
-        {
-            return _wrappedDbProviderFactoryCache.GetOrAdd(key, _ => new ProfiledDbProviderFactory(inner));
-        }
-
-        private static readonly ConcurrentDictionary<object, IDbProviderFactoryResolver> _wrappedIDbProviderFactoryResolverCache = new ConcurrentDictionary<object, IDbProviderFactoryResolver>();
-
-        private static IDbProviderFactoryResolver WrapIDbProviderFactoryResolver(IDbProviderFactoryResolver inner, object key)
-        {
-            return _wrappedIDbProviderFactoryResolverCache.GetOrAdd(key, _ => new EFProfiledDbProviderFactoryResolver(inner));
-        }
-
-        private static readonly ConcurrentDictionary<object, IDbConnectionFactory> _wrappedIDbConnectionFactoryCache = new ConcurrentDictionary<object, IDbConnectionFactory>();
-
-        private static IDbConnectionFactory WrapIDbConnectionFactory(IDbConnectionFactory inner, object key)
-        {
-            return _wrappedIDbConnectionFactoryCache.GetOrAdd(key, _ => new EFProfiledDbConnectionFactory(inner));
         }
     }
 }

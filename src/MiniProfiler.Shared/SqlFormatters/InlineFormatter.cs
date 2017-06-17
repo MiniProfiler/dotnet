@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
-        private static readonly Regex ParamPrefixes = new Regex(@"[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex ParamPrefixes = new Regex("[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static bool includeTypeInfo;
 
         /// <summary>

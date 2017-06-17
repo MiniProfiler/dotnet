@@ -348,7 +348,7 @@ namespace Samples.Mvc5.Controllers
                         yesterday = DateTime.UtcNow.AddDays(-1)
                     });
 
-                connection.Query(@"select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
+                connection.Query("select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
 
                 // massive query to test if max-height is properly removed from <pre> stylings
                 connection.Query(
