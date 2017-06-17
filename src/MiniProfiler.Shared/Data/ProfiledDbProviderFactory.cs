@@ -15,6 +15,9 @@ namespace StackExchange.Profiling.Data
         private DbProviderFactory _tail;
         private readonly bool _alwaysWrap;
 
+        /// <summary>
+        /// The <see cref="DbProviderFactory"/> that this profiled version wraps.
+        /// </summary>
         public DbProviderFactory InnerDbProviderFactory => _tail;
 
         /// <summary>
