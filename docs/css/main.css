@@ -72,6 +72,12 @@ td, th {
   border: 1px solid #e5e5e5;
 }
 
+img {
+    max-width: 80%;
+    margin: 0 auto;
+    display: block;
+}
+
 .highlight .hll { background-color: #ffffcc }
 .highlight  { background: #eaeaea; }
 .highlight .c { color: #888888 } /* Comment */

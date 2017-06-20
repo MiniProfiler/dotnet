@@ -10,6 +10,18 @@ MiniProfiler for .NET now has a few flavors since .NET Core differs quite a bit 
 
 Once you're setup, see [**how to profile code**]({{ site.baseurl }}/HowTo/ProfileCode) to get some timings up and running.
 
+#### About
+
+MiniProfiler is a library and UI for profiling your application. By letting you see where you time is spent, which queries are run, and any other custom timings you want to add, MiniProfiler helps you debug issues and optimize performance.
+
+The default setup is for every page to have an indicator so performance is always on your mind, like this:
+
+![Top Indicator and popup]({{ site.baseurl }}/images/Popup.png)
+
+Note the share link for sharing timings with other team members. Any custom timings (like queries) can be expanded in detail as well:
+
+![Custom Timings]({{ site.baseurl }}/images/Timings.png)
+
 #### Minimum requirements
 MiniProfiler v4 runs on .NET 4.6 and above or .NET Standard 1.5 and above. .NET 4.6+ is required due to all of the `async` support added in v4. If you need to use a version earlier than .NET 4.6, MiniProfiler v3.x is for you.
 
