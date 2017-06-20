@@ -18,6 +18,7 @@ namespace StackExchange.Profiling.EntityFramework6
         private static readonly Lookup<DbProviderFactory> _DbProviderFactoryCache = new Lookup<DbProviderFactory>();
         private static readonly Lookup<IDbProviderFactoryResolver> _IDbProviderFactoryResolverCache = new Lookup<IDbProviderFactoryResolver>();
         private static readonly Lookup<IDbConnectionFactory> _IDbConnectionFactoryCache = new Lookup<IDbConnectionFactory>();
+        private static readonly object _nullKeyPlaceholder = new object();
 
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
@@ -28,10 +29,10 @@ namespace StackExchange.Profiling.EntityFramework6
             {
                 DbConfiguration.Loaded += (_, a) =>
                 {
-                    a.ReplaceService((DbProviderServices inner, object key) => _DbProviderServicesCache.GetOrAdd(key, __ => new EFProfiledDbProviderServices(inner)));
-                    a.ReplaceService((DbProviderFactory inner, object key) => _DbProviderFactoryCache.GetOrAdd(key, __ => new ProfiledDbProviderFactory(inner)));
-                    a.ReplaceService((IDbProviderFactoryResolver inner, object key) => _IDbProviderFactoryResolverCache.GetOrAdd(key, __ => new EFProfiledDbProviderFactoryResolver(inner)));
-                    a.ReplaceService((IDbConnectionFactory inner, object key) => _IDbConnectionFactoryCache.GetOrAdd(key, __ => new EFProfiledDbConnectionFactory(inner)));
+                    a.ReplaceService((DbProviderServices inner, object key) => _DbProviderServicesCache.GetOrAdd(key ?? _nullKeyPlaceholder, __ => new EFProfiledDbProviderServices(inner)));
+                    a.ReplaceService((DbProviderFactory inner, object key) => _DbProviderFactoryCache.GetOrAdd(key ?? _nullKeyPlaceholder, __ => new ProfiledDbProviderFactory(inner)));
+                    a.ReplaceService((IDbProviderFactoryResolver inner, object key) => _IDbProviderFactoryResolverCache.GetOrAdd(key ?? _nullKeyPlaceholder, __ => new EFProfiledDbProviderFactoryResolver(inner)));
+                    a.ReplaceService((IDbConnectionFactory inner, object key) => _IDbConnectionFactoryCache.GetOrAdd(key ?? _nullKeyPlaceholder, __ => new EFProfiledDbConnectionFactory(inner)));
                     a.AddDependencyResolver(new EFProfiledInvariantNameResolver(), false);
                 };
 
