@@ -57,7 +57,7 @@ namespace StackExchange.Profiling.Helpers
             var sb = new StringBuilder("[");
             for (var i = 0; i < guids.Count; i++)
             {
-                sb.Append('"').Append(guids[i]).Append('"');
+                sb.Append('"').Append(guids[i].ToString()).Append('"');
                 if (i < guids.Count - 1) sb.Append(',');
             }
             sb.Append(']');
