@@ -117,7 +117,7 @@ namespace StackExchange.Profiling.Internal
             sb.Append(" (");
             sb.Append(profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture));
             sb.Append(" ms) - Profiling Results</title><script>var profiler = ");
-            sb.Append(profiler.ToJson());
+            sb.Append(profiler.ToJson(htmlEscape: true));
             sb.Append(";</script>");
             sb.Append(RenderIncludes(profiler, path: path, isAuthorized: true));
             sb.Append(@"</head><body><div class=""profiler-result-full""></div></body></html>");

@@ -64,12 +64,20 @@ namespace StackExchange.Profiling.Helpers
             return sb.ToString();
         }
 
+        private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
+        {
+            StringEscapeHandling = StringEscapeHandling.EscapeHtml
+        };
+
         /// <summary>
         /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
-        public static string ToJson(this MiniProfiler profiler) =>
-            profiler != null ? JsonConvert.SerializeObject(profiler) : null;
+        /// <param name="htmlEscape">Whether to HTML escape the output.</param>
+        public static string ToJson(this MiniProfiler profiler, bool htmlEscape = false) =>
+            profiler != default(object)
+            ? (htmlEscape ? JsonConvert.SerializeObject(profiler, htmlEscapeSettings) : JsonConvert.SerializeObject(profiler))
+            : null;
 
         /// <summary>
         /// Serializes <paramref name="o"/> to a JSON string.
