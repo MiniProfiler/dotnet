@@ -220,7 +220,7 @@ var MiniProfiler = (function () {
                         customTiming.IsDuplicate = true;
                         timing.HasDuplicateCustomTimings[customType] = true;
                         json.HasDuplicateCustomTimings = true;
-                    } else {
+                    } else if (!ignoreDuplicateCustomTiming(customTiming)) {
                         duplicates[customTiming.CommandString] = true;
                     }
                 }
@@ -237,6 +237,10 @@ var MiniProfiler = (function () {
         } else {
             timing.CustomTimings = {};
         }
+    };
+
+    var ignoreDuplicateCustomTiming = function (customTiming) {
+        return customTiming.ExecuteType && $.inArray(customTiming.ExecuteType, options.ignoredDuplicateExecuteTypes) > -1;
     };
 
     var renderTemplate = function (json) {
@@ -754,7 +758,8 @@ var MiniProfiler = (function () {
                 currentId: data.currentId,
                 authorized: data.authorized,
                 toggleShortcut: data.toggleShortcut,
-                startHidden: data.startHidden
+                startHidden: data.startHidden,
+                ignoredDuplicateExecuteTypes: (data.ignoredDuplicateExecuteTypes || '').split(',')
             };
 
             var doInit = function () {

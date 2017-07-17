@@ -107,7 +107,7 @@ namespace StackExchange.Profiling.Data
                 return;
             }
 
-            using (miniProfiler.CustomTiming("sql", "Connection Open()", "Open"))
+            using (miniProfiler.CustomTiming("sql", "Connection Open()", nameof(Open)))
             {
                 _connection.Open();
             }
@@ -126,7 +126,7 @@ namespace StackExchange.Profiling.Data
                 return;
             }
 
-            using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", "OpenAsync"))
+            using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", nameof(OpenAsync)))
             {
                 await _connection.OpenAsync(cancellationToken);
             }

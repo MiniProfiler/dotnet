@@ -98,6 +98,21 @@ namespace StackExchange.Profiling.Internal
             sb.Append("\" data-trivial-milliseconds=\"");
             sb.Append(MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString(CultureInfo.InvariantCulture));
 
+            if (MiniProfiler.Settings.IgnoredDuplicateExecuteTypes.Count > 0)
+            {
+                sb.Append("\" data-ignored-duplicate-execute-types=\"");
+                var i = 0;
+                foreach (var executeType in MiniProfiler.Settings.IgnoredDuplicateExecuteTypes)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(',');
+                    }
+                    sb.Append(executeType);
+                    i++;
+                }
+            }
+
             sb.Append("\"></script>");
 
             return sb.ToStringRecycle();
