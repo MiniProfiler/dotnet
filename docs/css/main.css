@@ -4,6 +4,7 @@ body {
 }
 
 pre, code, pre code {
+    font-family: 'Fira Mono', monospace;
     border: none;
     border-radius: 0;
     background-color: #eaeaea;
