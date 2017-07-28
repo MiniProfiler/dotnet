@@ -1,7 +1,7 @@
 title: 'MiniProfiler for .NET'
 subtitle: 'Documentation'
 codeurl: 'https://github.com/MiniProfiler/dotnet'
-baseurl: ''
+baseurl: '/dotnet'
 highlighter: rouge
 exclude: [README.md']
 markdown: kramdown
