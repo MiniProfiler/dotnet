@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
@@ -146,6 +147,15 @@ namespace StackExchange.Profiling
             /// For a per-page override you can use .RenderIncludes(showControls: true/false)
             /// </summary>
             public static bool ShowControls { get; set; } = false;
+
+            /// <summary>
+            /// Custom timing ExecuteTypes to ignore as duplicates in the UI.
+            /// </summary>
+            public static HashSet<string> IgnoredDuplicateExecuteTypes { get; } = new HashSet<string>()
+            {
+                nameof(ProfiledDbConnection.Open),
+                nameof(ProfiledDbConnection.OpenAsync),
+            };
 
             /// <summary>
             /// By default, <see cref="CustomTiming"/>s created by this assmebly will grab a stack trace to help 
