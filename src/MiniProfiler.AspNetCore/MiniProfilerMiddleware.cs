@@ -52,8 +52,8 @@ namespace StackExchange.Profiling
             if (basePath.StartsWith("~/", StringComparison.Ordinal)) basePath = basePath.Substring(1);
             if (basePath.EndsWith("/", StringComparison.Ordinal) && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
 
-            MatchPath = new PathString(basePath);
-            BasePath = new PathString(basePath.EnsureTrailingSlash());
+            MatchPath = basePath;
+            BasePath = basePath.EnsureTrailingSlash();
             Embedded = new EmbeddedProvider(Options, _env);
             // A static reference back to this middleware for property access.
             // Which is probably a crime against humanity in ways I'm ignorant of.
