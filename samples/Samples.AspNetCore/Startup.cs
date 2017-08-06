@@ -63,30 +63,30 @@ namespace Samples.AspNetCore
 
             app.UseStaticFiles();
 
-            app.UseMiniProfiler(new MiniProfilerOptions
+            app.UseMiniProfiler(options =>
             {
                 // Path to use for profiler URLs
-                RouteBasePath = "~/profiler",
+                options.RouteBasePath = "~/profiler";
 
                 // Control which SQL formatter to use
-                SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
+                options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 
                 // Control storage
-                Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60)),
+                options.Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60));
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
-                //ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
-                //ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
+                //options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+                //options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
 
                 // To control which requests are profiled, use the Func<HttpRequest, bool> option:
-                //ShouldProfile = request => MyShouldThisBeProfiledFunction(request),
+                //options.ShouldProfile = request => MyShouldThisBeProfiledFunction(request);
 
                 // Profiles are stored under a user ID, function to get it:
-                //UserIdProvider =  request => MyGetUserIdFunction(request),
+                //options.UserIdProvider =  request => MyGetUserIdFunction(request);
 
                 // Optionally swap out the entire profiler provider, if you want
                 // The default handles async and works fine for almost all appliations
-                //ProfilerProvider = new MyProfilerProvider(),
+                //options.ProfilerProvider = new MyProfilerProvider();
             });
 
             app.UseMvc(routes =>

@@ -14,23 +14,20 @@ namespace Microsoft.AspNetCore.Builder
         /// Adds middleware for profiling HTTP requests.
         /// </summary>
         /// <param name="builder">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-        /// <param name="options">Options for MiniProfiler.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="options"/> is <c>null</c>.</exception>
-        public static IApplicationBuilder UseMiniProfiler(this IApplicationBuilder builder, MiniProfilerOptions options)
+        /// <param name="configureOptions">Action to configure options for MiniProfiler.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="configureOptions"/> is <c>null</c>.</exception>
+        public static IApplicationBuilder UseMiniProfiler(this IApplicationBuilder builder, Action<MiniProfilerOptions> configureOptions)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+            _ = configureOptions ?? throw new ArgumentNullException(nameof(configureOptions));
 
             // Register all IMiniProfilerDiagnosticListeners that were registered, e.g. EntityFramework
             var listeners = builder.ApplicationServices.GetServices<IMiniProfilerDiagnosticListener>();
             var initializer = new DiagnosticInitializer(listeners);
             initializer.Start();
+
+            var options = new MiniProfilerOptions();
+            configureOptions(options);
 
             return builder.UseMiddleware<MiniProfilerMiddleware>(options);
         }
