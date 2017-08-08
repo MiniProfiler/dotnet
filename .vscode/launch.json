@@ -6,9 +6,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceRoot}\\samples\\Samples.AspNetCore\\bin\\Debug\\netcoreapp1.0\\Samples.AspNetCore.dll",
+            "program": "${workspaceRoot}/samples/Samples.AspNetCore/bin/Debug/netcoreapp1.0/Samples.AspNetCore.dll",
             "args": [],
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceRoot}/samples/Samples.AspNetCore",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
