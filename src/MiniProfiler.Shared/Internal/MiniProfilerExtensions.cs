@@ -38,7 +38,7 @@ namespace StackExchange.Profiling.Internal
         {
             var sb = StringBuilderCache.Get();
 
-            sb.Append("<script async id=\"mini-profiler\" src=\"");
+            sb.Append("<script async=\"async\" id=\"mini-profiler\" src=\"");
             sb.Append(path);
             sb.Append("includes.js?v=");
             sb.Append(MiniProfiler.Settings.VersionHash);
