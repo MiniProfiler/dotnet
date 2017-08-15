@@ -18,7 +18,7 @@ namespace Tests.Storage
             storage.Save(profiler);
             var guids = storage.List(100).ToArray();
             Assert.Equal(profiler.Id, guids[0]);
-            Assert.Equal(1, guids.Length);
+            Assert.Single(guids);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Tests.Storage
             Assert.Equal(4, guids.Count());
 
             guids = storage.List(1);
-            Assert.Equal(1, guids.Count());
+            Assert.Single(guids);
 
             guids = storage.List(2, now, in2Secs);
             Assert.Equal(profiler2.Id, guids.First());

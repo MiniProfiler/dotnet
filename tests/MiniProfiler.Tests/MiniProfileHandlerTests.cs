@@ -9,7 +9,7 @@ using StackExchange.Profiling;
 
 namespace Tests
 {
-    internal class MiniProfilerHandlerTests
+    public class MiniProfilerHandlerTests
     {
         [Theory]
         [InlineData("BRILLANT", 404)]
@@ -21,6 +21,7 @@ namespace Tests
         {
             // Arrange
             var sut = new MiniProfilerHandler();
+            MiniProfilerWebSettings.ResultsListAuthorize = null;
 
             // Act
             var res = GetRequestResponseHttpStatus(sut, resourceName);
@@ -50,7 +51,7 @@ namespace Tests
 		[InlineData("deflate", typeof(DeflateStream))]
 		[InlineData("unknown", null)]
 		[InlineData("", null)]
-		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string acceptEncoding, Type expectedEncodingFilterType)
+		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturnedType(string acceptEncoding, Type expectedEncodingFilterType)
 		{
 			// Arrange
 			var sut = new MiniProfilerHandler();

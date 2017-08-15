@@ -1,5 +1,6 @@
 ﻿using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
+using StackExchange.Redis;
 using Xunit;
 
 namespace Tests.Redis
@@ -19,7 +20,7 @@ namespace Tests.Redis
             var mp = GetMiniProfiler();
 
             var serialized = mp.ToRedisValue();
-            Assert.NotNull(serialized);
+            Assert.NotEqual(default(RedisValue), serialized);
 
             var deserialized = serialized.ToMiniProfiler();
             Assert.Equal(mp, deserialized);

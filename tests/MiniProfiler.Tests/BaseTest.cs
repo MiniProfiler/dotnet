@@ -227,7 +227,7 @@ namespace Tests
         /// <typeparam name="T">The argument type to compare.</typeparam>
         /// <param name="t1">The first object to compare.</param>
         /// <param name="t2">The second object to compare.</param>
-        protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2)
+        protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2) where T : class
         {
             Assert.NotNull(t1);
             Assert.NotNull(t2);

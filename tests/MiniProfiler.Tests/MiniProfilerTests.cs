@@ -38,17 +38,17 @@ namespace Tests
                 Timing goodTiming;
                 Timing badTiming;
 
-                using (goodTiming = (Timing)(mp1.StepIf("Yes", 1)))
+                using (goodTiming = mp1.StepIf("Yes", 1))
                 {
                     Increment(2);
                 }
-                using (badTiming = (Timing)(mp1.StepIf("No", 5)))
+                using (badTiming = mp1.StepIf("No", 5))
                 {
                     Increment(); // 1 ms
                 }
                 MiniProfiler.Stop();
 
-                Assert.True(mp1.Root.Children.Contains(goodTiming));
+                Assert.Contains(goodTiming, mp1.Root.Children);
                 Assert.True(!mp1.Root.Children.Contains(badTiming));
             }
         }
@@ -65,7 +65,7 @@ namespace Tests
                 Timing goodTiming;
                 Timing badTiming;
 
-                using (goodTiming = (Timing)(mp1.StepIf("Yes", 5, true)))
+                using (goodTiming = mp1.StepIf("Yes", 5, true))
                 {
                     Increment(2);
                     using (mp1.Step("#1"))
@@ -77,7 +77,7 @@ namespace Tests
                         Increment(2);
                     }
                 }
-                using (badTiming = (Timing)(mp1.StepIf("No", 5, false)))
+                using (badTiming = mp1.StepIf("No", 5, false))
                 {
                     Increment(2);
                     using (mp1.Step("#1"))
@@ -91,7 +91,7 @@ namespace Tests
                 }
                 MiniProfiler.Stop();
 
-                Assert.True(mp1.Root.Children.Contains(goodTiming));
+                Assert.Contains(goodTiming, mp1.Root.Children);
                 Assert.True(!mp1.Root.Children.Contains(badTiming));
             }
         }
@@ -118,7 +118,7 @@ namespace Tests
                 }
                 MiniProfiler.Stop();
 
-                Assert.True(mp1.Root.CustomTimings["Cat1"].Contains(goodTiming));
+                Assert.Contains(goodTiming, mp1.Root.CustomTimings["Cat1"]);
                 Assert.True(!mp1.Root.CustomTimings["Cat1"].Contains(badTiming));
             }
         }
