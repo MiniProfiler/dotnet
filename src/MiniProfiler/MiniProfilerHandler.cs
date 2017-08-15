@@ -154,7 +154,7 @@ namespace StackExchange.Profiling
             var authorize = MiniProfilerWebSettings.ResultsAuthorize;
             var authorizeList = MiniProfilerWebSettings.ResultsListAuthorize;
 
-            if ((authorize != null && !authorize(context.Request)) || (isList && (authorizeList == null || !authorizeList(context.Request))))
+            if ((authorize?.Invoke(context.Request) == false) || (isList && (authorizeList?.Invoke(context.Request) == false)))
             {
                 context.Response.StatusCode = 401;
                 context.Response.ContentType = "text/plain";
