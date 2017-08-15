@@ -10,7 +10,7 @@ namespace Benchmarks
     {
         private MiniProfiler Profiler;
 
-        [Setup]
+        [GlobalSetup]
         public void SetupData()
         {
             Profiler = new MiniProfiler("Test");
