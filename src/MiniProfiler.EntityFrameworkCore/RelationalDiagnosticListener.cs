@@ -1,9 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DiagnosticAdapter;
 using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Concurrent;
+#if NETSTANDARD2_0
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Collections.Generic;
+#else
+using Microsoft.Extensions.DiagnosticAdapter;
 using System.Data.Common;
+#endif
 
 namespace StackExchange.Profiling.Data
 {
@@ -25,9 +30,106 @@ namespace StackExchange.Profiling.Data
             _commands = new ConcurrentDictionary<Guid, CustomTiming>(),
             _opening = new ConcurrentDictionary<Guid, CustomTiming>(),
             _closing = new ConcurrentDictionary<Guid, CustomTiming>();
+        
+#if NETSTANDARD2_0
+        // See https://github.com/aspnet/EntityFramework/issues/8007
+        private readonly ConcurrentDictionary<Guid, CustomTiming>
+            _readers = new ConcurrentDictionary<Guid, CustomTiming>();
 
-        // Until EF has a Guid on DbReader's in 2.0, we have to hackily do this
-        // Tracking here: https://github.com/aspnet/EntityFramework/issues/8007
+        public void OnCompleted() { }
+        public void OnError(Exception error) { }
+
+        public void OnNext(KeyValuePair<string, object> kv)
+        {
+            if (kv.Key == RelationalEventId.CommandExecuting.Name)
+            {
+                var data = (CommandEventData)kv.Value;
+                var timing = data.Command.GetTiming(data.ExecuteMethod + (data.IsAsync ? " (Async)" : null), MiniProfiler.Current);
+                if (timing != null)
+                {
+                    _commands[data.CommandId] = timing;
+                }
+            }
+            else if (kv.Key == RelationalEventId.CommandExecuted.Name)
+            {
+                var data = (CommandExecutedEventData)kv.Value;
+                if (_commands.TryRemove(data.CommandId, out var current))
+                {
+                    // A completion for a DataReader only means we *started* getting data back, not finished.
+                    if (data.Result is RelationalDataReader reader)
+                    {
+                        _readers[data.CommandId] = current;
+                        current.FirstFetchCompleted();
+                    }
+                    else
+                    {
+                        current.Stop();
+                    }
+                }
+            }
+            else if (kv.Key == RelationalEventId.CommandError.Name)
+            {
+                var data = (CommandErrorEventData)kv.Value;
+                if (_commands.TryRemove(data.CommandId, out var command))
+                {
+                    command.Errored = true;
+                    command.Stop();
+                }
+            }
+            else if (kv.Key == RelationalEventId.DataReaderDisposing.Name)
+            {
+                var data = (DataReaderDisposingEventData)kv.Value;
+                if (_readers.TryRemove(data.CommandId, out var reader))
+                {
+                    reader.Stop();
+                }
+            }
+            // TODO consider switching to ConnectionEndEventData.Duration
+            // This isn't as trivia as it appears due to the start offset of the request
+            else if (kv.Key == RelationalEventId.ConnectionOpening.Name)
+            {
+                var data = (ConnectionEventData)kv.Value;
+                _opening[data.ConnectionId] = MiniProfiler.Current.CustomTiming("sql",
+                    data.IsAsync ? "Connection OpenAsync()" : "Connection Open()",
+                    data.IsAsync ? "OpenAsync" : "Open");
+            }
+            else if (kv.Key == RelationalEventId.ConnectionOpened.Name)
+            {
+                var data = (ConnectionEndEventData)kv.Value;
+                if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
+                {
+                    openingTiming.Stop();
+                }
+            }
+            else if (kv.Key == RelationalEventId.ConnectionClosing.Name)
+            {
+                var data = (ConnectionEventData)kv.Value;
+                _closing[data.ConnectionId] = MiniProfiler.Current.CustomTiming("sql",
+                    data.IsAsync ? "Connection CloseAsync()" : "Connection Close()",
+                    data.IsAsync ? "CloseAsync" : "Close");
+            }
+            else if (kv.Key == RelationalEventId.ConnectionClosed.Name)
+            {
+                var data = (ConnectionEndEventData)kv.Value;
+                if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
+                {
+                    closingTiming.Stop();
+                }
+            }
+            else if (kv.Key == RelationalEventId.ConnectionError.Name)
+            {
+                var data = (ConnectionErrorEventData)kv.Value;
+                if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
+                {
+                    openingTiming.Errored = true;
+                }
+                if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
+                {
+                    closingTiming.Errored = true;
+                }
+            }
+        }
+#else
         private readonly ConcurrentDictionary<DbDataReader, CustomTiming>
             _readers = new ConcurrentDictionary<DbDataReader, CustomTiming>();
 
@@ -106,7 +208,7 @@ namespace StackExchange.Profiling.Data
                 reader.Stop();
             }
         }
-
+        
         /// <summary>
         /// Handles ConnectionOpening events.
         /// </summary>
@@ -120,7 +222,7 @@ namespace StackExchange.Profiling.Data
                     async ? "Connection OpenAsync()" : "Connection Open()",
                     async ? "OpenAsync" : "Open");
         }
-
+        
         /// <summary>
         /// Handles ConnectionOpened events.
         /// </summary>
@@ -134,7 +236,7 @@ namespace StackExchange.Profiling.Data
                 openingTiming.Stop();
             }
         }
-
+        
         /// <summary>
         /// Handles ConnectionClosing events.
         /// </summary>
@@ -148,7 +250,7 @@ namespace StackExchange.Profiling.Data
                     async ? "Connection CloseAsync()" : "Connection Close()",
                     async ? "CloseAsync" : "Close");
         }
-
+        
         /// <summary>
         /// Handles ConnectionClosed events.
         /// </summary>
@@ -180,6 +282,7 @@ namespace StackExchange.Profiling.Data
                 closingTiming.Errored = true;
             }
         }
+#endif
 
         // Transactions - Not in yet
         //[DiagnosticName("Microsoft.EntityFrameworkCore.TransactionStarted")]

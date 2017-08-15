@@ -103,7 +103,7 @@ namespace Samples.AspNetCore.Controllers
                     {
                         using (MiniProfiler.Current.Step("Insertion"))
                         {
-                            context.RouteHits.Add(new RouteHit { RouteName = name, HitCount = 1 });
+                            context.RouteHits.Add(hit = new RouteHit { RouteName = name, HitCount = 1 });
                             context.SaveChanges();
                         }
                     }

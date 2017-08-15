@@ -5,14 +5,21 @@
     <Description>Lightweight mini-profiler, designed for ASP.NET Core (not System.Web) websites</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>ASP.NET Core;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net451;net46;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>net451;net46;netstandard1.5;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="1.1.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.3.0" />
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>
