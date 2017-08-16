@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using StackExchange.Profiling.Internal;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 
@@ -9,9 +11,6 @@ namespace StackExchange.Profiling.Helpers
     /// </summary>
     public static class StackTraceSnippet
     {
-        // TODO: Uhhhhhhh, this isn't gonna work. Let's come back to this. Oh and async. Dammit.
-        private const string AspNetEntryPointMethodName = "System.Web.HttpApplication.IExecutionStep.Execute";
-
         /// <summary>
         /// Gets the current formatted and filtered stack trace.
         /// </summary>
@@ -28,35 +27,49 @@ namespace StackExchange.Profiling.Helpers
                 return string.Empty;
             }
 
-            var sb = new StringBuilder();
-            int stackLength = -1; // Starts on -1 instead of zero to compensate for adding 1 first time
+            var sb = StringBuilderCache.Get();
+            int stackLength = 0,
+                startFrame = frames.Length - 1;
 
-            foreach (StackFrame t in frames)
+            for (int i = 0; i < frames.Length; i++)
             {
-                var method = t.GetMethod();
-
-                // no need to continue up the chain
-                if (method.Name == AspNetEntryPointMethodName)
-                    break;
-
-                if (stackLength >= MiniProfiler.Settings.StackMaxLength)
-                    break;
-
-                var assembly = method.Module.Assembly.GetName().Name;
-                if (!ShouldExcludeType(method)
-                    && !MiniProfiler.Settings.AssembliesToExclude.Contains(assembly)
-                    && !MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
+                var method = frames[i].GetMethod();
+                if (stackLength >= MiniProfiler.Settings.StackMaxLength
+                    // ASP.NET: no need to continue up the chain
+                    || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
+                    || (method.Module.Name == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
                 {
-                    if (sb.Length > 0)
-                    {
-                        sb.Append(' ');
-                    }
-                    sb.Append(method.Name);
-                    stackLength += method.Name.Length + 1; // 1 added for spaces.
+                    frames[i] = null;
+                    startFrame = i < 0 ? 0 : i - 1;
+                    break;
+                }
+                else if (ShouldExcludeType(method)
+                    || MiniProfiler.Settings.AssembliesToExclude.Contains(method.Module.Assembly.GetName().Name)
+                    || MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
+                {
+                    frames[i] = null;
+                }
+                else
+                {
+                    stackLength += (stackLength > 0 ? 3 : 0) + method.Name.Length;
                 }
             }
 
-            return sb.ToString();
+            for (var i = startFrame; i >= 0; i--)
+            {
+                var f = frames[i];
+                if (f != null)
+                {
+                    var method = f.GetMethod();
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(" > ");
+                    }
+                    sb.Append(method.Name);
+                }
+            }
+
+            return sb.ToStringRecycle();
         }
 
         private static bool ShouldExcludeType(MethodBase method)
