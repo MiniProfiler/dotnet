@@ -1,6 +1,9 @@
 @results-border: solid 1px #888888;
 @color-nuclear: #f00;
 @results-border-radius: 10px;
+@color-muted: #aaaaaa;
+@color-white: #fff;
+@color-alt: #f5f5f5;
 
 .profiler-result, .profiler-queries {
     color: #555;
@@ -37,7 +40,11 @@
 }
 
 .profiler-result {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: sans-serif;
+
+    .highlight {
+        animation: fadeIn 2s 1;
+    }
 
     table.profiler-client-timings {
         margin-top: 10px;
@@ -50,19 +57,20 @@
     }
 
     .profiler-unit {
-        color: #aaaaaa;
+        color: @color-muted;
     }
 
     .profiler-trivial {
         display: none;
 
         td, td * {
-            color: #aaaaaa !important;
+            color: @color-muted !important;
         }
     }
 
-    pre, code, .profiler-number, .profiler-unit {
-        font-family: Consolas, monospace, serif;
+    pre, code {
+        font-family: Fira Code, Consolas, monospace, serif;
+        font-variant-ligatures: none;
     }
 
     .profiler-number {
@@ -83,8 +91,8 @@
 
     .profiler-timings {
         th {
-            background-color: #fff;
-            color: #aaaaaa;
+            background-color: @color-white;
+            color: @color-muted;
             text-align: right;
         }
 
@@ -120,6 +128,7 @@
     .profiler-custom-timing-overview {
         float: right;
         margin: 10px 0;
+        width: auto;
 
         td {
             white-space: nowrap;
@@ -151,29 +160,34 @@
     }
 
     .profiler-queries {
-        font-family: Helvetica, Arial, sans-serif;
+        border-radius: 5px;
+        background-color: @color-white;
 
         .profiler-stack-trace {
-            margin-bottom: 15px;
+            padding-bottom: 3px;
+            color: #778;
+            /* border-botom: solid 1px #ebebeb; */
+            margin-bottom: 5px;
         }
 
         pre {
-            font-family: Consolas, monospace, serif;
+            font-family: Fira Code, Consolas, monospace, serif;
+            font-variant-ligatures: none;
             white-space: pre-wrap;
         }
 
         th {
-            background-color: #fff;
             border-bottom: 1px solid #555;
             font-weight: bold;
             padding: 8px;
             white-space: nowrap;
+            font-size: 14px;
         }
 
         td {
             padding: 8px;
             text-align: left;
-            background-color: #fff;
+            border-bottom: solid 1px #efefef;
 
             &:first-child {
                 width: 250px;
@@ -184,8 +198,8 @@
             }
         }
 
-        .profiler-odd td {
-            background-color: #e5e5e5;
+        .profiler-odd {
+            background-color: @color-alt;
         }
 
         .profiler-since-start, .profiler-duration {
@@ -199,12 +213,12 @@
         }
 
         .profiler-gap-info {
-            &, td {
-                background-color: #ccc;
+            background-color: #ddd;
+            opacity: 0.8;
+            color: #000;
 
-                &.query {
-                    word-break: break-all;
-                }
+            .query {
+                word-break: break-all;
             }
 
             .profiler-unit {
@@ -222,6 +236,7 @@
 
         .profiler-trivial-gap-container {
             text-align: center;
+            margin: 8px 0;
         }
 
         .str {
@@ -286,6 +301,15 @@
         &:hover {
             color: @color-nuclear;
         }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        background-color: #FFB;
+    }
+    to {
+        background-color: none;
     }
 }
 
@@ -357,28 +381,35 @@
         }
     }
 
+    .profiler-button {
+        > .profiler-number {
+            font-family: Consolas, monospace, serif;
+        }
+        &.new {
+            animation: fadeIn 2s 1;
+        }
+    }
+
     .profiler-button, .profiler-controls {
         display: none;
         z-index: 2147483640;
         border-bottom: @results-border;
-        background-color: #fff;
-        animation: new-entry 5s 1;
+        background-color: @color-white;
         padding: 4px 7px;
         text-align: right;
         cursor: pointer;
-    }
 
-    .profiler-button, .profiler-controls {
         &.profiler-button-active {
             background-color: maroon;
+            animation: none;
 
             .profiler-number, .profiler-nuclear {
-                color: #fff;
+                color: @color-white;
                 font-weight: bold;
             }
 
             .profiler-unit {
-                color: #fff;
+                color: @color-white;
                 font-weight: normal;
             }
         }
@@ -392,7 +423,7 @@
         text-align: center;
 
         span {
-            border-right: 1px solid #aaaaaa;
+            border-right: 1px solid @color-muted;
             padding-right: 5px;
             margin-right: 5px;
             cursor: pointer;
@@ -407,7 +438,7 @@
         display: none;
         z-index: 2147483641;
         position: absolute;
-        background-color: #fff;
+        background-color: @color-white;
         border: 1px solid #aaa;
         padding: 5px 10px;
         text-align: left;
@@ -421,7 +452,7 @@
             border-bottom: 1px solid #ddd;
 
             .profiler-name {
-                font-size: 110%;
+                font-size: 1.1em;
                 font-weight: bold;
 
                 .profiler-overall-duration {
@@ -453,17 +484,14 @@
     .profiler-queries {
         display: none;
         z-index: 2147483643;
-        top: 30px;
-        left: 30px;
-        right: 30px;
+        top: 25px;
+        left: 25px;
+        right: 25px;
         position: fixed;
         overflow-y: auto;
         overflow-x: auto;
-        background-color: #fff;
-
-        th {
-            font-size: 17px;
-        }
+        background-color: @color-white;
+        max-height: ~"calc(100vh - 50px)";
     }
 
     &.profiler-min {
@@ -487,11 +515,12 @@
     z-index: 2147483642;
     display: none;
     background: #000;
-    opacity: 0.7;
-    position: absolute;
+    opacity: 0.5;
     top: 0;
     left: 0;
     min-width: 100%;
+    position: fixed;
+    height: calc(100%);
 }
 
 .profiler-result-full {
@@ -506,7 +535,7 @@
         .profiler-popup {
             .profiler-info {
                 font-size: 25px;
-                border-bottom: 1px solid #aaaaaa;
+                border-bottom: 1px solid @color-muted;
                 padding-bottom: 3px;
                 margin-bottom: 25px;
 
@@ -578,7 +607,7 @@ table.profiler-results-index {
         }
 
         tr:nth-child(even) {
-            background-color: #fff;
+            background-color: @color-white;
         }
     }
 
@@ -614,14 +643,4 @@ table.profiler-results-index {
 .profiler-results-none {
     color: #888;
     text-align: center;
-}
-
-@keyframes new-entry {
-    0% {
-        background-color: #FFFAAA;
-    }
-
-    100% {
-        background-color: #FFF;
-    }
 }

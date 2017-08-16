@@ -103,7 +103,7 @@
       <table>
       <thead>
         <tr>
-          <th style="text-align:right">Step<br />Time (from start)<br />Call Type<br />Duration</th>
+          <th style="text-align:right">Step<br />Duration (from start)<br />Call Type</th>
           <th style="text-align:left">Call Stack<br />Command</th>
         </tr>
       </thead>
@@ -161,16 +161,20 @@
   <tr class="{{if i % 2 == 1}}profiler-odd{{/if}}" data-timing-id="${s.ParentTimingId}">
     <td class="profiler-info">
       <div>${s.ParentTimingName}</div>
-      <div class="profiler-number"><span class="profiler-unit">T+</span>${MiniProfiler.formatDuration(s.StartMilliseconds)} <span class="profiler-unit">ms</span></div>
+      <div class="profiler-number">
+        ${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms (T+${MiniProfiler.formatDuration(s.StartMilliseconds)} ms)</span>
+      </div>
+      {{if s.FirstFetchDurationMilliseconds}}
+      <div>First Result: ${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>
+      {{/if}}
       <div>
         {{if s.IsDuplicate}}<span class="profiler-warning">DUPLICATE</span>{{/if}}
         ${s.CallType}${!s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType}
       </div>
-      <div title="{{if s.FirstFetchDurationMilliseconds}}first result fetched: ${s.FirstFetchDurationMilliseconds}ms{{/if}}">${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>
     </td>
     <td>
       <div class="query">
-        <pre class="profiler-stack-trace">${s.StackTraceSnippet}</pre>
+        <div class="profiler-stack-trace">${s.StackTraceSnippet}</div>
         <pre class="prettyprint lang-${s.CallType}"><code>${s.CommandString}</code></pre>
       </div>
     </td>

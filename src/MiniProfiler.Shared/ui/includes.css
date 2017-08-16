@@ -1,4 +1,4 @@
-.profiler-result,
+﻿.profiler-result,
 .profiler-queries {
   color: #555;
   line-height: 1;
@@ -51,7 +51,10 @@
   text-decoration: underline;
 }
 .profiler-result {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
+}
+.profiler-result .highlight {
+  animation: fadeIn 2s 1;
 }
 .profiler-result table.profiler-client-timings {
   margin-top: 10px;
@@ -72,10 +75,9 @@
   color: #aaaaaa !important;
 }
 .profiler-result pre,
-.profiler-result code,
-.profiler-result .profiler-number,
-.profiler-result .profiler-unit {
-  font-family: Consolas, monospace, serif;
+.profiler-result code {
+  font-family: Fira Code, Consolas, monospace, serif;
+  font-variant-ligatures: none;
 }
 .profiler-result .profiler-number {
   color: #111111;
@@ -119,6 +121,7 @@
 .profiler-result .profiler-custom-timing-overview {
   float: right;
   margin: 10px 0;
+  width: auto;
 }
 .profiler-result .profiler-custom-timing-overview td {
   white-space: nowrap;
@@ -143,26 +146,31 @@
   float: right;
 }
 .profiler-result .profiler-queries {
-  font-family: Helvetica, Arial, sans-serif;
+  border-radius: 5px;
+  background-color: #fff;
 }
 .profiler-result .profiler-queries .profiler-stack-trace {
-  margin-bottom: 15px;
+  padding-bottom: 3px;
+  color: #778;
+  /* border-botom: solid 1px #ebebeb; */
+  margin-bottom: 5px;
 }
 .profiler-result .profiler-queries pre {
-  font-family: Consolas, monospace, serif;
+  font-family: Fira Code, Consolas, monospace, serif;
+  font-variant-ligatures: none;
   white-space: pre-wrap;
 }
 .profiler-result .profiler-queries th {
-  background-color: #fff;
   border-bottom: 1px solid #555;
   font-weight: bold;
   padding: 8px;
   white-space: nowrap;
+  font-size: 14px;
 }
 .profiler-result .profiler-queries td {
   padding: 8px;
   text-align: left;
-  background-color: #fff;
+  border-bottom: solid 1px #efefef;
 }
 .profiler-result .profiler-queries td:first-child {
   width: 250px;
@@ -170,8 +178,8 @@
 .profiler-result .profiler-queries td:last-child {
   padding-right: 15px;
 }
-.profiler-result .profiler-queries .profiler-odd td {
-  background-color: #e5e5e5;
+.profiler-result .profiler-queries .profiler-odd {
+  background-color: #f5f5f5;
 }
 .profiler-result .profiler-queries .profiler-since-start,
 .profiler-result .profiler-queries .profiler-duration {
@@ -182,12 +190,12 @@
   margin-bottom: 5px;
   word-break: break-all;
 }
-.profiler-result .profiler-queries .profiler-gap-info,
-.profiler-result .profiler-queries .profiler-gap-info td {
-  background-color: #ccc;
+.profiler-result .profiler-queries .profiler-gap-info {
+  background-color: #ddd;
+  opacity: 0.8;
+  color: #000;
 }
-.profiler-result .profiler-queries .profiler-gap-info.query,
-.profiler-result .profiler-queries .profiler-gap-info td.query {
+.profiler-result .profiler-queries .profiler-gap-info .query {
   word-break: break-all;
 }
 .profiler-result .profiler-queries .profiler-gap-info .profiler-unit {
@@ -201,6 +209,7 @@
 }
 .profiler-result .profiler-queries .profiler-trivial-gap-container {
   text-align: center;
+  margin: 8px 0;
 }
 .profiler-result .profiler-queries .str {
   color: #800000;
@@ -253,6 +262,14 @@
 }
 .profiler-result .profiler-nuclear:hover {
   color: #f00;
+}
+@keyframes fadeIn {
+  from {
+    background-color: #FFB;
+  }
+  to {
+    background-color: none;
+  }
 }
 .profiler-results {
   z-index: 2147483643;
@@ -315,14 +332,18 @@
   border-bottom: 0;
   border-top: solid 1px #888888;
 }
+.profiler-results .profiler-button > .profiler-number {
+  font-family: Consolas, monospace, serif;
+}
+.profiler-results .profiler-button.new {
+  animation: fadeIn 2s 1;
+}
 .profiler-results .profiler-button,
 .profiler-results .profiler-controls {
   display: none;
   z-index: 2147483640;
   border-bottom: solid 1px #888888;
   background-color: #fff;
-  -webkit-animation: new-entry 5s 1;
-          animation: new-entry 5s 1;
   padding: 4px 7px;
   text-align: right;
   cursor: pointer;
@@ -330,6 +351,7 @@
 .profiler-results .profiler-button.profiler-button-active,
 .profiler-results .profiler-controls.profiler-button-active {
   background-color: maroon;
+  animation: none;
 }
 .profiler-results .profiler-button.profiler-button-active .profiler-number,
 .profiler-results .profiler-controls.profiler-button-active .profiler-number,
@@ -377,7 +399,7 @@
   border-bottom: 1px solid #ddd;
 }
 .profiler-results .profiler-popup .profiler-info .profiler-name {
-  font-size: 110%;
+  font-size: 1.1em;
   font-weight: bold;
 }
 .profiler-results .profiler-popup .profiler-info .profiler-name .profiler-overall-duration {
@@ -400,16 +422,14 @@
 .profiler-results .profiler-queries {
   display: none;
   z-index: 2147483643;
-  top: 30px;
-  left: 30px;
-  right: 30px;
+  top: 25px;
+  left: 25px;
+  right: 25px;
   position: fixed;
   overflow-y: auto;
   overflow-x: auto;
   background-color: #fff;
-}
-.profiler-results .profiler-queries th {
-  font-size: 17px;
+  max-height: calc(100vh - 50px);
 }
 .profiler-results.profiler-min .profiler-result {
   display: none;
@@ -426,11 +446,12 @@
   z-index: 2147483642;
   display: none;
   background: #000;
-  opacity: 0.7;
-  position: absolute;
+  opacity: 0.5;
   top: 0;
   left: 0;
   min-width: 100%;
+  position: fixed;
+  height: calc(100%);
 }
 .profiler-result-full .profiler-result {
   width: 950px;
@@ -522,20 +543,4 @@ table.profiler-results-index td {
 .profiler-results-none {
   color: #888;
   text-align: center;
-}
-@-webkit-keyframes new-entry {
-  0% {
-    background-color: #FFFAAA;
-  }
-  100% {
-    background-color: #FFF;
-  }
-}
-@keyframes new-entry {
-  0% {
-    background-color: #FFFAAA;
-  }
-  100% {
-    background-color: #FFF;
-  }
 }

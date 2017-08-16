@@ -262,7 +262,7 @@ var MiniProfiler = (function () {
         else
             result.appendTo(container);
 
-        var button = result.find('.profiler-button'),
+        var button = result.find('.profiler-button').addClass('new'),
             popup = result.find('.profiler-popup');
 
         // button will appear in corner with the total profiling duration - click to show details
@@ -333,18 +333,11 @@ var MiniProfiler = (function () {
             popupHide(theirButtons, visiblePopups);
 
             // before showing the one we clicked
-            popupShow(button, popup);
+            button.removeClass('new').addClass('profiler-button-active');
+            popupSetDimensions(button, popup);
+            popup.show();
+            popupPreventHorizontalScroll(popup);
         }
-    };
-
-    var popupShow = function (button, popup) {
-        button.addClass('profiler-button-active');
-
-        popupSetDimensions(button, popup);
-
-        popup.show();
-
-        popupPreventHorizontalScroll(popup);
     };
 
     var popupSetDimensions = function (button, popup) {
@@ -383,28 +376,19 @@ var MiniProfiler = (function () {
     };
 
     var resultRemove = function (result) {
-        var bg = $('.profiler-queries-bg'),
-            queries = result.find('.profiler-queries');
-        var hideQueries = bg.is(':visible') && queries.is(':visible');
-        if (hideQueries) {
+        var bg = $('.profiler-queries-bg');
+        if (bg.is(':visible') && result.find('.profiler-queries').is(':visible')) {
             bg.remove();
         }
         result.remove();
     }
 
     var queriesShow = function (link, result) {
-
-        var px = 30,
-            win = $(window),
-            height = win.height() - 2 * px,
-            queries = result.find('.profiler-queries');
+        var queries = result.find('.profiler-queries');
 
         // opaque background
-        $('<div class="profiler-queries-bg"/>').appendTo('body').css({ 'height': $(document).height() }).show();
-
-        // center the queries and ensure long content is scrolled
-        queries.css({ 'max-height': height });
-
+        $('<div class="profiler-queries-bg"/>').appendTo('body').show();
+        
         // have to show everything before we can get a position for the first query
         queries.show();
 
@@ -416,57 +400,10 @@ var MiniProfiler = (function () {
 
     var queriesScrollIntoView = function (link, queries, whatToScroll) {
         var id = link.closest('tr').attr('data-timing-id'),
-            cells = queries.find('tr[data-timing-id="' + id + '"] td');
+            rows = queries.find('tr[data-timing-id="' + id + '"]').addClass('highlight');
 
         // ensure they're in view
-        whatToScroll.scrollTop(whatToScroll.scrollTop() + cells.first().position().top - 100);
-
-        // highlight and then fade back to original bg color; do it ourselves to prevent any conflicts w/ jquery.UI or other implementations of Resig's color plugin
-        cells.each(function () {
-            var cell = $(this),
-                highlightHex = '#FFFFBB',
-                highlightRgb = getRGB(highlightHex),
-                originalRgb = getRGB(cell.css('background-color')),
-                getColorDiff = function (fx, i) {
-                    // adapted from John Resig's color plugin: http://plugins.jquery.com/project/color
-                    return Math.max(Math.min(parseInt((fx.pos * (originalRgb[i] - highlightRgb[i])) + highlightRgb[i]), 255), 0);
-                };
-
-            // we need to animate some other property to piggy-back on the step function, so I choose you, opacity!
-            cell.css({ 'opacity': 1, 'background-color': highlightHex })
-                .animate({ 'opacity': 1 }, { duration: 2000, step: function (now, fx) {
-                    fx.elem.style['backgroundColor'] = 'rgb(' + [getColorDiff(fx, 0), getColorDiff(fx, 1), getColorDiff(fx, 2)].join(',') + ')';
-                }
-                });
-        });
-    };
-
-    // Color Conversion functions from highlightFade
-    // By Blair Mitchelmore
-    // http://jquery.offput.ca/highlightFade/
-    // Parse strings looking for color tuples [255,255,255]
-    var getRGB = function (color) {
-        var result;
-
-        // Check if we're already dealing with an array of colors
-        if (color && color.constructor == Array && color.length == 3) return color;
-
-        // Look for rgb(num,num,num)
-        if (result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(color)) return [parseInt(result[1]), parseInt(result[2]), parseInt(result[3])];
-
-        // Look for rgb(num%,num%,num%)
-        if (result = /rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(color)) return [parseFloat(result[1]) * 2.55, parseFloat(result[2]) * 2.55, parseFloat(result[3]) * 2.55];
-
-        // Look for #a0b1c2
-        if (result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(color)) return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
-
-        // Look for #fff
-        if (result = /#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(color)) return [parseInt(result[1] + result[1], 16), parseInt(result[2] + result[2], 16), parseInt(result[3] + result[3], 16)];
-
-        // Look for rgba(0, 0, 0, 0) == transparent in Safari 3
-        if (result = /rgba\(0, 0, 0, 0\)/.exec(color)) return colors['transparent'];
-
-        return null;
+        whatToScroll.scrollTop(whatToScroll.scrollTop() + rows.position().top - 100);
     };
 
     // some elements want to be hidden on certain doc events
