@@ -64,6 +64,7 @@ namespace StackExchange.Profiling.Helpers
             return sb.ToString();
         }
 
+        private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings();
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
         {
             StringEscapeHandling = StringEscapeHandling.EscapeHtml
@@ -76,24 +77,24 @@ namespace StackExchange.Profiling.Helpers
         /// <param name="htmlEscape">Whether to HTML escape the output.</param>
         public static string ToJson(this MiniProfiler profiler, bool htmlEscape = false) =>
             profiler != default(object)
-            ? (htmlEscape ? JsonConvert.SerializeObject(profiler, htmlEscapeSettings) : JsonConvert.SerializeObject(profiler))
+            ? (htmlEscape ? JsonConvert.SerializeObject(profiler, htmlEscapeSettings) : JsonConvert.SerializeObject(profiler, defaultSettings))
             : null;
 
         /// <summary>
         /// Serializes <paramref name="o"/> to a JSON string.
         /// </summary>
-        /// <param name="o">the instance to serialise</param>
-        /// <returns>the resulting JSON object as a string</returns>
+        /// <param name="o">The instance to serialize.</param>
+        /// <returns>The resulting JSON object as a string.</returns>
         public static string ToJson(this object o) =>
-            o != null ? JsonConvert.SerializeObject(o) : null;
+            o != null ? JsonConvert.SerializeObject(o, defaultSettings) : null;
 
         /// <summary>
         /// Deserializes <paramref name="s"/> to an object of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">The type to deserialize to.</typeparam>
-        /// <param name="s">The string to deserialize</param>
-        /// <returns>The object resulting from the given string</returns>
+        /// <param name="s">The string to deserialize.</param>
+        /// <returns>The object resulting from the given string.</returns>
         public static T FromJson<T>(this string s) where T : class =>
-            !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s) : null;
+            !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s, defaultSettings) : null;
     }
 }
