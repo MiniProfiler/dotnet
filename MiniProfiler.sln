@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC4009
 		build.ps1 = build.ps1
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
+		nuget.config = nuget.config
 		Readme.md = Readme.md
 		semver.txt = semver.txt
 	EndProjectSection
@@ -31,11 +32,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.SqlS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.SqlServerCe", "src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj", "{0C9A1AA9-F25F-41DF-AF57-7B7B3EBF13DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Mvc5", "samples\Samples.Mvc5\Samples.Mvc5.csproj", "{C179CF56-7AC2-4340-8D43-2A3DCDB2E448}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5", "samples\Samples.Mvc5\Samples.Mvc5.csproj", "{C179CF56-7AC2-4340-8D43-2A3DCDB2E448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.AspNetCore", "samples\Samples.AspNetCore\Samples.AspNetCore.csproj", "{A3946CAB-4BF9-47C1-A517-104CD8D7F46C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore", "samples\Samples.AspNetCore\Samples.AspNetCore.csproj", "{A3946CAB-4BF9-47C1-A517-104CD8D7F46C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.AspNetCore", "src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj", "{6A2B5B70-1C32-482F-B5C6-0597E2D4E376}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.AspNetCore", "src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj", "{6A2B5B70-1C32-482F-B5C6-0597E2D4E376}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A510DBF-E85F-4D2C-B8F7-006DA31B3418}"
 	ProjectSection(SolutionItems) = preProject
@@ -55,7 +56,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Rave
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EntityFrameworkCore", "src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj", "{BC36D84D-F5C6-4E12-8BC7-2F1972A00635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProfiler.Providers.Redis", "src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj", "{56F62841-5B51-4CA5-9637-96F547DBCAF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Redis", "src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj", "{56F62841-5B51-4CA5-9637-96F547DBCAF2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Profilers.Redis.Tests", "tests\MiniProfiler.Providers.Redis.Tests\MiniProfiler.Profilers.Redis.Tests.csproj", "{E2379D6A-5683-4D68-94A4-E0BED3E55949}"
 EndProject
@@ -174,6 +175,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

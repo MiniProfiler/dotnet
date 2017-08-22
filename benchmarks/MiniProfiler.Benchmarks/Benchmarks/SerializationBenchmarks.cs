@@ -9,9 +9,9 @@ namespace Benchmarks
     [Config(typeof(Configs.Memory))]
     public class SerializationBenchmarks
     {
-        private static readonly MiniProfiler _simpleProfiler = new MiniProfiler("Simple");
+        private static readonly MiniProfiler _simpleProfiler = new MiniProfiler("Simple", new MiniProfilerBaseOptions());
         private static readonly string _simpleProfilerJson = _simpleProfiler.ToJson();
-        private static readonly MiniProfiler _complexProfiler = Utils.GetComplexProfiler();
+        private static readonly MiniProfiler _complexProfiler = Utils.GetComplexProfiler(new MiniProfilerBaseOptions());
         private static readonly string _complexProfilerJson = _complexProfiler.ToJson();
 
         [Benchmark(Description = "System.Ben Baseline")]

@@ -10,6 +10,8 @@ namespace StackExchange.Profiling
     [DataContract]
     public class CustomTiming : IDisposable
     {
+        private readonly MiniProfiler _profiler;
+        private readonly long _startTicks;
         private readonly decimal? _minSaveMs;
 
         /// <summary>
@@ -34,14 +36,11 @@ namespace StackExchange.Profiling
             Id = Guid.NewGuid();
             StartMilliseconds = profiler.GetRoundedMilliseconds(profiler.ElapsedTicks);
 
-            if (!MiniProfiler.Settings.ExcludeStackTraceSnippetFromCustomTimings)
+            if (!profiler.Options.ExcludeStackTraceSnippetFromCustomTimings)
             {
-                StackTraceSnippet = Helpers.StackTraceSnippet.Get();
+                StackTraceSnippet = Helpers.StackTraceSnippet.Get(profiler.Options);
             }
         }
-
-        private readonly MiniProfiler _profiler;
-        private readonly long _startTicks;
 
         /// <summary>
         /// Unique identifier for this <see cref="CustomTiming"/>.

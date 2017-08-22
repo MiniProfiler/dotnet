@@ -289,7 +289,7 @@ Order By Started";
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
+        /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
         public override List<Guid> GetUnviewedIds(string user)
         {
@@ -302,7 +302,7 @@ Order By Started";
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
+        /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
         public override async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {

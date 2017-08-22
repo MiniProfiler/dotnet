@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using StackExchange.Profiling.SqlFormatters;
-using StackExchange.Profiling.Storage;
 using System;
 
 namespace StackExchange.Profiling
@@ -8,7 +6,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Options for configuring MiniProfiler
     /// </summary>
-    public class MiniProfilerOptions
+    public class MiniProfilerOptions : MiniProfilerBaseOptions
     {
         /// <summary>
         /// Seta a function to control whether a given request should be profiled at all.
@@ -34,57 +32,6 @@ namespace StackExchange.Profiling
         /// Function to provide the unique user ID based on the request, to store MiniProfiler IDs user
         /// </summary>
         public Func<HttpRequest, string> UserIdProvider { get; set; }
-
-        /// <summary>
-        /// Understands how to save and load MiniProfilers. Used for caching between when
-        /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.
-        /// </summary>
-        /// <remarks>
-        /// The normal profiling session life-cycle is as follows:
-        /// 1) request begins
-        /// 2) profiler is started
-        /// 3) normal page/controller/request execution
-        /// 4) profiler is stopped
-        /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/>
-        /// 6) request ends
-        /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
-        ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
-        /// </remarks>
-        public IAsyncStorage Storage
-        {
-            get => MiniProfiler.Settings.Storage;
-            set => MiniProfiler.Settings.Storage = value;
-        }
-
-        /// <summary>
-        /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
-        /// </summary>
-        public ISqlFormatter SqlFormatter
-        {
-            get => MiniProfiler.Settings.SqlFormatter;
-            set => MiniProfiler.Settings.SqlFormatter = value;
-        }
-
-        /// <summary>
-        /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler
-        /// </summary>
-        /// <remarks>
-        /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
-        /// </remarks>
-        public IAsyncProfilerProvider ProfilerProvider
-        {
-            get => MiniProfiler.Settings.ProfilerProvider;
-            set => MiniProfiler.Settings.ProfilerProvider = value;
-        }
-
-        /// <summary>
-        /// The base path for all MiniProfiler Middleware requests, defaults to ~/mini-profiler-resources
-        /// </summary>
-        public string RouteBasePath
-        {
-            get => MiniProfiler.Settings.RouteBasePath;
-            set => MiniProfiler.Settings.RouteBasePath = value;
-        }
 
         /// <summary>
         /// Gets or sets the content directory subfolder to load custom template overrides from.

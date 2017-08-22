@@ -16,10 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <c>null</c>.</exception>
         public static IMiniProfilerBuilder AddEntityFramework(this IMiniProfilerBuilder builder)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
             builder.Services.AddSingleton<IMiniProfilerDiagnosticListener, RelationalDiagnosticListener>();
 

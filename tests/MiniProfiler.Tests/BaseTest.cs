@@ -12,6 +12,8 @@ namespace Tests
     [Collection("Storage")]
     public abstract class BaseTest
     {
+        public const string NonParallel = nameof(NonParallel);
+
         /// <summary>
         /// Amount of time each <see cref="MiniProfilerExtensions.Step"/> will take for unit tests.
         /// </summary>
@@ -23,23 +25,20 @@ namespace Tests
         public const string DefaultRequestUrl = "http://localhost/Test.aspx";
 
         protected IAsyncStorage _testStorage { get; set; }
-        protected IAsyncProfilerProvider _provider { get; set; }
+        protected MiniProfilerOptions Options { get; set; }
 
         // Reset for each inheritor
         protected BaseTest()
         {
-            // instance per class, so multiple tests swapping the provider don't cause issues here
-            // it's not a threading issue of the profiler, but rather tests swapping providers
-            _provider = new DefaultProfilerProvider();
-            ResetProviders();
-        }
-
-        public void ResetProviders()
-        {
-            // allows us to manually set ticks during tests
-            MiniProfiler.Settings.StopwatchProvider = () => new UnitTestStopwatch();
-            MiniProfiler.Settings.ProfilerProvider = new DefaultProfilerProvider();
-            MiniProfiler.Settings.Storage = new MemoryCacheStorage(TimeSpan.FromDays(1));
+            // Instance per class, so multiple tests swapping the provider don't cause issues here
+            // It's not a threading issue of the profiler, but rather tests swapping providers
+            Options = new MiniProfilerOptions()
+            {
+                StopwatchProvider = () => new UnitTestStopwatch(),
+                Storage = new MemoryCacheStorage(TimeSpan.FromDays(1))
+            };
+            // To reset the static specifically, can probably remove this...
+            Options.SetProvider(new DefaultProfilerProvider()); 
         }
 
         /// <summary>
@@ -48,7 +47,7 @@ namespace Tests
         /// <param name="url">The url.</param>
         /// <param name="startAndStopProfiler">The start And Stop Profiler.</param>
         /// <returns>the request</returns>
-        public static IDisposable GetRequest(string url = DefaultRequestUrl, bool startAndStopProfiler = true)
+        public IDisposable GetRequest(string url = DefaultRequestUrl, bool startAndStopProfiler = true)
         {
             var result = new Subtext.TestLibrary.HttpSimulator();
 
@@ -56,8 +55,8 @@ namespace Tests
 
             if (startAndStopProfiler)
             {
-                MiniProfiler.Start();
-                result.OnBeforeDispose += () => MiniProfiler.Stop();
+                var mp = Options.StartProfiler();
+                result.OnBeforeDispose += () => mp.Stop();
             }
 
             return result;
@@ -87,7 +86,7 @@ namespace Tests
                 {
                     using (result.Step("Depth " + curDepth))
                     {
-                        Increment(stepsEachTakeMilliseconds);
+                        result.Increment(stepsEachTakeMilliseconds);
                         step();
                     }
                 }
@@ -95,7 +94,7 @@ namespace Tests
 
             using (GetRequest(url, startAndStopProfiler: false))
             {
-                result = MiniProfiler.Start();
+                result = Options.StartProfiler(url);
                 step();
 
                 if (_testStorage != null)
@@ -103,7 +102,7 @@ namespace Tests
                     result.Storage = _testStorage;
                 }
 
-                MiniProfiler.Stop();
+                result.Stop();
             }
 
             return result;
@@ -134,7 +133,7 @@ namespace Tests
                 {
                     using (result.Step("Depth " + curDepth))
                     {
-                        Increment(stepsEachTakeMilliseconds);
+                        result.Increment(stepsEachTakeMilliseconds);
                         step();
                     }
                 }
@@ -142,7 +141,7 @@ namespace Tests
 
             using (GetRequest(url, startAndStopProfiler: false))
             {
-                result = MiniProfiler.Start();
+                result = Options.StartProfiler();
                 step();
 
                 if (_testStorage != null)
@@ -150,29 +149,11 @@ namespace Tests
                     result.Storage = _testStorage;
                 }
 
-                await MiniProfiler.StopAsync().ConfigureAwait(false);
+                await result.StopAsync().ConfigureAwait(false);
             }
 
             return result;
         }
-
-        /// <summary>
-        /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
-        /// </summary>
-        /// <param name="milliseconds">The milliseconds.</param>
-        public void Increment(int milliseconds = StepTimeMilliseconds)
-        {
-            var mp = _provider?.GetCurrentProfiler() ?? MiniProfiler.Current;
-            var sw = (UnitTestStopwatch)mp.Stopwatch;
-            sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
-        }
-
-        /// <summary>
-        /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
-        /// </summary>
-        /// <param name="milliseconds">The milliseconds.</param>
-        public Task IncrementAsync(int milliseconds = StepTimeMilliseconds) =>
-            Task.Run(() => Increment(milliseconds));
 
         public void AssertProfilersAreEqual(MiniProfiler mp1, MiniProfiler mp2)
         {
@@ -269,5 +250,33 @@ namespace Tests
 
         private DateTime TrimToDecisecond(DateTime dateTime) =>
             new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
+
+        protected static void AssertNear(double expected, decimal? actual, double maxDelta = 0.0001)
+        {
+            Assert.NotNull(actual);
+            Assert.InRange((double)actual.Value, expected - maxDelta, expected + maxDelta);
+        }
+    }
+
+    internal static class TestExtensions
+    {
+        /// <summary>
+        /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
+        /// </summary>
+        /// <param name="profiler">The profile to increment.</param>
+        /// <param name="milliseconds">The milliseconds.</param>
+        public static void Increment(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds)
+        {
+            var sw = (UnitTestStopwatch)profiler.GetStopwatch();
+            sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
+        }
+
+        /// <summary>
+        /// Increments the currently running <see cref="MiniProfiler.Stopwatch"/> by <paramref name="milliseconds"/>.
+        /// </summary>
+        /// <param name="profiler">The profile to increment.</param>
+        /// <param name="milliseconds">The milliseconds.</param>
+        public static Task IncrementAsync(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
+            Task.Run(() => Increment(profiler, milliseconds));
     }
 }

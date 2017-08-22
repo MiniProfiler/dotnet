@@ -4,6 +4,7 @@ using System.Web.WebPages;
 
 namespace StackExchange.Profiling.Mvc
 {
+#pragma warning disable RCS1175 // Unused this parameter.
     /// <summary>
     /// Used to provide MVC-specific extensions for gathering <see cref="ClientTimingHelper"/> information.
     /// </summary>
@@ -43,4 +44,5 @@ namespace StackExchange.Profiling.Mvc
         public static IHtmlString TimeScript(this WebPageBase page, string name, string html) =>
             new HtmlString(ClientTimingHelper.TimeScript(name, html));
     }
+#pragma warning restore RCS1175 // Unused this parameter.
 }

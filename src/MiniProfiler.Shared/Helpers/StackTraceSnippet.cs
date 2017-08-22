@@ -1,8 +1,6 @@
 ﻿using StackExchange.Profiling.Internal;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text;
 
 namespace StackExchange.Profiling.Helpers
 {
@@ -14,15 +12,35 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Gets the current formatted and filtered stack trace.
         /// </summary>
+        /// <param name="options">The options to use for this StackTrace fetch.</param>
         /// <returns>Space separated list of methods</returns>
-        public static string Get()
+        public static string Get(MiniProfilerBaseOptions options)
         {
+            if (options.StackMaxLength <= 0)
+            {
+                return string.Empty;
+            }
+
+            bool ShouldExcludeType(MethodBase method)
+            {
+                var t = method.DeclaringType;
+                while (t != null)
+                {
+                    if (options.ExcludedTypes.Contains(t.Name))
+                        return true;
+
+                    t = t.DeclaringType;
+                }
+                return false;
+            }
+
 #if !NETSTANDARD1_5
             var frames = new StackTrace().GetFrames();
 #else // The above works in netstandard2.0 via https://github.com/dotnet/corefx/pull/12527
             StackFrame[] frames = null;
 #endif
-            if (frames == null || MiniProfiler.Settings.StackMaxLength <= 0)
+
+            if (frames == null)
             {
                 return string.Empty;
             }
@@ -34,7 +52,7 @@ namespace StackExchange.Profiling.Helpers
             for (int i = 0; i < frames.Length; i++)
             {
                 var method = frames[i].GetMethod();
-                if (stackLength >= MiniProfiler.Settings.StackMaxLength
+                if (stackLength >= options.StackMaxLength
                     // ASP.NET: no need to continue up the chain
                     || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
                     || (method.Module.Name == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
@@ -44,8 +62,8 @@ namespace StackExchange.Profiling.Helpers
                     break;
                 }
                 else if (ShouldExcludeType(method)
-                    || MiniProfiler.Settings.AssembliesToExclude.Contains(method.Module.Assembly.GetName().Name)
-                    || MiniProfiler.Settings.MethodsToExclude.Contains(method.Name))
+                    || options.ExcludedAssemblies.Contains(method.Module.Assembly.GetName().Name)
+                    || options.ExcludedMethods.Contains(method.Name))
                 {
                     frames[i] = null;
                 }
@@ -70,21 +88,6 @@ namespace StackExchange.Profiling.Helpers
             }
 
             return sb.ToStringRecycle();
-        }
-
-        private static bool ShouldExcludeType(MethodBase method)
-        {
-            var t = method.DeclaringType;
-
-            while (t != null)
-            {
-                if (MiniProfiler.Settings.TypesToExclude.Contains(t.Name))
-                    return true;
-
-                t = t.DeclaringType;
-            }
-
-            return false;
         }
     }
 }

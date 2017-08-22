@@ -119,7 +119,7 @@ namespace Samples.Mvc5.Controllers
         public ActionResult About()
         {
             // prevent this specific route from being profiled
-            MiniProfiler.Stop(true);
+            MiniProfiler.Current?.Stop(true);
 
             return View();
         }

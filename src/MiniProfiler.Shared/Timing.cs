@@ -159,10 +159,10 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="DurationMilliseconds"/> is less than the configured
-        /// <see cref="MiniProfiler.Settings.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
+        /// <see cref="MiniProfilerBaseOptions.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
         [IgnoreDataMember]
-        public bool IsTrivial => DurationMilliseconds <= MiniProfiler.Settings.TrivialDurationThresholdMilliseconds;
+        public bool IsTrivial => DurationMilliseconds <= Profiler.Options.TrivialDurationThresholdMilliseconds;
 
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.

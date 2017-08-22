@@ -18,12 +18,12 @@ namespace StackExchange.Profiling.Internal
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <param name="isAuthorized">Whether the current user is authorized for MiniProfiler.</param>
         /// <param name="requestIDs">The request IDs to fetch for this render.</param>
-        /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfiler.Settings.PopupRenderPosition"/>).</param>
-        /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTrivial"/>).</param>
-        /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfiler.Settings.PopupShowTimeWithChildren"/>).</param>
-        /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfiler.Settings.PopupMaxTracesToShow"/>).</param>
-        /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfiler.Settings.ShowControls"/>).</param>
-        /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfiler.Settings.PopupStartHidden"/>).</param>
+        /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).</param>
+        /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTrivial"/>).</param>
+        /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTimeWithChildren"/>).</param>
+        /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerBaseOptions.PopupMaxTracesToShow"/>).</param>
+        /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfilerBaseOptions.ShowControls"/>).</param>
+        /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfilerBaseOptions.PopupStartHidden"/>).</param>
         public static string RenderIncludes(
             this MiniProfiler profiler,
             string path,
@@ -37,13 +37,14 @@ namespace StackExchange.Profiling.Internal
             bool? startHidden = null)
         {
             var sb = StringBuilderCache.Get();
+            var options = profiler.Options;
 
             sb.Append("<script async=\"async\" id=\"mini-profiler\" src=\"");
             sb.Append(path);
             sb.Append("includes.js?v=");
-            sb.Append(MiniProfiler.Settings.VersionHash);
+            sb.Append(options.VersionHash);
             sb.Append("\" data-version=\"");
-            sb.Append(MiniProfiler.Settings.VersionHash);
+            sb.Append(options.VersionHash);
             sb.Append("\" data-path=\"");
             sb.Append(path);
             sb.Append("\" data-current-id=\"");
@@ -65,44 +66,44 @@ namespace StackExchange.Profiling.Internal
             }
 
             sb.Append("\" data-position=\"");
-            sb.Append((position ?? MiniProfiler.Settings.PopupRenderPosition).ToString().ToLower());
+            sb.Append((position ?? options.PopupRenderPosition).ToString().ToLower());
             sb.Append('"');
 
             if (isAuthorized)
             {
                 sb.Append(" data-authorized=\"true\"");
             }
-            if (showTrivial ?? MiniProfiler.Settings.PopupShowTrivial)
+            if (showTrivial ?? options.PopupShowTrivial)
             {
                 sb.Append(" data-trivial=\"true\"");
             }
-            if (showTimeWithChildren ?? MiniProfiler.Settings.PopupShowTimeWithChildren)
+            if (showTimeWithChildren ?? options.PopupShowTimeWithChildren)
             {
                 sb.Append(" data-children=\"true\"");
             }
-            if (showControls ?? MiniProfiler.Settings.ShowControls)
+            if (showControls ?? options.ShowControls)
             {
                 sb.Append(" data-controls=\"true\"");
             }
-            if (startHidden ?? MiniProfiler.Settings.PopupStartHidden)
+            if (startHidden ?? options.PopupStartHidden)
             {
                 sb.Append(" data-start-hidden=\"true\"");
             }
 
             sb.Append(" data-max-traces=\"");
-            sb.Append((maxTracesToShow ?? MiniProfiler.Settings.PopupMaxTracesToShow).ToString(CultureInfo.InvariantCulture));
+            sb.Append((maxTracesToShow ?? options.PopupMaxTracesToShow).ToString(CultureInfo.InvariantCulture));
 
             sb.Append("\" data-toggle-shortcut=\"");
-            sb.Append(MiniProfiler.Settings.PopupToggleKeyboardShortcut);
+            sb.Append(options.PopupToggleKeyboardShortcut);
 
             sb.Append("\" data-trivial-milliseconds=\"");
-            sb.Append(MiniProfiler.Settings.TrivialDurationThresholdMilliseconds.ToString(CultureInfo.InvariantCulture));
+            sb.Append(options.TrivialDurationThresholdMilliseconds.ToString(CultureInfo.InvariantCulture));
 
-            if (MiniProfiler.Settings.IgnoredDuplicateExecuteTypes.Count > 0)
+            if (options.IgnoredDuplicateExecuteTypes.Count > 0)
             {
                 sb.Append("\" data-ignored-duplicate-execute-types=\"");
                 var i = 0;
-                foreach (var executeType in MiniProfiler.Settings.IgnoredDuplicateExecuteTypes)
+                foreach (var executeType in options.IgnoredDuplicateExecuteTypes)
                 {
                     if (i > 0)
                     {

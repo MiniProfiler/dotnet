@@ -20,16 +20,16 @@ namespace Tests.RavenDB
         private IDocumentStore GetStore() =>
             new DocumentStore() { Url = "http://localhost:8080" }.Initialize().AddMiniProfiler();
 
-        [Fact(Skip ="Disabled until we have a is-RavenDB-running control in place")]
-        public void BasicQueryTest()
-        {
-            var mp = MiniProfiler.Start();
-            using (var store = GetStore())
-            {
-                var products = store.DatabaseCommands.GetIndex("products");
-            }
-            Assert.True(mp.Head.HasCustomTimings);
-            MiniProfiler.Stop(false);
-        }
+        //[Fact(Skip ="Disabled until we have a is-RavenDB-running control in place")]
+        //public void BasicQueryTest()
+        //{
+        //    var mp = MiniProfiler.Start();
+        //    using (var store = GetStore())
+        //    {
+        //        var products = store.DatabaseCommands.GetIndex("products");
+        //    }
+        //    Assert.True(mp.Head.HasCustomTimings);
+        //    mp.Stop(false);
+        //}
     }
 }

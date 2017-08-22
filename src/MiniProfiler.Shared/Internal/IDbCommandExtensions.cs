@@ -31,9 +31,9 @@ namespace StackExchange.Profiling.Internal
             var commandText = command.GetReadableCommand();
             var parameters = command.GetParameters();
 
-            if (MiniProfiler.Settings.SqlFormatter != null)
+            if (profiler.Options.SqlFormatter != null)
             {
-                commandText = MiniProfiler.Settings.SqlFormatter.GetFormattedSql(commandText, parameters, command);
+                commandText = profiler.Options.SqlFormatter.GetFormattedSql(commandText, parameters, command);
             }
 
             return profiler.CustomTiming(customType, commandText, commandType);
