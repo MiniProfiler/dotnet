@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling;
-
 using Xunit;
+using Xunit.Abstractions;
 using StackExchange.Profiling.Internal;
 
 namespace Tests.Async
@@ -12,8 +12,9 @@ namespace Tests.Async
     [Collection(NonParallel)]
     public class AsyncRealTimeTests : BaseTest
     {
-        public AsyncRealTimeTests()
+        public AsyncRealTimeTests(ITestOutputHelper output) : base(output)
         {
+            Options.SetProvider(new DefaultProfilerProvider());
             Options.StopwatchProvider = StopwatchWrapper.StartNew;
         }
 
@@ -29,8 +30,6 @@ namespace Tests.Async
                 timing30 = null,
                 timing31 = null;
 
-            // Act
-
             // Add 100ms to root
             await Task.Delay(100).ConfigureAwait(false);
 
@@ -39,12 +38,13 @@ namespace Tests.Async
                 Task.Run(async () =>
                 {
                     // timing10: 100 + 100 = 200 ms
-                    using (timing10 = profiler.Step("step1.0 (Task.Run)"))
+                    using (timing10 = MiniProfiler.Current.Step("step1.0 (Task.Run)"))
                     {
                         await Task.Delay(100).ConfigureAwait(false);
+
                         await Task.Run(async () =>
                         {
-                            using (timing11 = profiler.Step("step1.1 (Task.Run)"))
+                            using (timing11 = MiniProfiler.Current.Step("step1.1 (Task.Run)"))
                             {
                                 await Task.Delay(100).ConfigureAwait(false);
                             }
@@ -54,12 +54,13 @@ namespace Tests.Async
                 Task.Factory.StartNew(async () =>
                 {
                     // timing20: 200 + 100 = 300 ms
-                    using (timing20 = profiler.Step("step2.0 (Task.Factory.StartNew)"))
+                    using (timing20 = MiniProfiler.Current.Step("step2.0 (Task.Factory.StartNew)"))
                     {
                         await Task.Delay(200).ConfigureAwait(false);
+
                         await Task.Run(async () =>
                         {
-                            using (timing21 = profiler.Step("step2.1 (Task.Run)"))
+                            using (timing21 = MiniProfiler.Current.Step("step2.1 (Task.Run)"))
                             {
                                 await Task.Delay(100).ConfigureAwait(false);
                             }
@@ -70,12 +71,13 @@ namespace Tests.Async
                 Task.Factory.StartNew(async () =>
                 {
                     // timing30: 300 + 100 = 400 ms
-                    using (timing30 = profiler.Step("step3.0 (Task.Factory.StartNew:LongRunning)"))
+                    using (timing30 = MiniProfiler.Current.Step("step3.0 (Task.Factory.StartNew:LongRunning)"))
                     {
                         await Task.Delay(300).ConfigureAwait(false);
+
                         await Task.Run(async () =>
                         {
-                            using (timing31 = profiler.Step("step3.1 (Task.Run)"))
+                            using (timing31 = MiniProfiler.Current.Step("step3.1 (Task.Run)"))
                             {
                                 await Task.Delay(100).ConfigureAwait(false);
                             }
@@ -89,8 +91,8 @@ namespace Tests.Async
 
             profiler.Stop();
 
-            // Assert
-            //Console.WriteLine(profiler.RenderPlainText());
+            // Full diagnostic output
+            Output.WriteLine(profiler.RenderPlainText());
 
             // 100ms + longest running task (step3.0 with 300 + 100 ms) = 500ms
             AssertNear(500, profiler.DurationMilliseconds, 50);
@@ -132,8 +134,7 @@ namespace Tests.Async
 
             profiler.Stop();
 
-            // Assert
-            //Console.WriteLine(profiler.RenderPlainText());
+            Output.WriteLine(profiler.RenderPlainText());
 
             // The total run time is non-deterministic and depends
             // on the system and the scheduler, so we can only assert

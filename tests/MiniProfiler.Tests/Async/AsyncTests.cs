@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling;
-
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests.Async
 {
@@ -19,6 +19,11 @@ namespace Tests.Async
     [Collection(NonParallel)]
     public class AsyncTests : BaseTest
     {
+        public AsyncTests(ITestOutputHelper output) : base(output)
+        {
+            Options.SetProvider(new DefaultProfilerProvider());
+        }
+
         [Fact]
         public async Task SimpleAsync()
         {
@@ -58,11 +63,7 @@ namespace Tests.Async
 
             profiler.Stop();
 
-            //Console.WriteLine(profiler.RenderPlainText());
-            //   root = 330.9ms
-            //  > step2.0 = 107.6ms
-            //  > step1.0 = 212.1ms
-            //  >> step1.1 = 107ms
+            Output.WriteLine(profiler.RenderPlainText());
         }
 
         [Fact]
@@ -165,8 +166,7 @@ namespace Tests.Async
 
             profiler.Stop();
 
-            // Assert
-            //Console.WriteLine(profiler.RenderPlainText());
+            Output.WriteLine(profiler.RenderPlainText());
 
             // 1ms added to root
             AssertNear(5, profiler.DurationMilliseconds, maxDelta: 2);
