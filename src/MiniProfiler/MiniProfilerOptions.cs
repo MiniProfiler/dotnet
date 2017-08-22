@@ -14,12 +14,12 @@ namespace StackExchange.Profiling
     public class MiniProfilerOptions : MiniProfilerBaseOptions
     {
         /// <summary>
-        /// Creates a new <see cref="MiniProfilerOptions"/> with <see cref="WebRequestProfilerProvider"/> as the provider.
+        /// Creates a new <see cref="MiniProfilerOptions"/> with <see cref="AspNetRequestProvider"/> as the provider.
         /// </summary>
         public MiniProfilerOptions() : base()
         {
             // The default profiler for old ASP.NET (non-Core) is the WebRequestProfilerProvider
-            this.SetProvider(new WebRequestProfilerProvider());
+            this.SetProvider(new AspNetRequestProvider());
         }
 
         /// <summary>
