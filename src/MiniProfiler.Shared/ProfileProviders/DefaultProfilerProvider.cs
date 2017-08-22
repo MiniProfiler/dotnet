@@ -66,7 +66,7 @@ namespace StackExchange.Profiling
             }
             await SaveAsync(profiler).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Calls <see cref="IAsyncStorage.Save(MiniProfiler)"/> to save the current
         /// profiler using the current storage settings. 

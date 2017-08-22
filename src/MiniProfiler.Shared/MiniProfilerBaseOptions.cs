@@ -198,7 +198,7 @@ namespace StackExchange.Profiling
         /// Set via <see cref="MiniProfilerBaseOptionsExtensions.SetProvider{T}(T, IAsyncProfilerProvider, bool)"/>.
         /// </summary>
         public static IAsyncProfilerProvider CurrentProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
-        
+
         /// <summary>
         /// Allows switching out stopwatches for unit testing.
         /// </summary>
@@ -222,6 +222,7 @@ namespace StackExchange.Profiling
         /// Extension method to support chaining while retaining the derivative options type.
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
+        /// <param name="options">The options to set the provider on.</param>
         /// <param name="provider">The provider to use.</param>
         /// <param name="setAsCurrentProvider">Whether it should be set as the provider for getting <see cref="MiniProfiler.Current"/>.</param>
         public static T SetProvider<T>(this T options, IAsyncProfilerProvider provider, bool setAsCurrentProvider = true) where T : MiniProfilerBaseOptions
@@ -238,6 +239,7 @@ namespace StackExchange.Profiling
         /// Excludes an assembly from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedAssemblies"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
+        /// <param name="options">The options to exclude the assembly on.</param>
         /// <param name="assembly">The assembly name to exclude from stack traces.</param>
         public static T ExcludeAssembly<T>(this T options, string assembly) where T : MiniProfilerBaseOptions
         {
@@ -249,6 +251,7 @@ namespace StackExchange.Profiling
         /// Excludes a method from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedMethods"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
+        /// <param name="options">The options to exclude the method on.</param>
         /// <param name="method">The method name to exclude from stack traces.</param>
         public static T ExcludeMethod<T>(this T options, string method) where T : MiniProfilerBaseOptions
         {
@@ -260,6 +263,7 @@ namespace StackExchange.Profiling
         /// Excludes a type from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedTypes"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
+        /// <param name="options">The options to exclude the type on.</param>
         /// <param name="type">The type name to exclude from stack traces.</param>
         public static T ExcludeType<T>(this T options, string type) where T : MiniProfilerBaseOptions
         {

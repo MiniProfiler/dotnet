@@ -45,7 +45,7 @@ namespace Samples.AspNetCore
 
                 // Control storage
                 options.Storage = new MemoryCacheStorage(services.BuildServiceProvider().GetService<IMemoryCache>(), TimeSpan.FromMinutes(60));
-                
+
                 // Control which SQL formatter to use, InlineFormatter is the default
                 //options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 

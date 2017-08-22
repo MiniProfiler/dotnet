@@ -38,7 +38,7 @@ namespace Tests
                 Storage = new MemoryCacheStorage(TimeSpan.FromDays(1))
             };
             // To reset the static specifically, can probably remove this...
-            Options.SetProvider(new DefaultProfilerProvider()); 
+            Options.SetProvider(new DefaultProfilerProvider());
         }
 
         /// <summary>

@@ -238,7 +238,7 @@ namespace StackExchange.Profiling
             {
                 return false;
             }
-            await Options.ProfilerProvider.StoppedAsync(this, discardResults);
+            await Options.ProfilerProvider.StoppedAsync(this, discardResults).ConfigureAwait(false);
             return true;
         }
 
@@ -339,7 +339,7 @@ namespace StackExchange.Profiling
         }
 
         internal IDisposable IgnoreImpl() => new Suppression(this);
-        
+
         /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency, rounded to one decimal place.
         /// </summary>

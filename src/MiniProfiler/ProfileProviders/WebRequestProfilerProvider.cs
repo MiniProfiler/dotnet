@@ -48,7 +48,7 @@ namespace StackExchange.Profiling
 
             foreach (var ignored in options.IgnoredPaths)
             {
-                if (relativePath.Contains((ignored ?? string.Empty), StringComparison.InvariantCultureIgnoreCase))
+                if (relativePath.Contains(ignored ?? string.Empty, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return null;
                 }
