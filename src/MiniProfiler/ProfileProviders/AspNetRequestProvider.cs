@@ -8,11 +8,10 @@ using StackExchange.Profiling.Internal;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// HttpContext based profiler provider.  This is the default provider to use in a web context.
-    /// The current profiler is associated with a HttpContext.Current ensuring that profilers are 
-    /// specific to a individual HttpRequest.
+    /// For ASP.NET NON-Core applications, the MiniPofiler v3 and below style, using <see cref="HttpContext.Items"/> for storage.
+    /// This is a <see cref="HttpContext"/>-based profiler provider.
     /// </summary>
-    public class WebRequestProfilerProvider : DefaultProfilerProvider
+    public class AspNetRequestProvider : DefaultProfilerProvider
     {
         private const string CacheKey = ":mini-profiler:";
         /// <summary>
@@ -41,7 +40,7 @@ namespace StackExchange.Profiling
             var path = request?.Path;
             if (path == null) return null;
 
-            // If the application is hosted in root directory (appPath.Length == 1), return entire path
+            // If the application is hosted in the root directory (appPath.Length == 1), return entire path
             // Otherwise, return the substring after the path (e.g. a virtual directory)
             // This is for paths like /virtual/path.axd/more/path/omg
             var relativePath = path.Length < request.ApplicationPath.Length || request.ApplicationPath.Length == 1 ? path : path.Substring(request.ApplicationPath.Length);

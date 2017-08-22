@@ -9,7 +9,7 @@ namespace Tests
     {
         public WebRequestProfilerTests()
         {
-            Options.SetProvider(new WebRequestProfilerProvider());
+            Options.SetProvider(new AspNetRequestProvider());
         }
 
         public void Dispose()
