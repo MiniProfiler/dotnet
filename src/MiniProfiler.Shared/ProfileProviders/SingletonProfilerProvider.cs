@@ -12,7 +12,7 @@ namespace StackExchange.Profiling
         private static MiniProfiler _profiler;
 
         /// <summary>
-        /// The name says it all
+        /// The current profiler, 1 instance!
         /// </summary>
         public MiniProfiler CurrentProfiler => _profiler;
 
@@ -20,6 +20,7 @@ namespace StackExchange.Profiling
         /// Starts a new profiling session.
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
+        /// <param name="options">The options to use for this profiler, including all downstream commands.</param>
         public MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options) =>
             _profiler = new MiniProfiler(profilerName, options);
 
