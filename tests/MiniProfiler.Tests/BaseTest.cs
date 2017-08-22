@@ -4,8 +4,10 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -27,6 +29,14 @@ namespace Tests
         protected IAsyncStorage _testStorage { get; set; }
         protected MiniProfilerOptions Options { get; set; }
 
+        protected ITestOutputHelper Output { get; }
+
+        protected BaseTest(ITestOutputHelper output) : this()
+        {
+            ThreadPool.SetMinThreads(50, 50);
+            Output = output;
+        }
+
         // Reset for each inheritor
         protected BaseTest()
         {
@@ -38,7 +48,7 @@ namespace Tests
                 Storage = new MemoryCacheStorage(TimeSpan.FromDays(1))
             };
             // To reset the static specifically, can probably remove this...
-            Options.SetProvider(new DefaultProfilerProvider());
+            //Options.SetProvider(new DefaultProfilerProvider());
         }
 
         /// <summary>
@@ -251,10 +261,11 @@ namespace Tests
         private DateTime TrimToDecisecond(DateTime dateTime) =>
             new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
 
-        protected static void AssertNear(double expected, decimal? actual, double maxDelta = 0.0001)
+        protected void AssertNear(double expected, decimal? actual, double maxDelta = 0.0001)
         {
             Assert.NotNull(actual);
             Assert.InRange((double)actual.Value, expected - maxDelta, expected + maxDelta);
+            Output.WriteLine($"Assert.Near (Actual = {actual.Value}, Expected = {expected}, Tolerance = {maxDelta}");
         }
     }
 

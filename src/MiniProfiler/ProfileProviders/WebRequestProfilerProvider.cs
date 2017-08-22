@@ -44,7 +44,7 @@ namespace StackExchange.Profiling
             // If the application is hosted in root directory (appPath.Length == 1), return entire path
             // Otherwise, return the substring after the path (e.g. a virtual directory)
             // This is for paths like /virtual/path.axd/more/path/omg
-            var relativePath = request.ApplicationPath.Length == 1 ? path : path.Substring(request.ApplicationPath.Length);
+            var relativePath = path.Length < request.ApplicationPath.Length || request.ApplicationPath.Length == 1 ? path : path.Substring(request.ApplicationPath.Length);
 
             foreach (var ignored in options.IgnoredPaths)
             {
