@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Samples.AspNetCore.Models;
-using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
 using System;
 using System.IO;
@@ -34,45 +33,21 @@ namespace Samples.AspNetCore
         {
             // Add framework services.
             services.AddDbContext<SampleContext>();
-
             services.AddMvc();
+            services.AddMemoryCache();
             // Add MiniProfiler services
             // If using Entity Framework Core, add profiling for it as well
             // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
-            services.AddMiniProfiler()
-                    .AddEntityFramework();
-
-            services.AddMemoryCache();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IMemoryCache cache)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            app.UseStaticFiles();
-
-            app.UseMiniProfiler(options =>
+            services.AddMiniProfiler(options =>
             {
                 // Path to use for profiler URLs
                 options.RouteBasePath = "~/profiler";
 
-                // Control which SQL formatter to use
-                options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
-
                 // Control storage
-                options.Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60));
+                options.Storage = new MemoryCacheStorage(services.BuildServiceProvider().GetService<IMemoryCache>(), TimeSpan.FromMinutes(60));
+                
+                // Control which SQL formatter to use, InlineFormatter is the default
+                //options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
                 //options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
@@ -87,7 +62,28 @@ namespace Samples.AspNetCore
                 // Optionally swap out the entire profiler provider, if you want
                 // The default handles async and works fine for almost all appliations
                 //options.ProfilerProvider = new MyProfilerProvider();
-            });
+            }).AddEntityFramework();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            app.UseMiniProfiler();
+
+            app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {

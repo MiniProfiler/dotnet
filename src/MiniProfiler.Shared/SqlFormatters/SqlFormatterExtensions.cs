@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.SqlFormatters
     public static class SqlFormatterExtensions
     {
         /// <summary>
-        /// Format sql using the FormatSql method available in the current <see cref="MiniProfiler.Settings.SqlFormatter"/>. 
+        /// Format sql using the FormatSql method available in the current <see cref="MiniProfilerBaseOptions.SqlFormatter"/>. 
         /// </summary>
         /// <param name="sqlFormatter">The <see cref="ISqlFormatter"/> to use.</param>
         /// <param name="commandText">The SQL command to format.</param>

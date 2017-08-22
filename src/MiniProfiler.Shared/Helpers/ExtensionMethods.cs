@@ -32,6 +32,17 @@ namespace StackExchange.Profiling.Helpers
             s?.Length > maxLength ? s.Substring(0, maxLength) : s;
 
         /// <summary>
+        /// Checks if a string contains another one.
+        /// Why the hell isn't this in the BCL already?
+        /// </summary>
+        /// <param name="s">The string to check for presence in.</param>
+        /// <param name="value">The value to check presence of.</param>
+        /// <param name="comparison">The <see cref="StringComparison"/> to use when comparing.</param>
+        /// <returns>Whether <paramref name="value"/> is contained in <paramref name="s"/>.</returns>
+        public static bool Contains(this string s, string value, StringComparison comparison) =>
+            s.IndexOf(value, comparison) >= 0;
+
+        /// <summary>
         /// Removes trailing / characters from a path and leaves just one
         /// </summary>
         /// <param name="input">The string to ensure a trailing slash on.</param>

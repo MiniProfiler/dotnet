@@ -1,5 +1,4 @@
 ﻿using StackExchange.Profiling.Internal;
-using System;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
@@ -15,32 +14,25 @@ namespace StackExchange.Profiling
         /// <summary>
         /// The name says it all
         /// </summary>
-        public MiniProfiler GetCurrentProfiler() => _profiler;
+        public MiniProfiler CurrentProfiler => _profiler;
 
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
-        public MiniProfiler Start(string profilerName = null)
-        {
-#if !NETSTANDARD1_5
-            _profiler = new MiniProfiler(profilerName ?? AppDomain.CurrentDomain.FriendlyName) { IsActive = true };
-#else
-            _profiler = new MiniProfiler(profilerName ?? "MiniProfiler") { IsActive = true };
-#endif
-            return _profiler;
-        }
+        public MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options) =>
+            _profiler = new MiniProfiler(profilerName, options);
 
         /// <summary>
         /// Stops the current profiling session.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
         /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public void Stop(bool discardResults)
+        public void Stopped(MiniProfiler profiler, bool discardResults)
         {
-            _profiler?.StopImpl();
             if (discardResults)
             {
                 _profiler = null;
@@ -50,13 +42,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Asynchronously stops the current profiling session.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
         /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public Task StopAsync(bool discardResults)
+        public Task StoppedAsync(MiniProfiler profiler, bool discardResults)
         {
-            Stop(discardResults);
+            Stopped(profiler, discardResults);
             return Polyfills.CompletedTask;
         }
     }

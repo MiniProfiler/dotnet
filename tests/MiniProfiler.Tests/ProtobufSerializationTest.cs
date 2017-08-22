@@ -2,7 +2,6 @@
 
 using Dapper;
 using StackExchange.Profiling;
-using StackExchange.Profiling.SqlFormatters;
 using Xunit;
 
 namespace Tests
@@ -14,9 +13,9 @@ namespace Tests
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
-                MiniProfiler.Start();
-                Increment(); // 1 ms
-                MiniProfiler.Stop();
+                var mp = Options.StartProfiler();
+                mp.Increment(); // 1 ms
+                mp.Stop();
 
                 var mp1 = MiniProfiler.Current;
                 var ms = new MemoryStream();
@@ -33,19 +32,17 @@ namespace Tests
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
-                MiniProfiler.Settings.SqlFormatter = new SqlServerFormatter();
-                MiniProfiler.Start();
-                var mp1 = MiniProfiler.Current;
+                var mp = Options.StartProfiler();
 
-                Increment(); // 1 ms
+                mp.Increment(); // 1 ms
 
-                using (mp1.Step("Child one"))
+                using (mp.Step("Child one"))
                 {
-                    Increment();
+                    mp.Increment();
 
-                    using (mp1.CustomTiming("http", "GET http://google.com"))
+                    using (mp.CustomTiming("http", "GET http://google.com"))
                     {
-                        Increment();
+                        mp.Increment();
                     }
 
                     using (var conn = Utils.GetSqliteConnection())
@@ -55,14 +52,14 @@ namespace Tests
                     }
                 }
 
-                MiniProfiler.Stop();
+                mp.Stop();
 
                 var ms = new MemoryStream();
-                ProtoBuf.Serializer.Serialize(ms, mp1);
+                ProtoBuf.Serializer.Serialize(ms, mp);
 
                 ms.Position = 0;
                 var mp2 = ProtoBuf.Serializer.Deserialize<MiniProfiler>(ms);
-                AssertProfilersAreEqual(mp1, mp2);
+                AssertProfilersAreEqual(mp, mp2);
             }
         }
     }

@@ -66,7 +66,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
+        /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         public List<Guid> GetUnviewedIds(string user)
         {
             var ids = GetPerUserUnviewedIds(user);
@@ -79,7 +79,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <c>MiniProfiler.Settings.UserProvider</c></param>
+        /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Task.FromResult(GetUnviewedIds(user));
 
         private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;

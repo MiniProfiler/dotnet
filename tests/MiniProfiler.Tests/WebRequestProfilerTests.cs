@@ -9,12 +9,12 @@ namespace Tests
     {
         public WebRequestProfilerTests()
         {
-            _provider = WebRequestProfilerProvider.Setup();
+            Options.SetProvider(new WebRequestProfilerProvider());
         }
 
         public void Dispose()
         {
-            _provider = null;
+            Options = null;
         }
 
         [Fact]
@@ -22,15 +22,15 @@ namespace Tests
         {
             using (var rq = GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
-                var c = MiniProfiler.Start(null, _provider);
-                Increment(); // 1 ms
-                MiniProfiler.Stop(false, _provider);
+                var mp = new MiniProfiler(null, Options);
+                mp.Increment(); // 1 ms
+                mp.Stop(false);
 
-                Assert.NotNull(c);
-                Assert.Equal("/Test.aspx", c.Name);
+                Assert.NotNull(mp);
+                Assert.Equal("/Test.aspx", mp.Name);
 
-                Assert.NotNull(c.Root);
-                Assert.False(c.Root.HasChildren);
+                Assert.NotNull(mp.Root);
+                Assert.False(mp.Root.HasChildren);
             }
         }
     }

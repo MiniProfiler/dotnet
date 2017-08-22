@@ -1,5 +1,4 @@
 ﻿using StackExchange.Profiling;
-using System;
 using Xunit;
 
 namespace Tests
@@ -12,9 +11,9 @@ namespace Tests
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
-                MiniProfiler.Start();
-                Increment(); // 1 ms
-                MiniProfiler.Stop();
+                var mp = Options.StartProfiler();
+                mp.Increment(); // 1 ms
+                mp.Stop();
 
                 var c = MiniProfiler.Current;
 
@@ -31,25 +30,24 @@ namespace Tests
         {
             using (GetRequest())
             {
-                MiniProfiler.Start();
-                var mp1 = MiniProfiler.Current;
+                var mp = Options.StartProfiler();
 
-                Increment(); // 1 ms
+                mp.Increment(); // 1 ms
                 Timing goodTiming;
                 Timing badTiming;
 
-                using (goodTiming = mp1.StepIf("Yes", 1))
+                using (goodTiming = mp.StepIf("Yes", 1))
                 {
-                    Increment(2);
+                    mp.Increment(2);
                 }
-                using (badTiming = mp1.StepIf("No", 5))
+                using (badTiming = mp.StepIf("No", 5))
                 {
-                    Increment(); // 1 ms
+                    mp.Increment(); // 1 ms
                 }
-                MiniProfiler.Stop();
+                mp.Stop();
 
-                Assert.Contains(goodTiming, mp1.Root.Children);
-                Assert.True(!mp1.Root.Children.Contains(badTiming));
+                Assert.Contains(goodTiming, mp.Root.Children);
+                Assert.DoesNotContain(badTiming, mp.Root.Children);
             }
         }
 
@@ -58,41 +56,40 @@ namespace Tests
         {
             using (GetRequest())
             {
-                MiniProfiler.Start();
-                var mp1 = MiniProfiler.Current;
+                var mp = Options.StartProfiler();
 
-                Increment(); // 1 ms
+                mp.Increment(); // 1 ms
                 Timing goodTiming;
                 Timing badTiming;
 
-                using (goodTiming = mp1.StepIf("Yes", 5, true))
+                using (goodTiming = mp.StepIf("Yes", 5, true))
                 {
-                    Increment(2);
-                    using (mp1.Step("#1"))
+                    mp.Increment(2);
+                    using (mp.Step("#1"))
                     {
-                        Increment(2);
+                        mp.Increment(2);
                     }
-                    using (mp1.Step("#2"))
+                    using (mp.Step("#2"))
                     {
-                        Increment(2);
+                        mp.Increment(2);
                     }
                 }
-                using (badTiming = mp1.StepIf("No", 5, false))
+                using (badTiming = mp.StepIf("No", 5, false))
                 {
-                    Increment(2);
-                    using (mp1.Step("#1"))
+                    mp.Increment(2);
+                    using (mp.Step("#1"))
                     {
-                        Increment(2);
+                        mp.Increment(2);
                     }
-                    using (mp1.Step("#2"))
+                    using (mp.Step("#2"))
                     {
-                        Increment(2);
+                        mp.Increment(2);
                     }
                 }
-                MiniProfiler.Stop();
+                mp.Stop();
 
-                Assert.Contains(goodTiming, mp1.Root.Children);
-                Assert.True(!mp1.Root.Children.Contains(badTiming));
+                Assert.Contains(goodTiming, mp.Root.Children);
+                Assert.DoesNotContain(badTiming, mp.Root.Children);
             }
         }
 
@@ -101,25 +98,24 @@ namespace Tests
         {
             using (GetRequest())
             {
-                MiniProfiler.Start();
-                var mp1 = MiniProfiler.Current;
+                var mp = Options.StartProfiler();
 
-                Increment(); // 1 ms
+                mp.Increment(); // 1 ms
                 CustomTiming goodTiming;
                 CustomTiming badTiming;
 
-                using (goodTiming = mp1.CustomTimingIf("Cat1", "Yes", 1))
+                using (goodTiming = mp.CustomTimingIf("Cat1", "Yes", 1))
                 {
-                    Increment(2);
+                    mp.Increment(2);
                 }
-                using (badTiming = mp1.CustomTimingIf("Cat1", "No", 5))
+                using (badTiming = mp.CustomTimingIf("Cat1", "No", 5))
                 {
-                    Increment(); // 1 ms
+                    mp.Increment(); // 1 ms
                 }
-                MiniProfiler.Stop();
+                mp.Stop();
 
-                Assert.Contains(goodTiming, mp1.Root.CustomTimings["Cat1"]);
-                Assert.True(!mp1.Root.CustomTimings["Cat1"].Contains(badTiming));
+                Assert.Contains(goodTiming, mp.Root.CustomTimings["Cat1"]);
+                Assert.DoesNotContain(badTiming, mp.Root.CustomTimings["Cat1"]);
             }
         }
 
@@ -128,8 +124,8 @@ namespace Tests
         {
             using (GetRequest(startAndStopProfiler: false))
             {
-                MiniProfiler.Start();
-                MiniProfiler.Stop(discardResults: true);
+                var mp = Options.StartProfiler();
+                mp.Stop(discardResults: true);
 
                 var c = MiniProfiler.Current;
 

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 using StackExchange.Profiling.Helpers;
-using System.Threading.Tasks;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {
@@ -12,153 +12,89 @@ namespace StackExchange.Profiling
     /// The current profiler is associated with a HttpContext.Current ensuring that profilers are 
     /// specific to a individual HttpRequest.
     /// </summary>
-    public class WebRequestProfilerProvider : BaseProfilerProvider
+    public class WebRequestProfilerProvider : DefaultProfilerProvider
     {
+        private const string CacheKey = ":mini-profiler:";
         /// <summary>
-        /// Sets up a WebRequestProfilerProvider with the given parameters.
-        /// This is the recommended provider for ASP.NET MVC 5 and below applications.
-        /// Note that this registers the routes the profiler needs with the path specified 
-        /// by <paramref name="routeBasePath"/> or <see cref="MiniProfiler.Settings.RouteBasePath"/> if not provided.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
         /// </summary>
-        /// <param name="routeBasePath">The route path to use, e.g. "~/profiler"</param>
-        /// <param name="resultsAuthorize">The function to use to authorize a request to access a result. See <see cref="MiniProfilerWebSettings.ResultsAuthorize"/> for details.</param>
-        /// <param name="resultsListAuthorize">The function to use to authorize a request to access the list of results. See <see cref="MiniProfilerWebSettings.ResultsListAuthorize"/> for details.</param>
-        /// <returns>The setup <see cref="WebRequestProfilerProvider"/> for use if needed.</returns>
-        public static WebRequestProfilerProvider Setup(
-            string routeBasePath = null,
-            Func<HttpRequest, bool> resultsAuthorize = null,
-            Func<HttpRequest, bool> resultsListAuthorize = null)
+        public override MiniProfiler CurrentProfiler
         {
-            var result = new WebRequestProfilerProvider();
-
-            if (routeBasePath.HasValue())
+            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler;
+            protected set
             {
-                MiniProfiler.Settings.RouteBasePath = routeBasePath;
+                if (HttpContext.Current != null)
+                {
+                    HttpContext.Current.Items[CacheKey] = value;
+                }
             }
-            if (resultsAuthorize != null)
-            {
-                MiniProfilerWebSettings.ResultsAuthorize = resultsAuthorize;
-            }
-            if (resultsListAuthorize != null)
-            {
-                MiniProfilerWebSettings.ResultsListAuthorize = resultsListAuthorize;
-            }
-            MiniProfilerHandler.RegisterRoutes();
-
-            MiniProfiler.Settings.ProfilerProvider = result;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="WebRequestProfilerProvider"/> class. 
-        /// Public constructor.  This also registers any UI routes needed to display results
-        /// </summary>
-        internal WebRequestProfilerProvider()
-        {
-            MiniProfilerHandler.RegisterRoutes();
         }
 
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
-        public override MiniProfiler Start(string profilerName = null)
+        /// <param name="options">The options to start the MiniPofiler with. Likely a more-specific type underneath.</param>
+        public override MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options)
         {
-            var context = HttpContext.Current;
-            var path = context?.Request.Path;
+            var request = HttpContext.Current?.Request;
+            var path = request?.Path;
             if (path == null) return null;
 
-            var appRelativePath = GetAppRelativePath(context.Request.ApplicationPath, path).ToUpperInvariant();
+            // If the application is hosted in root directory (appPath.Length == 1), return entire path
+            // Otherwise, return the substring after the path (e.g. a virtual directory)
+            // This is for paths like /virtual/path.axd/more/path/omg
+            var relativePath = request.ApplicationPath.Length == 1 ? path : path.Substring(request.ApplicationPath.Length);
 
-            // don't profile /content or /scripts, either - happens in web.dev
-            if (MiniProfilerWebSettings.IgnoredPaths != null)
+            foreach (var ignored in options.IgnoredPaths)
             {
-                foreach (var ignored in MiniProfilerWebSettings.IgnoredPaths)
+                if (relativePath.Contains((ignored ?? string.Empty), StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (appRelativePath.Contains((ignored ?? string.Empty).ToUpperInvariant()))
-                        return null;
+                    return null;
                 }
             }
 
-            if (path.StartsWith(VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath), StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(VirtualPathUtility.ToAbsolute(options.RouteBasePath), StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
 
-            var result = new MiniProfiler(profilerName ?? context.Request.Url.OriginalString);
-            Current = result;
-
-            SetProfilerActive(result);
-
-            // don't really want to pass in the context to MiniProfler's constructor or access it statically in there, either
-            result.User = MiniProfilerWebSettings.UserIdProvider?.Invoke(context.Request);
-
-            return result;
-        }
-
-        private static string GetAppRelativePath(string applicationPath, string path)
-        {
-            // A relatively naive implementation that assumes both
-            // applicationPath and path begin with '/'.
-
-            var applicationPathLength = applicationPath.Length;
-            if (applicationPathLength == 1)
+            return CurrentProfiler = new MiniProfiler(profilerName, options)
             {
-                // application is hosted in root directory, return entire path
-                return path;
-            }
-
-            // do not need to prepend with '~'.
-            return path.Substring(applicationPathLength);
+                User = (options as MiniProfilerOptions)?.UserIdProvider?.Invoke(request)
+            };
         }
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
         /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public override void Stop(bool discardResults)
+        public override void Stopped(MiniProfiler profiler, bool discardResults)
         {
             var context = HttpContext.Current;
-            if (context == null) return;
+            if (context == null || profiler == null) return;
 
-            var current = Current;
-            if (current == null) return;
-
-            // stop our timings - when this is false, we've already called .Stop before on this session
-            if (!StopProfiler(current)) return;
-
-            if (discardResults)
+            if (discardResults && CurrentProfiler == profiler)
             {
-                Current = null;
+                CurrentProfiler = null;
                 return;
             }
 
-            var request = context.Request;
-            var response = context.Response;
-
             // set the profiler name to Controller/Action or /url
-            EnsureName(current, request);
-            SaveProfiler(current);
+            EnsureName(profiler, context.Request);
+            Save(profiler);
 
             try
             {
-                var arrayOfIds = MiniProfiler.Settings.Storage.GetUnviewedIds(current.User);
-                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
-                {
-                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
-                    {
-                        MiniProfiler.Settings.Storage.SetViewed(current.User, id);
-                    }
-                }
-
+                var ids = profiler.Options.ExpireAndGetUnviewed(profiler.User);
                 // allow profiling of ajax requests
-                if (arrayOfIds?.Count > 0)
+                if (ids?.Count > 0)
                 {
-                    response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                    context.Response.AppendHeader("X-MiniProfiler-Ids", ids.ToJson());
                 }
             }
             catch { /* headers blew up */ }
@@ -167,49 +103,33 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Asynchronously ends the current profiling session, if one exists.
         /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
         /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
-        public override async Task StopAsync(bool discardResults)
+        public override async Task StoppedAsync(MiniProfiler profiler, bool discardResults)
         {
             var context = HttpContext.Current;
-            if (context == null) return;
+            if (context == null || profiler == null) return;
 
-            var current = Current;
-            if (current == null) return;
-
-            // stop our timings - when this is false, we've already called .Stop before on this session
-            if (!StopProfiler(current)) return;
-
-            if (discardResults)
+            if (discardResults && CurrentProfiler == profiler)
             {
-                Current = null;
+                CurrentProfiler = null;
                 return;
             }
 
-            var request = context.Request;
-            var response = context.Response;
-
             // set the profiler name to Controller/Action or /url
-            EnsureName(current, request);
-            await SaveProfilerAsync(current).ConfigureAwait(false);
+            EnsureName(profiler, context.Request);
+            await SaveAsync(profiler).ConfigureAwait(false);
 
             try
             {
-                var arrayOfIds = await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false);
-                if (arrayOfIds?.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
-                {
-                    foreach (var id in arrayOfIds.Take(arrayOfIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
-                    {
-                        await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
-                    }
-                }
-
+                var ids = await profiler.Options.ExpireAndGetUnviewedAsync(profiler.User).ConfigureAwait(false);
                 // allow profiling of ajax requests
-                if (arrayOfIds?.Count > 0)
+                if (ids?.Count > 0)
                 {
-                    response.AppendHeader("X-MiniProfiler-Ids", arrayOfIds.ToJson());
+                    context.Response.AppendHeader("X-MiniProfiler-Ids", ids.ToJson());
                 }
             }
             catch { /* headers blew up */ }
@@ -233,10 +153,10 @@ namespace StackExchange.Profiling
                     var controller = values["Controller"];
                     var action = values["Action"];
 
-#pragma warning disable RCS1097 // Remove redundant 'ToString' call.
                     if (controller != null && action != null)
-                        profiler.Name = controller.ToString() + "/" + action.ToString();
-#pragma warning restore RCS1097 // Remove redundant 'ToString' call.
+                    {
+                        profiler.Name = controller + "/" + action;
+                    }
                 }
 
                 if (profiler.Name.IsNullOrWhiteSpace())
@@ -245,28 +165,11 @@ namespace StackExchange.Profiling
                     if (profiler.Name.Length > 50)
                         profiler.Name = profiler.Name.Remove(50);
                 }
-            }
-        }
 
-        /// <summary>
-        /// Returns the current profiler
-        /// </summary>
-        public override MiniProfiler GetCurrentProfiler() => Current;
-
-        private const string CacheKey = ":mini-profiler:";
-
-        /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
-        /// </summary>
-        private MiniProfiler Current
-        {
-            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler;
-            set
-            {
-                var context = HttpContext.Current;
-                if (context == null) return;
-
-                context.Items[CacheKey] = value;
+                if (profiler.Name.HasValue() && profiler.Root != null && profiler.Root.Name == null)
+                {
+                    profiler.Root.Name = profiler.Name;
+                }
             }
         }
     }

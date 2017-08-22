@@ -13,6 +13,8 @@ namespace StackExchange.Profiling
     /// </summary>
     public static class MiniProfilerWebExtensions
     {
+        private static readonly HtmlString _empty = new HtmlString(string.Empty);
+
         /// <summary>
         /// Returns the <c>css</c> and <c>javascript</c> includes needed to display the MiniProfiler results UI.
         /// </summary>
@@ -33,21 +35,23 @@ namespace StackExchange.Profiling
             bool? showControls = null,
             bool? startHidden = null)
         {
-            if (profiler == null) return new HtmlString(string.Empty);
+            if (profiler == null) return _empty;
+            var settings = profiler.Options as MiniProfilerOptions;
+            if (settings == null) return _empty;
 
-            var authorized = MiniProfilerWebSettings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+            var authorized = settings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
-            var ids = authorized ? MiniProfiler.Settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
+            var ids = authorized ? settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
             ids.Add(profiler.Id);
 
-            var path = VirtualPathUtility.ToAbsolute(MiniProfiler.Settings.RouteBasePath).EnsureTrailingSlash();
+            var path = VirtualPathUtility.ToAbsolute(settings.RouteBasePath).EnsureTrailingSlash();
 
             var result = profiler.RenderIncludes(
                 path: path,
-                requestIDs: ids,
                 isAuthorized: authorized,
+                requestIDs: ids,
                 position: position,
                 showTrivial: showTrivial,
                 showTimeWithChildren: showTimeWithChildren,

@@ -122,13 +122,13 @@ namespace StackExchange.Profiling.Data
             var miniProfiler = _profiler as MiniProfiler;
             if (miniProfiler == null || !miniProfiler.IsActive)
             {
-                await _connection.OpenAsync(cancellationToken);
+                await _connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                 return;
             }
 
             using (miniProfiler.CustomTiming("sql", "Connection OpenAsync()", nameof(OpenAsync)))
             {
-                await _connection.OpenAsync(cancellationToken);
+                await _connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 

@@ -42,12 +42,12 @@ namespace Tests
             MiniProfiler mp;
             using (GetRequest())
             {
-                Increment();
                 mp = MiniProfiler.Current;
+                mp.Increment();
             }
 
             Assert.Equal(1, mp.DurationMilliseconds);
-            Assert.False(mp.Stopwatch.IsRunning);
+            Assert.False(mp.GetStopwatch().IsRunning);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace StackExchange.Profiling.Mvc
     /// <summary>
     /// This filter can be applied globally to hook up automatic action profiling
     /// </summary>
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
     public class ProfilingActionFilter : ActionFilterAttribute
     {
         private const string StackKey = "ProfilingActionFilterStack";

@@ -135,11 +135,11 @@ namespace Samples.AspNetCore.Controllers
             using (profiler.Step("Nested call " + depth))
             {
                 // run some meaningless queries to illustrate formatting
-                connection.Query(
-                    @"select *
-                    from   MiniProfilers
-                    where  DurationMilliseconds >= @duration
-                            or Started > @yesterday",
+                connection.Query(@"
+Select *
+  From MiniProfilers
+ Where DurationMilliseconds >= @duration
+    Or Started > @yesterday",
                     new
                     {
                         name = "Home/Index",
@@ -147,66 +147,55 @@ namespace Samples.AspNetCore.Controllers
                         yesterday = DateTime.UtcNow.AddDays(-1)
                     });
 
-                connection.Query("select RouteName, HitCount from RouteHits where HitCount < 100000000 or HitCount > 0 order by HitCount, RouteName -- this should hopefully wrap");
+                connection.Query("Select RouteName, HitCount From RouteHits Where HitCount < 100000000 Or HitCount > 0 Order By HitCount, RouteName -- this should hopefully wrap");
 
                 // massive query to test if max-height is properly removed from <pre> stylings
-                connection.Query(
-                        @"select *
-                        from   (select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 0 and 9
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 10 and 19
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 20 and 29
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 30 and 39
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 40 and 49
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 50 and 59
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 60 and 69
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 70 and 79
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 80 and 89
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount between 90 and 99
-                                union all
-                                select RouteName,
-                                       HitCount
-                                from   RouteHits
-                                where  HitCount > 100)
-                        order  by RouteName");
+                connection.Query(@"
+Select *
+  From (Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 0 and 9
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 10 and 19
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 20 and 29
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 30 and 39
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 40 and 49
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 50 and 59
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 60 and 69
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 70 and 79
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 80 and 89
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount Between 90 and 99
+        UNION ALL
+        Select RouteName, HitCount
+          From RouteHits
+         Where HitCount > 100)
+Order By RouteName");
 
                 // need a long title to test max-width
                 using (profiler.Step("Incrementing a reference parameter named i"))
@@ -294,7 +283,7 @@ namespace Samples.AspNetCore.Controllers
         /// <returns>the data connection abstraction.</returns>
         public DbConnection GetConnection(MiniProfiler profiler = null)
         {
-            using (profiler.Step("GetOpenConnection"))
+            using (profiler.Step(nameof(GetConnection)))
             {
                 DbConnection cnn = new SqliteConnection(Startup.SqliteConnectionString);
 
@@ -317,7 +306,7 @@ namespace Samples.AspNetCore.Controllers
         /// <returns>the data connection abstraction.</returns>
         public async Task<DbConnection> GetConnectionAsync(MiniProfiler profiler = null)
         {
-            using (profiler.Step("GetOpenConnectionAsync"))
+            using (profiler.Step(nameof(GetConnectionAsync)))
             {
                 DbConnection cnn = new SqliteConnection(Startup.SqliteConnectionString);
 

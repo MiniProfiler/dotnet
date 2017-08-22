@@ -1,3 +1,4 @@
+using StackExchange.Profiling.Internal;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -31,21 +32,21 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
         public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
         {
-            var buffer = new StringBuilder();
+            var buffer = StringBuilderCache.Get();
 
             if (command != null && IncludeMetaData)
             {
-                buffer.AppendLine("-- Command Type: " + command.CommandType);
-                buffer.AppendLine("-- Database: " + command.Connection.Database);
+                buffer.Append("-- Command Type: ").AppendLine(command.CommandType.ToString());
+                buffer.Append("-- Database: ").AppendLine(command.Connection.Database);
 #if !NETSTANDARD1_5
                 if (command.Transaction != null)
                 {
-                    buffer.AppendLine("-- Command Transaction Iso Level: " + command.Transaction.IsolationLevel);
+                    buffer.Append("-- Command Transaction Iso Level: ").AppendLine(command.Transaction.IsolationLevel.ToString());
                 }
 				if (System.Transactions.Transaction.Current != null)
 				{
-					// transactions issued by TransactionScope are not bound to the database command but exists globally
-					buffer.AppendLine("-- Transaction Scope Iso Level: " + System.Transactions.Transaction.Current.IsolationLevel);
+                    // transactions issued by TransactionScope are not bound to the database command but exists globally
+                    buffer.Append("-- Transaction Scope Iso Level: ").AppendLine(System.Transactions.Transaction.Current.IsolationLevel.ToString());
 				}
 #endif
                 buffer.AppendLine();
@@ -55,7 +56,7 @@ namespace StackExchange.Profiling.SqlFormatters
 
 	        buffer.Append(baseOutput);
 
-	        return buffer.ToString();
+	        return buffer.ToStringRecycle();
         }
     }
 }

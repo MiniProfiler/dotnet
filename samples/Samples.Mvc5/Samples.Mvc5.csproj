@@ -9,6 +9,10 @@
     <UseIISExpress>true</UseIISExpress>
     <OutputPath>bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <PostBuildEvent>
+      if not exist "roslyn" md "roslyn"
+      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.Net.Compilers\2.1.0\tools\*.*" "roslyn"
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.EF6\MiniProfiler.EF6.csproj" />
@@ -19,7 +23,7 @@
     <PackageReference Include="EntityFramework.SqlServerCompact" Version="6.1.3" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
-    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="1.0.6" />
+    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="1.0.7" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.105.2" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.105.2" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,24 +53,6 @@
     <Content Include="App_Data\SampleEfModelFirst.mdf" />
     <Content Include="App_Data\SampleEfModelFirst_log.ldf" />
     <Content Include="Content\**\*" />
-    <!-- Working around https://github.com/dotnet/roslyn-project-system/issues/1176 -->
-    <!--<EntityDeploy Include="EfModelFirst\EfModelFirstContext.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>EfModelFirstContext1.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="EfModelFirst\EfModelFirstContext.edmx.diagram">
-      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
-    </Content>
-    <Content Include="EfModelFirst\EfModelFirstContext.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
-      <LastGenOutput>EfModelFirstContext.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="EfModelFirst\EfModelFirstContext.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>EfModelFirstContext.edmx</DependentUpon>
-      <LastGenOutput>EfModelFirstContext.cs</LastGenOutput>
-    </Content>-->
     <Content Include="Scripts\**\*" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -74,9 +60,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
-  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">

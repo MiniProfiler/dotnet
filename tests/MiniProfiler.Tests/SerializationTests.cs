@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Tests
 {
-    public class SerializationTests
+    public class SerializationTests : BaseTest
     {
         #region Payloads
 
@@ -48,7 +48,7 @@ namespace Tests
         [Fact]
         public void ParentMapping()
         {
-            var mp = new MiniProfiler("Test");
+            var mp = new MiniProfiler("Test", Options);
             using (mp.Step("Main"))
             {
                 using (mp.Step("Sub Step 1"))
@@ -64,7 +64,7 @@ namespace Tests
                     using (mp.CustomTiming("cat", "Command 6")) {}
                 }
             }
-            MiniProfiler.Stop();
+            mp.Stop();
             var json = mp.ToJson();
 
             var deserialized = MiniProfiler.FromJson(json);

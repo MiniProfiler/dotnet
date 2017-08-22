@@ -4,9 +4,9 @@ namespace Benchmarks
 {
     public static class Utils
     {
-        internal static MiniProfiler GetComplexProfiler()
+        internal static MiniProfiler GetComplexProfiler(MiniProfilerBaseOptions options)
         {
-            var mp = new MiniProfiler("Complex");
+            var mp = new MiniProfiler("Complex", options);
             for (var i = 0; i < 50; i++)
             {
                 using (mp.Step("Step " + i))

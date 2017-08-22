@@ -23,6 +23,7 @@ namespace StackExchange.Profiling.EntityFramework6
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
         /// </summary>
+        /// <param name="options">The options to configure (ignoring the steps in this library).</param>
         public static void Initialize()
         {
             try
@@ -35,20 +36,11 @@ namespace StackExchange.Profiling.EntityFramework6
                     a.ReplaceService((IDbConnectionFactory inner, object key) => _IDbConnectionFactoryCache.GetOrAdd(key ?? _nullKeyPlaceholder, __ => new EFProfiledDbConnectionFactory(inner)));
                     a.AddDependencyResolver(new EFProfiledInvariantNameResolver(), false);
                 };
-
-                MiniProfiler.Settings.ExcludeAssembly("EntityFramework");
-                MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServer");
-                MiniProfiler.Settings.ExcludeAssembly("EntityFramework.SqlServerCompact");
-                MiniProfiler.Settings.ExcludeAssembly(typeof(MiniProfilerEF6).Assembly.GetName().Name);
             }
-            catch (SqlException ex)
+            catch (SqlException ex) when (ex.Message.Contains("Invalid column name 'ContextKey'"))
             {
                 // Try to prevent tripping this harmless Exception when initializing the DB
                 // Issue in EF6 upgraded from EF5 on first db call in debug mode: http://entityframework.codeplex.com/workitem/594
-                if (!ex.Message.Contains("Invalid column name 'ContextKey'"))
-                {
-                    throw;
-                }
             }
         }
     }

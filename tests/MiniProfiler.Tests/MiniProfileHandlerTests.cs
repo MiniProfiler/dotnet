@@ -19,14 +19,12 @@ namespace Tests
         [InlineData("includes.css", 200)]
         public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string resourceName, int expectedHttpStatus)
         {
-            // Arrange
-            var sut = new MiniProfilerHandler();
-            MiniProfilerWebSettings.ResultsListAuthorize = null;
+            var sut = new MiniProfilerHandler(new MiniProfilerOptions()
+            {
+                ResultsListAuthorize = null
+            });
 
-            // Act
             var res = GetRequestResponseHttpStatus(sut, resourceName);
-
-            // Assert
             Assert.Equal(expectedHttpStatus, res);
         }
 
@@ -35,14 +33,12 @@ namespace Tests
         [InlineData(false, 401)]
         public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(bool isRequestAuthorized, int expectedHttpStatus)
         {
-            // Arrange
-            var sut = new MiniProfilerHandler();
-            MiniProfilerWebSettings.ResultsListAuthorize = request => isRequestAuthorized;
+            var sut = new MiniProfilerHandler(new MiniProfilerOptions()
+            {
+                ResultsListAuthorize = request => isRequestAuthorized
+            });
 
-            // Act
             var res = GetRequestResponseHttpStatus(sut, "/results-index");
-
-            // Assert
             Assert.Equal(expectedHttpStatus, res);
         }
 
@@ -54,7 +50,7 @@ namespace Tests
 		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturnedType(string acceptEncoding, Type expectedEncodingFilterType)
 		{
 			// Arrange
-			var sut = new MiniProfilerHandler();
+			var sut = new MiniProfilerHandler(new MiniProfilerOptions());
 
 			// Act
 			var res = GetRequestResponseEncoding(sut, "includes.js", acceptEncoding);

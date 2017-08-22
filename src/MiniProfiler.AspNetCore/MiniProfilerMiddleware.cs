@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,11 +36,11 @@ namespace StackExchange.Profiling
         public MiniProfilerMiddleware(
             RequestDelegate next,
             IHostingEnvironment hostingEnvironment,
-            MiniProfilerOptions options)
+            IOptions<MiniProfilerOptions> options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _env = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
-            Options = options ?? throw new ArgumentNullException(nameof(options));
+            Options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrEmpty(Options.RouteBasePath))
             {
@@ -84,7 +84,7 @@ namespace StackExchange.Profiling
             if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
             {
                 // Wrap the request in this profiler
-                var mp = MiniProfiler.Start();
+                var mp = Options.StartProfiler();
                 // Always add this profiler's header (and any async requests before it)
                 using (mp.Step("MiniProfiler Prep"))
                 {
@@ -95,7 +95,7 @@ namespace StackExchange.Profiling
                 await _next(context);
 #pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
                 // Stop (and record)
-                await MiniProfiler.StopAsync().ConfigureAwait(false);
+                await mp.StopAsync().ConfigureAwait(false);
             }
             else
             {
@@ -114,20 +114,11 @@ namespace StackExchange.Profiling
                 var isAuthorized = Options.ResultsAuthorize?.Invoke(context.Request) ?? true;
 
                 // Grab any past profilers (e.g. from a previous redirect)
-                var profilerIds = (isAuthorized ? await MiniProfiler.Settings.Storage.GetUnviewedIdsAsync(current.User).ConfigureAwait(false) : null)
+                var profilerIds = (isAuthorized ? await Options.ExpireAndGetUnviewedAsync(current.User).ConfigureAwait(false) : null)
                                  ?? new List<Guid>(1);
 
                 // Always add the current
                 profilerIds.Add(current.Id);
-
-                // Cap us down to MaxUnviewedProfiles
-                if (profilerIds.Count > MiniProfiler.Settings.MaxUnviewedProfiles)
-                {
-                    foreach (var id in profilerIds.Take(profilerIds.Count - MiniProfiler.Settings.MaxUnviewedProfiles))
-                    {
-                        await MiniProfiler.Settings.Storage.SetViewedAsync(current.User, id).ConfigureAwait(false);
-                    }
-                }
 
                 if (profilerIds.Count > 0)
                 {
@@ -217,7 +208,7 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html";
 
             var path = BasePath.Value.EnsureTrailingSlash();
-            var version = MiniProfiler.Settings.VersionHash;
+            var version = Options.VersionHash;
             return $@"<html>
   <head>
     <title>List of profiling sessions</title>
@@ -239,7 +230,7 @@ namespace StackExchange.Profiling
                 return message;
             }
 
-            var guids = await MiniProfiler.Settings.Storage.ListAsync(100).ConfigureAwait(false);
+            var guids = await Options.Storage.ListAsync(100).ConfigureAwait(false);
 
             if (context.Request.Query.TryGetValue("last-id", out var lastId) && Guid.TryParse(lastId, out var lastGuid))
             {
@@ -247,7 +238,7 @@ namespace StackExchange.Profiling
             }
 
             return guids.Reverse()
-                        .Select(g => MiniProfiler.Settings.Storage.Load(g))
+                        .Select(g => Options.Storage.Load(g))
                         .Where(p => p != null)
                         .Select(p => new
                         {
@@ -285,9 +276,9 @@ namespace StackExchange.Profiling
             // the last set of results needs to be displayed.
             string requestId = form?["id"] ?? context.Request.Query["id"];
 
-            if (!Guid.TryParse(requestId, out var id) && MiniProfiler.Settings.Storage != null)
+            if (!Guid.TryParse(requestId, out var id) && Options.Storage != null)
             {
-                id = (await MiniProfiler.Settings.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
+                id = (await Options.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
             }
 
             if (id == default(Guid))
@@ -295,10 +286,10 @@ namespace StackExchange.Profiling
                 return NotFound(context, jsonRequest ? null : "No GUID id specified on the query string");
             }
 
-            var profiler = await MiniProfiler.Settings.Storage.LoadAsync(id).ConfigureAwait(false);
+            var profiler = await Options.Storage.LoadAsync(id).ConfigureAwait(false);
             string user = Options.UserIdProvider?.Invoke(context.Request);
 
-            await MiniProfiler.Settings.Storage.SetViewedAsync(user, id).ConfigureAwait(false);
+            await Options.Storage.SetViewedAsync(user, id).ConfigureAwait(false);
 
             if (profiler == null)
             {
@@ -329,7 +320,7 @@ namespace StackExchange.Profiling
 
             if (needsSave)
             {
-                await MiniProfiler.Settings.Storage.SaveAsync(profiler).ConfigureAwait(false);
+                await Options.Storage.SaveAsync(profiler).ConfigureAwait(false);
             }
 
             if (!AuthorizeRequest(context, isList: false, message: out string authorizeMessage))

@@ -30,14 +30,16 @@ namespace StackExchange.Profiling.Data
             _commands = new ConcurrentDictionary<Guid, CustomTiming>(),
             _opening = new ConcurrentDictionary<Guid, CustomTiming>(),
             _closing = new ConcurrentDictionary<Guid, CustomTiming>();
-        
+
 #if NETSTANDARD2_0
         // See https://github.com/aspnet/EntityFramework/issues/8007
         private readonly ConcurrentDictionary<Guid, CustomTiming>
             _readers = new ConcurrentDictionary<Guid, CustomTiming>();
 
         public void OnCompleted() { }
+#pragma warning disable RCS1163 // Unused parameter.
         public void OnError(Exception error) { }
+#pragma warning restore RCS1163 // Unused parameter.
 
         public void OnNext(KeyValuePair<string, object> kv)
         {
@@ -208,7 +210,7 @@ namespace StackExchange.Profiling.Data
                 reader.Stop();
             }
         }
-        
+
         /// <summary>
         /// Handles ConnectionOpening events.
         /// </summary>
@@ -222,7 +224,7 @@ namespace StackExchange.Profiling.Data
                     async ? "Connection OpenAsync()" : "Connection Open()",
                     async ? "OpenAsync" : "Open");
         }
-        
+
         /// <summary>
         /// Handles ConnectionOpened events.
         /// </summary>
@@ -236,7 +238,7 @@ namespace StackExchange.Profiling.Data
                 openingTiming.Stop();
             }
         }
-        
+
         /// <summary>
         /// Handles ConnectionClosing events.
         /// </summary>
@@ -250,7 +252,7 @@ namespace StackExchange.Profiling.Data
                     async ? "Connection CloseAsync()" : "Connection Close()",
                     async ? "CloseAsync" : "Close");
         }
-        
+
         /// <summary>
         /// Handles ConnectionClosed events.
         /// </summary>

@@ -8,6 +8,7 @@ namespace Tests.Redis
     public class StorageTests : IClassFixture<RedisStorageFixture<StorageTests>>
     {
         private readonly RedisStorage _storage;
+        private readonly MiniProfilerBaseOptions _options = new MiniProfilerBaseOptions();
 
         public StorageTests(RedisStorageFixture<StorageTests> fixture)
         {
@@ -38,7 +39,7 @@ namespace Tests.Redis
 
         private MiniProfiler GetMiniProfiler()
         {
-            var mp = new MiniProfiler("Test");
+            var mp = new MiniProfiler("Test", _options);
             using (mp.Step("Foo"))
             {
                 using (mp.CustomTiming("Hey", "There"))
