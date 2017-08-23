@@ -32,7 +32,7 @@ namespace StackExchange.Profiling
         /// <param name="hostingEnvironment">The Hosting Environment.</param>
         /// <param name="options">The middleware options, containing the rules to apply.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Throws when <see cref="MiniProfilerOptions.RouteBasePath"/> is <c>null</c> or empty.</exception>
+        /// <exception cref="ArgumentException">Throws when <see cref="MiniProfilerBaseOptions.RouteBasePath"/> is <c>null</c> or empty.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
             IHostingEnvironment hostingEnvironment,

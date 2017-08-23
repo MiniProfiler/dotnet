@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
-        /// <see cref="GetCurrentProfiler"/> should return the new MiniProfiler. 
+        /// <see cref="CurrentProfiler"/> should return the new MiniProfiler. 
         /// Unless one was not created due to ignore rules, etc.
         /// </summary>
         /// <param name="profilerName">

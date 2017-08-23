@@ -75,7 +75,7 @@ namespace StackExchange.Profiling
         };
 
         /// <summary>
-        /// When <see cref="MiniProfiler.Start(string)"/> is called, if the current request url contains any items in this property,
+        /// When <see cref="IAsyncProfilerProvider.Start(string, MiniProfilerBaseOptions)"/> is called, if the current request url contains any items in this property,
         /// no profiler will be instantiated and no results will be displayed.
         /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
         /// </summary>
@@ -205,8 +205,8 @@ namespace StackExchange.Profiling
         public Func<IStopwatch> StopwatchProvider { get; set; } = StopwatchWrapper.StartNew;
 
         /// <summary>
-        /// Starts a new MiniProfiler based on the curren <see cref="ProfilerProvider"/>.
-        /// Shotcut for Options.StartProfiler.
+        /// Starts a new MiniProfiler based on the current <see cref="ProfilerProvider"/>.
+        /// Shotcut for Options.ProfilerProvider.Start.
         /// </summary>
         /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
@@ -215,10 +215,13 @@ namespace StackExchange.Profiling
         public MiniProfiler StartProfiler(string profilerName = null) => ProfilerProvider.Start(profilerName, this);
     }
 
+    /// <summary>
+    /// Handy extensions for <see cref="MiniProfilerBaseOptions"/>.
+    /// </summary>
     public static class MiniProfilerBaseOptionsExtensions
     {
         /// <summary>
-        /// Sets a provider as the <see cref="ProfilerProvider"/> and optionally as the provider for <see cref="MiniProfiler.Current"/>.
+        /// Sets a provider as the <see cref="MiniProfilerBaseOptions.ProfilerProvider"/> and optionally as the provider for <see cref="MiniProfiler.Current"/>.
         /// Extension method to support chaining while retaining the derivative options type.
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>

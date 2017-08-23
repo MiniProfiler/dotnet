@@ -24,6 +24,9 @@ namespace StackExchange.Profiling
         /// </summary>
         public bool IsReusable => true;
 
+        /// <summary>
+        /// The options this handler was created with.
+        /// </summary>
         public MiniProfilerOptions Options { get; }
 
         /// <summary>

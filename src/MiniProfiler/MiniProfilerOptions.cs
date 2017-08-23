@@ -57,6 +57,9 @@ namespace StackExchange.Profiling
         public string CustomUITemplates { get; set; } = "~/App_Data/MiniProfilerUI";
 
         private string _versionHash;
+        /// <summary>
+        /// The hash to use for file cache breaking, this is automatically calculated.
+        /// </summary>
         public override string VersionHash => _versionHash ?? (_versionHash = GetVersionHash());
 
         /// <summary>

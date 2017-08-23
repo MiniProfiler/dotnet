@@ -11,6 +11,9 @@ namespace StackExchange.Profiling
     public class DefaultProfilerProvider : IAsyncProfilerProvider
     {
         private static readonly FlowData<MiniProfiler> _profiler = new FlowData<MiniProfiler>();
+        /// <summary>
+        /// The current profiler instance, statically resolved and backed by AsyncLocal{T}.
+        /// </summary>
         public virtual MiniProfiler CurrentProfiler
         {
             get => _profiler.Value;
@@ -68,7 +71,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Calls <see cref="IAsyncStorage.Save(MiniProfiler)"/> to save the current
+        /// Calls <see cref="Storage.IAsyncStorage.Save(MiniProfiler)"/> to save the current
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
@@ -90,7 +93,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Asynchronously calls <see cref="IAsyncStorage.SaveAsync(MiniProfiler)"/> to save the current
+        /// Asynchronously calls <see cref="Storage.IAsyncStorage.SaveAsync(MiniProfiler)"/> to save the current
         /// profiler using the current storage settings. 
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
