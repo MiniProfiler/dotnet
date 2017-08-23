@@ -103,7 +103,8 @@ namespace Samples.Mvc5
                 // Setting up a MultiStorage provider. This will store results in the MemoryCacheStorage (normally the default) and in SqlLite as well.
                 Storage = new MultiStorageProvider(
                     new MemoryCacheStorage(new TimeSpan(1, 0, 0)),
-                    new SqliteMiniProfilerStorage(ConnectionString)
+                    // The RecreateDatabase call is only done for testing purposes, so we don't check in the db to source control.
+                    new SqliteMiniProfilerStorage(ConnectionString).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))")
                     ),
 
                 // Different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine.
@@ -153,11 +154,6 @@ namespace Samples.Mvc5
             .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)
             .ExcludeAssembly("NHibernate")  // Ignore any assembly named NHibernate
             .ExcludeMethod("Flush");        // Ignore any method with the name of Flush
-
-            // this is only done for testing purposes so we don't check in the db to source control
-            // parameter table is only used in this project for sample queries
-            // yes, it is ugly, and do not do this unless you know for sure that the second Store in the MultiStorageProvider is of this type
-            ((SqliteMiniProfilerStorage)((MultiStorageProvider)options.Storage).Stores[1]).RecreateDatabase("create table RouteHits(RouteName,HitCount,unique(RouteName))");
 
             MiniProfilerHandler.Configure(options);
             MiniProfilerEF6.Initialize();
