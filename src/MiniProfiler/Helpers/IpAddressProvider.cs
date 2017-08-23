@@ -1,4 +1,4 @@
-﻿using StackExchange.Profiling.Helpers;
+﻿using StackExchange.Profiling.Internal;
 using System.Web;
 
 namespace StackExchange.Profiling.Helpers

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 
 using Dapper;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Storage

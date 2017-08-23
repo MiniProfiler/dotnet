@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace StackExchange.Profiling.Helpers
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
     /// Common extension methods to use only in this project
@@ -107,5 +107,24 @@ namespace StackExchange.Profiling.Helpers
         /// <returns>The object resulting from the given string.</returns>
         public static T FromJson<T>(this string s) where T : class =>
             !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s, defaultSettings) : null;
+
+        /// <summary>
+        /// <see cref="Dictionary{TKey, TValue}"/> equivalent of ConcurrentDictionary's .TryRemove();
+        /// </summary>
+        /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
+        /// <param name="dict">The dictionary to attempt removal from.</param>
+        /// <param name="key">The key to attempt removal of.</param>
+        /// <param name="value">The value found (if it was found) from the dictionary.</param>
+        /// <returns></returns>
+        public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value)
+        {
+            value = default(TValue);
+            if (dict != null && dict.TryGetValue(key, out value))
+            {
+                return dict.Remove(key);
+            }
+            return false;
+        }
     }
 }

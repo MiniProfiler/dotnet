@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Dapper;
 using MySql.Data.MySqlClient;
-using StackExchange.Profiling.Helpers;
-using System.Threading.Tasks;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.Storage
 {

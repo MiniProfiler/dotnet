@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Dapper;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 
 // TODO: More code sharing between providers...not sure on the cleanest approach here.
 namespace StackExchange.Profiling.Storage

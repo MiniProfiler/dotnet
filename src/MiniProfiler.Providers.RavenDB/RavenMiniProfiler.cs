@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 using Raven.Client;
 using Raven.Client.Connection.Profiling;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.RavenDb
 {

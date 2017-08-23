@@ -36,11 +36,22 @@ namespace StackExchange.Profiling.Data
         private readonly ConcurrentDictionary<Guid, CustomTiming>
             _readers = new ConcurrentDictionary<Guid, CustomTiming>();
 
+        /// <summary>
+        /// Notifies the observer that the provider has finished sending push-based notifications.
+        /// </summary>
         public void OnCompleted() { }
 #pragma warning disable RCS1163 // Unused parameter.
+        /// <summary>
+        /// Notifies the observer that the provider has experienced an error condition.
+        /// </summary>
+        /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error) { }
 #pragma warning restore RCS1163 // Unused parameter.
 
+        /// <summary>
+        /// Provides the observer with new data.
+        /// </summary>
+        /// <param name="kv">The current notification information.</param>
         public void OnNext(KeyValuePair<string, object> kv)
         {
             if (kv.Key == RelationalEventId.CommandExecuting.Name)

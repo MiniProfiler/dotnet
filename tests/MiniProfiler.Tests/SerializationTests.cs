@@ -1,5 +1,5 @@
 ﻿using StackExchange.Profiling;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 using Xunit;
 
 namespace Tests
