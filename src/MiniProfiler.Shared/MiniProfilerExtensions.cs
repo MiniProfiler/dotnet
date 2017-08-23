@@ -106,7 +106,7 @@ namespace StackExchange.Profiling
         /// </remarks>
         /// <param name="profiler">The current profiling session or null.</param>
         /// <returns>the profile step</returns>
-        public static IDisposable Ignore(this MiniProfiler profiler) => profiler?.IgnoreImpl();
+        public static IDisposable Ignore(this MiniProfiler profiler) => profiler != null ? new Suppression(profiler) : null;
 
         /// <summary>
         /// Adds <paramref name="externalProfiler"/>'s <see cref="Timing"/> hierarchy to this profiler's current Timing step,

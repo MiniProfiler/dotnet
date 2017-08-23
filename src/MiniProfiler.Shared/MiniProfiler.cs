@@ -341,8 +341,6 @@ namespace StackExchange.Profiling
             return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
         }
 
-        internal IDisposable IgnoreImpl() => new Suppression(this);
-
         /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency, rounded to one decimal place.
         /// </summary>
