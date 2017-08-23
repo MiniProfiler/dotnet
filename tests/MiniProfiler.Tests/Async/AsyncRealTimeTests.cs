@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling;
+using StackExchange.Profiling.Internal;
 using Xunit;
 using Xunit.Abstractions;
-using StackExchange.Profiling.Internal;
 
 namespace Tests.Async
 {
@@ -21,6 +21,7 @@ namespace Tests.Async
         [Fact]
         public async Task Step_WithParallelTasks_RealTime()
         {
+            Thread.Sleep(1000); // calm down there stupid laptop
             var profiler = Options.StartProfiler("root");
 
             Timing timing10 = null,
@@ -95,7 +96,7 @@ namespace Tests.Async
             Output.WriteLine(profiler.RenderPlainText());
 
             // 100ms + longest running task (step3.0 with 300 + 100 ms) = 500ms
-            AssertNear(500, profiler.DurationMilliseconds, 50);
+            AssertNear(500, profiler.DurationMilliseconds, 125);
 
             // Parent durations are sum of itself and children
             AssertNear(200, timing10.DurationMilliseconds, 50);
