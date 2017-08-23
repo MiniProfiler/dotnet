@@ -33,7 +33,7 @@ namespace Samples.Mvc5.Helpers
         /// Used for testing purposes - destroys and recreates the SQLITE file with needed tables.
         /// </summary>
         /// <param name="extraTablesToCreate">The Extra Tables To Create.</param>
-        public void RecreateDatabase(params string[] extraTablesToCreate)
+        public SqliteMiniProfilerStorage RecreateDatabase(params string[] extraTablesToCreate)
         {
             var path = ConnectionString.Replace("Data Source = ", string.Empty); // hacky
 
@@ -52,6 +52,8 @@ namespace Samples.Mvc5.Helpers
                     cnn.Execute(sql);
                 }
             }
+
+            return this;
         }
 
         /// <summary>
