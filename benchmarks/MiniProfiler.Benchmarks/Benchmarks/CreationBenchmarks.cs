@@ -11,7 +11,11 @@ namespace Benchmarks.Benchmarks
             Storage = null
         };
 
-        [Benchmark(Description = "BaseOptions.StartProfiler")]
-        public MiniProfiler Profiler() => BaseOptions.StartProfiler("My Pofiler");
+        [Benchmark(Description = "Start and Stop MiniProfiler")]
+        public void StartStopProfiler()
+        {
+            var profiler = BaseOptions.StartProfiler("My Pofiler");
+            profiler.Stop(true);
+        }
     }
 }
