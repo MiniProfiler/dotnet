@@ -2,17 +2,19 @@
 using System.Data;
 using System.Data.Common;
 using StackExchange.Profiling.Data;
-using System.Collections.Concurrent;
 using StackExchange.Profiling.Internal;
+using System.Collections.Generic;
 
 namespace StackExchange.Profiling
 {
     public partial class MiniProfiler : IDbProfiler
     {
-        private readonly ConcurrentDictionary<Tuple<object, SqlExecuteType>, CustomTiming> _inProgress =
-            new ConcurrentDictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
-        private readonly ConcurrentDictionary<IDataReader, CustomTiming> _inProgressReaders =
-            new ConcurrentDictionary<IDataReader, CustomTiming>();
+        // Is this more complicated than needed? Yes. But we're avoiding allocating Dictionaries (or ConcurrentDictionaries) up front.
+        // They aer by far the heaviest memory part of a profiler, so this allocates them when needed
+        // Note that these operations almost certainly involve IO, so the critical section behavior is almost certainly insignificant on impact.
+        private readonly object _dbLocker = new object();
+        private Dictionary<Tuple<object, SqlExecuteType>, CustomTiming> _inProgress;
+        private Dictionary<IDataReader, CustomTiming> _inProgressReaders;
 
         /// <summary>
         /// Tracks when 'command' is started.
@@ -22,7 +24,12 @@ namespace StackExchange.Profiling
         void IDbProfiler.ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType)
         {
             var id = Tuple.Create((object)profiledDbCommand, executeType);
-            _inProgress[id] = profiledDbCommand.GetTiming(executeType.ToString(), this);
+            var timing = profiledDbCommand.GetTiming(executeType.ToString(), this);
+            lock (_dbLocker)
+            {
+                _inProgress = _inProgress ?? new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
+                _inProgress[id] = timing;
+            }
         }
 
         /// <summary>
@@ -33,18 +40,33 @@ namespace StackExchange.Profiling
         /// <param name="reader">(Optional) the reader piece of the <paramref name="profiledDbCommand"/>, if it exists.</param>
         void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader)
         {
-            var id = Tuple.Create((object)profiledDbCommand, executeType);
-            if (_inProgress.TryRemove(id, out var current))
+            if (_inProgress == null)
             {
-                if (reader != null)
+                return;
+            }
+
+            var id = Tuple.Create((object)profiledDbCommand, executeType);
+            CustomTiming current;
+            lock (_inProgress)
+            {
+                if (!_inProgress.TryRemove(id, out current))
                 {
+                    return;
+                }
+            }
+
+            if (reader != null)
+            {
+                lock (_dbLocker)
+                {
+                    _inProgressReaders = _inProgressReaders ?? new Dictionary<IDataReader, CustomTiming>();
                     _inProgressReaders[reader] = current;
-                    current.FirstFetchCompleted();
                 }
-                else
-                {
-                    current.Stop();
-                }
+                current.FirstFetchCompleted();
+            }
+            else
+            {
+                current.Stop();
             }
         }
 
@@ -54,11 +76,19 @@ namespace StackExchange.Profiling
         /// <param name="reader">The <see cref="IDataReader"/> that finished.</param>
         void IDbProfiler.ReaderFinish(IDataReader reader)
         {
-            // this reader may have been disposed/closed by reader code, not by our using()
-            if (_inProgressReaders.TryRemove(reader, out var stat))
+            if (_inProgressReaders == null)
             {
-                stat.Stop();
+                return;
             }
+
+            CustomTiming timing;
+            lock (_inProgressReaders)
+            {
+                _inProgressReaders.TryRemove(reader, out timing);
+            }
+
+            // This reader may have been disposed/closed by reader code, not by our using()
+            timing?.Stop();
         }
 
         /// <summary>
@@ -69,11 +99,22 @@ namespace StackExchange.Profiling
         /// <param name="exception">The exception thrown.</param>
         void IDbProfiler.OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception)
         {
-            var id = Tuple.Create((object)profiledDbCommand, executeType);
-            if (_inProgress.TryRemove(id, out var command))
+            if (_inProgress == null)
             {
-                command.Errored = true;
-                command.Stop();
+                return;
+            }
+
+            var id = Tuple.Create((object)profiledDbCommand, executeType);
+            CustomTiming timing;
+            lock (_inProgress)
+            {
+                _inProgress.TryRemove(id, out timing);
+            }
+
+            if (timing != null)
+            {
+                timing.Errored = true;
+                timing.Stop();
             }
         }
 
