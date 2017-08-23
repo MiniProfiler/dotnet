@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.SqlFormatters
 {

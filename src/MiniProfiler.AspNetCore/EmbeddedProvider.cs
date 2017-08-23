@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;

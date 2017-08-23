@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;

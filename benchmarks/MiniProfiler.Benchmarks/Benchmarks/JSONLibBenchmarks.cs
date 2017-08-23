@@ -4,7 +4,7 @@ using Jil;
 using Newtonsoft.Json;
 using ServiceStack.Text;
 using StackExchange.Profiling;
-using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
 
 namespace Benchmarks
 {

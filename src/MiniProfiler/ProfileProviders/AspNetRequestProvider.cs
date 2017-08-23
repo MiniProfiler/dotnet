@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
-using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
@@ -15,7 +14,7 @@ namespace StackExchange.Profiling
     {
         private const string CacheKey = ":mini-profiler:";
         /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string, MiniProfilerBaseOptions)"/>ed.
         /// </summary>
         public override MiniProfiler CurrentProfiler
         {

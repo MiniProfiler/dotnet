@@ -14,12 +14,12 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The profiler to render a tag for.</param>
         /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
-        /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfilerOptions.PopupRenderPosition"/>).</param>
-        /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerOptions.PopupShowTrivial"/>).</param>
-        /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerOptions.PopupShowTimeWithChildren"/>).</param>
-        /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerOptions.PopupMaxTracesToShow"/>).</param>
-        /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfilerOptions.ShowControls"/>).</param>
-        /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfilerOptions.PopupStartHidden"/>).</param>
+        /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).</param>
+        /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTrivial"/>).</param>
+        /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTimeWithChildren"/>).</param>
+        /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerBaseOptions.PopupMaxTracesToShow"/>).</param>
+        /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfilerBaseOptions.ShowControls"/>).</param>
+        /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfilerBaseOptions.PopupStartHidden"/>).</param>
         public static HtmlString RenderIncludes(
             this MiniProfiler profiler,
             HttpContext context,

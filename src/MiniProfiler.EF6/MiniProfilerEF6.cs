@@ -23,7 +23,6 @@ namespace StackExchange.Profiling.EntityFramework6
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
         /// </summary>
-        /// <param name="options">The options to configure (ignoring the steps in this library).</param>
         public static void Initialize()
         {
             try
