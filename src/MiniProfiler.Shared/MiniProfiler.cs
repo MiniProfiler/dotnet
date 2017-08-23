@@ -15,6 +15,9 @@ namespace StackExchange.Profiling
     [DataContract]
     public partial class MiniProfiler
     {
+        /// <summary>
+        /// The options this profiler uses, assigned at creation time.
+        /// </summary>
         [IgnoreDataMember]
         public MiniProfilerBaseOptions Options { get; }
 
@@ -191,7 +194,7 @@ namespace StackExchange.Profiling
         public IStopwatch GetStopwatch() => Stopwatch;
 
         /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string)"/>ed.
+        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was started.
         /// </summary>
         public static MiniProfiler Current => MiniProfilerBaseOptions.CurrentProfilerProvider?.CurrentProfiler;
 

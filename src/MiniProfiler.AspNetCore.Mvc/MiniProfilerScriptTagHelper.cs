@@ -17,37 +17,37 @@ namespace StackExchange.Profiling
         public ViewContext ViewContext { get; set; }
 
         /// <summary>
-        /// The UI position to render the profiler in (defaults to <see cref="MiniProfilerOptions.PopupRenderPosition"/>).
+        /// The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).
         /// </summary>
         [HtmlAttributeName("position")]
         public RenderPosition? Position { get; set; }
 
         /// <summary>
-        /// Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerOptions.PopupShowTrivial"/>).
+        /// Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTrivial"/>).
         /// </summary>
         [HtmlAttributeName("show-trivial")]
         public bool? ShowTrivial { get; set; }
 
         /// <summary>
-        /// Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerOptions.PopupShowTimeWithChildren"/>).
+        /// Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTimeWithChildren"/>).
         /// </summary>
         [HtmlAttributeName("show-time-with-children")]
         public bool? ShowTimeWithChildren { get; set; }
 
         /// <summary>
-        /// The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerOptions.PopupMaxTracesToShow"/>).
+        /// The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerBaseOptions.PopupMaxTracesToShow"/>).
         /// </summary>
         [HtmlAttributeName("max-traces")]
         public int? MaxTraces { get; set; }
 
         /// <summary>
-        /// Whether to show the controls (defaults to <see cref="MiniProfilerOptions.ShowControls"/>).
+        /// Whether to show the controls (defaults to <see cref="MiniProfilerBaseOptions.ShowControls"/>).
         /// </summary>
         [HtmlAttributeName("show-controls")]
         public bool? ShowControls { get; set; }
 
         /// <summary>
-        /// Whether to start hidden (defaults to <see cref="MiniProfilerOptions.PopupStartHidden"/>).
+        /// Whether to start hidden (defaults to <see cref="MiniProfilerBaseOptions.PopupStartHidden"/>).
         /// </summary>
         [HtmlAttributeName("start-hidden")]
         public bool? StartHidden { get; set; }

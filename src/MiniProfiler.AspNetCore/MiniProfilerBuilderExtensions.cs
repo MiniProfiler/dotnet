@@ -15,7 +15,6 @@ namespace Microsoft.AspNetCore.Builder
         /// Adds middleware for profiling HTTP requests.
         /// </summary>
         /// <param name="builder">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-        /// <param name="configureOptions">Action to configure options for MiniProfiler.</param>
         /// <exception cref="ArgumentNullException">Thown if <paramref name="builder"/> is null.</exception>
         public static IApplicationBuilder UseMiniProfiler(this IApplicationBuilder builder)
         {
