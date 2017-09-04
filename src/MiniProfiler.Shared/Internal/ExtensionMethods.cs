@@ -120,7 +120,7 @@ namespace StackExchange.Profiling.Internal
         public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value)
         {
             value = default(TValue);
-            if (dict != null && dict.TryGetValue(key, out value))
+            if (dict?.TryGetValue(key, out value) == true)
             {
                 return dict.Remove(key);
             }
