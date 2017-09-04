@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using StackExchange.Profiling.Internal;
 using System.Collections.Concurrent;
 using System.IO;
@@ -14,9 +15,9 @@ namespace StackExchange.Profiling
         /// </summary>
         private ConcurrentDictionary<string, string> _resourceCache { get; } = new ConcurrentDictionary<string, string>();
         private readonly IHostingEnvironment _env;
-        private readonly MiniProfilerOptions _options;
+        private readonly IOptions<MiniProfilerOptions> _options;
 
-        public EmbeddedProvider(MiniProfilerOptions options, IHostingEnvironment env)
+        public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IHostingEnvironment env)
         {
             _options = options;
             _env = env;
@@ -58,9 +59,9 @@ namespace StackExchange.Profiling
             }
 
             // Check the on-disk location first, if configured
-            if (_options.UITemplatesPath.HasValue())
+            if (_options.Value.UITemplatesPath.HasValue())
             {
-                var customFile = Path.Combine(_options.UITemplatesPath, filename);
+                var customFile = Path.Combine(_options.Value.UITemplatesPath, filename);
                 var fileInfo = _env.ContentRootFileProvider.GetFileInfo(customFile);
                 if (fileInfo.Exists)
                 {
