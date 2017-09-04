@@ -41,7 +41,7 @@ namespace Samples.AspNetCore
             services.AddMiniProfiler(options =>
             {
                 // Path to use for profiler URLs
-                options.RouteBasePath = "~/profiler";
+                options.RouteBasePath = "/profiler";
 
                 // Control storage
                 options.Storage = new MemoryCacheStorage(services.BuildServiceProvider().GetService<IMemoryCache>(), TimeSpan.FromMinutes(60));

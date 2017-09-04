@@ -9,7 +9,14 @@ namespace StackExchange.Profiling
     public class MiniProfilerOptions : MiniProfilerBaseOptions
     {
         /// <summary>
-        /// Seta a function to control whether a given request should be profiled at all.
+        /// The path under which ALL routes are registered in, defaults to the application root.  For example, "/myDirectory/" would yield
+        /// "/myDirectory/includes.js" rather than "/mini-profiler-resources/includes.js"
+        /// Any setting here should be absolute for the application, e.g. "/myDirectory/"
+        /// </summary>
+        public PathString RouteBasePath { get; set; } = "/mini-profiler-resources";
+
+        /// <summary>
+        /// Set a function to control whether a given request should be profiled at all.
         /// </summary>
         public Func<HttpRequest, bool> ShouldProfile { get; set; } = r => true;
 
