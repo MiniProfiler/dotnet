@@ -43,7 +43,10 @@ namespace Samples.Console
         /// </summary>
         public static void SetupProfiling()
         {
-            Options = new MiniProfilerOptions().SetProvider(new SingletonProfilerProvider());
+            // We're using DefaultProfilerProvider here (not the Web provider) because we're 
+            // not using HttpContext.Current to track MiniPofiler.Current
+            // In general, DefaultProfilerProvider() should be the go-to for most new applications.
+            Options = new MiniProfilerOptions().SetProvider(new DefaultProfilerProvider());
         }
 
         /// <summary>
@@ -64,9 +67,9 @@ namespace Samples.Console
                 }
 
                 using (var wc = new WebClient())
-                using (mp.CustomTiming("http", "GET http://google.com"))
+                using (mp.CustomTiming("http", "GET https://google.com"))
                 {
-                    wc.DownloadString("http://google.com");
+                    wc.DownloadString("https://google.com");
                 }
             }
 
