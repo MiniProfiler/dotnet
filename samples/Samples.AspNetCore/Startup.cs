@@ -42,7 +42,7 @@ namespace Samples.AspNetCore
 
                 // Path to use for profiler URLs, default is /mini-profiler-resources
                 options.RouteBasePath = "/profiler";
-
+                
                 // Control storage - the default is 30 minutes
                 //(options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 

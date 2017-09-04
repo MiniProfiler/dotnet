@@ -23,10 +23,37 @@ public void ConfigureServices(IServiceCollection services)
     // ...existing configuration...
     
     // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
-    services.AddMiniProfiler();
+    services.AddMiniProfiler(options =>
+    {
+        // All of this is optional. You can simply call .AddMiniProfiler() for all defaults
 
-    // Make sure you have memory cache available unless you're using another storage provider
-    services.AddMemoryCache();
+        // (Optional) Path to use for profiler URLs, default is /mini-profiler-resources
+        options.RouteBasePath = "/profiler";
+
+        // (Optional) Control storage
+        // (default is 30 minutes in MemoryCacheStorage)
+        (options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
+
+        // (Optional) Control which SQL formatter to use, InlineFormatter is the default
+        options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
+
+        // (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
+        // (default is everyone can access profilers)
+        options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+        options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+
+        // (Optional)  To control which requests are profiled, use the Func<HttpRequest, bool> option:
+        // (default is everything should be profiled)
+        options.ShouldProfile = request => MyShouldThisBeProfiledFunction(request);
+
+        // (Optional) Profiles are stored under a user ID, function to get it:
+        // (default is null, since above methods don't use it by default)
+        options.UserIdProvider =  request => MyGetUserIdFunction(request);
+
+        // (Optional) Swap out the entire profiler provider, if you want
+        // (default handles async and works fine for almost all appliations)
+        options.ProfilerProvider = new MyProfilerProvider();
+    });
 }
 ```
 
@@ -36,37 +63,7 @@ public void ConfigureServices(IServiceCollection services)
 public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IMemoryCache cache)
 {
     // ...existing configuration...
-
-    app.UseMiniProfiler(new MiniProfilerOptions
-    {
-        // Path to use for profiler URLs
-        RouteBasePath = "~/profiler",
-
-        // (Optional) Control which SQL formatter to use
-        // (default is no formatter)
-        SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
-
-        // (Optional) Control storage
-        // (default is 30 minutes in MemoryCacheStorage)
-        Storage = new MemoryCacheStorage(cache, TimeSpan.FromMinutes(60)),
-
-        // (Optional)  To control which requests are profiled, use the Func<HttpRequest, bool> option:
-        // (default is everything should be profiled)
-        ShouldProfile = request => MyShouldThisBeProfiledFunction(request),
-
-        // (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
-        // (default is everyone can access profilers)
-        ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
-        ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler,
-
-        // (Optional)  Profiles are stored under a user ID, function to get it:
-        // (default is null, since above methods don't use it by default)
-        UserIdProvider =  request => MyGetUserIdFunction(request),
-
-        // (Optional) Swap out the entire profiler provider, if you want
-        // (default handles async and works fine for almost all appliations)
-        ProfilerProvider = new MyProfilerProvider(),
-    });
+    app.UseMiniProfiler();
 }
 ```
 <sub>Note: most of the above are optional. A config can be as minimal as `app.UseMiniProfiler(new MiniProfilerOptions()));`</sub>
