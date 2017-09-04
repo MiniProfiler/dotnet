@@ -17,10 +17,11 @@ namespace StackExchange.Profiling
     {
         private readonly RequestDelegate _next;
         private readonly IHostingEnvironment _env;
+        private readonly IOptions<MiniProfilerOptions> _options;
+        internal MiniProfilerOptions Options => _options.Value;
 
         internal readonly PathString BasePath;
         internal readonly PathString MatchPath;
-        internal readonly MiniProfilerOptions Options;
         internal readonly EmbeddedProvider Embedded;
         internal static MiniProfilerMiddleware Current;
 
@@ -39,7 +40,8 @@ namespace StackExchange.Profiling
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _env = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
-            Options = options.Value ?? throw new ArgumentNullException(nameof(options));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _ = options.Value ?? throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrEmpty(Options.RouteBasePath))
             {
@@ -53,7 +55,7 @@ namespace StackExchange.Profiling
 
             MatchPath = basePath;
             BasePath = basePath.EnsureTrailingSlash();
-            Embedded = new EmbeddedProvider(Options, _env);
+            Embedded = new EmbeddedProvider(_options, _env);
             // A static reference back to this middleware for property access.
             // Which is probably a crime against humanity in ways I'm ignorant of.
             Current = this;
