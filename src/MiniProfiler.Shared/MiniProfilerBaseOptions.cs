@@ -152,8 +152,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Understands how to save and load MiniProfilers. Used for caching between when
         /// a profiling session ends and results can be fetched to the client, and for showing shared, full-page results.
-        /// On netstandard, defaults to <see cref="NullStorage"/>.
-        /// On netfx, defaults to <see cref="MemoryCacheStorage"/> with a duration of 30 minutes.
         /// </summary>
         /// <remarks>
         /// The normal profiling session life-cycle is as follows:
@@ -166,12 +164,7 @@ namespace StackExchange.Profiling
         /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
         ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
         /// </remarks>
-        public IAsyncStorage Storage { get; set; } =
-#if NETSTANDARD1_5 || NETSTANDARD2_0
-            new NullStorage();
-#else
-            new MemoryCacheStorage(TimeSpan.FromMinutes(30));
-#endif
+        public IAsyncStorage Storage { get; set; }
 
         /// <summary>
         /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.

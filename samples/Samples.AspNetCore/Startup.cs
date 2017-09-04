@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Samples.AspNetCore.Models;
-using StackExchange.Profiling.Storage;
-using System;
 using System.IO;
 
 namespace Samples.AspNetCore
@@ -34,17 +31,20 @@ namespace Samples.AspNetCore
             // Add framework services.
             services.AddDbContext<SampleContext>();
             services.AddMvc();
-            services.AddMemoryCache();
+
             // Add MiniProfiler services
-            // If using Entity Framework Core, add profiling for it as well
+            // If using Entity Framework Core, add profiling for it as well (see the end)
             // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
             services.AddMiniProfiler(options =>
             {
-                // Path to use for profiler URLs
+                // ALL of this is optional. You can simply call .AddMiniProfiler() for all defaults
+                // Defaults: In-Memory for 30 minutes, everything profiled, every user can see
+
+                // Path to use for profiler URLs, default is /mini-profiler-resources
                 options.RouteBasePath = "/profiler";
 
-                // Control storage
-                options.Storage = new MemoryCacheStorage(services.BuildServiceProvider().GetService<IMemoryCache>(), TimeSpan.FromMinutes(60));
+                // Control storage - the default is 30 minutes
+                //(options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
                 // Control which SQL formatter to use, InlineFormatter is the default
                 //options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();

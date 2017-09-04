@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
-#if NETSTANDARD1_5 || NETSTANDARD2_0
 using Microsoft.Extensions.Caching.Memory;
-#else
-using System.Runtime.Caching;
-#endif
 
 namespace StackExchange.Profiling.Storage
 {
@@ -16,12 +12,8 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class MemoryCacheStorage : IAsyncStorage
     {
-#if NETSTANDARD1_5 || NETSTANDARD2_0
         private readonly IMemoryCache _cache;
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
-#else
-        private readonly MemoryCache _cache;
-#endif
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
 
         /// <summary>
@@ -33,9 +25,8 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms.
         /// </summary>
-        public TimeSpan CacheDuration { get; }
+        public TimeSpan CacheDuration { get; set; }
 
-#if NETSTANDARD1_5 || NETSTANDARD2_0
         /// <summary>
         /// Creates a memory cache provider, storing each result in the provided IMemoryCache
         /// for the specified duration.
@@ -49,17 +40,6 @@ namespace StackExchange.Profiling.Storage
             CacheDuration = cacheDuration;
             CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
         }
-#else
-        /// <summary>
-        /// Creates a memory cache provider, storing each result in a MemoryCache for the specified duration.
-        /// </summary>
-        /// <param name="cacheDuration">The duration to cache each profiler, before it expires from cache.</param>
-        public MemoryCacheStorage(TimeSpan cacheDuration)
-        {
-            _cache = new MemoryCache("MiniProfilerCache");
-            CacheDuration = cacheDuration;
-        }
-#endif
 
         private string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
 

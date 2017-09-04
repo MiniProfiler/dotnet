@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Internal;
+using StackExchange.Profiling.Storage;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -15,26 +17,38 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds MiniProfiler timings for actions and views.
         /// </summary>
         /// <param name="services">The services collection to configure.</param>
-        public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services)
+        /// <param name="configureOptions">An Action{MiniProfilerOptions} to configure options for MiniProfiler.</param>
+        public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services, Action<MiniProfilerOptions> configureOptions = null)
         {
+            services.AddSingleton<IConfigureOptions<MiniProfilerOptions>, MiniProfilerOptionsDefaults>();
+            if (configureOptions != null)
+            {
+                services.Configure(configureOptions);
+            }
+
             // See https://github.com/MiniProfiler/dotnet/issues/162 for plans
             // Blocked on https://github.com/aspnet/Mvc/issues/6222
             //services.AddSingleton<IMiniProfilerDiagnosticListener, MvcViewDiagnosticListener>();
-
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
                     .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
             return new MiniProfilerBuilder(services);
         }
+    }
 
-        /// <summary>
-        /// Adds MiniProfiler timings for actions and views.
-        /// </summary>
-        /// <param name="services">The services collection to configure.</param>
-        /// <param name="configureOptions">An Action{MiniProfilerOptions} to configure options for MiniProfiler.</param>
-        public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services, Action<MiniProfilerOptions> configureOptions = null)
+    /// <summary>
+    /// Configures the default (important: with DI for IMemoryCache) before further user configuration.
+    /// </summary>
+    internal class MiniProfilerOptionsDefaults : IConfigureOptions<MiniProfilerOptions>
+    {
+        private readonly IMemoryCache _cache;
+        public MiniProfilerOptionsDefaults(IMemoryCache cache) => _cache = cache;
+
+        public void Configure(MiniProfilerOptions options)
         {
-            services.Configure(configureOptions);
-            return services.AddMiniProfiler();
+            if (options.Storage == null)
+            {
+                options.Storage = new MemoryCacheStorage(_cache, TimeSpan.FromMinutes(30));
+            }
         }
     }
 
