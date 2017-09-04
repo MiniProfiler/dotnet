@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using StackExchange.Profiling.Internal;
 using System;
@@ -81,6 +82,8 @@ namespace StackExchange.Profiling
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
 #pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
+                // Assign name
+                EnsureName(mp, context);
                 // Stop (and record)
                 await mp.StopAsync().ConfigureAwait(false);
             }
@@ -103,6 +106,18 @@ namespace StackExchange.Profiling
                 }
             }
             return Options.ShouldProfile?.Invoke(request) ?? true;
+        }
+
+        private void EnsureName(MiniProfiler profiler, HttpContext context)
+        {
+            if (profiler.Name == nameof(MiniProfiler))
+            {
+                var routingFeature = context.Features[typeof(IRoutingFeature)] as IRoutingFeature;
+                var controller = routingFeature?.RouteData.Values["controller"];
+                var action = routingFeature?.RouteData.Values["action"];
+
+                profiler.Name = controller + "/" + action;
+            }
         }
 
         private async Task SetHeadersAndState(HttpContext context, MiniProfiler current)
