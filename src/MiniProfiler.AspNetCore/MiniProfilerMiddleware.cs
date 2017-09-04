@@ -18,12 +18,9 @@ namespace StackExchange.Profiling
         private readonly RequestDelegate _next;
         private readonly IHostingEnvironment _env;
         private readonly IOptions<MiniProfilerOptions> _options;
-        internal MiniProfilerOptions Options => _options.Value;
 
-        internal readonly PathString BasePath;
-        internal readonly PathString MatchPath;
         internal readonly EmbeddedProvider Embedded;
-        internal static MiniProfilerMiddleware Current;
+        internal MiniProfilerOptions Options => _options.Value;
 
         /// <summary>
         /// Creates a new instance of <see cref="MiniProfilerMiddleware"/>
@@ -32,7 +29,6 @@ namespace StackExchange.Profiling
         /// <param name="hostingEnvironment">The Hosting Environment.</param>
         /// <param name="options">The middleware options, containing the rules to apply.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">Throws when <see cref="MiniProfilerBaseOptions.RouteBasePath"/> is <c>null</c> or empty.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
             IHostingEnvironment hostingEnvironment,
@@ -41,24 +37,13 @@ namespace StackExchange.Profiling
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _env = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            _ = options.Value ?? throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrEmpty(Options.RouteBasePath))
             {
-                throw new ArgumentException("BasePath cannot be empty", nameof(Options.RouteBasePath));
+                throw new ArgumentException("RouteBasePath cannot be empty", nameof(Options.RouteBasePath));
             }
 
-            var basePath = Options.RouteBasePath;
-            // Example transform: ~/mini-profiler-results/ to /mini-profiler-results
-            if (basePath.StartsWith("~/", StringComparison.Ordinal)) basePath = basePath.Substring(1);
-            if (basePath.EndsWith("/", StringComparison.Ordinal) && basePath.Length > 2) basePath = basePath.Substring(0, basePath.Length - 1);
-
-            MatchPath = basePath;
-            BasePath = basePath.EnsureTrailingSlash();
             Embedded = new EmbeddedProvider(_options, _env);
-            // A static reference back to this middleware for property access.
-            // Which is probably a crime against humanity in ways I'm ignorant of.
-            Current = this;
         }
 
         /// <summary>
@@ -69,12 +54,9 @@ namespace StackExchange.Profiling
         /// <exception cref="ArgumentNullException">Throws when <paramref name="context"/> is <c>null</c>.</exception>
         public async Task Invoke(HttpContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            if (context.Request.Path.StartsWithSegments(MatchPath, out PathString subPath))
+            if (context.Request.Path.StartsWithSegments(Options.RouteBasePath, out PathString subPath))
             {
                 // This is a request in the MiniProfiler path (e.g. one of "our" routes), HANDLE THE SITUATION.
                 await HandleRequest(context, subPath).ConfigureAwait(false);
@@ -208,7 +190,7 @@ namespace StackExchange.Profiling
 
             context.Response.ContentType = "text/html";
 
-            var path = BasePath.Value.EnsureTrailingSlash();
+            var path = context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash();
             var version = Options.VersionHash;
             return $@"<html>
   <head>
@@ -330,19 +312,16 @@ namespace StackExchange.Profiling
                 return @"""hidden"""; // JSON
             }
 
-            return jsonRequest ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
-        }
-
-        private string ResultsJson(HttpContext context, MiniProfiler profiler)
-        {
-            context.Response.ContentType = "application/json";
-            return profiler.ToJson();
-        }
-
-        private string ResultsFullPage(HttpContext context, MiniProfiler profiler)
-        {
-            context.Response.ContentType = "text/html";
-            return profiler.RenderResultsHtml(Current.BasePath.Value);
+            if (jsonRequest)
+            {
+                context.Response.ContentType = "application/json";
+                return profiler.ToJson();
+            }
+            else
+            {
+                context.Response.ContentType = "text/html";
+                return profiler.RenderResultsHtml(context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
+            }
         }
     }
 }

@@ -23,6 +23,13 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
+        /// "/myDirectory/includes.js" rather than just "/mini-profiler-resources/includes.js"
+        /// Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
+        /// </summary>
+        public string RouteBasePath { get; set; } = "~/mini-profiler-resources";
+
+        /// <summary>
         /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
         /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
         /// </summary>

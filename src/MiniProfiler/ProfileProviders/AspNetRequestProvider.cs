@@ -52,14 +52,15 @@ namespace StackExchange.Profiling
                 }
             }
 
-            if (path.StartsWith(VirtualPathUtility.ToAbsolute(options.RouteBasePath), StringComparison.OrdinalIgnoreCase))
+            var mpo = options as MiniProfilerOptions;
+            if ((mpo != null) && path.StartsWith(VirtualPathUtility.ToAbsolute(mpo.RouteBasePath), StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
 
             return CurrentProfiler = new MiniProfiler(profilerName, options)
             {
-                User = (options as MiniProfilerOptions)?.UserIdProvider?.Invoke(request)
+                User = mpo?.UserIdProvider?.Invoke(request)
             };
         }
 

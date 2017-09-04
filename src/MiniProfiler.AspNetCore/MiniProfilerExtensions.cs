@@ -34,10 +34,10 @@ namespace StackExchange.Profiling
 
             // This is populated in Middleware by SetHeadersAndState
             var state = RequestState.Get(context);
-            var path = MiniProfilerMiddleware.Current.BasePath.Value;
+            var path = (profiler.Options as MiniProfilerOptions)?.RouteBasePath.Value.EnsureTrailingSlash();
 
             var result = profiler.RenderIncludes(
-                path: path,
+                path: context.Request.PathBase + path,
                 isAuthorized: state?.IsAuthorized ?? false,
                 requestIDs: state?.RequestIDs,
                 position: position,
