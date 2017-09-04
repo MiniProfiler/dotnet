@@ -53,7 +53,7 @@ namespace StackExchange.Profiling
             }
 
             var mpo = options as MiniProfilerOptions;
-            if ((mpo != null) && path.StartsWith(VirtualPathUtility.ToAbsolute(mpo.RouteBasePath), StringComparison.OrdinalIgnoreCase))
+            if (mpo != null && path.StartsWith(VirtualPathUtility.ToAbsolute(mpo.RouteBasePath), StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
