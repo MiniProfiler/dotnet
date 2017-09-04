@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 namespace Tests.Async
 {
     [CollectionDefinition(BaseTest.NonParallel, DisableParallelization = true)]
-    public class NonParallelDefintion
+    public static class NonParallelDefintion
     {
         public const string Name = "NonParallel";
     }
