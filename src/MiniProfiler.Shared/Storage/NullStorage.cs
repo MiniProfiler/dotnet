@@ -7,7 +7,7 @@ using StackExchange.Profiling.Internal;
 namespace StackExchange.Profiling.Storage
 {
     /// <summary>
-    /// Empty storage provider, used if absolutely nothing is configured.
+    /// Empty storage provider for testing, etc.
     /// </summary>
     internal class NullStorage : IAsyncStorage
     {

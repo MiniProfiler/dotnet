@@ -199,11 +199,6 @@ namespace StackExchange.Profiling
         public static MiniProfiler Current => MiniProfilerBaseOptions.CurrentProfilerProvider?.CurrentProfiler;
 
         /// <summary>
-        /// Various configuration properties.
-        /// </summary>
-        internal static IAsyncProfilerProvider CurrentProvider { get; set; }
-
-        /// <summary>
         /// A <see cref="IAsyncStorage"/> strategy to use for the current profiler.
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
