@@ -1,4 +1,5 @@
 ﻿using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Storage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +21,8 @@ namespace StackExchange.Profiling
         {
             // The default profiler for old ASP.NET (non-Core) is the WebRequestProfilerProvider
             this.SetProvider(new AspNetRequestProvider());
+            // Default storage is 30 minutes in-memory
+            Storage = new MemoryCacheStorage(TimeSpan.FromMinutes(30));
         }
 
         /// <summary>

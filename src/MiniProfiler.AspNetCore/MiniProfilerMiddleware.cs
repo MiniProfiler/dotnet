@@ -112,11 +112,25 @@ namespace StackExchange.Profiling
         {
             if (profiler.Name == nameof(MiniProfiler))
             {
-                var routingFeature = context.Features[typeof(IRoutingFeature)] as IRoutingFeature;
-                var controller = routingFeature?.RouteData.Values["controller"];
-                var action = routingFeature?.RouteData.Values["action"];
+                var routeData = (context.Features[typeof(IRoutingFeature)] as IRoutingFeature)?.RouteData;
+                if (routeData != null)
+                {
+                    profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
+                }
+                else
+                {
+                    profiler.Name = StringBuilderCache.Get()
+                        .Append(context.Request.Scheme)
+                        .Append("://")
+                        .Append(context.Request.Host.Value)
+                        .Append(context.Request.PathBase.Value)
+                        .Append(context.Request.Path.Value)
+                        .Append(context.Request.QueryString.Value)
+                        .ToStringRecycle();
 
-                profiler.Name = controller + "/" + action;
+                    if (profiler.Name.Length > 50)
+                        profiler.Name = profiler.Name.Remove(50);
+                }
             }
         }
 
