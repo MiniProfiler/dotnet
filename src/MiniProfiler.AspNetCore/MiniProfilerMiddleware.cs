@@ -64,10 +64,14 @@ namespace StackExchange.Profiling
             }
 
             // Otherwise this is an app request, profile it!
-            if (Options.ShouldProfile?.Invoke(context.Request) ?? true)
+            if (ShouldProfile(context.Request))
             {
                 // Wrap the request in this profiler
                 var mp = Options.StartProfiler();
+
+                // Set the user
+                mp.User = Options.UserIdProvider?.Invoke(context.Request);
+
                 // Always add this profiler's header (and any async requests before it)
                 using (mp.Step("MiniProfiler Prep"))
                 {
@@ -87,6 +91,18 @@ namespace StackExchange.Profiling
                 await _next(context);
 #pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
             }
+        }
+
+        private bool ShouldProfile(HttpRequest request)
+        {
+            foreach (var ignored in Options.IgnoredPaths)
+            {
+                if (ignored != null && request.Path.Value.Contains(ignored, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+            return Options.ShouldProfile?.Invoke(request) ?? true;
         }
 
         private async Task SetHeadersAndState(HttpContext context, MiniProfiler current)
