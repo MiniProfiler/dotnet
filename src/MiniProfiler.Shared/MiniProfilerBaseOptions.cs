@@ -140,6 +140,8 @@ namespace StackExchange.Profiling
         {
             nameof(ProfiledDbConnection.Open),
             nameof(ProfiledDbConnection.OpenAsync),
+            nameof(ProfiledDbConnection.Close),
+            "CloseAsync" // RelationalDiagnosticListener
         };
 
         /// <summary>
