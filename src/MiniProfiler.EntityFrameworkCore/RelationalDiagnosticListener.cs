@@ -98,35 +98,43 @@ namespace StackExchange.Profiling.Data
                 }
             }
             // TODO consider switching to ConnectionEndEventData.Duration
-            // This isn't as trivia as it appears due to the start offset of the request
+            // This isn't as trivial as it appears due to the start offset of the request
             else if (kv.Key == RelationalEventId.ConnectionOpening.Name)
             {
                 var data = (ConnectionEventData)kv.Value;
-                _opening[data.ConnectionId] = MiniProfiler.Current.CustomTiming("sql",
+                var timing = MiniProfiler.Current.CustomTiming("sql",
                     data.IsAsync ? "Connection OpenAsync()" : "Connection Open()",
                     data.IsAsync ? "OpenAsync" : "Open");
+                if (timing != null)
+                {
+                    _opening[data.ConnectionId] = timing;
+                }
             }
             else if (kv.Key == RelationalEventId.ConnectionOpened.Name)
             {
                 var data = (ConnectionEndEventData)kv.Value;
                 if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
                 {
-                    openingTiming.Stop();
+                    openingTiming?.Stop();
                 }
             }
             else if (kv.Key == RelationalEventId.ConnectionClosing.Name)
             {
                 var data = (ConnectionEventData)kv.Value;
-                _closing[data.ConnectionId] = MiniProfiler.Current.CustomTiming("sql",
+                var timing = MiniProfiler.Current.CustomTiming("sql",
                     data.IsAsync ? "Connection CloseAsync()" : "Connection Close()",
                     data.IsAsync ? "CloseAsync" : "Close");
+                if (timing != null)
+                {
+                    _closing[data.ConnectionId] = timing;
+                }
             }
             else if (kv.Key == RelationalEventId.ConnectionClosed.Name)
             {
                 var data = (ConnectionEndEventData)kv.Value;
                 if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
                 {
-                    closingTiming.Stop();
+                    closingTiming?.Stop();
                 }
             }
             else if (kv.Key == RelationalEventId.ConnectionError.Name)
@@ -231,9 +239,13 @@ namespace StackExchange.Profiling.Data
         public void OnConnectionOpening(Guid instanceId, bool async)
         {
             // Available: DbConnection connection, Guid connectionId, Guid instanceId, long startTimestamp, bool async
-            _opening[instanceId] = MiniProfiler.Current.CustomTiming("sql",
+            var timing = MiniProfiler.Current.CustomTiming("sql",
                     async ? "Connection OpenAsync()" : "Connection Open()",
                     async ? "OpenAsync" : "Open");
+            if (timing != null)
+            {
+                _opening[instanceId] = timing;
+            }
         }
 
         /// <summary>
@@ -259,9 +271,13 @@ namespace StackExchange.Profiling.Data
         public void OnConnectionClosing(Guid instanceId, bool async)
         {
             // Available: DbConnection connection, Guid connectionId, Guid instanceId, long startTimestamp, bool async
-            _closing[instanceId] = MiniProfiler.Current.CustomTiming("sql",
+            var timing = MiniProfiler.Current.CustomTiming("sql",
                     async ? "Connection CloseAsync()" : "Connection Close()",
                     async ? "CloseAsync" : "Close");
+            if (timing != null)
+            {
+                _closing[instanceId] = timing;
+            }
         }
 
         /// <summary>
