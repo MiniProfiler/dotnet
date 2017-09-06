@@ -10,7 +10,7 @@ namespace StackExchange.Profiling
     public partial class MiniProfiler : IDbProfiler
     {
         // Is this more complicated than needed? Yes. But we're avoiding allocating Dictionaries (or ConcurrentDictionaries) up front.
-        // They aer by far the heaviest memory part of a profiler, so this allocates them when needed
+        // They are by far the heaviest memory part of a profiler, so this allocates them when needed
         // Note that these operations almost certainly involve IO, so the critical section behavior is almost certainly insignificant on impact.
         private readonly object _dbLocker = new object();
         private Dictionary<Tuple<object, SqlExecuteType>, CustomTiming> _inProgress;

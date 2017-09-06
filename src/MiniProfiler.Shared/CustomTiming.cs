@@ -80,7 +80,7 @@ namespace StackExchange.Profiling
         public decimal? DurationMilliseconds { get; set; }
 
         /// <summary>
-        /// OPTIONAL - how long this tim took to come back initially from the remote server, 
+        /// OPTIONAL - how long this timing took to come back initially from the remote server, 
         /// before all data is fetched and command is completed.
         /// </summary>
         [DataMember(Order = 7)]

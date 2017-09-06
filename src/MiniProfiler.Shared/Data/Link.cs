@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Data
     public class Link<TKey, TValue> where TKey : class
     {
         /// <summary>
-        /// Initialises a new instance of the <see cref="Link{TKey,TValue}"/> class.
+        /// Initializes a new instance of the <see cref="Link{TKey,TValue}"/> class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>

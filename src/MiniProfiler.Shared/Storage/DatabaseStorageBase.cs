@@ -17,7 +17,7 @@ namespace StackExchange.Profiling.Storage
         protected string ConnectionString { get; set; }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
         /// </summary>
         /// <param name="connectionString">The connection String</param>
@@ -63,14 +63,14 @@ namespace StackExchange.Profiling.Storage
         public virtual bool SetUnviewedAfterSave => false;
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "un-viewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public abstract void SetUnviewed(string user, Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -176,7 +176,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Flattems the timings down into a single list.
+        /// Flattens the timings down into a single list.
         /// </summary>
         /// <param name="timing">The <see cref="Timing"/> to flatten into <paramref name="timingsCollection"/>.</param>
         /// <param name="timingsCollection">The collection to add all timings in the <paramref name="timing"/> tree to.</param>

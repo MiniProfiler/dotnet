@@ -49,10 +49,10 @@ namespace StackExchange.Profiling.Helpers
         /// <summary>
         /// Perform a binary search of the given SortedList.
         /// </summary>
-        /// <typeparam name="T">SortedList value type</typeparam>
-        /// <param name="list">List to search</param>
-        /// <param name="date">The date to find the index of</param>
-        /// <returns>The index of the nearest occurence</returns>
+        /// <typeparam name="T">SortedList value type.</typeparam>
+        /// <param name="list">List to search.</param>
+        /// <param name="date">The date to find the index of.</param>
+        /// <returns>The index of the nearest occurrence.</returns>
         public static int BinaryClosestSearch<T>(this SortedList<ProfilerSortedKey, T> list, DateTime date)
         {
             int lower = 0;

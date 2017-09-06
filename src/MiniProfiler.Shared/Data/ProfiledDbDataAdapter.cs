@@ -1,5 +1,4 @@
-﻿// Only in .NET 4.6 until netstandard 2.0 timeframe
-#if !NETSTANDARD1_5
+﻿#if !NETSTANDARD1_5
 using System;
 using System.Data;
 using System.Data.Common;
@@ -25,7 +24,7 @@ namespace StackExchange.Profiling.Data
         public IDbDataAdapter InternalAdapter { get; }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ProfiledDbDataAdapter"/> class.
+        /// Initializes a new instance of the <see cref="ProfiledDbDataAdapter"/> class.
         /// </summary>
         /// <param name="wrappedAdapter">The wrapped adapter.</param>
         /// <param name="profiler">The profiler.</param>
@@ -168,7 +167,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets or sets whether unmapped source tables or columns are passed with their source names in order to be filtered or to raise an error.
         /// </summary>
-        /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is Passthrough.</returns>
+        /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is <see cref="MissingMappingAction.Passthrough"/>.</returns>
         public new MissingMappingAction MissingMappingAction
         {
             get => InternalAdapter.MissingMappingAction;

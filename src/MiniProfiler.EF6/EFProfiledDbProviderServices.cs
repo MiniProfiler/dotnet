@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Data
         private readonly DbProviderServices _tail;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="EFProfiledDbProviderServices"/> class. 
+        /// Initializes a new instance of the <see cref="EFProfiledDbProviderServices"/> class. 
         /// Used for DB provider APIS internally 
         /// </summary>
         /// <param name="providerServices">The <see cref="DbProviderServices"/> to wrap.</param>

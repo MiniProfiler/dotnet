@@ -33,7 +33,7 @@ namespace StackExchange.Profiling
         public string RouteBasePath { get; set; } = "~/mini-profiler-resources";
 
         /// <summary>
-        /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
+        /// A function that determines who can access the MiniProfiler results URL and list URL.  It should return true when
         /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
         /// </summary>
         /// <remarks>
@@ -59,7 +59,7 @@ namespace StackExchange.Profiling
         public bool EnableCompression { get; set; } = true;
 
         /// <summary>
-        /// The path where custom ui elements are stored.
+        /// The path where custom UI elements are stored.
         /// If the custom file doesn't exist, the standard resource is used.
         /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"
         /// </summary>

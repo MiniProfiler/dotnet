@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         public Func<HttpRequest, bool> ShouldProfile { get; set; } = r => true;
 
         /// <summary>
-        /// A function that determines who can access the MiniProfiler results url and list url.  It should return true when
+        /// A function that determines who can access the MiniProfiler results URL and list URL.  It should return true when
         /// the request client has access to results, false for a 401 to be returned. HttpRequest parameter is the current request and
         /// </summary>
         /// <remarks>

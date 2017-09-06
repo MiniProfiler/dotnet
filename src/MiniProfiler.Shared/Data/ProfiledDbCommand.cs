@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ProfiledDbCommand"/> class.
+        /// Initializes a new instance of the <see cref="ProfiledDbCommand"/> class.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="connection">The connection.</param>

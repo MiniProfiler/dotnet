@@ -25,7 +25,7 @@ namespace StackExchange.Profiling.Data
         public IDbProfiler Profiler => _profiler;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ProfiledDbConnection"/> class. 
+        /// Initializes a new instance of the <see cref="ProfiledDbConnection"/> class. 
         /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
         /// providing query execution profiling. If profiler is null, no profiling will occur.
         /// </summary>
@@ -151,7 +151,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Dispose the underlying connection.
         /// </summary>
-        /// <param name="disposing">false if pre-empted from a <c>finalizer</c></param>
+        /// <param name="disposing">false if preempted from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && _connection != null)

@@ -68,7 +68,7 @@ namespace StackExchange.Profiling
         };
 
         /// <summary>
-        /// When <see cref="IAsyncProfilerProvider.Start(string, MiniProfilerBaseOptions)"/> is called, if the current request url contains any items in this property,
+        /// When <see cref="IAsyncProfilerProvider.Start(string, MiniProfilerBaseOptions)"/> is called, if the current request URL contains any items in this property,
         /// no profiler will be instantiated and no results will be displayed.
         /// Default value is { "/content/", "/scripts/", "/favicon.ico" }.
         /// </summary>
@@ -145,7 +145,7 @@ namespace StackExchange.Profiling
         };
 
         /// <summary>
-        /// By default, <see cref="CustomTiming"/>s created by this assmebly will grab a stack trace to help 
+        /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help 
         /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
         /// will be collected, possibly improving profiler performance.
         /// </summary>
@@ -163,7 +163,7 @@ namespace StackExchange.Profiling
         /// 4) profiler is stopped
         /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/>
         /// 6) request ends
-        /// 7) page is displayed and profiling results are ajax-fetched down, pulling cached results from 
+        /// 7) page is displayed and profiling results are AJAX-fetched down, pulling cached results from 
         ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
         /// </remarks>
         public IAsyncStorage Storage { get; set; }
@@ -182,7 +182,7 @@ namespace StackExchange.Profiling
         public IAsyncProfilerProvider ProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
 
         /// <summary>
-        /// The profiler provider to use when resolving <see cref="MiniProfiler.Current"/> staticaly.
+        /// The profiler provider to use when resolving <see cref="MiniProfiler.Current"/> statically.
         /// Set via <see cref="MiniProfilerBaseOptionsExtensions.SetProvider{T}(T, IAsyncProfilerProvider, bool)"/>.
         /// </summary>
         public static IAsyncProfilerProvider CurrentProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
@@ -194,11 +194,11 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Starts a new MiniProfiler based on the current <see cref="ProfilerProvider"/>.
-        /// Shotcut for Options.ProfilerProvider.Start.
+        /// Shortcut for Options.ProfilerProvider.Start.
         /// </summary>
         /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
-        /// a web request, the url will be used for the overall session name.
+        /// a web request, the URL will be used for the overall session name.
         /// </param>
         public MiniProfiler StartProfiler(string profilerName = null) => ProfilerProvider.Start(profilerName, this);
     }
@@ -227,7 +227,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Excludes an assembly from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedAssemblies"/>.Add(assembly)
+        /// Excludes an assembly from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedAssemblies"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
         /// <param name="options">The options to exclude the assembly on.</param>
@@ -239,7 +239,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Excludes a method from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedMethods"/>.Add(assembly)
+        /// Excludes a method from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedMethods"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
         /// <param name="options">The options to exclude the method on.</param>
@@ -251,7 +251,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Excludes a type from stack traces, convenience method for chaining, basiscally <see cref="MiniProfilerBaseOptions.ExcludedTypes"/>.Add(assembly)
+        /// Excludes a type from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedTypes"/>.Add(assembly)
         /// </summary>
         /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
         /// <param name="options">The options to exclude the type on.</param>

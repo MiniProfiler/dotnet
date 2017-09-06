@@ -43,7 +43,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
-        /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
+        /// Should also ensure the profiler is stored as being unviewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         void Save(MiniProfiler profiler);
 
@@ -68,7 +68,7 @@ namespace StackExchange.Profiling.Storage
         bool SetUnviewedAfterSave { get; }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "un-viewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -105,7 +105,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         /// <remarks>
-        /// Should also ensure the profiler is stored as being un-viewed by its profiling <see cref="MiniProfiler.User"/>.
+        /// Should also ensure the profiler is stored as being unviewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         Task SaveAsync(MiniProfiler profiler);
 
@@ -122,7 +122,7 @@ namespace StackExchange.Profiling.Storage
         Task<MiniProfiler> LoadAsync(Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>

@@ -63,7 +63,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns an html-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
+        /// Returns an HTML-encoded string with a text-representation of <paramref name="profiler"/>; returns "" when profiler is null.
         /// </summary>
         /// <param name="profiler">The current profiling session or null.</param>
         public static IHtmlString Render(this MiniProfiler profiler) =>

@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         private readonly object _syncRoot = new object();
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="Timing"/> class. 
+        /// Initializes a new instance of the <see cref="Timing"/> class. 
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
@@ -216,7 +216,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
-        /// <param name="obj">The <see cref="object"/> to comare to.</param>
+        /// <param name="obj">The <see cref="object"/> to compare to.</param>
         public override bool Equals(object obj)
         {
             return obj is Timing && Id.Equals(((Timing)obj).Id);

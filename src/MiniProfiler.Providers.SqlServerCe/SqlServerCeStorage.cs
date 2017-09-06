@@ -35,7 +35,7 @@ SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Star
 @"INSERT INTO MiniProfilers
             (Id,  RootTimingId,  Name,  Started,  DurationMilliseconds, [User], HasUserViewed,  MachineName,  CustomLinksJson,  ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"; // this syntax works on both mssql and sqlite
+WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"; // this syntax works on both MSSQL and SQLite
 
         private const string _saveTimingsSql = @"
 INSERT INTO MiniProfilerTimings
@@ -221,21 +221,21 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         {
             if (result != null)
             {
-                // HACK: stored dates are utc, but are pulled out as local time
+                // HACK: stored dates are UTC, but are pulled out as local time
                 result.Started = DateTime.SpecifyKind(result.Started, DateTimeKind.Utc);
             }
             return result;
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "un-viewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>

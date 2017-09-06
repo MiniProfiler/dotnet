@@ -16,10 +16,7 @@ namespace StackExchange.Profiling.Internal
         /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class. 
         /// </summary>
         /// <param name="wrapped">Original view engine to profile</param>
-        public ProfilingViewEngine(IViewEngine wrapped)
-        {
-            _wrapped = wrapped;
-        }
+        public ProfilingViewEngine(IViewEngine wrapped) => _wrapped = wrapped;
 
         /// <summary>
         /// Finds the view with the given <paramref name="viewName"/> using view locations and information from the

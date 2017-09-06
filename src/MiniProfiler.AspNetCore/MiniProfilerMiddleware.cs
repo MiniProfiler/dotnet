@@ -202,7 +202,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if the current request is allowed to see the profiler response.
         /// </summary>
-        /// <param name="context">The context to attempt to authroize a user for.</param>
+        /// <param name="context">The context to attempt to authorize a user for.</param>
         /// <param name="isList">Whether this is a list route being accessed.</param>
         /// <param name="message">The access denied message, if present.</param>
         private bool AuthorizeRequest(HttpContext context, bool isList, out string message)
@@ -282,7 +282,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns either json or full page html of a previous <c>MiniProfiler</c> session, 
+        /// Returns either JSON or full page HTML of a previous <c>MiniProfiler</c> session, 
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>

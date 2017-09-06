@@ -234,7 +234,7 @@ namespace StackExchange.Profiling.Data
         /// Handles ConnectionOpening events.
         /// </summary>
         /// <param name="instanceId">The <see cref="Guid"/> identifier for this *specific open*, not the connection.</param>
-        /// <param name="async">Whether this connection is opening asynchronusly.</param>
+        /// <param name="async">Whether this connection is opening asynchronously.</param>
         [DiagnosticName("Microsoft.EntityFrameworkCore.ConnectionOpening")]
         public void OnConnectionOpening(Guid instanceId, bool async)
         {
@@ -266,7 +266,7 @@ namespace StackExchange.Profiling.Data
         /// Handles ConnectionClosing events.
         /// </summary>
         /// <param name="instanceId">The <see cref="Guid"/> identifier for this *specific close*, not the connection.</param>
-        /// <param name="async">Whether this connection is closing asynchronusly.</param>
+        /// <param name="async">Whether this connection is closing asynchronously.</param>
         [DiagnosticName("Microsoft.EntityFrameworkCore.ConnectionClosing")]
         public void OnConnectionClosing(Guid instanceId, bool async)
         {
@@ -323,7 +323,7 @@ namespace StackExchange.Profiling.Data
         //[DiagnosticName("Microsoft.EntityFrameworkCore.TransactionCommitted")]
         //public void OnTransactionCommitted()
         //{
-        //    // Avaialble: DbConnection connection, Guid connectionId, DbTransaction transaction, long startTimestamp, long currentTimestamp
+        //    // Available: DbConnection connection, Guid connectionId, DbTransaction transaction, long startTimestamp, long currentTimestamp
         //}
 
         //[DiagnosticName("Microsoft.EntityFrameworkCore.TransactionRolledback")]
@@ -335,7 +335,7 @@ namespace StackExchange.Profiling.Data
         //[DiagnosticName("Microsoft.EntityFrameworkCore.TransactionDisposed")]
         //public void OnTransactionDisposed()
         //{
-        //    // Avaialble: DbConnection connection, Guid connectionId, DbTransaction transaction
+        //    // Available: DbConnection connection, Guid connectionId, DbTransaction transaction
         //}
 
         //[DiagnosticName("Microsoft.EntityFrameworkCore.TransactionError")]

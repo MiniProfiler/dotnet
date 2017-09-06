@@ -90,7 +90,7 @@ namespace StackExchange.Profiling
             try
             {
                 var ids = profiler.Options.ExpireAndGetUnviewed(profiler.User);
-                // allow profiling of ajax requests
+                // allow profiling of AJAX requests
                 if (ids?.Count > 0)
                 {
                     context.Response.AppendHeader("X-MiniProfiler-Ids", ids.ToJson());
@@ -125,7 +125,7 @@ namespace StackExchange.Profiling
             try
             {
                 var ids = await profiler.Options.ExpireAndGetUnviewedAsync(profiler.User).ConfigureAwait(false);
-                // allow profiling of ajax requests
+                // allow profiling of AJAX requests
                 if (ids?.Count > 0)
                 {
                     context.Response.AppendHeader("X-MiniProfiler-Ids", ids.ToJson());
@@ -135,9 +135,9 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Makes sure <paramref name="profiler"/> has a Name, pulling it from route data or url.
+        /// Makes sure <paramref name="profiler"/> has a Name, pulling it from route data or URL.
         /// </summary>
-        /// <param name="profiler">The <see cref="MiniProfiler"/> to ensure a name ie set on.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to ensure a name is set on.</param>
         /// <param name="request">The <see cref="HttpRequest"/> request to get the name from.</param>
         private static void EnsureName(MiniProfiler profiler, HttpRequest request)
         {

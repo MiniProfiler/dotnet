@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
-        /// a web request, the url will be used for the overall session name.
+        /// a web request, the URL will be used for the overall session name.
         /// </param>
         /// <param name="options">The options to start the MiniPofiler with. Likely a more-specific type underneath.</param>
         MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options);
@@ -37,7 +37,7 @@ namespace StackExchange.Profiling
         void Stopped(MiniProfiler profiler, bool discardResults);
 
         /// <summary>
-        /// Asynconrously ends the current profiling session, if one exists.
+        /// Asynchronously ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">

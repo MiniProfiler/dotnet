@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         /// <param name="command">The <see cref="DbCommand"/> to time.</param>
         /// <param name="commandType">The command execution type (e.g. ExecuteNonQuery).</param>
-        /// <param name="profiler">The miniprofiler to attach the timing to.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to attach the timing to.</param>
         /// <param name="customType">The type for this command to show up as (which custom column).</param>
         /// <returns>A custom timing (which should be disposed or stopped!) for <paramref name="command"/>.</returns>
         public static CustomTiming GetTiming(this IDbCommand command, string commandType, MiniProfiler profiler, string customType = "sql")
@@ -53,7 +53,7 @@ namespace StackExchange.Profiling.Internal
         /// Returns better parameter information for <paramref name="command"/>.
         /// Returns <c>null</c> if no parameters are present.
         /// </summary>
-        /// <param name="command">The cmmand to get parameters for.</param>
+        /// <param name="command">The command to get parameters for.</param>
         public static List<SqlTimingParameter> GetParameters(this IDbCommand command)
         {
             if ((command?.Parameters?.Count ?? 0) == 0) return null;

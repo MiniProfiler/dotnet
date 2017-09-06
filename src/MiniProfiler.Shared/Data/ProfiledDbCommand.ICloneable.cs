@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Data
     public partial class ProfiledDbCommand : ICloneable
     {
         /// <summary>
-        /// Clone the command, Entity Framework expects this behaviour.
+        /// Clone the command, Entity Framework expects this behavior.
         /// </summary>
         /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
         object ICloneable.Clone()

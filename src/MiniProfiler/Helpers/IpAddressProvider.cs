@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.Helpers
     internal static class IpAddressIdentity
     {
         /// <summary>
-        /// Returns the paramter HttpRequest's client IP address.
+        /// Returns the <paramref name="request"/>'s client IP address.
         /// We combine both the REMOTE_ADDR header (which is the connecting device's IP address),
         /// plus the X-Forwarded-For header if present (which is set by some proxy
         /// servers and load balancers). This allows us to have a unique per-user view, even

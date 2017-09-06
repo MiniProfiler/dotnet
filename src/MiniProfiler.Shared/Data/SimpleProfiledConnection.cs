@@ -42,7 +42,7 @@ namespace StackExchange.Profiling.Data
         public IDbConnection WrappedConnection => _connection;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleProfiledConnection"/> class. 
+        /// Initializes a new instance of the <see cref="SimpleProfiledConnection"/> class. 
         /// Creates a simple profiled connection instance.
         /// </summary>
         /// <param name="connection">The database connection to wrap</param>
@@ -104,7 +104,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Releases the unmanaged resources used by the connetion and optionally releases the managed resources.
+        /// Releases the unmanaged resources used by the connection and optionally releases the managed resources.
         /// </summary>
         /// <param name="disposing">false if the dispose is called from a <c>finalizer</c></param>
         private void Dispose(bool disposing)

@@ -63,10 +63,7 @@ namespace StackExchange.Profiling.EntityFramework6
         {
             public string Name { get; }
 
-            public ProviderInvariantName(string name)
-            {
-                Name = name;
-            }
+            public ProviderInvariantName(string name) => Name = name;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Data
         private readonly IDbProfiler _profiler;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ProfiledDbDataReader"/> class.
+        /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="profiler">The profiler.</param>
@@ -126,13 +126,13 @@ namespace StackExchange.Profiling.Data
         /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</returns>
         public override Type GetFieldType(int ordinal) => WrappedReader.GetFieldType(ordinal);
 
-        /// <summary>Synchrnously gets the value of the specified column as a type.</summary>
+        /// <summary>Synchronously gets the value of the specified column as a type.</summary>
         /// <typeparam name="T">The type of the value to be returned.</typeparam>
         /// <param name="ordinal">The column to be retrieved.</param>
         /// <returns>The typed object.</returns>
         public override T GetFieldValue<T>(int ordinal) => WrappedReader.GetFieldValue<T>(ordinal);
 
-        /// <summary>Synchrnously gets the value of the specified column as a type.</summary>
+        /// <summary>Synchronously gets the value of the specified column as a type.</summary>
         /// <typeparam name="T">The type of the value to be returned.</typeparam>
         /// <param name="ordinal">The column to be retrieved.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>

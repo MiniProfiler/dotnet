@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.Mvc
         public string ViewPath => (_wrapped as RazorView)?.ViewPath;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="WrappedView"/> class. 
+        /// Initializes a new instance of the <see cref="WrappedView"/> class. 
         /// </summary>
         /// <param name="wrapped">The <see cref="IView"/> to be wrapped (and profiled).</param>
         /// <param name="name">The name of the view.</param>

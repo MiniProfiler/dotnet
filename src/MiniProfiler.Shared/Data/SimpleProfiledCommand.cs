@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Data
         private IDbTransaction _transaction;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleProfiledCommand"/> class, creating a new wrapped command.
+        /// Initializes a new instance of the <see cref="SimpleProfiledCommand"/> class, creating a new wrapped command.
         /// </summary>
         /// <param name="command">The wrapped command.</param>
         /// <param name="connection">The wrapped connection the command is attached to.</param>
@@ -80,7 +80,7 @@ namespace StackExchange.Profiling.Data
         /// profile with results.
         /// </summary>
         /// <param name="type">The type of execution.</param>
-        /// <param name="func">a function to execute against against the profile result</param>
+        /// <param name="func">A function to execute against the profile result.</param>
         /// <typeparam name="TResult">the type of result to return.</typeparam>
         private TResult ProfileWith<TResult>(SqlExecuteType type, Func<TResult> func)
         {

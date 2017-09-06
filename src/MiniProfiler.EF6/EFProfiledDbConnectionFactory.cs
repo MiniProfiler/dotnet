@@ -12,13 +12,10 @@ namespace StackExchange.Profiling.EntityFramework6
         private readonly IDbConnectionFactory _inner;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="EFProfiledDbConnectionFactory"/> class.
+        /// Initializes a new instance of the <see cref="EFProfiledDbConnectionFactory"/> class.
         /// </summary>
         /// <param name="inner">The <see cref="IDbConnectionFactory"/> to wrap.</param>
-        public EFProfiledDbConnectionFactory(IDbConnectionFactory inner)
-        {
-            _inner = inner;
-        }
+        public EFProfiledDbConnectionFactory(IDbConnectionFactory inner) => _inner = inner;
 
         /// <summary>
         /// Creates a connection based on the given database name or connection string.

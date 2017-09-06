@@ -22,14 +22,14 @@ namespace StackExchange.Profiling
         public MiniProfilerBaseOptions Options { get; }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="MiniProfiler"/> class. 
+        /// Initializes a new instance of the <see cref="MiniProfiler"/> class. 
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
         public MiniProfiler() { /* serialization only */ }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
+        /// Initializes a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
         /// for the root <paramref name="name"/>.
         /// </summary>
         /// <param name="name">The name of this <see cref="MiniProfiler"/>, typically a URL.</param>
@@ -96,7 +96,7 @@ namespace StackExchange.Profiling
         public Dictionary<string, string> CustomLinks { get; set; }
 
         /// <summary>
-        /// Json used to store Custom Links. Do not touch.
+        /// JSON used to store Custom Links. Do not touch.
         /// </summary>
         public string CustomLinksJson
         {
@@ -224,7 +224,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Asynchronously ends the current profiling session, if one exists. 
-        /// This invokves async saving all the way down if th providers support it.
+        /// This invokes async saving all the way down if th providers support it.
         /// </summary>
         /// <param name="discardResults">
         /// When true, clears the <see cref="Current"/>, allowing profiling to 
@@ -241,7 +241,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Shared stop bits fo <see cref="Stop(bool)"/> and <see cref="StopAsync(bool)"/>
+        /// Shared stop bits for <see cref="Stop(bool)"/> and <see cref="StopAsync(bool)"/>
         /// </summary>
         /// <returns></returns>
         private bool InnerStop()

@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.Data
         private readonly IDbProfiler _profiler;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleProfiledDataReader"/> class.
+        /// Initializes a new instance of the <see cref="SimpleProfiledDataReader"/> class.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="profiler">The profiler.</param>

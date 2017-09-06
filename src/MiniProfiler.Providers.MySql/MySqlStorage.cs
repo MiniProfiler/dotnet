@@ -194,7 +194,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
 
             if (result != null)
             {
-                // HACK: stored dates are utc, but are pulled out as unspecified
+                // HACK: stored dates are UTC, but are pulled out as unspecified
                 result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
             }
             return result;
@@ -222,21 +222,21 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
 
             if (result != null)
             {
-                // HACK: stored dates are utc, but are pulled out as local time
+                // HACK: stored dates are UTC, but are pulled out as local time
                 result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
             }
             return result;
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "un-viewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "un-viewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>

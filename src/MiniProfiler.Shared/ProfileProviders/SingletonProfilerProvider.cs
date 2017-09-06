@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Mostly for unit testing and single-threaded apps, only allows one 
+    /// Mostly for unit testing and single-threaded applications, only allows one 
     /// instance of a <see cref="MiniProfiler"/> to be the <see cref="MiniProfiler.Current"/> one.
     /// </summary>
     public class SingletonProfilerProvider : IAsyncProfilerProvider

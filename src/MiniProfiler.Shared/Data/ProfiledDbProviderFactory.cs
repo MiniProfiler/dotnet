@@ -27,7 +27,7 @@ namespace StackExchange.Profiling.Data
         public readonly static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="ProfiledDbProviderFactory"/> class.
+        /// Initializes a new instance of the <see cref="ProfiledDbProviderFactory"/> class.
         /// A proxy provider factory
         /// </summary>
         /// <param name="tail">The provider factory to wrap.</param>
@@ -86,7 +86,7 @@ namespace StackExchange.Profiling.Data
         public override DbParameter CreateParameter() => _tail.CreateParameter();
 
         /// <summary>
-        /// Allow to re-initialise the provider factory.
+        /// Allow to re-initialize the provider factory.
         /// </summary>
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _tail = tail;

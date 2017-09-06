@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Obtain a StringBuilder instance; this could be a recycled instance, or could be new
         /// </summary>
-        /// <param name="capacity">The capaity to start the fetched <see cref="StringBuilder"/> at.</param>
+        /// <param name="capacity">The capacity to start the fetched <see cref="StringBuilder"/> at.</param>
         public static StringBuilder Get(int capacity = DefaultCapacity)
         {
             var tmp = _perThread;
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Internal
         }
 
         /// <summary>
-        /// Get the string contents of a StringBuilder and recyle the instance at the same time
+        /// Get the string contents of a StringBuilder and recycle the instance at the same time
         /// </summary>
         /// <param name="builder">The <see cref="StringBuilder"/> to recycle.</param>
         public static string ToStringRecycle(this StringBuilder builder)

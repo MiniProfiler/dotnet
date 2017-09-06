@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Builder
         /// Adds middleware for profiling HTTP requests.
         /// </summary>
         /// <param name="builder">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-        /// <exception cref="ArgumentNullException">Thown if <paramref name="builder"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="builder"/> is null.</exception>
         public static IApplicationBuilder UseMiniProfiler(this IApplicationBuilder builder)
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
