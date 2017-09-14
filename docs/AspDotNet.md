@@ -3,7 +3,7 @@ title: "ASP.NET"
 layout: "default"
 ---
 ### ASP.NET
-If you'd rather learn by example, sample apps are available. [The ASP.NET MVC 5 sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore), with the important bits in [Global.asax.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.Mvc5/Global.asax.cs).
+If you'd rather learn by example, sample apps are available. [The ASP.NET MVC 5 sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Mvc5), with the important bits in [Global.asax.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.Mvc5/Global.asax.cs).
 
 #### Installation and Configuration
 
