@@ -111,7 +111,7 @@ namespace Samples.Console
         /// <returns>the database connection abstraction</returns>
         public static DbConnection GetConnection()
         {
-            DbConnection cnn = new System.Data.SQLite.SQLiteConnection("Data Source=:memory:");
+            DbConnection cnn = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
 
             // to get profiling times, we have to wrap whatever connection we're using in a ProfiledDbConnection
             // when MiniProfiler.Current is null, this connection will not record any database timings
