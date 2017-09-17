@@ -1,5 +1,8 @@
-﻿using System;
+﻿using StackExchange.Profiling.Internal;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace StackExchange.Profiling
 {
@@ -137,6 +140,61 @@ namespace StackExchange.Profiling
             }
 
             profiler.CustomLinks[text] = url;
+        }
+        
+        /// <summary>
+        /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from 
+        /// <see cref="Console"/>, log, or unit test output.
+        /// </summary>
+        /// <param name="profiler">A profiling session with child <see cref="Timing"/> instances.</param>
+        /// <param name="htmlEncode">Whether to HTML encode the response, for use in a web page for example.</param>
+        public static string RenderPlainText(this MiniProfiler profiler, bool htmlEncode = false)
+        {
+            if (profiler == null) return string.Empty;
+
+            var text = StringBuilderCache.Get()
+                .Append(htmlEncode ? WebUtility.HtmlEncode(Environment.MachineName) : Environment.MachineName)
+                .Append(" at ")
+                .Append(DateTime.UtcNow)
+                .AppendLine();
+
+            var timings = new Stack<Timing>();
+            timings.Push(profiler.Root);
+
+            while (timings.Count > 0)
+            {
+                var timing = timings.Pop();
+
+                text.AppendFormat("{0} {1} = {2:###,##0.##}ms",
+                    new string('>', timing.Depth),
+                    htmlEncode ? WebUtility.HtmlEncode(timing.Name) : timing.Name, 
+                    timing.DurationMilliseconds);
+
+                if (timing.HasCustomTimings)
+                {
+                    foreach (var pair in timing.CustomTimings)
+                    {
+                        var type = pair.Key;
+                        var customTimings = pair.Value;
+
+                        text.AppendFormat(" ({0} = {1:###,##0.##}ms in {2} cmd{3})",
+                            type,
+                            customTimings.Sum(ct => ct.DurationMilliseconds),
+                            customTimings.Count,
+                            customTimings.Count == 1 ? string.Empty : "s");
+                    }
+                }
+
+                text.AppendLine();
+
+                if (timing.HasChildren)
+                {
+                    var children = timing.Children;
+                    for (var i = children.Count - 1; i >= 0; i--) timings.Push(children[i]);
+                }
+            }
+
+            return text.ToStringRecycle();
         }
     }
 }
