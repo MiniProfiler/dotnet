@@ -14,7 +14,7 @@ namespace Samples.Console
     /// </summary>
     public static class Program
     {
-        private static MiniProfilerOptions Options;
+        private static MiniProfilerOptions Options = new MiniProfilerOptions();
 
         /// <summary>
         /// application entry point.
@@ -24,10 +24,9 @@ namespace Samples.Console
         {
             try
             {
-                SetupProfiling();
                 //Test();
                 TestMultiThreaded();
-                Report();
+                WriteLine(MiniProfiler.Current.RenderPlainText());
 
                 if (Debugger.IsAttached)
                     ReadKey();
@@ -36,17 +35,6 @@ namespace Samples.Console
             {
                 WriteLine(ex);
             }
-        }
-
-        /// <summary>
-        /// setup the profiling.
-        /// </summary>
-        public static void SetupProfiling()
-        {
-            // We're using DefaultProfilerProvider here (not the Web provider) because we're 
-            // not using HttpContext.Current to track MiniPofiler.Current
-            // In general, DefaultProfilerProvider() should be the go-to for most new applications.
-            Options = new MiniProfilerOptions().SetProvider(new DefaultProfilerProvider());
         }
 
         /// <summary>
@@ -99,11 +87,6 @@ namespace Samples.Console
                 });
             }
         }
-
-        /// <summary>
-        /// produce a profiling report.
-        /// </summary>
-        public static void Report() => WriteLine(MiniProfiler.Current.RenderPlainText());
 
         /// <summary>
         /// Returns an open connection that will have its queries profiled.

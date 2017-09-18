@@ -5,8 +5,12 @@ layout: "default"
 
 MiniProfiler for .NET now has a few flavors since .NET Core differs quite a bit from .NET Full Framework on the ASP.NET front. The pipelines have changed drastically (for the better), but that means how to configure MiniProfiler has also changed quite a bit.
 
-- If you're using ASP.NET (*not* .NET Core), [**start here**]({{ site.baseurl }}/AspDotNet).
-- If you're using ASP.NET Core, [**start here**]({{ site.baseurl }}/AspDotNetCore).
+- ASP.NET
+  - If you're using ASP.NET (*not* .NET Core), [**start here**]({{ site.baseurl }}/AspDotNet).
+  - If you're using ASP.NET Core, [**start here**]({{ site.baseurl }}/AspDotNetCore).
+- Console .NET
+  - If you're using .NET for a console application, [**stat here**]({{ site.baseurl }}/ConsoleDotNet).
+  - If you're using .NET Core for a console application, [**stat here**]({{ site.baseurl }}/ConsoleDotNetCore).
 
 Once you're setup, see [**how to profile code**]({{ site.baseurl }}/HowTo/ProfileCode) to get some timings up and running.
 
