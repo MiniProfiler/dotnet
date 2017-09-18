@@ -1,7 +1,5 @@
-﻿#if NETSTANDARD2_0
-using System;
+﻿using System;
 using System.Collections.Generic;
-#endif
 
 namespace StackExchange.Profiling.Internal
 {
@@ -9,10 +7,7 @@ namespace StackExchange.Profiling.Internal
     /// Internal MiniProfiler interface for registering DiagnosticListeners, not meant for consumption.
     /// This can and probably will break without warning. Don't use the .Internal namespace directly.
     /// </summary>
-    public interface IMiniProfilerDiagnosticListener
-#if NETSTANDARD2_0
-        : IObserver<KeyValuePair<string, object>>
-#endif
+    public interface IMiniProfilerDiagnosticListener : IObserver<KeyValuePair<string, object>>
     {
         /// <summary>
         /// Gets a value indicating which listener this instance should be subscribed to

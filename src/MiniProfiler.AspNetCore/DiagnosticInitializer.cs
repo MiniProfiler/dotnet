@@ -36,11 +36,7 @@ namespace StackExchange.Profiling
             {
                 if (listener.ListenerName == value.Name)
                 {
-#if NETSTANDARD2_0
                     _subscriptions.Add(value.Subscribe(listener));
-#else
-                    _subscriptions.Add(value.SubscribeWithAdapter(listener));
-#endif
                 }
             }
         }
