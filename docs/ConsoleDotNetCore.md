@@ -2,7 +2,7 @@
 title: "Console .NET Core"
 layout: "default"
 ---
-### .NET (Console Applications)
+### .NET Core (Console Applications)
 If you'd rather learn by example, sample apps are available. [The .NET Core Console sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.ConsoleCore), with the important bits in [Program.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.ConsoleCore/Program.cs).
 
 #### Installation and Configuration
