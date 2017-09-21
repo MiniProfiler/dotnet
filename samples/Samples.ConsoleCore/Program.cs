@@ -14,7 +14,7 @@ namespace Samples.Console
     /// </summary>
     public static class Program
     {
-        private static MiniProfilerOptions Options = new MiniProfilerOptions();
+        private static readonly MiniProfilerOptions Options = new MiniProfilerOptions();
 
         /// <summary>
         /// application entry point.

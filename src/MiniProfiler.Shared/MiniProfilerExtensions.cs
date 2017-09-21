@@ -141,7 +141,7 @@ namespace StackExchange.Profiling
 
             profiler.CustomLinks[text] = url;
         }
-        
+
         /// <summary>
         /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from 
         /// <see cref="Console"/>, log, or unit test output.
@@ -167,7 +167,7 @@ namespace StackExchange.Profiling
 
                 text.AppendFormat("{0} {1} = {2:###,##0.##}ms",
                     new string('>', timing.Depth),
-                    htmlEncode ? WebUtility.HtmlEncode(timing.Name) : timing.Name, 
+                    htmlEncode ? WebUtility.HtmlEncode(timing.Name) : timing.Name,
                     timing.DurationMilliseconds);
 
                 if (timing.HasCustomTimings)

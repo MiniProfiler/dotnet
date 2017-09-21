@@ -17,7 +17,7 @@ namespace Samples.Console
         // We're using DefaultProfilerProvider here (not the Web provider) because we're 
         // not using HttpContext.Current to track MiniPofiler.Current
         // In general, DefaultProfilerProvider() should be the go-to for most new applications.
-        private static MiniProfilerOptions Options = new MiniProfilerOptions().SetProvider(new DefaultProfilerProvider());
+        private static readonly MiniProfilerOptions Options = new MiniProfilerOptions().SetProvider(new DefaultProfilerProvider());
 
         /// <summary>
         /// application entry point.
