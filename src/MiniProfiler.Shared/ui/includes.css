@@ -53,6 +53,13 @@
 .profiler-result {
   font-family: sans-serif;
 }
+.profiler-result tr[style*='display: block;'] {
+  display: table-row !important;
+}
+.profiler-result th[style*='display: block;'],
+.profiler-result td[style*='display: block;'] {
+  display: table-cell !important;
+}
 .profiler-result .highlight {
   animation: fadeIn 2s 1;
 }

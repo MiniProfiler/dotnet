@@ -42,6 +42,14 @@
 .profiler-result {
     font-family: sans-serif;
 
+    tr[style*='display: block;'] {
+        display: table-row !important;
+    }
+
+    th[style*='display: block;'], td[style*='display: block;'] {
+        display: table-cell !important;
+    }
+
     .highlight {
         animation: fadeIn 2s 1;
     }
