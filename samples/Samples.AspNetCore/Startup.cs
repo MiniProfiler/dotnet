@@ -50,7 +50,7 @@ namespace Samples.AspNetCore
                 //options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
-                //options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+                options.ResultsAuthorize = request => !Program.DisableProfilingResults;
                 //options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
 
                 // To control which requests are profiled, use the Func<HttpRequest, bool> option:
