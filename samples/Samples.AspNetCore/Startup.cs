@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Samples.AspNetCore.Models;
-using System.IO;
 
 namespace Samples.AspNetCore
 {
@@ -14,7 +13,7 @@ namespace Samples.AspNetCore
 
         public Startup(IHostingEnvironment env)
         {
-            SqliteConnectionString = "Data Source = " + Path.Combine(env.ContentRootPath, @"App_Data\TestMiniProfiler.sqlite");
+            SqliteConnectionString = "Data Source=:memory:";
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -91,6 +90,13 @@ namespace Samples.AspNetCore
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            using (var serviceScope = serviceScopeFactory.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<SampleContext>();
+                dbContext.Database.EnsureCreated();
+            }
         }
     }
 }
