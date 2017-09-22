@@ -2,7 +2,7 @@ _ReSharper*
 bin
 obj
 *.suo
-*.sqlite
+**/App_Data/*.sqlite
 *.user
 *.sdf
 *.nupkgs
