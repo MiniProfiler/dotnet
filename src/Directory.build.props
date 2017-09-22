@@ -12,7 +12,7 @@
 
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseUrl>https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://miniprofiler.com</PackageProjectUrl>
+    <PackageProjectUrl>https://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
     <PackageBaseTags>Profiler;Performance;Profiling;Timing</PackageBaseTags>
     
