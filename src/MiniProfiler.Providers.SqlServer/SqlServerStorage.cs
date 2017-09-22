@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Dapper;
+using StackExchange.Profiling.Internal;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-
-using Dapper;
-using StackExchange.Profiling.Internal;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Storage
@@ -348,7 +346,8 @@ Order By Started";
 
         private string BuildListQuery(DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            var sb = new StringBuilder(@"
+            var sb = StringBuilderCache.Get();
+            sb.Append(@"
 Select Top {=maxResults} Id
   From MiniProfilers
 ");
@@ -364,7 +363,7 @@ Select Top {=maxResults} Id
             }
             sb.Append("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
 
-            return sb.ToString();
+            return sb.ToStringRecycle();
         }
 
         /// <summary>
