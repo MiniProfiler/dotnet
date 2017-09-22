@@ -11,6 +11,7 @@ using StackExchange.Profiling.EntityFramework6;
 using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using Samples.Mvc5.Helpers;
+using System.Data.SQLite;
 
 namespace Samples.Mvc5
 {
@@ -21,11 +22,13 @@ namespace Samples.Mvc5
         /// <summary>
         /// Gets the connection string.
         /// </summary>
-        public static string ConnectionString =>
-            "Data Source = " + HttpContext.Current.Server.MapPath("~/App_Data/TestMiniProfiler.sqlite");
+        public static string ConnectionString => "FullUri=file::memory:?cache=shared";
+        private static readonly SQLiteConnection TrapConnection = new SQLiteConnection(ConnectionString);
 
         protected void Application_Start()
         {
+            TrapConnection.Open(); //Hold the in-memory SQLite database open
+
             AreaRegistration.RegisterAllAreas();
             // Note: ProfilingActionFilter is add in the FilterConfig
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

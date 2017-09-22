@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,11 +10,13 @@ namespace Samples.AspNetCore
 {
     public class Startup
     {
-        public static string SqliteConnectionString { get; set; }
+        public static string SqliteConnectionString { get; } = "Data Source=Samples; Mode=Memory; Cache=Shared";
+        private static readonly SqliteConnection TrapConnection = new SqliteConnection(SqliteConnectionString);
 
         public Startup(IHostingEnvironment env)
         {
-            SqliteConnectionString = "Data Source=:memory:";
+            TrapConnection.Open(); //Hold the in-memory SQLite database open
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
