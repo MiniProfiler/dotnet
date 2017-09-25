@@ -37,7 +37,6 @@ namespace StackExchange.Profiling.Storage
             {
                 throw new ArgumentNullException(nameof(stores), "Please include at least one IAsyncStorage object when initializing a MultiStorageProvider");
             }
-            SetUnviewedAfterSave = Stores.Any(s => s.SetUnviewedAfterSave);
         }
 
         /// <summary>

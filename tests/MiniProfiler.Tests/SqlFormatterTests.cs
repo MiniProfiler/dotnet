@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Transactions;
 
 using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.SqlFormatters;
 using Xunit;
+#if NET452 || NET46
+using System.Transactions;
+#endif
 
-namespace Tests
+namespace StackExchange.Profiling.Tests
 {
     public class SqlFormatterTests
     {
@@ -133,13 +135,17 @@ namespace Tests
 			// overwrite the formatter
 	        _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
-            const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n-- Transaction Scope Iso Level: Serializable\r\n\r\nselect 1;";
             CreateDbCommand(CommandType.Text);
-	        TransactionScope transactionScope = new TransactionScope();
-
+#if NET452 || NET46
+            const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n-- Transaction Scope Iso Level: Serializable\r\n\r\nselect 1;";
+            var transactionScope = new TransactionScope();
             // act
             var actualOutput = GenerateOutput();
 	        transactionScope.Dispose();
+#else
+            const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n\r\nselect 1;";
+            var actualOutput = GenerateOutput();
+#endif
 
             // assert
             Assert.Equal(expectedOutput, actualOutput);

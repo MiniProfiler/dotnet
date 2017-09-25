@@ -121,9 +121,9 @@ namespace StackExchange.Profiling.Data
         /// <returns>The <see cref="IEnumerator{T}"/>.</returns>
         public override System.Collections.IEnumerator GetEnumerator() => ((System.Collections.IEnumerable)WrappedReader).GetEnumerator();
 
-        /// <summary>Gets the <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</summary>
+        /// <summary>Gets the <see cref="Type"/> information corresponding to the type of <see cref="object"/> that would be returned from <see cref="GetValue"/>.</summary>
         /// <param name="ordinal">The index of the field to find.</param>
-        /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</returns>
+        /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="object"/> that would be returned from <see cref="GetValue"/>.</returns>
         public override Type GetFieldType(int ordinal) => WrappedReader.GetFieldType(ordinal);
 
         /// <summary>Synchronously gets the value of the specified column as a type.</summary>

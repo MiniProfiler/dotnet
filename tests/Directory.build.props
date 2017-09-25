@@ -2,21 +2,20 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
-    <xUnitVersion>2.3.0-beta5-build3750</xUnitVersion>
+    <xUnitVersion>2.3.0-beta5-build3769</xUnitVersion>
   </PropertyGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="xunit" Version="$(xUnitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitVersion)" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="$(xUnitVersion)" />
-    <!-- Temp workaround for analyzer issue -->
-    <PackageReference Include="xunit.analyzers" Version="0.6.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'net452'">

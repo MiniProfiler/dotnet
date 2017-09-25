@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StackExchange.Profiling.Storage.Internal;
 using StackExchange.Redis;
 
 namespace StackExchange.Profiling.Storage
@@ -111,6 +112,11 @@ namespace StackExchange.Profiling.Storage
             _database.SortedSetAdd(ProfilerResultSetKey, id, score);
             _database.SortedSetRemoveRangeByRank(ProfilerResultSetKey, 0, -1 - 1 - ResultListMaxLength);
             _database.KeyExpire(ProfilerResultSetKey, CacheDuration);
+
+            if (!profiler.HasUserViewed)
+            {
+                SetUnviewed(profiler.User, profiler.Id);
+            }
         }
 
         /// <summary>
@@ -129,14 +135,6 @@ namespace StackExchange.Profiling.Storage
             RedisValue value = _database.StringGet(key);
             return value.ToMiniProfiler();
         }
-
-        /// <summary>
-        /// Returns whether or not the storage implementation needs to call <see cref="SetUnviewed(string, Guid)"/>
-        /// or <see cref="SetUnviewedAsync(string, Guid)"/> after the initial <see cref="Save(MiniProfiler)"/> or
-        /// <see cref="SaveAsync(MiniProfiler)"/> call. For example in a database this is likely false, whereas in
-        /// Redis and similar it's likely true (e.g. separately adding the profiler ID to a list).
-        /// </summary>
-        public bool SetUnviewedAfterSave => true;
 
         /// <summary>
         /// Sets a particular profiler session so it is considered "unviewed"
@@ -215,6 +213,11 @@ namespace StackExchange.Profiling.Storage
             await _database.SortedSetAddAsync(ProfilerResultSetKey, id, score).ConfigureAwait(false);
             await _database.SortedSetRemoveRangeByRankAsync(ProfilerResultSetKey, 0, -1 - 1 - ResultListMaxLength).ConfigureAwait(false);
             await _database.KeyExpireAsync(ProfilerResultSetKey, CacheDuration).ConfigureAwait(false);
+
+            if (!profiler.HasUserViewed)
+            {
+                await SetUnviewedAsync(profiler.User, profiler.Id).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

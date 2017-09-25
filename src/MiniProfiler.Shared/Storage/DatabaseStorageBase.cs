@@ -9,8 +9,12 @@ namespace StackExchange.Profiling.Storage
     /// <summary>
     /// Understands how to save MiniProfiler results to a MSSQL database, allowing more permanent storage and querying of slow results.
     /// </summary>
-    public abstract class DatabaseStorageBase : IAsyncStorage
+    public abstract class DatabaseStorageBase : IAsyncStorage, IDatabaseStorageConnectable
     {
+        public readonly string MiniProfilersTable = "MiniProfilers",
+                               MiniProfilerTimingsTable = "MiniProfilerTimings",
+                               MiniProfilerClientTimingsTable = "MiniProfilerClientTimings";
+
         /// <summary>
         /// Gets or sets how we connect to the database used to save/load MiniProfiler results.
         /// </summary>
@@ -24,6 +28,22 @@ namespace StackExchange.Profiling.Storage
         protected DatabaseStorageBase(string connectionString)
         {
             ConnectionString = connectionString;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
+        /// </summary>
+        /// <param name="connectionString">The connection String</param>
+        /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
+        /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
+        /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
+        protected DatabaseStorageBase(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+        {
+            ConnectionString = connectionString;
+            MiniProfilersTable = profilersTable;
+            MiniProfilerTimingsTable = clientTimingsTable;
+            MiniProfilerClientTimingsTable = timingsTable;
         }
 
         /// <summary>
@@ -191,5 +211,26 @@ namespace StackExchange.Profiling.Storage
                 }
             }
         }
+
+        private List<string> _tableCreationScripts;
+        public List<string> TableCreationScripts => _tableCreationScripts ?? (_tableCreationScripts = GetTableCreationScripts().ToList());
+
+        /// <summary>
+        /// Creates needed tables. Run this once on your database.
+        /// </summary>
+        /// <remarks>
+        /// Works in SQL server and <c>sqlite</c> (with documented removals).
+        /// </remarks>
+        protected abstract IEnumerable<string> GetTableCreationScripts();
+
+        DbConnection IDatabaseStorageConnectable.GetConnection() => GetConnection();
+    }
+
+    /// <summary>
+    /// Interface for accessing the <see cref="DatabaseStorageBase"/>'s connection, for testing.
+    /// </summary>
+    public interface IDatabaseStorageConnectable
+    {
+        DbConnection GetConnection();
     }
 }

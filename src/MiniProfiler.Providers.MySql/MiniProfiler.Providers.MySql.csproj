@@ -5,12 +5,12 @@
     <Description>MiniProfiler: Profiler storage for MySQL</Description>
     <Authors>Nick Craver, Bradley Grainger</Authors>
     <PackageTags>SQL;MySQL;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net451;net46;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>net452;netstandard1.6</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="MySqlConnector" Version="0.25.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.8-dmr" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net451' OR '$(TargetFramework)' == 'net46'">
     <Reference Include="Microsoft.CSharp" />

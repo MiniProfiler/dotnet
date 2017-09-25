@@ -7,7 +7,7 @@ using StackExchange.Profiling.Internal;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Tests.Async
+namespace StackExchange.Profiling.Tests.Async
 {
     [Collection(NonParallel)]
     public class AsyncRealTimeTests : BaseTest

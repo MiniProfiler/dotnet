@@ -83,8 +83,9 @@ Select Id
             }
         }
 
-        private static readonly List<string> TableCreationScripts = new  List<string>{@"
-                CREATE TABLE MiniProfilers
+        protected override IEnumerable<string> GetTableCreationScripts()
+        {
+            yield return @"CREATE TABLE MiniProfilers
                   (
                      RowId                                integer not null primary key,
                      Id                                   uniqueidentifier not null, 
@@ -97,8 +98,8 @@ Select Id
                      MachineName                          nvarchar(100) null,
                      CustomLinksJson                      text null,
                      ClientTimingsRedirectCount           int null
-                  );",
-                     @"create table MiniProfilerTimings
+                  );";
+            yield return @"CREATE TABLE MiniProfilerTimings
                   (
                      RowId                               integer not null primary key,
                      Id                                  uniqueidentifier not null,
@@ -110,8 +111,8 @@ Select Id
                      IsRoot                              bit not null,
                      Depth                               smallint not null,
                      CustomTimingsJson                   text null
-                  );",
-                     @" create table MiniProfilerClientTimings
+                  );";
+            yield return @"CREATE TABLE MiniProfilerClientTimings
                   (
                      RowId                               integer not null primary key,
                      Id                                  uniqueidentifier not null,
@@ -119,6 +120,7 @@ Select Id
                      Name                                nvarchar(200) not null,
                      Start                               decimal(9, 3) not null,
                      Duration                            decimal(9, 3) not null
-                  );"};
+                  );";
+        }
     }
 }

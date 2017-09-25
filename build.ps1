@@ -30,7 +30,7 @@ $projectsToBuild =
 
 $testsToRun =
     'MiniProfiler.Tests',
-    'MiniProfiler.Providers.Redis.Tests'
+    'MiniProfiler.Tests.AspNet'
     
 function CalculateVersion() {
     if ($Version) {
