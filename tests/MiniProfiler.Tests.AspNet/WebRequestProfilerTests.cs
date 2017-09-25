@@ -4,7 +4,6 @@ using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    [Collection("WebRequest")]
     public class WebRequestProfilerTests : AspNetTest, IDisposable
     {
         public WebRequestProfilerTests(ITestOutputHelper output) : base(output)

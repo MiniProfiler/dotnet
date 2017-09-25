@@ -2,16 +2,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    [Collection("Storage")]
     public abstract class AspNetTest : BaseTest
     {
         /// <summary>
-        /// Url that <see cref="GetRequest"/> and <see cref="GetProfiler"/> will hit.
+        /// URL that <see cref="GetRequest"/> and <see cref="GetProfiler"/> will hit.
         /// </summary>
         public const string DefaultRequestUrl = "http://localhost/Test.aspx";
         //protected MiniProfilerOptions Options { get; set; }
@@ -26,14 +24,12 @@ namespace StackExchange.Profiling.Tests
                 StopwatchProvider = () => new UnitTestStopwatch(),
                 Storage = new MemoryCacheStorage(TimeSpan.FromDays(1))
             };
-            // To reset the static specifically, can probably remove this...
-            //Options.SetProvider(new DefaultProfilerProvider());
         }
 
         /// <summary>
-        /// Returns a simulated http request to <paramref name="url"/>.
+        /// Returns a simulated HTTP request to <paramref name="url"/>.
         /// </summary>
-        /// <param name="url">The url.</param>
+        /// <param name="url">The URL.</param>
         /// <param name="startAndStopProfiler">The start And Stop Profiler.</param>
         /// <returns>the request</returns>
         public IDisposable GetRequest(string url = DefaultRequestUrl, bool startAndStopProfiler = true)
@@ -55,83 +51,38 @@ namespace StackExchange.Profiling.Tests
         /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
-        /// <param name="url">The uri of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
-        /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step.</param>
+        /// <param name="stepMs">Amount of time each step will "do work for" in each step.</param>
         /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler GetProfiler(
-            string url = DefaultRequestUrl,
-            int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+        public MiniProfiler GetProfiler(string url = DefaultRequestUrl, int childDepth = 0, int stepMs = StepTimeMilliseconds)
         {
-            MiniProfiler result = null;
-            Action step = null;
-            var curDepth = 0;
-
-            // recursively add child steps
-            step = () =>
-            {
-                if (curDepth++ < childDepth)
-                {
-                    using (result.Step("Depth " + curDepth))
-                    {
-                        result.Increment(stepsEachTakeMilliseconds);
-                        step();
-                    }
-                }
-            };
-
             using (GetRequest(url, startAndStopProfiler: false))
             {
-                result = Options.StartProfiler(url);
-                step();
-
+                var result = Options.StartProfiler(url);
+                AddRecursiveChildren(result, childDepth, stepMs);
                 result.Stop();
+                return result;
             }
-
-            return result;
         }
 
         /// <summary>
         /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
-        /// <param name="url">The uri of the request.</param>
+        /// <param name="url">The URL of the request.</param>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
-        /// <param name="stepsEachTakeMilliseconds">Amount of time each step will "do work for" in each step</param>
+        /// <param name="stepMs">Amount of time each step will "do work for" in each step</param>
         /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public async Task<MiniProfiler> GetProfilerAsync(
-            string url = DefaultRequestUrl,
-            int childDepth = 0,
-            int stepsEachTakeMilliseconds = StepTimeMilliseconds)
+        public async Task<MiniProfiler> GetProfilerAsync(string url = DefaultRequestUrl, int childDepth = 0, int stepMs = StepTimeMilliseconds)
         {
-            // TODO: Consolidate with above, maybe some out params
-            MiniProfiler result = null;
-            Action step = null;
-            var curDepth = 0;
-
-            // recursively add child steps
-            step = () =>
-            {
-                if (curDepth++ < childDepth)
-                {
-                    using (result.Step("Depth " + curDepth))
-                    {
-                        result.Increment(stepsEachTakeMilliseconds);
-                        step();
-                    }
-                }
-            };
-
             using (GetRequest(url, startAndStopProfiler: false))
             {
-                result = Options.StartProfiler();
-                step();
-
+                var result = Options.StartProfiler();
+                AddRecursiveChildren(result, childDepth, stepMs);
                 await result.StopAsync().ConfigureAwait(false);
+                return result;
             }
-
-            return result;
         }
     }
 }
