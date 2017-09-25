@@ -44,6 +44,18 @@ namespace StackExchange.Profiling.Tests
             return mp;
         }
 
+        protected void AddRecursiveChildren(MiniProfiler profiler, int maxDepth, int stepMs, int curDepth = 0)
+        {
+            if (curDepth++ < maxDepth)
+            {
+                using (profiler.Step("Depth " + curDepth))
+                {
+                    profiler.Increment(stepMs);
+                    AddRecursiveChildren(profiler, maxDepth, stepMs, curDepth);
+                }
+            }
+        }
+
         /// <summary>
         /// Doesn't handle collection properties!
         /// </summary>
