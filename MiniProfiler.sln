@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Sqli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Tests.AspNet", "tests\MiniProfiler.Tests.AspNet\MiniProfiler.Tests.AspNet.csproj", "{26C69CC7-765A-4378-BC16-65378B4E5033}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Tests.AspNetCore", "tests\MiniProfiler.Tests.AspNetCore\MiniProfiler.Tests.AspNetCore.csproj", "{CC4AD661-0F2D-4E27-934D-F321B2214E4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,10 @@ Global
 		{26C69CC7-765A-4378-BC16-65378B4E5033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26C69CC7-765A-4378-BC16-65378B4E5033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26C69CC7-765A-4378-BC16-65378B4E5033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC4AD661-0F2D-4E27-934D-F321B2214E4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4AD661-0F2D-4E27-934D-F321B2214E4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4AD661-0F2D-4E27-934D-F321B2214E4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4AD661-0F2D-4E27-934D-F321B2214E4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,10 +186,11 @@ Global
 		{63DADF8D-87D2-4471-B473-8322C6EDE98C} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{513C06B7-32FD-4833-8B04-A1A3C375634D} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{26C69CC7-765A-4378-BC16-65378B4E5033} = {33644D67-D9BB-4989-9B7A-98D51967059B}
+		{CC4AD661-0F2D-4E27-934D-F321B2214E4B} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

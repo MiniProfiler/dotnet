@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Tests.AspNetCore</AssemblyName>
+    <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
+    <TargetFrameworks>net452;net46;netcoreapp1.1;netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj" />
+  </ItemGroup>
+</Project>
