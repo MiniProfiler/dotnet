@@ -36,7 +36,10 @@ namespace StackExchange.Profiling.Tests.Storage
 
         public void Dispose()
         {
-            Storage.DropSchema();
+            if (!ShouldSkip)
+            {
+                Storage.DropSchema();
+            }
         }
     }
 }
