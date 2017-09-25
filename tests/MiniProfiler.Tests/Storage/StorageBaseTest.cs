@@ -136,7 +136,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             var unviewedIds = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
             Assert.Contains(mp.Id, unviewedIds);
-            Storage.SetViewed(mp);
+            await Storage.SetViewedAsync(mp).ConfigureAwait(false);
             var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
             Assert.DoesNotContain(mp.Id, unviewedIds2);
         }
