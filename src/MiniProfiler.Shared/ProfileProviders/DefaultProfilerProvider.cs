@@ -86,10 +86,6 @@ namespace StackExchange.Profiling
                 return;
             }
             storage.Save(profiler);
-            if (storage.SetUnviewedAfterSave && !profiler.HasUserViewed)
-            {
-                storage.SetUnviewed(profiler.User, profiler.Id);
-            }
         }
 
         /// <summary>
@@ -106,10 +102,6 @@ namespace StackExchange.Profiling
                 return;
             }
             await storage.SaveAsync(profiler).ConfigureAwait(false);
-            if (storage.SetUnviewedAfterSave && !profiler.HasUserViewed)
-            {
-                await storage.SetUnviewedAsync(profiler.User, profiler.Id).ConfigureAwait(false);
-            }
         }
     }
 }

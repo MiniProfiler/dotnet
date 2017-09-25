@@ -3,7 +3,7 @@
 using StackExchange.Profiling.Storage;
 using Xunit;
 
-namespace Tests.Storage
+namespace StackExchange.Profiling.Tests.Storage
 {
     /// <summary>
     /// test the HTTP runtime cache storage.
@@ -45,9 +45,9 @@ namespace Tests.Storage
         [Fact]
         public void Constructor_LoadStores_MaintainOrder()
         {
-            var p = new MultiStorageProvider(new MemoryCacheStorage(new TimeSpan(1, 0, 0)), new SqlServerStorage(string.Empty));
+            var p = new MultiStorageProvider(new MySqlStorage(string.Empty), new SqlServerStorage(string.Empty));
             Assert.Equal(2, p.Stores.Count);
-            Assert.True(p.Stores[0].GetType() == typeof(MemoryCacheStorage));
+            Assert.True(p.Stores[0].GetType() == typeof(MySqlStorage));
             Assert.True(p.Stores[1].GetType() == typeof(SqlServerStorage));
         }
     }

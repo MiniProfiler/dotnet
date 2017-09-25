@@ -60,14 +60,6 @@ namespace StackExchange.Profiling.Storage
         MiniProfiler Load(Guid id);
 
         /// <summary>
-        /// Returns whether or not the storage implementation needs to call <see cref="SetUnviewed(string, Guid)"/>
-        /// or <see cref="SetUnviewedAsync(string, Guid)"/> after the initial <see cref="Save(MiniProfiler)"/> or
-        /// <see cref="SaveAsync(MiniProfiler)"/> call. For example in a database this is likely false, whereas in
-        /// Redis and similar it's likely true (e.g. separately adding the profiler ID to a list).
-        /// </summary>
-        bool SetUnviewedAfterSave { get; }
-
-        /// <summary>
         /// Sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
@@ -140,5 +132,36 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         Task<List<Guid>> GetUnviewedIdsAsync(string user);
+    }
+
+    public static class AsyncStorageExtensions
+    {
+        /// <summary>
+        /// Sets a specific <see cref="MiniProfiler"/> to "unviewed".
+        /// </summary>
+        /// <param name="storage">The <see cref="IAsyncStorage"/> provider.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to set to "unviewed".</param>
+        public static void SetUnviewed(this IAsyncStorage storage, MiniProfiler profiler) => storage.SetUnviewed(profiler.User, profiler.Id);
+
+        /// <summary>
+        /// Asynchronously sets a specific <see cref="MiniProfiler"/> to "unviewed".
+        /// </summary>
+        /// <param name="storage">The <see cref="IAsyncStorage"/> provider.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to set to "unviewed".</param>
+        public static Task SetUnviewedAsync(this IAsyncStorage storage, MiniProfiler profiler) => storage.SetUnviewedAsync(profiler.User, profiler.Id);
+
+        /// <summary>
+        /// Sets a specific <see cref="MiniProfiler"/> to "viewed".
+        /// </summary>
+        /// <param name="storage">The <see cref="IAsyncStorage"/> provider.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to set to "viewed".</param>
+        public static void SetViewed(this IAsyncStorage storage, MiniProfiler profiler) => storage.SetViewed(profiler.User, profiler.Id);
+
+        /// <summary>
+        /// Asynchronously sets a specific <see cref="MiniProfiler"/> to "viewed".
+        /// </summary>
+        /// <param name="storage">The <see cref="IAsyncStorage"/> provider.</param>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to set to "viewed".</param>
+        public static Task SetViewedAsync(this IAsyncStorage storage, MiniProfiler profiler) => storage.SetViewedAsync(profiler.User, profiler.Id);
     }
 }

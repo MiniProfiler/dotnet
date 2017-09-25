@@ -10,41 +10,36 @@ using System.Threading.Tasks;
 namespace StackExchange.Profiling.Storage
 {
     /// <summary>
-    /// Understands how to store a <see cref="MiniProfiler"/> to a MSSQL database.
+    /// Understands how to store a <see cref="MiniProfiler"/> to a SQL Server database.
     /// </summary>
     public class SqlServerStorage : DatabaseStorageBase
     {
-        /// <summary>
-        /// Load the SQL statements (using Dapper Multiple Results)
-        /// </summary>
-        protected readonly string SqlStatements = @"
-SELECT * FROM MiniProfilers WHERE Id = @id;
-SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
         public SqlServerStorage(string connectionString) : base(connectionString) { /* base call */ }
 
-        private const string _saveSql =
-@"INSERT INTO MiniProfilers
-            (Id,  RootTimingId,  Name,  Started,  DurationMilliseconds, [User], HasUserViewed,  MachineName,  CustomLinksJson,  ClientTimingsRedirectCount)
+        private string _saveSql;
+        private string SaveSql => _saveSql ?? (_saveSql = $@"
+INSERT INTO {MiniProfilersTable}
+            (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"; // this syntax works on both MSSQL and SQLite
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)");
 
-        private const string _saveTimingsSql = @"
-INSERT INTO MiniProfilerTimings
-            (Id,  MiniProfilerId,  ParentTimingId,  Name,  DurationMilliseconds,  StartMilliseconds,  IsRoot,  Depth,  CustomTimingsJson)
+        private string _saveTimingsSql;
+        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+INSERT INTO {MiniProfilerTimingsTable}
+            (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)");
 
-        private const string _saveClientTimingsSql = @"
-INSERT INTO MiniProfilerClientTimings
-            (Id,  MiniProfilerId,  Name,  Start,  Duration)
+        private string _saveClientTimingsSql;
+        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+INSERT INTO {MiniProfilerClientTimingsTable}
+            (Id, MiniProfilerId, Name, Start, Duration)
 SELECT      @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)");
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -54,7 +49,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(_saveSql, new
+                conn.Execute(SaveSql, new
                 {
                     profiler.Id,
                     profiler.Started,
@@ -75,7 +70,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                conn.Execute(_saveTimingsSql, timings.Select(timing => new
+                conn.Execute(SaveTimingsSql, timings.Select(timing => new
                 {
                     timing.Id,
                     timing.MiniProfilerId,
@@ -97,7 +92,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                         timing.Id = Guid.NewGuid();
                     }
 
-                    conn.Execute(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
+                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
                         timing.Id,
                         timing.MiniProfilerId,
@@ -117,7 +112,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(_saveSql, new
+                await conn.ExecuteAsync(SaveSql, new
                 {
                     profiler.Id,
                     profiler.Started,
@@ -138,7 +133,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                await conn.ExecuteAsync(_saveTimingsSql, timings.Select(timing => new
+                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => new
                 {
                     timing.Id,
                     timing.MiniProfilerId,
@@ -159,7 +154,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
                         timing.MiniProfilerId = profiler.Id;
                         timing.Id = Guid.NewGuid();
                     }
-                    await conn.ExecuteAsync(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
+                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
                         timing.Id,
                         timing.MiniProfilerId,
@@ -171,6 +166,12 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
             }
         }
 
+        private string _loadSql;
+        private string LoadSql => _loadSql ?? (_loadSql = $@"
+SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
+SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
+
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
@@ -181,7 +182,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                using (var multi = conn.QueryMultiple(SqlStatements, new { id }))
+                using (var multi = conn.QueryMultiple(LoadSql, new { id }))
                 {
                     result = multi.ReadSingleOrDefault<MiniProfiler>();
                     var timings = multi.Read<Timing>().AsList();
@@ -209,7 +210,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                using (var multi = await conn.QueryMultipleAsync(SqlStatements, new { id }).ConfigureAwait(false))
+                using (var multi = await conn.QueryMultipleAsync(LoadSql, new { id }).ConfigureAwait(false))
                 {
                     result = await multi.ReadSingleOrDefaultAsync<MiniProfiler>().ConfigureAwait(false);
                     var timings = (await multi.ReadAsync<Timing>().ConfigureAwait(false)).AsList();
@@ -255,17 +256,18 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)";
         /// <param name="id">The profiler ID to set viewed.</param>
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
-        private const string _toggleViewedSql = @"
-Update MiniProfilers 
+        private string _toggleViewedSql;
+        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
-   And [User] = @user";
+   And [User] = @user");
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(_toggleViewedSql, new { id, user, hasUserVeiwed });
+                conn.Execute(ToggleViewedSql, new { id, user, hasUserVeiwed });
             }
         }
 
@@ -273,16 +275,17 @@ Update MiniProfilers
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(_toggleViewedSql, new { id, user, hasUserVeiwed }).ConfigureAwait(false);
+                await conn.ExecuteAsync(ToggleViewedSql, new { id, user, hasUserVeiwed }).ConfigureAwait(false);
             }
         }
 
-        private const string _getUnviewedIdsSql = @"
+        private string _getUnviewedIdsSql;
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
   Select Id
-    From MiniProfilers
+    From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
-Order By Started";
+Order By Started");
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -293,7 +296,7 @@ Order By Started";
         {
             using (var conn = GetConnection())
             {
-                return conn.Query<Guid>(_getUnviewedIdsSql, new { user }).AsList();
+                return conn.Query<Guid>(GetUnviewedIdsSql, new { user }).AsList();
             }
         }
 
@@ -306,7 +309,7 @@ Order By Started";
         {
             using (var conn = GetConnection())
             {
-                return (await conn.QueryAsync<Guid>(_getUnviewedIdsSql, new { user }).ConfigureAwait(false)).AsList();
+                return (await conn.QueryAsync<Guid>(GetUnviewedIdsSql, new { user }).ConfigureAwait(false)).AsList();
             }
         }
 
@@ -349,7 +352,7 @@ Order By Started";
             var sb = StringBuilderCache.Get();
             sb.Append(@"
 Select Top {=maxResults} Id
-  From MiniProfilers
+  From ").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -367,88 +370,63 @@ Select Top {=maxResults} Id
         }
 
         /// <summary>
-        /// Load individual MiniProfiler
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="keyParameter">The id Parameter.</param>
-        /// <returns>Related MiniProfiler object</returns>
-        private MiniProfiler LoadProfilerRecord(DbConnection connection, object keyParameter)
-        {
-            using (var multi = connection.QueryMultiple(SqlStatements, keyParameter))
-            {
-                var profiler = multi.Read<MiniProfiler>().SingleOrDefault();
-                var timings = multi.Read<Timing>().ToList();
-                var clientTimings = multi.Read<ClientTiming>().ToList();
-
-                ConnectTimings(profiler, timings, clientTimings);
-
-                return profiler;
-            }
-        }
-
-        /// <summary>
         /// Returns a connection to Sql Server.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
 
-        /// <summary>
-        /// Creates needed tables. Run this once on your database.
-        /// </summary>
-        /// <remarks>
-        /// Works in SQL server and <c>sqlite</c> (with documented removals).
-        /// </remarks>
-        public const string TableCreationScript =
-                @"
-                create table MiniProfilers
-                  (
-                     RowId                                integer not null identity constraint PK_MiniProfilers primary key clustered, -- Need a clustered primary key for SQL Azure
-                     Id                                   uniqueidentifier not null, -- don't cluster on a guid
-                     RootTimingId                         uniqueidentifier null,
-                     Name                                 nvarchar(200) null,
-                     Started                              datetime not null,
-                     DurationMilliseconds                 decimal(7, 1) not null,
-                     [User]                               nvarchar(100) null,
-                     HasUserViewed                        bit not null,
-                     MachineName                          nvarchar(100) null,
-                     CustomLinksJson                      nvarchar(max),
-                     ClientTimingsRedirectCount           int null
-                  );
+        protected override IEnumerable<string> GetTableCreationScripts()
+        {
+            yield return $@"
+CREATE TABLE {MiniProfilersTable}
+(
+    RowId                                integer not null identity constraint PK_{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
+    Id                                   uniqueidentifier not null, -- don't cluster on a guid
+    RootTimingId                         uniqueidentifier null,
+    Name                                 nvarchar(200) null,
+    Started                              datetime not null,
+    DurationMilliseconds                 decimal(7, 1) not null,
+    [User]                               nvarchar(100) null,
+    HasUserViewed                        bit not null,
+    MachineName                          nvarchar(100) null,
+    CustomLinksJson                      nvarchar(max),
+    ClientTimingsRedirectCount           int null
+);
+-- displaying results selects everything based on the main MiniProfilers.Id column
+CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilersTable}_Id ON {MiniProfilersTable} (Id);
                 
-                -- displaying results selects everything based on the main MiniProfilers.Id column
-                create unique nonclustered index IX_MiniProfilers_Id on MiniProfilers (Id);
-                
-                -- speeds up a query that is called on every .Stop()
-                create nonclustered index IX_MiniProfilers_User_HasUserViewed_Includes on MiniProfilers ([User], HasUserViewed) include (Id, [Started]); 
+-- speeds up a query that is called on every .Stop()
+CREATE NONCLUSTERED INDEX IX_{MiniProfilersTable}_User_HasUserViewed_Includes ON {MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]); 
 
-                create table MiniProfilerTimings
-                  (
-                     RowId                               integer not null identity constraint PK_MiniProfilerTimings primary key clustered,
-                     Id                                  uniqueidentifier not null,
-                     MiniProfilerId                      uniqueidentifier not null,
-                     ParentTimingId                      uniqueidentifier null,
-                     Name                                nvarchar(200) not null,
-                     DurationMilliseconds                decimal(9, 3) not null,
-                     StartMilliseconds                   decimal(9, 3) not null,
-                     IsRoot                              bit not null,
-                     Depth                               smallint not null,
-                     CustomTimingsJson                   nvarchar(max) null
-                  );
+CREATE TABLE {MiniProfilerTimingsTable}
+(
+    RowId                               integer not null identity constraint PK_{MiniProfilerTimingsTable} primary key clustered,
+    Id                                  uniqueidentifier not null,
+    MiniProfilerId                      uniqueidentifier not null,
+    ParentTimingId                      uniqueidentifier null,
+    Name                                nvarchar(200) not null,
+    DurationMilliseconds                decimal(9, 3) not null,
+    StartMilliseconds                   decimal(9, 3) not null,
+    IsRoot                              bit not null,
+    Depth                               smallint not null,
+    CustomTimingsJson                   nvarchar(max) null
+);
 
-                 create unique nonclustered index IX_MiniProfilerTimings_Id on MiniProfilerTimings (Id);
-                 create nonclustered index IX_MiniProfilerTimings_MiniProfilerId on MiniProfilerTimings (MiniProfilerId);
+CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_Id ON {MiniProfilerTimingsTable} (Id);
+CREATE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
 
-                 create table MiniProfilerClientTimings
-                  (
-                     RowId                               integer not null identity constraint PK_MiniProfilerClientTimings primary key clustered,
-                     Id                                  uniqueidentifier not null,
-                     MiniProfilerId                      uniqueidentifier not null,
-                     Name                                nvarchar(200) not null,
-                     Start                               decimal(9, 3) not null,
-                     Duration                            decimal(9, 3) not null
-                  );
+CREATE TABLE {MiniProfilerClientTimingsTable}
+(
+    RowId                               integer not null identity constraint PK_{MiniProfilerClientTimingsTable} primary key clustered,
+    Id                                  uniqueidentifier not null,
+    MiniProfilerId                      uniqueidentifier not null,
+    Name                                nvarchar(200) not null,
+    Start                               decimal(9, 3) not null,
+    Duration                            decimal(9, 3) not null
+);
 
-                 create unique nonclustered index IX_MiniProfilerClientTimings_Id on MiniProfilerClientTimings (Id);
-                 create nonclustered index IX_MiniProfilerClientTimings_MiniProfilerId on MiniProfilerClientTimings (MiniProfilerId);             
-                ";
+CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);
+CREATE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);             
+";
+        }
     }
 }

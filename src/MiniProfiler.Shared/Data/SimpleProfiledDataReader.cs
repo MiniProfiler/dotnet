@@ -109,9 +109,9 @@ namespace StackExchange.Profiling.Data
         /// <returns>The double-precision floating point number of the specified field.</returns>
         public double GetDouble(int ordinal) => _reader.GetDouble(ordinal);
 
-        /// <summary>Gets the <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</summary>
+        /// <summary>Gets the <see cref="Type"/> information corresponding to the type of <see cref="object"/> that would be returned from <see cref="GetValue"/>.</summary>
         /// <param name="ordinal">The index of the field to find.</param>
-        /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="Object"/> that would be returned from <see cref="GetValue"/>.</returns>
+        /// <returns>The <see cref="Type"/> information corresponding to the type of <see cref="object"/> that would be returned from <see cref="GetValue"/>.</returns>
         public Type GetFieldType(int ordinal) => _reader.GetFieldType(ordinal);
 
         /// <summary>Gets the single-precision floating point number of the specified field.</summary>

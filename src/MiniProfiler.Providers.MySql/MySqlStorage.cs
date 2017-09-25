@@ -16,36 +16,37 @@ namespace StackExchange.Profiling.Storage
     public sealed class MySqlStorage : DatabaseStorageBase
     {
         /// <summary>
-        /// Load the SQL statements (using Dapper Multiple Results)
-        /// </summary>
-        private readonly string SqlStatements = @"
-SELECT * FROM MiniProfilers WHERE Id = @id;
-SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MySqlStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        public MySqlStorage(string connectionString)
-            : base(connectionString)
-        {
-        }
+        public MySqlStorage(string connectionString) : base(connectionString) { }
 
-        private const string _saveSql =
-@"INSERT IGNORE INTO MiniProfilers
-            (Id,  RootTimingId,  Name,  Started,  DurationMilliseconds, User, HasUserViewed,  MachineName,  CustomLinksJson,  ClientTimingsRedirectCount)
-VALUES(@Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount)";
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MySqlStorage"/> class with the specified connection string
+        /// and the given table names to use.
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
+        /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
+        /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
+        public MySqlStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
-        private const string _saveTimingsSql = @"
-INSERT IGNORE INTO MiniProfilerTimings
-            (Id,  MiniProfilerId,  ParentTimingId,  Name,  DurationMilliseconds,  StartMilliseconds,  IsRoot,  Depth,  CustomTimingsJson)
-VALUES(@Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson)";
+        private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
+        private string SaveSql => _saveSql ?? (_saveSql = $@"
+INSERT IGNORE INTO {MiniProfilersTable}
+            (Id, RootTimingId, Name, Started, DurationMilliseconds, User, HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
+VALUES(@Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount)");
 
-        private const string _saveClientTimingsSql = @"
-INSERT IGNORE INTO MiniProfilerClientTimings
-            (Id,  MiniProfilerId,  Name,  Start,  Duration)
-VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
+        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+INSERT IGNORE INTO {MiniProfilerTimingsTable}
+            (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
+VALUES(@Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson)");
+
+        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+INSERT IGNORE INTO {MiniProfilerClientTimingsTable}
+            (Id, MiniProfilerId, Name, Start, Duration)
+VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)");
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -55,7 +56,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(_saveSql, new
+                conn.Execute(SaveSql, new
                 {
                     profiler.Id,
                     profiler.Started,
@@ -76,7 +77,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                conn.Execute(_saveTimingsSql, timings.Select(timing => new
+                conn.Execute(SaveTimingsSql, timings.Select(timing => new
                 {
                     timing.Id,
                     timing.MiniProfilerId,
@@ -98,7 +99,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                         timing.Id = Guid.NewGuid();
                     }
 
-                    conn.Execute(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
+                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
                         timing.Id,
                         timing.MiniProfilerId,
@@ -118,7 +119,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(_saveSql, new
+                await conn.ExecuteAsync(SaveSql, new
                 {
                     profiler.Id,
                     profiler.Started,
@@ -139,7 +140,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                await conn.ExecuteAsync(_saveTimingsSql, timings.Select(timing => new
+                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => new
                 {
                     timing.Id,
                     timing.MiniProfilerId,
@@ -160,7 +161,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                         timing.MiniProfilerId = profiler.Id;
                         timing.Id = Guid.NewGuid();
                     }
-                    await conn.ExecuteAsync(_saveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
+                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
                         timing.Id,
                         timing.MiniProfilerId,
@@ -171,6 +172,12 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                 }
             }
         }
+
+        private string _sqlStatements;
+        private string SqlStatements => _sqlStatements ?? (_sqlStatements = $@"
+SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
+SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -256,17 +263,18 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
         /// <param name="id">The profiler ID to set viewed.</param>
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
-        private const string _toggleViewedSql = @"
-UPDATE MiniProfilers 
+        private string _toggleViewedSql;
+        public string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+UPDATE {MiniProfilersTable} 
    SET HasUserViewed = @hasUserViewed 
  WHERE Id = @id 
-   AND User = @user";
+   AND User = @user");
 
         private void ToggleViewed(string user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(_toggleViewedSql, new { id, user, hasUserViewed });
+                conn.Execute(ToggleViewedSql, new { id, user, hasUserViewed });
             }
         }
 
@@ -274,16 +282,17 @@ UPDATE MiniProfilers
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(_toggleViewedSql, new { id, user, hasUserViewed }).ConfigureAwait(false);
+                await conn.ExecuteAsync(ToggleViewedSql, new { id, user, hasUserViewed }).ConfigureAwait(false);
             }
         }
 
-        private const string _getUnviewedIdsSql = @"
+        private string _getUnviewedIdsSql;
+        public string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
   SELECT Id
-    FROM MiniProfilers
+    FROM {MiniProfilersTable}
    WHERE User = @user
      AND HasUserViewed = 0
-ORDER BY Started";
+ORDER BY Started");
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -294,7 +303,7 @@ ORDER BY Started";
         {
             using (var conn = GetConnection())
             {
-                return conn.Query<Guid>(_getUnviewedIdsSql, new { user }).AsList();
+                return conn.Query<Guid>(GetUnviewedIdsSql, new { user }).AsList();
             }
         }
 
@@ -307,7 +316,7 @@ ORDER BY Started";
         {
             using (var conn = GetConnection())
             {
-                return (await conn.QueryAsync<Guid>(_getUnviewedIdsSql, new { user }).ConfigureAwait(false)).AsList();
+                return (await conn.QueryAsync<Guid>(GetUnviewedIdsSql, new { user }).ConfigureAwait(false)).AsList();
             }
         }
 
@@ -345,11 +354,11 @@ ORDER BY Started";
             }
         }
 
-        private static string BuildListQuery(DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
+        private string BuildListQuery(DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var sb = new StringBuilder(@"
 SELECT Id
-  FROM MiniProfilers
+  FROM ").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -372,57 +381,53 @@ SELECT Id
         /// </summary>
         protected override DbConnection GetConnection() => new MySqlConnection(ConnectionString);
 
-        /// <summary>
-        /// Creates needed tables. Run this once on your database.
-        /// </summary>
-        /// <remarks>
-        /// Works in SQL server and <c>sqlite</c> (with documented removals).
-        /// </remarks>
-        public const string TableCreationScript = @"
-                create table MiniProfilers
-                  (
-                     RowId                                integer not null auto_increment primary key,
-                     Id                                   char(36) not null collate ascii_general_ci,
-                     RootTimingId                         char(36) null collate ascii_general_ci,
-                     Name                                 varchar(200) null,
-                     Started                              datetime not null,
-                     DurationMilliseconds                 decimal(7, 1) not null,
-                     User                                 varchar(100) null,
-                     HasUserViewed                        bool not null,
-                     MachineName                          varchar(100) null,
-                     CustomLinksJson                      longtext,
-                     ClientTimingsRedirectCount           int null,
-                     unique index IX_MiniProfilers_Id (Id), -- displaying results selects everything based on the main MiniProfilers.Id column
-                     index IX_MiniProfilers_User_HasUserViewed (User, HasUserViewed) -- speeds up a query that is called on every .Stop()
-                  ) engine=InnoDB collate utf8mb4_bin;
-
-                create table MiniProfilerTimings
-                  (
-                     RowId                               integer not null auto_increment primary key,
-                     Id                                  char(36) not null collate ascii_general_ci,
-                     MiniProfilerId                      char(36) not null collate ascii_general_ci,
-                     ParentTimingId                      char(36) null collate ascii_general_ci,
-                     Name                                varchar(200) not null,
-                     DurationMilliseconds                decimal(9, 3) not null,
-                     StartMilliseconds                   decimal(9, 3) not null,
-                     IsRoot                              bool not null,
-                     Depth                               smallint not null,
-                     CustomTimingsJson                   longtext null,
-                     unique index IX_MiniProfilerTimings_Id (Id),
-                     index IX_MiniProfilerTimings_MiniProfilerId (MiniProfilerId)
-                  ) engine=InnoDB collate utf8mb4_bin;
-
-                 create table MiniProfilerClientTimings
-                  (
-                     RowId                               integer not null auto_increment primary key,
-                     Id                                  char(36) not null collate ascii_general_ci,
-                     MiniProfilerId                      char(36) not null collate ascii_general_ci,
-                     Name                                varchar(200) not null,
-                     Start                               decimal(9, 3) not null,
-                     Duration                            decimal(9, 3) not null,
-                     unique index IX_MiniProfilerClientTimings_Id (Id),
-                     index IX_MiniProfilerClientTimings_MiniProfilerId (MiniProfilerId)
-                  ) engine=InnoDB collate utf8mb4_bin;
-                ";
+        protected override IEnumerable<string> GetTableCreationScripts()
+        {
+            yield return $@"
+CREATE TABLE {MiniProfilersTable}
+(
+    RowId                                integer not null auto_increment primary key,
+    Id                                   char(36) not null collate ascii_general_ci,
+    RootTimingId                         char(36) null collate ascii_general_ci,
+    Name                                 varchar(200) null,
+    Started                              datetime not null,
+    DurationMilliseconds                 decimal(7, 1) not null,
+    User                                 varchar(100) null,
+    HasUserViewed                        bool not null,
+    MachineName                          varchar(100) null,
+    CustomLinksJson                      longtext,
+    ClientTimingsRedirectCount           int null,
+    UNIQUE INDEX IX_{MiniProfilersTable}_Id (Id), -- displaying results selects everything based on the main MiniProfilers.Id column
+    INDEX IX_{MiniProfilersTable}_User_HasUserViewed (User, HasUserViewed) -- speeds up a query that is called on every .Stop()
+) engine=InnoDB collate utf8mb4_bin;";
+            yield return $@"
+CREATE TABLE {MiniProfilerTimingsTable}
+(
+    RowId                               integer not null auto_increment primary key,
+    Id                                  char(36) not null collate ascii_general_ci,
+    MiniProfilerId                      char(36) not null collate ascii_general_ci,
+    ParentTimingId                      char(36) null collate ascii_general_ci,
+    Name                                varchar(200) not null,
+    DurationMilliseconds                decimal(9, 3) not null,
+    StartMilliseconds                   decimal(9, 3) not null,
+    IsRoot                              bool not null,
+    Depth                               smallint not null,
+    CustomTimingsJson                   longtext null,
+    UNIQUE INDEX IX_{MiniProfilerTimingsTable}_Id (Id),
+    INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId (MiniProfilerId)
+) engine=InnoDB collate utf8mb4_bin;";
+            yield return $@"
+CREATE TABLE {MiniProfilerClientTimingsTable}
+(
+    RowId                               integer not null auto_increment primary key,
+    Id                                  char(36) not null collate ascii_general_ci,
+    MiniProfilerId                      char(36) not null collate ascii_general_ci,
+    Name                                varchar(200) not null,
+    Start                               decimal(9, 3) not null,
+    Duration                            decimal(9, 3) not null,
+    UNIQUE INDEX IX_{MiniProfilerClientTimingsTable}_Id (Id),
+    INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId (MiniProfilerId)
+) engine=InnoDB collate utf8mb4_bin;";
+        }
     }
 }

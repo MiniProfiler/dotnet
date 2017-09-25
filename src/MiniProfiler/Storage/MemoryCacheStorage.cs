@@ -173,6 +173,10 @@ namespace StackExchange.Profiling.Storage
                     }
                 }
             }
+            if (!profiler.HasUserViewed)
+            {
+                SetUnviewed(profiler.User, profiler.Id);
+            }
         }
 
         /// <summary>
@@ -185,8 +189,6 @@ namespace StackExchange.Profiling.Storage
             Save(profiler);
             return Polyfills.CompletedTask;
         }
-
-        bool IAsyncStorage.SetUnviewedAfterSave => true;
 
         /// <summary>
         /// Set the profile to unviewed for this user

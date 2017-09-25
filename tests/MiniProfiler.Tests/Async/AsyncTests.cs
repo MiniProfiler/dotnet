@@ -8,14 +8,8 @@ using StackExchange.Profiling;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Tests.Async
+namespace StackExchange.Profiling.Tests.Async
 {
-    [CollectionDefinition(BaseTest.NonParallel, DisableParallelization = true)]
-    public static class NonParallelDefintion
-    {
-        public const string Name = "NonParallel";
-    }
-
     [Collection(NonParallel)]
     public class AsyncTests : BaseTest
     {
