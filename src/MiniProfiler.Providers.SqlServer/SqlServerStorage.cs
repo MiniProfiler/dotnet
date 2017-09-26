@@ -385,6 +385,9 @@ Select Top {=maxResults} Id
         /// </summary>
         protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
 
+        /// <summary>
+        /// SQL statements to create the SQL Server tables.
+        /// </summary>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"

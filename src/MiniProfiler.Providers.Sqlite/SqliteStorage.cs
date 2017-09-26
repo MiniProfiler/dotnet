@@ -23,7 +23,7 @@ SELECT * FROM MiniProfilerTimings WHERE MiniProfilerId = @id ORDER BY StartMilli
 SELECT * FROM MiniProfilerClientTimings WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string.
+        /// Initializes a new instance of the <see cref="SqliteStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
         public SqliteStorage(string connectionString) : base(connectionString) { }
@@ -419,6 +419,9 @@ Select Id
             }
         }
 
+        /// <summary>
+        /// SQL statements to create the SQLite tables.
+        /// </summary>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return @"CREATE TABLE MiniProfilers

@@ -177,9 +177,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         }
 
         private string _getSql, _getTimingsSql, _getClientTimingsSql;
-        public string GetSql => _getSql ?? (_getSql = $"SELECT * FROM {MiniProfilersTable} WHERE Id = @id");
-        public string GetTimingsSql => _getTimingsSql ?? (_getTimingsSql = $"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds");
-        public string GetClientTimingsSql => _getClientTimingsSql ?? (_getClientTimingsSql = $"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start");
+        private string GetSql => _getSql ?? (_getSql = $"SELECT * FROM {MiniProfilersTable} WHERE Id = @id");
+        private string GetTimingsSql => _getTimingsSql ?? (_getTimingsSql = $"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds");
+        private string GetClientTimingsSql => _getClientTimingsSql ?? (_getClientTimingsSql = $"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start");
 
         /// <summary>
         /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
@@ -381,11 +381,8 @@ Select Top {=maxResults} Id
         protected override DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
         /// <summary>
-        /// Creates needed tables. Run this once on your database.
+        /// SQL statements to create the SQL Server CE tables.
         /// </summary>
-        /// <remarks>
-        /// Works in SQL server and <c>sqlite</c> (with documented removals).
-        /// </remarks>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"CREATE TABLE {MiniProfilersTable}
