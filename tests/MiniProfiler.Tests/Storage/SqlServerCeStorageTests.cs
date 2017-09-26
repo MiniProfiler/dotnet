@@ -23,7 +23,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             var connString = TestConfig.Current.SQLServerCeConnectionString;
             var csb = new SqlCeConnectionStringBuilder(connString);
-            var filename = csb.DataSource.Replace("|DataDirectory|", AppDomain.CurrentDomain.GetData("DataDirectory").ToString());
+            var filename = csb.DataSource;
 
             Storage = new SqlServerCeStorage(
                 connString,

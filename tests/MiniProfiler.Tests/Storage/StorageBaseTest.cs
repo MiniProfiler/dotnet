@@ -190,6 +190,7 @@ namespace StackExchange.Profiling.Tests.Storage
                     // heyyyyyyyyy
                 }
             }
+            mp.Stop();
             return mp;
         }
     }
