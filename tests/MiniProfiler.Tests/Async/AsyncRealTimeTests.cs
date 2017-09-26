@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using StackExchange.Profiling;
 using StackExchange.Profiling.Internal;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,7 +17,7 @@ namespace StackExchange.Profiling.Tests.Async
             Options.StopwatchProvider = StopwatchWrapper.StartNew;
         }
 
-        [Fact]
+        [FactLongRunning]
         public async Task Step_WithParallelTasks_RealTime()
         {
             Thread.Sleep(1000); // calm down there stupid laptop
@@ -109,7 +108,7 @@ namespace StackExchange.Profiling.Tests.Async
             AssertNear(100, timing31.DurationMilliseconds, 50);
         }
 
-        [Fact]
+        [FactLongRunning]
         public void Step_WithParallelThreads_RealTime()
         {
             var profiler = Options.StartProfiler("root");
