@@ -16,10 +16,6 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class SqlServerCeStorage : DatabaseStorageBase
     {
-        private readonly string _mpTable = "MiniProfilers",
-                                _mpTimingsTable = "MiniProfilerTimings",
-                                _mpClientTimingsTable = "MiniProfilerClientTimings";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerCeStorage"/> class with the specified connection string.
         /// </summary>
@@ -31,35 +27,30 @@ namespace StackExchange.Profiling.Storage
         /// and the given table names to use.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        /// <param name="miniprofilersTableName">The table name to use for MiniProfilers.</param>
-        /// <param name="miniprofilerTimingsTableName">The table name to use for MiniProfiler Timings.</param>
-        /// <param name="miniprofilerClientTimingsTableName">The table name to use for MiniProfiler Client Timings.</param>
-        public SqlServerCeStorage(string connectionString, string miniprofilersTableName, string miniprofilerTimingsTableName, string miniprofilerClientTimingsTableName)
-            : base(connectionString)
-        {
-            _mpTable = miniprofilersTableName;
-            _mpTimingsTable = miniprofilerClientTimingsTableName;
-            _mpClientTimingsTable = miniprofilerTimingsTableName;
-        }
+        /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
+        /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
+        /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
+        public SqlServerCeStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
         private string SaveSql => _saveSql ?? (_saveSql = $@"
-INSERT INTO {_mpTable}
+INSERT INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilers WHERE Id = @Id)"); // this syntax works on both MSSQL and SQLite
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)"); // this syntax works on both MSSQL and SQLite
 
         private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
-INSERT INTO {_mpTimingsTable}
+INSERT INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerTimings WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)");
 
         private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
-INSERT INTO {_mpClientTimingsTable}
+INSERT INTO {MiniProfilerClientTimingsTable}
              (Id, MiniProfilerId, Name, Start, Duration)
 SELECT       @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)");
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -186,9 +177,9 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)");
         }
 
         private string _getSql, _getTimingsSql, _getClientTimingsSql;
-        public string GetSql => _getSql ?? (_getSql = $"SELECT * FROM {_mpTable} WHERE Id = @id");
-        public string GetTimingsSql => _getTimingsSql ?? (_getTimingsSql = $"SELECT * FROM {_mpTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds");
-        public string GetClientTimingsSql => _getClientTimingsSql ?? (_getClientTimingsSql = $"SELECT * FROM {_mpClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start");
+        public string GetSql => _getSql ?? (_getSql = $"SELECT * FROM {MiniProfilersTable} WHERE Id = @id");
+        public string GetTimingsSql => _getTimingsSql ?? (_getTimingsSql = $"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds");
+        public string GetClientTimingsSql => _getClientTimingsSql ?? (_getClientTimingsSql = $"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start");
 
         /// <summary>
         /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
@@ -274,7 +265,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MiniProfilerClientTimings WHERE Id = @Id)");
 
         private string _toggleViewedSql;
         private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
-Update {_mpTable} 
+Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
    And [User] = @user");
@@ -298,7 +289,7 @@ Update {_mpTable}
         private string _getUnviewedIdsSql;
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
   Select Id
-    From {_mpTable}
+    From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
 Order By Started");
@@ -367,7 +358,7 @@ Order By Started");
         {
             var sb = new StringBuilder(@"
 Select Top {=maxResults} Id
-  From ").Append(_mpTable).Append(@"
+  From ").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -397,7 +388,7 @@ Select Top {=maxResults} Id
         /// </remarks>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
-            yield return $@"CREATE TABLE {_mpTable}
+            yield return $@"CREATE TABLE {MiniProfilersTable}
                   (
                      RowId                                integer not null identity,
                      Id                                   uniqueidentifier not null,
@@ -411,9 +402,9 @@ Select Top {=maxResults} Id
                      CustomLinksJson                      ntext,
                      ClientTimingsRedirectCount           int null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{_mpTable}_Id on {_mpTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{_mpTable}_User_HasUserViewed on {_mpTable} ([User], HasUserViewed);";
-            yield return $@"CREATE TABLE {_mpTimingsTable}
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilersTable}_Id on {MiniProfilersTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilersTable}_User_HasUserViewed on {MiniProfilersTable} ([User], HasUserViewed);";
+            yield return $@"CREATE TABLE {MiniProfilerTimingsTable}
                   (
                      RowId                               integer not null identity,
                      Id                                  uniqueidentifier not null,
@@ -426,9 +417,9 @@ Select Top {=maxResults} Id
                      Depth                               smallint not null,
                      CustomTimingsJson                   ntext null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{_mpTimingsTable}_Id on {_mpTimingsTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{_mpTimingsTable}_MiniProfilerId on {_mpTimingsTable} (MiniProfilerId);";
-            yield return $@"CREATE TABLE {_mpClientTimingsTable}
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_Id on {MiniProfilerTimingsTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId on {MiniProfilerTimingsTable} (MiniProfilerId);";
+            yield return $@"CREATE TABLE {MiniProfilerClientTimingsTable}
                   (
                      RowId                               integer not null identity,
                      Id                                  uniqueidentifier not null,
@@ -437,8 +428,8 @@ Select Top {=maxResults} Id
                      Start                               decimal(9, 3) not null,
                      Duration                            decimal(9, 3) not null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{_mpClientTimingsTable}_Id on {_mpClientTimingsTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{_mpClientTimingsTable}_MiniProfilerId on {_mpClientTimingsTable} (MiniProfilerId);";
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);";
         }
     }
 }

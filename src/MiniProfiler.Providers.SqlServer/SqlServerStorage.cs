@@ -20,6 +20,17 @@ namespace StackExchange.Profiling.Storage
         /// <param name="connectionString">The connection string to use.</param>
         public SqlServerStorage(string connectionString) : base(connectionString) { /* base call */ }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlServerStorage"/> class with the specified connection string
+        /// and the given table names to use.
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
+        /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
+        /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
+        public SqlServerStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
+
         private string _saveSql;
         private string SaveSql => _saveSql ?? (_saveSql = $@"
 INSERT INTO {MiniProfilersTable}
