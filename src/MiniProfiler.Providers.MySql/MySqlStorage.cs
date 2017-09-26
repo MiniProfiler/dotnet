@@ -264,7 +264,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private string _toggleViewedSql;
-        public string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
 UPDATE {MiniProfilersTable} 
    SET HasUserViewed = @hasUserViewed 
  WHERE Id = @id 
@@ -287,7 +287,7 @@ UPDATE {MiniProfilersTable}
         }
 
         private string _getUnviewedIdsSql;
-        public string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
   SELECT Id
     FROM {MiniProfilersTable}
    WHERE User = @user
@@ -381,6 +381,9 @@ SELECT Id
         /// </summary>
         protected override DbConnection GetConnection() => new MySqlConnection(ConnectionString);
 
+        /// <summary>
+        /// SQL statements to create the MySQL tables.
+        /// </summary>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"

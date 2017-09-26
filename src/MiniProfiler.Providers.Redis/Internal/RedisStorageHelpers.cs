@@ -25,7 +25,7 @@ namespace StackExchange.Profiling.Storage.Internal
         }
 
         /// <summary>
-        /// Converts a <see cref="RedisValue"/> into a <see cref="MiniProfiler"./>
+        /// Converts a <see cref="RedisValue"/> into a <see cref="MiniProfiler"/>.
         /// </summary>
         /// <param name="value">The <see cref="RedisValue"/> to convert.</param>
         /// <returns>The <see cref="MiniProfiler"/> created.</returns>

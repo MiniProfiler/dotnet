@@ -8,7 +8,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
-    <GenerateDocumentationFile Condition="'$(Configuration)'=='Release'">true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseUrl>https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt</PackageLicenseUrl>

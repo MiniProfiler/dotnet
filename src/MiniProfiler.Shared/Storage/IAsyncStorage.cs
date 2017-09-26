@@ -134,6 +134,9 @@ namespace StackExchange.Profiling.Storage
         Task<List<Guid>> GetUnviewedIdsAsync(string user);
     }
 
+    /// <summary>
+    /// Extension methods for <see cref="IAsyncStorage"/>.
+    /// </summary>
     public static class AsyncStorageExtensions
     {
         /// <summary>
