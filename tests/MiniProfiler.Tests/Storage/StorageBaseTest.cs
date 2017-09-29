@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Fixture = fixture;
             if (fixture.ShouldSkip)
             {
-                Skip.Inconclusive("Couldn't test against: " + Storage.GetType() + "\n" + fixture.SkipReason);
+                Skip.Inconclusive("Couldn't test against: " + (Storage?.GetType() ?? GetType()) + "\n" + fixture.SkipReason);
             }
         }
 
