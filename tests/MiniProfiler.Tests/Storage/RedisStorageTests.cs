@@ -9,12 +9,8 @@ namespace StackExchange.Profiling.Tests.Storage
 {
     public class RedisStorageTests : StorageBaseTest, IClassFixture<RedisStorageFixture>
     {
-        private readonly RedisStorageFixture _fixture;
-        protected override IAsyncStorage Storage => _fixture.Storage;
-
         public RedisStorageTests(RedisStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
         {
-            _fixture = fixture;
         }
 
         [Fact]
@@ -69,17 +65,22 @@ namespace StackExchange.Profiling.Tests.Storage
             Skip.IfNoConfig(nameof(TestConfig.Current.RedisConnectionString), TestConfig.Current.RedisConnectionString);
 
             var testSuffix = Guid.NewGuid().ToString("N") + "_";
-            Storage = new RedisStorage(TestConfig.Current.RedisConnectionString);
+            try
+            {
+                Storage = new RedisStorage(TestConfig.Current.RedisConnectionString);
 #pragma warning disable CS0612 // Type or member is obsolete
-            Storage.ProfilerResultKeyPrefix += testSuffix;
-            Storage.ProfilerResultSetKey += testSuffix;
-            Storage.ProfilerResultUnviewedSetKeyPrefix += testSuffix;
+                Storage.ProfilerResultKeyPrefix += testSuffix;
+                Storage.ProfilerResultSetKey += testSuffix;
+                Storage.ProfilerResultUnviewedSetKeyPrefix += testSuffix;
 #pragma warning restore CS0612 // Type or member is obsolete
+            }
+            catch (Exception e)
+            {
+                ShouldSkip = true;
+                SkipReason = e.Message;
+            }
         }
 
-        public void Dispose()
-        {
-            Storage.Dispose();
-        }
+        public void Dispose() => Storage?.Dispose();
     }
 }
