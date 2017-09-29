@@ -13,7 +13,6 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <PackageReference Include="Jil" Version="2.15.4" />
-    <PackageReference Include="protobuf-net" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46'">
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
