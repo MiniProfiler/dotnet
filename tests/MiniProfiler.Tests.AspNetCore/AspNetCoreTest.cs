@@ -1,14 +1,20 @@
-﻿using StackExchange.Profiling.Storage;
-using System;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
+﻿using System;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Caching.Memory;
+using StackExchange.Profiling.Storage;
+using Xunit.Abstractions;
+using Microsoft.AspNetCore.Builder;
+using System.Collections.Generic;
 
 namespace StackExchange.Profiling.Tests
 {
     public abstract class AspNetCoreTest : BaseTest
     {
-        //protected MiniProfilerOptions Options { get; set; }
+        protected MiniProfilerOptions CurrentOptions { get; set; }
 
         protected AspNetCoreTest(ITestOutputHelper output) : base(output)
         {
@@ -23,36 +29,27 @@ namespace StackExchange.Profiling.Tests
 
         protected MemoryCache GetMemoryCache() => new MemoryCache(new MemoryCacheOptions());
 
-        /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
-        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
-        /// </summary>
-        /// <param name="url">The URL of the request.</param>
-        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
-        /// <param name="stepMs">Amount of time each step will "do work for" in each step.</param>
-        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler GetProfiler(int childDepth = 0, int stepMs = StepTimeMilliseconds)
-        {
-            var result = Options.StartProfiler();
-            AddRecursiveChildren(result, childDepth, stepMs);
-            result.Stop();
-            return result;
-        }
+        protected string UserName([CallerMemberName]string name = null) => name;
 
-        /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
-        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
-        /// </summary>
-        /// <param name="url">The URI of the request.</param>
-        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
-        /// <param name="stepMs">Amount of time each step will "do work for" in each step</param>
-        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
-        public async Task<MiniProfiler> GetProfilerAsync(int childDepth = 0, int stepMs = StepTimeMilliseconds)
-        {
-            var result = Options.StartProfiler();
-            AddRecursiveChildren(result, childDepth, stepMs);
-            await result.StopAsync().ConfigureAwait(false);
-            return result;
-        }
+        protected List<Guid> GetProfilerIds([CallerMemberName]string name = null) => 
+            CurrentOptions?.Storage.GetUnviewedIds(name);
+
+        protected TestServer GetServer(RequestDelegate requestDelegate, [CallerMemberName]string name = null) =>
+            new TestServer(BasicBuilder(requestDelegate, name));
+
+        protected IWebHostBuilder BasicBuilder(RequestDelegate requestDelegate, [CallerMemberName]string name = null) =>
+            new WebHostBuilder()
+               .ConfigureServices(services => services.AddMiniProfiler(o =>
+               {
+                   o.Storage = new MemoryCacheStorage(GetMemoryCache(), TimeSpan.FromDays(1));
+                   o.StopwatchProvider = () => new UnitTestStopwatch();
+                   o.UserIdProvider = _ => name;
+                   CurrentOptions = o;
+               }))
+               .Configure(app =>
+               {
+                   app.UseMiniProfiler();
+                   app.Run(requestDelegate);
+               });
     }
 }

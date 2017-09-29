@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -42,6 +43,38 @@ namespace StackExchange.Profiling.Tests
                 }
             }
             return mp;
+        }
+
+        /// <summary>
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
+        /// </summary>
+        /// <param name="url">The URL of the request.</param>
+        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
+        /// <param name="stepMs">Amount of time each step will "do work for" in each step.</param>
+        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
+        protected virtual MiniProfiler GetProfiler(int childDepth = 0, int stepMs = StepTimeMilliseconds)
+        {
+            var result = Options.StartProfiler();
+            AddRecursiveChildren(result, childDepth, stepMs);
+            result.Stop();
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
+        /// </summary>
+        /// <param name="url">The URI of the request.</param>
+        /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/></param>
+        /// <param name="stepMs">Amount of time each step will "do work for" in each step</param>
+        /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
+        protected virtual async Task<MiniProfiler> GetProfilerAsync(int childDepth = 0, int stepMs = StepTimeMilliseconds)
+        {
+            var result = Options.StartProfiler();
+            AddRecursiveChildren(result, childDepth, stepMs);
+            await result.StopAsync().ConfigureAwait(false);
+            return result;
         }
 
         protected void AddRecursiveChildren(MiniProfiler profiler, int maxDepth, int stepMs, int curDepth = 0)
