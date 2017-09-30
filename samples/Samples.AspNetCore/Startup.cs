@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Samples.AspNetCore.Models;
+using StackExchange.Profiling.Storage;
 
 namespace Samples.AspNetCore
 {
@@ -39,6 +40,8 @@ namespace Samples.AspNetCore
             // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
             services.AddMiniProfiler(options =>
             {
+                //options.Storage = new SqliteMiniProfilerStorage("Data Source=Profiler.sqlite", true); //Switch to OnDisk SQLite Storage
+                //options.Storage = new SqliteMiniProfilerStorage(Startup.SqliteConnectionString, true); //Or Switch to In memory SQLite Storage
                 // ALL of this is optional. You can simply call .AddMiniProfiler() for all defaults
                 // Defaults: In-Memory for 30 minutes, everything profiled, every user can see
 

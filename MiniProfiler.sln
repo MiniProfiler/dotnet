@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26906.1
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -70,6 +70,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ConsoleCore", "samples\Samples.ConsoleCore\Samples.ConsoleCore.csproj", "{63DADF8D-87D2-4471-B473-8322C6EDE98C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Sqlite", "src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj", "{513C06B7-32FD-4833-8B04-A1A3C375634D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Sqlite.EF", "src\MiniProfiler.Providers.Sqlite.EF\MiniProfiler.Providers.Sqlite.EF.csproj", "{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +163,10 @@ Global
 		{513C06B7-32FD-4833-8B04-A1A3C375634D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{513C06B7-32FD-4833-8B04-A1A3C375634D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{513C06B7-32FD-4833-8B04-A1A3C375634D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,10 +193,11 @@ Global
 		{36ED231C-19C9-4CA3-A085-4066A9B571CD} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{63DADF8D-87D2-4471-B473-8322C6EDE98C} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{513C06B7-32FD-4833-8B04-A1A3C375634D} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
+		{7C20B2E1-2DF4-4C56-A14F-AF2C676CE7DE} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

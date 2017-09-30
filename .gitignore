@@ -22,3 +22,4 @@ packages/**/*.*
 docs/_site
 BenchmarkDotNet.Artifacts
 samples/Samples.Mvc5/Properties/launchSettings.json
+samples/Samples.AspNetCore/Profiler.sqlite
