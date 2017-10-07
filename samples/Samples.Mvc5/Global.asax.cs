@@ -30,7 +30,7 @@ namespace Samples.Mvc5
             TrapConnection.Open(); //Hold the in-memory SQLite database open
 
             AreaRegistration.RegisterAllAreas();
-            // Note: ProfilingActionFilter is add in the FilterConfig
+            // Note: ProfilingActionFilter is added in the FilterConfig
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -135,7 +135,7 @@ namespace Samples.Mvc5
                     // for example, for this specific path, we'll only allow profiling if a query parameter is set
                     if ("/Home/ResultsAuthorization".Equals(request.Url.LocalPath, StringComparison.OrdinalIgnoreCase))
                     {
-                        return (request.Url.Query).ToLower().Contains("isauthorized");
+                        return (request.Url.Query).IndexOf("isauthorized", StringComparison.OrdinalIgnoreCase) >= 0;
                     }
 
                     // all other paths can check our global switch
