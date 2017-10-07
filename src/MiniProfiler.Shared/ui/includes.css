@@ -61,7 +61,7 @@
   display: table-cell !important;
 }
 .profiler-result .highlight {
-  animation: fadeIn 2s 1;
+  animation: profiler-fadeIn 2s 1;
 }
 .profiler-result table.profiler-client-timings {
   margin-top: 10px;
@@ -269,7 +269,7 @@
 .profiler-result .profiler-nuclear:hover {
   color: #f00;
 }
-@keyframes fadeIn {
+@keyframes profiler-fadeIn {
   from {
     background-color: #FFB;
   }
@@ -342,7 +342,7 @@
   font-family: Consolas, monospace, serif;
 }
 .profiler-results .profiler-button.new {
-  animation: fadeIn 2s 1;
+  animation: profiler-fadeIn 2s 1;
 }
 .profiler-results .profiler-button,
 .profiler-results .profiler-controls {
