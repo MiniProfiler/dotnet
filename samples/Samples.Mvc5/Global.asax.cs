@@ -119,14 +119,14 @@ namespace Samples.Mvc5
                 //    PopupRenderPosition = RenderPosition.Right;
                 //    and in the page:
                 //    @MiniProfiler.RenderIncludes(position: RenderPosition.Left)
-                // ...then the position would be on the left that that page, and on the right (the app default) for anywhere that doesn't
+                // ...then the position would be on the left on that page, and on the right (the application default) for anywhere that doesn't
                 // specified position in the .RenderIncludes() call.
                 PopupRenderPosition = RenderPosition.Right,  // defaults to left
                 PopupMaxTracesToShow = 10,                   // defaults to 15
 
                 // ResultsAuthorize (optional - open to all by default):
                 // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
-                // can define a function that will authorize clients to see the json or full page results.
+                // can define a function that will authorize clients to see the JSON or full page results.
                 // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
                 ResultsAuthorize = request =>
                 {
