@@ -31,7 +31,7 @@ namespace StackExchange.Profiling.Tests
 
         protected string UserName([CallerMemberName]string name = null) => name;
 
-        protected List<Guid> GetProfilerIds([CallerMemberName]string name = null) => 
+        protected List<Guid> GetProfilerIds([CallerMemberName]string name = null) =>
             CurrentOptions?.Storage.GetUnviewedIds(name);
 
         protected TestServer GetServer(RequestDelegate requestDelegate, [CallerMemberName]string name = null) =>

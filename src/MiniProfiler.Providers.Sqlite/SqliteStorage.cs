@@ -361,7 +361,7 @@ Select Id
                     ? "  And Started > @start"
                     : "Where Started > @start");
             }
-            sb.Append("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
+            sb.Append("Order By ").AppendLine(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
             sb.Append("LIMIT({=maxResults})");
 
             return sb.ToStringRecycle();

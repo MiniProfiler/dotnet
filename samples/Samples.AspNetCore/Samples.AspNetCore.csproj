@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -17,8 +17,6 @@ namespace Samples.Mvc5
 {
     public class MvcApplication : HttpApplication
     {
-        private static MiniProfilerOptions ProfilerOptions;
-
         /// <summary>
         /// Gets the connection string.
         /// </summary>
@@ -66,7 +64,7 @@ namespace Samples.Mvc5
             // profile only for local requests (seems reasonable)
             if (Request.IsLocal)
             {
-                profiler = ProfilerOptions.StartProfiler();
+                profiler = MiniProfiler.StartNew();
             }
 
             using (profiler.Step("Application_BeginRequest"))
@@ -97,7 +95,7 @@ namespace Samples.Mvc5
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
             // Let's rig up serialization of our profiler results to a database, so they survive app restarts.
-            var options = ProfilerOptions = new MiniProfilerOptions
+            var options = MiniProfiler.Configure(new MiniProfilerOptions
             {
                 // Sets up the WebRequestProfilerProvider with
                 // ~/profiler as the route path to use (e.g. /profiler/mini-profiler-includes.js)
@@ -156,7 +154,8 @@ namespace Samples.Mvc5
             // Optional settings to control the stack trace output in the details pane
             .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)
             .ExcludeAssembly("NHibernate")  // Ignore any assembly named NHibernate
-            .ExcludeMethod("Flush");        // Ignore any method with the name of Flush
+            .ExcludeMethod("Flush")        // Ignore any method with the name of Flush
+            );
 
             MiniProfilerHandler.Configure(options);
             MiniProfilerEF6.Initialize();

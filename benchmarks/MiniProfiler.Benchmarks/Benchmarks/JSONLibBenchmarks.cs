@@ -14,9 +14,9 @@ namespace Benchmarks
     {
         private static readonly Options JilOptions = Options.ISO8601ExcludeNulls;
 
-        private static readonly MiniProfiler _simpleProfiler = new MiniProfiler("Simple", new MiniProfilerBaseOptions());
+        private static readonly MiniProfiler _simpleProfiler = new MiniProfiler("Simple", new MiniProfilerBenchmarkOptions());
         private static readonly string _simpleProfilerJson = _simpleProfiler.ToJson();
-        private static readonly MiniProfiler _complexProfiler = Utils.GetComplexProfiler(new MiniProfilerBaseOptions());
+        private static readonly MiniProfiler _complexProfiler = Utils.GetComplexProfiler(new MiniProfilerBenchmarkOptions());
         private static readonly string _complexProfilerJson = _complexProfiler.ToJson();
 
         static JSONLibBenchmarks()

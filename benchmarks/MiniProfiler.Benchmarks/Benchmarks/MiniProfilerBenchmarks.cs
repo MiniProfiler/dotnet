@@ -7,7 +7,7 @@ namespace Benchmarks
     [Config(typeof(Configs.Memory))]
     public class MiniProfilerBenchmarks
     {
-        private static MiniProfilerBaseOptions Options { get; } = new MiniProfilerBaseOptions();
+        private static MiniProfilerBenchmarkOptions Options { get; } = new MiniProfilerBenchmarkOptions();
 
         [Benchmark(Description = "new MiniProfiler")]
         public MiniProfiler Creation() => new MiniProfiler("Test", Options);

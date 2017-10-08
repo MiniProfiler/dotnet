@@ -25,6 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.Configure(configureOptions);
             }
+            // Set background statics
+            services.Configure<MiniProfilerOptions>(o => MiniProfiler.Configure(o));
 
             // See https://github.com/MiniProfiler/dotnet/issues/162 for plans
             // Blocked on https://github.com/aspnet/Mvc/issues/6222

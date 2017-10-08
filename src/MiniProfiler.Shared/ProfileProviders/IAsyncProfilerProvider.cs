@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {

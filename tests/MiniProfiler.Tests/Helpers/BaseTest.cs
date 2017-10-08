@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using StackExchange.Profiling.Internal;
+using StackExchange.Profiling.Tests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,7 +28,7 @@ namespace StackExchange.Profiling.Tests
         protected BaseTest(ITestOutputHelper output)
         {
             Output = output;
-            Options = new MiniProfilerBaseOptions()
+            Options = new MiniProfilerTestOptions()
             {
                 StopwatchProvider = () => new UnitTestStopwatch()
             };

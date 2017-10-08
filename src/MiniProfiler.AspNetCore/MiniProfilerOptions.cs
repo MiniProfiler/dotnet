@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Http;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {

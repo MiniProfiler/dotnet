@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using StackExchange.Profiling.Data;
@@ -7,12 +7,12 @@ using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
 using StackExchange.Profiling.Internal;
 
-namespace StackExchange.Profiling
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
     /// Various configuration properties for MiniProfiler.
     /// </summary>
-    public class MiniProfilerBaseOptions
+    public abstract class MiniProfilerBaseOptions
     {
         /// <summary>
         /// Assembly version of this dank MiniProfiler.
@@ -183,7 +183,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// The profiler provider to use when resolving <see cref="MiniProfiler.Current"/> statically.
-        /// Set via <see cref="MiniProfilerBaseOptionsExtensions.SetProvider{T}(T, IAsyncProfilerProvider, bool)"/>.
+        /// Set via <see cref="MiniProfilerOptionsExtensions.SetProvider{T}(T, IAsyncProfilerProvider, bool)"/>.
         /// </summary>
         public static IAsyncProfilerProvider CurrentProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
 
@@ -201,65 +201,5 @@ namespace StackExchange.Profiling
         /// a web request, the URL will be used for the overall session name.
         /// </param>
         public MiniProfiler StartProfiler(string profilerName = null) => ProfilerProvider.Start(profilerName, this);
-    }
-
-    /// <summary>
-    /// Handy extensions for <see cref="MiniProfilerBaseOptions"/>.
-    /// </summary>
-    public static class MiniProfilerBaseOptionsExtensions
-    {
-        /// <summary>
-        /// Sets a provider as the <see cref="MiniProfilerBaseOptions.ProfilerProvider"/> and optionally as the provider for <see cref="MiniProfiler.Current"/>.
-        /// Extension method to support chaining while retaining the derivative options type.
-        /// </summary>
-        /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
-        /// <param name="options">The options to set the provider on.</param>
-        /// <param name="provider">The provider to use.</param>
-        /// <param name="setAsCurrentProvider">Whether it should be set as the provider for getting <see cref="MiniProfiler.Current"/>.</param>
-        public static T SetProvider<T>(this T options, IAsyncProfilerProvider provider, bool setAsCurrentProvider = true) where T : MiniProfilerBaseOptions
-        {
-            options.ProfilerProvider = provider ?? throw new ArgumentException(nameof(provider));
-            if (setAsCurrentProvider )
-            {
-                MiniProfilerBaseOptions.CurrentProfilerProvider = provider;
-            }
-            return options;
-        }
-
-        /// <summary>
-        /// Excludes an assembly from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedAssemblies"/>.Add(assembly)
-        /// </summary>
-        /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
-        /// <param name="options">The options to exclude the assembly on.</param>
-        /// <param name="assembly">The assembly name to exclude from stack traces.</param>
-        public static T ExcludeAssembly<T>(this T options, string assembly) where T : MiniProfilerBaseOptions
-        {
-            options.ExcludedAssemblies.Add(assembly);
-            return options;
-        }
-
-        /// <summary>
-        /// Excludes a method from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedMethods"/>.Add(assembly)
-        /// </summary>
-        /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
-        /// <param name="options">The options to exclude the method on.</param>
-        /// <param name="method">The method name to exclude from stack traces.</param>
-        public static T ExcludeMethod<T>(this T options, string method) where T : MiniProfilerBaseOptions
-        {
-            options.ExcludedMethods.Add(method);
-            return options;
-        }
-
-        /// <summary>
-        /// Excludes a type from stack traces, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.ExcludedTypes"/>.Add(assembly)
-        /// </summary>
-        /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
-        /// <param name="options">The options to exclude the type on.</param>
-        /// <param name="type">The type name to exclude from stack traces.</param>
-        public static T ExcludeType<T>(this T options, string type) where T : MiniProfilerBaseOptions
-        {
-            options.ExcludedTypes.Add(type);
-            return options;
-        }
     }
 }

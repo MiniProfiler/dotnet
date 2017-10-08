@@ -1,11 +1,12 @@
-﻿using StackExchange.Profiling.Helpers;
-using StackExchange.Profiling.Storage;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Web;
+using StackExchange.Profiling.Helpers;
+using StackExchange.Profiling.Internal;
+using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
 {

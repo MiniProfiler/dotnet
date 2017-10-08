@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
-using StackExchange.Profiling;
 using StackExchange.Profiling.Helpers;
 
 namespace Benchmarks
@@ -9,7 +8,7 @@ namespace Benchmarks
     [Config(typeof(Configs.Full))]
     public class StackTraceSnippetBenchmarks
     {
-        private MiniProfilerBaseOptions Options { get; } = new MiniProfilerBaseOptions();
+        private MiniProfilerBenchmarkOptions Options { get; } = new MiniProfilerBenchmarkOptions();
 
         [Benchmark(Description = "System.Ben Baseline")]
         public void SystemDotBen() { }

@@ -1,4 +1,5 @@
 ﻿using StackExchange.Profiling;
+using StackExchange.Profiling.Internal;
 
 namespace Benchmarks
 {

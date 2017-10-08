@@ -7,7 +7,7 @@ namespace StackExchange.Profiling.Internal
     /// <summary>
     /// Internal extension methods for <see cref="MiniProfilerBaseOptions"/> and inheritors.
     /// </summary>
-    public static class MiniProfilerOptionsExtensions
+    public static class MiniProfilerBaseOptionsExtensions
     {
         /// <summary>
         /// Asynchronously gets unviewed profiles for the user, 

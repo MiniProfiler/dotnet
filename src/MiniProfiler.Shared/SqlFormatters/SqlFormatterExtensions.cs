@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.SqlFormatters
 {

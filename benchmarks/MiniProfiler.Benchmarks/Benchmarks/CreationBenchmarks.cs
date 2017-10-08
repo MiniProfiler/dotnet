@@ -1,12 +1,12 @@
 ﻿using BenchmarkDotNet.Attributes;
-using StackExchange.Profiling;
+using StackExchange.Profiling.Internal;
 
 namespace Benchmarks.Benchmarks
 {
     [Config(typeof(Configs.MemoryFast))]
     public class CreationBenchmarks
     {
-        private static readonly MiniProfilerBaseOptions BaseOptions = new MiniProfilerBaseOptions()
+        private static readonly MiniProfilerBaseOptions BaseOptions = new MiniProfilerBenchmarkOptions()
         {
             Storage = null
         };

@@ -17,9 +17,11 @@ namespace StackExchange.Profiling
     {
         /// <summary>
         /// The options this profiler uses, assigned at creation time.
+        /// It defaults for the global options, if present, as a fall back for all operations.
+        /// The vast majority of use cases will be a single options instance, so this works pretty well.
         /// </summary>
         [IgnoreDataMember]
-        public MiniProfilerBaseOptions Options { get; }
+        public MiniProfilerBaseOptions Options { get; } = DefaultOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MiniProfiler"/> class. 
