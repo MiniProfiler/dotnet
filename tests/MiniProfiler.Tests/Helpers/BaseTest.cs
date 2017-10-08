@@ -28,10 +28,10 @@ namespace StackExchange.Profiling.Tests
         protected BaseTest(ITestOutputHelper output)
         {
             Output = output;
-            Options = new MiniProfilerTestOptions()
+            Options = MiniProfiler.Configure(new MiniProfilerTestOptions()
             {
                 StopwatchProvider = () => new UnitTestStopwatch()
-            };
+            });
         }
 
         protected MiniProfiler GetBasicProfiler([CallerMemberName]string name = null)

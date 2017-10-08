@@ -99,6 +99,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             var fetched = Storage.Load(mp.Id);
             Assert.Equal(mp, fetched);
+            Assert.NotNull(fetched.Options);
         }
 
         [Fact]
@@ -109,6 +110,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             var fetched = await Storage.LoadAsync(mp.Id).ConfigureAwait(false);
             Assert.Equal(mp, fetched);
+            Assert.NotNull(fetched.Options);
         }
 
         [Fact]
