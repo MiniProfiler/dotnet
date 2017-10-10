@@ -136,29 +136,29 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns the MiniProfiler Ids for the given search criteria.
         /// </summary>
-        /// <param name="maxResults">The max number of results</param>
-        /// <param name="start">Search window start</param>
-        /// <param name="finish">Search window end</param>
-        /// <param name="orderBy">Result order</param>
-        /// <returns>The list of GUID keys</returns>
+        /// <param name="maxResults">The max number of results.</param>
+        /// <param name="start">Search window start.</param>
+        /// <param name="finish">Search window end.</param>
+        /// <param name="orderBy">Result order.</param>
+        /// <returns>The list of GUID keys.</returns>
         public abstract IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
 
         /// <summary>
         /// Asynchronously returns the MiniProfiler Ids for the given search criteria.
         /// </summary>
-        /// <param name="maxResults">The max number of results</param>
-        /// <param name="start">Search window start</param>
-        /// <param name="finish">Search window end</param>
-        /// <param name="orderBy">Result order</param>
-        /// <returns>The list of GUID keys</returns>
+        /// <param name="maxResults">The max number of results.</param>
+        /// <param name="start">Search window start.</param>
+        /// <param name="finish">Search window end.</param>
+        /// <param name="orderBy">Result order.</param>
+        /// <returns>The list of GUID keys.</returns>
         public abstract Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending);
 
         /// <summary>
         /// Connects timings from the database, shared here for use in multiple providers.
         /// </summary>
-        /// <param name="profiler">The profiler to connect the timing tree to</param>
-        /// <param name="timings">The raw list of Timings to construct the tree from</param>
-        /// <param name="clientTimings">The client timings to connect to the profiler</param>
+        /// <param name="profiler">The profiler to connect the timing tree to.</param>
+        /// <param name="timings">The raw list of Timings to construct the tree from.</param>
+        /// <param name="clientTimings">The client timings to connect to the profiler.</param>
         protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
         {
             if (profiler?.RootTimingId.HasValue == true && timings.Count > 0)
@@ -190,8 +190,8 @@ namespace StackExchange.Profiling.Storage
         /// Build the subtree of <see cref="Timing"/> objects with <paramref name="parent"/> at the top.
         /// Used recursively.
         /// </summary>
-        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated</param>
-        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent</param>
+        /// <param name="parent">Parent <see cref="Timing"/> to be evaluated.</param>
+        /// <param name="timingsLookupByParent">Key: parent timing Id; Value: collection of all <see cref="Timing"/> objects under the given parent.</param>
         private void PopulateChildTimings(Timing parent, ILookup<Guid, Timing> timingsLookupByParent)
         {
             if (timingsLookupByParent.Contains(parent.Id))

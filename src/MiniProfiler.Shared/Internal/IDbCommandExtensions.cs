@@ -1,6 +1,4 @@
-﻿using StackExchange.Profiling.Helpers;
-using StackExchange.Profiling.SqlFormatters;
-using System;
+﻿using StackExchange.Profiling.SqlFormatters;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
