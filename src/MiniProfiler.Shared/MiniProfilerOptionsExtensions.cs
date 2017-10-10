@@ -61,5 +61,17 @@ namespace StackExchange.Profiling
             options.ExcludedTypes.Add(type);
             return options;
         }
+
+        /// <summary>
+        /// Excludes a path from being profiled, convenience method for chaining, basically <see cref="MiniProfilerBaseOptions.IgnoredPaths"/>.Add(assembly)
+        /// </summary>
+        /// <typeparam name="T">The subtype of <see cref="MiniProfilerBaseOptions"/> to use (inferred for common usage).</typeparam>
+        /// <param name="options">The options to exclude the type on.</param>
+        /// <param name="path">The path to exclude from profiled.</param>
+        public static T IgnorePath<T>(this T options, string path) where T : MiniProfilerBaseOptions
+        {
+            options.IgnoredPaths.Add(path);
+            return options;
+        }
     }
 }
