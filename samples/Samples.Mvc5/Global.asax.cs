@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -39,14 +38,6 @@ namespace Samples.Mvc5
             if (File.Exists(entityFrameworkDataPath))
             {
                 File.Delete(entityFrameworkDataPath);
-            }
-
-            // initialize automatic view profiling
-            var copy = ViewEngines.Engines.ToList();
-            ViewEngines.Engines.Clear();
-            foreach (var item in copy)
-            {
-                ViewEngines.Engines.Add(new ProfilingViewEngine(item));
             }
         }
 
@@ -154,7 +145,8 @@ namespace Samples.Mvc5
             // Optional settings to control the stack trace output in the details pane
             .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)
             .ExcludeAssembly("NHibernate")  // Ignore any assembly named NHibernate
-            .ExcludeMethod("Flush")        // Ignore any method with the name of Flush
+            .ExcludeMethod("Flush")         // Ignore any method with the name of Flush
+            .AddViewPofiling()              // Add MVC view profiling
             );
 
             MiniProfilerHandler.Configure(options);

@@ -84,4 +84,25 @@ namespace StackExchange.Profiling.Mvc
         public void ReleaseView(ControllerContext controllerContext, IView view) =>
             _wrapped.ReleaseView(controllerContext, view);
     }
+
+    /// <summary>
+    /// Extension methods for <see cref="ProfilingViewEngine"/>.
+    /// </summary>
+    public static class ProfilingViewEngineExtensions
+    {
+        /// <summary>
+        /// Adds view profiling to MiniProfiler, so that view times show up in profilers.
+        /// </summary>
+        /// <param name="options">The options object to configure, only used for chaining.</param>
+        public static MiniProfilerOptions AddViewPofiling(this MiniProfilerOptions options)
+        {
+            var copy = ViewEngines.Engines.ToList();
+            ViewEngines.Engines.Clear();
+            foreach (var item in copy)
+            {
+                ViewEngines.Engines.Add(new ProfilingViewEngine(item));
+            }
+            return options;
+        }
+    }
 }
