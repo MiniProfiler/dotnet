@@ -5,7 +5,6 @@ using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
 using StackExchange.Profiling.Storage;
-using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.Internal
 {
@@ -201,5 +200,12 @@ namespace StackExchange.Profiling.Internal
         /// a web request, the URL will be used for the overall session name.
         /// </param>
         public MiniProfiler StartProfiler(string profilerName = null) => ProfilerProvider.Start(profilerName, this);
+
+        /// <summary>
+        /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.
+        /// </summary>
+        protected virtual void OnConfigure() { }
+
+        internal void Configure() => OnConfigure();
     }
 }

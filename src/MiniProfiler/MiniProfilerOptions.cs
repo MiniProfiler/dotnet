@@ -114,5 +114,13 @@ namespace StackExchange.Profiling
                 return base.VersionHash;
             }
         }
+
+        /// <summary>
+        /// Configures the <see cref="MiniProfilerHandler"/>.
+        /// </summary>
+        protected override void OnConfigure()
+        {
+            MiniProfilerHandler.Configure(this);
+        }
     }
 }

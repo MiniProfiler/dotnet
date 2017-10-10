@@ -149,7 +149,6 @@ namespace Samples.Mvc5
             .AddViewPofiling()              // Add MVC view profiling
             );
 
-            MiniProfilerHandler.Configure(options);
             MiniProfilerEF6.Initialize();
         }
     }

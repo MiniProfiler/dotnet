@@ -20,6 +20,7 @@ namespace StackExchange.Profiling
         public static T Configure<T>(T options) where T : MiniProfilerBaseOptions
         {
             DefaultOptions = options ?? throw new ArgumentNullException(nameof(options));
+            options.Configure(); // Event handler of sorts
             return options;
         }
 
