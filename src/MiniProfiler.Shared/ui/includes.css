@@ -467,10 +467,10 @@
   display: none;
 }
 .profiler-result-full .profiler-result .profiler-popup .profiler-info {
-  font-size: 25px;
+  font-size: 18px;
   border-bottom: 1px solid #aaaaaa;
   padding-bottom: 3px;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 .profiler-result-full .profiler-result .profiler-popup .profiler-info .profiler-overall-duration {
   padding-right: 20px;
