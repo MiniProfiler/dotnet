@@ -88,8 +88,8 @@ namespace Samples.Mvc5
             // Let's rig up serialization of our profiler results to a database, so they survive app restarts.
             MiniProfiler.Configure(new MiniProfilerOptions
             {
-                // Sets up the WebRequestProfilerProvider with
-                // ~/profiler as the route path to use (e.g. /profiler/mini-profiler-includes.js)
+                // Sets up the route to use for MiniProfiler resources:
+                // Here, ~/profiler is used for things like /profiler/mini-profiler-includes.js)
                 RouteBasePath = "~/profiler",
 
                 // Setting up a MultiStorage provider. This will store results in the MemoryCacheStorage (normally the default) and in SqlLite as well.
@@ -107,7 +107,7 @@ namespace Samples.Mvc5
                 // override the application-wide defaults specified here, for example if you had both:
                 //    PopupRenderPosition = RenderPosition.Right;
                 //    and in the page:
-                //    @MiniProfiler.RenderIncludes(position: RenderPosition.Left)
+                //    @MiniProfiler.Current.RenderIncludes(position: RenderPosition.Left)
                 // ...then the position would be on the left on that page, and on the right (the application default) for anywhere that doesn't
                 // specified position in the .RenderIncludes() call.
                 PopupRenderPosition = RenderPosition.Right,  // defaults to left
