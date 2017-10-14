@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -134,8 +133,7 @@ namespace StackExchange.Profiling.Tests.Async
                 }, TaskCreationOptions.LongRunning)
             );
 
-            Func<List<CountdownEvent>, bool> hasPendingTasks =
-                handlers2 => (handlers2.Count == 0) || handlers2.Any(y => !y.IsSet);
+            bool hasPendingTasks(List<CountdownEvent> handlers2) => (handlers2.Count == 0) || handlers2.Any(y => !y.IsSet);
 
             // TODO Make this a thread safe signaling lock step to avoid sleeping
             // Wait for tasks to run and call their Step() methods

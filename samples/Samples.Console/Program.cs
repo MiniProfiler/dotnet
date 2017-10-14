@@ -70,7 +70,7 @@ namespace Samples.Console
         public static void TestMultiThreaded()
         {
             var mp = Options.StartProfiler("Locking");
-            Action doWork = () => Thread.Sleep(new Random().Next(1, 50));
+            void doWork() => Thread.Sleep(new Random().Next(1, 50));
 
             using (mp.Step("outer"))
             {
