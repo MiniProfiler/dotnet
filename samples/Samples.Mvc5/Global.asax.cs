@@ -86,7 +86,7 @@ namespace Samples.Mvc5
             // by default, however, long-term result caching is done in HttpRuntime.Cache, which is very volatile.
             // 
             // Let's rig up serialization of our profiler results to a database, so they survive app restarts.
-            var options = MiniProfiler.Configure(new MiniProfilerOptions
+            MiniProfiler.Configure(new MiniProfilerOptions
             {
                 // Sets up the WebRequestProfilerProvider with
                 // ~/profiler as the route path to use (e.g. /profiler/mini-profiler-includes.js)

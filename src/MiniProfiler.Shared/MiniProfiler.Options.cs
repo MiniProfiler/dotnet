@@ -9,7 +9,7 @@ namespace StackExchange.Profiling
         /// Settings for context-less settings access.
         /// For example, every <see cref="MiniProfiler"/> deserialized from a store would have these settings.
         /// </summary>
-        public static MiniProfilerBaseOptions DefaultOptions { get; private set; }
+        public static MiniProfilerBaseOptions DefaultOptions { get; private set; } = new MiniProfilerBaseOptions();
 
         /// <summary>
         /// Saves the given <paramref name="options"/> as the global <see cref="DefaultOptions"/> available for use globally.

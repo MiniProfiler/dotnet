@@ -14,11 +14,6 @@ namespace Samples.Console
     /// </summary>
     public static class Program
     {
-        // We're using DefaultProfilerProvider here (not the Web provider) because we're 
-        // not using HttpContext.Current to track MiniPofiler.Current
-        // In general, DefaultProfilerProvider() should be the go-to for most new applications.
-        private static readonly MiniProfilerOptions Options = new MiniProfilerOptions().SetProvider(new DefaultProfilerProvider());
-
         /// <summary>
         /// application entry point.
         /// </summary>
@@ -27,6 +22,8 @@ namespace Samples.Console
         {
             try
             {
+                MiniProfiler.Configure(new MiniProfilerOptions() { ProfilerProvider = new DefaultProfilerProvider() });
+
                 //Test();
                 TestMultiThreaded();
                 WriteLine(MiniProfiler.Current.RenderPlainText());
@@ -45,7 +42,7 @@ namespace Samples.Console
         /// </summary>
         public static void Test()
         {
-            var mp = Options.StartProfiler("Test");
+            var mp = MiniProfiler.StartNew("Test");
 
             using (mp.Step("Level 1"))
             using (var conn = GetConnection())
@@ -69,7 +66,7 @@ namespace Samples.Console
 
         public static void TestMultiThreaded()
         {
-            var mp = Options.StartProfiler("Locking");
+            var mp = MiniProfiler.StartNew("Locking");
             void doWork() => Thread.Sleep(new Random().Next(1, 50));
 
             using (mp.Step("outer"))

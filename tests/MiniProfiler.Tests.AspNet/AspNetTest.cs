@@ -12,18 +12,17 @@ namespace StackExchange.Profiling.Tests
         /// URL that <see cref="GetRequest"/> and <see cref="GetProfiler"/> will hit.
         /// </summary>
         public const string DefaultRequestUrl = "http://localhost/Test.aspx";
-        //protected MiniProfilerOptions Options { get; set; }
 
         protected AspNetTest(ITestOutputHelper output) : base(output)
         {
             ThreadPool.SetMinThreads(50, 50);
             // Instance per class, so multiple tests swapping the provider don't cause issues here
             // It's not a threading issue of the profiler, but rather tests swapping providers
-            Options = new MiniProfilerOptions()
+            MiniProfiler.Configure(Options = new MiniProfilerOptions()
             {
                 StopwatchProvider = () => new UnitTestStopwatch(),
                 Storage = new MemoryCacheStorage(TimeSpan.FromDays(1))
-            };
+            });
         }
 
         /// <summary>

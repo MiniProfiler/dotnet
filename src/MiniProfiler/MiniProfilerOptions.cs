@@ -18,10 +18,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Creates a new <see cref="MiniProfilerOptions"/> with <see cref="AspNetRequestProvider"/> as the provider.
         /// </summary>
-        public MiniProfilerOptions() : base()
+        public MiniProfilerOptions()
         {
             // The default profiler for old ASP.NET (non-Core) is the WebRequestProfilerProvider
-            this.SetProvider(new AspNetRequestProvider());
+            ProfilerProvider = new AspNetRequestProvider();
             // Default storage is 30 minutes in-memory
             Storage = new MemoryCacheStorage(TimeSpan.FromMinutes(30));
         }

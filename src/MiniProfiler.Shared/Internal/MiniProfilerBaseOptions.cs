@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Internal
     /// <summary>
     /// Various configuration properties for MiniProfiler.
     /// </summary>
-    public abstract class MiniProfilerBaseOptions
+    public class MiniProfilerBaseOptions
     {
         /// <summary>
         /// Assembly version of this dank MiniProfiler.
@@ -178,13 +178,7 @@ namespace StackExchange.Profiling.Internal
         /// <remarks>
         /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
         /// </remarks>
-        public IAsyncProfilerProvider ProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
-
-        /// <summary>
-        /// The profiler provider to use when resolving <see cref="MiniProfiler.Current"/> statically.
-        /// Set via <see cref="MiniProfilerOptionsExtensions.SetProvider{T}(T, IAsyncProfilerProvider, bool)"/>.
-        /// </summary>
-        public static IAsyncProfilerProvider CurrentProfilerProvider { get; internal set; } = new DefaultProfilerProvider();
+        public IAsyncProfilerProvider ProfilerProvider { get; set; } = new DefaultProfilerProvider();
 
         /// <summary>
         /// Allows switching out stopwatches for unit testing.
@@ -192,7 +186,7 @@ namespace StackExchange.Profiling.Internal
         public Func<IStopwatch> StopwatchProvider { get; set; } = StopwatchWrapper.StartNew;
 
         /// <summary>
-        /// Starts a new MiniProfiler based on the current <see cref="ProfilerProvider"/>.
+        /// Starts a new MiniProfiler from the <see cref="ProfilerProvider"/>.
         /// Shortcut for Options.ProfilerProvider.Start.
         /// </summary>
         /// <param name="profilerName">

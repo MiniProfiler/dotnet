@@ -196,9 +196,9 @@ namespace StackExchange.Profiling
         public IStopwatch GetStopwatch() => Stopwatch;
 
         /// <summary>
-        /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was started.
+        /// Gets the currently running MiniProfiler for the current context; null if no MiniProfiler was started.
         /// </summary>
-        public static MiniProfiler Current => MiniProfilerBaseOptions.CurrentProfilerProvider?.CurrentProfiler;
+        public static MiniProfiler Current => DefaultOptions.ProfilerProvider?.CurrentProfiler;
 
         /// <summary>
         /// A <see cref="IAsyncStorage"/> strategy to use for the current profiler.

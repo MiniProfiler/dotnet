@@ -3,6 +3,7 @@ using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
+    [Collection(NonParallel)]
     public class BasicTests : AspNetTest
     {
         public BasicTests(ITestOutputHelper output) : base(output) { }

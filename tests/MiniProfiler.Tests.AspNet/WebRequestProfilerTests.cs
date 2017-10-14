@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Tests
     {
         public WebRequestProfilerTests(ITestOutputHelper output) : base(output)
         {
-            Options.SetProvider(new AspNetRequestProvider());
+            Options.ProfilerProvider = new AspNetRequestProvider();
         }
 
         public void Dispose()

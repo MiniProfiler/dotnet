@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Tests.Async
     {
         public AsyncTests(ITestOutputHelper output) : base(output)
         {
-            Options.SetProvider(new DefaultProfilerProvider());
+            Options.ProfilerProvider = new DefaultProfilerProvider();
         }
 
         [Fact]
