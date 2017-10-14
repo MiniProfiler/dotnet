@@ -6,31 +6,6 @@ param(
     [bool] $RunTests = $true,
     [string] $PullRequestNumber
 )
-
-Write-Host "Run Parameters:" -ForegroundColor Cyan
-Write-Host "Version: $Version"
-Write-Host "BuildNumber: $BuildNumber"
-Write-Host "CreatePackages: $CreatePackages"
-Write-Host "RunTests: $RunTests"
-
-$packageOutputFolder = "$PSScriptRoot\.nupkgs"
-$projectsToBuild =
-    'MiniProfiler.Shared',
-    'MiniProfiler',
-    'MiniProfiler.EF6',
-    'MiniProfiler.EntityFrameworkCore',
-    'MiniProfiler.Mvc5',
-    'MiniProfiler.AspNetCore',
-    'MiniProfiler.AspNetCore.Mvc',
-    'MiniProfiler.Providers.MySql',
-    'MiniProfiler.Providers.Redis',
-    'MiniProfiler.Providers.Sqlite',
-    'MiniProfiler.Providers.SqlServer',
-    'MiniProfiler.Providers.SqlServerCe'
-
-$testsToRun =
-    'MiniProfiler.Tests',
-    'MiniProfiler.Tests.AspNet'
     
 function CalculateVersion() {
     if ($Version) {
@@ -57,6 +32,36 @@ function CalculateVersion() {
 
     return "$semVersion-$BuildNumber"
 }
+
+if ($BuildNumber -and $BuildNumber.Length -lt 5) {
+    $BuildNumber = $BuildNumber.PadLeft(5, "0")
+}
+
+Write-Host "Run Parameters:" -ForegroundColor Cyan
+Write-Host "Version: $Version"
+Write-Host "BuildNumber: $BuildNumber"
+Write-Host "CreatePackages: $CreatePackages"
+Write-Host "RunTests: $RunTests"
+Write-Host "Base Version: $(CalculateVersion)"
+
+$packageOutputFolder = "$PSScriptRoot\.nupkgs"
+$projectsToBuild =
+    'MiniProfiler.Shared',
+    'MiniProfiler',
+    'MiniProfiler.EF6',
+    'MiniProfiler.EntityFrameworkCore',
+    'MiniProfiler.Mvc5',
+    'MiniProfiler.AspNetCore',
+    'MiniProfiler.AspNetCore.Mvc',
+    'MiniProfiler.Providers.MySql',
+    'MiniProfiler.Providers.Redis',
+    'MiniProfiler.Providers.Sqlite',
+    'MiniProfiler.Providers.SqlServer',
+    'MiniProfiler.Providers.SqlServerCe'
+
+$testsToRun =
+    'MiniProfiler.Tests',
+    'MiniProfiler.Tests.AspNet'
 
 if (!$Version -and !$BuildNumber) {
     Write-Host "ERROR: You must supply either a -Version or -BuildNumber argument. `
