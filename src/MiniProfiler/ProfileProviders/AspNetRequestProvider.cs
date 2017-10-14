@@ -12,21 +12,32 @@ namespace StackExchange.Profiling
     /// </summary>
     public class AspNetRequestProvider : DefaultProfilerProvider
     {
+        private readonly bool _enableFallback;
         private const string CacheKey = ":mini-profiler:";
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string, MiniProfilerBaseOptions)"/>ed.
         /// </summary>
         public override MiniProfiler CurrentProfiler
         {
-            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler;
+            get => HttpContext.Current?.Items[CacheKey] as MiniProfiler ?? (_enableFallback ? base.CurrentProfiler : null);
             protected set
             {
                 if (HttpContext.Current != null)
                 {
                     HttpContext.Current.Items[CacheKey] = value;
                 }
+                if (_enableFallback)
+                {
+                    base.CurrentProfiler = value;
+                }
             }
         }
+
+        /// <summary>
+        /// Creates a new <see cref="AspNetRequestProvider"/>, optionally enabling fall back to async context.
+        /// </summary>
+        /// <param name="enableFallback">Enables AsyncLocal fall back (if not found in HttpContext.Current.Items.</param>
+        public AspNetRequestProvider(bool enableFallback = false) => _enableFallback = enableFallback;
 
         /// <summary>
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
