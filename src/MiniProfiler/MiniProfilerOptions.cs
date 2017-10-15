@@ -20,8 +20,12 @@ namespace StackExchange.Profiling
         /// </summary>
         public MiniProfilerOptions()
         {
-            // The default profiler for old ASP.NET (non-Core) is the WebRequestProfilerProvider
-            ProfilerProvider = new AspNetRequestProvider();
+            // The default profiler for old ASP.NET (non-Core) is the AspNetRequestProvider
+            // Only set this provider by default if we're in a web application
+            if (HttpRuntime.AppDomainAppId != null)
+            {
+                ProfilerProvider = new AspNetRequestProvider();
+            }
             // Default storage is 30 minutes in-memory
             Storage = new MemoryCacheStorage(TimeSpan.FromMinutes(30));
         }
@@ -74,7 +78,7 @@ namespace StackExchange.Profiling
         public override string VersionHash => _versionHash ?? (_versionHash = GetVersionHash());
 
         /// <summary>
-        /// On first call, set the version hash for all cache breakers
+        /// On first call, set the version hash for all cache breakers.
         /// </summary>
         private string GetVersionHash()
         {
