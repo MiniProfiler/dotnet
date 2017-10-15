@@ -18,11 +18,12 @@ Install-Package MiniProfiler.AspNetCore -IncludePrerelease
 * Edit your `Program.cs` to configure MiniProfiler and start profiling:
 
 ```c#
-private static MiniProfilerOptions Options = new MiniProfilerOptions();
-
 public static void Main()
 {
-    var profiler = Options.StartProfiler("My Pofiler Name");
+    // Default configuration usually works for most, but overrde, you can call:
+    // MiniProfiler.Configure(new MiniProfilerOptions { ... });
+    
+    var profiler = MiniProfiler.StartNew("My Pofiler Name");
     using (profiler.Step("Main Work"))
     {
         // Do some work...

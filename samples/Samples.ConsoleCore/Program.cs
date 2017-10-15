@@ -14,8 +14,6 @@ namespace Samples.Console
     /// </summary>
     public static class Program
     {
-        private static readonly MiniProfilerOptions Options = new MiniProfilerOptions();
-
         /// <summary>
         /// application entry point.
         /// </summary>
@@ -42,7 +40,7 @@ namespace Samples.Console
         /// </summary>
         public static void Test()
         {
-            var mp = Options.StartProfiler("Test");
+            var mp = MiniProfiler.StartNew("Test");
 
             using (mp.Step("Level 1"))
             using (var conn = GetConnection())
@@ -66,7 +64,7 @@ namespace Samples.Console
 
         public static void TestMultiThreaded()
         {
-            var mp = Options.StartProfiler("Locking");
+            var mp = MiniProfiler.StartNew("Locking");
             void doWork() => Thread.Sleep(new Random().Next(1, 50));
 
             using (mp.Step("outer"))

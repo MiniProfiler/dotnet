@@ -22,9 +22,8 @@ namespace Samples.Console
         {
             try
             {
-                MiniProfiler.Configure(new MiniProfilerOptions() { ProfilerProvider = new DefaultProfilerProvider() });
-
-                //Test();
+                Test();
+                WriteLine(MiniProfiler.Current.RenderPlainText());
                 TestMultiThreaded();
                 WriteLine(MiniProfiler.Current.RenderPlainText());
 
