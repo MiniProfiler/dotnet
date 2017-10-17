@@ -12,7 +12,10 @@
         <span class="profiler-name">
           ${Name} <span class="profiler-overall-duration">(${MiniProfiler.formatDuration(DurationMilliseconds)} ms)</span>
         </span>
-        <span class="profiler-server-time">${MachineName} on ${Started ? Started.toUTCString() : ''}</span>
+        <div class="profiler-server-time">
+            <div>${MachineName}</div>
+            <div>${Started ? Started.toUTCString() : ''}</div>
+        </div>
       </div>
       <div class="profiler-output">
         <table class="profiler-timings">
@@ -103,8 +106,15 @@
       <table>
       <thead>
         <tr>
-          <th style="text-align:right">Step<br />Duration (from start)<br />Call Type</th>
-          <th style="text-align:left">Call Stack<br />Command</th>
+          <th class="profiler-info">
+            <div class="profiler-call-type">Call Type</div>
+            <div>Step</div>
+            <div>Duration <span class="profiler-unit">(from start)</span></div>
+          </th>
+          <th>
+            <div class="profiler-stack-trace">Call Stack</div>
+            <div>Command</div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -160,6 +170,7 @@
 <script id="customTimingTemplate" type="text/x-jquery-tmpl">
   <tr class="{{if i % 2 == 1}}profiler-odd{{/if}}" data-timing-id="${s.ParentTimingId}">
     <td class="profiler-info">
+      <div class="profiler-call-type">${s.CallType}${!s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType}</div>
       <div>${s.ParentTimingName}</div>
       <div class="profiler-number">
         ${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms (T+${MiniProfiler.formatDuration(s.StartMilliseconds)} ms)</span>
@@ -167,10 +178,9 @@
       {{if s.FirstFetchDurationMilliseconds}}
       <div>First Result: ${MiniProfiler.formatDuration(s.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>
       {{/if}}
-      <div>
-        {{if s.IsDuplicate}}<span class="profiler-warning">DUPLICATE</span>{{/if}}
-        ${s.CallType}${!s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType}
-      </div>
+      {{if s.IsDuplicate}}
+      <div><span class="profiler-warning">(DUPLICATE)</span></div>
+      {{/if}}
     </td>
     <td>
       <div class="query">

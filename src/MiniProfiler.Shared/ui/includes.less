@@ -1,4 +1,4 @@
-@results-border: solid 1px #888888;
+@results-border: solid 0.5px #888888;
 @color-nuclear: #f00;
 @results-border-radius: 10px;
 @color-muted: #aaaaaa;
@@ -88,8 +88,13 @@
     .profiler-info {
         text-align: right;
 
+        .profiler-call-type {
+            font-weight: bold;
+        }
+
         .profiler-name {
             float: left;
+            font-weight: bold;
         }
 
         .profiler-server-time {
@@ -172,7 +177,7 @@
         background-color: @color-white;
 
         .profiler-stack-trace {
-            padding-bottom: 3px;
+            padding-bottom: 1px;
             color: #aab;
             margin-bottom: 5px;
         }
@@ -184,11 +189,9 @@
         }
 
         th {
-            border-bottom: 1px solid #555;
-            font-weight: bold;
-            padding: 8px;
+            padding: 10px 5px 5px 5px;
             white-space: nowrap;
-            font-size: 14px;
+            border-bottom: solid 1px #efefef;
         }
 
         td {
@@ -216,13 +219,13 @@
         .profiler-info div {
             text-align: right;
             margin-bottom: 5px;
-            word-break: break-all;
+            word-break: break-word;
         }
 
         .profiler-gap-info {
-            background-color: #ddd;
+            background-color: #e1e5ed;
             opacity: 0.8;
-            color: #000;
+            color: #444;
 
             .query {
                 word-break: break-all;
@@ -392,6 +395,7 @@
         > .profiler-number {
             font-family: Consolas, monospace, serif;
         }
+
         &.new {
             animation: profiler-fadeIn 2s 1;
         }
@@ -409,6 +413,7 @@
         &.profiler-button-active {
             background-color: maroon;
             animation: none;
+            border-radius: 0 !important;
 
             .profiler-number, .profiler-nuclear {
                 color: @color-white;
@@ -446,7 +451,6 @@
         z-index: 2147483641;
         position: absolute;
         background-color: @color-white;
-        border: 1px solid #aaa;
         padding: 5px 10px;
         text-align: left;
         line-height: 18px;
@@ -460,15 +464,10 @@
 
             .profiler-name {
                 font-size: 1.1em;
-                font-weight: bold;
 
                 .profiler-overall-duration {
                     display: none;
                 }
-            }
-
-            .profiler-server-time {
-                font-size: 95%;
             }
         }
 
@@ -589,10 +588,14 @@
                 font-size: 16px;
                 color: #555;
                 line-height: 20px;
+
+                div {
+                    text-align: left;
+                }
             }
 
             td {
-                padding: 15px 10px;
+                padding: 10px;
                 text-align: left;
             }
 

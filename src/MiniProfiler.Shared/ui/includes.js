@@ -69,10 +69,6 @@ var MiniProfiler = (function () {
         }
     };
 
-    var getClientPerformance = function() {
-        return window.performance == null ? null : window.performance;
-    };
-
     var fetchResults = function (ids) {
         var clientPerformance, clientProbes, i, j, p, id, idx;
 
@@ -92,7 +88,7 @@ var MiniProfiler = (function () {
 
             if (id == options.currentId) {
 
-                clientPerformance = getClientPerformance();
+                clientPerformance = window.performance;
 
                 if (clientPerformance != null) {
                     // ie is buggy strip out functions
@@ -302,8 +298,6 @@ var MiniProfiler = (function () {
 
             popup.parent().find('.' + klass).toggle(isHidden);
             link.text(isHidden ? hideText : showText);
-
-            popupPreventHorizontalScroll(popup);
         };
 
         toggleColumns.add(trivial).add(trivialGaps).click(function () {
@@ -336,7 +330,6 @@ var MiniProfiler = (function () {
             button.removeClass('new').addClass('profiler-button-active');
             popupSetDimensions(button, popup);
             popup.show();
-            popupPreventHorizontalScroll(popup);
         }
     };
 
@@ -353,21 +346,13 @@ var MiniProfiler = (function () {
             var horizontalPosition = isLeft ? 'left' : 'right';
             popup
                 .css({ 'bottom': bottom, 'max-height': maxHeight })
-                .css(horizontalPosition, button.outerWidth() - 3); // move left or right, based on config
+                .css(horizontalPosition, button.outerWidth() - 1); // move left or right, based on config
         }
         else {
             popup
                 .css({ 'top': top, 'max-height': maxHeight })
-                .css(options.renderPosition, button.outerWidth() - 3); // move left or right, based on config
+                .css(options.renderPosition, button.outerWidth() - 1); // move left or right, based on config
         }
-    };
-
-    var popupPreventHorizontalScroll = function (popup) {
-        var childrenHeight = 0;
-
-        popup.children().each(function () { childrenHeight += $(this).height(); });
-
-        popup.css({ 'padding-right': childrenHeight > popup.height() ? 40 : 10 });
     };
 
     var popupHide = function (button, popup) {
@@ -503,7 +488,7 @@ var MiniProfiler = (function () {
     };
 
     var installAjaxHandlers = function () {
-        // We simply don't support *really* old browsers: http://caniuse.com/#feat=json
+        // We simply don't support *really* old browsers: https://caniuse.com/#feat=json
         if (!window.JSON) {
             return;
         }
@@ -527,10 +512,10 @@ var MiniProfiler = (function () {
             handleXHR(xhr);
         };
 
-        // we need to attach our ajax complete handler to the window's (profiled app's) copy, not our internal, no conflict version
+        // we need to attach our AJAX complete handler to the window's (profiled app's) copy, not our internal, no conflict version
         var window$ = window.jQuery;
 
-        // fetch profile results for any ajax calls
+        // fetch profile results for any AJAX calls
         if (window$ && window$(document) && window$(document).ajaxComplete) {
             window$(document).ajaxComplete(jQueryAjaxComplete);
 
@@ -646,16 +631,16 @@ var MiniProfiler = (function () {
 
     var initPopupView = function () {
         if (options.authorized) {
-            // all fetched profilings will go in here
+            // all fetched profilers will go in here
             container = $('<div class="profiler-results"/>').appendTo('body');
 
             // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
             container.addClass('profiler-' + options.renderPosition);
 
-            //initialize the controls
+            // initialize the controls
             initControls(container);
 
-            // we'll render results json via a jquery.tmpl - after we get the templates, we'll fetch the initial json to populate it
+            // we'll render results JSON via a jquery.tmpl - after we get the templates, we'll fetch the initial JSON to populate it
             fetchTemplates(function () {
                 // get master page profiler results
                 fetchResults(options.ids);
