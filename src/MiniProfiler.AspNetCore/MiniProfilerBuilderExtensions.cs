@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Internal;
 using System;

@@ -11,8 +11,7 @@
     <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
   </ItemGroup>
 </Project>

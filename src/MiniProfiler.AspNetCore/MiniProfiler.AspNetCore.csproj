@@ -8,7 +8,6 @@
     <TargetFrameworks>net451;net46;netstandard1.5;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -19,7 +18,6 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="1.1.2" />

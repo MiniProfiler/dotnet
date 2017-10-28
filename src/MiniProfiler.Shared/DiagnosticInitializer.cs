@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using StackExchange.Profiling.Internal;
 
-namespace StackExchange.Profiling
+namespace StackExchange.Profiling.Internal
 {
     /// <summary>
     /// Class used to initialize MiniProfiler diagnostic listeners.
     /// </summary>
-    internal class DiagnosticInitializer : IObserver<DiagnosticListener>, IDisposable
+    public class DiagnosticInitializer : IObserver<DiagnosticListener>, IDisposable
     {
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
         private readonly IEnumerable<IMiniProfilerDiagnosticListener> _diagnosticListeners;
@@ -44,8 +43,15 @@ namespace StackExchange.Profiling
         void IObserver<DiagnosticListener>.OnError(Exception error) { }
         void IObserver<DiagnosticListener>.OnCompleted() { }
 
+        /// <summary>
+        /// Dispose this initializer, including all subscriptions.
+        /// </summary>
         public void Dispose() => Dispose(true);
 
+        /// <summary>
+        /// Dispose this initializer, including all subscriptions.
+        /// </summary>
+        /// <param name="disposing">Whether we're immediately disposing.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
