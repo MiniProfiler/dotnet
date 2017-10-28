@@ -1,0 +1,82 @@
+﻿@using StackExchange.Profiling
+@{
+    using (MiniProfiler.Current.Step("Some complex thinking"))
+    {
+        System.Threading.Thread.Sleep(25);
+    }
+}
+@section head 
+{
+    <script>
+        $(function() {
+            // these links should fire ajax requests, not do navigation
+            $('.ajax-requests a').click(function () {
+                var $clicked = $(this),
+                    $spinner = $('<span class="glyphicon glyphicon-refresh spinning" title="Working..."></span>').appendTo($clicked.parent()), //$('<img class="ajax-spinner" src="/Content/progress-dots.gif" title="working...">').appendTo($clicked.parent()),
+                    $results = $('.ajax-results');
+
+                $.ajax({
+                    type: 'GET',
+                    url: this.href,
+                    success: function (data) {
+                        if (window.mPt) mPt.probe("Processing ajax response.");
+
+                        var $p = $('<p class="ajax-result">'),
+                            transform = $clicked.data('transform');
+
+                        $p.append(transform ? window[transform](data) : data);
+                        $results.append($p);
+
+                        if (window.mPt) mPt.probe("Processing ajax response.");
+                    },
+                    error: function () { $results.append('<p>ERROR!</p>'); },
+                    complete: function () { $spinner.remove(); }
+                });
+                return false;
+            });
+        });
+        
+        function fetchRouteHits_transform(data) {
+            var $table = $('<table>');
+            for (var i = 0; i < data.length; i++) {
+                $table.append('<tr><td>' + data[i].RouteName + '</td><td>' + data[i].HitCount + '</td></tr>');
+            }
+            return $table;
+        }
+    </script>
+}
+
+<div class="col-md-12">
+    <div class="page-header">
+        <h2>ASP.NET MVC5: Behold the MiniProfiler in the top right!</h2>
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="panel panel-primary ajax-requests">
+        <div class="panel-heading">Click the links below to see it profile ajax requests</div>
+        <div class="panel-body">
+            <ul>
+                <li><a href="/Home/EFCore">EF Core Test</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">You can also...</div>
+        <div class="panel-body">
+            <ul>
+                <li><a href="/profiler/results-index">Show all profiling sessions</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">Results from ajax requests</div>
+        <div class="panel-body ajax-results">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12" style="margin:900px 0 300px 0;">
+    Some content way down the page - notice how the profiler button is fixed in the upper left corner.
+</div>

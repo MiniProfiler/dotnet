@@ -1,0 +1,43 @@
+﻿@using StackExchange.Profiling;
+@using StackExchange.Profiling.Mvc
+<!DOCTYPE html>
+<html>
+<head>
+    @this.InitClientTimings()
+    @this.TimeScript("jQuery 3.1.1", @<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>)
+    @using (MiniProfiler.Current.Step("<head> rendering"))
+    {
+        <title>@ViewBag.Title - MVC MiniProfiler Demo</title>
+        @(this.TimeScript("Our CSS", @Styles.Render("~/Content/css")));
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("head", required: false)
+    }
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">MiniProfiler Demo</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div>
+        @RenderBody()
+    </div>
+    @MiniProfiler.Current.RenderIncludes(position: RenderPosition.Right, showTrivial: false, showTimeWithChildren: false)
+</body>
+</html>
