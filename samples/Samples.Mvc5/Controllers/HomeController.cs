@@ -213,14 +213,6 @@ namespace Samples.Mvc5.Controllers
         }
 
         /// <summary>
-        /// The XHTML view.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        public ActionResult Xhtml() => View();
-
-        /// <summary>
         /// The EF code first.
         /// </summary>
         /// <returns>the entity framework code first view.</returns>
