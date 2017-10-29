@@ -19,6 +19,7 @@ namespace Samples.Mvc5
 
             InitProfilerSettings();
         }
+
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());

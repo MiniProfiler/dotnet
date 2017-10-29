@@ -93,7 +93,7 @@ namespace Samples.Mvc5.Controllers
         {
             int count;
             int? newCount = null;
-            
+
             EFContext context = null;
             //using (var connection = new ProfiledDbConnection(new SqliteConnection("DataSource=:memory:"), MiniProfiler.Current))
             using (var connection = new SqliteConnection("DataSource=:memory:"))
@@ -135,7 +135,7 @@ namespace Samples.Mvc5.Controllers
                     {
                         count = context.People.Count();
                     }
-                    
+
                     using (MiniProfiler.Current.Step("Get Count from SqlQuery Method - no sql recorded"))
                     {
                         newCount = context.People.FromSql("Select * from People").Count();
