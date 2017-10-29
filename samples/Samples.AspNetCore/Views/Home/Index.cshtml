@@ -16,7 +16,7 @@
         // these links should fire ajax requests, not do navigation
         $('.ajax-requests a').click(function () {
             var $clicked = $(this),
-                $spinner = $('<span class="glyphicon glyphicon-refresh spinning" title="Working..."></span>').appendTo($clicked.parent()), //$('<img class="ajax-spinner" src="/Content/progress-dots.gif" title="working...">').appendTo($clicked.parent()),
+                $spinner = $('<span class="glyphicon glyphicon-refresh spinning" title="Working..."></span>').appendTo($clicked.parent()),
                 $results = $('.ajax-results');
 
             $.ajax({

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Samples.Mvc5.EFCodeFirst
+namespace Samples.Mvc5.Models
 {
     /// <summary>
     /// The EF context.

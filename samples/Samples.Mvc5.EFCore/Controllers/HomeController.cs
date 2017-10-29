@@ -3,9 +3,7 @@ using System.Threading;
 using System.Web.Mvc;
 using StackExchange.Profiling;
 
-using Samples.Mvc5.EFCodeFirst;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Samples.Mvc5.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using StackExchange.Profiling.Data;

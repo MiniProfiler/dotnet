@@ -11,26 +11,43 @@ namespace Samples.Mvc5
 {
     public class MvcApplication : HttpApplication
     {
-        /// <summary>
-        /// Gets the connection string.
-        /// </summary>
-        public static string ConnectionString => "FullUri=file::memory:?cache=shared";
-
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
-            // Note: ProfilingActionFilter is added in the FilterConfig
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
+            RegisterGlobalFilters(GlobalFilters.Filters);
+            RegisterRoutes(RouteTable.Routes);
+            RegisterBundles(BundleTable.Bundles);
 
             InitProfilerSettings();
+        }
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+            filters.Add(new ProfilingActionFilter());
+        }
 
-            var entityFrameworkDataPath = HttpContext.Current.Server.MapPath("~/App_Data/Samples.Mvc5.EFCodeFirst.EFContext.sdf");
-            if (File.Exists(entityFrameworkDataPath))
-            {
-                File.Delete(entityFrameworkDataPath);
-            }
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+                name: "Default",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+            );
+        }
+
+        public static void RegisterBundles(BundleCollection bundles)
+        {
+            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                        "~/Scripts/jquery-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                      "~/Scripts/bootstrap.js"));
+
+            bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-theme.css",
+                      "~/Content/site.css"));
         }
 
         /// <summary>
@@ -74,11 +91,9 @@ namespace Samples.Mvc5
             // 
             // Let's rig up serialization of our profiler results to a database, so they survive app restarts.
             MiniProfiler.Configure(new MiniProfilerOptions
-            {
-                RouteBasePath = "~/profiler",
-            }
-            .AddViewPofiling()    // Add MVC view profiling
-            .AddEntityFramework() // Add EF Core
+                { RouteBasePath = "~/profiler" }
+                .AddViewPofiling()    // Add MVC view profiling
+                .AddEntityFramework() // Add EF Core
             );
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Samples.Mvc5.EFCodeFirst
+﻿namespace Samples.Mvc5.Models
 {
     /// <summary>
     /// The person.
