@@ -205,9 +205,9 @@ namespace StackExchange.Profiling.Tests.Storage
         /// <param name="storage">The storage to create schema for.</param>
         public static void CreateSchema(this IAsyncStorage storage)
         {
-            if (storage is DatabaseStorageBase dbs)
+            if (storage is DatabaseStorageBase dbs && storage is IDatabaseStorageConnectable dbsc)
             {
-                using (var conn = ((IDatabaseStorageConnectable)dbs).GetConnection())
+                using (var conn = dbsc.GetConnection())
                 {
                     foreach (var script in dbs.TableCreationScripts)
                     {
@@ -223,9 +223,9 @@ namespace StackExchange.Profiling.Tests.Storage
         /// <param name="storage">The storage to drop schema for.</param>
         public static void DropSchema(this IAsyncStorage storage)
         {
-            if (storage is DatabaseStorageBase dbs)
+            if (storage is DatabaseStorageBase dbs && storage is IDatabaseStorageConnectable dbsc)
             {
-                using (var conn = ((IDatabaseStorageConnectable)dbs).GetConnection())
+                using (var conn = dbsc.GetConnection())
                 {
                     conn.Execute("Drop Table " + dbs.MiniProfilerClientTimingsTable);
                     conn.Execute("Drop Table " + dbs.MiniProfilerTimingsTable);
