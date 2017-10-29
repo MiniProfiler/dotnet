@@ -32,6 +32,7 @@ namespace StackExchange.Profiling.Tests
             public bool RunLongRunning { get; set; }
 
             public string RedisConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(RedisConnectionString)) ?? "localhost:6379";
+            public string SqliteConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(SqliteConnectionString)) ?? "DataSource=:memory:";
             public string SQLServerConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(SQLServerConnectionString)) ?? "Server=.;Database=tempdb;Trusted_Connection=True;";
             public string SQLServerCeConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(SQLServerCeConnectionString)) ?? "Data Source=TestData.sdf;";
             public string MySQLConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(MySQLConnectionString)) ?? "server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true;SslMode=none";
