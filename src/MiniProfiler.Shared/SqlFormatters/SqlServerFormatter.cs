@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -121,12 +121,12 @@ namespace StackExchange.Profiling.SqlFormatters
 		    if (parameters == null) return;
 
 		    var parametersToSelect = parameters.Where(
-			    x => x.Direction == ParameterDirection.InputOutput.ToString()
-                  || x.Direction == ParameterDirection.Output.ToString())
+			    x => x.Direction == nameof(ParameterDirection.InputOutput)
+                  || x.Direction == nameof(ParameterDirection.Output))
 					 .Select(x => EnsureParameterPrefix(x.Name) + " AS " + RemoveParameterPrefix(x.Name))
 					 .ToList();
 
-		    var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == ParameterDirection.ReturnValue.ToString());
+		    var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == nameof(ParameterDirection.ReturnValue));
 			if (returnValueParameter != null)
 			{
 				parametersToSelect.Insert(0, EnsureParameterPrefix(returnValueParameter.Name) + " AS ReturnValue");
@@ -140,7 +140,7 @@ namespace StackExchange.Profiling.SqlFormatters
 	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
         {
             if (parameters == null || parameters.Count == 0) return null;
-            return parameters.Find(x => x.Direction == ParameterDirection.ReturnValue.ToString());
+            return parameters.Find(x => x.Direction == nameof(ParameterDirection.ReturnValue));
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace StackExchange.Profiling.SqlFormatters
             bool firstParameter = true;
             foreach (var parameter in parameters)
             {
-                if (parameter.Direction == ParameterDirection.ReturnValue.ToString())
+                if (parameter.Direction == nameof(ParameterDirection.ReturnValue))
                 {
                     continue;
                 }
@@ -177,8 +177,8 @@ namespace StackExchange.Profiling.SqlFormatters
                 buffer.Append(' ').Append(EnsureParameterPrefix(parameter.Name)).Append(" = ").Append(EnsureParameterPrefix(parameter.Name));
 
                 // Output and InputOutput directions treated equally on the database side.
-                if (parameter.Direction == ParameterDirection.Output.ToString()
-                 || parameter.Direction == ParameterDirection.InputOutput.ToString())
+                if (parameter.Direction == nameof(ParameterDirection.Output)
+                 || parameter.Direction == nameof(ParameterDirection.InputOutput))
                 {
                     buffer.Append(" OUTPUT");
                 }
@@ -228,7 +228,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     buffer.Append(niceName).Append(' ').Append(resolvedType);
 
                     // return values don't have a value assignment
-                    if (parameter.Direction != ParameterDirection.ReturnValue.ToString())
+                    if (parameter.Direction != nameof(ParameterDirection.ReturnValue))
                     {
                         buffer.Append(" = ").Append(PrepareValue(parameter));
                     }
