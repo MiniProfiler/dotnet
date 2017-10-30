@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Common;
+using System.IO;
 using StackExchange.Profiling.Storage;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,21 +16,19 @@ namespace StackExchange.Profiling.Tests.Storage
 
     public class SqliteStorageFixture : StorageFixtureBase<SqliteStorage>, IDisposable
     {
-        private DbConnection _doorStop;
+        private readonly string fileName;
 
         public SqliteStorageFixture()
         {
-            Skip.IfNoConfig(nameof(TestConfig.Current.SqliteConnectionString), TestConfig.Current.SqliteConnectionString);
+            fileName = Guid.NewGuid() + ".sqlite";
 
             Storage = new SqliteStorage(
-                TestConfig.Current.SqliteConnectionString,
+                $"Data Source={fileName}",
                 "MPTest" + TestId,
                 "MPTimingsTest" + TestId,
                 "MPClientTimingsTest" + TestId);
             try
             {
-                _doorStop = (Storage as IDatabaseStorageConnectable)?.GetConnection();
-                _doorStop?.Open();
                 Storage.CreateSchema();
             }
             catch (Exception e)
@@ -45,7 +44,10 @@ namespace StackExchange.Profiling.Tests.Storage
             {
                 Storage.DropSchema();
             }
-            _doorStop?.Dispose();
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
         }
     }
 }
