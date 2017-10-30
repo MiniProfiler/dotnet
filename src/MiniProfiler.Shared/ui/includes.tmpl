@@ -9,12 +9,13 @@
 
     <div class="profiler-popup">
       <div class="profiler-info">
-        <span class="profiler-name">
-          ${Name} <span class="profiler-overall-duration">(${MiniProfiler.formatDuration(DurationMilliseconds)} ms)</span>
-        </span>
-        <div class="profiler-server-time">
-            <div>${MachineName}</div>
-            <div>${Started ? Started.toUTCString() : ''}</div>
+        <div>
+          <div class="profiler-name">${Name}</div>
+          <div class="profiler-machine-name">${MachineName}</div>
+        </div>
+        <div>
+          <div class="profiler-overall-duration">(${MiniProfiler.formatDuration(DurationMilliseconds)} ms)</div>
+          <div class="profiler-started">${Started ? Started.toUTCString() : ''}</div>
         </div>
       </div>
       <div class="profiler-output">

@@ -86,14 +86,27 @@
     }
 
     .profiler-info {
-        text-align: right;
+        > div {
+            white-space: nowrap;
+            overflow: hidden;
 
-        .profiler-call-type {
-            font-weight: bold;
+            > div {
+                display: inline-block;
+            }
         }
 
         .profiler-name {
+            display: inline-block;
+            font-weight: bold;
             float: left;
+        }
+
+        .profiler-machine-name, .profiler-started {
+            text-align: right;
+            float: right;
+        }
+
+        .profiler-call-type {
             font-weight: bold;
         }
 
@@ -464,10 +477,10 @@
 
             .profiler-name {
                 font-size: 1.1em;
+            }
 
-                .profiler-overall-duration {
-                    display: none;
-                }
+            .profiler-overall-duration {
+                color: @color-muted;
             }
         }
 
@@ -545,10 +558,17 @@
                 padding-bottom: 3px;
                 margin-bottom: 10px;
 
-                .profiler-overall-duration {
-                    padding-right: 20px;
+                .profiler-name {
+                    margin-bottom: 5px;
+                }
+
+                .profiler-overall-duration, .profiler-started {
                     font-size: 80%;
                     color: #888;
+                }
+
+                .profiler-overall-duration {
+                    padding-right: 20px;
                 }
             }
 
