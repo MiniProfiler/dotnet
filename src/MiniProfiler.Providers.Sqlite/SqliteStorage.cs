@@ -62,11 +62,11 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
             {
                 conn.Execute(SaveSql, new
                 {
-                    profiler.Id,
+                    Id = profiler.Id.ToString(),
                     profiler.Started,
                     Name = profiler.Name.Truncate(200),
                     User = profiler.User.Truncate(100),
-                    RootTimingId = profiler.Root?.Id,
+                    RootTimingId = profiler.Root?.Id.ToString(),
                     profiler.DurationMilliseconds,
                     profiler.HasUserViewed,
                     MachineName = profiler.MachineName.Truncate(100),
@@ -83,9 +83,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
 
                 conn.Execute(SaveTimingsSql, timings.Select(timing => new
                 {
-                    timing.Id,
-                    timing.MiniProfilerId,
-                    timing.ParentTimingId,
+                    Id = timing.Id.ToString(),
+                    MiniProfilerId = timing.MiniProfilerId.ToString(),
+                    ParentTimingId = timing.ParentTimingId.ToString(),
                     Name = timing.Name.Truncate(200),
                     timing.DurationMilliseconds,
                     timing.StartMilliseconds,
@@ -105,8 +105,8 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
 
                     conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
-                        timing.Id,
-                        timing.MiniProfilerId,
+                        Id = timing.Id.ToString(),
+                        MiniProfilerId = timing.MiniProfilerId.ToString(),
                         Name = timing.Name.Truncate(200),
                         timing.Start,
                         timing.Duration
@@ -125,11 +125,11 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
             {
                 await conn.ExecuteAsync(SaveSql, new
                 {
-                    profiler.Id,
+                    Id = profiler.Id.ToString(),
                     profiler.Started,
                     Name = profiler.Name.Truncate(200),
                     User = profiler.User.Truncate(100),
-                    RootTimingId = profiler.Root?.Id,
+                    RootTimingId = profiler.Root?.Id.ToString(),
                     profiler.DurationMilliseconds,
                     profiler.HasUserViewed,
                     MachineName = profiler.MachineName.Truncate(100),
@@ -146,9 +146,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
 
                 await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => new
                 {
-                    timing.Id,
-                    timing.MiniProfilerId,
-                    timing.ParentTimingId,
+                    Id = timing.Id.ToString(),
+                    MiniProfilerId = timing.MiniProfilerId.ToString(),
+                    ParentTimingId =  timing.ParentTimingId.ToString(),
                     Name = timing.Name.Truncate(200),
                     timing.DurationMilliseconds,
                     timing.StartMilliseconds,
@@ -167,8 +167,8 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
                     }
                     await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => new
                     {
-                        timing.Id,
-                        timing.MiniProfilerId,
+                        Id = timing.Id.ToString(),
+                        MiniProfilerId = timing.MiniProfilerId.ToString(),
                         Name = timing.Name.Truncate(200),
                         timing.Start,
                         timing.Duration
@@ -179,9 +179,62 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
 
         private string _loadSql;
         private string LoadSql => _loadSql ?? (_loadSql = $@"
-SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
-SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
+  SELECT Id as IdString,
+         RootTimingId as RootTimingIdString,
+         Name,
+         Started,
+         DurationMilliseconds,
+         User,
+         HasUserViewed,
+         MachineName,
+         CustomLinksJson,
+         ClientTimingsRedirectCount
+    FROM {MiniProfilersTable} 
+   WHERE Id = @id;
+
+  SELECT Id as IdString,
+         MiniProfilerId as MiniProfilerIdString,
+         ParentTimingId as ParentTimingIdString,
+         Name,
+         DurationMilliseconds,
+         StartMilliseconds,
+         IsRoot,
+         Depth,
+         CustomTimingsJson
+    FROM {MiniProfilerTimingsTable} 
+   WHERE MiniProfilerId = @id 
+ORDER BY StartMilliseconds;
+
+  SELECT Id as IdString,
+         MiniProfilerId as MiniProfilerIdString,
+         Name,
+         Start,
+         Duration
+    FROM {MiniProfilerClientTimingsTable} 
+   WHERE MiniProfilerId = @id 
+ORDER BY Start;");
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        // GUID Serialization issue workarounds ahoy!
+        private class SqliteMiniProfiler : MiniProfiler
+        {
+            public string IdString { set => Id = new Guid(value); }
+            public string RootTimingIdString { set => RootTimingId = new Guid(value); }
+        }
+
+        private class SqliteTiming : Timing
+        {
+            public string IdString { set => Id = new Guid(value); }
+            public string MiniProfilerIdString { set => MiniProfilerId = new Guid(value); }
+            public string ParentTimingIdString { set => ParentTimingId = new Guid(value); }
+        }
+
+        private class SqliteClientTiming : ClientTiming
+        {
+            public string IdString { set => Id = new Guid(value); }
+            public string MiniProfilerIdString { set => MiniProfilerId = new Guid(value); }
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -193,11 +246,11 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                using (var multi = conn.QueryMultiple(LoadSql, new { id }))
+                using (var multi = conn.QueryMultiple(LoadSql, new { id = id.ToString() }))
                 {
-                    result = multi.ReadSingleOrDefault<MiniProfiler>();
-                    var timings = multi.Read<Timing>().AsList();
-                    var clientTimings = multi.Read<ClientTiming>().AsList();
+                    result = multi.ReadSingleOrDefault<SqliteMiniProfiler>();
+                    var timings = multi.Read<SqliteTiming>().OfType<Timing>().AsList();
+                    var clientTimings = multi.Read<SqliteClientTiming>().OfType<ClientTiming>().AsList();
 
                     ConnectTimings(result, timings, clientTimings);
                 }
@@ -221,11 +274,11 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                using (var multi = await conn.QueryMultipleAsync(LoadSql, new { id }).ConfigureAwait(false))
+                using (var multi = await conn.QueryMultipleAsync(LoadSql, new { id = id.ToString() }).ConfigureAwait(false))
                 {
-                    result = await multi.ReadSingleOrDefaultAsync<MiniProfiler>().ConfigureAwait(false);
-                    var timings = (await multi.ReadAsync<Timing>().ConfigureAwait(false)).AsList();
-                    var clientTimings = (await multi.ReadAsync<ClientTiming>().ConfigureAwait(false)).AsList();
+                    result = await multi.ReadSingleOrDefaultAsync<SqliteMiniProfiler>().ConfigureAwait(false);
+                    var timings = (await multi.ReadAsync<SqliteTiming>().ConfigureAwait(false)).OfType<Timing>().AsList();
+                    var clientTimings = (await multi.ReadAsync<SqliteClientTiming>().ConfigureAwait(false)).OfType<ClientTiming>().AsList();
 
                     ConnectTimings(result, timings, clientTimings);
                 }
@@ -266,7 +319,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
-        
+
         private string _toggleViewedSql;
         private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
 Update {MiniProfilersTable} 
@@ -278,7 +331,7 @@ Update {MiniProfilersTable}
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(ToggleViewedSql, new { id, user, hasUserVeiwed });
+                conn.Execute(ToggleViewedSql, new { id = id.ToString(), user, hasUserVeiwed });
             }
         }
 
@@ -286,13 +339,13 @@ Update {MiniProfilersTable}
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(ToggleViewedSql, new { id, user, hasUserVeiwed }).ConfigureAwait(false);
+                await conn.ExecuteAsync(ToggleViewedSql, new { id = id.ToString(), user, hasUserVeiwed }).ConfigureAwait(false);
             }
         }
 
         private string _getUnviewedIdsSql;
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
-  Select Cast(Id as text) Id
+  Select Id
     From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
@@ -307,7 +360,7 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                return conn.Query<Guid>(GetUnviewedIdsSql, new { user }).AsList();
+                return conn.Query<string>(GetUnviewedIdsSql, new { user }).Select(Guid.Parse).AsList();
             }
         }
 
@@ -320,7 +373,7 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                return (await conn.QueryAsync<Guid>(GetUnviewedIdsSql, new { user }).ConfigureAwait(false)).AsList();
+                return (await conn.QueryAsync<string>(GetUnviewedIdsSql, new { user }).ConfigureAwait(false)).Select(Guid.Parse).AsList();
             }
         }
 
@@ -334,10 +387,10 @@ Order By Started");
         /// <returns>The list of GUID keys</returns>
         public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
+            var query = BuildListQuery(start, finish, orderBy);
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(start, finish, orderBy);
-                return conn.Query<Guid>(query, new { maxResults, start, finish }).AsList();
+                return conn.Query<string>(query, new { maxResults, start, finish }).Select(Guid.Parse).AsList();
             }
         }
 
@@ -351,10 +404,10 @@ Order By Started");
         /// <returns>The list of GUID keys</returns>
         public override async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
+            var query = BuildListQuery(start, finish, orderBy);
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(start, finish, orderBy);
-                return await conn.QueryAsync<Guid>(query, new { maxResults, start, finish }).ConfigureAwait(false);
+                return (await conn.QueryAsync<string>(query, new { maxResults, start, finish }).ConfigureAwait(false)).Select(Guid.Parse).AsList();
             }
         }
 
@@ -421,8 +474,8 @@ Select Cast(Id as text) Id
             yield return $@"Create Table {MiniProfilersTable}
                   (
                      RowId                                integer not null primary key,
-                     Id                                   uniqueidentifier not null, 
-                     RootTimingId                         uniqueidentifier null,
+                     Id                                   nvarchar(36) not null, 
+                     RootTimingId                         nvarchar(36) null,
                      Name                                 nvarchar(200) not null,
                      Started                              datetime not null,
                      DurationMilliseconds                 decimal(9, 3) not null,
@@ -435,9 +488,9 @@ Select Cast(Id as text) Id
             yield return $@"Create Table {MiniProfilerTimingsTable}
                   (
                      RowId                               integer not null primary key,
-                     Id                                  uniqueidentifier not null,
-                     MiniProfilerId                      uniqueidentifier not null,
-                     ParentTimingId                      uniqueidentifier null,
+                     Id                                  nvarchar(36) not null,
+                     MiniProfilerId                      nvarchar(36) not null,
+                     ParentTimingId                      nvarchar(36) null,
                      Name                                nvarchar(200) not null,
                      DurationMilliseconds                decimal(9, 3) not null,
                      StartMilliseconds                   decimal(9, 3) not null,
@@ -448,8 +501,8 @@ Select Cast(Id as text) Id
             yield return $@"Create Table {MiniProfilerClientTimingsTable}
                   (
                      RowId                               integer not null primary key,
-                     Id                                  uniqueidentifier not null,
-                     MiniProfilerId                      uniqueidentifier not null,
+                     Id                                  nvarchar(36) not null,
+                     MiniProfilerId                      nvarchar(36) not null,
                      Name                                nvarchar(200) not null,
                      Start                               decimal(9, 3) not null,
                      Duration                            decimal(9, 3) not null

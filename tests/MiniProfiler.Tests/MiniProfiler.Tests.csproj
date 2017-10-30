@@ -15,6 +15,7 @@
     <PackageReference Include="Jil" Version="2.15.4" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46'">
+    <PackageReference Include="sqlite" Version="3.13.0" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net452' OR '$(TargetFramework)' == 'net46'">
@@ -23,6 +24,7 @@
       xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
       if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
       xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
+      xcopy /s /y /q "$(NuGetPackageRoot)\sqlite\3.13.0\runtimes\win7-x64\native\*.*" "$(TargetDir)x64\.."
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
