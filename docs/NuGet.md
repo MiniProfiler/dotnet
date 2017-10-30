@@ -26,7 +26,9 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
 * [MiniProfiler.EntityFrameworkCore](https://www.nuget.org/packages/MiniProfiler.EntityFrameworkCore) - Entity Framework Core Integration
 * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
 *  Storage and Profiling Providers
+   * [MiniProfiler.Providers.MySql](https://www.nuget.org/packages/MiniProfiler.Providers.MySql/) - MySQL MiniProfiler Storage
    * [MiniProfiler.Providers.Redis](https://www.nuget.org/packages/MiniProfiler.Providers.Redis/) - Redis MiniProfiler Storage
+   * [MiniProfiler.Providers.Sqlite](https://www.nuget.org/packages/MiniProfiler.Providers.Sqlite/) - SQLite MiniProfiler Storage
    * [MiniProfiler.Providers.SqlServer](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer/) - SQL Server MiniProfiler Storage
    * [MiniProfiler.Providers.SqlServerCe](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServerCe/) - SQL Server CS MiniProfiler Storage
 
