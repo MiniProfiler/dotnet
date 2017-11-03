@@ -7,7 +7,7 @@
     
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
-    <xUnitVersion>2.3.0-beta5-build3769</xUnitVersion>
+    <xUnitVersion>2.3.1</xUnitVersion>
   </PropertyGroup>
   
   <ItemGroup>
