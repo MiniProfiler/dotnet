@@ -14,24 +14,6 @@
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
-    <PackageReference Include="EntityFramework" Version="6.1.3" />
-    <PackageReference Include="EntityFramework.SqlServerCompact" Version="6.1.3" />
-    <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="WebActivatorEx" Version="2.2.0" />
-    <PackageReference Include="protobuf-net" Version="2.3.2" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.105.2" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.105.2" />
-    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.105.2" />
-    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.105.2" />
-    <PackageReference Include="Microsoft.SqlServer.Compact" Version="4.0.8876.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
-      <Visible>False</Visible>
-    </CodeAnalysisDependentAssemblyPaths>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
