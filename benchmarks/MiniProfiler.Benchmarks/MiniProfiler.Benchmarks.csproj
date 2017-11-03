@@ -12,19 +12,19 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.9" />
-    <PackageReference Include="Jil" Version="2.15.2" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.10" />
+    <PackageReference Include="Jil" Version="2.15.4" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.43" />
+    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.44" />
     <PackageReference Include="System.Ben" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.40" />
+    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.44" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="ServiceStack.Text" Version="4.5.12" />
+    <PackageReference Include="ServiceStack.Text" Version="4.5.14" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 </Project>
