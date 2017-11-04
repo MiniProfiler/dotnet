@@ -71,6 +71,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 * Add Tag Helpers in `_ViewImports.cshtml`:
 
 ```
+@using StackExchange.Profiling
 @addTagHelper *, MiniProfiler.AspNetCore.Mvc
 ```
 
