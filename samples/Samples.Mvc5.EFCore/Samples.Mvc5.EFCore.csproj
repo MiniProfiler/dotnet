@@ -11,7 +11,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PostBuildEvent>
       if not exist "roslyn" md "roslyn"
-      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.Net.Compilers\2.1.0\tools\*.*" "roslyn"
+      xcopy /s /y /q "$(CscToolPath)\*.*" "roslyn"
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
