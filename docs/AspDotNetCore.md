@@ -64,6 +64,12 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 {
     // ...existing configuration...
     app.UseMiniProfiler();
+
+    // The call to app.UseMiniProfiler must come before the call to app.UseMvc
+    app.UseMvc(routes =>
+    {
+        // ...
+    });
 }
 ```
 <sub>Note: most of the above are optional. A config can be as minimal as `app.UseMiniProfiler(new MiniProfilerOptions()));`</sub>
