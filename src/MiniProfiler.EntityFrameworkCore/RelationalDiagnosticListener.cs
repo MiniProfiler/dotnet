@@ -47,19 +47,22 @@ namespace StackExchange.Profiling.Data
         /// <param name="kv">The current notification information.</param>
         public void OnNext(KeyValuePair<string, object> kv)
         {
-            if (kv.Key == RelationalEventId.CommandExecuting.Name)
+            var key = kv.Key;
+            var val = kv.Value;
+            if (key == RelationalEventId.CommandExecuting.Name)
             {
-                var data = (CommandEventData)kv.Value;
-                var timing = data.Command.GetTiming(data.ExecuteMethod + (data.IsAsync ? " (Async)" : null), MiniProfiler.Current);
-                if (timing != null)
+                if (val is CommandEventData data)
                 {
-                    _commands[data.CommandId] = timing;
+                    var timing = data.Command.GetTiming(data.ExecuteMethod + (data.IsAsync ? " (Async)" : null), MiniProfiler.Current);
+                    if (timing != null)
+                    {
+                        _commands[data.CommandId] = timing;
+                    }
                 }
             }
-            else if (kv.Key == RelationalEventId.CommandExecuted.Name)
+            else if (key == RelationalEventId.CommandExecuted.Name)
             {
-                var data = (CommandExecutedEventData)kv.Value;
-                if (_commands.TryRemove(data.CommandId, out var current))
+                if (val is CommandExecutedEventData data && _commands.TryRemove(data.CommandId, out var current))
                 {
                     // A completion for a DataReader only means we *started* getting data back, not finished.
                     if (data.Result is RelationalDataReader reader)
@@ -73,73 +76,75 @@ namespace StackExchange.Profiling.Data
                     }
                 }
             }
-            else if (kv.Key == RelationalEventId.CommandError.Name)
+            else if (key == RelationalEventId.CommandError.Name)
             {
-                var data = (CommandErrorEventData)kv.Value;
-                if (_commands.TryRemove(data.CommandId, out var command))
+                if (val is CommandErrorEventData data && _commands.TryRemove(data.CommandId, out var command))
                 {
                     command.Errored = true;
                     command.Stop();
                 }
             }
-            else if (kv.Key == RelationalEventId.DataReaderDisposing.Name)
+            else if (key == RelationalEventId.DataReaderDisposing.Name)
             {
-                var data = (DataReaderDisposingEventData)kv.Value;
-                if (_readers.TryRemove(data.CommandId, out var reader))
+                if (val is DataReaderDisposingEventData data && _readers.TryRemove(data.CommandId, out var reader))
                 {
                     reader.Stop();
                 }
             }
             // TODO consider switching to ConnectionEndEventData.Duration
             // This isn't as trivial as it appears due to the start offset of the request
-            else if (kv.Key == RelationalEventId.ConnectionOpening.Name)
+            else if (key == RelationalEventId.ConnectionOpening.Name)
             {
-                var data = (ConnectionEventData)kv.Value;
-                var timing = MiniProfiler.Current.CustomTiming("sql",
-                    data.IsAsync ? "Connection OpenAsync()" : "Connection Open()",
-                    data.IsAsync ? "OpenAsync" : "Open");
-                if (timing != null)
+                if (val is ConnectionEventData data)
                 {
-                    _opening[data.ConnectionId] = timing;
+                    var timing = MiniProfiler.Current.CustomTiming("sql",
+                        data.IsAsync ? "Connection OpenAsync()" : "Connection Open()",
+                        data.IsAsync ? "OpenAsync" : "Open");
+                    if (timing != null)
+                    {
+                        _opening[data.ConnectionId] = timing;
+                    }
                 }
             }
-            else if (kv.Key == RelationalEventId.ConnectionOpened.Name)
+            else if (key == RelationalEventId.ConnectionOpened.Name)
             {
-                var data = (ConnectionEndEventData)kv.Value;
-                if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
+                if (val is ConnectionEndEventData data && _opening.TryRemove(data.ConnectionId, out var openingTiming))
                 {
                     openingTiming?.Stop();
                 }
             }
-            else if (kv.Key == RelationalEventId.ConnectionClosing.Name)
+            else if (key == RelationalEventId.ConnectionClosing.Name)
             {
-                var data = (ConnectionEventData)kv.Value;
-                var timing = MiniProfiler.Current.CustomTiming("sql",
-                    data.IsAsync ? "Connection CloseAsync()" : "Connection Close()",
-                    data.IsAsync ? "CloseAsync" : "Close");
-                if (timing != null)
+                if (val is ConnectionEventData data)
                 {
-                    _closing[data.ConnectionId] = timing;
+                    var timing = MiniProfiler.Current.CustomTiming("sql",
+                        data.IsAsync ? "Connection CloseAsync()" : "Connection Close()",
+                        data.IsAsync ? "CloseAsync" : "Close");
+                    if (timing != null)
+                    {
+                        _closing[data.ConnectionId] = timing;
+                    }
                 }
             }
-            else if (kv.Key == RelationalEventId.ConnectionClosed.Name)
+            else if (key == RelationalEventId.ConnectionClosed.Name)
             {
-                var data = (ConnectionEndEventData)kv.Value;
-                if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
+                if (val is ConnectionEndEventData data && _closing.TryRemove(data.ConnectionId, out var closingTiming))
                 {
                     closingTiming?.Stop();
                 }
             }
-            else if (kv.Key == RelationalEventId.ConnectionError.Name)
+            else if (key == RelationalEventId.ConnectionError.Name)
             {
-                var data = (ConnectionErrorEventData)kv.Value;
-                if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
+                if (val is ConnectionErrorEventData data)
                 {
-                    openingTiming.Errored = true;
-                }
-                if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
-                {
-                    closingTiming.Errored = true;
+                    if (_opening.TryRemove(data.ConnectionId, out var openingTiming))
+                    {
+                        openingTiming.Errored = true;
+                    }
+                    if (_closing.TryRemove(data.ConnectionId, out var closingTiming))
+                    {
+                        closingTiming.Errored = true;
+                    }
                 }
             }
         }
