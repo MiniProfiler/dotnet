@@ -1,4 +1,4 @@
-﻿#if NET46
+﻿#if NET461
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 using StackExchange.Profiling;

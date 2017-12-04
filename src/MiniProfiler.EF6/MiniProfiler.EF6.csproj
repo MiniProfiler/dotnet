@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Integration for Entity Framework 6</Description>
     <Authors>Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>Entity Framework;Entity Framework 6;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net45;net46</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <RootNamespace>StackExchange.Profiling.Data</RootNamespace>

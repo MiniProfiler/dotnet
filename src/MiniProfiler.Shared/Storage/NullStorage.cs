@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.Storage
         /// Saves nothing.
         /// </summary>
         /// <param name="profiler">No one cares.</param>
-        public Task SaveAsync(MiniProfiler profiler) => Polyfills.CompletedTask;
+        public Task SaveAsync(MiniProfiler profiler) => Task.CompletedTask;
         /// <summary>
         /// Returns null.
         /// </summary>
@@ -66,7 +66,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public Task SetUnviewedAsync(string user, Guid id) => Polyfills.CompletedTask;
+        public Task SetUnviewedAsync(string user, Guid id) => Task.CompletedTask;
         /// <summary>
         /// Sets nothing.
         /// </summary>
@@ -78,7 +78,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public Task SetViewedAsync(string user, Guid id) => Polyfills.CompletedTask;
+        public Task SetViewedAsync(string user, Guid id) => Task.CompletedTask;
         /// <summary>
         /// Gets nothing.
         /// </summary>

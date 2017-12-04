@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Tests.AspNet</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-    <TargetFrameworks>net452;net46</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />

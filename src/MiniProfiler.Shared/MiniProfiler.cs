@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
@@ -166,7 +167,7 @@ namespace StackExchange.Profiling
         public bool HasUserViewed { get; set; }
 
         // Allows async to properly track the attachment point
-        private readonly FlowData<Timing> _head = new FlowData<Timing>();
+        private readonly AsyncLocal<Timing> _head = new AsyncLocal<Timing>();
 
         // When async context flows aren't preserved, fallback to enable correct profiling in most cases
         private Timing _lastSetHead;

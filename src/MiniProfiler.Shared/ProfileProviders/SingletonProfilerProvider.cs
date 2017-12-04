@@ -51,7 +51,7 @@ namespace StackExchange.Profiling
         public Task StoppedAsync(MiniProfiler profiler, bool discardResults)
         {
             Stopped(profiler, discardResults);
-            return Polyfills.CompletedTask;
+            return Task.CompletedTask;
         }
     }
 }

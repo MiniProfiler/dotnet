@@ -1,4 +1,4 @@
-﻿#if NET452 || NET46
+﻿#if NET461
 using System;
 using System.Data.SqlServerCe;
 using System.IO;

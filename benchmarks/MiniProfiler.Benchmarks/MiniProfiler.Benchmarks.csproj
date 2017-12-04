@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Benchmarks</RootNamespace>
     <Configuration>Release</Configuration>
-    <TargetFrameworks>net46;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp1.1</TargetFrameworks>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
@@ -23,7 +23,7 @@
     <PackageReference Include="ServiceStack.Text.Core" Version="1.0.44" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="ServiceStack.Text" Version="4.5.14" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>

@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.SqlFormatters;
 using Xunit;
-#if NET452 || NET46
+#if NET461
 using System.Transactions;
 #endif
 
@@ -136,7 +136,7 @@ namespace StackExchange.Profiling.Tests
 	        _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
             CreateDbCommand(CommandType.Text);
-#if NET452 || NET46
+#if NET461
             const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n-- Transaction Scope Iso Level: Serializable\r\n\r\nselect 1;";
             var transactionScope = new TransactionScope();
             // act
