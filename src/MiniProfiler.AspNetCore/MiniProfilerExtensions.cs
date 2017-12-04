@@ -34,6 +34,10 @@ namespace StackExchange.Profiling
 
             // This is populated in Middleware by SetHeadersAndState
             var state = RequestState.Get(context);
+
+            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            if (state?.IsAuthorized == false) return HtmlString.Empty;
+
             var path = (profiler.Options as MiniProfilerOptions)?.RouteBasePath.Value.EnsureTrailingSlash();
 
             var result = profiler.RenderIncludes(

@@ -40,6 +40,8 @@ namespace StackExchange.Profiling
             if (settings == null) return _empty;
 
             var authorized = settings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            if (!authorized) return _empty;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
             // seen the current one yet, so go ahead and add it to the end 
