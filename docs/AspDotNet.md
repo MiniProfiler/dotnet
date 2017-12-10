@@ -27,7 +27,7 @@ protected void Application_Start()
         RouteBasePath = "~/profiler",
 
         // Example of using SQLite storage instead
-        Storage = new SqliteMiniProfilerStorage(ConnectionString);
+        Storage = new SqliteMiniProfilerStorage(ConnectionString),
 
         // Different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine.
         // By default, sql parameters will be displayed.
@@ -47,18 +47,18 @@ protected void Application_Start()
         // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
         // can define a function that will authorize clients to see the JSON or full page results.
         // we use it on http://stackoverflow.com to check that the request cookies belong to a valid developer.
-        ResultsAuthorize = request => request.IsLocal;
+        ResultsAuthorize = request => request.IsLocal,
 
         // ResultsListAuthorize (optional - open to all by default)
         // the list of all sessions in the store is restricted by default, you must return true to allow it
         ResultsListAuthorize = request =>
         {
-            // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
+            // you may implement this if you need to restrict visibility of profiling lists on a per request basis
             return true; // all requests are legit in this example
         },
 
         // Stack trace settings
-        StackMaxLength = 256, // default is 120 characters
+        StackMaxLength = 256 // default is 120 characters
     }
     // Optional settings to control the stack trace output in the details pane, examples:
     .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)
@@ -71,7 +71,7 @@ protected void Application_Start()
 
     // If we're using EntityFramework 6, here's where it'd go.
     // This is in the MiniProfiler.EF6 NuGet package.
-    // MiniProfilerEF6.Initialize();   
+    // MiniProfilerEF6.Initialize();
 }
 
 protected void Application_BeginRequest()
