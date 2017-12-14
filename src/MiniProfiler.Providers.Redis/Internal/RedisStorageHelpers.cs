@@ -17,6 +17,11 @@ namespace StackExchange.Profiling.Storage.Internal
         /// <returns>The <see cref="RedisValue"/> created.</returns>
         public static RedisValue ToRedisValue(this MiniProfiler profiler)
         {
+            if (profiler == null)
+            {
+                return RedisValue.Null;
+            }
+
             using (var stream = new MemoryStream())
             {
                 Serializer.Serialize(stream, profiler);
@@ -31,6 +36,11 @@ namespace StackExchange.Profiling.Storage.Internal
         /// <returns>The <see cref="MiniProfiler"/> created.</returns>
         public static MiniProfiler ToMiniProfiler(this RedisValue value)
         {
+            if (!value.HasValue)
+            {
+                return null;
+            }
+
             using (var stream = new MemoryStream(value))
             {
                 return Serializer.Deserialize<MiniProfiler>(stream);
