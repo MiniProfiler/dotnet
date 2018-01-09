@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using StackExchange.Profiling.Wcf.Helpers;
 using StackExchange.Profiling.Wcf.Storage;
@@ -41,8 +42,7 @@ namespace StackExchange.Profiling.Wcf
             var instanceContext = operationContext.InstanceContext;
             if (instanceContext == null) return null;
 
-            // TODO: Include the action name here as well, and null protection
-            string serviceName = instanceContext.Host.Description.Name;
+            string serviceName = GetProfilerName(operationContext, instanceContext);
 
             // BaseAddresses.FirstOrDefault();
             // TODO: Ignored paths - currently solely based on servicename
@@ -57,7 +57,7 @@ namespace StackExchange.Profiling.Wcf
                     return null;
             }
 
-            var result = new MiniProfiler(sessionName ?? GetProfilerName(operationContext, instanceContext));
+            var result = new MiniProfiler(sessionName ?? serviceName);
 
             SetCurrentProfiler(result);
 
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling.Wcf
             if (instanceContext == null) return null;
 
             // TODO: Include the action name here as well, and null protection
-            string serviceName = instanceContext.Host.Description.Name;
+            string serviceName = GetProfilerName(operationContext, instanceContext);
             
             // BaseAddresses.FirstOrDefault();
             // TODO: Ignored paths - currently solely based on servicename
@@ -103,7 +103,7 @@ namespace StackExchange.Profiling.Wcf
                     return null;
             }
 
-            var result = new MiniProfiler(sessionName ?? GetProfilerName(operationContext, instanceContext), level);
+            var result = new MiniProfiler(sessionName ?? serviceName, level);
 
             SetCurrentProfiler(result);
 
@@ -163,12 +163,91 @@ namespace StackExchange.Profiling.Wcf
         /// <returns>a string containing the profiler name.</returns>
         private static string GetProfilerName(OperationContext operationContext, InstanceContext instanceContext)
         {
-            // TODO: Include the action name here as well, and null protection
             var action = operationContext.IncomingMessageHeaders.Action;
+            if (string.IsNullOrEmpty(action))
+            {
+                action = operationContext.IncomingMessageProperties["HttpOperationName"] as string;
+            }
 
-            var serviceName = string.Format("{0} [{1}]", instanceContext.Host.Description.Name, action);
+            if (!string.IsNullOrEmpty(action))
+            {
+                // For Client->Server calls the host is available here.
+                string contractName;
+                if (instanceContext.Host != null)
+                {
+                    contractName = instanceContext.Host.Description.Name;
+                    action = GetActionFromUri(action);
+                    return $"{contractName} [{action}]";
+                }
 
-            return serviceName;
+                // For Server->Client calls (callbacks) the host is not available, 
+                // maybe the action (in case of SOAP) contains the contract name 
+                // in the action http://www.tempuri.org/{Contract}/{Action}/
+                // Unfortunately the {Contract} is then rather the Callback-Interface 
+                // instead of the actual contract but it's better than nothing 
+                // and faster than trying to resolve the action otherwise. 
+
+                action = GetActionAndContractFromUri(action);
+                var slash = action.IndexOf('/');
+                if (slash != -1)
+                {
+                    contractName = action.Substring(0, slash);
+                    action = action.Substring(slash + 1);
+                    return $"{contractName} [{action}]";
+                }
+                return action;
+            }
+
+            if (operationContext.IncomingMessageHeaders.To != null)
+            {
+                return operationContext.IncomingMessageHeaders.To.LocalPath;
+            }
+
+            Debug.Fail("What method is being called?");
+            return "Unknown Member";
+        }
+
+        /// <summary>
+        /// Tries to load the action name only form the given action determined via WCF.
+        /// </summary>
+        /// <param name="actionUri">The action identifier received via WCF</param>
+        /// <returns>
+        /// In case the action contains an URI (e.g. http://www.tempuri.org/{Contract}/{Action}) only the last part of the path is returned, 
+        /// otherwise the whole actionUri is returned.
+        /// </returns>
+        private static string GetActionFromUri(string actionUri)
+        {
+            var actionAndContract = GetActionAndContractFromUri(actionUri);
+
+            var lastSlash = actionAndContract.LastIndexOf('/');
+            if (lastSlash != -1)
+            {
+                return actionAndContract.Substring(lastSlash + 1);
+            }
+
+            return actionAndContract;
+        }
+
+        /// <summary>
+        /// Tries to load the action name only form the given action determined via WCF.
+        /// </summary>
+        /// <param name="actionUri">The action identifier received via WCF</param>
+        /// <returns>
+        /// In case the action contains an URI (e.g. http://www.tempuri.org/{Contract}/{Action}) only the local path without domain and protocol
+        /// is returned, otherwise the whole actionUri is returned.
+        /// </returns>
+        private static string GetActionAndContractFromUri(string actionUri)
+        {
+            Uri parsedUri;
+            if (Uri.TryCreate(actionUri, UriKind.RelativeOrAbsolute, out parsedUri))
+            {
+                var path = parsedUri.LocalPath;
+                if (!string.IsNullOrEmpty(path))
+                {
+                    return path;
+                }
+            }
+            return actionUri;
         }
 
         /// <summary>
