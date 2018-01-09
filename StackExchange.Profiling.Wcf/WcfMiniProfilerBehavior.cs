@@ -33,8 +33,12 @@
         /// <param name="clientRuntime">The client runtime.</param>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.ClientRuntime clientRuntime)
         {
-            var inspector = new WcfMiniProfilerClientInspector();
-            clientRuntime.MessageInspectors.Add(inspector);
+            // Register Client Inspector for Client->Server calls.
+            var clientInspector = new WcfMiniProfilerClientInspector();
+            clientRuntime.MessageInspectors.Add(clientInspector);
+            // Register Callback Inspector for Server->Client calls.
+            var dispatchInspector = new WcfMiniProfilerDispatchInspector();
+            clientRuntime.CallbackDispatchRuntime.MessageInspectors.Add(dispatchInspector);
         }
 
         /// <summary>
@@ -44,8 +48,13 @@
         /// <param name="endpointDispatcher">The endpoint dispatcher.</param>
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.EndpointDispatcher endpointDispatcher)
         {
-            var inspector = new WcfMiniProfilerDispatchInspector();
-            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
+            // Register Callback Inspector for Client->Server calls.
+            var dispatchInspector = new WcfMiniProfilerDispatchInspector();
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(dispatchInspector);
+
+            // Register Client Inspector for Server->Client calls.
+            var clientInspector = new WcfMiniProfilerClientInspector();
+            endpointDispatcher.DispatchRuntime.CallbackClientRuntime.MessageInspectors.Add(clientInspector);
         }
 
         /// <summary>
