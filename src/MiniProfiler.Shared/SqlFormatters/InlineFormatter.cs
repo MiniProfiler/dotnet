@@ -35,16 +35,18 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
+            var originalCommandText = commandText;
+
             foreach (var p in parameters)
             {
                 // If the parameter doesn't have a prefix (@,:,etc), append one
                 var name = ParamPrefixes.IsMatch(p.Name)
                     ? p.Name
-                    : Regex.Match(commandText, "([@:?])" + p.Name, RegexOptions.IgnoreCase).Value;
+                    : Regex.Match(originalCommandText, "([@:?])" + Regex.Escape(p.Name), RegexOptions.IgnoreCase).Value;
                 if (name.HasValue())
                 {
                     var value = GetParameterValue(p);
-                    commandText = Regex.Replace(commandText, "(" + name + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
+                    commandText = Regex.Replace(commandText, "(" + Regex.Escape(name) + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
                 }
             }
 
