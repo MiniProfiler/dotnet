@@ -164,5 +164,26 @@ namespace StackExchange.Profiling.Data
         /// <param name="value">The value of the parameter.</param>
         protected override void SetDbParameterValue(DbParameter parameter, TypeUsage parameterType, object value) =>
             _tail.SetParameterValue(parameter, parameterType, value);
+
+        /// <summary>
+        /// Clones the connection.
+        /// </summary>
+        /// <param name="connection">The original connection.</param>
+        /// <returns></returns>
+        public override DbConnection CloneDbConnection(DbConnection connection) =>
+            connection is ProfiledDbConnection profiled
+                ? new ProfiledDbConnection(base.CloneDbConnection(profiled.WrappedConnection), profiled.Profiler)
+                : base.CloneDbConnection(connection);
+
+        /// <summary>
+        /// Clones the connection.
+        /// </summary>
+        /// <param name="connection">The original connection.</param>
+        /// <param name="factory">The factory to use.</param>
+        /// <returns>Cloned connection</returns>
+        public override DbConnection CloneDbConnection(DbConnection connection, DbProviderFactory factory) =>
+            connection is ProfiledDbConnection profiled
+                ? new ProfiledDbConnection(base.CloneDbConnection(profiled.WrappedConnection, factory), profiled.Profiler)
+                : base.CloneDbConnection(connection, factory);
     }
 }
