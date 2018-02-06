@@ -109,6 +109,20 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
+        public void InlineParameterNamesInParameterValues()
+        {
+            var formatter = new InlineFormatter();
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = "1" }
+            };
+            const string command = "SELECT * FROM urls WHERE url = @url OR myid = @myid";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
+        }
+
+        [Fact]
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             // arrange
