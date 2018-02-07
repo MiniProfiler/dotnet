@@ -106,14 +106,27 @@ var MiniProfiler = (function () {
                     }
                     clientPerformance = copy;
 
-                    // hack to add chrome timings
-                    if (window.chrome && window.chrome.loadTimes) {
+                    if (window.performance.getEntriesByType && window.PerformancePaintTiming && performance.timeOrigin) {
+                        var entries = window.performance.getEntriesByType('paint');
+                        for (var i = 0; i < entries.length; i++) {
+                            var entry = entries[i];
+                            switch (entry.name) {
+                                case 'first-paint':
+                                    clientPerformance.timing['First Paint Time'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
+                                    break;
+                                case 'first-contentful-paint':
+                                    clientPerformance.timing['First Contentful Paint Time'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
+                                break;
+                            }
+                        }
+                    } else if (window.chrome && window.chrome.loadTimes) {
+                      // hack to add chrome timings
                       var chromeTimes = window.chrome.loadTimes();
                       if (chromeTimes.firstPaintTime) {
-                        clientPerformance.timing['First Paint Time'] = Math.round(chromeTimes.firstPaintTime * 1000);
+                          clientPerformance.timing['First Paint Time'] = Math.round(chromeTimes.firstPaintTime * 1000);
                       }
                       if (chromeTimes.firstPaintTime) {
-                        clientPerformance.timing['First Paint After Load Time'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
+                          clientPerformance.timing['First Paint After Load Time'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
                       }
 
                     }
@@ -756,7 +769,7 @@ var MiniProfiler = (function () {
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
-                var trivial = t.Name != 'Dom Complete' && t.Name != 'Response' && t.Name != 'First Paint Time';
+                var trivial = t.Name != 'Dom Complete' && t.Name != 'Response' && t.Name != 'First Paint Time' && t.Name != 'First Contentful Paint Time';
                 trivial = t.Duration < 2 ? trivial : false;
                 list.push(
                 {
