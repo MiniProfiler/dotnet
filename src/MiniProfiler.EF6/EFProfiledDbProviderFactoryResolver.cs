@@ -25,6 +25,6 @@ namespace StackExchange.Profiling.EntityFramework6
         /// <param name="connection">The connection.</param>
         /// <returns>The provider factory for the connection.</returns>
         public DbProviderFactory ResolveProviderFactory(DbConnection connection) =>
-            _inner.ResolveProviderFactory(connection is ProfiledDbConnection profiled ? profiled.InnerConnection : connection);
+            _inner.ResolveProviderFactory(connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection);
     }
 }

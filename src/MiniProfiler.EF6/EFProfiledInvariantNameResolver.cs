@@ -24,7 +24,7 @@ namespace StackExchange.Profiling.EntityFramework6
             {
                 return null;
             }
-            var factory = key is ProfiledDbProviderFactory profiled ? profiled.InnerDbProviderFactory : key as DbProviderFactory;
+            var factory = key is ProfiledDbProviderFactory profiled ? profiled.WrappedDbProviderFactory : key as DbProviderFactory;
             if (factory == null)
             {
                 return null;
