@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC4009
 		miniprofiler.snk = miniprofiler.snk
 		nuget.config = nuget.config
 		Readme.md = Readme.md
-		semver.txt = semver.txt
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler", "src\MiniProfiler\MiniProfiler.csproj", "{386222BD-6B6E-480F-A342-8DE1AB516E2C}"
@@ -196,8 +196,8 @@ Global
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

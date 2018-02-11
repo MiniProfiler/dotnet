@@ -1,48 +1,13 @@
 [CmdletBinding(PositionalBinding=$false)]
 param(
-    [string] $Version,
-    [string] $BuildNumber,
     [bool] $CreatePackages,
     [bool] $RunTests = $true,
     [string] $PullRequestNumber
 )
-    
-function CalculateVersion() {
-    if ($Version) {
-        return $Version
-    }
-
-    $semVersion = '';
-    $path = $pwd;
-    while (!$semVersion) {
-        if (Test-Path (Join-Path $path "semver.txt")) {
-            $semVersion = Get-Content (Join-Path $path "semver.txt")
-            break
-        }
-        if ($PSScriptRoot -eq $path) {
-            break
-        }
-        $path = Split-Path $path -Parent
-    }
-
-    if (!$semVersion) {
-        Write-Error "semver.txt was not found in $pwd or any parent directory"
-        Exit 1
-    }
-
-    return "$semVersion-$BuildNumber"
-}
-
-if ($BuildNumber -and $BuildNumber.Length -lt 5) {
-    $BuildNumber = $BuildNumber.PadLeft(5, "0")
-}
 
 Write-Host "Run Parameters:" -ForegroundColor Cyan
-Write-Host "Version: $Version"
-Write-Host "BuildNumber: $BuildNumber"
 Write-Host "CreatePackages: $CreatePackages"
 Write-Host "RunTests: $RunTests"
-Write-Host "Base Version: $(CalculateVersion)"
 
 $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
@@ -62,13 +27,6 @@ $projectsToBuild =
 $testsToRun =
     'MiniProfiler.Tests',
     'MiniProfiler.Tests.AspNet'
-
-if (!$Version -and !$BuildNumber) {
-    Write-Host "ERROR: You must supply either a -Version or -BuildNumber argument. `
-  Use -Version `"4.0.0`" for explicit version specification, or `
-  Use -BuildNumber `"12345`" for generation using <semver.txt>-<buildnumber>" -ForegroundColor Yellow
-    Exit 1
-}
 
 if ($PullRequestNumber) {
     Write-Host "Building for a pull request (#$PullRequestNumber), skipping packaging." -ForegroundColor Yellow
@@ -107,7 +65,6 @@ foreach ($project in $projectsToBuild) {
 	
 	Push-Location ".\src\$project"
 
-    $semVer = CalculateVersion
     $targets = "Restore"
 
     Write-Host "  Restoring " -NoNewline -ForegroundColor "Magenta"
@@ -115,12 +72,10 @@ foreach ($project in $projectsToBuild) {
         $targets += ";Pack"
 		Write-Host "and packing " -NoNewline -ForegroundColor "Magenta"
     }
-	Write-Host "$project... (Version:" -NoNewline -ForegroundColor "Magenta"
-    Write-Host $semVer -NoNewline -ForegroundColor "Cyan"
-    Write-Host ")" -ForegroundColor "Magenta"
+	Write-Host "$project..." -ForegroundColor "Magenta"
     
 
-	dotnet msbuild "/t:$targets" "/p:Configuration=Release" "/p:Version=$semVer" "/p:PackageOutputPath=$packageOutputFolder" "/p:CI=true"
+	dotnet msbuild "/t:$targets" "/p:Configuration=Release" "/p:PackageOutputPath=$packageOutputFolder" "/p:CI=true"
 
 	Pop-Location
 
