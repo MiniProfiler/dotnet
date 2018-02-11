@@ -109,9 +109,6 @@ namespace StackExchange.Profiling.Data
         private static DbConnection GetRealConnection(DbConnection connection) =>
             connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection;
 
-        private static DbDataReader GetSpatialDataReader(DbDataReader fromReader) =>
-            fromReader is ProfiledDbDataReader profiled ? profiled.WrappedReader : fromReader;
-
         /// <summary>
         /// Called to resolve additional default provider services when a derived type is registered 
         /// as an EF provider either using an entry in the application's config file or through code-based 
