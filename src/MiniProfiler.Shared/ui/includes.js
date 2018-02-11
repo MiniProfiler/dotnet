@@ -593,7 +593,7 @@ var MiniProfiler = (function () {
         }
 
         // add support for AngularJS, which uses the basic XMLHttpRequest object.
-        if (window.angular && typeof (XMLHttpRequest) != 'undefined') {
+        if ((window.angular || window.axios || window.xhr) && typeof (XMLHttpRequest) != 'undefined') {
             var _send = XMLHttpRequest.prototype.send;
 
             XMLHttpRequest.prototype.send = function sendReplacement(data) {
