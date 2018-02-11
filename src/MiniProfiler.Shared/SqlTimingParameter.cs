@@ -56,8 +56,7 @@ namespace StackExchange.Profiling
         /// <param name="obj">The <see cref="object"/> to compare.</param>
         public override bool Equals(object obj)
         {
-            var other = obj as SqlTimingParameter;
-            return other != null
+            return obj is SqlTimingParameter other
                 && string.Equals(Name, other.Name)
                 && string.Equals(Value, other.Value);
         }

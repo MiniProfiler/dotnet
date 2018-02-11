@@ -19,7 +19,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Set a function to control whether a given request should be profiled at all.
         /// </summary>
-        public Func<HttpRequest, bool> ShouldProfile { get; set; } = r => true;
+        public Func<HttpRequest, bool> ShouldProfile { get; set; } = _ => true;
 
         /// <summary>
         /// A function that determines who can access the MiniProfiler results URL and list URL.  It should return true when
