@@ -46,6 +46,7 @@ build_script:
   - createdb test
   # MySQL
   - mysql -e "create database test;" --user=root
+  - ps: .\build\dotnet-install.ps1 -Version 2.1.100-preview-007379
   - ps: .\build.ps1 -PullRequestNumber "$env:APPVEYOR_PULL_REQUEST_NUMBER" -CreatePackages $true
 
 test: off

@@ -6,8 +6,9 @@ param(
 )
 
 Write-Host "Run Parameters:" -ForegroundColor Cyan
-Write-Host "CreatePackages: $CreatePackages"
-Write-Host "RunTests: $RunTests"
+Write-Host "  CreatePackages: $CreatePackages"
+Write-Host "  RunTests: $RunTests"
+Write-Host "  dotnet --version:" (dotnet --version)
 
 $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
@@ -33,8 +34,11 @@ if ($PullRequestNumber) {
     $CreatePackages = $false
 }
 
-if ($RunTests) {   
-    dotnet restore /ConsoleLoggerParameters:Verbosity=Quiet
+Write-Host "Building solution..." -ForegroundColor "Magenta"
+dotnet build ".\MiniProfiler.sln" /p:CI=true
+Write-Host "Done building." -ForegroundColor "Green"
+
+if ($RunTests) {
     foreach ($project in $testsToRun) {
         Write-Host "Running tests: $project (all frameworks)" -ForegroundColor "Magenta"
         Push-Location ".\tests\$project"
@@ -58,27 +62,12 @@ if ($CreatePackages) {
     Write-Host "done." -ForegroundColor "Green"
 
     Write-Host "Building all packages" -ForegroundColor "Green"
-}
 
-foreach ($project in $projectsToBuild) {
-    Write-Host "Working on $project`:" -ForegroundColor "Magenta"
-	
-	Push-Location ".\src\$project"
-
-    $targets = "Restore"
-
-    Write-Host "  Restoring " -NoNewline -ForegroundColor "Magenta"
-    if ($CreatePackages) {
-        $targets += ";Pack"
-		Write-Host "and packing " -NoNewline -ForegroundColor "Magenta"
+    foreach ($project in $projectsToBuild) {
+        Write-Host "Packing $project (dotnet pack)..." -ForegroundColor "Magenta"
+        dotnet pack ".\src\$project\$project.csproj" -c Release /p:PackageOutputPath=$packageOutputFolder /p:NoPackageAnalysis=true /p:CI=true
+        Write-Host ""
     }
-	Write-Host "$project..." -ForegroundColor "Magenta"
-    
-
-	dotnet msbuild "/t:$targets" "/p:Configuration=Release" "/p:PackageOutputPath=$packageOutputFolder" "/p:CI=true"
-
-	Pop-Location
-
-    Write-Host "Done."
-    Write-Host ""
 }
+
+Write-Host "Done."
