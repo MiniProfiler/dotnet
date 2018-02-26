@@ -125,7 +125,7 @@ var MiniProfiler = (function () {
                       if (chromeTimes.firstPaintTime) {
                           clientPerformance.timing['First Paint Time'] = Math.round(chromeTimes.firstPaintTime * 1000);
                       }
-                      if (chromeTimes.firstPaintTime) {
+                      if (chromeTimes.firstPaintAfterLoadTime) {
                           clientPerformance.timing['First Paint After Load Time'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
                       }
 
