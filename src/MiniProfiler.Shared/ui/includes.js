@@ -112,10 +112,10 @@ var MiniProfiler = (function () {
                             var entry = entries[k];
                             switch (entry.name) {
                                 case 'first-paint':
-                                    clientPerformance.timing['First Paint Time'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
+                                    clientPerformance.timing['firstPaintTime'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
                                     break;
                                 case 'first-contentful-paint':
-                                    clientPerformance.timing['First Contentful Paint Time'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
+                                    clientPerformance.timing['firstContentfulPaintTime'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
                                 break;
                             }
                         }
@@ -123,10 +123,10 @@ var MiniProfiler = (function () {
                       // hack to add chrome timings
                       var chromeTimes = window.chrome.loadTimes();
                       if (chromeTimes.firstPaintTime) {
-                          clientPerformance.timing['First Paint Time'] = Math.round(chromeTimes.firstPaintTime * 1000);
+                          clientPerformance.timing['firstPaintTime'] = Math.round(chromeTimes.firstPaintTime * 1000);
                       }
                       if (chromeTimes.firstPaintAfterLoadTime) {
-                          clientPerformance.timing['First Paint After Load Time'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
+                          clientPerformance.timing['firstPaintAfterLoadTime'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
                       }
 
                     }
