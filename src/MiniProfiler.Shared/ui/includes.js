@@ -108,8 +108,8 @@ var MiniProfiler = (function () {
 
                     if (window.performance.getEntriesByType && window.PerformancePaintTiming && performance.timeOrigin) {
                         var entries = window.performance.getEntriesByType('paint');
-                        for (var i = 0; i < entries.length; i++) {
-                            var entry = entries[i];
+                        for (var k = 0; k < entries.length; k++) {
+                            var entry = entries[k];
                             switch (entry.name) {
                                 case 'first-paint':
                                     clientPerformance.timing['First Paint Time'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
