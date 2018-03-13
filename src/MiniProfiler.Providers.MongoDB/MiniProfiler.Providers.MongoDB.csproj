@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Providers.MongoDB</AssemblyName>
+    <Title>MiniProfiler.Providers.MongoDB</Title>
+    <Description>MiniProfiler: Profiler storage for MongoDB</Description>
+    <Authors>Nick Craver</Authors>
+    <PackageTags>NoSQL;MongoDB;$(PackageBaseTags)</PackageTags>
+    <TargetFrameworks>net461;netstandard1.5;netstandard2.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+  </ItemGroup>
+</Project>
