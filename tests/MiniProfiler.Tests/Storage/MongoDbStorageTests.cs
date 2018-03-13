@@ -4,9 +4,9 @@ using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class MongoDbStorageTests : StorageBaseTest, IClassFixture<MySqlStorageFixture>
+    public class MongoDbStorageTests : StorageBaseTest, IClassFixture<MongoDbStorageFixture>
     {
-        public MongoDbStorageTests(MySqlStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
+        public MongoDbStorageTests(MongoDbStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
         {
         }
     }
