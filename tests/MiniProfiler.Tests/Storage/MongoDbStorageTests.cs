@@ -21,6 +21,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             try
             {
+                //No schema needs to be created
                 Storage.CreateSchema();
             }
             catch (Exception e)
