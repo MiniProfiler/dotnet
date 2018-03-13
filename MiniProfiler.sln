@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27019.1
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -72,6 +72,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Tests.AspNetCore", "tests\MiniProfiler.Tests.AspNetCore\MiniProfiler.Tests.AspNetCore.csproj", "{CC4AD661-0F2D-4E27-934D-F321B2214E4B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5.EFCore", "samples\Samples.Mvc5.EFCore\Samples.Mvc5.EFCore.csproj", "{44F5C82B-412E-485D-B349-BA9A008BD5AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.MongoDB", "src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj", "{001EFFB2-E56C-4A63-9954-79D7AEB052DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +169,10 @@ Global
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,10 +200,11 @@ Global
 		{26C69CC7-765A-4378-BC16-65378B4E5033} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 		{CC4AD661-0F2D-4E27-934D-F321B2214E4B} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
+		{001EFFB2-E56C-4A63-9954-79D7AEB052DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
