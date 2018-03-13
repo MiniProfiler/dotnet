@@ -87,7 +87,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
         /// </summary>
-        protected MongoDbStorage(string connectionString) : base(connectionString)
+        public MongoDbStorage(string connectionString) : base(connectionString)
         {
         }
 
