@@ -17,12 +17,9 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             Skip.IfNoConfig(nameof(TestConfig.Current.MongoDbConnectionString), TestConfig.Current.MongoDbConnectionString);
 
-            Storage = new MongoDbStorage(TestConfig.Current.MongoDbConnectionString);
-
             try
             {
-                //No schema needs to be created
-                Storage.CreateSchema();
+                Storage = new MongoDbStorage(TestConfig.Current.MongoDbConnectionString);
             }
             catch (Exception e)
             {
