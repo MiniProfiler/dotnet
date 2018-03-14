@@ -12,8 +12,13 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Understands how to store a <see cref="MiniProfiler"/> to a MongoDb database.
     /// </summary>
-    public class MongoDbStorage : DatabaseStorageBase
+    public class MongoDbStorage : IAsyncStorage, IDisposable
     {
+        /// <summary>
+        /// Gets or sets how we connect to the database used to save/load MiniProfiler results.
+        /// </summary>
+        protected string ConnectionString { get; set; }
+
         #region Collections
 
         private IMongoDatabase _db;
@@ -82,20 +87,23 @@ namespace StackExchange.Profiling
             }
         }
 
+        
+
         #endregion
 
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
         /// </summary>
-        public MongoDbStorage(string connectionString) : base(connectionString)
+        public MongoDbStorage(string connectionString)
         {
+            ConnectionString = connectionString;
         }
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public override List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string user)
         {
             var guids = Profilers.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
             return guids;
@@ -105,7 +113,7 @@ namespace StackExchange.Profiling
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public override async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {
             var guids = new List<Guid>();
             
@@ -125,7 +133,7 @@ namespace StackExchange.Profiling
         /// <param name="finish">Search window end</param>
         /// <param name="orderBy">Result order</param>
         /// <returns>The list of GUID keys</returns>
-        public override IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
+        public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             FilterDefinition<MiniProfilerPoco> query = null;
 
@@ -155,7 +163,7 @@ namespace StackExchange.Profiling
         /// <param name="finish">Search window end</param>
         /// <param name="orderBy">Result order</param>
         /// <returns>The list of GUID keys</returns>
-        public override async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
+        public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             FilterDefinition<MiniProfilerPoco> query = null;
 
@@ -184,7 +192,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override MiniProfiler Load(Guid id)
+        public MiniProfiler Load(Guid id)
         {
             var poco = Profilers.Find(p => p.Id == id).FirstOrDefault();
             var miniProfiler = ProfilerPocoToProfiler(poco);
@@ -211,7 +219,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler> LoadAsync(Guid id)
         {
             var cursor = await Profilers.FindAsync(p => p.Id == id).ConfigureAwait(false);
             var miniProfiler = ProfilerPocoToProfiler(cursor.FirstOrDefault());
@@ -302,7 +310,7 @@ namespace StackExchange.Profiling
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
-        public override void Save(MiniProfiler profiler)
+        public void Save(MiniProfiler profiler)
         {
             var miniProfilerPoco = new MiniProfilerPoco
             {
@@ -327,7 +335,7 @@ namespace StackExchange.Profiling
         /// Asynchronously stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
-        public override async Task SaveAsync(MiniProfiler profiler)
+        public async Task SaveAsync(MiniProfiler profiler)
         {
             var miniProfilerPoco = new MiniProfilerPoco
             {
@@ -403,7 +411,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string user, Guid id)
         {
             var set = Builders<MiniProfilerPoco>.Update.Set(poco => poco.HasUserViewed, false);
             Profilers.UpdateOne(p => p.Id == id, set);
@@ -414,7 +422,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override async Task SetUnviewedAsync(string user, Guid id)
+        public async Task SetUnviewedAsync(string user, Guid id)
         {
             var set = Builders<MiniProfilerPoco>.Update.Set(poco => poco.HasUserViewed, false);
             await Profilers.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
@@ -425,7 +433,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override void SetViewed(string user, Guid id)
+        public void SetViewed(string user, Guid id)
         {
             var set = Builders<MiniProfilerPoco>.Update.Set(poco => poco.HasUserViewed, true);
             Profilers.UpdateOne(p => p.Id == id, set);
@@ -436,23 +444,17 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override async Task SetViewedAsync(string user, Guid id)
+        public async Task SetViewedAsync(string user, Guid id)
         {
             var set = Builders<MiniProfilerPoco>.Update.Set(poco => poco.HasUserViewed, true);
             await Profilers.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Method not implemented
+        /// Disposes the database connection, if present.
         /// </summary>
-        protected override DbConnection GetConnection() => throw new NotImplementedException();
-
-        /// <summary>
-        /// Method not implemented
-        /// </summary>
-        protected override IEnumerable<string> GetTableCreationScripts()
+        public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         #region Mapping
