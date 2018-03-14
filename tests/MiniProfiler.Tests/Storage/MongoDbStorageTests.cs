@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage.DropSchema();
+                Storage?.Dispose();
             }
         }
     }
