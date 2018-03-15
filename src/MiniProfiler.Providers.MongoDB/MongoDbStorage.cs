@@ -135,7 +135,7 @@ namespace StackExchange.Profiling
         /// <returns>The list of GUID keys</returns>
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            FilterDefinition<MiniProfilerPoco> query = null;
+            var query = FilterDefinition<MiniProfilerPoco>.Empty;
 
             if (start != null)
             {
@@ -165,7 +165,7 @@ namespace StackExchange.Profiling
         /// <returns>The list of GUID keys</returns>
         public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            FilterDefinition<MiniProfilerPoco> query = null;
+            var query = FilterDefinition<MiniProfilerPoco>.Empty;
 
             if (start != null)
             {
