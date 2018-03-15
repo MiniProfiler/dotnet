@@ -451,6 +451,11 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Returns a client to MongoDB Server.
+        /// </summary>
+        public MongoClient GetClient() => new MongoClient(ConnectionString);
+
+        /// <summary>
         /// Disposes the database connection, if present.
         /// </summary>
         public void Dispose()

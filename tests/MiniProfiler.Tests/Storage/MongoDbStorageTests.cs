@@ -32,8 +32,21 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage?.Dispose();
+                Storage.DropDatabase();
+                Storage.Dispose();
             }
+        }
+    }
+
+    public static class MongoDbStorageExtensions
+    {
+        /// <summary>
+        /// Drop database for MongoDb storage.
+        /// </summary>
+        /// <param name="storage">The storage to drop schema for.</param>
+        public static void DropDatabase(this MongoDbStorage storage)
+        {
+            storage.GetClient().DropDatabase("MiniProfiler");
         }
     }
 }
