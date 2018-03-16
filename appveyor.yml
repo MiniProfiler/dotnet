@@ -37,6 +37,7 @@ services:
   - mssql2016
   - mysql
   - postgresql
+  - mongodb
 
 nuget:
   disable_publish_on_pr: true
