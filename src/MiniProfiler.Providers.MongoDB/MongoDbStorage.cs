@@ -84,8 +84,10 @@ namespace StackExchange.Profiling
 
         public MongoDbStorage WithIndexCreation()
         {
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started));
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User));
             _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed));
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started));
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started));
             return this;
         }
 
