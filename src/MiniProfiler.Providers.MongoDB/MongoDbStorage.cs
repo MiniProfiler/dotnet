@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
@@ -19,8 +18,6 @@ namespace StackExchange.Profiling
         /// </summary>
         protected string ConnectionString { get; set; }
 
-        #region Collections
-
         private IMongoDatabase _db;
         private IMongoDatabase Db
         {
@@ -36,64 +33,21 @@ namespace StackExchange.Profiling
         }
 
         private IMongoCollection<MiniProfilerPoco> _profilers;
-        private IMongoCollection<MiniProfilerPoco> Profilers
-        {
-            get
-            {
-                if (_profilers == null)
-                {
-                    _profilers = Db.GetCollection<MiniProfilerPoco>("profilers");
-                }
-                return _profilers;
-            }
-        }
+        private IMongoCollection<MiniProfilerPoco> Profilers => _profilers ?? (_profilers = Db.GetCollection<MiniProfilerPoco>("profilers"));
 
         private IMongoCollection<TimingPoco> _timings;
-        private IMongoCollection<TimingPoco> Timings
-        {
-            get
-            {
-                if (_timings == null)
-                {
-                    _timings = Db.GetCollection<TimingPoco>("timings");
-                }
-                return _timings;
-            }
-        }
+        private IMongoCollection<TimingPoco> Timings => _timings ?? (_timings = Db.GetCollection<TimingPoco>("timings"));
 
         private IMongoCollection<CustomTimingPoco> _customTimings;
-        private IMongoCollection<CustomTimingPoco> CustomTimings
-        {
-            get
-            {
-                if (_customTimings == null)
-                {
-                    _customTimings = Db.GetCollection<CustomTimingPoco>("customtimings");
-                }
-                return _customTimings;
-            }
-        }
+        private IMongoCollection<CustomTimingPoco> CustomTimings => _customTimings ?? (_customTimings = Db.GetCollection<CustomTimingPoco>("customtimings"));
 
         private IMongoCollection<ClientTimingPoco> _clientTimings;
-        private IMongoCollection<ClientTimingPoco> ClientTimings
-        {
-            get
-            {
-                if (_clientTimings == null)
-                {
-                    _clientTimings = Db.GetCollection<ClientTimingPoco>("clienttimings");
-                }
-                return _clientTimings;
-            }
-        }
-
-        
-
-        #endregion
+        private IMongoCollection<ClientTimingPoco> ClientTimings => _clientTimings ?? (_clientTimings = Db.GetCollection<ClientTimingPoco>("clienttimings"));
 
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
         /// </summary>
+        /// <param name="connectionString">The MongoDB connection string.</param>
         public MongoDbStorage(string connectionString)
         {
             ConnectionString = connectionString;
@@ -103,11 +57,7 @@ namespace StackExchange.Profiling
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public List<Guid> GetUnviewedIds(string user)
-        {
-            var guids = Profilers.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
-            return guids;
-        }
+        public List<Guid> GetUnviewedIds(string user) => Profilers.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -116,12 +66,10 @@ namespace StackExchange.Profiling
         public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {
             var guids = new List<Guid>();
-            
             using (var cursor = await Profilers.FindAsync(p => p.User == user && !p.HasUserViewed).ConfigureAwait(false))
             {
                 await cursor.ForEachAsync(profiler => guids.Add(profiler.Id)).ConfigureAwait(false);
             }
-
             return guids;
         }
 
@@ -182,9 +130,7 @@ namespace StackExchange.Profiling
                 ? profilers.SortByDescending(p => p.Started)
                 : profilers.SortBy(p => p.Started);
 
-            var guids = await profilers.Project(p => p.Id).ToListAsync().ConfigureAwait(false);
-
-            return guids;
+            return await profilers.Project(p => p.Id).ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -296,113 +242,142 @@ namespace StackExchange.Profiling
 
             timings.ForEach(timing => timing.MiniProfilerId = profiler.Id);
 
-            if (timings.Any() || profiler.ClientTimingsRedirectCount.HasValue)
+            if (timings.Count > 0 || profiler.ClientTimingsRedirectCount.HasValue)
+            {
                 return new ClientTimings
                 {
                     Timings = timings,
                     RedirectCount = profiler.ClientTimingsRedirectCount ?? 0
                 };
+            }
 
             return null;
         }
 
         /// <summary>
-        /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
+        /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public void Save(MiniProfiler profiler)
         {
-            var miniProfilerPoco = new MiniProfilerPoco
-            {
-                Id = profiler.Id,
-                RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
-                Name = profiler.Name,
-                Started = profiler.Started,
-                DurationMilliseconds = (double)profiler.DurationMilliseconds,
-                User = profiler.User,
-                HasUserViewed = profiler.HasUserViewed,
-                MachineName = profiler.MachineName,
-                CustomLinksJson = profiler.CustomLinksJson,
-                ClientTimingsRedirectCounts = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?)null
-            };
-
+            var miniProfilerPoco = GetPoco(profiler);
             Profilers.InsertOne(miniProfilerPoco);
 
-            SaveClientTimings(profiler);
+            void Insert<T>(IMongoCollection<T> coll, IEnumerable<T> source)
+            {
+                var items = source.ToList();
+                if (items.Count > 0)
+                {
+                    coll.InsertMany(items);
+                }
+            }
+
+            Insert(Timings, GetTimingPocos(profiler));
+            Insert(CustomTimings, GetCustomTimingPocos(profiler));
+            Insert(ClientTimings, GetClientTimingPocos(profiler));
         }
 
         /// <summary>
-        /// Asynchronously stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>.
+        /// Asynchronously stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public async Task SaveAsync(MiniProfiler profiler)
         {
-            var miniProfilerPoco = new MiniProfilerPoco
-            {
-                Id = profiler.Id,
-                RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
-                Name = profiler.Name,
-                Started = profiler.Started,
-                DurationMilliseconds = (double)profiler.DurationMilliseconds,
-                User = profiler.User,
-                HasUserViewed = profiler.HasUserViewed,
-                MachineName = profiler.MachineName,
-                CustomLinksJson = profiler.CustomLinksJson,
-                ClientTimingsRedirectCounts = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?)null
-            };
-
+            var miniProfilerPoco = GetPoco(profiler);
             await Profilers.WithWriteConcern(WriteConcern.Acknowledged).InsertOneAsync(miniProfilerPoco).ConfigureAwait(false);
 
-            SaveClientTimings(profiler);
+            async Task Insert<T>(IMongoCollection<T> coll, IEnumerable<T> source)
+            {
+                var items = source.ToList();
+                if (items.Count > 0)
+                {
+                    await coll.WithWriteConcern(WriteConcern.Acknowledged).InsertManyAsync(items).ConfigureAwait(false);
+                }
+            }
+
+            await Insert(Timings, GetTimingPocos(profiler)).ConfigureAwait(false);
+            await Insert(CustomTimings, GetCustomTimingPocos(profiler)).ConfigureAwait(false);
+            await Insert(ClientTimings, GetClientTimingPocos(profiler)).ConfigureAwait(false);
         }
 
-        private void SaveClientTimings(MiniProfiler profiler)
+        private MiniProfilerPoco GetPoco(MiniProfiler profiler) => new MiniProfilerPoco
         {
-            if (profiler.ClientTimings == null || profiler.ClientTimings.Timings == null || !profiler.ClientTimings.Timings.Any())
-                return;
+            Id = profiler.Id,
+            RootTimingId = profiler.Root != null ? profiler.Root.Id : (Guid?)null,
+            Name = profiler.Name,
+            Started = profiler.Started,
+            DurationMilliseconds = (double)profiler.DurationMilliseconds,
+            User = profiler.User,
+            HasUserViewed = profiler.HasUserViewed,
+            MachineName = profiler.MachineName,
+            CustomLinksJson = profiler.CustomLinksJson,
+            ClientTimingsRedirectCounts = profiler.ClientTimings != null ? profiler.ClientTimings.RedirectCount : (int?)null
+        };
 
-            profiler.ClientTimings.Timings.ForEach(x =>
+        private IEnumerable<TimingPoco> GetTimingPocos(MiniProfiler profiler)
+        {
+            foreach (var timing in profiler.GetTimingHierarchy())
             {
-                x.MiniProfilerId = profiler.Id;
-                x.Id = Guid.NewGuid();
-            });
-
-            foreach (var clientTiming in profiler.ClientTimings.Timings)
-            {
-                var clientTimingPoco = new ClientTimingPoco
+                yield return new TimingPoco
                 {
-                    Id = clientTiming.Id,
-                    MiniProfilerId = clientTiming.MiniProfilerId,
-                    Name = clientTiming.Name,
-                    Start = (double)clientTiming.Start,
-                    Duration = (double)clientTiming.Duration
+                    Id = timing.Id,
+                    ParentTimingId = timing.ParentTimingId,
+                    Name = timing.Name,
+                    StartMilliseconds = (double)timing.StartMilliseconds,
+                    DurationMilliseconds = (double?)timing.DurationMilliseconds
                 };
-
-                ClientTimings.InsertOne(clientTimingPoco);
             }
         }
 
-        private void SaveCustomTimings(Timing timing, KeyValuePair<string, List<CustomTiming>> customTimingsKV)
+        private IEnumerable<CustomTimingPoco> GetCustomTimingPocos(MiniProfiler profiler)
         {
-            var key = customTimingsKV.Key;
-            var value = customTimingsKV.Value;
-
-            foreach (var customTiming in value)
+            foreach (var timing in profiler.GetTimingHierarchy())
             {
-                var customTimingPoco = new CustomTimingPoco
+                if (timing.CustomTimings?.Count > 0)
                 {
-                    Id = customTiming.Id,
-                    Key = key,
-                    TimingId = timing.Id,
-                    CommandString = customTiming.CommandString,
-                    ExecuteType = customTiming.ExecuteType,
-                    StackTraceSnippet = customTiming.StackTraceSnippet,
-                    StartMilliseconds = customTiming.StartMilliseconds,
-                    DurationMilliseconds = customTiming.DurationMilliseconds,
-                    FirstFetchDurationMilliseconds = customTiming.FirstFetchDurationMilliseconds
-                };
+                    foreach (var kvp in timing.CustomTimings)
+                    {
+                        foreach (var entry in kvp.Value)
+                        {
+                            yield return new CustomTimingPoco
+                            {
+                                Id = entry.Id,
+                                Key = kvp.Key,
+                                TimingId = timing.Id,
+                                CommandString = entry.CommandString,
+                                ExecuteType = entry.ExecuteType,
+                                StackTraceSnippet = entry.StackTraceSnippet,
+                                StartMilliseconds = entry.StartMilliseconds,
+                                DurationMilliseconds = entry.DurationMilliseconds,
+                                FirstFetchDurationMilliseconds = entry.FirstFetchDurationMilliseconds
+                            };
+                        }
+                    }
+                }
+            }
+        }
 
-                CustomTimings.InsertOne(customTimingPoco);
+        private IEnumerable<ClientTimingPoco> GetClientTimingPocos(MiniProfiler profiler)
+        {
+            if (profiler.ClientTimings?.Timings?.Count > 0)
+            {
+                profiler.ClientTimings.Timings.ForEach(x =>
+                {
+                    x.MiniProfilerId = profiler.Id;
+                    x.Id = Guid.NewGuid();
+                });
+
+                foreach (var clientTiming in profiler.ClientTimings.Timings)
+                {
+                    yield return new ClientTimingPoco
+                    {
+                        Id = clientTiming.Id,
+                        MiniProfilerId = clientTiming.MiniProfilerId,
+                        Name = clientTiming.Name,
+                        Start = (double)clientTiming.Start,
+                        Duration = (double)clientTiming.Duration
+                    };
+                }
             }
         }
 
@@ -458,20 +433,15 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Disposes the database connection, if present.
         /// </summary>
-        public void Dispose()
-        {
-        }
-
-        #region Mapping
+        public void Dispose() {}
 
         private static MiniProfiler ProfilerPocoToProfiler(MiniProfilerPoco profilerPoco)
         {
             if (profilerPoco == null)
                 return null;
 
-#pragma warning disable 618
-            var miniProfiler = new MiniProfiler
-#pragma warning restore 618
+#pragma warning disable CS0618 // Type or member is obsolete
+            return new MiniProfiler()
             {
                 Id = profilerPoco.Id,
                 MachineName = profilerPoco.MachineName,
@@ -482,8 +452,7 @@ namespace StackExchange.Profiling
                 RootTimingId = profilerPoco.RootTimingId,
                 DurationMilliseconds = (decimal)profilerPoco.DurationMilliseconds
             };
-
-            return miniProfiler;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private static Timing TimingPocoToTiming(TimingPoco timingPoco)
@@ -491,22 +460,21 @@ namespace StackExchange.Profiling
             if (timingPoco == null)
                 return null;
 
-#pragma warning disable 618
+#pragma warning disable CS0618 // Type or member is obsolete
             return new Timing
-#pragma warning restore 618
             {
                 Id = timingPoco.Id,
                 Name = timingPoco.Name,
                 StartMilliseconds = (decimal)timingPoco.StartMilliseconds,
                 DurationMilliseconds = (decimal)timingPoco.DurationMilliseconds,
             };
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private static CustomTiming CustomTimingPocoToCustomTiming(CustomTimingPoco customTimingPoco)
         {
-#pragma warning disable 618
+#pragma warning disable CS0618 // Type or member is obsolete
             return new CustomTiming
-#pragma warning restore 618
             {
                 CommandString = customTimingPoco.CommandString,
                 DurationMilliseconds = customTimingPoco.DurationMilliseconds,
@@ -515,6 +483,7 @@ namespace StackExchange.Profiling
                 ExecuteType = customTimingPoco.ExecuteType,
                 StackTraceSnippet = customTimingPoco.StackTraceSnippet
             };
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private static ClientTiming ClientTimingPocoToClientTiming(ClientTimingPoco clientTimingPoco)
@@ -528,11 +497,7 @@ namespace StackExchange.Profiling
             };
         }
 
-        #endregion
-
-        #region Poco Classes
-
-        class MiniProfilerPoco
+        private class MiniProfilerPoco
         {
             [BsonId]
             public Guid Id { get; set; }
@@ -547,17 +512,17 @@ namespace StackExchange.Profiling
             public bool HasUserViewed { get; set; }
         }
 
-        class TimingPoco
+        private class TimingPoco
         {
             [BsonId]
             public Guid Id { get; set; }
             public Guid? ParentTimingId { get; set; }
             public string Name { get; set; }
             public double StartMilliseconds { get; set; }
-            public double DurationMilliseconds { get; set; }
+            public double? DurationMilliseconds { get; set; }
         }
 
-        class CustomTimingPoco
+        private class CustomTimingPoco
         {
             [BsonId]
             public Guid Id { get; set; }
@@ -571,7 +536,7 @@ namespace StackExchange.Profiling
             public decimal? FirstFetchDurationMilliseconds { get; set; }
         }
 
-        class ClientTimingPoco
+        private class ClientTimingPoco
         {
             [BsonId]
             public Guid Id { get; set; }
@@ -580,7 +545,5 @@ namespace StackExchange.Profiling
             public double Start { get; set; }
             public double Duration { get; set; }
         }
-
-        #endregion
     }
 }
