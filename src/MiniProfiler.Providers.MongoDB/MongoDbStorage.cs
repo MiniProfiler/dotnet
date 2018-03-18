@@ -90,15 +90,7 @@ namespace StackExchange.Profiling
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
-        {
-            var guids = new List<Guid>();
-            using (var cursor = await _collection.FindAsync(p => p.User == user && !p.HasUserViewed).ConfigureAwait(false))
-            {
-                await cursor.ForEachAsync(profiler => guids.Add(profiler.Id)).ConfigureAwait(false);
-            }
-            return guids;
-        }
+        public Task<List<Guid>> GetUnviewedIdsAsync(string user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToListAsync();
 
         /// <summary>
         /// List the MiniProfiler Ids for the given search criteria.
@@ -165,21 +157,15 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler Load(Guid id)
-        {
-            return _collection.Find(p => p.Id == id).FirstOrDefault();
-        }
+        public MiniProfiler Load(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefault();
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
-        {
-            return (await _collection.FindAsync(p => p.Id == id).ConfigureAwait(false)).FirstOrDefault();
-        }
-
+        public Task<MiniProfiler> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
+        
         /// <summary>
         /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
