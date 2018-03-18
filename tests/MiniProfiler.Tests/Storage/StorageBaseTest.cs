@@ -96,10 +96,12 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             var mp = GetMiniProfiler();
             Storage.Save(mp);
+            var timings = mp.GetTimingHierarchy();
 
             var fetched = Storage.Load(mp.Id);
             Assert.Equal(mp, fetched);
             Assert.NotNull(fetched.Options);
+            Assert.Equal(timings, fetched.GetTimingHierarchy());
         }
 
         [Fact]
@@ -107,10 +109,12 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             var mp = GetMiniProfiler();
             await Storage.SaveAsync(mp).ConfigureAwait(false);
+            var timings = mp.GetTimingHierarchy();
 
             var fetched = await Storage.LoadAsync(mp.Id).ConfigureAwait(false);
             Assert.Equal(mp, fetched);
             Assert.NotNull(fetched.Options);
+            Assert.Equal(timings, fetched.GetTimingHierarchy());
         }
 
         [Fact]
