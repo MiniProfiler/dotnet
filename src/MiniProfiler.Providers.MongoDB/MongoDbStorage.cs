@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
@@ -13,27 +12,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class MongoDbStorage : IAsyncStorage, IDisposable
     {
-        /// <summary>
-        /// Gets or sets how we connect to the database used to save/load MiniProfiler results.
-        /// </summary>
-        protected string ConnectionString { get; set; }
-
-        private IMongoDatabase _db;
-        private IMongoDatabase Db
-        {
-            get
-            {
-                if (_db == null)
-                {
-                    var client = new MongoClient(ConnectionString);
-                    _db = client.GetDatabase("MiniProfiler");
-                }
-                return _db;
-            }
-        }
-
-        private IMongoCollection<MiniProfiler> _profilers;
-        private IMongoCollection<MiniProfiler> Profilers => _profilers ?? (_profilers = Db.GetCollection<MiniProfiler>("profilers"));
+        private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
@@ -41,8 +20,18 @@ namespace StackExchange.Profiling
         /// <param name="connectionString">The MongoDB connection string.</param>
         public MongoDbStorage(string connectionString)
         {
-            ConnectionString = connectionString;
+            if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
+            {
+                BsonClassMapFields();
+            }
 
+            _collection = new MongoClient(connectionString)
+                .GetDatabase("MiniProfiler")
+                .GetCollection<MiniProfiler>("profilers");
+        }
+
+        private static void BsonClassMapFields()
+        {
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
                 {
@@ -95,7 +84,7 @@ namespace StackExchange.Profiling
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public List<Guid> GetUnviewedIds(string user) => Profilers.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
+        public List<Guid> GetUnviewedIds(string user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -104,7 +93,7 @@ namespace StackExchange.Profiling
         public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {
             var guids = new List<Guid>();
-            using (var cursor = await Profilers.FindAsync(p => p.User == user && !p.HasUserViewed).ConfigureAwait(false))
+            using (var cursor = await _collection.FindAsync(p => p.User == user && !p.HasUserViewed).ConfigureAwait(false))
             {
                 await cursor.ForEachAsync(profiler => guids.Add(profiler.Id)).ConfigureAwait(false);
             }
@@ -125,14 +114,14 @@ namespace StackExchange.Profiling
 
             if (start != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(poco => poco.Started, (DateTime)start));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)start));
             }
             if (finish != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(poco => poco.Started, (DateTime)finish));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)finish));
             }
 
-            var profilers = Profilers.Find(query).Limit(maxResults);
+            var profilers = _collection.Find(query).Limit(maxResults);
 
             profilers = orderBy == ListResultsOrder.Descending
                 ? profilers.SortByDescending(p => p.Started)
@@ -155,14 +144,14 @@ namespace StackExchange.Profiling
 
             if (start != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(poco => poco.Started, (DateTime)start));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)start));
             }
             if (finish != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(poco => poco.Started, (DateTime)finish));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)finish));
             }
 
-            var profilers = Profilers.Find(query).Limit(maxResults);
+            var profilers = _collection.Find(query).Limit(maxResults);
 
             profilers = orderBy == ListResultsOrder.Descending
                 ? profilers.SortByDescending(p => p.Started)
@@ -178,7 +167,7 @@ namespace StackExchange.Profiling
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public MiniProfiler Load(Guid id)
         {
-            return Profilers.Find(p => p.Id == id).FirstOrDefault();
+            return _collection.Find(p => p.Id == id).FirstOrDefault();
         }
 
         /// <summary>
@@ -188,7 +177,7 @@ namespace StackExchange.Profiling
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public async Task<MiniProfiler> LoadAsync(Guid id)
         {
-            return (await Profilers.FindAsync(p => p.Id == id).ConfigureAwait(false)).FirstOrDefault();
+            return (await _collection.FindAsync(p => p.Id == id).ConfigureAwait(false)).FirstOrDefault();
         }
 
         /// <summary>
@@ -197,7 +186,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public void Save(MiniProfiler profiler)
         {
-            Profilers.ReplaceOne(
+            _collection.ReplaceOne(
                 p => p.Id == profiler.Id,
                 profiler,
                 new UpdateOptions
@@ -212,7 +201,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public Task SaveAsync(MiniProfiler profiler)
         {
-            return Profilers.ReplaceOneAsync(
+            return _collection.ReplaceOneAsync(
                 p => p.Id == profiler.Id,
                 profiler,
                 new UpdateOptions
@@ -228,8 +217,8 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to set unviewed.</param>
         public void SetUnviewed(string user, Guid id)
         {
-            var set = Builders<MiniProfiler>.Update.Set(poco => poco.HasUserViewed, false);
-            Profilers.UpdateOne(p => p.Id == id, set);
+            var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, false);
+            _collection.UpdateOne(p => p.Id == id, set);
         }
 
         /// <summary>
@@ -239,8 +228,8 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to set unviewed.</param>
         public async Task SetUnviewedAsync(string user, Guid id)
         {
-            var set = Builders<MiniProfiler>.Update.Set(poco => poco.HasUserViewed, false);
-            await Profilers.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
+            var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, false);
+            await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -250,8 +239,8 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to set viewed.</param>
         public void SetViewed(string user, Guid id)
         {
-            var set = Builders<MiniProfiler>.Update.Set(poco => poco.HasUserViewed, true);
-            Profilers.UpdateOne(p => p.Id == id, set);
+            var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, true);
+            _collection.UpdateOne(p => p.Id == id, set);
         }
 
         /// <summary>
@@ -261,14 +250,9 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to set viewed.</param>
         public async Task SetViewedAsync(string user, Guid id)
         {
-            var set = Builders<MiniProfiler>.Update.Set(poco => poco.HasUserViewed, true);
-            await Profilers.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
+            var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, true);
+            await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Returns a client to MongoDB Server.
-        /// </summary>
-        public MongoClient GetClient() => new MongoClient(ConnectionString);
 
         /// <summary>
         /// Disposes the database connection, if present.
