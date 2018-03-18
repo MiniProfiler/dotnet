@@ -46,7 +46,7 @@ namespace Afisha.Frontend.Infrastructure.Profiling
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
                 {
-                    map.MapField(c => c.Id);
+                    map.MapIdField(c => c.Id);
                     map.MapField(c => c.Name);
                     map.MapField(c => c.Started);
                     map.MapField(c => c.DurationMilliseconds);
@@ -197,7 +197,13 @@ namespace Afisha.Frontend.Infrastructure.Profiling
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public void Save(MiniProfiler profiler)
         {
-            Profilers.InsertOne(profiler);
+            Profilers.ReplaceOne(
+                p => p.Id == profiler.Id,
+                profiler,
+                new UpdateOptions
+                {
+                    IsUpsert = true
+                });
         }
 
         /// <summary>
@@ -206,7 +212,13 @@ namespace Afisha.Frontend.Infrastructure.Profiling
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public Task SaveAsync(MiniProfiler profiler)
         {
-            return Profilers.InsertOneAsync(profiler);
+            return Profilers.ReplaceOneAsync(
+                p => p.Id == profiler.Id,
+                profiler,
+                new UpdateOptions
+                {
+                    IsUpsert = true
+                });
         }
 
         /// <summary>
