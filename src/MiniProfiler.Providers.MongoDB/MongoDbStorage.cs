@@ -6,7 +6,7 @@ using MongoDB.Driver;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Storage;
 
-namespace Afisha.Frontend.Infrastructure.Profiling
+namespace StackExchange.Profiling
 {
     /// <summary>
     /// Understands how to store a <see cref="MiniProfiler"/> to a MongoDb database.
