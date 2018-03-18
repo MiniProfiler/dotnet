@@ -95,9 +95,11 @@ namespace StackExchange.Profiling.Data
             // This isn't as trivial as it appears due to the start offset of the request
             else if (key == RelationalEventId.ConnectionOpening.Name)
             {
-                if (val is ConnectionEventData data)
+                var profiler = MiniProfiler.Current;
+                // Track if we either don't have options (assume defaults), or we're set to track.
+                if (val is ConnectionEventData data && (profiler?.Options == null || profiler.Options.TrackConnectionOpenClose))
                 {
-                    var timing = MiniProfiler.Current.CustomTiming("sql",
+                    var timing = profiler.CustomTiming("sql",
                         data.IsAsync ? "Connection OpenAsync()" : "Connection Open()",
                         data.IsAsync ? "OpenAsync" : "Open");
                     if (timing != null)
@@ -115,9 +117,11 @@ namespace StackExchange.Profiling.Data
             }
             else if (key == RelationalEventId.ConnectionClosing.Name)
             {
-                if (val is ConnectionEventData data)
+                var profiler = MiniProfiler.Current;
+                // Track if we either don't have options (assume defaults), or we're set to track.
+                if (val is ConnectionEventData data && (profiler?.Options == null || profiler.Options.TrackConnectionOpenClose))
                 {
-                    var timing = MiniProfiler.Current.CustomTiming("sql",
+                    var timing = profiler.CustomTiming("sql",
                         data.IsAsync ? "Connection CloseAsync()" : "Connection Close()",
                         data.IsAsync ? "CloseAsync" : "Close");
                     if (timing != null)

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using StackExchange.Profiling.Data;
+using StackExchange.Profiling.Tests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -245,6 +247,56 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(profiler.ErrorSql, BadSql);
             }
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TrackingOptions(bool track)
+        {
+            var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
+            var profiler = options.StartProfiler("Tracking: " + track);
+
+            const string cmdString = "Select 1";
+            GetUnopenedConnection(profiler).Query(cmdString);
+
+            CheckConnectionTracking(track, profiler, cmdString, false);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TrackingOptionsAsync(bool track)
+        {
+            var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
+            var profiler = options.StartProfiler("Tracking: " + track);
+
+            const string cmdString = "Select 1";
+            await GetUnopenedConnection(profiler).QueryAsync(cmdString).ConfigureAwait(false);
+
+            CheckConnectionTracking(track, profiler, cmdString, true);
+        }
+
+        private void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async)
+        {
+            Assert.NotNull(profiler.Root.CustomTimings);
+            Assert.Single(profiler.Root.CustomTimings);
+            var sqlTimings = profiler.Root.CustomTimings["sql"];
+            Assert.NotNull(sqlTimings);
+
+            if (track)
+            {
+                Assert.Equal(2, sqlTimings.Count);
+                Assert.Equal(async ? "Connection OpenAsync()" : "Connection Open()", sqlTimings[0].CommandString);
+                Assert.Equal(command, sqlTimings[1].CommandString);
+            }
+            else
+            {
+                Assert.Single(sqlTimings);
+                Assert.Equal(command, sqlTimings[0].CommandString);
+            }
+        }
+
+        private ProfiledDbConnection GetUnopenedConnection(MiniProfiler profiler) => new ProfiledDbConnection(Fixture.GetConnection(), profiler);
 
         private CountingConnection GetConnection()
         {

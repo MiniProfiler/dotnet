@@ -88,6 +88,12 @@ namespace StackExchange.Profiling.Internal
         public int StackMaxLength { get; set; } = 120;
 
         /// <summary>
+        /// Whether to track open and close for connections to things like database servers.
+        /// While this ise useful for debugging connection pools and things, it can be noisy in other cases.
+        /// </summary>
+        public bool TrackConnectionOpenClose { get; set; } = true;
+
+        /// <summary>
         /// Any Timing step with a duration less than or equal to this will be hidden by default in the UI; defaults to 2.0 ms.
         /// </summary>
         public decimal TrivialDurationThresholdMilliseconds { get; set; } = 2.0M;

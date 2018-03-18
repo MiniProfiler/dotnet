@@ -53,6 +53,10 @@ public void ConfigureServices(IServiceCollection services)
         // (Optional) Swap out the entire profiler provider, if you want
         // (default handles async and works fine for almost all appliations)
         options.ProfilerProvider = new MyProfilerProvider();
+        
+        // (Optional) You can disable "Connection Open()", "Connection Close()" (and async variant) tracking.
+        // (defaults to true, and connection opening/closing is tracked)
+        options.TrackConnectionOpenClose = true;
     });
 }
 ```

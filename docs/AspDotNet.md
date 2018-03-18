@@ -58,7 +58,11 @@ protected void Application_Start()
         },
 
         // Stack trace settings
-        StackMaxLength = 256 // default is 120 characters
+        StackMaxLength = 256, // default is 120 characters
+        
+        // (Optional) You can disable "Connection Open()", "Connection Close()" (and async variant) tracking.
+        // (defaults to true, and connection opening/closing is tracked)
+        TrackConnectionOpenClose = true
     }
     // Optional settings to control the stack trace output in the details pane, examples:
     .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)

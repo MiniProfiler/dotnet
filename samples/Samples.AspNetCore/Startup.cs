@@ -66,6 +66,9 @@ namespace Samples.AspNetCore
                 // Optionally swap out the entire profiler provider, if you want
                 // The default handles async and works fine for almost all applications
                 //options.ProfilerProvider = new MyProfilerProvider();
+
+                // Optionally disable "Connection Open()", "Connection Close()" (and async variants).
+                //options.TrackConnectionOpenClose = false;
             }).AddEntityFramework();
         }
 
