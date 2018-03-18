@@ -34,7 +34,6 @@ namespace StackExchange.Profiling.Tests.Storage
             if (!ShouldSkip)
             {
                 Storage.DropDatabase();
-                Storage.Dispose();
             }
         }
     }
