@@ -12,6 +12,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class MongoDbStorage : IAsyncStorage, IDisposable
     {
+        private readonly MongoClient _client;
         private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
@@ -25,7 +26,8 @@ namespace StackExchange.Profiling
                 BsonClassMapFields();
             }
 
-            _collection = new MongoClient(connectionString)
+            _client = new MongoClient(connectionString);
+            _collection = _client
                 .GetDatabase("MiniProfiler")
                 .GetCollection<MiniProfiler>("profilers");
         }
@@ -165,7 +167,7 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public Task<MiniProfiler> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
-        
+
         /// <summary>
         /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
@@ -239,6 +241,8 @@ namespace StackExchange.Profiling
             var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, true);
             await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
         }
+
+        public MongoClient GetClient() => _client;
 
         /// <summary>
         /// Disposes the database connection, if present.
