@@ -10,7 +10,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Understands how to store a <see cref="MiniProfiler"/> to a MongoDb database.
     /// </summary>
-    public class MongoDbStorage : IAsyncStorage, IDisposable
+    public class MongoDbStorage : IAsyncStorage
     {
         private readonly MongoClient _client;
         private readonly IMongoCollection<MiniProfiler> _collection;
@@ -163,7 +163,7 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public Task<MiniProfiler> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
-
+        
         /// <summary>
         /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
@@ -239,10 +239,5 @@ namespace StackExchange.Profiling
         }
 
         public MongoClient GetClient() => _client;
-
-        /// <summary>
-        /// Disposes the database connection, if present.
-        /// </summary>
-        public void Dispose() { }
     }
 }
