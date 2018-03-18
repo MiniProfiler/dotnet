@@ -82,6 +82,13 @@ namespace StackExchange.Profiling
                 });
         }
 
+        public MongoDbStorage WithIndexCreation()
+        {
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started));
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed));
+            return this;
+        }
+
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
@@ -104,24 +111,7 @@ namespace StackExchange.Profiling
         /// <returns>The list of GUID keys</returns>
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
-            var query = FilterDefinition<MiniProfiler>.Empty;
-
-            if (start != null)
-            {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)start));
-            }
-            if (finish != null)
-            {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)finish));
-            }
-
-            var profilers = _collection.Find(query).Limit(maxResults);
-
-            profilers = orderBy == ListResultsOrder.Descending
-                ? profilers.SortByDescending(p => p.Started)
-                : profilers.SortBy(p => p.Started);
-
-            return profilers.Project(p => p.Id).ToList();
+            return GetListQuery(maxResults, start, finish, orderBy).ToList();
         }
 
         /// <summary>
@@ -134,15 +124,21 @@ namespace StackExchange.Profiling
         /// <returns>The list of GUID keys</returns>
         public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
+            return await GetListQuery(maxResults, start, finish, orderBy).ToListAsync().ConfigureAwait(false);
+        }
+
+        private IFindFluent<MiniProfiler, Guid> GetListQuery(int maxResults, DateTime? start, DateTime? finish, ListResultsOrder orderBy)
+        {
             var query = FilterDefinition<MiniProfiler>.Empty;
 
             if (start != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)start));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gte(profiler => profiler.Started, (DateTime)start));
             }
+
             if (finish != null)
             {
-                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Gt(profiler => profiler.Started, (DateTime)finish));
+                query = Builders<MiniProfiler>.Filter.And(Builders<MiniProfiler>.Filter.Lte(profiler => profiler.Started, (DateTime)finish));
             }
 
             var profilers = _collection.Find(query).Limit(maxResults);
@@ -151,7 +147,7 @@ namespace StackExchange.Profiling
                 ? profilers.SortByDescending(p => p.Started)
                 : profilers.SortBy(p => p.Started);
 
-            return await profilers.Project(p => p.Id).ToListAsync().ConfigureAwait(false);
+            return profilers.Project(p => p.Id);
         }
 
         /// <summary>

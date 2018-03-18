@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
             try
             {
-                Storage = new MongoDbStorage(TestConfig.Current.MongoDbConnectionString);
+                Storage = new MongoDbStorage(TestConfig.Current.MongoDbConnectionString).WithIndexCreation();
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)
