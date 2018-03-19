@@ -84,7 +84,7 @@ protected void Application_BeginRequest()
     // We're doing it here so profiling happens ASAP to account for as much time as possible.
     if (Request.IsLocal) // Example of conditional profiling, you could just call MiniProfiler.Start();
     {
-        MiniProfiler.StarNew();
+        MiniProfiler.StartNew();
     }
 }
 
