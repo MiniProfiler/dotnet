@@ -14,6 +14,7 @@ namespace StackExchange.Profiling
     {
         private readonly bool _enableFallback;
         private const string CacheKey = ":mini-profiler:";
+
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string, MiniProfilerBaseOptions)"/>ed.
         /// </summary>
@@ -46,7 +47,18 @@ namespace StackExchange.Profiling
         /// <param name="options">The options to start the MiniPofiler with. Likely a more-specific type underneath.</param>
         public override MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options)
         {
-            var request = HttpContext.Current?.Request;
+            HttpRequest request;
+            try
+            {
+                request = HttpContext.Current?.Request;
+            }
+            catch
+            {
+                // Sometimes .Request will throw, like in Application_Start
+                // That's okay, if we're not in a request context and we have this provider,
+                // return a profiler, in that scenario.
+                return new MiniProfiler(profilerName, options);
+            }
             var path = request?.Path;
             if (path == null) return null;
 
