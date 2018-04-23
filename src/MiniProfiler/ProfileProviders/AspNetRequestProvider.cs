@@ -107,7 +107,7 @@ namespace StackExchange.Profiling
             }
 
             // set the profiler name to Controller/Action or /url
-            EnsureName(profiler, context.Request);
+            EnsureName(profiler, context);
             Save(profiler);
 
             try
@@ -142,7 +142,7 @@ namespace StackExchange.Profiling
             }
 
             // set the profiler name to Controller/Action or /url
-            EnsureName(profiler, context.Request);
+            EnsureName(profiler, context);
             await SaveAsync(profiler).ConfigureAwait(false);
 
             try
@@ -161,14 +161,21 @@ namespace StackExchange.Profiling
         /// Makes sure <paramref name="profiler"/> has a Name, pulling it from route data or URL.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to ensure a name is set on.</param>
-        /// <param name="request">The <see cref="HttpRequest"/> request to get the name from.</param>
-        private static void EnsureName(MiniProfiler profiler, HttpRequest request)
+        /// <param name="context">The <see cref="HttpContext"/> request to get the name from.</param>
+        private static void EnsureName(MiniProfiler profiler, HttpContext context)
         {
             // also set the profiler name to Controller/Action or /url
             if (profiler.Name.IsNullOrWhiteSpace())
             {
-                var rc = request.RequestContext;
+                var rc = context.Request.RequestContext;
                 RouteValueDictionary values;
+
+                var url = StringBuilderCache.Get()
+                        .Append(context.Request.Url.Scheme)
+                        .Append("://")
+                        .Append(context.Request.Url.Host)
+                        .Append(context.Request.Url.PathAndQuery)
+                        .ToStringRecycle();
 
                 if (rc?.RouteData != null && (values = rc.RouteData.Values).Count > 0)
                 {
@@ -183,14 +190,14 @@ namespace StackExchange.Profiling
 
                 if (profiler.Name.IsNullOrWhiteSpace())
                 {
-                    profiler.Name = request.Url.AbsolutePath ?? string.Empty;
+                    profiler.Name = url ?? string.Empty;
                     if (profiler.Name.Length > 50)
                         profiler.Name = profiler.Name.Remove(50);
                 }
 
                 if (profiler.Name.HasValue() && profiler.Root != null && profiler.Root.Name == null)
                 {
-                    profiler.Root.Name = profiler.Name;
+                    profiler.Root.Name = url;
                 }
             }
         }

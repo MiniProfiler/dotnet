@@ -26,7 +26,7 @@ namespace StackExchange.Profiling.Tests
                 mp.Stop(false);
 
                 Assert.NotNull(mp);
-                Assert.Equal("/Test.aspx", mp.Name);
+                Assert.Equal("http://localhost/Test.aspx", mp.Name);
 
                 Assert.NotNull(mp.Root);
                 Assert.False(mp.Root.HasChildren);

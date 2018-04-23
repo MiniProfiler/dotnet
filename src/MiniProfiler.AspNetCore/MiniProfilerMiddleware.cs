@@ -74,7 +74,7 @@ namespace StackExchange.Profiling
                 mp.User = Options.UserIdProvider?.Invoke(context.Request);
 
                 // Always add this profiler's header (and any async requests before it)
-                using (mp.Step("MiniProfiler Prep"))
+                using (mp.StepIf("MiniProfiler Prep", minSaveMs: 0.1m))
                 {
                     await SetHeadersAndState(context, mp).ConfigureAwait(false);
                 }
@@ -112,14 +112,7 @@ namespace StackExchange.Profiling
         {
             if (profiler.Name == nameof(MiniProfiler))
             {
-                var routeData = (context.Features[typeof(IRoutingFeature)] as IRoutingFeature)?.RouteData;
-                if (routeData != null)
-                {
-                    profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
-                }
-                else
-                {
-                    profiler.Name = StringBuilderCache.Get()
+                var url = StringBuilderCache.Get()
                         .Append(context.Request.Scheme)
                         .Append("://")
                         .Append(context.Request.Host.Value)
@@ -128,8 +121,20 @@ namespace StackExchange.Profiling
                         .Append(context.Request.QueryString.Value)
                         .ToStringRecycle();
 
+                var routeData = (context.Features[typeof(IRoutingFeature)] as IRoutingFeature)?.RouteData;
+                if (routeData != null)
+                {
+                    profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
+                }
+                else
+                {
+                    profiler.Name = url;
                     if (profiler.Name.Length > 50)
                         profiler.Name = profiler.Name.Remove(50);
+                }
+                if (profiler.Root?.Name == nameof(MiniProfiler))
+                {
+                    profiler.Root.Name = url;
                 }
             }
         }

@@ -55,8 +55,11 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(nameof(BasicProfiling), profiler.User);
                 Assert.False(profiler.Stop());
 
-                Assert.Equal(2, profiler.Root.Children.Count);
-                Assert.Equal("MiniProfiler Prep", profiler.Root.Children[0].Name);
+                // Prep is a StepIf, for no noise in the fast case
+                if (profiler.Root.Children.Count == 2)
+                {
+                    Assert.Equal("MiniProfiler Prep", profiler.Root.Children[0].Name);
+                }
 
                 var testStep = profiler.Root.Children[1];
                 Assert.Equal("Test", testStep.Name);
