@@ -1,5 +1,5 @@
-@results-border: solid 0.5px #888888;
-@color-nuclear: #f00;
+@results-border: solid 0.5px #ababab;
+@color-warning: #f00;
 @results-border-radius: 10px;
 @color-muted: #aaaaaa;
 @color-white: #fff;
@@ -22,6 +22,11 @@
         max-height: none;
     }
 
+    pre, code {
+        font-family: Fira Code, Consolas, monospace, serif;
+        font-variant-ligatures: none;
+    }
+
     table {
         border-collapse: collapse;
         border-spacing: 0;
@@ -42,16 +47,32 @@
 .profiler-result {
     font-family: sans-serif;
 
-    tr[style*='display: block;'] {
-        display: table-row !important;
+    &.show-columns {
+        th.profiler-more-columns, td.profiler-more-columns {
+            display: table-cell !important;
+        }
+
+        a.profiler-more-columns {
+            display: inline-block;
+        }
+
+        .profiler-links span a:nth-child(1) {
+            display: none;
+        }
     }
 
-    th[style*='display: block;'], td[style*='display: block;'] {
-        display: table-cell !important;
-    }
+    &.show-trivial {
+        tr.profiler-trivial {
+            display: table-row !important;
+        }
 
-    .highlight {
-        animation: profiler-fadeIn 2s 1;
+        a.profiler-trivial {
+            display: inline-block;
+        }
+
+        .profiler-links span a:nth-child(3) {
+            display: none;
+        }
     }
 
     table.profiler-client-timings {
@@ -68,17 +89,20 @@
         color: @color-muted;
     }
 
+    .profiler-more-columns {
+        display: none;
+    }
+
     .profiler-trivial {
         display: none;
+
+        &:first-child {
+            display: table-row;
+        }
 
         td, td * {
             color: @color-muted !important;
         }
-    }
-
-    pre, code {
-        font-family: Fira Code, Consolas, monospace, serif;
-        font-variant-ligatures: none;
     }
 
     .profiler-number {
@@ -104,10 +128,6 @@
         .profiler-machine-name, .profiler-started {
             text-align: right;
             float: right;
-        }
-
-        .profiler-call-type {
-            font-weight: bold;
         }
 
         .profiler-server-time {
@@ -170,9 +190,13 @@
         margin-top: 10px;
         clear: both;
 
+        span {
+            float: right;
+        }
+
         a {
             font-size: 95%;
-            display: inline-block;
+            //display: inline-block;
             margin-left: 12px;
 
             &:first-child {
@@ -180,164 +204,179 @@
             }
         }
     }
+}
 
-    .profiler-toggleable-links {
-        float: right;
-    }
-
-    .profiler-queries {
-        border-radius: 5px;
-        background-color: @color-white;
-
-        .profiler-stack-trace {
-            padding-bottom: 1px;
-            color: #aab;
-            margin-bottom: 5px;
-        }
-
-        pre {
-            font-family: Fira Code, Consolas, monospace, serif;
-            font-variant-ligatures: none;
-            white-space: pre-wrap;
-        }
-
-        th {
-            padding: 10px 5px 5px 5px;
-            white-space: nowrap;
-            border-bottom: solid 1px #efefef;
-        }
-
-        td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: solid 1px #efefef;
-
-            &:first-child {
-                width: 250px;
-            }
-
-            &:last-child {
-                padding-right: 15px;
-            }
-        }
-
-        .profiler-odd {
-            background-color: @color-alt;
-        }
-
-        .profiler-since-start, .profiler-duration {
-            text-align: right;
-        }
-
-        .profiler-info div {
-            text-align: right;
-            margin-bottom: 5px;
-            word-break: break-word;
-        }
-
-        .profiler-gap-info {
-            background-color: #e1e5ed;
-            opacity: 0.8;
-            color: #444;
-
-            .query {
-                word-break: break-all;
-            }
-
-            .profiler-unit {
-                color: #777;
-            }
-
-            .profiler-info {
-                text-align: right;
-            }
-
-            &.profiler-trivial-gaps {
-                display: none;
-            }
-        }
-
-        .profiler-trivial-gap-container {
-            text-align: center;
-            margin: 8px 0;
-        }
-
-        .str {
-            color: #800000;
-        }
-
-        .kwd {
-            color: #00008b;
-        }
-
-        .com {
-            color: #808080;
-        }
-
-        .typ {
-            color: #2b91af;
-        }
-
-        .lit {
-            color: #800000;
-        }
-
-        .pun {
-            color: #000000;
-        }
-
-        .pln {
-            color: #000000;
-        }
-
-        .tag {
-            color: #800000;
-        }
-
-        .atn {
-            color: #ff0000;
-        }
-
-        .atv {
-            color: #0000ff;
-        }
-
-        .dec {
-            color: #800080;
-        }
-    }
-
-    .profiler-warning {
-        &, *, .profiler-queries-show, .profiler-queries-show .profiler-unit {
-            color: @color-nuclear;
-
-            &:hover {
-                color: @color-nuclear;
-            }
-        }
-    }
-
-    .profiler-nuclear {
-        color: @color-nuclear;
-        font-weight: bold;
-
-        &:hover {
-            color: @color-nuclear;
-        }
-    }
+.profiler-warning {
+    color: @color-warning;
 }
 
 @keyframes profiler-fadeIn {
     from {
         background-color: #FFB;
     }
+
     to {
         background-color: none;
     }
 }
 
+.profiler-overlay {
+    z-index: 2147483642;
+
+    .profiler-overlay-bg {
+        z-index: 2147483643;
+        background: #000;
+        opacity: 0.5;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        position: fixed;
+        height: calc(100%);
+    }
+
+    .profiler-queries {
+        display: block;
+        z-index: 2147483644;
+        top: 25px;
+        left: 25px;
+        right: 25px;
+        position: fixed;
+        max-height: ~"calc(100vh - 50px)";
+        background-color: @color-white;
+        border-radius: 2px;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+}
+
+.profiler-queries {
+    font-family: sans-serif;
+
+    pre {
+        white-space: pre-wrap;
+    }
+
+    div {
+        text-align: left;
+    }
+
+    table {
+        table-layout: fixed;
+    }
+
+    td, th {
+        padding: 8px;
+        border-bottom: solid 1px #efefef;
+
+        &:first-child {
+            width: 250px;
+            text-align: right;
+
+            div {
+                text-align: right;
+                margin-bottom: 5px;
+                word-break: break-word;
+            }
+        }
+
+        &:last-child {
+            text-align: left;
+            padding-right: 15px;
+        }
+    }
+
+    .highlight {
+        animation: profiler-fadeIn 2s 1;
+    }
+
+    .profiler-odd {
+        background-color: @color-alt;
+    }
+
+    .profiler-stack-trace {
+        padding-bottom: 1px;
+        color: #aab;
+        margin-bottom: 5px;
+    }
+
+    .profiler-since-start, .profiler-duration {
+        text-align: right;
+    }
+
+    .profiler-gap-info {
+        background-color: #e1e5ed;
+        opacity: 0.8;
+        color: #444;
+
+        .query {
+            word-break: break-all;
+        }
+
+        .profiler-unit {
+            color: #777;
+        }
+
+        &.profiler-trivial-gap {
+            display: none;
+        }
+    }
+
+    .profiler-trivial-gap-container {
+        text-align: center;
+        margin: 8px 0;
+    }
+
+    .profiler-call-type {
+        font-weight: bold;
+    }
+
+    .str {
+        color: #800000;
+    }
+
+    .kwd {
+        color: #00008b;
+    }
+
+    .com {
+        color: #808080;
+    }
+
+    .typ {
+        color: #2b91af;
+    }
+
+    .lit {
+        color: #800000;
+    }
+
+    .pun {
+        color: #000000;
+    }
+
+    .pln {
+        color: #000000;
+    }
+
+    .tag {
+        color: #800000;
+    }
+
+    .atn {
+        color: #ff0000;
+    }
+
+    .atv {
+        color: #0000ff;
+    }
+
+    .dec {
+        color: #800080;
+    }
+}
+
 .profiler-results {
-    z-index: 2147483643;
+    z-index: 2147483641;
     position: fixed;
     top: 0;
 
@@ -405,39 +444,58 @@
     }
 
     .profiler-button {
+        user-select: none;
+
+        .profiler-warning {
+            font-weight: bold;
+        }
+
         > .profiler-number {
             font-family: Consolas, monospace, serif;
         }
+    }
 
-        &.new {
-            animation: profiler-fadeIn 2s 1;
-        }
+    .profiler-controls {
+        display: none;
     }
 
     .profiler-button, .profiler-controls {
-        display: none;
         z-index: 2147483640;
         border-bottom: @results-border;
         background-color: @color-white;
-        padding: 4px 7px;
+        padding: 4px 8px;
         text-align: right;
         cursor: pointer;
+    }
 
-        &.profiler-button-active {
-            background-color: maroon;
-            animation: none;
-            border-radius: 0 !important;
+    .profiler-result {
+        position: relative;
 
-            .profiler-number, .profiler-nuclear {
-                color: @color-white;
-                font-weight: bold;
+        &.active {
+            .profiler-button {
+                background-color: #207ab7;
+                animation: none;
+                border-radius: 0 !important;
+
+                .profiler-number, .profiler-warning {
+                    color: @color-white;
+                    font-weight: bold;
+                }
+
+                .profiler-unit {
+                    color: @color-white;
+                    font-weight: normal;
+                }
             }
 
-            .profiler-unit {
-                color: @color-white;
-                font-weight: normal;
+            .profiler-popup {
+                display: block;
             }
         }
+    }
+
+    &.new .profiler-button {
+        animation: profiler-fadeIn 2s 1;
     }
 
     .profiler-controls {
@@ -468,7 +526,8 @@
         text-align: left;
         line-height: 18px;
         overflow: auto;
-        box-shadow: 0 1px 15px #555555;
+        box-shadow: 0 1px 10px #555555;
+        border-radius: 2px;
 
         .profiler-info {
             margin-bottom: 3px;
@@ -502,15 +561,6 @@
 
     .profiler-queries {
         display: none;
-        z-index: 2147483643;
-        top: 25px;
-        left: 25px;
-        right: 25px;
-        position: fixed;
-        overflow-y: auto;
-        overflow-x: auto;
-        background-color: @color-white;
-        max-height: ~"calc(100vh - 50px)";
     }
 
     &.profiler-min {
@@ -530,22 +580,10 @@
     }
 }
 
-.profiler-queries-bg {
-    z-index: 2147483642;
-    display: none;
-    background: #000;
-    opacity: 0.5;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    position: fixed;
-    height: calc(100%);
-}
-
 .profiler-result-full {
     .profiler-result {
         width: 950px;
-        margin: 30px auto;
+        margin: 25px auto;
 
         .profiler-button {
             display: none;
@@ -574,6 +612,7 @@
 
             .profiler-timings {
                 td, th {
+                    font-size: 13px;
                     padding-left: 8px;
                     padding-right: 8px;
                 }
@@ -583,7 +622,6 @@
                 }
 
                 td {
-                    font-size: 14px;
                     padding-bottom: 4px;
 
                     &:first-child {
@@ -598,57 +636,53 @@
         }
 
         .profiler-queries {
-            margin: 25px 0;
-
-            table {
-                width: 100%;
-            }
+            margin: 20px 0;
 
             th {
                 font-size: 16px;
                 color: #555;
-                line-height: 20px;
-
-                div {
-                    text-align: left;
-                }
-            }
-
-            td {
-                padding: 10px;
-                text-align: left;
-            }
-
-            .profiler-info div {
-                text-align: right;
-                margin-bottom: 5px;
             }
         }
+    }
+
+    .profiler-share-profiler-results {
+        display: none;
     }
 }
 
 table.profiler-results-index {
     border: 0;
     border-spacing: 0;
+    font-size: 12px;
 
     tbody {
         tr:nth-child(odd) {
-            background-color: #eee;
+            background-color: #e5e5e5;
         }
 
         tr:nth-child(even) {
             background-color: @color-white;
         }
-    }
 
-    tr {
-        border: 0;
+        td {
+            text-align: center;
+
+            &:first-child {
+                text-align: left;
+            }
+
+            &:nth-child(3) {
+                color: #666;
+            }
+
+            &[colspan="3"] {
+                color: @color-muted;
+            }
+        }
     }
 
     thead tr {
-        background-color: #bbb;
         color: #444;
-        font-size: 12px;
 
         th {
             padding: 5px 15px;
@@ -657,20 +691,5 @@ table.profiler-results-index {
 
     td {
         padding: 8px;
-        font-size: 12px;
     }
-}
-
-.profiler-results-index-date {
-    font-size: 11px;
-    color: #666;
-}
-
-.profiler-results-index-time {
-    text-align: center;
-}
-
-.profiler-results-none {
-    color: #888;
-    text-align: center;
 }

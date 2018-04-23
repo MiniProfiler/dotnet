@@ -1,10 +1,10 @@
 ﻿<script id="profilerTemplate" type="text/x-jquery-tmpl">
-  <div class="profiler-result">
-    <div class="profiler-button{{if HasDuplicateCustomTimings}} profiler-warning{{/if}}" title="${Name}">
+  <div class="profiler-result{{if ShowTrivial}} show-trivial{{/if}}{{if ShowMoreColumns}} show-columns{{/if}}">
+    <div class="profiler-button" title="${Name}">
       <span class="profiler-number">
         ${MiniProfiler.formatDuration(DurationMilliseconds)} <span class="profiler-unit">ms</span>
       </span>
-      {{if HasDuplicateCustomTimings}}<span class="profiler-nuclear">!</span>{{/if}}
+      {{if HasDuplicateCustomTimings}}<span class="profiler-warning">!</span>{{/if}}
     </div>
 
     <div class="profiler-popup">
@@ -24,8 +24,8 @@
             <tr>
               <th></th>
               <th>duration (ms)</th>
-              <th class="profiler-show-more">with children (ms)</th>
-              <th class="time-from-start profiler-show-more">from start (ms)</th>
+              <th class="profiler-more-columns">with children (ms)</th>
+              <th class="time-from-start profiler-more-columns">from start (ms)</th>
 			  {{each CustomTimingStats}}
               <th title="call count">${$index.toLowerCase()} (ms)</th>
 			  {{/each}}
@@ -37,7 +37,7 @@
           <tfoot>
             <tr>
               <td colspan="2"></td>
-              <td class="profiler-show-more" colspan="2"></td>
+              <td class="profiler-more-columns" colspan="2"></td>
             </tr>
           </tfoot>
         </table>
@@ -62,7 +62,7 @@
             <tr>
               <th style="text-align:left">client event</th>
               <th>duration (ms)</th>
-              <th class="profiler-show-more">from start (ms)</th>
+              <th class="profiler-more-columns">from start (ms)</th>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +74,7 @@
                 <span class="profiler-unit"></span>${MiniProfiler.formatDuration($value.duration)}
                 {{/if}}
               </td>
-              <td class="profiler-duration time-from-start profiler-show-more">
+              <td class="profiler-duration time-from-start profiler-more-columns">
                 <span class="profiler-unit">+</span>${MiniProfiler.formatDuration($value.start)}
               </td>
             </tr>
@@ -88,13 +88,19 @@
 		{{each CustomLinks}}
           <a href="${$value}" class="profiler-custom-link" target="_blank">${$index}</a>
         {{/each}}
-        <span class="profiler-toggleable-links">
-          <a class="profiler-toggle-hidden-columns" data-toggle-class="profiler-show-more" data-hide-text="fewer columns">
+        <span>
+          <a class="profiler-toggle-columns" title="shows additional columns">
             more columns
           </a>
+          <a class="profiler-toggle-columns profiler-more-columns" title="hides additional columns">
+            fewer columns
+          </a>
           {{if HasTrivialTimings}}
-            <a class="profiler-toggle-trivial" data-toggle-class="profiler-trivial" data-hide-text="hide trivial" title="toggles any rows with &lt; ${TrivialMilliseconds} ms duration">
+            <a class="profiler-toggle-trivial" title="shows any rows with &lt; ${TrivialMilliseconds} ms duration">
               show trivial
+            </a>
+            <a class="profiler-toggle-trivial profiler-trivial" title="hides any rows with &lt; ${TrivialMilliseconds} ms duration">
+              hide trivial
             </a>
           {{/if}}
         </span>
@@ -107,7 +113,7 @@
       <table>
       <thead>
         <tr>
-          <th class="profiler-info">
+          <th>
             <div class="profiler-call-type">Call Type</div>
             <div>Step</div>
             <div>Duration <span class="profiler-unit">(from start)</span></div>
@@ -129,7 +135,7 @@
       </tbody>
       </table>
       <p class="profiler-trivial-gap-container">
-        <a class="profiler-toggle-trivial-gaps" href="#">show trivial gaps</a>
+        <a class="profiler-toggle-trivial-gaps" href="#">toggle trivial gaps</a>
       </p>
     </div>
   {{/if}}
@@ -144,18 +150,18 @@
     <td class="profiler-duration" title="duration of this step without any children's durations">
       ${MiniProfiler.formatDuration(timing.DurationWithoutChildrenMilliseconds)}
     </td>
-    <td class="profiler-duration profiler-show-more" title="duration of this step and its children">
+    <td class="profiler-duration profiler-more-columns" title="duration of this step and its children">
       ${MiniProfiler.formatDuration(timing.DurationMilliseconds)}
     </td>
-    <td class="profiler-duration profiler-show-more time-from-start" title="time elapsed since profiling started">
+    <td class="profiler-duration profiler-more-columns time-from-start" title="time elapsed since profiling started">
       <span class="profiler-unit">+</span>${MiniProfiler.formatDuration(timing.StartMilliseconds)}
     </td>
   {{each page && page.CustomTimingStats}}
 	{{if timing.CustomTimings[$index]}}
-    <td class="profiler-duration ${timing.HasDuplicateCustomTimings[$index] ? 'profiler-warning' : ''}">
+    <td class="profiler-duration">
       <a class="profiler-queries-show" title="${MiniProfiler.formatDuration(timing.CustomTimingStats[$index].Duration)} ms in ${timing.CustomTimings[$index].length} ${$index} calls${timing.HasDuplicateCustomTimings[$index] ? '; duplicate calls detected!': ''}">
         ${MiniProfiler.formatDuration(timing.CustomTimingStats[$index].Duration)}
-        (${timing.CustomTimings[$index].length}{{if timing.HasDuplicateCustomTimings[$index]}}<span class="profiler-nuclear">!</span>{{/if}})
+        (${timing.CustomTimings[$index].length}{{if timing.HasDuplicateCustomTimings[$index]}}<span class="profiler-warning">!</span>{{/if}})
       </a>
     </td>
     {{else}}
@@ -170,7 +176,7 @@
 
 <script id="customTimingTemplate" type="text/x-jquery-tmpl">
   <tr class="{{if i % 2 == 1}}profiler-odd{{/if}}" data-timing-id="${s.ParentTimingId}">
-    <td class="profiler-info">
+    <td>
       <div class="profiler-call-type">${s.CallType}${!s.ExecuteType || s.CallType == s.ExecuteType ? "" : " - " + s.ExecuteType}</div>
       <div>${s.ParentTimingName}</div>
       <div class="profiler-number">
@@ -193,7 +199,7 @@
 </script>
 
 <script id="customGapTemplate" type="text/x-jquery-tmpl">
-  <tr class="profiler-gap-info{{if g.duration < 4}} profiler-trivial-gaps{{/if}}">
+  <tr class="profiler-gap-info{{if g.duration < 4}} profiler-trivial-gap{{/if}}">
     <td class="profiler-info">
       ${g.duration} <span class="profiler-unit">ms</span>
     </td>
@@ -227,11 +233,11 @@
     <td><a href="${MiniProfiler.path}results?id=${Id}">${Name}</a></td>
     <td>${MachineName}</td>
     <td class="profiler-results-index-date">${Started}</td>
-    <td class="profiler-results-index-time">${DurationMilliseconds}</td>
+    <td>${DurationMilliseconds}</td>
     {{if ClientTimings}}
-    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Request Start").Start}</td>
-    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Response").Start}</td>
-    <td class="profiler-results-index-time">${MiniProfiler.getClientTimingByName(ClientTimings,"Dom Complete").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Request Start").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Response").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Dom Complete").Start}</td>
     {{else}}
     <td colspan="3" class="profiler-results-none">(no client timings)</td>
     {{/if}}

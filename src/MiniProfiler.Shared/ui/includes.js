@@ -164,6 +164,8 @@ var MiniProfiler = (function () {
         json.HasDuplicateCustomTimings = false;
         json.HasCustomTimings = false;
         json.HasTrivialTimings = false;
+        json.ShowMoreColumns = options.showChildrenTime;
+        json.ShowTrivial = options.showTrivial;
         json.CustomTimingStats = {};
         json.CustomLinks = json.CustomLinks || {};
         json.TrivialMilliseconds = options.trivialMilliseconds;
@@ -187,69 +189,69 @@ var MiniProfiler = (function () {
                 break;
         }
 
-        processTiming(json, json.Root, 0);
-    };
+        function processTiming(json, timing, depth) {
+            timing.DurationWithoutChildrenMilliseconds = timing.DurationMilliseconds;
+            timing.Depth = depth;
+            timing.HasCustomTimings = timing.CustomTimings ? true : false;
+            timing.HasDuplicateCustomTimings = {};
+            json.HasCustomTimings = json.HasCustomTimings || timing.HasCustomTimings;
 
-    var processTiming = function (json, timing, depth) {
-        timing.DurationWithoutChildrenMilliseconds = timing.DurationMilliseconds;
-        timing.Depth = depth;
-        timing.HasCustomTimings = timing.CustomTimings ? true : false;
-        timing.HasDuplicateCustomTimings = {};
-        json.HasCustomTimings = json.HasCustomTimings || timing.HasCustomTimings;
-
-        if (timing.Children) {
-            for (var i = 0; i < timing.Children.length; i++) {
-                timing.Children[i].ParentTimingId = timing.Id;
-                processTiming(json, timing.Children[i], depth + 1);
-                timing.DurationWithoutChildrenMilliseconds -= timing.Children[i].DurationMilliseconds;
-            }
-        } else {
-            timing.Children = [];
-        }
-
-        // do this after subtracting child durations
-        timing.IsTrivial = timing.DurationWithoutChildrenMilliseconds < options.trivialMilliseconds;
-        json.HasTrivialTimings = json.HasTrivialTimings || timing.IsTrivial;
-
-        if (timing.CustomTimings) {
-            timing.CustomTimingStats = {};
-            for (var customType in timing.CustomTimings) {
-                var customTimings = timing.CustomTimings[customType];
-                var customStat = {
-                    Duration: 0,
-                    Count: 0
-                };
-                var duplicates = {};
-                for (var i = 0; i < customTimings.length; i++) {
-                    var customTiming = customTimings[i];
-                    customTiming.ParentTimingId = timing.Id;
-                    customStat.Duration += customTiming.DurationMilliseconds;
-                    customStat.Count++;
-                    if (customTiming.CommandString && duplicates[customTiming.CommandString]) {
-                        customTiming.IsDuplicate = true;
-                        timing.HasDuplicateCustomTimings[customType] = true;
-                        json.HasDuplicateCustomTimings = true;
-                    } else if (!ignoreDuplicateCustomTiming(customTiming)) {
-                        duplicates[customTiming.CommandString] = true;
-                    }
+            if (timing.Children) {
+                for (var i = 0; i < timing.Children.length; i++) {
+                    timing.Children[i].ParentTimingId = timing.Id;
+                    processTiming(json, timing.Children[i], depth + 1);
+                    timing.DurationWithoutChildrenMilliseconds -= timing.Children[i].DurationMilliseconds;
                 }
-                timing.CustomTimingStats[customType] = customStat;
-                if (!json.CustomTimingStats[customType]) {
-                    json.CustomTimingStats[customType] = {
+            } else {
+                timing.Children = [];
+            }
+
+            // do this after subtracting child durations
+            timing.IsTrivial = timing.DurationWithoutChildrenMilliseconds < options.trivialMilliseconds;
+            json.HasTrivialTimings = json.HasTrivialTimings || timing.IsTrivial;
+
+            function ignoreDuplicateCustomTiming (customTiming) {
+                return customTiming.ExecuteType && $.inArray(customTiming.ExecuteType, options.ignoredDuplicateExecuteTypes) > -1;
+            };
+
+            if (timing.CustomTimings) {
+                timing.CustomTimingStats = {};
+                for (var customType in timing.CustomTimings) {
+                    var customTimings = timing.CustomTimings[customType];
+                    var customStat = {
                         Duration: 0,
                         Count: 0
                     };
+                    var duplicates = {};
+                    for (var i = 0; i < customTimings.length; i++) {
+                        var customTiming = customTimings[i];
+                        customTiming.ParentTimingId = timing.Id;
+                        customStat.Duration += customTiming.DurationMilliseconds;
+                        customStat.Count++;
+                        if (customTiming.CommandString && duplicates[customTiming.CommandString]) {
+                            customTiming.IsDuplicate = true;
+                            timing.HasDuplicateCustomTimings[customType] = true;
+                            json.HasDuplicateCustomTimings = true;
+                        } else if (!ignoreDuplicateCustomTiming(customTiming)) {
+                            duplicates[customTiming.CommandString] = true;
+                        }
+                    }
+                    timing.CustomTimingStats[customType] = customStat;
+                    if (!json.CustomTimingStats[customType]) {
+                        json.CustomTimingStats[customType] = {
+                            Duration: 0,
+                            Count: 0
+                        };
+                    }
+                    json.CustomTimingStats[customType].Duration += customStat.Duration;
+                    json.CustomTimingStats[customType].Count += customStat.Count;
                 }
-                json.CustomTimingStats[customType].Duration += customStat.Duration;
-                json.CustomTimingStats[customType].Count += customStat.Count;
+            } else {
+                timing.CustomTimings = {};
             }
-        } else {
-            timing.CustomTimings = {};
-        }
-    };
+        };
 
-    var ignoreDuplicateCustomTiming = function (customTiming) {
-        return customTiming.ExecuteType && $.inArray(customTiming.ExecuteType, options.ignoredDuplicateExecuteTypes) > -1;
+        processTiming(json, json.Root, 0);
     };
 
     var renderTemplate = function (json) {
@@ -264,140 +266,19 @@ var MiniProfiler = (function () {
             return;
         }
 
-        var result = renderTemplate(json);
+        var result = renderTemplate(json).addClass('new');
 
         if (controls)
             result.insertBefore(controls);
         else
             result.appendTo(container);
 
-        var button = result.find('.profiler-button').addClass('new'),
-            popup = result.find('.profiler-popup');
-
-        // button will appear in corner with the total profiling duration - click to show details
-        button.click(function () { buttonClick(button, popup); });
-
-        // small duration steps and the column with aggregate durations are hidden by default; allow toggling
-        toggleHidden(popup);
-
-        // lightbox in the queries
-        popup.find('.profiler-queries-show').click(function () { queriesShow($(this), result); });
-
-        // limit count
-        if (container.find('.profiler-result').length > options.maxTracesToShow)
-            resultRemove(container.find('.profiler-result').first());
-
-        // use this rather than .show() as .show won't set it properly if the css hasn't loaded yet
-        button.css('display', 'block');
+        // limit count to maxTracesToShow, remove those before it
+        container.find('.profiler-result:lt(' + -options.maxTracesToShow + ')').remove();
     };
 
-    var toggleHidden = function (popup) {
-        var trivial = popup.find('.profiler-toggle-trivial'),
-            toggleColumns = popup.find('.profiler-toggle-hidden-columns'),
-            trivialGaps = popup.parent().find('.profiler-toggle-trivial-gaps');
-
-        var toggleIt = function (node) {
-            var link = $(node),
-                klass = link.data('toggle-class'),
-                hideText = link.data('hide-text'),
-                showText = link.data('show-text'), // first call will be null
-                isHidden = link.text() != hideText;
-
-            // save our initial text to allow reverting
-            if (!showText) {
-                showText = link.text();
-                link.data('show-text', showText);
-            }
-
-            popup.parent().find('.' + klass).toggle(isHidden);
-            link.text(isHidden ? hideText : showText);
-        };
-
-        toggleColumns.add(trivial).add(trivialGaps).click(function () {
-            toggleIt(this);
-        });
-
-        // if option is set or all our timings are trivial, go ahead and show them
-        if (options.showTrivial || trivial.data('show-on-load')) {
-            toggleIt(trivial);
-        }
-        // if option is set, go ahead and show time with children
-        if (options.showChildrenTime) {
-            toggleIt(toggleColumns);
-        }
-    };
-
-    var buttonClick = function (button, popup) {
-        // we're toggling this button/popup
-        if (popup.is(':visible')) {
-            popupHide(button, popup);
-        }
-        else {
-            var visiblePopups = container.find('.profiler-popup:visible'),
-                theirButtons = visiblePopups.siblings('.profiler-button');
-
-            // hide any other popups
-            popupHide(theirButtons, visiblePopups);
-
-            // before showing the one we clicked
-            button.removeClass('new').addClass('profiler-button-active');
-            popupSetDimensions(button, popup);
-            popup.show();
-        }
-    };
-
-    var popupSetDimensions = function (button, popup) {
-        var top = button.position().top - 1, // position next to the button we clicked
-            windowHeight = $(window).height(),
-            maxHeight = windowHeight - top - 40, // make sure the popup doesn't extend below the fold
-            isBottom = options.renderPosition.indexOf('bottom') != -1; // is this rendering on the bottom (if no, then is top by default)
-
-        if (isBottom) {
-            var bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(), // get bottom of button
-                isLeft = options.renderPosition.indexOf('left') != -1;
-
-            var horizontalPosition = isLeft ? 'left' : 'right';
-            popup
-                .css({ 'bottom': bottom, 'max-height': maxHeight })
-                .css(horizontalPosition, button.outerWidth() - 1); // move left or right, based on config
-        }
-        else {
-            popup
-                .css({ 'top': top, 'max-height': maxHeight })
-                .css(options.renderPosition, button.outerWidth() - 1); // move left or right, based on config
-        }
-    };
-
-    var popupHide = function (button, popup) {
-        button.removeClass('profiler-button-active');
-        popup.hide();
-    };
-
-    var resultRemove = function (result) {
-        var bg = $('.profiler-queries-bg');
-        if (bg.is(':visible') && result.find('.profiler-queries').is(':visible')) {
-            bg.remove();
-        }
-        result.remove();
-    }
-
-    var queriesShow = function (link, result) {
-        var queries = result.find('.profiler-queries');
-
-        // opaque background
-        $('<div class="profiler-queries-bg"/>').appendTo('body').show();
-        
-        // have to show everything before we can get a position for the first query
-        queries.show();
-
-        queriesScrollIntoView(link, queries, queries);
-
-        // syntax highlighting
-        prettyPrint();
-    };
-
-    var queriesScrollIntoView = function (link, queries, whatToScroll) {
-        var id = link.closest('tr').attr('data-timing-id'),
+    var scrollToQuery = function (link, queries, whatToScroll) {
+        var id = link.closest('tr').data('timing-id'),
             rows = queries.find('tr[data-timing-id="' + id + '"]').addClass('highlight');
 
         // ensure they're in view
@@ -406,70 +287,75 @@ var MiniProfiler = (function () {
 
     // some elements want to be hidden on certain doc events
     var bindDocumentEvents = function () {
-        $(document).bind('click keyup', function (e) {
-            // Don't handle these clicks in the HTML view
-            var fullPage = $('.profiler-result-full');
-            if (fullPage.length) {
-                return;
-            }
+        $(document)
+            .on('click', '.profiler-toggle-trivial', function (e) {
+                e.preventDefault();
+                $(this).closest('.profiler-result').toggleClass('show-trivial');
+            }).on('click', '.profiler-toggle-columns', function (e) {
+                e.preventDefault();
+                $(this).closest('.profiler-result').toggleClass('show-columns');
+            }).on('click', '.profiler-toggle-trivial-gaps', function (e) {
+                e.preventDefault();
+                $(this).closest('.profiler-queries').find('.profiler-trivial-gap').toggle();
+            });
 
-            // this happens on every keystroke, and :visible is crazy expensive in IE <9
-            // and in this case, the display:none check is sufficient.
-            var popup = $('.profiler-popup').filter(function () { return $(this).css('display') !== 'none'; });
+        // Don't handle below in the full page HTML view
+        if ($('.profiler-result-full').length) {
+            return;
+        }
+        $(document)
+            .on('click', '.profiler-button', function (e) {
+                var button = $(this),
+                    popup = button.siblings('.profiler-popup'),
+                    wasActive = button.parent().hasClass('active');
 
-            if (!popup.length) {
-                return;
-            }
+                button.parent().removeClass('new').toggleClass('active')
+                      .siblings('.active').removeClass('active');
 
-            var button = popup.siblings('.profiler-button'),
-                queries = popup.closest('.profiler-result').find('.profiler-queries'),
-                bg = $('.profiler-queries-bg'),
-                isEscPress = e.type == 'keyup' && e.which == 27,
-                hidePopup = false,
-                hideQueries = false;
+                if (!wasActive) {
+                    // move left or right, based on config
+                    popup.css(options.renderPosition.indexOf('left') != -1 ? 'left' : 'right', button.outerWidth() - 1);
 
-            if (bg.is(':visible')) {
-                hideQueries = isEscPress || (e.type == 'click' && !$.contains(queries[0], e.target) && !$.contains(popup[0], e.target));
-            }
-            else if (popup.is(':visible')) {
-                hidePopup = isEscPress || (e.type == 'click' && !$.contains(popup[0], e.target) && !$.contains(button[0], e.target) && button[0] != e.target);
-            }
+                    // is this rendering on the bottom (if no, then is top by default)
+                    if (options.renderPosition.indexOf('bottom') != -1) {
+                        var bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(); // get bottom of button
+                        popup.css({ 'bottom': 0, 'max-height': 'calc(100vh - ' + (bottom + 25) + 'px)' });
+                    }
+                    else {
+                        popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top + 25) + 'px)' });
+                    }
+                }
+            }).on('click', '.profiler-queries-show', function (e) {
+                // opaque background
+                var overlay = $('<div class="profiler-overlay"><div class="profiler-overlay-bg"/></div>').appendTo('body');
+                var queries = $(this).closest('.profiler-result').find('.profiler-queries').clone().appendTo(overlay).show();
 
-            if (hideQueries) {
-                bg.remove();
-                queries.hide();
-            }
+                scrollToQuery($(this), queries, queries);
 
-            if (hidePopup) {
-                popupHide(button, popup);
-            }
-        });
+                // syntax highlighting
+                prettyPrint();
+            }).on('click keyup', function (e) {
+                var active = $('.profiler-result.active');
+                if (active.length) {
+                    var bg = $('.profiler-overlay'),
+                        isEscPress = e.type == 'keyup' && e.which == 27,
+                        isBgClick = e.type == 'click' && !$(e.target).closest('.profiler-queries, .profiler-results').length
+
+                    if (isEscPress || isBgClick) {
+                        if (bg.is(':visible')) {
+                            bg.remove();
+                        }
+                        else {
+                            active.removeClass('active');
+                        }
+                    }
+                }
+            });
         if (options.toggleShortcut && !options.toggleShortcut.match(/^None$/i)) {
             $(document).bind('keydown', options.toggleShortcut, function(e) {
                 $('.profiler-results').toggle();
             });
         }
-    };
-
-    var initFullView = function () {
-
-        // first, get jquery tmpl, then render and bind handlers
-        fetchTemplates(function () {
-
-            // profiler will be defined in the full page's head
-            renderTemplate(profiler).appendTo(container);
-
-            var popup = $('.profiler-popup');
-
-            toggleHidden(popup);
-
-            prettyPrint();
-
-            // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
-            popup.find('.profiler-queries-show').click(function () {
-                queriesScrollIntoView($(this), $('.profiler-queries'), $(document));
-            });
-        });
     };
 
     var initControls = function (container) {
@@ -480,16 +366,17 @@ var MiniProfiler = (function () {
                 container.toggleClass('profiler-min');
             });
 
-            container.hover(function () {
-                if ($(this).hasClass('profiler-min')) {
-                    $(this).find('.profiler-min-max').show();
-                }
-            },
-            function () {
-                if ($(this).hasClass('profiler-min')) {
-                    $(this).find('.profiler-min-max').hide();
-                }
-            });
+            container.hover(
+                function () {
+                    if ($(this).hasClass('profiler-min')) {
+                        $(this).find('.profiler-min-max').show();
+                    }
+                },
+                function () {
+                    if ($(this).hasClass('profiler-min')) {
+                        $(this).find('.profiler-min-max').hide();
+                    }
+                });
 
             $('.profiler-controls .profiler-clear').click(function () {
                 container.find('.profiler-result').remove();
@@ -642,34 +529,6 @@ var MiniProfiler = (function () {
         }
     };
 
-    var initPopupView = function () {
-        if (options.authorized) {
-            // all fetched profilers will go in here
-            container = $('<div class="profiler-results"/>').appendTo('body');
-
-            // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-            container.addClass('profiler-' + options.renderPosition);
-
-            // initialize the controls
-            initControls(container);
-
-            // we'll render results JSON via a jquery.tmpl - after we get the templates, we'll fetch the initial JSON to populate it
-            fetchTemplates(function () {
-                // get master page profiler results
-                fetchResults(options.ids);
-            });
-            if (options.startHidden) container.hide();
-
-            // if any data came in before the view popped up, render now
-            for (var i = 0; i < savedJson.length; i++) {
-                buttonShow(savedJson[i]);
-            }
-        }
-        else {
-            fetchResults(options.ids);
-        }
-    };
-
     return {
 
         init: function () {
@@ -698,6 +557,49 @@ var MiniProfiler = (function () {
             };
 
             var doInit = function () {
+                function initFullView() {
+                    // first, get jquery tmpl, then render and bind handlers
+                    fetchTemplates(function () {
+
+                        // profiler will be defined in the full page's head
+                        renderTemplate(profiler).appendTo(container);
+                        prettyPrint();
+
+                        // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
+                        $('.profiler-popup').find('.profiler-queries-show').click(function () {
+                            scrollToQuery($(this), $('.profiler-queries'), $(document));
+                        });
+                    });
+                };
+
+                function initPopupView() {
+                    if (options.authorized) {
+                        // all fetched profilers will go in here
+                        // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
+                        container = $('<div class="profiler-results"/>')
+                            .addClass('profiler-' + options.renderPosition)
+                            .appendTo('body');
+
+                        // initialize the controls
+                        initControls(container);
+
+                        // we'll render results JSON via a jquery.tmpl - after we get the templates, we'll fetch the initial JSON to populate it
+                        fetchTemplates(function () {
+                            // get master page profiler results
+                            fetchResults(options.ids);
+                        });
+                        if (options.startHidden) container.hide();
+
+                        // if any data came in before the view popped up, render now
+                        for (var i = 0; i < savedJson.length; i++) {
+                            buttonShow(savedJson[i]);
+                        }
+                    }
+                    else {
+                        fetchResults(options.ids);
+                    }
+                };
+
                 // when rendering a shared, full page, this div will exist
                 container = $('.profiler-result-full');
                 if (container.length) {
@@ -708,8 +610,8 @@ var MiniProfiler = (function () {
                 }
                 else {
                     initPopupView();
-                    bindDocumentEvents();
                 }
+                bindDocumentEvents();
             };
 
             var wait = 0;
