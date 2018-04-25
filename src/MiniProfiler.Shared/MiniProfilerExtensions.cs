@@ -63,12 +63,13 @@ namespace StackExchange.Profiling
         /// <param name="category">The category under which this timing will be recorded.</param>
         /// <param name="commandString">The command string that will be recorded along with this timing, for display in the MiniProfiler results.</param>
         /// <param name="executeType">Execute Type to be associated with the Custom Timing. Example: Get, Set, Insert, Delete</param>
+        /// <param name="includeStackTrace">Whether to include the stack trace in this custom timing.</param>
         /// <remarks>
         /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method
         /// </remarks>
-        public static CustomTiming CustomTiming(this MiniProfiler profiler, string category, string commandString, string executeType = null)
+        public static CustomTiming CustomTiming(this MiniProfiler profiler, string category, string commandString, string executeType = null, bool includeStackTrace = true)
         {
-            return CustomTimingIf(profiler, category, commandString, 0, executeType: executeType);
+            return CustomTimingIf(profiler, category, commandString, 0, executeType: executeType, includeStackTrace: includeStackTrace);
         }
 
         /// <summary>
@@ -79,16 +80,17 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="category">The category under which this timing will be recorded.</param>
         /// <param name="commandString">The command string that will be recorded along with this timing, for display in the MiniProfiler results.</param>
-        /// <param name="executeType">Execute Type to be associated with the Custom Timing. Example: Get, Set, Insert, Delete</param>
         /// <param name="minSaveMs">The minimum amount of time that needs to elapse in order for this result to be recorded.</param>
+        /// <param name="executeType">Execute Type to be associated with the Custom Timing. Example: Get, Set, Insert, Delete</param>
+        /// <param name="includeStackTrace">Whether to include the stack trace in this custom timing.</param>
         /// <remarks>
         /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method 
         /// </remarks>
-        public static CustomTiming CustomTimingIf(this MiniProfiler profiler, string category, string commandString, decimal minSaveMs, string executeType = null)
+        public static CustomTiming CustomTimingIf(this MiniProfiler profiler, string category, string commandString, decimal minSaveMs, string executeType = null, bool includeStackTrace = true)
         {
             if (profiler == null || profiler.Head == null || !profiler.IsActive) return null;
 
-            var result = new CustomTiming(profiler, commandString, minSaveMs)
+            var result = new CustomTiming(profiler, commandString, minSaveMs, includeStackTrace: includeStackTrace)
             {
                 ExecuteType = executeType,
                 Category = category

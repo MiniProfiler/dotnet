@@ -26,7 +26,8 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The <see cref="MiniProfiler"/> to attach the timing so.</param>
         /// <param name="commandString">The descriptive command string for this timing, e.g. a URL or database command.</param>
         /// <param name="minSaveMs">(Optional) The minimum time required to actually save this timing (e.g. do we care?).</param>
-        public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs = null)
+        /// <param name="includeStackTrace">Whether to include the stack trace in this custom timing.</param>
+        public CustomTiming(MiniProfiler profiler, string commandString, decimal? minSaveMs = null, bool includeStackTrace = true)
         {
             _profiler = profiler;
             _startTicks = profiler.ElapsedTicks;
@@ -36,7 +37,7 @@ namespace StackExchange.Profiling
             Id = Guid.NewGuid();
             StartMilliseconds = profiler.GetRoundedMilliseconds(profiler.ElapsedTicks);
 
-            if (!profiler.Options.ExcludeStackTraceSnippetFromCustomTimings)
+            if (includeStackTrace && !profiler.Options.ExcludeStackTraceSnippetFromCustomTimings)
             {
                 StackTraceSnippet = Helpers.StackTraceSnippet.Get(profiler.Options);
             }
