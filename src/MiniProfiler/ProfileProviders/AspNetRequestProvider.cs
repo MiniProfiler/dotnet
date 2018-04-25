@@ -164,18 +164,19 @@ namespace StackExchange.Profiling
         /// <param name="context">The <see cref="HttpContext"/> request to get the name from.</param>
         private static void EnsureName(MiniProfiler profiler, HttpContext context)
         {
+            string url = null;
+            string GetUrl() => url ?? (url = StringBuilderCache.Get()
+                                    .Append(context.Request.Url.Scheme)
+                                    .Append("://")
+                                    .Append(context.Request.Url.Host)
+                                    .Append(context.Request.Url.PathAndQuery)
+                                    .ToStringRecycle());
+
             // also set the profiler name to Controller/Action or /url
             if (profiler.Name.IsNullOrWhiteSpace())
             {
                 var rc = context.Request.RequestContext;
                 RouteValueDictionary values;
-
-                var url = StringBuilderCache.Get()
-                        .Append(context.Request.Url.Scheme)
-                        .Append("://")
-                        .Append(context.Request.Url.Host)
-                        .Append(context.Request.Url.PathAndQuery)
-                        .ToStringRecycle();
 
                 if (rc?.RouteData != null && (values = rc.RouteData.Values).Count > 0)
                 {
@@ -190,15 +191,15 @@ namespace StackExchange.Profiling
 
                 if (profiler.Name.IsNullOrWhiteSpace())
                 {
-                    profiler.Name = url ?? string.Empty;
+                    profiler.Name = GetUrl() ?? string.Empty;
                     if (profiler.Name.Length > 50)
                         profiler.Name = profiler.Name.Remove(50);
                 }
+            }
 
-                if (profiler.Name.HasValue() && profiler.Root != null && profiler.Root.Name == null)
-                {
-                    profiler.Root.Name = url;
-                }
+            if (profiler.Root != null && profiler.Root.Name == null)
+            {
+                profiler.Root.Name = GetUrl();
             }
         }
     }
