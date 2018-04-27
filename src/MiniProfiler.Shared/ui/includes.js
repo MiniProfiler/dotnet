@@ -141,7 +141,7 @@ var MiniProfiler = (function () {
 
                 $.ajax({
                     url: options.path + 'results',
-                    data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes, popup: 1 },
+                    data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes },
                     dataType: 'json',
                     type: 'POST',
                     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',

@@ -227,7 +227,7 @@ namespace StackExchange.Profiling
         {
             // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
             // if it's absent, we're rendering results as a full page for sharing
-            var isPopup = context.Request["popup"].HasValue();
+            var jsonRequest = context.Request.Headers["Accept"]?.Contains("application/json") == true;
             // this guid is the MiniProfiler.Id property
             // if this guid is not supplied, the last set of results needs to be
             // displayed. The home page doesn't have profiling otherwise.
@@ -235,7 +235,7 @@ namespace StackExchange.Profiling
                 id = Options.Storage.List(1).FirstOrDefault();
 
             if (id == default(Guid))
-                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
+                return jsonRequest ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             var profiler = Options.Storage.Load(id);
             string user = Options.UserIdProvider?.Invoke(context.Request);
@@ -244,7 +244,7 @@ namespace StackExchange.Profiling
 
             if (profiler == null)
             {
-                return isPopup ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
+                return jsonRequest ? NotFound(context) : NotFound(context, "text/plain", "No MiniProfiler results found with Id=" + id.ToString());
             }
 
             bool needsSave = false;
@@ -274,7 +274,7 @@ namespace StackExchange.Profiling
                 return @"""hidden"""; // JSON
             }
 
-            return isPopup ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
+            return jsonRequest ? ResultsJson(context, profiler) : ResultsFullPage(context, profiler);
         }
 
         private static string ResultsJson(HttpContext context, MiniProfiler profiler)

@@ -293,7 +293,6 @@ namespace StackExchange.Profiling
         /// <param name="context">The context to get a profiler response for.</param>
         private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
         {
-            bool jsonRequest = false;
             IFormCollection form = null;
 
             // When we're rendering as a button/popup in the corner, we'll pass { popup: 1 } from jQuery
@@ -301,8 +300,6 @@ namespace StackExchange.Profiling
             if (context.Request.HasFormContentType)
             {
                 form = await context.Request.ReadFormAsync().ConfigureAwait(false);
-                // TODO: Get rid of popup and switch to application/json Accept header detection
-                jsonRequest = form["popup"] == "1";
             }
 
             // This guid is the MiniProfiler.Id property. If a guid is not supplied, 
@@ -313,6 +310,8 @@ namespace StackExchange.Profiling
             {
                 id = (await Options.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
             }
+
+            bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
 
             if (id == default(Guid))
             {
