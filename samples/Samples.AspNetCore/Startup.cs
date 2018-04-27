@@ -51,7 +51,7 @@ namespace Samples.AspNetCore
                 //options.Storage = new SqlServerStorage("Data Source=.;Initial Catalog=MiniProfiler;Integrated Security=True;");
 
                 // Control which SQL formatter to use, InlineFormatter is the default
-                //options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
+                options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.SqlServerFormatter();
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
                 options.ResultsAuthorize = request => !Program.DisableProfilingResults;

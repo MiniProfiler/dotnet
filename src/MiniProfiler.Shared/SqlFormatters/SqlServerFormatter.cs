@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <summary>
         /// What data types should not be quoted when used in parameters
         /// </summary>
-        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte[]" };
+        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte", "Byte[]" };
 
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
