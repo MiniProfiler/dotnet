@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Internal
     public static class MiniProfilerBaseOptionsExtensions
     {
         /// <summary>
-        /// Asynchronously gets unviewed profiles for the user, 
+        /// Synchronously gets unviewed profiles for the user, 
         /// expiring any above the <see cref="MiniProfilerBaseOptions.MaxUnviewedProfiles"/> count.
         /// </summary>
         /// <param name="options">The options to operate against on.</param>
