@@ -44,9 +44,12 @@ namespace StackExchange.Profiling
         public virtual void Stopped(MiniProfiler profiler, bool discardResults)
         {
             if (profiler == null) return;
-            if (discardResults && CurrentProfiler == profiler)
+            if (discardResults)
             {
-                CurrentProfiler = null;
+                if (CurrentProfiler == profiler)
+                {
+                    CurrentProfiler = null;
+                }
                 return;
             }
             Save(profiler);
@@ -63,9 +66,12 @@ namespace StackExchange.Profiling
         public virtual async Task StoppedAsync(MiniProfiler profiler, bool discardResults)
         {
             if (profiler == null) return;
-            if (discardResults && CurrentProfiler == profiler)
+            if (discardResults)
             {
-                CurrentProfiler = null;
+                if (CurrentProfiler == profiler)
+                {
+                    CurrentProfiler = null;
+                }
                 return;
             }
             await SaveAsync(profiler).ConfigureAwait(false);

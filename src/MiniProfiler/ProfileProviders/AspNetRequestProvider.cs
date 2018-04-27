@@ -100,9 +100,12 @@ namespace StackExchange.Profiling
             var context = HttpContext.Current;
             if (context == null || profiler == null) return;
 
-            if (discardResults && CurrentProfiler == profiler)
+            if (discardResults)
             {
-                CurrentProfiler = null;
+                if (CurrentProfiler == profiler)
+                {
+                    CurrentProfiler = null;
+                }
                 return;
             }
 
@@ -135,9 +138,12 @@ namespace StackExchange.Profiling
             var context = HttpContext.Current;
             if (context == null || profiler == null) return;
 
-            if (discardResults && CurrentProfiler == profiler)
+            if (discardResults)
             {
-                CurrentProfiler = null;
+                if (CurrentProfiler == profiler)
+                {
+                    CurrentProfiler = null;
+                }
                 return;
             }
 
