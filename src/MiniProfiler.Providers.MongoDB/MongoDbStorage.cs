@@ -82,6 +82,9 @@ namespace StackExchange.Profiling
                 });
         }
 
+        /// <summary>
+        /// Creates indexes for faster querying.
+        /// </summary>
         public MongoDbStorage WithIndexCreation()
         {
             _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User));
@@ -165,7 +168,7 @@ namespace StackExchange.Profiling
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public Task<MiniProfiler> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
-        
+
         /// <summary>
         /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
         /// </summary>
@@ -240,6 +243,9 @@ namespace StackExchange.Profiling
             await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Returns the underlying client.
+        /// </summary>
         public MongoClient GetClient() => _client;
     }
 }
