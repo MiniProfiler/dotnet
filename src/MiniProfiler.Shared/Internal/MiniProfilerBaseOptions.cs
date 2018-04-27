@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// The hash to use for file cache breaking, this is automatically calculated.
         /// </summary>
-        public virtual string VersionHash { get; set; } = Version.ToString();
+        public virtual string VersionHash { get; set; } = typeof(MiniProfilerBaseOptions).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? Version.ToString();
 
         /// <summary>
         /// Assemblies to exclude from the stack trace report.
