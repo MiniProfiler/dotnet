@@ -75,10 +75,14 @@ namespace StackExchange.Profiling.Internal
             return sb.ToString();
         }
 
-        private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings();
+        private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        };
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
         {
-            StringEscapeHandling = StringEscapeHandling.EscapeHtml
+            StringEscapeHandling = StringEscapeHandling.EscapeHtml,
+            NullValueHandling = NullValueHandling.Ignore
         };
 
         /// <summary>

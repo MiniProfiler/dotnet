@@ -56,13 +56,13 @@
         </table>
 		{{/if}}
 
-      {{if ClientTimings}}
+      {{if ClientTimings && ClientTimings.Timings.length}}
         <table class="profiler-timings profiler-client-timings">
           <thead>
             <tr>
               <th style="text-align:left">client event</th>
               <th>duration (ms)</th>
-              <th class="profiler-more-columns">from start (ms)</th>
+              <th>from start (ms)</th>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +74,7 @@
                 <span class="profiler-unit"></span>${MiniProfiler.formatDuration($value.duration)}
                 {{/if}}
               </td>
-              <td class="profiler-duration time-from-start profiler-more-columns">
+              <td class="profiler-duration time-from-start">
                 <span class="profiler-unit">+</span>${MiniProfiler.formatDuration($value.start)}
               </td>
             </tr>
@@ -235,9 +235,9 @@
     <td class="profiler-results-index-date">${Started}</td>
     <td>${DurationMilliseconds}</td>
     {{if ClientTimings}}
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Request Start").Start}</td>
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Response").Start}</td>
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"Dom Complete").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"requestStartStart").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"responseStart").Start}</td>
+    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"domComplete").Start}</td>
     {{else}}
     <td colspan="3" class="profiler-results-none">(no client timings)</td>
     {{/if}}

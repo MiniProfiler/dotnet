@@ -293,25 +293,29 @@ namespace StackExchange.Profiling
         /// <param name="context">The context to get a profiler response for.</param>
         private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
         {
-            IFormCollection form = null;
+            Guid id;
+            ResultRequest clientRequest = null;
+            // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
+            // If that's absent, we're rendering results as a full page for sharing.
+            bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
 
-            // When we're rendering as a button/popup in the corner, we'll pass { popup: 1 } from jQuery
-            // If it's absent, we're rendering results as a full page for sharing.
-            if (context.Request.HasFormContentType)
+            // Try to parse from the JSON payload first
+            if (jsonRequest
+                && context.Request.ContentLength > 0
+                && ResultRequest.TryParse(context.Request.Body, out clientRequest)
+                && clientRequest.Id.HasValue)
             {
-                form = await context.Request.ReadFormAsync().ConfigureAwait(false);
+                id = clientRequest.Id.Value;
             }
-
-            // This guid is the MiniProfiler.Id property. If a guid is not supplied, 
-            // the last set of results needs to be displayed.
-            string requestId = form?["id"] ?? context.Request.Query["id"];
-
-            if (!Guid.TryParse(requestId, out var id) && Options.Storage != null)
+            else if (Guid.TryParse(context.Request.Query["id"], out id))
             {
+                // We got the guid from the querystring
+            }
+            else if (Options.StopwatchProvider != null)
+            {
+                // Fall back to the last result
                 id = (await Options.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
             }
-
-            bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
 
             if (id == default(Guid))
             {
@@ -329,19 +333,10 @@ namespace StackExchange.Profiling
             }
 
             bool needsSave = false;
-            if (profiler.ClientTimings == null && form != null)
+            if (profiler.ClientTimings == null && clientRequest?.TimingCount > 0)
             {
-                var dict = new Dictionary<string, string>();
-                foreach (var k in form.Keys)
-                {
-                    dict.Add(k, form[k]);
-                }
-                profiler.ClientTimings = ClientTimings.FromForm(dict);
-
-                if (profiler.ClientTimings != null)
-                {
-                    needsSave = true;
-                }
+                profiler.ClientTimings = ClientTimings.FromRequest(clientRequest);
+                needsSave = true;
             }
 
             if (!profiler.HasUserViewed)

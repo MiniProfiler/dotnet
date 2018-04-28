@@ -225,14 +225,29 @@ namespace StackExchange.Profiling
         /// <param name="context">The context to get a profiler response for.</param>
         private string GetSingleProfilerResult(HttpContext context)
         {
-            // when we're rendering as a button/popup in the corner, we'll pass ?popup=1
-            // if it's absent, we're rendering results as a full page for sharing
+            Guid id;
+            ResultRequest clientRequest = null;
+            // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
+            // If that's absent, we're rendering results as a full page for sharing.
             var jsonRequest = context.Request.Headers["Accept"]?.Contains("application/json") == true;
-            // this guid is the MiniProfiler.Id property
-            // if this guid is not supplied, the last set of results needs to be
-            // displayed. The home page doesn't have profiling otherwise.
-            if (!Guid.TryParse(context.Request["id"], out var id) && Options.Storage != null)
+
+            // Try to parse from the JSON payload first
+            if (jsonRequest
+                && context.Request.ContentLength > 0
+                && ResultRequest.TryParse(context.Request.InputStream, out clientRequest)
+                && clientRequest.Id.HasValue)
+            {
+                id = clientRequest.Id.Value;
+            }
+            else if (Guid.TryParse(context.Request["id"], out id))
+            {
+                // We got the guid from the querystring
+            }
+            else if (Options.StopwatchProvider != null)
+            {
+                // Fall back to the last result
                 id = Options.Storage.List(1).FirstOrDefault();
+            }
 
             if (id == default(Guid))
                 return jsonRequest ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
@@ -248,13 +263,10 @@ namespace StackExchange.Profiling
             }
 
             bool needsSave = false;
-            if (profiler.ClientTimings == null)
+            if (profiler.ClientTimings == null && clientRequest?.TimingCount > 0)
             {
-                profiler.ClientTimings = context.Request.GetClientTimings();
-                if (profiler.ClientTimings != null)
-                {
-                    needsSave = true;
-                }
+                profiler.ClientTimings = ClientTimings.FromRequest(clientRequest);
+                needsSave = true;
             }
 
             if (!profiler.HasUserViewed)

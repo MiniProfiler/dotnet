@@ -9,8 +9,7 @@ var MiniProfiler = (function () {
         container,
         controls,
         tmplCache = {},
-        fetchedIds = [],
-        fetchingIds = [], // so we never pull down a profiler twice
+        fetchStatus = {}, // so we never pull down a profiler twice
         ajaxStartTime,
         savedJson = [],
         hasLocalStorage;
@@ -68,92 +67,131 @@ var MiniProfiler = (function () {
             });
         }
     };
+    
+    var clientPerfTimings = [
+        //{ name: 'navigationStart', description: 'Navigation Start' },
+        //{ name: 'unloadEventStart', description: 'Unload Start' },
+        //{ name: 'unloadEventEnd', description: 'Unload End' },
+        //{ name: 'redirectStart', description: 'Redirect Start' },
+        //{ name: 'redirectEnd', description: 'Redirect End' },
+        { name: 'fetchStart', description: 'Fetch Start', lineDescription: 'Fetch', point: true },
+        { name: 'domainLookupStart', description: 'Domain Lookup Start', lineDescription: 'DNS Lookup', type: 'dns' },
+        { name: 'domainLookupEnd', description: 'Domain Lookup End', type: 'dns' },
+        { name: 'connectStart', description: 'Connect Start', lineDescription: 'Connect', type: 'connect' },
+        { name: 'secureConnectionStart', description: 'Secure Connection Start', lineDescription: 'SSL/TLS Connect', type: 'ssl' },
+        { name: 'connectEnd', description: 'Connect End', type: 'connect' },
+        { name: 'requestStart', description: 'Request Start', lineDescription: 'Request', type: 'request' },
+        { name: 'responseStart', description: 'Response Start', lineDescription: 'Response', type: 'request' },
+        { name: 'responseEnd', description: 'Response End', type: 'response' },
+        { name: 'domLoading', description: 'DOM Loading', lineDescription: 'DOM Loading', type: 'dom' },
+        { name: 'domInteractive', description: 'DOM Interactive', lineDescription: 'DOM Interactive', type: 'dom', point: true },
+        { name: 'domContentLoadedEventStart', description: 'DOM Content Loaded Event Start', lineDescription: 'DOM Content Loaded', type: 'domcontent' },
+        { name: 'domContentLoadedEventEnd', description: 'DOM Content Loaded Event End', type: 'domcontent' },
+        { name: 'domComplete', description: 'DOM Complete', lineDescription: 'DOM Complete', type: 'dom', point: true },
+        { name: 'loadEventStart', description: 'Load Event Start', lineDescription: 'Load Event', type: 'load' },
+        { name: 'loadEventEnd', description: 'Load Event End', type: 'load' },
+        { name: 'firstPaintTime', description: 'First Paint', lineDescription: 'First Paint', type: 'paint', point: true },
+        { name: 'firstContentfulPaintTime', description: 'First Content Paint', lineDescription: 'First Content Paint', type: 'paint', point: true }
+    ];
+
+    var populatePerformanceTimings = function (results) {
+        if (window.performance && window.performance.timing) {
+            var resource = window.performance.timing,
+                start = resource.fetchStart;
+
+            results.Performance = clientPerfTimings
+                .filter(function (current) { return resource[current.name] })
+                .map(function (current, i) { return { item: current, index: i } })
+                .sort(function (a, b) { return resource[a.item.name] - resource[b.item.name] || a.index - b.index; })
+                .map(function (x, i, sorted) {
+                    var current = x.item;
+                    var next = i + 1 < sorted.length ? sorted[i + 1].item : null;
+                    return $.extend({
+                        startTime: resource[current.name] - start,
+                        timeTaken: !next ? 0 : (resource[next.name] - resource[current.name]),
+                    }, current);
+                })
+                .map(function (item, i) {
+                    return {
+                        Name: item.name,
+                        Start: item.startTime,
+                        Duration: item.point ? undefined : item.timeTaken
+                    };
+                });
+
+            if (window.performance.navigation) {
+                results.RedirectCount = window.performance.navigation.redirectCount;
+            }
+            
+            if (window.mPt) {
+                var pResults = window.mPt.results();
+                results.Probes = [];
+                for (var k in pResults) {
+                    var result = pResults[k];
+                    if (result.start && result.end) {
+                        results.Probes.push({ Name: k, Start: result.start - start, Duration: result.end - result.start });
+                    }
+                }
+                window.mPt.flush();
+            }
+
+            if (window.performance.getEntriesByType && window.PerformancePaintTiming) {
+                var entries = window.performance.getEntriesByType('paint');
+                for (var k = 0; k < entries.length; k++) {
+                    var entry = entries[k];
+                    switch (entry.name) {
+                        case 'first-paint':
+                            var firstPaint = { Name: 'firstPaintTime', Start: Math.round(entry.startTime) };
+                            results.Performance.push(firstPaint);
+                            break;
+                        case 'first-contentful-paint':
+                            var firstContentPaint = { Name: 'firstContentfulPaintTime', Start: Math.round(entry.startTime) };
+                            break;
+                    }
+                }
+                if (firstPaint && firstContentPaint && firstContentPaint.Start > firstPaint.Start) {
+                    results.Performance.push(firstContentPaint);
+                }
+
+            } else if (window.chrome && window.chrome.loadTimes) {
+                // fallback to Chrome timings
+                var chromeTimes = window.chrome.loadTimes();
+                if (chromeTimes.firstPaintTime) {
+                    results.Performance.push({ Name: 'firstPaintTime', Start: Math.round(chromeTimes.firstPaintTime * 1000 - start) });
+                }
+                if (chromeTimes.firstPaintAfterLoadTime && chromeTimes.firstPaintAfterLoadTime > chromeTimes.firstPaintTime) {
+                    results.Performance.push({ Name: 'firstPaintAfterLoadTime', Start: Math.round(chromeTimes.firstPaintAfterLoadTime * 1000 - start) });
+                }
+            }
+        }
+    }
 
     var fetchResults = function (ids) {
-        var clientPerformance, clientProbes, i, j, p, id, idx;
-
-        for (i = 0; i < ids.length; i++) {
-            id = ids[i];
-
-            clientPerformance = null;
-            clientProbes = null;
-
-            if (window.mPt) {
-                clientProbes = mPt.results();
-                for (j = 0; j < clientProbes.length; j++) {
-                    clientProbes[j].d = clientProbes[j].d.getTime();
-                }
-                mPt.flush();
-            }
+        for (var i = 0; i < ids.length; i++) {
+            var id = ids[i],
+                results = { Id: id };
 
             if (id == options.currentId) {
-
-                clientPerformance = window.performance;
-
-                if (clientPerformance != null) {
-                    // ie is buggy strip out functions
-                    var copy = { navigation: {}, timing: {} };
-
-                    var timing = $.extend({}, clientPerformance.timing);
-
-                    for (p in timing) {
-                        if (timing.hasOwnProperty(p) && !$.isFunction(timing[p])) {
-                            copy.timing[p] = timing[p];
-                        }
-                    }
-                    if (clientPerformance.navigation) {
-                        copy.navigation.redirectCount = clientPerformance.navigation.redirectCount;
-                    }
-                    clientPerformance = copy;
-
-                    if (window.performance.getEntriesByType && window.PerformancePaintTiming && performance.timeOrigin) {
-                        var entries = window.performance.getEntriesByType('paint');
-                        for (var k = 0; k < entries.length; k++) {
-                            var entry = entries[k];
-                            switch (entry.name) {
-                                case 'first-paint':
-                                    clientPerformance.timing['firstPaintTime'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
-                                    break;
-                                case 'first-contentful-paint':
-                                    clientPerformance.timing['firstContentfulPaintTime'] = Math.round((entry.startTime + performance.timeOrigin) / 1000);
-                                break;
-                            }
-                        }
-                    } else if (window.chrome && window.chrome.loadTimes) {
-                      // hack to add chrome timings
-                      var chromeTimes = window.chrome.loadTimes();
-                      if (chromeTimes.firstPaintTime) {
-                          clientPerformance.timing['firstPaintTime'] = Math.round(chromeTimes.firstPaintTime * 1000);
-                      }
-                      if (chromeTimes.firstPaintAfterLoadTime) {
-                          clientPerformance.timing['firstPaintAfterLoadTime'] = Math.round(chromeTimes.firstPaintAfterLoadTime * 1000);
-                      }
-
-                    }
-                }
-            } else if (ajaxStartTime != null && clientProbes && clientProbes.length > 0) {
-                clientPerformance = { timing: { navigationStart: ajaxStartTime.getTime() } };
-                ajaxStartTime = null;
+                populatePerformanceTimings(results);
             }
 
-            if ($.inArray(id, fetchedIds) < 0 && $.inArray(id, fetchingIds) < 0) {
-                idx = fetchingIds.push(id) - 1;
+            if (!fetchStatus.hasOwnProperty(id)) {
+                fetchStatus[id] = 'Starting fetch';
 
                 $.ajax({
                     url: options.path + 'results',
-                    data: { id: id, clientPerformance: clientPerformance, clientProbes: clientProbes },
+                    data: JSON.stringify(results),
                     dataType: 'json',
+                    contentType: 'application/json',
                     type: 'POST',
-                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    processData: true,
                     success: function (json) {
-                        fetchedIds.push(id);
+                        fetchStatus[id] = 'Fetch succeeded';
                         if (json != 'hidden') {
                             buttonShow(json);
                         }
                     },
                     complete: function () {
-                        fetchingIds.splice(idx, 1);
+                        fetchStatus[id] = 'Fetch complete';
                     }
                 });
             }
@@ -671,15 +709,14 @@ var MiniProfiler = (function () {
 
             for (var i = 0; i < clientTimings.Timings.length; i++) {
                 t = clientTimings.Timings[i];
-                var trivial = t.Name != 'Dom Complete' && t.Name != 'Response' && t.Name != 'First Paint Time' && t.Name != 'First Contentful Paint Time';
-                trivial = t.Duration < 2 ? trivial : false;
+                var info = clientPerfTimings.find(function (pt) { return pt.name == t.Name; }) || {};
                 list.push(
-                {
-                    isTrivial: trivial,
-                    name: t.Name,
-                    duration: t.Duration,
-                    start: t.Start
-                });
+                    {
+                        isTrivial: t.Duration == 0 && !info.point,
+                        name: info.lineDescription || t.Name,
+                        duration: info.point ? undefined : t.Duration,
+                        start: t.Start
+                    });
             }
 
             list.sort(function (a, b) { return a.start - b.start; });
@@ -827,6 +864,9 @@ var MiniProfiler = (function () {
         },
 
         formatDuration: function (duration) {
+            if (duration === undefined) {
+                return '';
+            }
             return (duration || 0).toFixed(1);
         },
 

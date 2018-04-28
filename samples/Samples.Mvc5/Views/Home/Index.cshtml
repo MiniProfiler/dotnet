@@ -19,7 +19,7 @@
                     type: 'GET',
                     url: this.href,
                     success: function (data) {
-                        if (window.mPt) mPt.probe("Processing ajax response.");
+                        if (window.mPt) mPt.start("Processing ajax response.");
 
                         var $p = $('<p class="ajax-result">'),
                             transform = $clicked.data('transform');
@@ -27,7 +27,7 @@
                         $p.append(transform ? window[transform](data) : data);
                         $results.append($p);
 
-                        if (window.mPt) mPt.probe("Processing ajax response.");
+                        if (window.mPt) mPt.end("Processing ajax response.");
                     },
                     error: function () { $results.append('<p>ERROR!</p>'); },
                     complete: function () { $spinner.remove(); }

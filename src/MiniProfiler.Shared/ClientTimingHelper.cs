@@ -1,4 +1,6 @@
-﻿namespace StackExchange.Profiling
+﻿using StackExchange.Profiling.Internal;
+
+namespace StackExchange.Profiling
 {
     /// <summary>
     /// Pro
@@ -8,7 +10,7 @@
         /// <summary>
         /// This code needs to be inserted in the page before client timings work
         /// </summary>
-        public const string InitScript = "<script>mPt=function(){var t=[];return{results:function(){return t},probe:function(n){t.push({d:new Date(),n:n})},flush:function(){t=[]}}}()</script>";
+        public const string InitScript = "<script>mPt=function(){var t={};return{results:function(){return t},start:function(n){t[n]={start:new Date().getTime()}},end:function(n){t[n].end=new Date().getTime()},flush:function(){t={};}}}();</script>";
 
         /// <summary>
         /// You can wrap an HTML block with timing wrappers using this helper
@@ -19,9 +21,12 @@
         {
             if (MiniProfiler.Current != null)
             {
+                var sb = StringBuilderCache.Get();
                 name = name.Replace("'", "\\'");
-                var probe = "<script>mPt.probe('" + name + "')</script>";
-                html = probe + html + probe;
+                sb.Append("<script>mPt.start('").Append(name).Append("')</script>");
+                sb.Append(html);
+                sb.Append("<script>mPt.end('").Append(name).Append("')</script>");
+                return sb.ToStringRecycle();
             }
 
             return html;
