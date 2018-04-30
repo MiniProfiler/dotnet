@@ -7,7 +7,7 @@
     <TargetFrameworks>net461;netstandard1.5;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BuildWebCompiler" Version="1.11.326" PrivateAssets="all" />
+    <PackageReference Include="BuildBundlerMinifier" Version="2.6.375" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
   </ItemGroup>
