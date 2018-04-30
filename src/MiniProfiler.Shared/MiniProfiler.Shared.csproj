@@ -7,6 +7,7 @@
     <TargetFrameworks>net461;netstandard1.5;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BuildWebCompiler" Version="1.11.326" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
   </ItemGroup>
@@ -38,9 +39,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ui\includes.tmpl" />
     <None Include="ui\includes.less" />
-    <EmbeddedResource Include="ui\*.*" />
-    <EmbeddedResource Update="ui\includes.css" DependentUpon="includes.less" />
-    <EmbeddedResource Update="ui\includes.min.css" DependentUpon="includes.css" />
+    <EmbeddedResource Include="ui\includes.css" DependentUpon="includes.less" />
+    <EmbeddedResource Include="ui\includes.min.css" DependentUpon="includes.css" />
+    
+    <EmbeddedResource Include="ui\lib\MiniProfiler.js" DependentUpon="MiniProfiler.ts" />
+    <EmbeddedResource Include="ui\lib\MiniProfiler.js.map" DependentUpon="MiniProfiler.js" />
+
+    <EmbeddedResource Include="ui\includes.js" />
+    <EmbeddedResource Include="ui\includes.min.js" DependentUpon="includes.js" />
   </ItemGroup>
 </Project>
