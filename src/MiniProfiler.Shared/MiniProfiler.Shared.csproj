@@ -5,13 +5,6 @@
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>You shouldn't reference this - MiniProfiler's shared library for all frameworks</Description>
     <TargetFrameworks>net461;netstandard1.5;netstandard2.0</TargetFrameworks>
-    
-    <TypeScriptNoImplicitAny>true</TypeScriptNoImplicitAny>
-    <TypeScriptPreserveConstEnums>true</TypeScriptPreserveConstEnums>
-    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
-    <TypeScriptSourceMap>true</TypeScriptSourceMap>
-    <TypeScriptSuppressImplicitAnyIndexErrors>true</TypeScriptSuppressImplicitAnyIndexErrors>
-    <TypeScriptTarget>ES5</TypeScriptTarget>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.6.375" PrivateAssets="all" />
