@@ -1,7 +1,6 @@
 ﻿{
   "compileOnSave": true,
   "compilerOptions": {
-    "watch": true,
     "target": "es5",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
