@@ -1,0 +1,15 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "watch": true,
+    "target": "es5",
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
