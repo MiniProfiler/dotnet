@@ -1,0 +1,11 @@
+﻿[
+  {
+    "outputFileName": "ui/includes.js",
+    "inputFiles": [
+      "ui/lib/jquery.min.js",
+      "ui/lib/jquery.hotkeys.min.js",
+      "ui/lib/jquery.tmpl.min.js",
+      "ui/lib/MiniProfiler.js"
+    ]
+  }
+]

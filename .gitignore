@@ -22,3 +22,7 @@ packages/**/*.*
 docs/_site
 BenchmarkDotNet.Artifacts
 samples/Samples.Mvc5/Properties/launchSettings.json
+src/MiniProfiler.Shared/ui/lib/MiniProfiler.js
+src/MiniProfiler.Shared/ui/lib/MiniProfiler.js.map
+src/MiniProfiler.Shared/ui/includes.js
+src/MiniProfiler.Shared/ui/includes.min.js
