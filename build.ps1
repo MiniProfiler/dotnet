@@ -36,6 +36,7 @@ if ($PullRequestNumber) {
 }
 
 Write-Host "Building solution..." -ForegroundColor "Magenta"
+dotnet restore ".\MiniProfiler.sln" /p:CI=true
 dotnet build ".\MiniProfiler.sln" /p:CI=true
 Write-Host "Done building." -ForegroundColor "Green"
 
