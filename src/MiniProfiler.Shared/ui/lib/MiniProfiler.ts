@@ -276,6 +276,10 @@ namespace StackExchange.Profiling {
 
         fetchResults = (ids: string[]) => {
             let $ = this.jq;
+            if (!ids) {
+                return;
+            }
+
             for (let i = 0; i < ids.length; i++) {
                 var id = ids[i],
                     request: ResultRequest = { Id: id };
@@ -948,17 +952,17 @@ namespace StackExchange.Profiling {
 
             var time = 0;
             var prev = null;
-            jQuery.each(result, function () {
-                this.prevGap = {
-                    duration: (this.StartMilliseconds - time).toFixed(2),
+            result.forEach(function (elem) {
+                elem.prevGap = {
+                    duration: (elem.StartMilliseconds - time).toFixed(2),
                     start: time,
-                    finish: this.StartMilliseconds
+                    finish: elem.StartMilliseconds
                 };
 
-                this.prevGap.topReason = determineGap(this.prevGap, root, null);
+                elem.prevGap.topReason = determineGap(elem.prevGap, root, null);
 
-                time = this.StartMilliseconds + this.DurationMilliseconds;
-                prev = this;
+                time = elem.StartMilliseconds + elem.DurationMilliseconds;
+                prev = elem;
             });
 
 
@@ -982,21 +986,37 @@ namespace StackExchange.Profiling {
             return (duration || 0).toFixed(1);
         };
 
+        escape = (orig: string) => orig.replace(/&/g, "&amp;")
+                                       .replace(/</g, "&lt;")
+                                       .replace(/>/g, "&gt;")
+                                       .replace(/"/g, "&quot;")
+                                       .replace(/'/g, "&#039;");
+
         listInit = (options: Options) => {
-            this.jq = jQuery.noConflict(true);
-            let $ = this.jq;
-            var opt = options || <Options>{};
-            this.path = opt.path;
+            let mp = this,
+                $ = mp.jq,
+                opt = this.options = options || <Options>{};
 
             function updateGrid(id?: string) {
                 $.ajax({
-                    url: options.path + 'results-list',
+                    url: opt.path + 'results-list',
                     data: { 'last-id': id },
                     dataType: 'json',
                     type: 'GET',
-                    // TODO: List types
-                    success: function (data: any) {
-                        $('table tbody').append($('#rowTemplate').tmpl(data));
+                    success: function (data: Profiler[]) {
+                        data.forEach((profiler) => {
+                            $('table tbody').append(`
+<tr>
+  <td><a href="${options.path}results?id=${profiler.Id}">${escape(profiler.Name)}</a></td>
+  <td>${escape(profiler.MachineName)}</td>
+  <td class="profiler-results-index-date">${profiler.Started}</td>
+  <td>${profiler.DurationMilliseconds}</td>` + (profiler.ClientTimings ? `
+  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'requestStart').Start}</td>
+  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'responseStart').Start}</td>
+  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'domComplete').Start}</td> ` : `
+  <td colspan="3" class="profiler-results-none">(no client timings)</td>`) + `
+</tr>`);
+                        });
                         var oldId = id;
                         var oldData = data;
                         setTimeout(function () {
@@ -1009,14 +1029,7 @@ namespace StackExchange.Profiling {
                     }
                 });
             }
-
-            $.get(opt.path + 'includes.tmpl?v=' + opt.version, function (data) {
-                if (data) {
-                    $('body').append(data);
-                    $('body').append($('#tableTemplate').tmpl());
-                    updateGrid();
-                }
-            });
+            updateGrid();
         };
     }
 }

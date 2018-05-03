@@ -210,38 +210,3 @@
     </td>
   </tr>
 </script>
-
-<script id="tableTemplate" type="text/x-jquery-tmpl">
-  <table class="profiler-results-index">
-    <thead>
-      <tr>
-        <th>Name</th>
-		<th>Server</th>
-        <th>Started</th>
-        <th>Total Duration</th>
-        <th>Request Start</th>
-        <th>Response Start</th>
-        <th>Dom Complete</th>
-      </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-  </table>
-</script>
-
-<script id="rowTemplate" type="text/x-jquery-tmpl">
-  <tr>
-    <td><a href="${MiniProfiler.path}results?id=${Id}">${Name}</a></td>
-    <td>${MachineName}</td>
-    <td class="profiler-results-index-date">${Started}</td>
-    <td>${DurationMilliseconds}</td>
-    {{if ClientTimings}}
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"requestStartStart").Start}</td>
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"responseStart").Start}</td>
-    <td>${MiniProfiler.getClientTimingByName(ClientTimings,"domComplete").Start}</td>
-    {{else}}
-    <td colspan="3" class="profiler-results-none">(no client timings)</td>
-    {{/if}}
-  </tr>
-</script>
