@@ -55,6 +55,9 @@ namespace StackExchange.Profiling {
         HasDuplicateCustomTimings: { [id: string]: boolean };
         IsTrivial: boolean;
         ParentTimingId?: string;
+        // Added for gaps (TODO: change all this)
+        parent: Timing;
+        richTiming: GapTiming[];
     }
 
     interface CustomTiming {
@@ -71,6 +74,9 @@ namespace StackExchange.Profiling {
         ParentTimingName: string;
         CallType: string;
         IsDuplicate: boolean;
+        // Added for gaps
+        prevGap: any;
+        nextGap: any;
     }
 
     interface CustomTimingStat {
@@ -108,6 +114,13 @@ namespace StackExchange.Profiling {
         Performance?: ClientTiming[];
         Probes?: ClientTiming[];
         RedirectCount?: number;
+    }
+
+    // Gaps
+    interface GapTiming {
+        start: number;
+        finish: number;
+        duration: number;
     }
 
     export class MiniProfiler {
@@ -854,112 +867,110 @@ namespace StackExchange.Profiling {
             addToResults(root);
             result.sort((a, b) => a.StartMilliseconds - b.StartMilliseconds);
 
-            // TODO: Gaps for custom timings
+            function removeDuration(list: GapTiming[], duration: GapTiming) {
 
-            // function removeDuration(list, duration) {
+                var newList:GapTiming[] = [];
+                for (var i = 0; i < list.length; i++) {
 
-            //     var newList = [];
-            //     for (var i = 0; i < list.length; i++) {
+                    var item = list[i];
+                    if (duration.start > item.start) {
+                        if (duration.start > item.finish) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push(<GapTiming>({ start: item.start, finish: duration.start }));
+                    }
 
-            //         var item = list[i];
-            //         if (duration.start > item.start) {
-            //             if (duration.start > item.finish) {
-            //                 newList.push(item);
-            //                 continue;
-            //             }
-            //             newList.push({ start: item.start, finish: duration.start });
-            //         }
+                    if (duration.finish < item.finish) {
+                        if (duration.finish < item.start) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push(<GapTiming>({ start: duration.finish, finish: item.finish }));
+                    }
+                }
 
-            //         if (duration.finish < item.finish) {
-            //             if (duration.finish < item.start) {
-            //                 newList.push(item);
-            //                 continue;
-            //             }
-            //             newList.push({ start: duration.finish, finish: item.finish });
-            //         }
-            //     }
+                return newList;
+            };
 
-            //     return newList;
-            // };
+            function processTimes(elem: Timing, parent: Timing) {
+                var duration = <GapTiming>({ start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) });
+                elem.richTiming = [duration];
+                if (parent != null) {
+                    elem.parent = parent;
+                    elem.parent.richTiming = removeDuration(elem.parent.richTiming, duration);
+                }
 
-            // function processTimes(elem: Timing, parent: Timing) {
-            //     var duration = { start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) };
-            //     elem.richTiming = [duration];
-            //     if (parent != null) {
-            //         elem.parent = parent;
-            //         elem.parent.richTiming = removeDuration(elem.parent.richTiming, duration);
-            //     }
+                if (elem.Children) {
+                    for (var i = 0; i < elem.Children.length; i++) {
+                        processTimes(elem.Children[i], elem);
+                    }
+                }
+            };
 
-            //     if (elem.Children) {
-            //         for (var i = 0; i < elem.Children.length; i++) {
-            //             processTimes(elem.Children[i], elem);
-            //         }
-            //     }
-            // };
+            processTimes(root, null);
 
-            // processTimes(root, null);
+            // sort results by time
+            result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
 
-            // // sort results by time
-            // result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
+            function determineOverlap(gap: GapTiming, node: Timing) {
+                var overlap = 0;
+                for (var i = 0; i < node.richTiming.length; i++) {
+                    var current = node.richTiming[i];
+                    if (current.start > gap.finish) {
+                        break;
+                    }
+                    if (current.finish < gap.start) {
+                        continue;
+                    }
 
-            // function determineOverlap(gap, node: Timing) {
-            //     var overlap = 0;
-            //     for (var i = 0; i < node.richTiming.length; i++) {
-            //         var current = node.richTiming[i];
-            //         if (current.start > gap.finish) {
-            //             break;
-            //         }
-            //         if (current.finish < gap.start) {
-            //             continue;
-            //         }
+                    overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
+                }
+                return overlap;
+            };
 
-            //         overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
-            //     }
-            //     return overlap;
-            // };
+            function determineGap(gap: GapTiming, node: Timing, match: any) {
+                var overlap = determineOverlap(gap, node);
+                if (match == null || overlap > match.duration) {
+                    match = { name: node.Name, duration: overlap };
+                }
+                else if (match.name === node.Name) {
+                    match.duration += overlap;
+                }
 
-            // function determineGap(gap, node: Timing, match) {
-            //     var overlap = determineOverlap(gap, node);
-            //     if (match == null || overlap > match.duration) {
-            //         match = { name: node.Name, duration: overlap };
-            //     }
-            //     else if (match.name === node.Name) {
-            //         match.duration += overlap;
-            //     }
+                if (node.Children) {
+                    for (var i = 0; i < node.Children.length; i++) {
+                        match = determineGap(gap, node.Children[i], match);
+                    }
+                }
+                return match;
+            };
 
-            //     if (node.Children) {
-            //         for (var i = 0; i < node.Children.length; i++) {
-            //             match = determineGap(gap, node.Children[i], match);
-            //         }
-            //     }
-            //     return match;
-            // };
+            var time = 0;
+            var prev = null;
+            jQuery.each(result, function () {
+                this.prevGap = {
+                    duration: (this.StartMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: this.StartMilliseconds
+                };
 
-            // var time = 0;
-            // var prev = null;
-            // jQuery.each(result, function () {
-            //     this.prevGap = {
-            //         duration: (this.StartMilliseconds - time).toFixed(2),
-            //         start: time,
-            //         finish: this.StartMilliseconds
-            //     };
+                this.prevGap.topReason = determineGap(this.prevGap, root, null);
 
-            //     this.prevGap.topReason = determineGap(this.prevGap, root, null);
-
-            //     time = this.StartMilliseconds + this.DurationMilliseconds;
-            //     prev = this;
-            // });
+                time = this.StartMilliseconds + this.DurationMilliseconds;
+                prev = this;
+            });
 
 
-            // if (result.length > 0) {
-            //     var me = result[result.length - 1];
-            //     me.nextGap = {
-            //         duration: (root.DurationMilliseconds - time).toFixed(2),
-            //         start: time,
-            //         finish: root.DurationMilliseconds
-            //     };
-            //     me.nextGap.topReason = determineGap(me.nextGap, root, null);
-            // }
+            if (result.length > 0) {
+                var me = result[result.length - 1];
+                me.nextGap = {
+                    duration: (root.DurationMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: root.DurationMilliseconds
+                };
+                me.nextGap.topReason = determineGap(me.nextGap, root, null);
+            }
 
             return result;
         };
