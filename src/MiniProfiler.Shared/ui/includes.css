@@ -543,6 +543,7 @@ table.profiler-results-index {
   border: 0;
   border-spacing: 0;
   font-size: 12px;
+  font-family: Arial;
 }
 table.profiler-results-index tbody tr:nth-child(odd) {
   background-color: #e5e5e5;
