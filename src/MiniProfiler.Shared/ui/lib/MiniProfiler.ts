@@ -797,15 +797,6 @@ namespace StackExchange.Profiling {
             return this;
         };
 
-        getClientTimingByName = (clientTiming: ClientTimings, name: string) => {
-            for (var i = 0; i < clientTiming.Timings.length; i++) {
-                if (clientTiming.Timings[i].Name === name) {
-                    return clientTiming.Timings[i];
-                }
-            }
-            return { Name: name, Duration: '', Start: '' };
-        };
-
         renderIndent = (depth: number) => {
             var result = '';
             for (var i = 0; i < depth; i++) {
@@ -998,27 +989,32 @@ namespace StackExchange.Profiling {
                 opt = this.options = options || <Options>{};
 
             function updateGrid(id?: string) {
+                let getTiming = (profiler: Profiler, name: string) => 
+                    profiler.ClientTimings.Timings.filter((t) => t.Name === name)[0] || { Name: name, Duration: '', Start: '' };
+
                 $.ajax({
                     url: opt.path + 'results-list',
                     data: { 'last-id': id },
                     dataType: 'json',
                     type: 'GET',
                     success: function (data: Profiler[]) {
+                        var str = '';
                         data.forEach((profiler) => {
-                            $('table tbody').append(`
+                            str += (`
 <tr>
   <td><a href="${options.path}results?id=${profiler.Id}">${escape(profiler.Name)}</a></td>
   <td>${escape(profiler.MachineName)}</td>
   <td class="profiler-results-index-date">${profiler.Started}</td>
   <td>${profiler.DurationMilliseconds}</td>` + (profiler.ClientTimings ? `
-  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'requestStart').Start}</td>
-  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'responseStart').Start}</td>
-  <td>${mp.getClientTimingByName(profiler.ClientTimings, 'domComplete').Start}</td> ` : `
+  <td>${getTiming(profiler, 'requestStart').Start}</td>
+  <td>${getTiming(profiler, 'responseStart').Start}</td>
+  <td>${getTiming(profiler, 'domComplete').Start}</td> ` : `
   <td colspan="3" class="profiler-results-none">(no client timings)</td>`) + `
 </tr>`);
                         });
-                        var oldId = id;
-                        var oldData = data;
+                        $('table tbody').append(str);
+                        var oldId = id,
+                            oldData = data;
                         setTimeout(function () {
                             var newId = oldId;
                             if (oldData.length > 0) {
