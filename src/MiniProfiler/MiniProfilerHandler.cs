@@ -160,8 +160,24 @@ namespace StackExchange.Profiling
     <title>List of profiling sessions</title>
     <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
     <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.list.init({{path: '{path}', version: '{version}'}});</script>
+    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
   </head>
+  <body>
+    <table class=""profiler-results-index"">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Server</th>
+          <th>Started</th>
+          <th>Total Duration</th>
+          <th>Request Start</th>
+          <th>Response Start</th>
+          <th>Dom Complete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
 </html>";
         }
 
