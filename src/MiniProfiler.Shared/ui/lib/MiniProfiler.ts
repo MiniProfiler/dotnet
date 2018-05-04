@@ -399,7 +399,258 @@ namespace StackExchange.Profiling {
             return json;
         };
 
-        renderTemplate = (json: Profiler) => this.jq('#profilerTemplate').tmpl(this.processJson(json));
+        renderProfiler = (json: Profiler) => {
+            let p = this.processJson(json),
+                mp = this,
+                str = '';
+
+            let encode = (orig: string) => orig.replace(/&/g, "&amp;")
+                                               .replace(/</g, "&lt;")
+                                               .replace(/>/g, "&gt;")
+                                               .replace(/"/g, "&quot;")
+                                               .replace(/'/g, "&#039;");
+
+            let indent = (depth: number) => {
+                var result = '';
+                for (var i = 0; i < depth; i++) {
+                    result += '&nbsp;';
+                }
+                return result;
+            };
+            
+            let formatDuration = (duration: number | undefined) => {
+                if (duration === undefined) {
+                    return '';
+                }
+                return (duration || 0).toFixed(1);
+            };
+
+            let renderTiming = (timing: Timing) => {
+                var customTimings = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
+                let str = `
+  <tr class="${timing.IsTrivial ? 'profiler-trivial' : ''}" data-timing-id="${timing.Id}">
+    <td class="profiler-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}">
+      <span class="profiler-indent">${indent(timing.Depth)}</span> ${timing.Name.slice(0, 45)}${encode(timing.Name && timing.Name.length > 45 ? '...' : '')}
+    </td>
+    <td class="profiler-duration" title="duration of this step without any children's durations">
+      ${formatDuration(timing.DurationWithoutChildrenMilliseconds)}
+    </td>
+    <td class="profiler-duration profiler-more-columns" title="duration of this step and its children">
+      ${formatDuration(timing.DurationMilliseconds)}
+    </td>
+    <td class="profiler-duration profiler-more-columns time-from-start" title="time elapsed since profiling started">
+      <span class="profiler-unit">+</span>${formatDuration(timing.StartMilliseconds)}
+    </td>
+    ${customTimings.map(tk => timing.CustomTimings[tk] ? `
+    <td class="profiler-duration">
+      <a class="profiler-queries-show" title="${formatDuration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimings[tk].length} ${tk} calls${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
+        ${formatDuration(timing.CustomTimingStats[tk].Duration)}
+        (${timing.CustomTimings[tk].length}${(timing.HasDuplicateCustomTimings[tk] ? `<span class="profiler-warning">!</span>` : '')})
+      </a>
+    </td>` : `<td></td>`).join('')}
+  </tr>`;
+                // Append children
+                timing.Children.forEach(ct => str += renderTiming(ct));
+                return str;
+            }
+
+            let timingsTable = () => `
+        <table class="profiler-timings">
+          <thead>
+            <tr>
+              <th></th>
+              <th>duration (ms)</th>
+              <th class="profiler-more-columns">with children (ms)</th>
+              <th class="time-from-start profiler-more-columns">from start (ms)</th>
+              ${Object.keys(p.CustomTimingStats).map((k: string) => `<th title="call count">${k} (ms)</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${renderTiming(p.Root)}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"></td>
+              <td class="profiler-more-columns" colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>`;
+
+            let customTimings = () => {
+                if (!p.HasCustomTimings) {
+                    return '';
+                }
+                let str = '<table class="profiler-custom-timing-overview">';
+                Object.getOwnPropertyNames(p.CustomTimingStats).forEach(key => {
+                    let t = p.CustomTimingStats[key];
+                    str += `
+          <tr title="${t.Count} ${key.toLowerCase()} calls spent ${formatDuration(t.Duration)} ms of total request time">
+            <td class="profiler-number">
+              ${key}:
+            </td>
+            <td class="profiler-number">
+              ${formatDuration(t.Duration / p.DurationMilliseconds * 100)} <span class="profiler-unit">%</span>
+            </td>
+          </tr>`;
+                });
+                str += '</table>';
+                return str;
+            }
+
+            let clientTimings = () => {
+                if (!p.ClientTimings) {
+                    return '';
+                }
+
+                let list = [];
+                for (var i = 0; i < p.ClientTimings.Timings.length; i++) {
+                    let t: ClientTiming = p.ClientTimings.Timings[i],
+                        results = this.clientPerfTimings ? this.clientPerfTimings.filter(function (pt: TimingInfo) { return pt.name === t.Name; }) : [],
+                        info = results.length > 0 ? results[0] : null;
+
+                    list.push({
+                        isTrivial: t.Duration === 0 && !(info && info.point),
+                        name: info && info.lineDescription || t.Name,
+                        duration: info && info.point ? undefined : t.Duration,
+                        start: t.Start
+                    });
+                }
+                list.sort((a, b) => a.start - b.start);
+                
+                return `
+        <table class="profiler-timings profiler-client-timings">
+          <thead>
+            <tr>
+              <th style="text-align:left">client event</th>
+              <th>duration (ms)</th>
+              <th>from start (ms)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(t => `
+            <tr class="${(t.isTrivial ? 'profiler-trivial' : '')}">
+              <td class="profiler-label">${t.name}</td>
+              <td class="profiler-duration">
+                ${(t.duration >= 0 ? `<span class="profiler-unit"></span>${formatDuration(t.duration)}` : '')}
+              </td>
+              <td class="profiler-duration time-from-start">
+                <span class="profiler-unit">+</span>${formatDuration(t.start)}
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+            }
+
+            let profilerQueries = () => {
+                if (!p.HasCustomTimings) {
+                    return '';
+                }
+
+                let renderGap = (gap: any) =>  gap ? `
+  <tr class="profiler-gap-info ${(gap.duration < 4 ? 'profiler-trivial-gap' : '')}">
+    <td class="profiler-info">
+      ${gap.duration} <span class="profiler-unit">ms</span>
+    </td>
+    <td class="query">
+      <div>${gap.topReason.name} &mdash; ${gap.topReason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
+    </td>
+  </tr>` : '';
+
+            let renderTiming = (ct: CustomTiming, index: number) => `
+  <tr class="${(index % 2 == 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.ParentTimingId}">
+    <td>
+      <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType == ct.ExecuteType ? "" : " - " + ct.ExecuteType)}</div>
+      <div>${ct.ParentTimingName}</div>
+      <div class="profiler-number">
+        ${formatDuration(ct.DurationMilliseconds)} <span class="profiler-unit">ms (T+${formatDuration(ct.StartMilliseconds)} ms)</span>
+      </div>
+      ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${formatDuration(ct.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>` : '')}
+      ${(ct.IsDuplicate ? `<div><span class="profiler-warning">(DUPLICATE)</span></div>` : '')}
+    </td>
+    <td>
+      <div class="query">
+        <div class="profiler-stack-trace">${encode(ct.StackTraceSnippet)}</div>
+        <pre class="prettyprint lang-${encode(ct.CallType)}"><code>${encode(ct.CommandString)}</code></pre>
+      </div>
+    </td>
+  </tr>`;
+
+                return `
+    <div class="profiler-queries">
+      <table>
+      <thead>
+        <tr>
+          <th>
+            <div class="profiler-call-type">Call Type</div>
+            <div>Step</div>
+            <div>Duration <span class="profiler-unit">(from start)</span></div>
+          </th>
+          <th>
+            <div class="profiler-stack-trace">Call Stack</div>
+            <div>Command</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        ${mp.getCustomTimings(p.Root).map((ct, i) => renderGap(ct.prevGap) + renderTiming(ct, i) + renderGap(ct.nextGap)).join('')}
+      </tbody>
+      </table>
+      <p class="profiler-trivial-gap-container">
+        <a class="profiler-toggle-trivial-gaps" href="#">toggle trivial gaps</a>
+      </p>
+    </div>`;
+            }
+
+            str += `
+  <div class="profiler-result${(p.ShowTrivial ? 'show-trivial' : '')}${(p.ShowMoreColumns ? 'show-columns' : '')}">
+    <div class="profiler-button" title="${encode(p.Name)}">
+      <span class="profiler-number">
+        ${formatDuration(p.DurationMilliseconds)} <span class="profiler-unit">ms</span>
+      </span>
+      ${(p.HasDuplicateCustomTimings ? '<span class="profiler-warning">!</span>' : '')}
+    </div>
+
+    <div class="profiler-popup">
+      <div class="profiler-info">
+        <div>
+          <div class="profiler-name">${encode(p.Name)}</div>
+          <div class="profiler-machine-name">${encode(p.MachineName)}</div>
+        </div>
+        <div>
+          <div class="profiler-overall-duration">(${formatDuration(p.DurationMilliseconds)} ms)</div>
+          <div class="profiler-started">${p.Started ? p.Started.toUTCString() : ''}</div>
+        </div>
+      </div>
+      <div class="profiler-output">
+        ${timingsTable()}
+		${customTimings()}
+        ${clientTimings()}
+
+      <div class="profiler-links">
+        <a href="${this.options.path + 'results?id=' + p.Id}" class="profiler-share-profiler-results" target="_blank">share</a>
+        ${Object.keys(p.CustomLinks).map(k => `<a href="${p.CustomLinks[k]}" class="profiler-custom-link" target="_blank">${k}</a>`).join('')}
+		<span>
+          <a class="profiler-toggle-columns" title="shows additional columns">
+            more columns
+          </a>
+          <a class="profiler-toggle-columns profiler-more-columns" title="hides additional columns">
+            fewer columns
+          </a>
+          ${(p.HasTrivialTimings ? `
+            <a class="profiler-toggle-trivial" title="shows any rows with &lt; ${p.TrivialMilliseconds} ms duration">
+              show trivial
+            </a>
+            <a class="profiler-toggle-trivial profiler-trivial" title="hides any rows with &lt; ${p.TrivialMilliseconds} ms duration">
+              hide trivial
+            </a>` : '')}
+        </span>
+      </div>
+    </div>
+  </div>
+    ${profilerQueries()}
+  </div>`;
+            return $(str);
+        };
 
         buttonShow = (json: Profiler) => {
             if (!this.container) {
@@ -408,7 +659,7 @@ namespace StackExchange.Profiling {
                 return;
             }
 
-            let result = this.renderTemplate(json).addClass('new');
+            let result = this.renderProfiler(json).addClass('new');
 
             if (this.controls)
                 result.insertBefore(this.controls);
@@ -711,7 +962,7 @@ namespace StackExchange.Profiling {
                     mp.fetchTemplates(function () {
 
                         // profiler will be defined in the full page's head
-                        mp.renderTemplate(window.profiler).appendTo(mp.container);
+                        mp.renderProfiler(window.profiler).appendTo(mp.container);
                         //prettyPrint();
 
                         // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
@@ -795,41 +1046,6 @@ namespace StackExchange.Profiling {
             $(deferInit);
 
             return this;
-        };
-
-        renderIndent = (depth: number) => {
-            var result = '';
-            for (var i = 0; i < depth; i++) {
-                result += '&nbsp;';
-            }
-            return result;
-        };
-
-        shareUrl = (id: string) => {
-            return this.options.path + 'results?id=' + id;
-        };
-
-        getClientTimings = (clientTimings: ClientTimings) => {
-            if (!clientTimings.Timings) return [];
-
-            let list = [],
-                t: ClientTiming;
-
-            for (var i = 0; i < clientTimings.Timings.length; i++) {
-                t = clientTimings.Timings[i];
-                let results = this.clientPerfTimings.filter(function (pt: TimingInfo) { return pt.name === t.Name; });
-                var info = results.length > 0 ? results[0] : null;
-                list.push(
-                    {
-                        isTrivial: t.Duration === 0 && !info.point,
-                        name: info && info.lineDescription || t.Name,
-                        duration: info && info.point ? undefined : t.Duration,
-                        start: t.Start
-                    });
-            }
-
-            list.sort(function (a, b) { return a.start - b.start; });
-            return list;
         };
 
         getCustomTimings = (root: Timing) => {
@@ -969,19 +1185,6 @@ namespace StackExchange.Profiling {
 
             return result;
         };
-
-        formatDuration = (duration: number | undefined) => {
-            if (duration === undefined) {
-                return '';
-            }
-            return (duration || 0).toFixed(1);
-        };
-
-        escape = (orig: string) => orig.replace(/&/g, "&amp;")
-                                       .replace(/</g, "&lt;")
-                                       .replace(/>/g, "&gt;")
-                                       .replace(/"/g, "&quot;")
-                                       .replace(/'/g, "&#039;");
 
         listInit = (options: Options) => {
             let mp = this,
