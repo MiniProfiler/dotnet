@@ -130,7 +130,6 @@ namespace StackExchange.Profiling {
         jq: JQueryStatic = window.jQuery.noConflict();
         fetchStatus: { [id: string]: string } = {}; // so we never pull down a profiler twice
         savedJson: Profiler[] = [];
-        hasLocalStorage: boolean;
         path: string;
         clientPerfTimings: TimingInfo[] = [
             //{ name: 'navigationStart', description: 'Navigation Start' },
@@ -157,48 +156,6 @@ namespace StackExchange.Profiling {
             <TimingInfo>({ name: 'firstPaintTime', description: 'First Paint', lineDescription: 'First Paint', type: 'paint', point: true }),
             <TimingInfo>({ name: 'firstContentfulPaintTime', description: 'First Content Paint', lineDescription: 'First Content Paint', type: 'paint', point: true })
         ];
-
-        save = (keyPrefix: string, value: string) => {
-            if (!this.hasLocalStorage) { return; }
-
-            // clear old keys with this prefix, if any
-            for (var i = 0; i < localStorage.length; i++) {
-                if ((localStorage.key(i) || '').indexOf(keyPrefix) > -1) {
-                    localStorage.removeItem(localStorage.key(i));
-                }
-            }
-
-            // save under this version
-            localStorage[keyPrefix + '-' + this.options.version] = value;
-        };
-
-        load = (keyPrefix: string) => {
-            // for local dev, allow easy bypassing of cache
-            if (!this.hasLocalStorage || window.location.href.indexOf('mpnocache=') > -1) { return null; }
-
-            return localStorage[keyPrefix + '-' + this.options.version];
-        };
-
-        fetchTemplates = (success: Function) => {
-            let key = 'templates',
-                mp = this,
-                cached = mp.load(key),
-                $ = mp.jq;
-
-            if (cached) {
-                $('body').append(cached);
-                success();
-            }
-            else {
-                $.get(this.options.path + 'includes.tmpl?v=' + this.options.version, function (data: string) {
-                    if (data) {
-                        mp.save(key, data);
-                        $('body').append(data);
-                        success();
-                    }
-                });
-            }
-        };
 
         populatePerformanceTimings = (results: ResultRequest) => {
             if (window.performance && window.performance.timing) {
@@ -926,16 +883,6 @@ namespace StackExchange.Profiling {
             var script = this.jq('#mini-profiler');
             if (!script.length) return;
 
-            try {
-                if ('localStorage' in window && window.localStorage !== null) {
-                    window.localStorage.setItem('__localStorageTest__', '1');
-                    window.localStorage.removeItem('__localStorageTest__');
-                }
-                this.hasLocalStorage = true;
-            } catch (e) {
-                this.hasLocalStorage = false;
-            }
-
             let mp = this;
             var data = script.data();
 
@@ -958,17 +905,13 @@ namespace StackExchange.Profiling {
 
             function doInit() {
                 function initFullView() {
-                    // first, get jquery tmpl, then render and bind handlers
-                    mp.fetchTemplates(function () {
+                    // profiler will be defined in the full page's head
+                    mp.renderProfiler(window.profiler).appendTo(mp.container);
+                    //prettyPrint();
 
-                        // profiler will be defined in the full page's head
-                        mp.renderProfiler(window.profiler).appendTo(mp.container);
-                        //prettyPrint();
-
-                        // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
-                        $('.profiler-popup').find('.profiler-queries-show').click(function () {
-                            mp.scrollToQuery($(this), $('.profiler-queries'), $(document));
-                        });
+                    // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
+                    $('.profiler-popup').find('.profiler-queries-show').click(function () {
+                        mp.scrollToQuery($(this), $('.profiler-queries'), $(document));
                     });
                 };
 
@@ -983,11 +926,9 @@ namespace StackExchange.Profiling {
                         // initialize the controls
                         mp.initControls(mp.container);
 
-                        // we'll render results JSON via a jquery.tmpl - after we get the templates, we'll fetch the initial JSON to populate it
-                        mp.fetchTemplates(function () {
-                            // get master page profiler results
-                            mp.fetchResults(mp.options.ids);
-                        });
+                        // fetch and render results
+                        mp.fetchResults(mp.options.ids);
+
                         if (mp.options.startHidden) {
                             mp.container.hide();
                         }

@@ -134,9 +134,6 @@ namespace StackExchange.Profiling
                 case ".css":
                     response.ContentType = "text/css";
                     break;
-                case ".tmpl":
-                    response.ContentType = "text/x-jquery-tmpl";
-                    break;
                 default:
                     return NotFound(context);
             }
