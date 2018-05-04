@@ -717,7 +717,7 @@ namespace StackExchange.Profiling {
                             popup.css({ 'bottom': 0, 'max-height': 'calc(100vh - ' + (bottom + 25) + 'px)' });
                         }
                         else {
-                            popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top + 25) + 'px)' });
+                            popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top - $(window).scrollTop() + 25) + 'px)' });
                         }
                     }
                 }).on('click', '.profiler-queries-show', function (e) {
