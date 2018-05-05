@@ -1,0 +1,16 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "max-classes-per-file": false,
+        "max-line-length": false,
+        "new-parens": true,
+        "no-arg": true,
+        "no-bitwise": true,
+        "no-conditional-assignment": true,
+        "no-consecutive-blank-lines": false,
+        "no-console": [true, "log", "error"],
+        "no-namespace": false,
+        "object-literal-sort-keys": false,
+        "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+    }
+}

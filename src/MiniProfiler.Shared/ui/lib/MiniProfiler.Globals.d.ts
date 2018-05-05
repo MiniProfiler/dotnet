@@ -13,7 +13,7 @@
         angular: any;
         axios: any;
         xhr: any;
-        profiler: StackExchange.Profiling.Profiler;
+        profiler: StackExchange.Profiling.IProfiler;
         MiniProfiler: StackExchange.Profiling.MiniProfiler;
         WebForm_ExecuteCallback(object: any): void;
     }
