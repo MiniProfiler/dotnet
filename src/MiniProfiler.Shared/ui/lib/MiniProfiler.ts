@@ -109,11 +109,89 @@ namespace StackExchange.Profiling {
         version: string;
     }
 
-    interface ResultRequest {
+    enum RenderMode {
+        Full,
+        Corner
+    }
+
+    class ResultRequest {
         Id: string;
         Performance?: ClientTiming[];
         Probes?: ClientTiming[];
         RedirectCount?: number;
+        constructor(id: string, perfTimings: TimingInfo[]) {
+            this.Id = id;
+            if (perfTimings && window.performance && window.performance.timing) {
+                const resource = window.performance.timing,
+                    start = resource.fetchStart;
+
+                this.Performance = perfTimings
+                    .filter((current) => resource[current.name])
+                    .map((current, i) => ({ item: current, index: i }))
+                    .sort((a, b) => resource[a.item.name] - resource[b.item.name] || a.index - b.index)
+                    .map(function (x, i, sorted) {
+                        const current = x.item,
+                              next = i + 1 < sorted.length ? sorted[i + 1].item : null;
+                        return {
+                            ...current,
+                            ...{
+                                startTime: resource[current.name] - start,
+                                timeTaken: !next ? 0 : (resource[next.name] - resource[current.name]),
+                            }
+                        };
+                    })
+                    .map((item, i) => ({
+                        Name: item.name,
+                        Start: item.startTime,
+                        Duration: item.point ? undefined : item.timeTaken
+                    }));
+
+                if (window.performance.navigation) {
+                    this.RedirectCount = window.performance.navigation.redirectCount;
+                }
+
+                if (window.mPt) {
+                    const pResults = window.mPt.results();
+                    this.Probes = Object.keys(pResults).map(k => pResults[k].start && pResults[k].end
+                        ? {
+                            Name: k,
+                            Start: pResults[k].start - start,
+                            Duration: pResults[k].end - pResults[k].start
+                        } : null).filter(v => v);
+                    window.mPt.flush();
+                }
+
+                if (window.performance.getEntriesByType && window.PerformancePaintTiming) {
+                    const entries = window.performance.getEntriesByType('paint');
+                    let firstPaint, firstContentPaint;
+                    for (let k = 0; k < entries.length; k++) {
+                        const entry = entries[k];
+                        switch (entry.name) {
+                            case 'first-paint':
+                                firstPaint = new ClientTiming('firstPaintTime', Math.round(entry.startTime));
+                                this.Performance.push(firstPaint);
+                                break;
+                            case 'first-contentful-paint':
+                                firstContentPaint = new ClientTiming('firstContentfulPaintTime', Math.round(entry.startTime));
+                                break;
+                        }
+                    }
+                    if (firstPaint && firstContentPaint && firstContentPaint.Start > firstPaint.Start) {
+                        this.Performance.push(firstContentPaint);
+                    }
+
+                } else if (window.chrome && window.chrome.loadTimes) {
+                    // fallback to Chrome timings
+                    const chromeTimes = window.chrome.loadTimes();
+                    if (chromeTimes.firstPaintTime) {
+                        this.Performance.push(new ClientTiming('firstPaintTime', Math.round(chromeTimes.firstPaintTime * 1000 - start)));
+                    }
+                    if (chromeTimes.firstPaintAfterLoadTime && chromeTimes.firstPaintAfterLoadTime > chromeTimes.firstPaintTime) {
+                        this.Performance.push(new ClientTiming('firstPaintAfterLoadTime', Math.round(chromeTimes.firstPaintAfterLoadTime * 1000 - start)));
+                    }
+                }
+            }
+        };
     }
 
     // Gaps
@@ -157,147 +235,67 @@ namespace StackExchange.Profiling {
             <TimingInfo>({ name: 'firstContentfulPaintTime', description: 'First Content Paint', lineDescription: 'First Content Paint', type: 'paint', point: true })
         ];
 
-        populatePerformanceTimings = (results: ResultRequest) => {
-            if (window.performance && window.performance.timing) {
-                let resource = window.performance.timing,
-                    start = resource.fetchStart,
-                    $ = this.jq;
-
-                results.Performance = this.clientPerfTimings
-                    .filter(function (current) { return resource[current.name] })
-                    .map(function (current, i) { return { item: current, index: i } })
-                    .sort(function (a, b) { return resource[a.item.name] - resource[b.item.name] || a.index - b.index; })
-                    .map(function (x, i, sorted) {
-                        var current = x.item;
-                        var next = i + 1 < sorted.length ? sorted[i + 1].item : null;
-                        // TODO: var clone { ...current };
-                        return $.extend({
-                            startTime: resource[current.name] - start,
-                            timeTaken: !next ? 0 : (resource[next.name] - resource[current.name]),
-                        }, current);
-                    })
-                    .map(function (item, i) {
-                        return {
-                            Name: item.name,
-                            Start: item.startTime,
-                            Duration: item.point ? undefined : item.timeTaken
-                        };
-                    });
-
-                if (window.performance.navigation) {
-                    results.RedirectCount = window.performance.navigation.redirectCount;
-                }
-
-                if (window.mPt) {
-                    var pResults = window.mPt.results();
-                    results.Probes = [];
-                    for (var k in pResults) {
-                        var result = pResults[k];
-                        if (result.start && result.end) {
-                            results.Probes.push({ Name: k, Start: result.start - start, Duration: result.end - result.start });
-                        }
-                    }
-                    window.mPt.flush();
-                }
-
-                if (window.performance.getEntriesByType && window.PerformancePaintTiming) {
-                    var entries = window.performance.getEntriesByType('paint');
-                    for (let k = 0; k < entries.length; k++) {
-                        var entry = entries[k];
-                        switch (entry.name) {
-                            case 'first-paint':
-                                var firstPaint = new ClientTiming('firstPaintTime', Math.round(entry.startTime));
-                                results.Performance.push(firstPaint);
-                                break;
-                            case 'first-contentful-paint':
-                                var firstContentPaint = new ClientTiming('firstContentfulPaintTime', Math.round(entry.startTime));
-                                break;
-                        }
-                    }
-                    if (firstPaint && firstContentPaint && firstContentPaint.Start > firstPaint.Start) {
-                        results.Performance.push(firstContentPaint);
-                    }
-
-                } else if (window.chrome && window.chrome.loadTimes) {
-                    // fallback to Chrome timings
-                    var chromeTimes = window.chrome.loadTimes();
-                    if (chromeTimes.firstPaintTime) {
-                        results.Performance.push(new ClientTiming('firstPaintTime', Math.round(chromeTimes.firstPaintTime * 1000 - start)));
-                    }
-                    if (chromeTimes.firstPaintAfterLoadTime && chromeTimes.firstPaintAfterLoadTime > chromeTimes.firstPaintTime) {
-                        results.Performance.push(new ClientTiming('firstPaintAfterLoadTime', Math.round(chromeTimes.firstPaintAfterLoadTime * 1000 - start)));
-                    }
-                }
-            }
-        }
-
         fetchResults = (ids: string[]) => {
-            let $ = this.jq;
-            if (!ids) {
-                return;
-            }
+            for (let i = 0; ids && i < ids.length; i++) {
+                const id = ids[i],
+                    request = new ResultRequest(id, id === this.options.currentId ? this.clientPerfTimings : null),
+                    mp = this;
 
-            for (let i = 0; i < ids.length; i++) {
-                var id = ids[i],
-                    request: ResultRequest = { Id: id };
-
-                if (id === this.options.currentId) {
-                    this.populatePerformanceTimings(request);
+                if (mp.fetchStatus.hasOwnProperty(id)) {
+                    continue; // already fetching
                 }
 
-                let mp = this;
-                let fs = this.fetchStatus;
+                const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/,
+                      parseDates = (key: string, value: any) =>
+                          key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
 
-                if (!fs.hasOwnProperty(id)) {
-                    fs[id] = 'Starting fetch';
-
-                    $.ajax({
-                        url: this.options.path + 'results',
-                        data: JSON.stringify(request),
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        type: 'POST',
-                        success: function (json: Profiler | string) {
-                            fs[id] = 'Fetch succeeded';
-                            if (json instanceof String) {
-                                // hidden
-                            } else {
-                                mp.buttonShow(<Profiler>json);
-                            }
-                        },
-                        complete: function () {
-                            fs[id] = 'Fetch complete';
+                mp.fetchStatus[id] = 'Starting fetch';
+                this.jq.ajax({
+                    url: this.options.path + 'results',
+                    data: JSON.stringify(request),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    type: 'POST',
+                    converters: {
+                        'text json': (result) => JSON.parse(result, parseDates)
+                    },
+                    success: function (json: Profiler | string) {
+                        mp.fetchStatus[id] = 'Fetch succeeded';
+                        if (json instanceof String) {
+                            // hidden
+                        } else {
+                            mp.buttonShow(<Profiler>json);
                         }
-                    });
-                }
+                    },
+                    complete: function () {
+                        mp.fetchStatus[id] = 'Fetch complete';
+                    }
+                });
             }
         };
 
         processJson = (profiler: Profiler) => {
 
-            let json: any = { ...profiler },
+            const json: Profiler = { ...profiler },
                 mp = this;
 
+            // TODO: nuke
             json.HasDuplicateCustomTimings = false;
             json.HasCustomTimings = false;
             json.HasTrivialTimings = false;
-            json.ShowMoreColumns = this.options.showChildrenTime;
-            json.ShowTrivial = this.options.showTrivial;
             json.CustomTimingStats = {};
             json.CustomLinks = json.CustomLinks || {};
-            json.TrivialMilliseconds = this.options.trivialMilliseconds;
             json.Root.ParentTimingId = json.Id;
-            json.Started = new Date(json.Started);
 
             function processTiming(json: Profiler, timing: Timing, depth: number) {
                 timing.DurationWithoutChildrenMilliseconds = timing.DurationMilliseconds;
                 timing.Depth = depth;
-                timing.HasCustomTimings = timing.CustomTimings ? true : false;
+                timing.HasCustomTimings = !!timing.CustomTimings;
                 timing.HasDuplicateCustomTimings = {};
                 json.HasCustomTimings = json.HasCustomTimings || timing.HasCustomTimings;
 
                 if (timing.Children) {
-                    for (var i = 0; i < timing.Children.length; i++) {
+                    for (let i = 0; i < timing.Children.length; i++) {
                         timing.Children[i].ParentTimingId = timing.Id;
                         processTiming(json, timing.Children[i], depth + 1);
                         timing.DurationWithoutChildrenMilliseconds -= timing.Children[i].DurationMilliseconds;
@@ -316,13 +314,13 @@ namespace StackExchange.Profiling {
 
                 if (timing.CustomTimings) {
                     timing.CustomTimingStats = {};
-                    for (var customType in timing.CustomTimings) {
-                        var customTimings = timing.CustomTimings[customType];
-                        var customStat = {
-                            Duration: 0,
-                            Count: 0
-                        };
-                        var duplicates: { [id: string]: boolean } = {};
+                    for (let customType in timing.CustomTimings) {
+                        const customTimings = timing.CustomTimings[customType],
+                              customStat = {
+                                  Duration: 0,
+                                  Count: 0
+                              };
+                        const duplicates: { [id: string]: boolean } = {};
                         for (let i = 0; i < customTimings.length; i++) {
                             const customTiming: CustomTiming = customTimings[i];
                             customTiming.ParentTimingId = timing.Id;
@@ -357,22 +355,14 @@ namespace StackExchange.Profiling {
         };
 
         renderProfiler = (json: Profiler) => {
-            let p = this.processJson(json),
+            const p = this.processJson(json),
                 mp = this,
-                str = '',
                 encode = (orig: string) => orig
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;")
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#039;"),
-                indent = (depth: number) => {
-                    var result = '';
-                    for (var i = 0; i < depth; i++) {
-                        result += '&nbsp;';
-                    }
-                    return result;
-                },
                 duration = (duration: number | undefined) => {
                     if (duration === undefined) {
                         return '';
@@ -380,12 +370,12 @@ namespace StackExchange.Profiling {
                     return (duration || 0).toFixed(1);
                 };
 
-            let renderTiming = (timing: Timing) => {
-                var customTimings = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
+            const renderTiming = (timing: Timing) => {
+                const customTimings = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
                 let str = `
   <tr class="${timing.IsTrivial ? 'profiler-trivial' : ''}" data-timing-id="${timing.Id}">
-    <td class="profiler-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}">
-      <span class="profiler-indent">${indent(timing.Depth)}</span> ${encode(timing.Name.slice(0, 45))}${encode(timing.Name && timing.Name.length > 45 ? '...' : '')}
+    <td class="profiler-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth*11}px;"` : ``}>
+      ${encode(timing.Name.slice(0, 45))}${encode(timing.Name && timing.Name.length > 45 ? '...' : '')}
     </td>
     <td class="profiler-duration" title="duration of this step without any children's durations">
       ${duration(timing.DurationWithoutChildrenMilliseconds)}
@@ -407,9 +397,9 @@ namespace StackExchange.Profiling {
                 // Append children
                 timing.Children.forEach(ct => str += renderTiming(ct));
                 return str;
-            }
+            };
 
-            let timingsTable = () => `
+            const timingsTable = `
         <table class="profiler-timings">
           <thead>
             <tr>
@@ -431,47 +421,42 @@ namespace StackExchange.Profiling {
           </tfoot>
         </table>`;
 
-            let customTimings = () => {
+            const customTimings = () => {
                 if (!p.HasCustomTimings) {
                     return '';
                 }
-                let str = '<table class="profiler-custom-timing-overview">';
-                Object.getOwnPropertyNames(p.CustomTimingStats).forEach(key => {
-                    let t = p.CustomTimingStats[key];
-                    str += `
-          <tr title="${t.Count} ${encode(key.toLowerCase())} calls spent ${duration(t.Duration)} ms of total request time">
+                return `
+        <table class="profiler-custom-timing-overview">
+            ${Object.getOwnPropertyNames(p.CustomTimingStats).map(key => `
+          <tr title="${p.CustomTimingStats[key].Count} ${encode(key.toLowerCase())} calls spent ${duration(p.CustomTimingStats[key].Duration)} ms of total request time">
             <td class="profiler-number">
               ${encode(key)}:
             </td>
             <td class="profiler-number">
-              ${duration(t.Duration / p.DurationMilliseconds * 100)} <span class="profiler-unit">%</span>
+              ${duration(p.CustomTimingStats[key].Duration / p.DurationMilliseconds * 100)} <span class="profiler-unit">%</span>
             </td>
-          </tr>`;
-                });
-                str += '</table>';
-                return str;
-            }
+          </tr>`).join('')}
+        </table>`;
+            };
 
-            let clientTimings = () => {
+            function clientTimings() {
                 if (!p.ClientTimings) {
                     return '';
                 }
 
-                let list = [];
-                for (var i = 0; i < p.ClientTimings.Timings.length; i++) {
-                    let t: ClientTiming = p.ClientTimings.Timings[i],
-                        results = this.clientPerfTimings ? this.clientPerfTimings.filter(function (pt: TimingInfo) { return pt.name === t.Name; }) : [],
+                const list = p.ClientTimings.Timings.map(t => {
+                    const results = this.clientPerfTimings ? this.clientPerfTimings.filter(function (pt: TimingInfo) { return pt.name === t.Name; }) : [],
                         info = results.length > 0 ? results[0] : null;
 
-                    list.push({
+                    return {
                         isTrivial: t.Duration === 0 && !(info && info.point),
                         name: info && info.lineDescription || t.Name,
                         duration: info && info.point ? undefined : t.Duration,
                         start: t.Start
-                    });
-                }
+                    };
+                });
                 list.sort((a, b) => a.start - b.start);
-                
+
                 return `
         <table class="profiler-timings profiler-client-timings">
           <thead>
@@ -496,12 +481,13 @@ namespace StackExchange.Profiling {
         </table>`;
             }
 
-            let profilerQueries = () => {
+            function profilerQueries() {
                 if (!p.HasCustomTimings) {
                     return '';
                 }
 
-                let renderGap = (gap: any) =>  gap ? `
+                const cts = mp.getCustomTimings(p.Root),
+                      renderGap = (gap: any) => gap ? `
   <tr class="profiler-gap-info ${(gap.duration < 4 ? 'profiler-trivial-gap' : '')}">
     <td class="profiler-info">
       ${gap.duration} <span class="profiler-unit">ms</span>
@@ -509,46 +495,46 @@ namespace StackExchange.Profiling {
     <td class="query">
       <div>${encode(gap.topReason.name)} &mdash; ${gap.topReason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
     </td>
-  </tr>` : '';
-
-            let renderTiming = (ct: CustomTiming, index: number) => `
-  <tr class="${(index % 2 == 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.ParentTimingId}">
-    <td>
-      <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType == ct.ExecuteType ? "" : " - " + ct.ExecuteType)}</div>
-      <div>${encode(ct.ParentTimingName)}</div>
-      <div class="profiler-number">
-        ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
-      </div>
-      ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>` : '')}
-      ${(ct.IsDuplicate ? `<div><span class="profiler-warning">(DUPLICATE)</span></div>` : '')}
-    </td>
-    <td>
-      <div class="query">
-        <div class="profiler-stack-trace">${encode(ct.StackTraceSnippet)}</div>
-        <pre class="prettyprint lang-${encode(ct.CallType)}"><code>${encode(ct.CommandString)}</code></pre>
-      </div>
-    </td>
-  </tr>`;
+  </tr>` : ``;
 
                 return `
     <div class="profiler-queries">
       <table>
-      <thead>
-        <tr>
-          <th>
-            <div class="profiler-call-type">Call Type</div>
-            <div>Step</div>
-            <div>Duration <span class="profiler-unit">(from start)</span></div>
-          </th>
-          <th>
-            <div class="profiler-stack-trace">Call Stack</div>
-            <div>Command</div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        ${mp.getCustomTimings(p.Root).map((ct, i) => renderGap(ct.prevGap) + renderTiming(ct, i) + renderGap(ct.nextGap)).join('')}
-      </tbody>
+        <thead>
+          <tr>
+            <th>
+              <div class="profiler-call-type">Call Type</div>
+              <div>Step</div>
+              <div>Duration <span class="profiler-unit">(from start)</span></div>
+            </th>
+            <th>
+              <div class="profiler-stack-trace">Call Stack</div>
+              <div>Command</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          ${cts.map((ct, index) => `
+            ${renderGap(ct.prevGap)}
+            <tr class="${(index % 2 == 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.ParentTimingId}">
+              <td>
+                <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType == ct.ExecuteType ? "" : " - " + ct.ExecuteType)}</div>
+                <div>${encode(ct.ParentTimingName)}</div>
+                <div class="profiler-number">
+                  ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
+                </div>
+                ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>` : '')}
+                ${(ct.IsDuplicate ? `<div><span class="profiler-warning">(DUPLICATE)</span></div>` : '')}
+              </td>
+              <td>
+                <div class="query">
+                  <div class="profiler-stack-trace">${encode(ct.StackTraceSnippet)}</div>
+                  <pre class="prettyprint lang-${encode(ct.CallType)}"><code>${encode(ct.CommandString)}</code></pre>
+                </div>
+              </td>
+            </tr>
+            ${renderGap(ct.nextGap)}`).join('')}
+        </tbody>
       </table>
       <p class="profiler-trivial-gap-container">
         <a class="profiler-toggle-trivial-gaps" href="#">toggle trivial gaps</a>
@@ -556,15 +542,12 @@ namespace StackExchange.Profiling {
     </div>`;
             }
 
-            str += `
-  <div class="profiler-result${(p.ShowTrivial ? 'show-trivial' : '')}${(p.ShowMoreColumns ? 'show-columns' : '')}">
+            return mp.jq(`
+  <div class="profiler-result${(this.options.showTrivial ? 'show-trivial' : '')}${(this.options.showChildrenTime ? 'show-columns' : '')}">
     <div class="profiler-button" title="${encode(p.Name)}">
-      <span class="profiler-number">
-        ${duration(p.DurationMilliseconds)} <span class="profiler-unit">ms</span>
-      </span>
+      <span class="profiler-number">${duration(p.DurationMilliseconds)} <span class="profiler-unit">ms</span></span>
       ${(p.HasDuplicateCustomTimings ? `<span class="profiler-warning">!</span>` : '')}
     </div>
-
     <div class="profiler-popup">
       <div class="profiler-info">
         <div>
@@ -577,26 +560,24 @@ namespace StackExchange.Profiling {
         </div>
       </div>
       <div class="profiler-output">
-        ${timingsTable()}
+        ${timingsTable}
 		${customTimings()}
         ${clientTimings()}
-
-      <div class="profiler-links">
-        <a href="${this.options.path + 'results?id=' + p.Id}" class="profiler-share-profiler-results" target="_blank">share</a>
-        ${Object.keys(p.CustomLinks).map(k => `<a href="${p.CustomLinks[k]}" class="profiler-custom-link" target="_blank">${k}</a>`).join('')}
-		<span>
-          <a class="profiler-toggle-columns" title="shows additional columns">more columns</a>
-          <a class="profiler-toggle-columns profiler-more-columns" title="hides additional columns">fewer columns</a>
-          ${(p.HasTrivialTimings ? `
-            <a class="profiler-toggle-trivial" title="shows any rows with &lt; ${p.TrivialMilliseconds} ms duration">show trivial</a>
-            <a class="profiler-toggle-trivial profiler-trivial" title="hides any rows with &lt; ${p.TrivialMilliseconds} ms duration">hide trivial</a>` : '')}
-        </span>
+        <div class="profiler-links">
+          <a href="${this.options.path}results?id=${p.Id}" class="profiler-share-profiler-results" target="_blank">share</a>
+          ${Object.keys(p.CustomLinks).map(k => `<a href="${p.CustomLinks[k]}" class="profiler-custom-link" target="_blank">${k}</a>`).join('')}
+  		  <span>
+            <a class="profiler-toggle-columns" title="shows additional columns">more columns</a>
+            <a class="profiler-toggle-columns profiler-more-columns" title="hides additional columns">fewer columns</a>
+            ${(p.HasTrivialTimings ? `
+            <a class="profiler-toggle-trivial" title="shows any rows with &lt; ${this.options.trivialMilliseconds} ms duration">show trivial</a>
+            <a class="profiler-toggle-trivial profiler-trivial" title="hides any rows with &lt; ${this.options.trivialMilliseconds} ms duration">hide trivial</a>` : '')}
+          </span>
+        </div>
       </div>
     </div>
-  </div>
     ${profilerQueries()}
-  </div>`;
-            return mp.jq(str);
+  </div>`);
         };
 
         buttonShow = (json: Profiler) => {
@@ -618,16 +599,18 @@ namespace StackExchange.Profiling {
         };
 
         scrollToQuery = (link: JQuery, queries: JQuery, whatToScroll: JQuery) => {
-            var id = link.closest('tr').data('timing-id'),
-                rows = queries.find('tr[data-timing-id="' + id + '"]').addClass('highlight');
+            const id = link.closest('tr').data('timing-id'),
+                  rows = queries.find('tr[data-timing-id="' + id + '"]').addClass('highlight');
 
             // ensure they're in view
             whatToScroll.scrollTop(whatToScroll.scrollTop() + rows.position().top - 100);
         };
 
         // some elements want to be hidden on certain doc events
-        bindDocumentEvents = () => {
-            let $ = this.jq;
+        bindDocumentEvents = (mode: RenderMode) => {
+            const mp = this,
+                $ = this.jq;
+            // Common handlers
             $(document)
                 .on('click', '.profiler-toggle-trivial', function (e) {
                     e.preventDefault();
@@ -640,63 +623,66 @@ namespace StackExchange.Profiling {
                     $(this).closest('.profiler-queries').find('.profiler-trivial-gap').toggle();
                 });
 
-            // Don't handle below in the full page HTML view
-            if ($('.profiler-result-full').length) {
-                return;
-            }
-            var mp = this;
-            $(document)
-                .on('click', '.profiler-button', function (e) {
-                    var button = $(this),
-                        popup = button.siblings('.profiler-popup'),
-                        wasActive = button.parent().hasClass('active');
+            // Full vs. Corner handlers
+            if (mode === RenderMode.Full) {
+                // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
+                $(document).on('click', '.profiler-popup .profiler-queries-show', function () {
+                    mp.scrollToQuery($(this), $('.profiler-queries'), $(document));
+                });
+            } else {
+                $(document)
+                    .on('click', '.profiler-button', function (e) {
+                        const button = $(this),
+                              popup = button.siblings('.profiler-popup'),
+                              wasActive = button.parent().hasClass('active');
 
-                    button.parent().removeClass('new').toggleClass('active')
-                        .siblings('.active').removeClass('active');
+                        button.parent().removeClass('new').toggleClass('active')
+                            .siblings('.active').removeClass('active');
 
-                    if (!wasActive) {
-                        // move left or right, based on config
-                        popup.css(mp.options.renderPosition.indexOf('left') != -1 ? 'left' : 'right', button.outerWidth() - 1);
+                        if (!wasActive) {
+                            // move left or right, based on config
+                            popup.css(mp.options.renderPosition.indexOf('left') != -1 ? 'left' : 'right', button.outerWidth() - 1);
 
-                        // is this rendering on the bottom (if no, then is top by default)
-                        if (mp.options.renderPosition.indexOf('bottom') != -1) {
-                            var bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(); // get bottom of button
-                            popup.css({ 'bottom': 0, 'max-height': 'calc(100vh - ' + (bottom + 25) + 'px)' });
-                        }
-                        else {
-                            popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top - $(window).scrollTop() + 25) + 'px)' });
-                        }
-                    }
-                }).on('click', '.profiler-queries-show', function (e) {
-                    // opaque background
-                    var overlay = $('<div class="profiler-overlay"><div class="profiler-overlay-bg"/></div>').appendTo('body');
-                    var queries = $(this).closest('.profiler-result').find('.profiler-queries').clone().appendTo(overlay).show();
-
-                    mp.scrollToQuery($(this), queries, queries);
-
-                    // syntax highlighting
-                    //prettyPrint();
-                }).on('click keyup', function (e) {
-                    var active = $('.profiler-result.active');
-                    if (active.length) {
-                        var bg = $('.profiler-overlay'),
-                            isEscPress = e.type === 'keyup' && e.which === 27,
-                            isBgClick = e.type === 'click' && !$(e.target).closest('.profiler-queries, .profiler-results').length
-
-                        if (isEscPress || isBgClick) {
-                            if (bg.is(':visible')) {
-                                bg.remove();
+                            // is this rendering on the bottom (if no, then is top by default)
+                            if (mp.options.renderPosition.indexOf('bottom') != -1) {
+                                const bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(); // get bottom of button
+                                popup.css({ 'bottom': 0, 'max-height': 'calc(100vh - ' + (bottom + 25) + 'px)' });
                             }
                             else {
-                                active.removeClass('active');
+                                popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top - $(window).scrollTop() + 25) + 'px)' });
                             }
                         }
-                    }
-                });
-            if (mp.options.toggleShortcut && !mp.options.toggleShortcut.match(/^None$/i)) {
-                $(document).bind('keydown', mp.options.toggleShortcut, function (e) {
-                    $('.profiler-results').toggle();
-                });
+                    }).on('click', '.profiler-queries-show', function (e) {
+                        // opaque background
+                        const overlay = $('<div class="profiler-overlay"><div class="profiler-overlay-bg"/></div>').appendTo('body');
+                        const queries = $(this).closest('.profiler-result').find('.profiler-queries').clone().appendTo(overlay).show();
+
+                        mp.scrollToQuery($(this), queries, queries);
+
+                        // syntax highlighting
+                        //prettyPrint();
+                    }).on('click keyup', function (e) {
+                        const active = $('.profiler-result.active');
+                        if (active.length) {
+                            const bg = $('.profiler-overlay'),
+                                  isEscPress = e.type === 'keyup' && e.which === 27,
+                                  isBgClick = e.type === 'click' && !$(e.target).closest('.profiler-queries, .profiler-results').length
+
+                            if (isEscPress || isBgClick) {
+                                if (bg.is(':visible')) {
+                                    bg.remove();
+                                }
+                                else {
+                                    active.removeClass('active');
+                                }
+                            }
+                        }
+                    });
+                if (mp.options.toggleShortcut && !mp.options.toggleShortcut.match(/^None$/i)) {
+                    $(document).bind('keydown', mp.options.toggleShortcut, function (e) {
+                        $('.profiler-results').toggle();
+                    });
+                }
             }
         };
 
@@ -753,7 +739,7 @@ namespace StackExchange.Profiling {
             }
 
             // we need to attach our AJAX complete handler to the window's (profiled app's) copy, not our internal, no conflict version
-            var window$ = window.jQuery;
+            const window$ = window.jQuery;
 
             // fetch profile results for any AJAX calls
             if (window$ && window$(document) && window$(document).ajaxComplete) {
@@ -764,12 +750,9 @@ namespace StackExchange.Profiling {
 
             // fetch results after ASP Ajax calls
             if (typeof (Sys) != 'undefined' && typeof (Sys.WebForms) != 'undefined' && typeof (Sys.WebForms.PageRequestManager) != 'undefined') {
-                // Get the instance of PageRequestManager.
-                var PageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
-
-                PageRequestManager.add_endRequest(function (sender: any, args: any) {
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender: any, args: any) {
                     if (args) {
-                        var response = args.get_response();
+                        const response = args.get_response();
                         if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
                             handleXHR(response);
                         }
@@ -780,7 +763,7 @@ namespace StackExchange.Profiling {
             if (typeof (Sys) != 'undefined' && typeof (Sys.Net) != 'undefined' && typeof (Sys.Net.WebRequestManager) != 'undefined') {
                 Sys.Net.WebRequestManager.add_completedRequest(function (sender: any, args: any) {
                     if (sender) {
-                        var webRequestExecutor = sender;
+                        const webRequestExecutor = sender;
                         if (webRequestExecutor.get_responseAvailable()) {
                             handleXHR(webRequestExecutor);
                         }
@@ -792,7 +775,7 @@ namespace StackExchange.Profiling {
             if (typeof (window.WebForm_ExecuteCallback) === "function") {
                 window.WebForm_ExecuteCallback = (function (callbackObject: any) {
                     // Store original function
-                    var original = window.WebForm_ExecuteCallback;
+                    const original = window.WebForm_ExecuteCallback;
 
                     return function (callbackObject: any) {
                         original(callbackObject);
@@ -819,7 +802,7 @@ namespace StackExchange.Profiling {
 
             // add support for AngularJS, which uses the basic XMLHttpRequest object.
             if ((window.angular || window.axios || window.xhr) && typeof (XMLHttpRequest) !== 'undefined') {
-                var _send = XMLHttpRequest.prototype.send;
+                const _send = XMLHttpRequest.prototype.send;
 
                 XMLHttpRequest.prototype.send = function sendReplacement(data) {
                     if (this.onreadystatechange) {
@@ -857,7 +840,7 @@ namespace StackExchange.Profiling {
 
             // wrap fetch
             if (window.fetch) {
-                var windowFetch = window.fetch;
+                const windowFetch = window.fetch;
                 window.fetch = function (input, init) {
                     return windowFetch(input, init).then(function (response) {
                         handleIds(response.headers.get('X-MiniProfiler-Ids'));
@@ -869,12 +852,13 @@ namespace StackExchange.Profiling {
 
         init = (): MiniProfiler => {
             this.jq = jQuery.noConflict(true);
-            let $ = this.jq;
-            var script = this.jq('#mini-profiler');
-            if (!script.length) return;
+            const mp = this,
+                  $ = this.jq,
+                  script = this.jq('#mini-profiler');
 
-            let mp = this;
-            var data = script.data();
+            if (!script.length) return;
+            
+            const data = script.data();
 
             this.options = {
                 ids: data.ids.split(','),
@@ -894,18 +878,7 @@ namespace StackExchange.Profiling {
             };
 
             function doInit() {
-                let initFullView = () => {
-                    // profiler will be defined in the full page's head
-                    mp.renderProfiler(window.profiler).appendTo(mp.container);
-                    //prettyPrint();
-
-                    // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
-                    $('.profiler-popup').find('.profiler-queries-show').click(function () {
-                        mp.scrollToQuery($(this), $('.profiler-queries'), $(document));
-                    });
-                };
-
-                let initPopupView = () => {
+                const initPopupView = () => {
                     if (mp.options.authorized) {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
@@ -924,7 +897,7 @@ namespace StackExchange.Profiling {
                         }
 
                         // if any data came in before the view popped up, render now
-                        for (var i = 0; i < mp.savedJson.length; i++) {
+                        for (let i = 0; i < mp.savedJson.length; i++) {
                             mp.buttonShow(mp.savedJson[i]);
                         }
                     }
@@ -939,31 +912,33 @@ namespace StackExchange.Profiling {
                     if (window.location.href.indexOf('&trivial=1') > 0) {
                         mp.options.showTrivial = true
                     }
-                    initFullView();
+
+                    // profiler will be defined in the full page's head
+                    window.profiler.Started = new Date('' + window.profiler.Started); // Ugh, JavaScript
+                    mp.renderProfiler(window.profiler).appendTo(mp.container);
+                    //prettyPrint();
+
+                    mp.bindDocumentEvents(RenderMode.Full);
                 }
                 else {
                     initPopupView();
+                    mp.bindDocumentEvents(RenderMode.Corner);
                 }
-                mp.bindDocumentEvents();
             };
 
             let wait = 0,
-                alreadyDone = false,
-                deferInit = () => {
-                    if (alreadyDone) {
-                        return;
-                    }
-                    if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
-                        setTimeout(deferInit, 100);
-                        wait += 100;
-                    } else {
-                        alreadyDone = true;
-                        init();
-                    }
-                },
-                init = () => {
+                alreadyDone = false;
+            const deferInit = () => {
+                if (alreadyDone) {
+                    return;
+                }
+                if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
+                    setTimeout(deferInit, 100);
+                    wait += 100;
+                } else {
+                    alreadyDone = true;
                     if (mp.options.authorized) {
-                        var url = mp.options.path + 'includes.css?v=' + mp.options.version;
+                        const url = mp.options.path + 'includes.css?v=' + mp.options.version;
                         if (document.createStyleSheet) {
                             document.createStyleSheet(url);
                         } else {
@@ -971,7 +946,8 @@ namespace StackExchange.Profiling {
                         }
                     }
                     doInit();
-                };
+                }
+            };
 
             $(mp.installAjaxHandlers);
             $(deferInit);
@@ -980,12 +956,12 @@ namespace StackExchange.Profiling {
         };
 
         getCustomTimings = (root: Timing) => {
-            var result: CustomTiming[] = [];
+            const result: CustomTiming[] = [];
 
             function addToResults(timing: Timing) {
                 if (timing.CustomTimings) {
-                    for (var customType in timing.CustomTimings) {
-                        var customTimings = timing.CustomTimings[customType];
+                    for (let customType in timing.CustomTimings) {
+                        const customTimings = timing.CustomTimings[customType];
 
                         for (let i = 0, customTiming; i < customTimings.length; i++) {
                             let customTiming: CustomTiming = customTimings[i];
@@ -1011,10 +987,10 @@ namespace StackExchange.Profiling {
 
             function removeDuration(list: GapTiming[], duration: GapTiming) {
 
-                var newList:GapTiming[] = [];
-                for (var i = 0; i < list.length; i++) {
+                const newList:GapTiming[] = [];
+                for (let i = 0; i < list.length; i++) {
 
-                    var item = list[i];
+                    const item = list[i];
                     if (duration.start > item.start) {
                         if (duration.start > item.finish) {
                             newList.push(item);
@@ -1036,7 +1012,7 @@ namespace StackExchange.Profiling {
             };
 
             function processTimes(elem: Timing, parent: Timing) {
-                var duration = <GapTiming>({ start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) });
+                const duration = <GapTiming>({ start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) });
                 elem.richTiming = [duration];
                 if (parent != null) {
                     elem.parent = parent;
@@ -1044,7 +1020,7 @@ namespace StackExchange.Profiling {
                 }
 
                 if (elem.Children) {
-                    for (var i = 0; i < elem.Children.length; i++) {
+                    for (let i = 0; i < elem.Children.length; i++) {
                         processTimes(elem.Children[i], elem);
                     }
                 }
@@ -1056,9 +1032,9 @@ namespace StackExchange.Profiling {
             result.sort(function (a, b) { return a.StartMilliseconds - b.StartMilliseconds; });
 
             function determineOverlap(gap: GapTiming, node: Timing) {
-                var overlap = 0;
-                for (var i = 0; i < node.richTiming.length; i++) {
-                    var current = node.richTiming[i];
+                let overlap = 0;
+                for (let i = 0; i < node.richTiming.length; i++) {
+                    const current = node.richTiming[i];
                     if (current.start > gap.finish) {
                         break;
                     }
@@ -1072,7 +1048,7 @@ namespace StackExchange.Profiling {
             };
 
             function determineGap(gap: GapTiming, node: Timing, match: any) {
-                var overlap = determineOverlap(gap, node);
+                const overlap = determineOverlap(gap, node);
                 if (match == null || overlap > match.duration) {
                     match = { name: node.Name, duration: overlap };
                 }
@@ -1081,15 +1057,15 @@ namespace StackExchange.Profiling {
                 }
 
                 if (node.Children) {
-                    for (var i = 0; i < node.Children.length; i++) {
+                    for (let i = 0; i < node.Children.length; i++) {
                         match = determineGap(gap, node.Children[i], match);
                     }
                 }
                 return match;
             };
 
-            var time = 0;
-            var prev = null;
+            let time = 0,
+                prev = null;
             result.forEach(function (elem) {
                 elem.prevGap = {
                     duration: (elem.StartMilliseconds - time).toFixed(2),
@@ -1105,7 +1081,7 @@ namespace StackExchange.Profiling {
 
 
             if (result.length > 0) {
-                var me = result[result.length - 1];
+                const me = result[result.length - 1];
                 me.nextGap = {
                     duration: (root.DurationMilliseconds - time).toFixed(2),
                     start: time,
@@ -1118,9 +1094,9 @@ namespace StackExchange.Profiling {
         };
 
         listInit = (options: Options) => {
-            let mp = this,
-                $ = mp.jq,
-                opt = this.options = options || <Options>{};
+            const mp = this,
+                  $ = mp.jq,
+                  opt = this.options = options || <Options>{};
 
             function updateGrid(id?: string) {
                 let getTiming = (profiler: Profiler, name: string) => 
@@ -1132,7 +1108,7 @@ namespace StackExchange.Profiling {
                     dataType: 'json',
                     type: 'GET',
                     success: function (data: Profiler[]) {
-                        var str = '';
+                        let str = '';
                         data.forEach((profiler) => {
                             str += (`
 <tr>
@@ -1147,10 +1123,10 @@ namespace StackExchange.Profiling {
 </tr>`);
                         });
                         $('table tbody').append(str);
-                        var oldId = id,
-                            oldData = data;
+                        const oldId = id,
+                              oldData = data;
                         setTimeout(function () {
-                            var newId = oldId;
+                            let newId = oldId;
                             if (oldData.length > 0) {
                                 newId = oldData[oldData.length - 1].Id;
                             }
