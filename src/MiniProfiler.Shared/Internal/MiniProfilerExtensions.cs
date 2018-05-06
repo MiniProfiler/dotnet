@@ -135,7 +135,7 @@ namespace StackExchange.Profiling.Internal
             sb.Append(profiler.ToJson(htmlEscape: true));
             sb.Append(";</script>");
             sb.Append(RenderIncludes(profiler, path: path, isAuthorized: true));
-            sb.Append(@"</head><body><div class=""profiler-result-full""></div></body></html>");
+            sb.Append(@"</head><body><div class=""mp-result-full""></div></body></html>");
             return sb.ToString();
         }
     }
