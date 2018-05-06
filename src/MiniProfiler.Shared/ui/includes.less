@@ -329,49 +329,71 @@
     .profiler-call-type {
         font-weight: bold;
     }
-
-    .str {
-        color: #800000;
+    /*
+    Colorbrewer theme
+    Original: https://github.com/mbostock/colorbrewer-theme (c) Mike Bostock <mike@ocks.org>
+    Ported by Fabrício Tavares de Oliveira
+    */
+    .hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 0.5em;
+        //background: #fff;
     }
 
-    .kwd {
-        color: #00008b;
+    .hljs,
+    .hljs-subst {
+        color: #000;
     }
 
-    .com {
-        color: #808080;
+    .hljs-string,
+    .hljs-meta,
+    .hljs-symbol,
+    .hljs-template-tag,
+    .hljs-template-variable,
+    .hljs-addition {
+        color: #756bb1;
     }
 
-    .typ {
-        color: #2b91af;
+    .hljs-comment,
+    .hljs-quote {
+        color: #636363;
     }
 
-    .lit {
-        color: #800000;
+    .hljs-number,
+    .hljs-regexp,
+    .hljs-literal,
+    .hljs-bullet,
+    .hljs-link {
+        color: #31a354;
     }
 
-    .pun {
-        color: #000000;
+    .hljs-deletion,
+    .hljs-variable {
+        color: #88f;
     }
 
-    .pln {
-        color: #000000;
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-title,
+    .hljs-section,
+    .hljs-built_in,
+    .hljs-doctag,
+    .hljs-type,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-selector-id,
+    .hljs-selector-class,
+    .hljs-strong {
+        color: #3182bd;
     }
 
-    .tag {
-        color: #800000;
+    .hljs-emphasis {
+        font-style: italic;
     }
 
-    .atn {
-        color: #ff0000;
-    }
-
-    .atv {
-        color: #0000ff;
-    }
-
-    .dec {
-        color: #800080;
+    .hljs-attribute {
+        color: #e6550d;
     }
 }
 

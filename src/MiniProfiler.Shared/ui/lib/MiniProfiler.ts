@@ -1,7 +1,6 @@
 ﻿/// <reference path="./node_modules/@types/jquery/index.d.ts">
 /// <reference path="./node_modules/@types/extjs/index.d.ts">
 /// <reference path="./node_modules/@types/microsoft-ajax/index.d.ts">
-/// <reference path="./node_modules/@types/highlight.js/index.d.ts">
 /// <reference path="./MiniProfiler.Globals.d.ts">
 
 namespace StackExchange.Profiling {
@@ -226,6 +225,7 @@ namespace StackExchange.Profiling {
         public container: JQuery;
         public controls: JQuery;
         public jq: JQueryStatic = window.jQuery.noConflict();
+        public highlight = (elem: HTMLElement): void => { }
         public fetchStatus: { [id: string]: string } = {}; // so we never pull down a profiler twice
         public clientPerfTimings: ITimingInfo[] = [
             // { name: 'navigationStart', description: 'Navigation Start' },
@@ -316,6 +316,7 @@ namespace StackExchange.Profiling {
                 // when rendering a shared, full page, this div will exist
                 mp.container = $('.profiler-result-full');
                 if (mp.container.length) {
+                    // Full page view
                     if (window.location.href.indexOf('&trivial=1') > 0) {
                         mp.options.showTrivial = true;
                     }
@@ -323,7 +324,11 @@ namespace StackExchange.Profiling {
                     // profiler will be defined in the full page's head
                     window.profiler.Started = new Date('' + window.profiler.Started); // Ugh, JavaScript
                     mp.renderProfiler(window.profiler).appendTo(mp.container);
-                    // prettyPrint();
+
+                    // highight
+                    $('pre code').each(function (i, block) {
+                        mp.highlight(block);
+                    });
 
                     mp.bindDocumentEvents(RenderMode.Full);
                 } else {
@@ -795,7 +800,7 @@ namespace StackExchange.Profiling {
               <td>
                 <div class="query">
                   <div class="profiler-stack-trace">${encode(ct.StackTraceSnippet)}</div>
-                  <pre class="prettyprint lang-${encode(ct.CallType)}"><code>${encode(ct.CommandString)}</code></pre>
+                  <pre><code>${encode(ct.CommandString)}</code></pre>
                 </div>
               </td>
             </tr>
@@ -927,7 +932,9 @@ namespace StackExchange.Profiling {
                         mp.scrollToQuery($(this), queries, queries);
 
                         // syntax highlighting
-                        // prettyPrint();
+                        queries.find('pre code').each(function (i, block) {
+                            mp.highlight(block);
+                        });
                     }).on('click keyup', (e) => {
                         const active = $('.profiler-result.active');
                         if (active.length) {
