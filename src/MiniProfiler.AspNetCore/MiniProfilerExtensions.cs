@@ -40,7 +40,8 @@ namespace StackExchange.Profiling
 
             var path = (profiler.Options as MiniProfilerOptions)?.RouteBasePath.Value.EnsureTrailingSlash();
 
-            var result = profiler.RenderIncludes(
+            var result = Render.Includes(
+                profiler,
                 path: context.Request.PathBase + path,
                 isAuthorized: state?.IsAuthorized ?? false,
                 requestIDs: state?.RequestIDs,

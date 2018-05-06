@@ -241,31 +241,7 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html";
 
             var path = context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash();
-            var version = Options.VersionHash;
-            return $@"<html>
-  <head>
-    <title>List of profiling sessions</title>
-    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
-    <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
-  </head>
-  <body>
-    <table class=""profiler-results-index"">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Server</th>
-          <th>Started</th>
-          <th>Total Duration</th>
-          <th>Request Start</th>
-          <th>Response Start</th>
-          <th>Dom Complete</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </body>
-</html>";
+            return Render.ResultListHtml(Options, path);
         }
 
         /// <summary>
@@ -380,7 +356,7 @@ namespace StackExchange.Profiling
             else
             {
                 context.Response.ContentType = "text/html";
-                return profiler.RenderResultsHtml(context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
+                return Render.SingleResultHtml(profiler, context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
             }
         }
     }

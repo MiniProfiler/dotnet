@@ -50,7 +50,8 @@ namespace StackExchange.Profiling
 
             var path = VirtualPathUtility.ToAbsolute(settings.RouteBasePath).EnsureTrailingSlash();
 
-            var result = profiler.RenderIncludes(
+            var result = Internal.Render.Includes(
+                profiler,
                 path: path,
                 isAuthorized: authorized,
                 requestIDs: ids,
