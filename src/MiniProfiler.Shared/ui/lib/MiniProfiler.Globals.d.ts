@@ -1,5 +1,7 @@
 ﻿declare global {
     interface Window {
+        profiler: StackExchange.Profiling.IProfiler;
+        MiniProfiler: StackExchange.Profiling.MiniProfiler;
         PerformancePaintTiming: Function;
         mPt: MiniProfilerProbeTiming;
         chrome: {
@@ -8,14 +10,12 @@
                 firstPaintAfterLoadTime: number;
             }
         };
-        JSON: any;
-        jQuery: any;
+        jQuery: JQueryStatic;
+        // We only check for these existing to hook up xhr events...we need to know noting about them.
         angular: any;
         axios: any;
         xhr: any;
-        profiler: StackExchange.Profiling.IProfiler;
-        MiniProfiler: StackExchange.Profiling.MiniProfiler;
-        WebForm_ExecuteCallback(object: any): void;
+        WebForm_ExecuteCallback(callbackObject: { xmlRequest: XMLHttpRequest }): void;
     }
 
     interface Document {
@@ -30,11 +30,7 @@
     }
 
     interface Request {
-        addEvents(object: any): void;
-    }
-
-    interface JQuery {
-        tmpl(object?: any): JQuery;
+        addEvents(object: {onComplete: Function}): void;
     }
 
     class MooTools { }
