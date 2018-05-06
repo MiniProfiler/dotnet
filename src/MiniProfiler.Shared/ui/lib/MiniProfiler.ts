@@ -289,7 +289,7 @@ namespace StackExchange.Profiling {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
                         mp.container = $('<div class="mp-results"/>')
-                            .addClass('mp-' + mp.options.renderPosition)
+                            .addClass('mp-' + mp.options.renderPosition.toLowerCase())
                             .appendTo('body');
 
                         // initialize the controls

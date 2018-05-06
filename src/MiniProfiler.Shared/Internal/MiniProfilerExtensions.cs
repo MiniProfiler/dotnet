@@ -65,7 +65,7 @@ namespace StackExchange.Profiling.Internal
             }
 
             sb.Append("\" data-position=\"");
-            sb.Append((position ?? options.PopupRenderPosition).ToString().ToLower());
+            sb.Append((position ?? options.PopupRenderPosition).ToString());
             sb.Append('"');
 
             if (isAuthorized)

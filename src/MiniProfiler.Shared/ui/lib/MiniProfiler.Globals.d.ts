@@ -38,10 +38,6 @@
     }
 
     class MooTools { }
-
-    //function WebForm_ExecuteCallback(object: any): void;
-    // TODO: highlight.js
-    function prettyPrint(): void;
 }
 
 export { };
