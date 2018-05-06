@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Internal
     /// Internal MiniProfiler extensions, not meant for consumption.
     /// This can and probably will break without warning. Don't use the .Internal namespace directly.
     /// </summary>
-    public static class MiniProfilerExtensions
+    public static class Render
     {
         /// <summary>
         /// Renders script tag for including MiniProfiler.
@@ -23,8 +23,8 @@ namespace StackExchange.Profiling.Internal
         /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerBaseOptions.PopupMaxTracesToShow"/>).</param>
         /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfilerBaseOptions.ShowControls"/>).</param>
         /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfilerBaseOptions.PopupStartHidden"/>).</param>
-        public static string RenderIncludes(
-            this MiniProfiler profiler,
+        public static string Includes(
+            MiniProfiler profiler,
             string path,
             bool isAuthorized,
             List<Guid> requestIDs = null,
@@ -124,7 +124,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The profiler to render a tag for.</param>
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <returns>A full HTML page for this MiniProfiler.</returns>
-        public static string RenderResultsHtml(this MiniProfiler profiler, string path)
+        public static string SingleResultHtml(MiniProfiler profiler, string path)
         {
             var sb = StringBuilderCache.Get();
             sb.Append("<html><head><title>");
@@ -134,9 +134,44 @@ namespace StackExchange.Profiling.Internal
             sb.Append(" ms) - Profiling Results</title><script>var profiler = ");
             sb.Append(profiler.ToJson(htmlEscape: true));
             sb.Append(";</script>");
-            sb.Append(RenderIncludes(profiler, path: path, isAuthorized: true));
+            sb.Append(Includes(profiler, path: path, isAuthorized: true));
             sb.Append(@"</head><body><div class=""mp-result-full""></div></body></html>");
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Renders a full HTML page for the share link in MiniProfiler.
+        /// </summary>
+        /// <param name="options">The options to render for.</param>
+        /// <param name="path">The root path that MiniProfiler is being served from.</param>
+        /// <returns>A full HTML page for this MiniProfiler.</returns>
+        public static string ResultListHtml(MiniProfilerBaseOptions options, string path)
+        {
+            var version = options.VersionHash;
+            return $@"<html>
+  <head>
+    <title>List of profiling sessions</title>
+    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
+    <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
+    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
+  </head>
+  <body>
+    <table class=""mp-results-index"">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Server</th>
+          <th>Started</th>
+          <th>Total Duration</th>
+          <th>Request Start</th>
+          <th>Response Start</th>
+          <th>Dom Complete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+</html>";
         }
     }
 }
