@@ -225,7 +225,6 @@ namespace StackExchange.Profiling {
         public container: JQuery;
         public controls: JQuery;
         public jq: JQueryStatic = window.jQuery.noConflict();
-        public highlight = (elem: HTMLElement): void => { }
         public fetchStatus: { [id: string]: string } = {}; // so we never pull down a profiler twice
         public clientPerfTimings: ITimingInfo[] = [
             // { name: 'navigationStart', description: 'Navigation Start' },
@@ -254,6 +253,7 @@ namespace StackExchange.Profiling {
         ];
         private savedJson: IProfiler[] = [];
         private path: string;
+        public highlight = (elem: HTMLElement): void => undefined;
 
         public init = (): MiniProfiler => {
             this.jq = jQuery.noConflict(true);
@@ -326,9 +326,7 @@ namespace StackExchange.Profiling {
                     mp.renderProfiler(window.profiler).appendTo(mp.container);
 
                     // highight
-                    $('pre code').each(function (i, block) {
-                        mp.highlight(block);
-                    });
+                    $('pre code').each((i, block) => mp.highlight(block));
 
                     mp.bindDocumentEvents(RenderMode.Full);
                 } else {
@@ -932,9 +930,7 @@ namespace StackExchange.Profiling {
                         mp.scrollToQuery($(this), queries, queries);
 
                         // syntax highlighting
-                        queries.find('pre code').each(function (i, block) {
-                            mp.highlight(block);
-                        });
+                        queries.find('pre code').each((i, block) => mp.highlight(block));
                     }).on('click keyup', (e) => {
                         const active = $('.mp-result.active');
                         if (active.length) {
@@ -991,7 +987,7 @@ namespace StackExchange.Profiling {
                 }
             }
 
-            function handleXHR(xhr: XMLHttpRequest | JQuery.jqXHR) {
+            function handleXHR(xhr: XMLHttpRequest | JQuery.jqXHR | Sys.Net.WebRequestExecutor) {
                 // iframed file uploads don't have headers
                 if (xhr && xhr.getResponseHeader) {
                     // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
@@ -1004,14 +1000,14 @@ namespace StackExchange.Profiling {
 
             // fetch profile results for any AJAX calls
             if (window$ && window$(document) && window$(document).ajaxComplete) {
-                window$(document).ajaxComplete((e: any, xhr: JQuery.jqXHR, settings: any) => handleXHR(xhr));
+                window$(document).ajaxComplete((e, xhr, settings) => handleXHR(xhr));
             }
 
             // fetch results after ASP Ajax calls
             if (typeof (Sys) !== 'undefined' && typeof (Sys.WebForms) !== 'undefined' && typeof (Sys.WebForms.PageRequestManager) !== 'undefined') {
-                Sys.WebForms.PageRequestManager.getInstance().add_endRequest((sender: any, args: any) => {
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest((sender, args) => {
                     if (args) {
-                        const response = args.get_response();
+                        const response = args.get_response() as any; // Trust me, it's there.
                         if (response.get_responseAvailable() && response._xmlHttpRequest != null) {
                             handleXHR(response);
                         }
@@ -1020,7 +1016,7 @@ namespace StackExchange.Profiling {
             }
 
             if (typeof (Sys) !== 'undefined' && typeof (Sys.Net) !== 'undefined' && typeof (Sys.Net.WebRequestManager) !== 'undefined') {
-                Sys.Net.WebRequestManager.add_completedRequest((sender: any, args: any) => {
+                Sys.Net.WebRequestManager.add_completedRequest((sender, args) => {
                     if (sender) {
                         const webRequestExecutor = sender;
                         if (webRequestExecutor.get_responseAvailable()) {
@@ -1032,11 +1028,11 @@ namespace StackExchange.Profiling {
 
             // more Asp.Net callbacks
             if (typeof (window.WebForm_ExecuteCallback) === 'function') {
-                window.WebForm_ExecuteCallback = ((callbackObject: any) => {
+                window.WebForm_ExecuteCallback = ((callbackObject: { xmlRequest: XMLHttpRequest }) => {
                     // Store original function
                     const original = window.WebForm_ExecuteCallback;
 
-                    return (callbackObjectInner: any) => {
+                    return (callbackObjectInner: { xmlRequest: XMLHttpRequest }) => {
                         original(callbackObjectInner);
                         handleXHR(callbackObjectInner.xmlRequest);
                     };
