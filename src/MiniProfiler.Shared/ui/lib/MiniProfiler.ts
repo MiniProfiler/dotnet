@@ -288,8 +288,8 @@ namespace StackExchange.Profiling {
                     if (mp.options.authorized) {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-                        mp.container = $('<div class="profiler-results"/>')
-                            .addClass('profiler-' + mp.options.renderPosition)
+                        mp.container = $('<div class="mp-results"/>')
+                            .addClass('mp-' + mp.options.renderPosition)
                             .appendTo('body');
 
                         // initialize the controls
@@ -314,7 +314,7 @@ namespace StackExchange.Profiling {
                 };
 
                 // when rendering a shared, full page, this div will exist
-                mp.container = $('.profiler-result-full');
+                mp.container = $('.mp-result-full');
                 if (mp.container.length) {
                     // Full page view
                     if (window.location.href.indexOf('&trivial=1') > 0) {
@@ -381,12 +381,12 @@ namespace StackExchange.Profiling {
 <tr>
   <td><a href="${options.path}results?id=${profiler.Id}">${escape(profiler.Name)}</a></td>
   <td>${escape(profiler.MachineName)}</td>
-  <td class="profiler-results-index-date">${profiler.Started}</td>
+  <td class="mp-results-index-date">${profiler.Started}</td>
   <td>${profiler.DurationMilliseconds}</td>` + (profiler.ClientTimings ? `
   <td>${getTiming(profiler, 'requestStart').Start}</td>
   <td>${getTiming(profiler, 'responseStart').Start}</td>
   <td>${getTiming(profiler, 'domComplete').Start}</td> ` : `
-  <td colspan="3" class="profiler-results-none">(no client timings)</td>`) + `
+  <td colspan="3" class="mp-results-none">(no client timings)</td>`) + `
 </tr>`);
                         });
                         $('table tbody').append(str);
@@ -644,24 +644,24 @@ namespace StackExchange.Profiling {
             const renderTiming = (timing: ITiming) => {
                 const customTimingTypes = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
                 let str = `
-  <tr class="${timing.IsTrivial ? 'profiler-trivial' : ''}" data-timing-id="${timing.Id}">
-    <td class="profiler-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
+  <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}" data-timing-id="${timing.Id}">
+    <td class="mp-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
       ${encode(timing.Name.slice(0, 45))}${encode(timing.Name && timing.Name.length > 45 ? '...' : '')}
     </td>
-    <td class="profiler-duration" title="duration of this step without any children's durations">
+    <td class="mp-duration" title="duration of this step without any children's durations">
       ${duration(timing.DurationWithoutChildrenMilliseconds)}
     </td>
-    <td class="profiler-duration profiler-more-columns" title="duration of this step and its children">
+    <td class="mp-duration mp-more-columns" title="duration of this step and its children">
       ${duration(timing.DurationMilliseconds)}
     </td>
-    <td class="profiler-duration profiler-more-columns time-from-start" title="time elapsed since profiling started">
-      <span class="profiler-unit">+</span>${duration(timing.StartMilliseconds)}
+    <td class="mp-duration mp-more-columns time-from-start" title="time elapsed since profiling started">
+      <span class="mp-unit">+</span>${duration(timing.StartMilliseconds)}
     </td>
     ${customTimingTypes.map((tk) => timing.CustomTimings[tk] ? `
-    <td class="profiler-duration">
-      <a class="profiler-queries-show" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimings[tk].length} ${encode(tk)} calls${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
+    <td class="mp-duration">
+      <a class="mp-queries-show" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimings[tk].length} ${encode(tk)} calls${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
         ${duration(timing.CustomTimingStats[tk].Duration)}
-        (${timing.CustomTimings[tk].length}${(timing.HasDuplicateCustomTimings[tk] ? '<span class="profiler-warning">!</span>' : '')})
+        (${timing.CustomTimings[tk].length}${(timing.HasDuplicateCustomTimings[tk] ? '<span class="mp-warning">!</span>' : '')})
       </a>
     </td>` : '<td></td>').join('')}
   </tr>`;
@@ -673,13 +673,13 @@ namespace StackExchange.Profiling {
             };
 
             const timingsTable = `
-        <table class="profiler-timings">
+        <table class="mp-timings">
           <thead>
             <tr>
               <th></th>
               <th>duration (ms)</th>
-              <th class="profiler-more-columns">with children (ms)</th>
-              <th class="time-from-start profiler-more-columns">from start (ms)</th>
+              <th class="mp-more-columns">with children (ms)</th>
+              <th class="time-from-start mp-more-columns">from start (ms)</th>
               ${Object.keys(p.CustomTimingStats).map((k) => `<th title="call count">${encode(k)} (ms)</th>`).join('')}
             </tr>
           </thead>
@@ -689,7 +689,7 @@ namespace StackExchange.Profiling {
           <tfoot>
             <tr>
               <td colspan="2"></td>
-              <td class="profiler-more-columns" colspan="2"></td>
+              <td class="mp-more-columns" colspan="2"></td>
             </tr>
           </tfoot>
         </table>`;
@@ -699,14 +699,14 @@ namespace StackExchange.Profiling {
                     return '';
                 }
                 return `
-        <table class="profiler-custom-timing-overview">
+        <table class="mp-custom-timing-overview">
             ${Object.getOwnPropertyNames(p.CustomTimingStats).map((key) => `
           <tr title="${p.CustomTimingStats[key].Count} ${encode(key.toLowerCase())} calls spent ${duration(p.CustomTimingStats[key].Duration)} ms of total request time">
-            <td class="profiler-number">
+            <td class="mp-number">
               ${encode(key)}:
             </td>
-            <td class="profiler-number">
-              ${duration(p.CustomTimingStats[key].Duration / p.DurationMilliseconds * 100)} <span class="profiler-unit">%</span>
+            <td class="mp-number">
+              ${duration(p.CustomTimingStats[key].Duration / p.DurationMilliseconds * 100)} <span class="mp-unit">%</span>
             </td>
           </tr>`).join('')}
         </table>`;
@@ -731,7 +731,7 @@ namespace StackExchange.Profiling {
                 list.sort((a, b) => a.start - b.start);
 
                 return `
-        <table class="profiler-timings profiler-client-timings">
+        <table class="mp-timings mp-client-timings">
           <thead>
             <tr>
               <th style="text-align:left">client event</th>
@@ -741,13 +741,13 @@ namespace StackExchange.Profiling {
           </thead>
           <tbody>
             ${list.map((t) => `
-            <tr class="${(t.isTrivial ? 'profiler-trivial' : '')}">
-              <td class="profiler-label">${encode(t.name)}</td>
-              <td class="profiler-duration">
-                ${(t.duration >= 0 ? `<span class="profiler-unit"></span>${duration(t.duration)}` : '')}
+            <tr class="${(t.isTrivial ? 'mp-trivial' : '')}">
+              <td class="mp-label">${encode(t.name)}</td>
+              <td class="mp-duration">
+                ${(t.duration >= 0 ? `<span class="mp-unit"></span>${duration(t.duration)}` : '')}
               </td>
-              <td class="profiler-duration time-from-start">
-                <span class="profiler-unit">+</span>${duration(t.start)}
+              <td class="mp-duration time-from-start">
+                <span class="mp-unit">+</span>${duration(t.start)}
               </td>
             </tr>`).join('')}
           </tbody>
@@ -760,27 +760,27 @@ namespace StackExchange.Profiling {
                 }
 
                 const renderGap = (gap: IGapInfo) => gap && gap.Reason.duration > 0.02 ? `
-  <tr class="profiler-gap-info ${(gap.Reason.duration < 4 ? 'profiler-trivial-gap' : '')}">
-    <td class="profiler-info">
-      ${gap.duration} <span class="profiler-unit">ms</span>
+  <tr class="mp-gap-info ${(gap.Reason.duration < 4 ? 'mp-trivial-gap' : '')}">
+    <td class="mp-info">
+      ${gap.duration} <span class="mp-unit">ms</span>
     </td>
     <td class="query">
-      <div>${encode(gap.Reason.name)} &mdash; ${gap.Reason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
+      <div>${encode(gap.Reason.name)} &mdash; ${gap.Reason.duration.toFixed(2)} <span class="mp-unit">ms</span></div>
     </td>
   </tr>` : '';
 
                 return `
-    <div class="profiler-queries">
+    <div class="mp-queries">
       <table>
         <thead>
           <tr>
             <th>
-              <div class="profiler-call-type">Call Type</div>
+              <div class="mp-call-type">Call Type</div>
               <div>Step</div>
-              <div>Duration <span class="profiler-unit">(from start)</span></div>
+              <div>Duration <span class="mp-unit">(from start)</span></div>
             </th>
             <th>
-              <div class="profiler-stack-trace">Call Stack</div>
+              <div class="mp-stack-trace">Call Stack</div>
               <div>Command</div>
             </th>
           </tr>
@@ -788,18 +788,18 @@ namespace StackExchange.Profiling {
         <tbody>
           ${p.AllCustomTimings.map((ct, index) => `
             ${renderGap(ct.PrevGap)}
-            <tr class="${(index % 2 === 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.Parent.Id}">
+            <tr class="${(index % 2 === 1 ? 'mp-odd' : '')}" data-timing-id="${ct.Parent.Id}">
               <td>
-                <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}${(ct.IsDuplicate ? ' <span class="profiler-warning" title="Duplicate">!</span>' : '')}</div>
+                <div class="mp-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}${(ct.IsDuplicate ? ' <span class="mp-warning" title="Duplicate">!</span>' : '')}</div>
                 <div>${encode(ct.Parent.Name)}</div>
-                <div class="profiler-number">
-                  ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
+                <div class="mp-number">
+                  ${duration(ct.DurationMilliseconds)} <span class="mp-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
                 </div>
-                ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>` : '')}
+                ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="mp-unit">ms</span></div>` : '')}
               </td>
               <td>
                 <div class="query">
-                  <div class="profiler-stack-trace">${encode(ct.StackTraceSnippet)}</div>
+                  <div class="mp-stack-trace">${encode(ct.StackTraceSnippet)}</div>
                   <pre><code>${encode(ct.CommandString)}</code></pre>
                 </div>
               </td>
@@ -807,42 +807,42 @@ namespace StackExchange.Profiling {
             ${renderGap(ct.NextGap)}`).join('')}
         </tbody>
       </table>
-      <p class="profiler-trivial-gap-container">
-        <a class="profiler-toggle-trivial-gaps" href="#">toggle trivial gaps</a>
+      <p class="mp-trivial-gap-container">
+        <a class="mp-toggle-trivial-gaps" href="#">toggle trivial gaps</a>
       </p>
     </div>`;
             }
 
             return mp.jq(`
-  <div class="profiler-result${(this.options.showTrivial ? 'show-trivial' : '')}${(this.options.showChildrenTime ? 'show-columns' : '')}">
-    <div class="profiler-button" title="${encode(p.Name)}">
-      <span class="profiler-number">${duration(p.DurationMilliseconds)} <span class="profiler-unit">ms</span></span>
-      ${(p.HasDuplicateCustomTimings ? '<span class="profiler-warning">!</span>' : '')}
+  <div class="mp-result${(this.options.showTrivial ? 'show-trivial' : '')}${(this.options.showChildrenTime ? 'show-columns' : '')}">
+    <div class="mp-button" title="${encode(p.Name)}">
+      <span class="mp-number">${duration(p.DurationMilliseconds)} <span class="mp-unit">ms</span></span>
+      ${(p.HasDuplicateCustomTimings ? '<span class="mp-warning">!</span>' : '')}
     </div>
-    <div class="profiler-popup">
-      <div class="profiler-info">
+    <div class="mp-popup">
+      <div class="mp-info">
         <div>
-          <div class="profiler-name">${encode(p.Name)}</div>
-          <div class="profiler-machine-name">${encode(p.MachineName)}</div>
+          <div class="mp-name">${encode(p.Name)}</div>
+          <div class="mp-machine-name">${encode(p.MachineName)}</div>
         </div>
         <div>
-          <div class="profiler-overall-duration">(${duration(p.DurationMilliseconds)} ms)</div>
-          <div class="profiler-started">${p.Started ? p.Started.toUTCString() : ''}</div>
+          <div class="mp-overall-duration">(${duration(p.DurationMilliseconds)} ms)</div>
+          <div class="mp-started">${p.Started ? p.Started.toUTCString() : ''}</div>
         </div>
       </div>
-      <div class="profiler-output">
+      <div class="mp-output">
         ${timingsTable}
 		${customTimings()}
         ${clientTimings()}
-        <div class="profiler-links">
-          <a href="${this.options.path}results?id=${p.Id}" class="profiler-share-profiler-results" target="_blank">share</a>
-          ${Object.keys(p.CustomLinks).map((k) => `<a href="${p.CustomLinks[k]}" class="profiler-custom-link" target="_blank">${k}</a>`).join('')}
+        <div class="mp-links">
+          <a href="${this.options.path}results?id=${p.Id}" class="mp-share-mp-results" target="_blank">share</a>
+          ${Object.keys(p.CustomLinks).map((k) => `<a href="${p.CustomLinks[k]}" class="mp-custom-link" target="_blank">${k}</a>`).join('')}
   		  <span>
-            <a class="profiler-toggle-columns" title="shows additional columns">more columns</a>
-            <a class="profiler-toggle-columns profiler-more-columns" title="hides additional columns">fewer columns</a>
+            <a class="mp-toggle-columns" title="shows additional columns">more columns</a>
+            <a class="mp-toggle-columns mp-more-columns" title="hides additional columns">fewer columns</a>
             ${(p.HasTrivialTimings ? `
-            <a class="profiler-toggle-trivial" title="shows any rows with &lt; ${this.options.trivialMilliseconds} ms duration">show trivial</a>
-            <a class="profiler-toggle-trivial profiler-trivial" title="hides any rows with &lt; ${this.options.trivialMilliseconds} ms duration">hide trivial</a>` : '')}
+            <a class="mp-toggle-trivial" title="shows any rows with &lt; ${this.options.trivialMilliseconds} ms duration">show trivial</a>
+            <a class="mp-toggle-trivial mp-trivial" title="hides any rows with &lt; ${this.options.trivialMilliseconds} ms duration">hide trivial</a>` : '')}
           </span>
         </div>
       </div>
@@ -867,7 +867,7 @@ namespace StackExchange.Profiling {
             }
 
             // limit count to maxTracesToShow, remove those before it
-            this.container.find('.profiler-result:lt(' + -this.options.maxTracesToShow + ')').remove();
+            this.container.find('.mp-result:lt(' + -this.options.maxTracesToShow + ')').remove();
         }
 
         private scrollToQuery = (link: JQuery, queries: JQuery, whatToScroll: JQuery) => {
@@ -884,28 +884,28 @@ namespace StackExchange.Profiling {
             const $ = this.jq;
             // Common handlers
             $(document)
-                .on('click', '.profiler-toggle-trivial', function(e) {
+                .on('click', '.mp-toggle-trivial', function(e) {
                     e.preventDefault();
-                    $(this).closest('.profiler-result').toggleClass('show-trivial');
-                }).on('click', '.profiler-toggle-columns', function(e) {
+                    $(this).closest('.mp-result').toggleClass('show-trivial');
+                }).on('click', '.mp-toggle-columns', function(e) {
                     e.preventDefault();
-                    $(this).closest('.profiler-result').toggleClass('show-columns');
-                }).on('click', '.profiler-toggle-trivial-gaps', function(e) {
+                    $(this).closest('.mp-result').toggleClass('show-columns');
+                }).on('click', '.mp-toggle-trivial-gaps', function(e) {
                     e.preventDefault();
-                    $(this).closest('.profiler-queries').find('.profiler-trivial-gap').toggle();
+                    $(this).closest('.mp-queries').find('.mp-trivial-gap').toggle();
                 });
 
             // Full vs. Corner handlers
             if (mode === RenderMode.Full) {
                 // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
-                $(document).on('click', '.profiler-popup .profiler-queries-show', function() {
-                    mp.scrollToQuery($(this), $('.profiler-queries'), $(document));
+                $(document).on('click', '.mp-popup .mp-queries-show', function() {
+                    mp.scrollToQuery($(this), $('.mp-queries'), $(document));
                 });
             } else {
                 $(document)
-                    .on('click', '.profiler-button', function(e) {
+                    .on('click', '.mp-button', function(e) {
                         const button = $(this);
-                        const popup = button.siblings('.profiler-popup');
+                        const popup = button.siblings('.mp-popup');
                         const wasActive = button.parent().hasClass('active');
                         const pos = mp.options.renderPosition;
 
@@ -924,10 +924,10 @@ namespace StackExchange.Profiling {
                                 popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top - $(window).scrollTop() + 25) + 'px)' });
                             }
                         }
-                    }).on('click', '.profiler-queries-show', function(e) {
+                    }).on('click', '.mp-queries-show', function(e) {
                         // opaque background
-                        const overlay = $('<div class="profiler-overlay"><div class="profiler-overlay-bg"/></div>').appendTo('body');
-                        const queries = $(this).closest('.profiler-result').find('.profiler-queries').clone().appendTo(overlay).show();
+                        const overlay = $('<div class="mp-overlay"><div class="mp-overlay-bg"/></div>').appendTo('body');
+                        const queries = $(this).closest('.mp-result').find('.mp-queries').clone().appendTo(overlay).show();
 
                         mp.scrollToQuery($(this), queries, queries);
 
@@ -936,11 +936,11 @@ namespace StackExchange.Profiling {
                             mp.highlight(block);
                         });
                     }).on('click keyup', (e) => {
-                        const active = $('.profiler-result.active');
+                        const active = $('.mp-result.active');
                         if (active.length) {
-                            const bg = $('.profiler-overlay');
+                            const bg = $('.mp-overlay');
                             const isEscPress = e.type === 'keyup' && e.which === 27;
-                            const isBgClick = e.type === 'click' && !$(e.target).closest('.profiler-queries, .profiler-results').length;
+                            const isBgClick = e.type === 'click' && !$(e.target).closest('.mp-queries, .mp-results').length;
 
                             if (isEscPress || isBgClick) {
                                 if (bg.is(':visible')) {
@@ -952,32 +952,32 @@ namespace StackExchange.Profiling {
                         }
                     });
                 if (mp.options.toggleShortcut && !mp.options.toggleShortcut.match(/^None$/i)) {
-                    $(document).bind('keydown', mp.options.toggleShortcut, (e) => $('.profiler-results').toggle());
+                    $(document).bind('keydown', mp.options.toggleShortcut, (e) => $('.mp-results').toggle());
                 }
             }
         }
 
         private initControls = (container: JQuery) => {
             if (this.options.showControls) {
-                this.controls = $('<div class="profiler-controls"><span class="profiler-min-max">m</span><span class="profiler-clear">c</span></div>').appendTo(container);
+                this.controls = $('<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>').appendTo(container);
 
-                $('.profiler-controls .profiler-min-max').click(() => container.toggleClass('profiler-min'));
+                $('.mp-controls .mp-min-max').click(() => container.toggleClass('mp-min'));
 
                 container.hover(
                     function() {
-                        if ($(this).hasClass('profiler-min')) {
-                            $(this).find('.profiler-min-max').show();
+                        if ($(this).hasClass('mp-min')) {
+                            $(this).find('.mp-min-max').show();
                         }
                     },
                     function() {
-                        if ($(this).hasClass('profiler-min')) {
-                            $(this).find('.profiler-min-max').hide();
+                        if ($(this).hasClass('mp-min')) {
+                            $(this).find('.mp-min-max').hide();
                         }
                     });
 
-                $('.profiler-controls .profiler-clear').click(() => container.find('.profiler-result').remove());
+                $('.mp-controls .mp-clear').click(() => container.find('.mp-result').remove());
             } else {
-                container.addClass('profiler-no-controls');
+                container.addClass('mp-no-controls');
             }
         }
 
