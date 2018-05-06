@@ -22,6 +22,7 @@ namespace StackExchange.Profiling {
         HasCustomTimings: boolean;
         HasDuplicateCustomTimings: boolean;
         HasTrivialTimings: boolean;
+        AllCustomTimings: ICustomTiming[];
     }
 
     interface IClientTimings {
@@ -54,9 +55,8 @@ namespace StackExchange.Profiling {
         HasCustomTimings: boolean;
         HasDuplicateCustomTimings: { [id: string]: boolean };
         IsTrivial: boolean;
-        ParentTimingId?: string;
+        Parent: ITiming;
         // added for gaps (TODO: change all this)
-        parent: ITiming;
         richTiming: IGapTiming[];
     }
 
@@ -70,13 +70,12 @@ namespace StackExchange.Profiling {
         FirstFetchDurationMilliseconds?: number;
         Errored: boolean;
         // client side:
-        ParentTimingId: string;
-        ParentTimingName: string;
+        Parent: ITiming;
         CallType: string;
         IsDuplicate: boolean;
         // added for gaps
-        prevGap: any;
-        nextGap: any;
+        PrevGap: IGapInfo;
+        NextGap: IGapInfo;
     }
 
     interface ICustomTimingStat {
@@ -210,6 +209,18 @@ namespace StackExchange.Profiling {
         duration: number;
     }
 
+    interface IGapInfo {
+        start: number;
+        finish: number;
+        duration: string;
+        Reason: IGapReason;
+    }
+
+    interface IGapReason {
+        name: string;
+        duration: number;
+    }
+
     export class MiniProfiler {
         public options: IOptions;
         public container: JQuery;
@@ -324,23 +335,17 @@ namespace StackExchange.Profiling {
             let wait = 0;
             let alreadyDone = false;
             const deferInit = () => {
-                if (alreadyDone) {
-                    return;
-                }
-                if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
-                    setTimeout(deferInit, 100);
-                    wait += 100;
-                } else {
-                    alreadyDone = true;
-                    if (mp.options.authorized) {
-                        const url = mp.options.path + 'includes.css?v=' + mp.options.version;
-                        if (document.createStyleSheet) {
-                            document.createStyleSheet(url);
-                        } else {
-                            $('head').append($('<link rel="stylesheet" type="text/css" href="' + url + '" />'));
+                if (!alreadyDone) {
+                    if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
+                        setTimeout(deferInit, 100);
+                        wait += 100;
+                    } else {
+                        alreadyDone = true;
+                        if (mp.options.authorized) {
+                            $('head').append(`<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.css?v=${mp.options.version}" />`);
                         }
+                        doInit();
                     }
-                    doInit();
                 }
             };
 
@@ -435,37 +440,29 @@ namespace StackExchange.Profiling {
         }
 
         private processJson = (profiler: IProfiler) => {
-            const json: IProfiler = { ...profiler };
+            const result: IProfiler = { ...profiler };
             const mp = this;
 
-            // TODO: nuke
-            json.HasDuplicateCustomTimings = false;
-            json.HasCustomTimings = false;
-            json.HasTrivialTimings = false;
-            json.CustomTimingStats = {};
-            json.CustomLinks = json.CustomLinks || {};
-            json.Root.ParentTimingId = json.Id;
+            result.CustomTimingStats = {};
+            result.CustomLinks = result.CustomLinks || {};
+            result.AllCustomTimings = [];
 
-            function processTiming(timing: ITiming, depth: number) {
+            function processTiming(timing: ITiming, parent: ITiming, depth: number) {
                 timing.DurationWithoutChildrenMilliseconds = timing.DurationMilliseconds;
+                timing.Parent = parent;
                 timing.Depth = depth;
-                timing.HasCustomTimings = !!timing.CustomTimings;
                 timing.HasDuplicateCustomTimings = {};
-                json.HasCustomTimings = json.HasCustomTimings || timing.HasCustomTimings;
 
-                if (timing.Children) {
-                    for (const child of timing.Children) {
-                        child.ParentTimingId = timing.Id;
-                        processTiming(child, depth + 1);
-                        timing.DurationWithoutChildrenMilliseconds -= child.DurationMilliseconds;
-                    }
-                } else {
-                    timing.Children = [];
+                for (const child of timing.Children || []) {
+                    processTiming(child, timing, depth + 1);
+                    timing.DurationWithoutChildrenMilliseconds -= child.DurationMilliseconds;
                 }
 
                 // do this after subtracting child durations
-                timing.IsTrivial = timing.DurationWithoutChildrenMilliseconds < mp.options.trivialMilliseconds;
-                json.HasTrivialTimings = json.HasTrivialTimings || timing.IsTrivial;
+                if (timing.DurationWithoutChildrenMilliseconds < mp.options.trivialMilliseconds) {
+                    timing.IsTrivial = true;
+                    result.HasTrivialTimings = true;
+                }
 
                 function ignoreDuplicateCustomTiming(customTiming: ICustomTiming) {
                     return customTiming.ExecuteType && mp.options.ignoredDuplicateExecuteTypes.indexOf(customTiming.ExecuteType) > -1;
@@ -473,6 +470,8 @@ namespace StackExchange.Profiling {
 
                 if (timing.CustomTimings) {
                     timing.CustomTimingStats = {};
+                    timing.HasCustomTimings = true;
+                    result.HasCustomTimings = true;
                     for (const customType of Object.keys(timing.CustomTimings)) {
                         const customTimings = timing.CustomTimings[customType];
                         const customStat = {
@@ -481,35 +480,144 @@ namespace StackExchange.Profiling {
                               };
                         const duplicates: { [id: string]: boolean } = {};
                         for (const customTiming of customTimings) {
-                            customTiming.ParentTimingId = timing.Id;
+                            // Add to the overall list for the queries view
+                            result.AllCustomTimings.push(customTiming);
+                            customTiming.Parent = timing;
+                            customTiming.CallType = customType;
+
                             customStat.Duration += customTiming.DurationMilliseconds;
                             customStat.Count++;
+
                             if (customTiming.CommandString && duplicates[customTiming.CommandString]) {
                                 customTiming.IsDuplicate = true;
                                 timing.HasDuplicateCustomTimings[customType] = true;
-                                json.HasDuplicateCustomTimings = true;
+                                result.HasDuplicateCustomTimings = true;
                             } else if (!ignoreDuplicateCustomTiming(customTiming)) {
                                 duplicates[customTiming.CommandString] = true;
                             }
                         }
                         timing.CustomTimingStats[customType] = customStat;
-                        if (!json.CustomTimingStats[customType]) {
-                            json.CustomTimingStats[customType] = {
+                        if (!result.CustomTimingStats[customType]) {
+                            result.CustomTimingStats[customType] = {
                                 Duration: 0,
                                 Count: 0,
                             };
                         }
-                        json.CustomTimingStats[customType].Duration += customStat.Duration;
-                        json.CustomTimingStats[customType].Count += customStat.Count;
+                        result.CustomTimingStats[customType].Duration += customStat.Duration;
+                        result.CustomTimingStats[customType].Count += customStat.Count;
                     }
                 } else {
                     timing.CustomTimings = {};
                 }
             }
 
-            processTiming(json.Root, 0);
+            processTiming(result.Root, null, 0);
+            this.processCustomTimings(result);
 
-            return json;
+            return result;
+        }
+
+        private processCustomTimings = (profiler: IProfiler) => {
+            const result = profiler.AllCustomTimings;
+
+            result.sort((a, b) => a.StartMilliseconds - b.StartMilliseconds);
+
+            function removeDuration(list: IGapTiming[], duration: IGapTiming) {
+
+                const newList: IGapTiming[] = [];
+                for (const item of list) {
+                    if (duration.start > item.start) {
+                        if (duration.start > item.finish) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push(({ start: item.start, finish: duration.start }) as IGapTiming);
+                    }
+
+                    if (duration.finish < item.finish) {
+                        if (duration.finish < item.start) {
+                            newList.push(item);
+                            continue;
+                        }
+                        newList.push(({ start: duration.finish, finish: item.finish }) as IGapTiming);
+                    }
+                }
+
+                return newList;
+            }
+
+            function processTimes(elem: ITiming) {
+                const duration = ({ start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) }) as IGapTiming;
+                elem.richTiming = [duration];
+                if (elem.Parent != null) {
+                    elem.Parent.richTiming = removeDuration(elem.Parent.richTiming, duration);
+                }
+
+                for (const child of elem.Children || []) {
+                    processTimes(child);
+                }
+            }
+
+            processTimes(profiler.Root);
+            // sort results by time
+            result.sort((a, b) => a.StartMilliseconds - b.StartMilliseconds);
+
+            function determineOverlap(gap: IGapInfo, node: ITiming) {
+                let overlap = 0;
+                for (const current of node.richTiming) {
+                    if (current.start > gap.finish) {
+                        break;
+                    }
+                    if (current.finish < gap.start) {
+                        continue;
+                    }
+
+                    overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
+                }
+                return overlap;
+            }
+
+            function determineGap(gap: IGapInfo, node: ITiming, match: IGapReason) {
+                const overlap = determineOverlap(gap, node);
+                if (match == null || overlap > match.duration) {
+                    match = { name: node.Name, duration: overlap };
+                } else if (match.name === node.Name) {
+                    match.duration += overlap;
+                }
+
+                for (const child of node.Children || []) {
+                    match = determineGap(gap, child, match);
+                }
+                return match;
+            }
+
+            let time = 0;
+            let prev = null;
+            result.forEach((elem) => {
+                elem.PrevGap = {
+                    duration: (elem.StartMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: elem.StartMilliseconds,
+                } as IGapInfo;
+
+                elem.PrevGap.Reason = determineGap(elem.PrevGap, profiler.Root, null);
+
+                time = elem.StartMilliseconds + elem.DurationMilliseconds;
+                prev = elem;
+            });
+
+
+            if (result.length > 0) {
+                const me = result[result.length - 1];
+                me.NextGap = {
+                    duration: (profiler.Root.DurationMilliseconds - time).toFixed(2),
+                    start: time,
+                    finish: profiler.Root.DurationMilliseconds,
+                } as IGapInfo;
+                me.NextGap.Reason = determineGap(me.NextGap, profiler.Root, null);
+            }
+
+            return result;
         }
 
         private renderProfiler = (json: IProfiler) => {
@@ -553,7 +661,9 @@ namespace StackExchange.Profiling {
     </td>` : '<td></td>').join('')}
   </tr>`;
                 // Append children
-                timing.Children.forEach((ct) => str += renderTiming(ct));
+                if (timing.Children) {
+                    timing.Children.forEach((ct) => str += renderTiming(ct));
+                }
                 return str;
             };
 
@@ -644,14 +754,13 @@ namespace StackExchange.Profiling {
                     return '';
                 }
 
-                const cts = mp.getCustomTimings(p.Root);
-                const renderGap = (gap: any) => gap ? `
-  <tr class="profiler-gap-info ${(gap.duration < 4 ? 'profiler-trivial-gap' : '')}">
+                const renderGap = (gap: IGapInfo) => gap && gap.Reason.duration > 0.02 ? `
+  <tr class="profiler-gap-info ${(gap.Reason.duration < 4 ? 'profiler-trivial-gap' : '')}">
     <td class="profiler-info">
       ${gap.duration} <span class="profiler-unit">ms</span>
     </td>
     <td class="query">
-      <div>${encode(gap.topReason.name)} &mdash; ${gap.topReason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
+      <div>${encode(gap.Reason.name)} &mdash; ${gap.Reason.duration.toFixed(2)} <span class="profiler-unit">ms</span></div>
     </td>
   </tr>` : '';
 
@@ -672,17 +781,16 @@ namespace StackExchange.Profiling {
           </tr>
         </thead>
         <tbody>
-          ${cts.map((ct, index) => `
-            ${renderGap(ct.prevGap)}
-            <tr class="${(index % 2 === 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.ParentTimingId}">
+          ${p.AllCustomTimings.map((ct, index) => `
+            ${renderGap(ct.PrevGap)}
+            <tr class="${(index % 2 === 1 ? 'profiler-odd' : '')}" data-timing-id="${ct.Parent.Id}">
               <td>
-                <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}</div>
-                <div>${encode(ct.ParentTimingName)}</div>
+                <div class="profiler-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}${(ct.IsDuplicate ? ' <span class="profiler-warning" title="Duplicate">!</span>' : '')}</div>
+                <div>${encode(ct.Parent.Name)}</div>
                 <div class="profiler-number">
                   ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
                 </div>
                 ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="profiler-unit">ms</span></div>` : '')}
-                ${(ct.IsDuplicate ? '<div><span class="profiler-warning">(DUPLICATE)</span></div>' : '')}
               </td>
               <td>
                 <div class="query">
@@ -691,7 +799,7 @@ namespace StackExchange.Profiling {
                 </div>
               </td>
             </tr>
-            ${renderGap(ct.nextGap)}`).join('')}
+            ${renderGap(ct.NextGap)}`).join('')}
         </tbody>
       </table>
       <p class="profiler-trivial-gap-container">
@@ -989,137 +1097,6 @@ namespace StackExchange.Profiling {
                     });
                 };
             }
-        }
-
-        private getCustomTimings = (root: ITiming) => {
-            const result: ICustomTiming[] = [];
-
-            function addToResults(timing: ITiming) {
-                if (timing.CustomTimings) {
-                    for (const customType of Object.keys(timing.CustomTimings)) {
-                        const customTimings = timing.CustomTimings[customType];
-
-                        for (const customTiming of customTimings) {
-                            // HACK: add info about the parent Timing to each CustomTiming so UI can render
-                            customTiming.ParentTimingName = timing.Name;
-                            customTiming.CallType = customType;
-                            result.push(customTiming);
-                        }
-                    }
-                }
-
-                if (timing.Children) {
-                    for (const child of timing.Children) {
-                        addToResults(child);
-                    }
-                }
-            }
-
-            // start adding at the root and recurse down
-            addToResults(root);
-            result.sort((a, b) => a.StartMilliseconds - b.StartMilliseconds);
-
-            function removeDuration(list: IGapTiming[], duration: IGapTiming) {
-
-                const newList: IGapTiming[] = [];
-                for (const item of list) {
-                    if (duration.start > item.start) {
-                        if (duration.start > item.finish) {
-                            newList.push(item);
-                            continue;
-                        }
-                        newList.push(({ start: item.start, finish: duration.start }) as IGapTiming);
-                    }
-
-                    if (duration.finish < item.finish) {
-                        if (duration.finish < item.start) {
-                            newList.push(item);
-                            continue;
-                        }
-                        newList.push(({ start: duration.finish, finish: item.finish }) as IGapTiming);
-                    }
-                }
-
-                return newList;
-            }
-
-            function processTimes(elem: ITiming, parent: ITiming) {
-                const duration = ({ start: elem.StartMilliseconds, finish: (elem.StartMilliseconds + elem.DurationMilliseconds) }) as IGapTiming;
-                elem.richTiming = [duration];
-                if (parent != null) {
-                    elem.parent = parent;
-                    elem.parent.richTiming = removeDuration(elem.parent.richTiming, duration);
-                }
-
-                if (elem.Children) {
-                    for (const child of elem.Children) {
-                        processTimes(child, elem);
-                    }
-                }
-            }
-
-            processTimes(root, null);
-            // sort results by time
-            result.sort((a, b) => a.StartMilliseconds - b.StartMilliseconds);
-
-            function determineOverlap(gap: IGapTiming, node: ITiming) {
-                let overlap = 0;
-                for (const current of node.richTiming) {
-                    if (current.start > gap.finish) {
-                        break;
-                    }
-                    if (current.finish < gap.start) {
-                        continue;
-                    }
-
-                    overlap += Math.min(gap.finish, current.finish) - Math.max(gap.start, current.start);
-                }
-                return overlap;
-            }
-
-            function determineGap(gap: IGapTiming, node: ITiming, match: any) {
-                const overlap = determineOverlap(gap, node);
-                if (match == null || overlap > match.duration) {
-                    match = { name: node.Name, duration: overlap };
-                } else if (match.name === node.Name) {
-                    match.duration += overlap;
-                }
-
-                if (node.Children) {
-                    for (const child of node.Children) {
-                        match = determineGap(gap, child, match);
-                    }
-                }
-                return match;
-            }
-
-            let time = 0;
-            let prev = null;
-            result.forEach((elem) => {
-                elem.prevGap = {
-                    duration: (elem.StartMilliseconds - time).toFixed(2),
-                    start: time,
-                    finish: elem.StartMilliseconds,
-                };
-
-                elem.prevGap.topReason = determineGap(elem.prevGap, root, null);
-
-                time = elem.StartMilliseconds + elem.DurationMilliseconds;
-                prev = elem;
-            });
-
-
-            if (result.length > 0) {
-                const me = result[result.length - 1];
-                me.nextGap = {
-                    duration: (root.DurationMilliseconds - time).toFixed(2),
-                    start: time,
-                    finish: root.DurationMilliseconds,
-                };
-                me.nextGap.topReason = determineGap(me.nextGap, root, null);
-            }
-
-            return result;
         }
     }
 }
