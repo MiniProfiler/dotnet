@@ -5,7 +5,7 @@
 @color-white: #fff;
 @color-alt: #f5f5f5;
 
-.profiler-result, .profiler-queries {
+.mp-result, .mp-queries {
     color: #555;
     line-height: 1;
     font-size: 12px;
@@ -44,56 +44,56 @@
     }
 }
 
-.profiler-result {
+.mp-result {
     font-family: sans-serif;
 
     &.show-columns {
-        th.profiler-more-columns, td.profiler-more-columns {
+        th.mp-more-columns, td.mp-more-columns {
             display: table-cell !important;
         }
 
-        a.profiler-more-columns {
+        a.mp-more-columns {
             display: inline-block;
         }
 
-        .profiler-links span a:nth-child(1) {
+        .mp-links span a:nth-child(1) {
             display: none;
         }
     }
 
     &.show-trivial {
-        tr.profiler-trivial {
+        tr.mp-trivial {
             display: table-row !important;
         }
 
-        a.profiler-trivial {
+        a.mp-trivial {
             display: inline-block;
         }
 
-        .profiler-links span a:nth-child(3) {
+        .mp-links span a:nth-child(3) {
             display: none;
         }
     }
 
-    table.profiler-client-timings {
+    table.mp-client-timings {
         margin-top: 10px;
     }
 
-    .profiler-label {
+    .mp-label {
         color: #555555;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .profiler-unit {
+    .mp-unit {
         color: @color-muted;
     }
 
-    .profiler-more-columns {
+    .mp-more-columns {
         display: none;
     }
 
-    .profiler-trivial {
+    .mp-trivial {
         display: none;
 
         &:first-child {
@@ -105,11 +105,11 @@
         }
     }
 
-    .profiler-number {
+    .mp-number {
         color: #111111;
     }
 
-    .profiler-info {
+    .mp-info {
         > div {
             white-space: nowrap;
             overflow: hidden;
@@ -119,23 +119,23 @@
             }
         }
 
-        .profiler-name {
+        .mp-name {
             display: inline-block;
             font-weight: bold;
             float: left;
         }
 
-        .profiler-machine-name, .profiler-started {
+        .mp-machine-name, .mp-started {
             text-align: right;
             float: right;
         }
 
-        .profiler-server-time {
+        .mp-server-time {
             white-space: nowrap;
         }
     }
 
-    .profiler-timings {
+    .mp-timings {
         th {
             background-color: @color-white;
             color: @color-muted;
@@ -146,32 +146,32 @@
             white-space: nowrap;
         }
 
-        .profiler-show-more {
+        .mp-show-more {
             display: none;
         }
 
-        .profiler-duration {
+        .mp-duration {
             font-family: Consolas, monospace, serif;
             color: #111111;
             text-align: right;
         }
 
-        .profiler-indent {
+        .mp-indent {
             letter-spacing: 4px;
         }
 
-        .profiler-queries-show {
-            .profiler-number, .profiler-unit {
+        .mp-queries-show {
+            .mp-number, .mp-unit {
                 color: #0077cc;
             }
         }
 
-        .profiler-queries-duration {
+        .mp-queries-duration {
             padding-left: 6px;
         }
     }
 
-    .profiler-custom-timing-overview {
+    .mp-custom-timing-overview {
         float: right;
         margin: 10px 0;
         width: auto;
@@ -186,7 +186,7 @@
         }
     }
 
-    .profiler-links {
+    .mp-links {
         margin-top: 10px;
         clear: both;
 
@@ -206,11 +206,11 @@
     }
 }
 
-.profiler-warning {
+.mp-warning {
     color: @color-warning;
 }
 
-@keyframes profiler-fadeIn {
+@keyframes mp-fadeIn {
     from {
         background-color: #FFB;
     }
@@ -220,10 +220,10 @@
     }
 }
 
-.profiler-overlay {
+.mp-overlay {
     z-index: 2147483642;
 
-    .profiler-overlay-bg {
+    .mp-overlay-bg {
         z-index: 2147483643;
         background: #000;
         opacity: 0.5;
@@ -234,7 +234,7 @@
         height: calc(100%);
     }
 
-    .profiler-queries {
+    .mp-queries {
         display: block;
         z-index: 2147483644;
         top: 25px;
@@ -249,7 +249,7 @@
     }
 }
 
-.profiler-queries {
+.mp-queries {
     font-family: sans-serif;
 
     pre {
@@ -286,24 +286,24 @@
     }
 
     .highlight {
-        animation: profiler-fadeIn 2s 1;
+        animation: mp-fadeIn 2s 1;
     }
 
-    .profiler-odd {
+    .mp-odd {
         background-color: @color-alt;
     }
 
-    .profiler-stack-trace {
+    .mp-stack-trace {
         padding-bottom: 1px;
         color: #aab;
         margin-bottom: 5px;
     }
 
-    .profiler-since-start, .profiler-duration {
+    .mp-since-start, .mp-duration {
         text-align: right;
     }
 
-    .profiler-gap-info {
+    .mp-gap-info {
         background-color: #e1e5ed;
         opacity: 0.8;
         color: #444;
@@ -312,21 +312,21 @@
             word-break: break-all;
         }
 
-        .profiler-unit {
+        .mp-unit {
             color: #777;
         }
 
-        &.profiler-trivial-gap {
+        &.mp-trivial-gap {
             display: none;
         }
     }
 
-    .profiler-trivial-gap-container {
+    .mp-trivial-gap-container {
         text-align: center;
         margin: 8px 0;
     }
 
-    .profiler-call-type {
+    .mp-call-type {
         font-weight: bold;
     }
     /*
@@ -397,91 +397,91 @@
     }
 }
 
-.profiler-results {
+.mp-results {
     z-index: 2147483641;
     position: fixed;
     top: 0;
 
-    &.profiler-left, &.profiler-bottomleft {
+    &.mp-left, &.mp-bottomleft {
         left: 0;
     }
 
-    &.profiler-left {
-        .profiler-controls, &.profiler-no-controls .profiler-result:last-child .profiler-button {
+    &.mp-left {
+        .mp-controls, &.mp-no-controls .mp-result:last-child .mp-button {
             border-bottom-right-radius: @results-border-radius;
         }
 
-        .profiler-button, .profiler-controls {
+        .mp-button, .mp-controls {
             border-right: @results-border;
         }
     }
 
-    &.profiler-right {
+    &.mp-right {
         right: 0;
 
-        .profiler-controls, &.profiler-no-controls .profiler-result:last-child .profiler-button {
+        .mp-controls, &.mp-no-controls .mp-result:last-child .mp-button {
             border-bottom-left-radius: @results-border-radius;
         }
 
-        .profiler-button, .profiler-controls {
+        .mp-button, .mp-controls {
             border-left: @results-border;
         }
     }
 
-    &.profiler-bottomleft {
+    &.mp-bottomleft {
         top: inherit;
         bottom: 0;
 
-        .profiler-result:first-child .profiler-button {
+        .mp-result:first-child .mp-button {
             border-top-right-radius: @results-border-radius;
         }
 
-        .profiler-button, .profiler-controls {
+        .mp-button, .mp-controls {
             border-right: @results-border;
         }
 
-        .profiler-result .profiler-button, .profiler-controls {
+        .mp-result .mp-button, .mp-controls {
             border-bottom: 0;
             border-top: @results-border;
         }
     }
 
-    &.profiler-bottomright {
+    &.mp-bottomright {
         top: inherit;
         bottom: 0;
         right: 0;
 
-        .profiler-result:first-child .profiler-button {
+        .mp-result:first-child .mp-button {
             border-top-left-radius: @results-border-radius;
         }
 
-        .profiler-button, .profiler-controls {
+        .mp-button, .mp-controls {
             border-left: @results-border;
         }
 
-        .profiler-result .profiler-button, .profiler-controls {
+        .mp-result .mp-button, .mp-controls {
             border-bottom: 0;
             border-top: @results-border;
         }
     }
 
-    .profiler-button {
+    .mp-button {
         user-select: none;
 
-        .profiler-warning {
+        .mp-warning {
             font-weight: bold;
         }
 
-        > .profiler-number {
+        > .mp-number {
             font-family: Consolas, monospace, serif;
         }
     }
 
-    .profiler-controls {
+    .mp-controls {
         display: none;
     }
 
-    .profiler-button, .profiler-controls {
+    .mp-button, .mp-controls {
         z-index: 2147483640;
         border-bottom: @results-border;
         background-color: @color-white;
@@ -490,37 +490,37 @@
         cursor: pointer;
     }
 
-    .profiler-result {
+    .mp-result {
         position: relative;
 
         &.active {
-            .profiler-button {
+            .mp-button {
                 background-color: #207ab7;
                 animation: none;
                 border-radius: 0 !important;
 
-                .profiler-number, .profiler-warning {
+                .mp-number, .mp-warning {
                     color: @color-white;
                     font-weight: bold;
                 }
 
-                .profiler-unit {
+                .mp-unit {
                     color: @color-white;
                     font-weight: normal;
                 }
             }
 
-            .profiler-popup {
+            .mp-popup {
                 display: block;
             }
         }
     }
 
-    &.new .profiler-button {
-        animation: profiler-fadeIn 2s 1;
+    &.new .mp-button {
+        animation: mp-fadeIn 2s 1;
     }
 
-    .profiler-controls {
+    .mp-controls {
         display: block;
         font-size: 12px;
         font-family: Consolas, monospace, serif;
@@ -539,7 +539,7 @@
         }
     }
 
-    .profiler-popup {
+    .mp-popup {
         display: none;
         z-index: 2147483641;
         position: absolute;
@@ -551,21 +551,21 @@
         box-shadow: 0 1px 10px #555555;
         border-radius: 2px;
 
-        .profiler-info {
+        .mp-info {
             margin-bottom: 3px;
             padding-bottom: 2px;
             border-bottom: 1px solid #ddd;
 
-            .profiler-name {
+            .mp-name {
                 font-size: 1.1em;
             }
 
-            .profiler-overall-duration {
+            .mp-overall-duration {
                 color: @color-muted;
             }
         }
 
-        .profiler-timings {
+        .mp-timings {
             th, td {
                 padding: 0 6px;
             }
@@ -575,26 +575,26 @@
                 padding-bottom: 3px;
             }
 
-            .profiler-label {
+            .mp-label {
                 max-width: 275px;
             }
         }
     }
 
-    .profiler-queries {
+    .mp-queries {
         display: none;
     }
 
-    &.profiler-min {
-        .profiler-result {
+    &.mp-min {
+        .mp-result {
             display: none;
         }
 
-        .profiler-controls span {
+        .mp-controls span {
             display: none;
         }
 
-        .profiler-controls .profiler-min-max {
+        .mp-controls .mp-min-max {
             border-right: none;
             padding: 0;
             margin: 0;
@@ -602,37 +602,37 @@
     }
 }
 
-.profiler-result-full {
-    .profiler-result {
+.mp-result-full {
+    .mp-result {
         width: 950px;
         margin: 25px auto;
 
-        .profiler-button {
+        .mp-button {
             display: none;
         }
 
-        .profiler-popup {
-            .profiler-info {
+        .mp-popup {
+            .mp-info {
                 font-size: 18px;
                 border-bottom: 1px solid @color-muted;
                 padding-bottom: 3px;
                 margin-bottom: 10px;
 
-                .profiler-name {
+                .mp-name {
                     margin-bottom: 5px;
                 }
 
-                .profiler-overall-duration, .profiler-started {
+                .mp-overall-duration, .mp-started {
                     font-size: 80%;
                     color: #888;
                 }
 
-                .profiler-overall-duration {
+                .mp-overall-duration {
                     padding-right: 20px;
                 }
             }
 
-            .profiler-timings {
+            .mp-timings {
                 td, th {
                     font-size: 13px;
                     padding-left: 8px;
@@ -651,13 +651,13 @@
                     }
                 }
 
-                .profiler-label {
+                .mp-label {
                     max-width: 550px;
                 }
             }
         }
 
-        .profiler-queries {
+        .mp-queries {
             margin: 20px 0;
 
             th {
@@ -667,12 +667,12 @@
         }
     }
 
-    .profiler-share-profiler-results {
+    .mp-share-mp-results {
         display: none;
     }
 }
 
-table.profiler-results-index {
+table.mp-results-index {
     border: 0;
     border-spacing: 0;
     font-size: 12px;
