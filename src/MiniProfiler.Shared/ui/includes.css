@@ -218,6 +218,11 @@
 }
 .profiler-queries {
   font-family: sans-serif;
+  /*
+    Colorbrewer theme
+    Original: https://github.com/mbostock/colorbrewer-theme (c) Mike Bostock <mike@ocks.org>
+    Ported by Fabr�cio Tavares de Oliveira
+    */
 }
 .profiler-queries pre {
   white-space: pre-wrap;
@@ -285,38 +290,57 @@
 .profiler-queries .profiler-call-type {
   font-weight: bold;
 }
-.profiler-queries .str {
-  color: #800000;
+.profiler-queries .hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
 }
-.profiler-queries .kwd {
-  color: #00008b;
+.profiler-queries .hljs,
+.profiler-queries .hljs-subst {
+  color: #000;
 }
-.profiler-queries .com {
-  color: #808080;
+.profiler-queries .hljs-string,
+.profiler-queries .hljs-meta,
+.profiler-queries .hljs-symbol,
+.profiler-queries .hljs-template-tag,
+.profiler-queries .hljs-template-variable,
+.profiler-queries .hljs-addition {
+  color: #756bb1;
 }
-.profiler-queries .typ {
-  color: #2b91af;
+.profiler-queries .hljs-comment,
+.profiler-queries .hljs-quote {
+  color: #636363;
 }
-.profiler-queries .lit {
-  color: #800000;
+.profiler-queries .hljs-number,
+.profiler-queries .hljs-regexp,
+.profiler-queries .hljs-literal,
+.profiler-queries .hljs-bullet,
+.profiler-queries .hljs-link {
+  color: #31a354;
 }
-.profiler-queries .pun {
-  color: #000000;
+.profiler-queries .hljs-deletion,
+.profiler-queries .hljs-variable {
+  color: #88f;
 }
-.profiler-queries .pln {
-  color: #000000;
+.profiler-queries .hljs-keyword,
+.profiler-queries .hljs-selector-tag,
+.profiler-queries .hljs-title,
+.profiler-queries .hljs-section,
+.profiler-queries .hljs-built_in,
+.profiler-queries .hljs-doctag,
+.profiler-queries .hljs-type,
+.profiler-queries .hljs-tag,
+.profiler-queries .hljs-name,
+.profiler-queries .hljs-selector-id,
+.profiler-queries .hljs-selector-class,
+.profiler-queries .hljs-strong {
+  color: #3182bd;
 }
-.profiler-queries .tag {
-  color: #800000;
+.profiler-queries .hljs-emphasis {
+  font-style: italic;
 }
-.profiler-queries .atn {
-  color: #ff0000;
-}
-.profiler-queries .atv {
-  color: #0000ff;
-}
-.profiler-queries .dec {
-  color: #800080;
+.profiler-queries .hljs-attribute {
+  color: #e6550d;
 }
 .profiler-results {
   z-index: 2147483641;
