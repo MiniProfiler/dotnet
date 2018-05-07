@@ -77,6 +77,64 @@
 
     table.mp-client-timings {
         margin-top: 10px;
+
+        td:nth-child(2) {
+            width: 100%;
+            padding: 0;
+        }
+
+        td div {
+            height: 13px;
+            min-width: 1px;
+        }
+
+        .t-point div {
+            height: 4px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            box-shadow: 0 0 2px;
+        }
+
+        .t-unknown div {
+            background: #f1f1f1;
+            border: solid 1px #e8e8e8;
+        }
+
+        .t-dns div {
+            background: #8BAAD1;
+        }
+
+        .t-connect div {
+            background: #8CBB4E;
+        }
+
+        .t-ssl div {
+            background: #795892;
+        }
+
+        .t-request div {
+            background: #0099B2;
+        }
+
+        .t-response div {
+            background: #D99D35;
+        }
+
+        .t-dom div {
+            background: #BD4D32;
+        }
+
+        .t-domcontent div {
+            background: #DD4678;
+        }
+
+        .t-load div {
+            background: #1D72AA;
+        }
+
+        .t-paint div {
+            background: #bc41e3;
+        }
     }
 
     .mp-label {
@@ -95,10 +153,6 @@
 
     .mp-trivial {
         display: none;
-
-        &:first-child {
-            display: table-row;
-        }
 
         td, td * {
             color: @color-muted !important;
@@ -168,6 +222,10 @@
 
         .mp-queries-duration {
             padding-left: 6px;
+        }
+
+        &:not(.mp-client-timings) .mp-trivial:first-child {
+            display: table-row;
         }
     }
 
