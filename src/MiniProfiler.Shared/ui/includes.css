@@ -82,6 +82,51 @@
 .mp-result table.mp-client-timings {
   margin-top: 10px;
 }
+.mp-result table.mp-client-timings td:nth-child(2) {
+  width: 100%;
+  padding: 0;
+}
+.mp-result table.mp-client-timings td div {
+  height: 13px;
+  min-width: 1px;
+}
+.mp-result table.mp-client-timings .t-point div {
+  height: 4px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  box-shadow: 0 0 2px;
+}
+.mp-result table.mp-client-timings .t-unknown div {
+  background: #f1f1f1;
+  border: solid 1px #e8e8e8;
+}
+.mp-result table.mp-client-timings .t-dns div {
+  background: #8BAAD1;
+}
+.mp-result table.mp-client-timings .t-connect div {
+  background: #8CBB4E;
+}
+.mp-result table.mp-client-timings .t-ssl div {
+  background: #795892;
+}
+.mp-result table.mp-client-timings .t-request div {
+  background: #0099B2;
+}
+.mp-result table.mp-client-timings .t-response div {
+  background: #D99D35;
+}
+.mp-result table.mp-client-timings .t-dom div {
+  background: #BD4D32;
+}
+.mp-result table.mp-client-timings .t-domcontent div {
+  background: #DD4678;
+}
+.mp-result table.mp-client-timings .t-load div {
+  background: #1D72AA;
+}
+.mp-result table.mp-client-timings .t-paint div {
+  background: #bc41e3;
+}
 .mp-result .mp-label {
   color: #555555;
   overflow: hidden;
@@ -95,9 +140,6 @@
 }
 .mp-result .mp-trivial {
   display: none;
-}
-.mp-result .mp-trivial:first-child {
-  display: table-row;
 }
 .mp-result .mp-trivial td,
 .mp-result .mp-trivial td * {
@@ -152,6 +194,9 @@
 }
 .mp-result .mp-timings .mp-queries-duration {
   padding-left: 6px;
+}
+.mp-result .mp-timings:not(.mp-client-timings) .mp-trivial:first-child {
+  display: table-row;
 }
 .mp-result .mp-custom-timing-overview {
   float: right;

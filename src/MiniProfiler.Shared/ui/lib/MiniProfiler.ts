@@ -239,7 +239,7 @@ namespace StackExchange.Profiling {
             ({ name: 'secureConnectionStart', description: 'Secure Connection Start', lineDescription: 'SSL/TLS Connect', type: 'ssl' }) as ITimingInfo,
             ({ name: 'connectEnd', description: 'Connect End', type: 'connect' }) as ITimingInfo,
             ({ name: 'requestStart', description: 'Request Start', lineDescription: 'Request', type: 'request' }) as ITimingInfo,
-            ({ name: 'responseStart', description: 'Response Start', lineDescription: 'Response', type: 'request' }) as ITimingInfo,
+            ({ name: 'responseStart', description: 'Response Start', lineDescription: 'Response', type: 'response' }) as ITimingInfo,
             ({ name: 'responseEnd', description: 'Response End', type: 'response' }) as ITimingInfo,
             ({ name: 'domLoading', description: 'DOM Loading', lineDescription: 'DOM Loading', type: 'dom' }) as ITimingInfo,
             ({ name: 'domInteractive', description: 'DOM Interactive', lineDescription: 'DOM Interactive', type: 'dom', point: true }) as ITimingInfo,
@@ -632,12 +632,12 @@ namespace StackExchange.Profiling {
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#039;');
-            const duration = (milliseconds: number | undefined) => {
-                    if (milliseconds === undefined) {
-                        return '';
-                    }
-                    return (milliseconds || 0).toFixed(1);
-                };
+            const duration = (milliseconds: number | undefined, decimalPlaces?: number) => {
+                if (milliseconds === undefined) {
+                    return '';
+                }
+                return (milliseconds || 0).toFixed(decimalPlaces === undefined ? 1 : decimalPlaces);
+            };
 
             const renderTiming = (timing: ITiming) => {
                 const customTimingTypes = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
@@ -715,37 +715,50 @@ namespace StackExchange.Profiling {
                     return '';
                 }
 
+                let end = 0;
                 const list = p.ClientTimings.Timings.map((t) => {
-                    const results = this.clientPerfTimings ? this.clientPerfTimings.filter((pt: ITimingInfo) => pt.name === t.Name) : [];
-                    const info = results.length > 0 ? results[0] : null;
+                    const results = mp.clientPerfTimings ? mp.clientPerfTimings.filter((pt: ITimingInfo) => pt.name === t.Name) : [];
+                    const info: ITimingInfo = results.length > 0 ? results[0] : null;
+                    end = Math.max(end, t.Start + t.Duration);
 
                     return {
-                        isTrivial: t.Duration === 0 && !(info && info.point),
+                        isTrivial: t.Start === 0 || t.Duration < 2, // all points are considered trivial
                         name: info && info.lineDescription || t.Name,
                         duration: info && info.point ? undefined : t.Duration,
+                        type: info && info.type || 'unknown',
+                        point: info && info.point,
                         start: t.Start,
+                        left: null,
+                        width: null,
                     };
                 });
                 list.sort((a, b) => a.start - b.start);
+                list.forEach((l) => {
+                    const percent = (100 * l.start / end) + '%';
+                    l.left = l.point ? `calc(${percent} - 2px)` : percent;
+                    l.width = l.point ? '4px' : (100 * l.duration / end + '%');
+                });
 
                 return `
         <table class="mp-timings mp-client-timings">
           <thead>
             <tr>
               <th style="text-align:left">client event</th>
+              <th></th>
               <th>duration (ms)</th>
-              <th>from start (ms)</th>
+              <th class="mp-more-columns">from start (ms)</th>
             </tr>
           </thead>
           <tbody>
             ${list.map((t) => `
             <tr class="${(t.isTrivial ? 'mp-trivial' : '')}">
               <td class="mp-label">${encode(t.name)}</td>
+              <td class="t-${t.type}${t.point ? ' t-point' : ''}"><div style="margin-left: ${t.left}; width: ${t.width};"></div></td>
               <td class="mp-duration">
-                ${(t.duration >= 0 ? `<span class="mp-unit"></span>${duration(t.duration)}` : '')}
+                ${(t.duration >= 0 ? `<span class="mp-unit"></span>${duration(t.duration, 0)}` : '')}
               </td>
-              <td class="mp-duration time-from-start">
-                <span class="mp-unit">+</span>${duration(t.start)}
+              <td class="mp-duration time-from-start mp-more-columns">
+                <span class="mp-unit">+</span>${duration(t.start, 0)}
               </td>
             </tr>`).join('')}
           </tbody>
