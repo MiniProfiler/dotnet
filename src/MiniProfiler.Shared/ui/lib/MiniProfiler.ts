@@ -303,8 +303,8 @@ namespace StackExchange.Profiling {
                         }
 
                         // if any data came in before the view popped up, render now
-                        if (this.savedJson) {
-                            for (const saved of this.savedJson) {
+                        if (mp.savedJson) {
+                            for (const saved of mp.savedJson) {
                                 mp.buttonShow(saved);
                             }
                         }
