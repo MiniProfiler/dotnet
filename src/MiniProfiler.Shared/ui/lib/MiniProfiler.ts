@@ -1072,7 +1072,7 @@ namespace StackExchange.Profiling {
 
                 XMLHttpRequest.prototype.send = function sendReplacement(data) {
                     if (this.onreadystatechange) {
-                        if (typeof (this.miniprofiler) === undefined || typeof (this.miniprofiler.prev_onreadystatechange) === undefined) {
+                        if (typeof (this.miniprofiler) === 'undefined' || typeof (this.miniprofiler.prev_onreadystatechange) === 'undefined') {
                             this.miniprofiler = { prev_onreadystatechange: this.onreadystatechange };
 
                             this.onreadystatechange = function onReadyStateChangeReplacement() {
@@ -1086,7 +1086,7 @@ namespace StackExchange.Profiling {
                             };
                         }
                     } else if (this.onload) {
-                        if (typeof (this.miniprofiler) === undefined || typeof (this.miniprofiler.prev_onload) === undefined) {
+                        if (typeof (this.miniprofiler) === 'undefined' || typeof (this.miniprofiler.prev_onload) === 'undefined') {
                             this.miniprofiler = { prev_onload: this.onload };
 
                             this.onload = function onLoadReplacement() {
