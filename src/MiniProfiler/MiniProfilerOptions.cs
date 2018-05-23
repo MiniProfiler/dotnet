@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Security.Cryptography;
 using System.Web;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.Internal;
@@ -62,62 +58,6 @@ namespace StackExchange.Profiling
         /// If this setting is false, the output won't be compressed. (Only do this when you take care of compression yourself)
         /// </summary>
         public bool EnableCompression { get; set; } = true;
-
-        /// <summary>
-        /// The path where custom UI elements are stored.
-        /// If the custom file doesn't exist, the standard resource is used.
-        /// This setting should be in APP RELATIVE FORM, e.g. "~/App_Data/MiniProfilerUI"
-        /// </summary>
-        /// <remarks>A web server restart is required to reload new files.</remarks>
-        public string CustomUITemplates { get; set; } = "~/App_Data/MiniProfilerUI";
-
-        private string _versionHash;
-        /// <summary>
-        /// The hash to use for file cache breaking, this is automatically calculated.
-        /// </summary>
-        public override string VersionHash => _versionHash ?? (_versionHash = GetVersionHash());
-
-        /// <summary>
-        /// On first call, set the version hash for all cache breakers.
-        /// </summary>
-        private string GetVersionHash()
-        {
-            try
-            {
-                if (HttpContext.Current == null) return base.VersionHash;
-                var files = new List<string>();
-
-                var customUITemplatesPath = HttpContext.Current.Server.MapPath(CustomUITemplates);
-                if (Directory.Exists(customUITemplatesPath))
-                {
-                    files.AddRange(Directory.EnumerateFiles(customUITemplatesPath));
-                }
-
-                if (files.Count == 0) return base.VersionHash;
-
-                using (var sha256 = new SHA256CryptoServiceProvider())
-                {
-                    var hash = new byte[sha256.HashSize / 8];
-                    foreach (string file in files)
-                    {
-                        // sha256 can throw a FIPS exception, but SHA256CryptoServiceProvider is FIPS BABY - FIPS 
-                        byte[] contents = File.ReadAllBytes(file);
-                        byte[] hashfile = sha256.ComputeHash(contents);
-                        for (int i = 0; i < (sha256.HashSize / 8); i++)
-                        {
-                            hash[i] = (byte)(hashfile[i] ^ hash[i]);
-                        }
-                    }
-                    return Convert.ToBase64String(hash);
-                }
-            }
-            catch (Exception e)
-            {
-                //VersionHash is pre-populated
-                Debug.WriteLine($"Error calculating folder hash: {e}\n{e.StackTrace}");
-                return base.VersionHash;
-            }
-        }
 
         /// <summary>
         /// Configures the <see cref="MiniProfilerHandler"/>.

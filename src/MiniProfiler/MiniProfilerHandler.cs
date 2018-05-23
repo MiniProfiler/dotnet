@@ -290,53 +290,21 @@ namespace StackExchange.Profiling
             return Render.SingleResultHtml(profiler, VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash());
         }
 
-#if DEBUG
-        private static bool BypassLocalLoad = false;
-#endif
-
         private bool TryGetResource(string filename, out string resource)
         {
             filename = filename.ToLower();
 
-#if DEBUG
-            // attempt to simply load from file system, this lets up modify js without needing to recompile A MILLION TIMES 
-            if (!BypassLocalLoad)
-            {
-                var trace = new System.Diagnostics.StackTrace(true);
-                var path = Path.GetDirectoryName(trace.GetFrames()[0].GetFileName()) + "\\ui\\" + filename;
-                try
-                {
-                    resource = File.ReadAllText(path);
-                    return true;
-                }
-                catch
-                {
-                    BypassLocalLoad = true;
-                }
-            }
-#endif
-
             if (!ResourceCache.TryGetValue(filename, out resource))
             {
-                string customTemplatesPath = HttpContext.Current.Server.MapPath(Options.CustomUITemplates);
-                string customTemplateFile = Path.Combine(customTemplatesPath, filename);
-
-                if (File.Exists(customTemplateFile))
+                using (var stream = typeof(MiniProfiler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
                 {
-                    resource = File.ReadAllText(customTemplateFile);
-                }
-                else
-                {
-                    using (var stream = typeof(MiniProfiler).Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
+                    if (stream == null)
                     {
-                        if (stream == null)
-                        {
-                            return false;
-                        }
-                        using (var reader = new StreamReader(stream))
-                        {
-                            resource = reader.ReadToEnd();
-                        }
+                        return false;
+                    }
+                    using (var reader = new StreamReader(stream))
+                    {
+                        resource = reader.ReadToEnd();
                     }
                 }
 

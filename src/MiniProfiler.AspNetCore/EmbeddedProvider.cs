@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using StackExchange.Profiling.Internal;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
@@ -55,33 +54,16 @@ namespace StackExchange.Profiling
                 return true;
             }
 
-            // Check the on-disk location first, if configured
-            if (_options.Value.UITemplatesPath.HasValue())
+            // Fall back to embedded
+            using (var stream = typeof(MiniProfiler).GetTypeInfo().Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
             {
-                var customFile = Path.Combine(_options.Value.UITemplatesPath, filename);
-                var fileInfo = _env.ContentRootFileProvider.GetFileInfo(customFile);
-                if (fileInfo.Exists)
+                if (stream == null)
                 {
-                    using (var stream = fileInfo.CreateReadStream())
-                    using (var reader = new StreamReader(stream))
-                    {
-                        resource = reader.ReadToEnd();
-                    }
+                    return false;
                 }
-            }
-            else
-            {
-                // Fall back to embedded
-                using (var stream = typeof(MiniProfiler).GetTypeInfo().Assembly.GetManifestResourceStream("StackExchange.Profiling.ui." + filename))
+                using (var reader = new StreamReader(stream))
                 {
-                    if (stream == null)
-                    {
-                        return false;
-                    }
-                    using (var reader = new StreamReader(stream))
-                    {
-                        resource = reader.ReadToEnd();
-                    }
+                    resource = reader.ReadToEnd();
                 }
             }
 

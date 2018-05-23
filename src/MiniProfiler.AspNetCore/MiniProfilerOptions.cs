@@ -40,11 +40,5 @@ namespace StackExchange.Profiling
         /// Function to provide the unique user ID based on the request, to store MiniProfiler IDs user
         /// </summary>
         public Func<HttpRequest, string> UserIdProvider { get; set; } = request => request.HttpContext.Connection.RemoteIpAddress.ToString();
-
-        /// <summary>
-        /// Gets or sets the content directory subfolder to load custom template overrides from.
-        /// For example, if you're using wwwroot and want to use wwwroot/profiler/, set this to "profiler/"
-        /// </summary>
-        public string UITemplatesPath { get; set; }
     }
 }
