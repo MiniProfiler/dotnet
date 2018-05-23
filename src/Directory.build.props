@@ -16,6 +16,10 @@
     <PackageReleaseNotes>See https://github.com/MiniProfiler/dotnet/releases for more info</PackageReleaseNotes>
     <PackageBaseTags>Profiler;Performance;Profiling;Timing</PackageBaseTags>
     
+    <RepositoryUrl>https://github.com/MiniProfiler/dotnet.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>master</RepositoryBranch>
+
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
