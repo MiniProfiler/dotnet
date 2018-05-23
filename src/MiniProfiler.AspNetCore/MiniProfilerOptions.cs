@@ -11,7 +11,7 @@ namespace StackExchange.Profiling
     {
         /// <summary>
         /// The path under which ALL routes are registered in, defaults to the application root.  For example, "/myDirectory/" would yield
-        /// "/myDirectory/includes.js" rather than "/mini-profiler-resources/includes.js"
+        /// "/myDirectory/includes.min.js" rather than "/mini-profiler-resources/includes.min.js"
         /// Any setting here should be absolute for the application, e.g. "/myDirectory/"
         /// </summary>
         public PathString RouteBasePath { get; set; } = "/mini-profiler-resources";

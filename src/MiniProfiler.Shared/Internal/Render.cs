@@ -40,7 +40,7 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("<script async=\"async\" id=\"mini-profiler\" src=\"");
             sb.Append(path);
-            sb.Append("includes.js?v=");
+            sb.Append("includes.min.js?v=");
             sb.Append(options.VersionHash);
             sb.Append("\" data-version=\"");
             sb.Append(options.VersionHash);
@@ -151,8 +151,8 @@ namespace StackExchange.Profiling.Internal
             return $@"<html>
   <head>
     <title>List of profiling sessions</title>
-    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.js?v={version}""></script>
-    <link href=""{path}includes.css?v={version}"" rel=""stylesheet"" />
+    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
+    <link href=""{path}includes.min.css?v={version}"" rel=""stylesheet"" />
     <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
   </head>
   <body>

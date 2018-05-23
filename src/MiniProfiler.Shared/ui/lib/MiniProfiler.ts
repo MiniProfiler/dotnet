@@ -345,7 +345,7 @@ namespace StackExchange.Profiling {
                     } else {
                         alreadyDone = true;
                         if (mp.options.authorized) {
-                            $('head').append(`<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.css?v=${mp.options.version}" />`);
+                            $('head').append(`<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" />`);
                         }
                         doInit();
                     }

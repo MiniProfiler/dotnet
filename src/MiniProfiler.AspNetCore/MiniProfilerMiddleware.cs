@@ -170,7 +170,7 @@ namespace StackExchange.Profiling
             string result = null;
 
             // File embed
-            if (subPath.Value.StartsWith("/includes", StringComparison.Ordinal))
+            if (subPath.Value.StartsWith("/includes.min", StringComparison.Ordinal))
             {
                 result = Embedded.GetFile(context, subPath);
             }

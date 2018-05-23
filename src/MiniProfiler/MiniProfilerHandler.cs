@@ -89,7 +89,7 @@ namespace StackExchange.Profiling
 
             switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
             {
-                case "includes":
+                case "includes.min":
                     output = Includes(context, path);
                     break;
 

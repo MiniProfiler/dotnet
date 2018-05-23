@@ -14,8 +14,8 @@ namespace StackExchange.Profiling.Tests
         [InlineData("BRILLANT", 404)]
         [InlineData("underscore.js", 404)]
         [InlineData("results-list", 200)]
-        [InlineData("includes.js", 200)]
-        [InlineData("includes.css", 200)]
+        [InlineData("includes.min.js", 200)]
+        [InlineData("includes.min.css", 200)]
         public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string resourceName, int expectedHttpStatus)
         {
             var sut = new MiniProfilerHandler(new MiniProfilerOptions()
@@ -52,7 +52,7 @@ namespace StackExchange.Profiling.Tests
 			var sut = new MiniProfilerHandler(new MiniProfilerOptions());
 
 			// Act
-			var res = GetRequestResponseEncoding(sut, "includes.js", acceptEncoding);
+			var res = GetRequestResponseEncoding(sut, "includes.min.js", acceptEncoding);
 
 			// Assert
 			// due the limitations of the HttpSimulator, we can't access the header values because it needs iis integrated pipeline mode.
