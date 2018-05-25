@@ -37,7 +37,7 @@ if ($PullRequestNumber) {
 
 Write-Host "Building solution..." -ForegroundColor "Magenta"
 dotnet restore ".\MiniProfiler.sln" /p:CI=true
-dotnet build ".\MiniProfiler.sln" /p:CI=true
+dotnet build ".\MiniProfiler.sln" -c Release /p:CI=true
 Write-Host "Done building." -ForegroundColor "Green"
 
 if ($RunTests) {
@@ -46,7 +46,7 @@ if ($RunTests) {
         Push-Location ".\tests\$project"
 
         dotnet xunit -configuration Release
-        if ($LastExitCode -ne 0) { 
+        if ($LastExitCode -ne 0) {
             Write-Host "Error with tests, aborting build." -Foreground "Red"
             Pop-Location
             Exit 1
@@ -67,7 +67,7 @@ if ($CreatePackages) {
 
     foreach ($project in $projectsToBuild) {
         Write-Host "Packing $project (dotnet pack)..." -ForegroundColor "Magenta"
-        dotnet pack ".\src\$project\$project.csproj" -c Release /p:PackageOutputPath=$packageOutputFolder /p:NoPackageAnalysis=true /p:CI=true
+        dotnet pack ".\src\$project\$project.csproj" --no-build -c Release /p:PackageOutputPath=$packageOutputFolder /p:NoPackageAnalysis=true /p:CI=true
         Write-Host ""
     }
 }
