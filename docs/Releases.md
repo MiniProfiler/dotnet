@@ -19,7 +19,7 @@ This page tracks major changes included in any update starting with version 4.0.
 - [All libraries](https://www.nuget.org/packages?q=MiniProfiler+owner%3AStackExchange) are strongly named
 - Client timings added to main UI for visual breakdown of requests
 - Storage providers (optional - for persistent storage of MiniProfilers) added and updated:
-  - MySQL: [https://www.nuget.org/packages/MiniProfiler.Providers.MySql](https://www.nuget.org/packages/MiniProfiler.Providers.MySql/)
+  - MySQL: [MiniProfiler.Providers.MySql](https://www.nuget.org/packages/MiniProfiler.Providers.MySql/)
   - Redis: [MiniProfiler.Providers.Redis](https://www.nuget.org/packages/MiniProfiler.Providers.Redis/)
   - SQL Server: [MiniProfiler.Providers.SqlServer](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer/)
   - SQL Server CE: [MiniProfiler.Providers.SqlServerCe](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServerCe/)
