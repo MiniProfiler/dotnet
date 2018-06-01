@@ -36,8 +36,8 @@ if ($PullRequestNumber) {
 }
 
 Write-Host "Building solution..." -ForegroundColor "Magenta"
-dotnet restore ".\PackageBuild.csproj" /p:CI=true
-dotnet build ".\PackageBuild.csproj" -c Release /p:CI=true
+dotnet restore ".\MiniProfiler.sln" /p:CI=true
+dotnet build ".\MiniProfiler.sln" -c Release /p:CI=true
 Write-Host "Done building." -ForegroundColor "Green"
 
 if ($RunTests) {
