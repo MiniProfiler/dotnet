@@ -15,7 +15,7 @@ skip_commits:
   files:
     - '**/*.md'
     - docs/*
-    
+
 environment:
   Appveyor: true
   # Postgres
@@ -47,25 +47,25 @@ build_script:
   - createdb test
   # MySQL
   - mysql -e "create database test;" --user=root
-  - ps: .\build\dotnet-install.ps1 -Version 2.1.105
+  - ps: .\build\dotnet-install.ps1 -Version 2.1.300
   - ps: .\build.ps1 -PullRequestNumber "$env:APPVEYOR_PULL_REQUEST_NUMBER" -CreatePackages $true
 
 test: off
 artifacts:
 - path: .\.nupkgs\*.nupkg
-  
+
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/miniprofiler/api/v2
   on:
-    branch: master  
+    branch: master
   api_key:
     secure: LLyiHXh/pU4i8H2Cn74C5sXNV+5MX0gpJZuunTnXv/KoafhfmkB/65/TcV4B7kj2
   symbol_server: https://www.myget.org/F/miniprofiler/symbols/api/v2/package
 - provider: NuGet
   server: https://www.myget.org/F/stackoverflow/api/v2
   on:
-    branch: master  
+    branch: master
   api_key:
     secure: P/UHxq2DEs0GI1SoDXDesHjRVsSVgdywz5vmsnhFQQY5aJgO3kP+QfhwfhXz19Rw
   symbol_server: https://www.myget.org/F/stackoverflow/symbols/api/v2/package
