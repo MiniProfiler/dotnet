@@ -150,7 +150,7 @@ namespace Samples.Mvc5
             .ExcludeType("SessionFactory")  // Ignore any class with the name of SessionFactory)
             .ExcludeAssembly("NHibernate")  // Ignore any assembly named NHibernate
             .ExcludeMethod("Flush")         // Ignore any method with the name of Flush
-            .AddViewPofiling()              // Add MVC view profiling
+            .AddViewProfiling()              // Add MVC view profiling
             );
 
             MiniProfilerEF6.Initialize();
