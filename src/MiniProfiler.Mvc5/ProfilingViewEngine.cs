@@ -94,7 +94,7 @@ namespace StackExchange.Profiling.Mvc
         /// Adds view profiling to MiniProfiler, so that view times show up in profilers.
         /// </summary>
         /// <param name="options">The options object to configure, only used for chaining.</param>
-        public static MiniProfilerOptions AddViewPofiling(this MiniProfilerOptions options)
+        public static MiniProfilerOptions AddViewProfiling(this MiniProfilerOptions options)
         {
             var copy = ViewEngines.Engines.ToList();
             ViewEngines.Engines.Clear();
