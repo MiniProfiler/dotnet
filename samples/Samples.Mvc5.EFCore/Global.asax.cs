@@ -93,7 +93,7 @@ namespace Samples.Mvc5
             // Let's rig up serialization of our profiler results to a database, so they survive app restarts.
             MiniProfiler.Configure(new MiniProfilerOptions
                 { RouteBasePath = "~/profiler" }
-                .AddViewPofiling()    // Add MVC view profiling
+                .AddViewProfiling()    // Add MVC view profiling
                 .AddEntityFramework() // Add EF Core
             );
         }
