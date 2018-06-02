@@ -377,8 +377,8 @@ namespace StackExchange.Profiling {
                         data.forEach((profiler) => {
                             str += (`
 <tr>
-  <td><a href="${options.path}results?id=${profiler.Id}">${escape(profiler.Name)}</a></td>
-  <td>${escape(profiler.MachineName)}</td>
+  <td><a href="${options.path}results?id=${profiler.Id}">${mp.htmlEscape(profiler.Name)}</a></td>
+  <td>${mp.htmlEscape(profiler.MachineName)}</td>
   <td class="mp-results-index-date">${profiler.Started}</td>
   <td>${profiler.DurationMilliseconds}</td>` + (profiler.ClientTimings ? `
   <td>${getTiming(profiler, 'requestStart').Start}</td>
@@ -623,15 +623,17 @@ namespace StackExchange.Profiling {
             return result;
         }
 
+        private htmlEscape = (orig: string) => orig
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
         private renderProfiler = (json: IProfiler) => {
             const p = this.processJson(json);
             const mp = this;
-            const encode = (orig: string) => orig
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
+            const encode = this.htmlEscape;
             const duration = (milliseconds: number | undefined, decimalPlaces?: number) => {
                 if (milliseconds === undefined) {
                     return '';
