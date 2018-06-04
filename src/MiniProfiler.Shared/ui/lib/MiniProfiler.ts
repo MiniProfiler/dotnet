@@ -734,6 +734,8 @@ namespace StackExchange.Profiling {
                         width: null,
                     };
                 });
+                p.HasTrivialTimings = p.HasTrivialTimings || list.some((t) => t.isTrivial);
+
                 list.sort((a, b) => a.start - b.start);
                 list.forEach((l) => {
                     const percent = (100 * l.start / end) + '%';
