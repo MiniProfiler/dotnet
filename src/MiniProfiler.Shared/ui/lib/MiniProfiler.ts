@@ -254,6 +254,7 @@ namespace StackExchange.Profiling {
         private savedJson: IProfiler[] = [];
         private path: string;
         public highlight = (elem: HTMLElement): void => undefined;
+        public initCondition: () => boolean;
 
         public init = (): MiniProfiler => {
             this.jq = jQuery.noConflict(true);
@@ -339,7 +340,8 @@ namespace StackExchange.Profiling {
             let alreadyDone = false;
             const deferInit = () => {
                 if (!alreadyDone) {
-                    if (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000) {
+                    if ((mp.initCondition && !mp.initCondition())
+                        || (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000)) {
                         setTimeout(deferInit, 100);
                         wait += 100;
                     } else {
