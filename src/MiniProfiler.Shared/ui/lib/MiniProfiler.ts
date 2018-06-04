@@ -812,7 +812,7 @@ namespace StackExchange.Profiling {
               </td>
               <td>
                 <div class="query">
-                  <div class="mp-stack-trace">${encode(ct.StackTraceSnippet)}</div>
+                  <div class="mp-stack-trace">${encode(ct.StackTraceSnippet || '')}</div>
                   <pre><code>${encode(ct.CommandString)}</code></pre>
                 </div>
               </td>
