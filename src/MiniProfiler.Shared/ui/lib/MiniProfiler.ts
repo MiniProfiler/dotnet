@@ -623,12 +623,12 @@ namespace StackExchange.Profiling {
             return result;
         }
 
-        private htmlEscape = (orig: string) => orig
+        private htmlEscape = (orig: string) => (orig || '')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+            .replace(/'/g, '&#039;')
 
         private renderProfiler = (json: IProfiler) => {
             const p = this.processJson(json);
