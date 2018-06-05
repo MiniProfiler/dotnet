@@ -971,6 +971,7 @@ namespace StackExchange.Profiling {
         }
 
         private initControls = (container: JQuery) => {
+            const $ = this.jq;
             if (this.options.showControls) {
                 this.controls = $('<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>').appendTo(container);
 
