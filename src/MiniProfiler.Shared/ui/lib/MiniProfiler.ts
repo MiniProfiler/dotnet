@@ -254,7 +254,7 @@ namespace StackExchange.Profiling {
         private savedJson: IProfiler[] = [];
         private path: string;
         public highlight = (elem: HTMLElement): void => undefined;
-        public initCondition: () => boolean;
+        public initCondition: () => boolean; // Example usage: window.MiniProfiler.initCondition = function() { return myOtherThingIsReady; };
 
         public init = (): MiniProfiler => {
             this.jq = jQuery.noConflict(true);
