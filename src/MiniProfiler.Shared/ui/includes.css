@@ -328,6 +328,9 @@
 .mp-queries .mp-gap-info.mp-trivial-gap {
   display: none;
 }
+.mp-queries .mp-gap-info.mp-trivial-gap.show-trivial-gap {
+  display: table-row;
+}
 .mp-queries .mp-trivial-gap-container {
   text-align: center;
   margin: 8px 0;

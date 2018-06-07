@@ -849,12 +849,12 @@ namespace StackExchange.Profiling {
       </div>
       <div class="mp-output">
         ${timingsTable}
-		${customTimings()}
+        ${customTimings()}
         ${clientTimings()}
         <div class="mp-links">
           <a href="${this.options.path}results?id=${p.Id}" class="mp-share-mp-results" target="_blank">share</a>
           ${Object.keys(p.CustomLinks).map((k) => `<a href="${p.CustomLinks[k]}" class="mp-custom-link" target="_blank">${k}</a>`).join('')}
-  		  <span>
+          <span>
             <a class="mp-toggle-columns" title="shows additional columns">more columns</a>
             <a class="mp-toggle-columns mp-more-columns" title="hides additional columns">fewer columns</a>
             ${(p.HasTrivialTimings ? `
@@ -909,7 +909,7 @@ namespace StackExchange.Profiling {
                     $(this).closest('.mp-result').toggleClass('show-columns');
                 }).on('click', '.mp-toggle-trivial-gaps', function(e) {
                     e.preventDefault();
-                    $(this).closest('.mp-queries').find('.mp-trivial-gap').toggle();
+                    $(this).closest('.mp-queries').find('.mp-trivial-gap').toggleClass('show-trivial-gap');
                 });
 
             // Full vs. Corner handlers
