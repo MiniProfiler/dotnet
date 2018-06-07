@@ -831,7 +831,7 @@ namespace StackExchange.Profiling {
             }
 
             return mp.jq(`
-  <div class="mp-result${(this.options.showTrivial ? 'show-trivial' : '')}${(this.options.showChildrenTime ? 'show-columns' : '')}">
+  <div class="mp-result${(this.options.showTrivial ? ' show-trivial' : '')}${(this.options.showChildrenTime ? ' show-columns' : '')}">
     <div class="mp-button" title="${encode(p.Name)}">
       <span class="mp-number">${duration(p.DurationMilliseconds)} <span class="mp-unit">ms</span></span>
       ${(p.HasDuplicateCustomTimings ? '<span class="mp-warning">!</span>' : '')}
