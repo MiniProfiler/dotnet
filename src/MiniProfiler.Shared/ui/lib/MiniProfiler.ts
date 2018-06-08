@@ -491,13 +491,17 @@ namespace StackExchange.Profiling {
                             customTiming.CallType = customType;
 
                             customStat.Duration += customTiming.DurationMilliseconds;
-                            customStat.Count++;
+
+                            const ignored = ignoreDuplicateCustomTiming(customTiming);
+                            if (!ignored) {
+                                customStat.Count++;
+                            }
 
                             if (customTiming.CommandString && duplicates[customTiming.CommandString]) {
                                 customTiming.IsDuplicate = true;
                                 timing.HasDuplicateCustomTimings[customType] = true;
                                 result.HasDuplicateCustomTimings = true;
-                            } else if (!ignoreDuplicateCustomTiming(customTiming)) {
+                            } else if (!ignored) {
                                 duplicates[customTiming.CommandString] = true;
                             }
                         }
@@ -661,9 +665,9 @@ namespace StackExchange.Profiling {
     </td>
     ${customTimingTypes.map((tk) => timing.CustomTimings[tk] ? `
     <td class="mp-duration">
-      <a class="mp-queries-show" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimings[tk].length} ${encode(tk)} calls${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
+      <a class="mp-queries-show" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimingStats[tk].Count} ${encode(tk)} call(s)${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
         ${duration(timing.CustomTimingStats[tk].Duration)}
-        (${timing.CustomTimings[tk].length}${(timing.HasDuplicateCustomTimings[tk] ? '<span class="mp-warning">!</span>' : '')})
+        (${timing.CustomTimingStats[tk].Count}${(timing.HasDuplicateCustomTimings[tk] ? '<span class="mp-warning">!</span>' : '')})
       </a>
     </td>` : '<td></td>').join('')}
   </tr>`;
