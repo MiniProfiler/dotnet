@@ -19,6 +19,12 @@ The current major version of MiniProfiler is v4, which is in alpha pre-release w
   * [ASP.NET MVC 5 Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Mvc5)
   * [Console Application](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Console)
 
+#### Building
+To build the MiniProfiler solution in Visual Studio, you'll need:
+- Visual Studio 2017 (or the .NET 2.x SDK)
+- The [Web Compiler](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.WebCompiler) extension
+  - Note: no extension is needed if building via `buid.cmd` or `build.ps1` in the repository root. They pull it in via a package.
+
 #### Package Status
 
 MyGet Pre-release feed: https://www.myget.org/gallery/miniprofiler
