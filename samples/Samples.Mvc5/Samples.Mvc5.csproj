@@ -60,6 +60,15 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+      if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+      if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
+      xcopy /s /y /q "$(NuGetPackageRoot)\sqlite\3.13.0\runtimes\win7-x64\native\*.*" "$(TargetDir)x64\.."
+    </PostBuildEvent>
+  </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
