@@ -913,7 +913,7 @@ namespace StackExchange.Profiling {
                     $(this).closest('.mp-result').toggleClass('show-columns');
                 }).on('click', '.mp-toggle-trivial-gaps', function(e) {
                     e.preventDefault();
-                    $(this).closest('.mp-queries').find('.mp-trivial-gap').toggle();
+                    $(this).closest('.mp-queries').toggleClass('show-trivial');
                 });
 
             // Full vs. Corner handlers

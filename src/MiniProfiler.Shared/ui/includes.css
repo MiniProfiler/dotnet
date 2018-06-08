@@ -314,6 +314,9 @@
 .mp-queries .mp-duration {
   text-align: right;
 }
+.mp-queries.show-trivial .mp-gap-info.mp-trivial-gap {
+  display: table-row;
+}
 .mp-queries .mp-gap-info {
   background-color: #e1e5ed;
   opacity: 0.8;
