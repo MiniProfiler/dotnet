@@ -148,7 +148,7 @@ namespace StackExchange.Profiling
                 return message;
             }
 
-            context.Response.ContentType = "text/html";
+            context.Response.ContentType = "text/html; charset=utf-8";
 
             var path = VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash();
             return Render.ResultListHtml(Options, path);
@@ -286,7 +286,7 @@ namespace StackExchange.Profiling
 
         private string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
-            context.Response.ContentType = "text/html";
+            context.Response.ContentType = "text/html; charset=utf-8";
             return Render.SingleResultHtml(profiler, VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash());
         }
 
