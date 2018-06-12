@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
@@ -32,7 +33,8 @@ namespace Microsoft.Extensions.DependencyInjection
             // Blocked on https://github.com/aspnet/Mvc/issues/6222
             //services.AddSingleton<IMiniProfilerDiagnosticListener, MvcViewDiagnosticListener>();
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
-                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
+                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>()
+                    .AddTransient<IViewComponentInvokerFactory, ProfilingViewComponentInvokerFactory>();
             return new MiniProfilerBuilder(services);
         }
     }
