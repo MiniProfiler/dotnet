@@ -14,9 +14,9 @@ namespace StackExchange.Profiling.Tests
 {
     public class SqlFormatterTests
     {
-	    private const string None = "";
-	    private const string At = "@";
-	    private SqlServerFormatter _formatter;
+        private const string None = "";
+        private const string At = "@";
+        private SqlServerFormatter _formatter;
         private string _commandText;
         private SqlCommand _dbCommand;
         private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap;
@@ -126,8 +126,8 @@ namespace StackExchange.Profiling.Tests
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             // arrange
-			// overwrite the formatter
-	        _formatter = new VerboseSqlServerFormatter(true);
+            // overwrite the formatter
+            _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
             const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n\r\nselect 1;";
             CreateDbCommand(CommandType.Text);
@@ -142,12 +142,12 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void VerboseSqlServerFormatterAddsTransactionInformation()
         {
-			// note: since we don't have an active sql connection we cannot test the transactions coupled to a connection
-			// the only thing we can do is test the TransactionScope transaction
+            // note: since we don't have an active sql connection we cannot test the transactions coupled to a connection
+            // the only thing we can do is test the TransactionScope transaction
 
             // arrange
-			// overwrite the formatter
-	        _formatter = new VerboseSqlServerFormatter(true);
+            // overwrite the formatter
+            _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
             CreateDbCommand(CommandType.Text);
 #if NET461
@@ -155,7 +155,7 @@ namespace StackExchange.Profiling.Tests
             var transactionScope = new TransactionScope();
             // act
             var actualOutput = GenerateOutput();
-	        transactionScope.Dispose();
+            transactionScope.Dispose();
 #else
             const string expectedOutput = "-- Command Type: Text\r\n-- Database: TestDatabase\r\n\r\nselect 1;";
             var actualOutput = GenerateOutput();
@@ -215,6 +215,8 @@ namespace StackExchange.Profiling.Tests
             Assert.Equal(expectedOutput, actualOutput);
         }
 
+        #region Single data type tests
+
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
         public void TableQueryWithVarchar(string at)
@@ -225,12 +227,105 @@ namespace StackExchange.Profiling.Tests
             CreateDbCommand(CommandType.Text);
             AddDbParameter<string>(at + "x", "bob", size: 20, type: DbType.AnsiString);
             AddDbParameter<string>(at + "y", "bob2", size: -1, type: DbType.AnsiString);
+
             // act
             var actualOutput = GenerateOutput();
 
             // assert
             Assert.Equal(expectedOutput, actualOutput);
         }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDouble(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x float = 123.45,\r\n        @y float = -54.321;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<double>(at + "x", 123.45, type: DbType.Double);
+            AddDbParameter<double>(at + "y", -54.321, type: DbType.Double);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithSingle(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x real = 123.45,\r\n        @y real = -54.321;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<float>(at + "x", 123.45, type: DbType.Single);
+            AddDbParameter<float>(at + "y", -54.321, type: DbType.Single);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithCurrency(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x money = 123.45,\r\n        @y money = -54.321;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<decimal>(at + "x", 123.45, type: DbType.Currency);
+            AddDbParameter<decimal>(at + "y", -54.321, type: DbType.Currency);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDecimal(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\r\n        @y decimal(5,3) = -54.321;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<decimal>(at + "x", 123.45, type: DbType.Decimal);
+            AddDbParameter<decimal>(at + "y", -54.321, type: DbType.Decimal);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDecimalZeroPrecision(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x decimal(5,0) = 12345,\r\n        @y decimal(5,0) = -54321;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<decimal>(at + "x", 12345.0, type: DbType.Decimal);
+            AddDbParameter<decimal>(at + "y", -54321.0, type: DbType.Decimal);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        #endregion
 
         [Fact]
         public void StoredProcedureCallWithoutParameters()
