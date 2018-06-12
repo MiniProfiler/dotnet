@@ -29,24 +29,39 @@ namespace StackExchange.Profiling.SqlFormatters
             [DbType.Guid] = _ => "uniqueidentifier",
             [DbType.Boolean] = _ => "bit",
             [DbType.Binary] = GetWithLenFormatter("varbinary"),
+            [DbType.Double] = _ => "float",
+            [DbType.Single] = _ => "real",
+            [DbType.Currency] = _ => "money",
+            [DbType.Decimal] = GetWithDecimalFormatter("decimal")
         };
 
         /// <summary>
         /// What data types should not be quoted when used in parameters
         /// </summary>
-        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte", "Byte[]" };
+        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte", "Byte[]", "Double", "Single", "Currency", "Decimal" };
 
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {
             var capture = native;
             return p =>
-                {
-                    if (p.Size < 0)
-                        return capture + "(max)";
-                    if (p.Size == 0)
-                        return capture;
-                    return capture + "(" + (p.Size > 8000 ? "max" : p.Size.ToString(CultureInfo.InvariantCulture)) + ")";
-                };
+            {
+                if (p.Size < 0)
+                    return capture + "(max)";
+                if (p.Size == 0)
+                    return capture;
+                return capture + "(" + (p.Size > 8000 ? "max" : p.Size.ToString(CultureInfo.InvariantCulture)) + ")";
+            };
+        }
+
+        private static Func<SqlTimingParameter, string> GetWithDecimalFormatter(string native)
+        {
+            return p =>
+            {
+                var size = p.Value.Replace("-", string.Empty).Replace(".", string.Empty).Length;
+                var pos = p.Value.LastIndexOf('.');
+                var precision = pos > 0 ? p.Value.Length - pos - 1 : 0;
+                return native + "(" + size.ToString(CultureInfo.InvariantCulture) + "," + precision.ToString(CultureInfo.InvariantCulture) + ")";
+            };
         }
 
         /// <summary>
@@ -113,31 +128,31 @@ namespace StackExchange.Profiling.SqlFormatters
             GenerateStoredProcedureParameters(buffer, parameters);
             buffer.Append(';');
 
-	        GenerateSelectStatement(buffer, parameters);
+            GenerateSelectStatement(buffer, parameters);
         }
 
-	    private void GenerateSelectStatement(StringBuilder buffer, List<SqlTimingParameter> parameters)
-	    {
-		    if (parameters == null) return;
+        private void GenerateSelectStatement(StringBuilder buffer, List<SqlTimingParameter> parameters)
+        {
+            if (parameters == null) return;
 
-		    var parametersToSelect = parameters.Where(
-			    x => x.Direction == nameof(ParameterDirection.InputOutput)
+            var parametersToSelect = parameters.Where(
+                x => x.Direction == nameof(ParameterDirection.InputOutput)
                   || x.Direction == nameof(ParameterDirection.Output))
-					 .Select(x => EnsureParameterPrefix(x.Name) + " AS " + RemoveParameterPrefix(x.Name))
-					 .ToList();
+                     .Select(x => EnsureParameterPrefix(x.Name) + " AS " + RemoveParameterPrefix(x.Name))
+                     .ToList();
 
-		    var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == nameof(ParameterDirection.ReturnValue));
-			if (returnValueParameter != null)
-			{
-				parametersToSelect.Insert(0, EnsureParameterPrefix(returnValueParameter.Name) + " AS ReturnValue");
-			}
+            var returnValueParameter = parameters.SingleOrDefault(x => x.Direction == nameof(ParameterDirection.ReturnValue));
+            if (returnValueParameter != null)
+            {
+                parametersToSelect.Insert(0, EnsureParameterPrefix(returnValueParameter.Name) + " AS ReturnValue");
+            }
 
-		    if (parametersToSelect.Count == 0) return;
+            if (parametersToSelect.Count == 0) return;
 
-			buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
-	    }
+            buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
+        }
 
-	    private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
+        private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
         {
             if (parameters == null || parameters.Count == 0) return null;
             return parameters.Find(x => x.Direction == nameof(ParameterDirection.ReturnValue));
