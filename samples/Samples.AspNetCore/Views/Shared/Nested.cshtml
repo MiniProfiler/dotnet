@@ -5,4 +5,5 @@
 {
     @Html.Partial("NestedChild")
     Html.RenderPartial("NestedChild");
+    @await Component.InvokeAsync("ComponentTest")
 }
