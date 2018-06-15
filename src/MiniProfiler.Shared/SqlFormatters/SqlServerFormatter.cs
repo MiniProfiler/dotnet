@@ -17,6 +17,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
         {
+            // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-data-type-mappings
             [DbType.AnsiString] = GetWithLenFormatter("varchar"),
             [DbType.String] = GetWithLenFormatter("nvarchar"),
             [DbType.AnsiStringFixedLength] = GetWithLenFormatter("char"),
@@ -25,20 +26,35 @@ namespace StackExchange.Profiling.SqlFormatters
             [DbType.Int16] = _ => "smallint",
             [DbType.Int32] = _ => "int",
             [DbType.Int64] = _ => "bigint",
+            [DbType.SByte] = _ => "tinyint",
+            [DbType.UInt16] = _ => "smallint",
+            [DbType.UInt32] = _ => "int",
+            [DbType.UInt64] = _ => "bigint",
+            [DbType.Date] = _ => "date",
+            [DbType.Time] = _ => "time",
             [DbType.DateTime] = _ => "datetime",
+            [DbType.DateTime2] = _ => "datetime2",
+            [DbType.DateTimeOffset] = _ => "datetimeoffset",
             [DbType.Guid] = _ => "uniqueidentifier",
             [DbType.Boolean] = _ => "bit",
             [DbType.Binary] = GetWithLenFormatter("varbinary"),
             [DbType.Double] = _ => "float",
             [DbType.Single] = _ => "real",
             [DbType.Currency] = _ => "money",
-            [DbType.Decimal] = GetWithDecimalFormatter("decimal")
+            [DbType.Decimal] = GetWithDecimalFormatter("decimal"),
+            [DbType.Xml] = _ => "xml",
+            [DbType.Object] = _ => "sql_variant"
         };
 
         /// <summary>
         /// What data types should not be quoted when used in parameters
         /// </summary>
-        protected static readonly string[] DontQuote = { "Int16", "Int32", "Int64", "Boolean", "Byte", "Byte[]", "Double", "Single", "Currency", "Decimal" };
+        protected static readonly string[] DontQuote =
+        {
+            "Int16", "Int32", "Int64", "UInt16", "UInt32", "UInt64",
+            "Boolean", "Byte", "SByte", "Byte[]",
+            "Double", "Single", "Currency", "Decimal"
+        };
 
         private static Func<SqlTimingParameter, string> GetWithLenFormatter(string native)
         {

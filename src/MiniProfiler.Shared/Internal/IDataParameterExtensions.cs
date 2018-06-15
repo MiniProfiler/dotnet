@@ -36,9 +36,28 @@ namespace StackExchange.Profiling.Internal
                 return null;
             }
 
+            if (parameter.DbType == DbType.Date && rawValue is DateTime)
+            {
+                return ((DateTime) rawValue).ToString("d", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (parameter.DbType == DbType.Time && rawValue is TimeSpan)
+            {
+                return ((TimeSpan) rawValue).ToString("hh\\:mm\\:ss");
+            }
+
             if (rawValue is DateTime)
             {
-                return ((DateTime)rawValue).ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                return ((DateTime) rawValue).ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (rawValue is DateTimeOffset)
+            {
+                var time = (DateTimeOffset) rawValue;
+                var offset = time.Offset;
+                return time.ToString("s", System.Globalization.CultureInfo.InvariantCulture) 
+                       + (offset < TimeSpan.Zero ? "-" : "+")
+                       + offset.ToString("hh\\:mm");
             }
 
             // we want the integral value of an enum, not its string representation

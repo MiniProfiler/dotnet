@@ -237,6 +237,96 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDate(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x datetime = '2017-01-30',\r\n        @y datetime = '2001-01-01';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.Date);
+            AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.Date);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.NotEqual(expectedOutput, actualOutput); // Auto-translation of DbType.Date to DbType.DateTime breaks output
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithTime(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x datetime = '05:13:21',\r\n        @y datetime = '18:12:11';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.Time);
+            AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.Time);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.NotEqual(expectedOutput, actualOutput); // Auto-translation of DbType.Time to DbType.DateTime breaks output
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDateTime(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x datetime = '2017-01-30T05:13:21',\r\n        @y datetime = '2001-01-01T18:12:11';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.DateTime);
+            AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.DateTime);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDateTime2(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x datetime2 = '2017-01-30T05:13:21',\r\n        @y datetime2 = '2001-01-01T18:12:11';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.DateTime2);
+            AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.DateTime2);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDateTimeOffset(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x datetimeoffset = '2017-01-30T05:13:21+04:30',\r\n        @y datetimeoffset = '2001-01-01T18:12:11-04:30';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<DateTimeOffset>(at + "x", new DateTimeOffset(2017, 1, 30, 5, 13, 21, TimeSpan.FromHours(4.5)), type: DbType.DateTimeOffset);
+            AddDbParameter<DateTimeOffset>(at + "y", new DateTimeOffset(2001, 1, 1, 18, 12, 11, TimeSpan.FromHours(-4.5)), type: DbType.DateTimeOffset);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
         public void TableQueryWithDouble(string at)
         {
             // arrange
@@ -317,6 +407,24 @@ namespace StackExchange.Profiling.Tests
             CreateDbCommand(CommandType.Text);
             AddDbParameter<decimal>(at + "x", 12345.0, type: DbType.Decimal);
             AddDbParameter<decimal>(at + "y", -54321.0, type: DbType.Decimal);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithXml(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x xml = '<root></root>',\r\n        @y xml = '<root><node/></root>';\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<string>(at + "x", "<root></root>", type: DbType.Xml);
+            AddDbParameter<string>(at + "y", "<root><node/></root>", type: DbType.Xml);
 
             // act
             var actualOutput = GenerateOutput();
