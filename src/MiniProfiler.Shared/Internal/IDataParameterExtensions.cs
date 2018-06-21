@@ -46,16 +46,15 @@ namespace StackExchange.Profiling.Internal
                 return ((TimeSpan) rawValue).ToString("hh\\:mm\\:ss");
             }
 
-            if (rawValue is DateTime)
+            if (rawValue is DateTime dateTime)
             {
-                return ((DateTime) rawValue).ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+                return dateTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            if (rawValue is DateTimeOffset)
+            if (rawValue is DateTimeOffset timeOffset)
             {
-                var time = (DateTimeOffset) rawValue;
-                var offset = time.Offset;
-                return time.ToString("s", System.Globalization.CultureInfo.InvariantCulture) 
+                var offset = timeOffset.Offset;
+                return timeOffset.ToString("s", System.Globalization.CultureInfo.InvariantCulture)
                        + (offset < TimeSpan.Zero ? "-" : "+")
                        + offset.ToString("hh\\:mm");
             }

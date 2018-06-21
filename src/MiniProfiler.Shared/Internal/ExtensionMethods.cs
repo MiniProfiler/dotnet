@@ -79,6 +79,7 @@ namespace StackExchange.Profiling.Internal
         {
             NullValueHandling = NullValueHandling.Ignore
         };
+
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
         {
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,

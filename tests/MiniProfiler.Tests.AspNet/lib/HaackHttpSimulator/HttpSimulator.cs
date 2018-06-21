@@ -91,13 +91,13 @@ namespace Subtext.TestLibrary
             if (headers != null)
                 _headers.Add(headers);
 
-            workerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, ResponseWriter, host, port, httpVerb.ToString());
+            WorkerRequest = new SimulatedHttpRequest(ApplicationPath, PhysicalApplicationPath, PhysicalPath, Page, query, ResponseWriter, host, port, httpVerb.ToString());
 
-            workerRequest.Form.Add(_formVars);
-            workerRequest.Headers.Add(_headers);
+            WorkerRequest.Form.Add(_formVars);
+            WorkerRequest.Headers.Add(_headers);
 
             if (_referer != null)
-                workerRequest.SetReferer(_referer);
+                WorkerRequest.SetReferer(_referer);
 
             InitializeSession();
 
@@ -138,7 +138,7 @@ namespace Subtext.TestLibrary
 
         private void InitializeSession()
         {
-            HttpContext.Current = new HttpContext(workerRequest);
+            HttpContext.Current = new HttpContext(WorkerRequest);
             HttpContext.Current.Items.Clear();
             var session = (HttpSessionState)ReflectionHelper.Instantiate(typeof(HttpSessionState), new Type[] { typeof(IHttpSessionState) }, new FakeHttpSessionState());
 
@@ -300,7 +300,7 @@ namespace Subtext.TestLibrary
         /// <param name="referer">The referer to set.</param>
         public HttpSimulator SetReferer(Uri referer)
         {
-            workerRequest?.SetReferer(referer);
+            WorkerRequest?.SetReferer(referer);
             _referer = referer;
             return this;
         }
@@ -313,7 +313,7 @@ namespace Subtext.TestLibrary
         /// <exception cref="InvalidOperationException">Throws when called after <see cref="Simulate()"/>.</exception>
         public HttpSimulator SetFormVariable(string name, string value)
         {
-            if (workerRequest != null)
+            if (WorkerRequest != null)
                 throw new InvalidOperationException("Cannot set form variables after calling Simulate().");
 
             _formVars.Add(name, value);
@@ -329,7 +329,7 @@ namespace Subtext.TestLibrary
         /// <exception cref="InvalidOperationException">Throws when called after <cref="Simulate()"/>.</exception>
         public HttpSimulator SetHeader(string name, string value)
         {
-            if (workerRequest != null)
+            if (WorkerRequest != null)
                 throw new InvalidOperationException("Cannot set headers after calling Simulate().");
 
             _headers.Add(name, value);
@@ -421,15 +421,12 @@ namespace Subtext.TestLibrary
         /// </summary>
         public string ResponseText => (builder ?? new StringBuilder()).ToString();
 
-        public SimulatedHttpRequest WorkerRequest => workerRequest;
-        private SimulatedHttpRequest workerRequest;
+        public SimulatedHttpRequest WorkerRequest { get; private set; }
 
         private static string ExtractQueryStringPart(Uri url)
         {
             string query = url.Query ?? string.Empty;
-            if (query.StartsWith("?", StringComparison.Ordinal))
-                return query.Substring(1);
-            return query;
+            return query.StartsWith("?", StringComparison.Ordinal) ? query.Substring(1) : query;
         }
 
         private void SetHttpRuntimeInternals()
@@ -504,6 +501,7 @@ namespace Subtext.TestLibrary
         internal class ConfigMapPath : IConfigMapPath
         {
             private readonly HttpSimulator _requestSimulation;
+
             public ConfigMapPath(HttpSimulator simulation)
             {
                 _requestSimulation = simulation;

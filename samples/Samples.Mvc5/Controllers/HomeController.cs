@@ -38,14 +38,17 @@ namespace Samples.Mvc5.Controllers
         /// the default view, home page, top right orientation.
         /// </summary>
         public ActionResult Index() => HomeWithPosition(RenderPosition.Right);
+
         /// <summary>
         /// the default view, home page, top left orientation.
         /// </summary>
         public ActionResult TopLeft() => HomeWithPosition(RenderPosition.Left);
+
         /// <summary>
         /// the default view, home page, bottom left orientation.
         /// </summary>
         public ActionResult BottomLeft() => HomeWithPosition(RenderPosition.BottomLeft);
+
         /// <summary>
         /// the default view, home page, bottom right orientation.
         /// </summary>

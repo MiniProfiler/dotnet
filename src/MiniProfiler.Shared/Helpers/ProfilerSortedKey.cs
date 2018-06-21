@@ -13,6 +13,7 @@ namespace StackExchange.Profiling.Helpers
         /// Profiler Id
         /// </summary>
         public Guid Id { get; }
+
         /// <summary>
         /// Profiler start date
         /// </summary>
