@@ -15,10 +15,12 @@ namespace StackExchange.Profiling.Storage
         /// The table <see cref="MiniProfiler"/>s are stored in.
         /// </summary>
         public readonly string MiniProfilersTable = "MiniProfilers";
+
         /// <summary>
         /// The table <see cref="Timing"/>s are stored in.
         /// </summary>
         public readonly string MiniProfilerTimingsTable = "MiniProfilerTimings";
+
         /// <summary>
         /// The table <see cref="ClientTiming"/>s are stored in.
         /// </summary>

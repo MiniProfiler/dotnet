@@ -283,7 +283,7 @@ namespace StackExchange.Profiling
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object obj) => obj is MiniProfiler && Id.Equals(((MiniProfiler)obj).Id);
+        public override bool Equals(object obj) => obj is MiniProfiler miniProfiler && Id.Equals(miniProfiler.Id);
 
         /// <summary>
         /// Returns hash code of Id.

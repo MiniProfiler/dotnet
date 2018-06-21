@@ -14,6 +14,7 @@ namespace StackExchange.Profiling.Data
     {
         private DbConnection _connection;
         private IDbProfiler _profiler;
+
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>

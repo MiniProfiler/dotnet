@@ -1,4 +1,4 @@
-#region Disclaimer/Info
+﻿#region Disclaimer/Info
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Subtext WebLog
 // 
@@ -80,11 +80,13 @@ namespace Subtext.TestLibrary
         public override string GetServerName() => _host;
 
         public override int GetLocalPort() => _port;
+
         /// <summary>
         /// Gets the headers.
         /// </summary>
         /// <value>The headers.</value>
         public NameValueCollection Headers => Headers1;
+
         /// <summary>
         /// Gets the format exception.
         /// </summary>
