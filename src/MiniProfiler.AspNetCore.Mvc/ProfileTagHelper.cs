@@ -25,6 +25,8 @@ namespace StackExchange.Profiling
         /// <param name="output">The output to render to.</param>
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            output.TagName = null;
+
             using (MiniProfiler.Current.Step(Name))
             {
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
