@@ -1,8 +1,8 @@
-﻿using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {
@@ -32,14 +32,14 @@ namespace StackExchange.Profiling
             if (MiniProfiler.Current == null)
                 return;
 
-            var pre = new StringBuilder();
+            var pre = StringBuilderCache.Get();
             if (!ViewContext.ViewData.ContainsKey(MiniProfilerTimingTagHelper.ClientTimingKey))
             {
                 pre.Append(ClientTimingHelper.InitScript);
                 ViewContext.ViewData[MiniProfilerTimingTagHelper.ClientTimingKey] = true;
             }
             pre.Append($"<script>mPt.start('{Name}')</script>");
-            output.PreContent.SetHtmlContent(pre.ToString());
+            output.PreContent.SetHtmlContent(pre.ToStringRecycle());
             output.PostContent.SetHtmlContent($"<script>mPt.end('{Name}')</script>");
         }
     }
