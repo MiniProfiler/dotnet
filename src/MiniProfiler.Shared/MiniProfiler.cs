@@ -25,14 +25,14 @@ namespace StackExchange.Profiling
         public MiniProfilerBaseOptions Options { get; } = DefaultOptions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MiniProfiler"/> class. 
+        /// Initializes a new instance of the <see cref="MiniProfiler"/> class.
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
         public MiniProfiler() { /* serialization only */ }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MiniProfiler"/> class.  Creates and starts a new MiniProfiler 
+        /// Initializes a new instance of the <see cref="MiniProfiler"/> class. Creates and starts a new MiniProfiler
         /// for the root <paramref name="name"/>.
         /// </summary>
         /// <param name="name">The name of this <see cref="MiniProfiler"/>, typically a URL.</param>
@@ -173,7 +173,7 @@ namespace StackExchange.Profiling
         private Timing _lastSetHead;
 
         /// <summary>
-        /// Gets or sets points to the currently executing Timing. 
+        /// Gets or sets points to the currently executing Timing.
         /// </summary>
         public Timing Head
         {
@@ -212,7 +212,7 @@ namespace StackExchange.Profiling
         /// Ends the current profiling session, if one exists.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public bool Stop(bool discardResults = false)
@@ -226,11 +226,11 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Asynchronously ends the current profiling session, if one exists. 
-        /// This invokes async saving all the way down if th providers support it.
+        /// Asynchronously ends the current profiling session, if one exists.
+        /// This invokes async saving all the way down if the providers support it.
         /// </summary>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public async Task<bool> StopAsync(bool discardResults = false)
@@ -270,13 +270,13 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Deserializes the JSON string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
-        /// <param name="json">The string to deserialize int a <see cref="MiniProfiler"/>.</param>
+        /// <param name="json">The string to deserialize into a <see cref="MiniProfiler"/>.</param>
         public static MiniProfiler FromJson(string json) => json.FromJson<MiniProfiler>();
 
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
         /// </summary>
-        /// <returns>a string containing the recording information</returns>
+        /// <returns>A string containing the recording information</returns>
         public override string ToString() => Root != null ? Root.Name + " (" + DurationMilliseconds + " ms)" : string.Empty;
 
         /// <summary>
