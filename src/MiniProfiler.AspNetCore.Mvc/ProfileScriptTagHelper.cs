@@ -35,10 +35,10 @@ namespace StackExchange.Profiling
             if (MiniProfiler.Current == null)
                 return;
 
-            if (!ViewContext.ViewData.ContainsKey(ClientTimingKey))
+            if (!ViewContext.HttpContext.Items.ContainsKey(ClientTimingKey))
             {
                 output.PreContent.AppendHtml(ClientTimingHelper.InitScript);
-                ViewContext.ViewData[ClientTimingKey] = true;
+                ViewContext.HttpContext.Items[ClientTimingKey] = true;
             }
 
             if (output.TagMode == TagMode.SelfClosing)
