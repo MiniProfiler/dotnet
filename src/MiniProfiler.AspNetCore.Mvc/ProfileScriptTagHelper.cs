@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {
@@ -11,11 +10,15 @@ namespace StackExchange.Profiling
     /// &lt;profile-script name="My Step" /&gt;
     /// ...script blocks...
     /// &lt;/profile-script&gt;
+    /// Include as self closing to provide initialization only.
     /// </summary>
     [HtmlTargetElement("profile-script", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class ProfileScriptTagHelper : TagHelper
     {
+        private const string ClientTimingKey = "MiniProfiler:ClientTiming";
+
         [ViewContext]
+        [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
 
         /// <summary>
@@ -32,14 +35,16 @@ namespace StackExchange.Profiling
             if (MiniProfiler.Current == null)
                 return;
 
-            var pre = StringBuilderCache.Get();
-            if (!ViewContext.ViewData.ContainsKey(MiniProfilerTimingTagHelper.ClientTimingKey))
+            if (!ViewContext.ViewData.ContainsKey(ClientTimingKey))
             {
-                pre.Append(ClientTimingHelper.InitScript);
-                ViewContext.ViewData[MiniProfilerTimingTagHelper.ClientTimingKey] = true;
+                output.PreContent.AppendHtml(ClientTimingHelper.InitScript);
+                ViewContext.ViewData[ClientTimingKey] = true;
             }
-            pre.Append($"<script>mPt.start('{Name}')</script>");
-            output.PreContent.SetHtmlContent(pre.ToStringRecycle());
+
+            if (output.TagMode == TagMode.SelfClosing)
+                return;
+
+            output.PreContent.AppendHtml($"<script>mPt.start('{Name}')</script>");
             output.PostContent.SetHtmlContent($"<script>mPt.end('{Name}')</script>");
         }
     }
