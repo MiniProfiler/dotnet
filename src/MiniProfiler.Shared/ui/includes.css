@@ -97,8 +97,7 @@
   box-shadow: 0 0 2px;
 }
 .mp-result table.mp-client-timings .t-unknown div {
-  background: #f1f1f1;
-  border: solid 1px #e8e8e8;
+  background: #80ccda;
 }
 .mp-result table.mp-client-timings .t-dns div {
   background: #8BAAD1;
