@@ -17,6 +17,9 @@ namespace StackExchange.Profiling
     {
         private const string ClientTimingKey = "MiniProfiler:ClientTiming";
 
+        /// <summary>
+        /// The <see cref="ViewContext"/> for this control, gets injected.
+        /// </summary>
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -27,6 +30,12 @@ namespace StackExchange.Profiling
         [HtmlAttributeName("name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Renders the tag helper.
+        /// </summary>
+        /// <param name="context">The context we're rendering in.</param>
+        /// <param name="output">The output we're rendering to.</param>
+        /// <returns>The task to await.</returns>
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = null;
