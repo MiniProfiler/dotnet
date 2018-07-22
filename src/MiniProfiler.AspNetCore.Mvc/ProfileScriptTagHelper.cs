@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -16,7 +15,7 @@ namespace StackExchange.Profiling
     [HtmlTargetElement("profile-script", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class ProfileScriptTagHelper : TagHelper
     {
-        private static readonly object ClientTimingKey = Guid.NewGuid();
+        private const string ClientTimingKey = "MiniProfiler:ClientTiming";
 
         [ViewContext]
         [HtmlAttributeNotBound]
