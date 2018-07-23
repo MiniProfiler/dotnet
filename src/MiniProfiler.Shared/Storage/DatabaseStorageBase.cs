@@ -53,8 +53,8 @@ namespace StackExchange.Profiling.Storage
         {
             ConnectionString = connectionString;
             MiniProfilersTable = profilersTable;
-            MiniProfilerTimingsTable = clientTimingsTable;
-            MiniProfilerClientTimingsTable = timingsTable;
+            MiniProfilerTimingsTable = timingsTable;
+            MiniProfilerClientTimingsTable = clientTimingsTable;
         }
 
         /// <summary>
