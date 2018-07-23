@@ -45,13 +45,19 @@ namespace StackExchange.Profiling
             output.Content = await output.GetChildContentAsync();
 
             if (MiniProfiler.Current == null)
+            {
                 return;
+            }
 
             if (!isInitialized)
+            {
                 output.PreContent.AppendHtml(ClientTimingHelper.InitScript);
+            }
 
             if (output.TagMode == TagMode.SelfClosing)
+            {
                 return;
+            }
 
             output.PreContent.AppendHtml($"<script>mPt.start('{Name}')</script>");
             output.PostContent.SetHtmlContent($"<script>mPt.end('{Name}')</script>");
