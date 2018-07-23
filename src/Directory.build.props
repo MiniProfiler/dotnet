@@ -9,6 +9,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
 
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseUrl>https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt</PackageLicenseUrl>

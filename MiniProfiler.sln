@@ -50,6 +50,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33644D67
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E0DA4035-4D64-4BB8-8EA1-42197DE62519}"
+	ProjectSection(SolutionItems) = preProject
+		samples\Directory.build.props = samples\Directory.build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.AspNetCore.Mvc", "src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj", "{C7E9334A-6BFA-43A7-8FE4-393AC17DD7C1}"
 EndProject
@@ -203,8 +206,8 @@ Global
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

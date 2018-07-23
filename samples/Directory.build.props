@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+</Project>
