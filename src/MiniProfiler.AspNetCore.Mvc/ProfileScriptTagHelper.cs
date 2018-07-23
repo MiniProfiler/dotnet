@@ -38,17 +38,17 @@ namespace StackExchange.Profiling
         /// <returns>The task to await.</returns>
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            var isInitialized = ViewContext.HttpContext.Items.ContainsKey(ClientTimingKey);
+            ViewContext.HttpContext.Items[ClientTimingKey] = true;
+
             output.TagName = null;
             output.Content = await output.GetChildContentAsync();
 
             if (MiniProfiler.Current == null)
                 return;
 
-            if (!ViewContext.HttpContext.Items.ContainsKey(ClientTimingKey))
-            {
+            if (!isInitialized)
                 output.PreContent.AppendHtml(ClientTimingHelper.InitScript);
-                ViewContext.HttpContext.Items[ClientTimingKey] = true;
-            }
 
             if (output.TagMode == TagMode.SelfClosing)
                 return;
