@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -149,6 +150,21 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(1, profiler.ReaderFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
 #endif
+            }
+        }
+
+        [Fact]
+        public void DataReaderViaProfiledDbCommandWithNullConnection()
+        {
+            // https://github.com/MiniProfiler/dotnet/issues/313
+
+            using (var conn = GetConnection())
+            {
+                var command = new SqliteCommand("select 1");
+                var wrappedCommand = new ProfiledDbCommand(command, conn, conn.Profiler);
+
+                var reader = wrappedCommand.ExecuteReader(CommandBehavior.SequentialAccess);
+                Assert.True(reader.Read());
             }
         }
 

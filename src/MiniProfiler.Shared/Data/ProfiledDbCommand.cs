@@ -53,7 +53,8 @@ namespace StackExchange.Profiling.Data
         public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
-            _connection = connection;
+
+            UnwrapAndAssignConnection(connection);
 
             if (profiler != null)
             {
@@ -137,15 +138,20 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _connection = value;
-                if (value is ProfiledDbConnection profiledConn)
-                {
-                    _profiler = profiledConn.Profiler;
-                    _command.Connection = profiledConn.WrappedConnection;
-                }
-                else
-                {
-                    _command.Connection = value;
-                }
+                UnwrapAndAssignConnection(value);
+            }
+        }
+
+        private void UnwrapAndAssignConnection(DbConnection value)
+        {
+            if (value is ProfiledDbConnection profiledConn)
+            {
+                _profiler = profiledConn.Profiler;
+                _command.Connection = profiledConn.WrappedConnection;
+            }
+            else
+            {
+                _command.Connection = value;
             }
         }
 
