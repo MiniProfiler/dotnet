@@ -399,6 +399,24 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithDecimalNullable(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\r\n        @y decimal = null;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<decimal?>(at + "x", 123.45);
+            AddDbParameter<decimal?>(at + "y", null);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
         public void TableQueryWithDecimalZeroPrecision(string at)
         {
             // arrange

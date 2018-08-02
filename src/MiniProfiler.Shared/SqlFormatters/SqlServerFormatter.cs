@@ -73,6 +73,7 @@ namespace StackExchange.Profiling.SqlFormatters
         {
             return p =>
             {
+                if (p.Value is null) return native;
                 var size = p.Value.Replace("-", string.Empty).Replace(".", string.Empty).Length;
                 var pos = p.Value.LastIndexOf('.');
                 var precision = pos > 0 ? p.Value.Length - pos - 1 : 0;
