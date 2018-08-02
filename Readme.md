@@ -4,7 +4,7 @@
 
 Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](http://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](http://miniprofiler.com/).
 
-The current major version of MiniProfiler is v4, which is in alpha pre-release while we test.
+The current major version of MiniProfiler is v4.
 
 #### Handy Links
 
