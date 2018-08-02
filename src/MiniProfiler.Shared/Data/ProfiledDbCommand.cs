@@ -54,7 +54,11 @@ namespace StackExchange.Profiling.Data
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
 
-            UnwrapAndAssignConnection(connection);
+            if (connection != null)
+            {
+                _connection = connection;
+                UnwrapAndAssignConnection(connection);
+            }
 
             if (profiler != null)
             {
