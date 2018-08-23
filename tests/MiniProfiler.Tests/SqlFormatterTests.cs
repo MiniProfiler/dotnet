@@ -219,6 +219,24 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithBit(string at)
+        {
+            // arrange
+            _commandText = "select 1 from dbo.Table where x = @x, y = @y";
+            const string expectedOutput = "DECLARE @x bit = 1,\r\n        @y bit = null;\r\n\r\nselect 1 from dbo.Table where x = @x, y = @y;";
+            CreateDbCommand(CommandType.Text);
+            AddDbParameter<bool?>(at + "x", true, type: DbType.Boolean);
+            AddDbParameter<bool?>(at + "y", null, type: DbType.Boolean);
+
+            // act
+            var actualOutput = GenerateOutput();
+
+            // assert
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
         public void TableQueryWithVarchar(string at)
         {
             // arrange
