@@ -295,9 +295,9 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void ShimProfiler()
         {
-            var options = new MiniProfilerTestOptions {};
+            var options = new MiniProfilerTestOptions();
             var profiler = options.StartProfiler("Shimming");
-            var currentDbProfiler = new CurrentDbProfiler(() => profiler);
+            var currentDbProfiler = new CurrentDbProfiler(() => MiniProfiler.Current);
 
             const string cmdString = "Select 1";
             GetUnopenedConnection(currentDbProfiler).Query(cmdString);
@@ -310,7 +310,7 @@ namespace StackExchange.Profiling.Tests
             private Func<IDbProfiler> GetProfiler { get; }
             public CurrentDbProfiler(Func<IDbProfiler> getProfiler) => GetProfiler = getProfiler;
 
-            public bool IsActive => ((IDbProfiler)MiniProfiler.Current)?.IsActive ?? false;
+            public bool IsActive => GetProfiler()?.IsActive ?? false;
 
             public void ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader) =>
                 GetProfiler()?.ExecuteFinish(profiledDbCommand, executeType, reader);
@@ -321,8 +321,7 @@ namespace StackExchange.Profiling.Tests
             public void OnError(IDbCommand profiledDbCommand, SqlExecuteType executeType, Exception exception) =>
                 GetProfiler()?.OnError(profiledDbCommand, executeType, exception);
 
-            public void ReaderFinish(IDataReader reader) =>
-                GetProfiler()?.ReaderFinish(reader);
+            public void ReaderFinish(IDataReader reader) => GetProfiler()?.ReaderFinish(reader);
         }
 
         private void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async)
