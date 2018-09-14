@@ -196,6 +196,9 @@ namespace StackExchange.Profiling.Data
             set => _command.UpdatedRowSource = value;
         }
 
+        /// <summary>
+        /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
+        /// </summary>
         protected virtual DbDataReader CreateDataReader(DbDataReader original, IDbProfiler profiler)
             => new ProfiledDbDataReader(original, profiler);
         
