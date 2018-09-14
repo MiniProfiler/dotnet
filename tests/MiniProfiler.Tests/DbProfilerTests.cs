@@ -116,13 +116,8 @@ namespace StackExchange.Profiling.Tests
 
                 Assert.Equal(1, profiler.ExecuteStartCount);
                 Assert.Equal(1, profiler.ExecuteFinishCount);
-#if NETCOREAPP1_1 // .Close() is not exposed in netstandard1.5
-                Assert.Equal(0, profiler.ReaderFinishCount);
-                Assert.False(profiler.CompleteStatementMeasured);
-#else
                 Assert.Equal(1, profiler.ReaderFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
-#endif
             }
         }
 
@@ -143,13 +138,8 @@ namespace StackExchange.Profiling.Tests
 
                 Assert.Equal(1, profiler.ExecuteStartCount);
                 Assert.Equal(1, profiler.ExecuteFinishCount);
-#if NETCOREAPP1_1 // .Close() is not exposed in netstandard1.5
-                Assert.Equal(0, profiler.ReaderFinishCount);
-                Assert.False(profiler.CompleteStatementMeasured);
-#else
                 Assert.Equal(1, profiler.ReaderFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
-#endif
             }
         }
 
