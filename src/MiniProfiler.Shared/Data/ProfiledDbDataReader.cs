@@ -232,5 +232,19 @@ namespace StackExchange.Profiling.Data
         /// <returns>A <see cref="DataTable"/> that describes the column metadata.</returns>
         public override DataTable GetSchemaTable() => WrappedReader.GetSchemaTable();
 #endif
+        // <summary>Disposes the IDataReader Object.</summary>
+        protected override void Dispose(bool disposing)
+        {
+            // reader can be null when we're not profiling, but we've inherited from ProfiledDbCommand and are returning a
+            // an unwrapped reader from the base command
+            WrappedReader?.Dispose();
+#if NETSTANDARD1_5
+            // Close isn't available in NETSTANDARD1_5, but Dispose *is*.
+            // Dispose should call close anyway, so we aren't calling ReaderFinish for other frameworks
+            _profiler?.ReaderFinish(this);
+#endif
+            
+            base.Dispose(disposing);
+        }
     }
 }
