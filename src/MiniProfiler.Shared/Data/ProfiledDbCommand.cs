@@ -199,7 +199,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
         /// </summary>
-        protected virtual DbDataReader CreateDataReader(DbDataReader original, IDbProfiler profiler)
+        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, IDbProfiler profiler)
             => new ProfiledDbDataReader(original, profiler);
         
         /// <summary>
@@ -219,7 +219,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = _command.ExecuteReader(behavior);
-                result = CreateDataReader(result, _profiler);
+                result = CreateDbDataReader(result, _profiler);
             }
             catch (Exception e)
             {
@@ -252,7 +252,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
-                result = CreateDataReader(result, _profiler);
+                result = CreateDbDataReader(result, _profiler);
             }
             catch (Exception e)
             {
