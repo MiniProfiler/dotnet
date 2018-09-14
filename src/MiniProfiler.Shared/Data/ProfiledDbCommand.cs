@@ -196,6 +196,9 @@ namespace StackExchange.Profiling.Data
             set => _command.UpdatedRowSource = value;
         }
 
+        protected virtual DbDataReader CreateDataReader(DbDataReader original, IDbProfiler profiler)
+            => new ProfiledDbDataReader(original, profiler);
+        
         /// <summary>
         /// Executes a database data reader.
         /// </summary>
@@ -213,7 +216,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = _command.ExecuteReader(behavior);
-                result = new ProfiledDbDataReader(result, _profiler);
+                result = CreateDataReader(result, _profiler);
             }
             catch (Exception e)
             {
@@ -246,7 +249,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
-                result = new ProfiledDbDataReader(result, _profiler);
+                result = CreateDataReader(result, _profiler);
             }
             catch (Exception e)
             {
