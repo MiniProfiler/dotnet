@@ -197,6 +197,12 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
+        /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
+        /// </summary>
+        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, IDbProfiler profiler)
+            => new ProfiledDbDataReader(original, profiler);
+        
+        /// <summary>
         /// Executes a database data reader.
         /// </summary>
         /// <param name="behavior">The command behavior to use.</param>
@@ -213,7 +219,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = _command.ExecuteReader(behavior);
-                result = new ProfiledDbDataReader(result, _profiler);
+                result = CreateDbDataReader(result, _profiler);
             }
             catch (Exception e)
             {
@@ -246,7 +252,7 @@ namespace StackExchange.Profiling.Data
             try
             {
                 result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
-                result = new ProfiledDbDataReader(result, _profiler);
+                result = CreateDbDataReader(result, _profiler);
             }
             catch (Exception e)
             {

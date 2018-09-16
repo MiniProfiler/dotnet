@@ -137,12 +137,19 @@ namespace StackExchange.Profiling.Data
         {
             return new ProfiledDbTransaction(_connection.BeginTransaction(isolationLevel), this);
         }
+        
+        /// <summary>
+        /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
+        /// </summary>
+        /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
+        protected virtual DbCommand CreateDbCommand(DbCommand original, IDbProfiler profiler)
+                => new ProfiledDbCommand(original, this, profiler);
 
         /// <summary>
         /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
         /// </summary>
         /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
-        protected override DbCommand CreateDbCommand() => new ProfiledDbCommand(_connection.CreateCommand(), this, _profiler);
+        protected override DbCommand CreateDbCommand() => CreateDbCommand(_connection.CreateCommand(), _profiler);
 
         /// <summary>
         /// Dispose the underlying connection.
