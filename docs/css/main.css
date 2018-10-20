@@ -32,6 +32,16 @@ h4:nth-child(n+2) {
     margin-top: 20px;
 }
 
+h4 a.repo {
+    float: right;
+    font-size: 13px;
+}
+h4 a.repo svg {
+    height: 16px;
+    width: 16px;
+    vertical-align: text-bottom;
+}
+
 footer {
     margin: 20px 0;
     font-size: 0.85em;
