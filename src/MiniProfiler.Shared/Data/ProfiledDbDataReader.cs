@@ -13,15 +13,18 @@ namespace StackExchange.Profiling.Data
     public class ProfiledDbDataReader : DbDataReader
     {
         private readonly IDbProfiler _profiler;
+        private readonly IDbCommand _command;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class.
         /// </summary>
         /// <param name="reader">The reader.</param>
+        /// <param name="command">The command.</param>
         /// <param name="profiler">The profiler.</param>
-        public ProfiledDbDataReader(DbDataReader reader, IDbProfiler profiler)
+        public ProfiledDbDataReader(DbDataReader reader, IDbCommand command, IDbProfiler profiler)
         {
             WrappedReader = reader;
+            _command = command; // Required by profile
 
             if (profiler != null)
             {
@@ -202,21 +205,58 @@ namespace StackExchange.Profiling.Data
 
         /// <summary>Advances the data reader to the next result, when reading the results of batch SQL statements.</summary>
         /// <returns>true if there are more rows; otherwise, false.</returns>
-        public override bool NextResult() => WrappedReader.NextResult();
+        public override bool NextResult() => Wrap(() => WrappedReader.NextResult());
 
         /// <summary>Asynchronously advances the data reader to the next result, when reading the results of batch SQL statements.</summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
         /// <returns>true if there are more rows; otherwise, false.</returns>
-        public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => WrappedReader.NextResultAsync(cancellationToken);
+        public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => Wrap(() => WrappedReader.NextResultAsync(cancellationToken));
 
         /// <summary>Advances the IDataReader to the next record.</summary>
         /// <returns>true if there are more rows; otherwise, false.</returns>
-        public override bool Read() => WrappedReader.Read();
+        public override bool Read() => Wrap(() => WrappedReader.Read());
 
         /// <summary>Asynchronously advances the IDataReader to the next record.</summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
         /// <returns>true if there are more rows; otherwise, false.</returns>
-        public override Task<bool> ReadAsync(CancellationToken cancellationToken) => WrappedReader.ReadAsync(cancellationToken);
+        public override Task<bool> ReadAsync(CancellationToken cancellationToken) => Wrap(() => WrappedReader.ReadAsync(cancellationToken));
+
+        private T Wrap<T>(Func<T> func)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return func();
+            }
+
+            try
+            {
+                return func();
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(_command, SqlExecuteType.Reader, e);
+                throw;
+            }
+        }
+
+        private async Task<T> Wrap<T>(Func<Task<T>> func)
+        {
+            if (_profiler == null || !_profiler.IsActive)
+            {
+                return await func();
+            }
+
+            try
+            {
+                T result = await func(); // Do NOT return directly, thus exceptions could be catched.
+                return result;
+            }
+            catch (Exception e)
+            {
+                _profiler.OnError(_command, SqlExecuteType.Reader, e);
+                throw;
+            }
+        }
 
 #if !NETSTANDARD1_5
         /// <summary>Closes the IDataReader Object.</summary>
