@@ -10,6 +10,12 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  all-dbs-password: 'Password12!' # Same across mysql and postgres
+  all-dbs-name: 'test' # Same across mysql and postgres
+  postgres-path: 'C:\Program Files\PostgreSQL\9.6'
+  postgres-user: 'postgres'
+  mysql-path: 'C:\Program Files\MySql\MySQL Server 5.7'
+  mysql-user: 'root'
 
 steps:
 - task: NuGetToolInstaller@0
