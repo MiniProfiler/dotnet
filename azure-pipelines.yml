@@ -20,6 +20,12 @@ variables:
 steps:
 - task: NuGetToolInstaller@0
 
+- powerhshell: 'nuget install redis-64 -excludeversion'
+  displayname: 'redis nuget'
+
+- powershell: 'redis-64\tools\redis-server.exe --service-install; redis-64\tools\redis-server.exe --service-start'
+  displayname: 'redis install and run'
+
 - powershell: 'createdb $(all-dbs-name)' # inline script
   displayName: 'create postgres db' #
   env:
