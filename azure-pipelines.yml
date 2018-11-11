@@ -37,13 +37,6 @@ steps:
     targetType: 'inline'
     script: 'createdb $(all-dbs-name)' # inline script
     displayName: 'create postgres db' #
-    env:
-      POSTGRES_PATH: $(postgres-path) # mapping of environment variables to add
-      PGUSER: $(postgres-user)
-      PGPASSWORD: $(all-dbs-password)
-      POSTGRES_ENV_POSTGRES_USER: $(postgres-user)
-      POSTGRES_ENV_POSTGRES_PASSWORD: $(all-dbs-password)
-      POSTGRES_ENV_POSTGRES_DB: $(all-dbs-name)
 
 - task: PowerShell@4
   inputs:
