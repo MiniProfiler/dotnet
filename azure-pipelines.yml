@@ -20,13 +20,16 @@ variables:
 steps:
 - task: NuGetToolInstaller@0
 
-- powerhshell: 'nuget install redis-64 -excludeversion'
-  displayname: 'redis nuget'
+- powerhshell: 
+  script: 'nuget install redis-64 -excludeversion'
+  displayName: 'redis nuget'
 
-- powershell: 'redis-64\tools\redis-server.exe --service-install; redis-64\tools\redis-server.exe --service-start'
-  displayname: 'redis install and run'
+- powershell: 
+  script: 'redis-64\tools\redis-server.exe --service-install; redis-64\tools\redis-server.exe --service-start'
+  displayName: 'redis install and run'
 
-- powershell: 'createdb $(all-dbs-name)' # inline script
+- powershell: 
+  script: 'createdb $(all-dbs-name)' # inline script
   displayName: 'create postgres db' #
   env:
     POSTGRES_PATH: $(postgres-path) # mapping of environment variables to add
