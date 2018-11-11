@@ -3,6 +3,7 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace StackExchange.Profiling.Internal
 {
@@ -77,13 +78,15 @@ namespace StackExchange.Profiling.Internal
 
         private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings
         {
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new DefaultContractResolver()
         };
 
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
         {
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new DefaultContractResolver()
         };
 
         /// <summary>
