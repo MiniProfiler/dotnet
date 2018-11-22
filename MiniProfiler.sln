@@ -78,6 +78,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5.EFCore", "samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.MongoDB", "src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj", "{001EFFB2-E56C-4A63-9954-79D7AEB052DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Misc", "samples\Misc\Misc.csproj", "{44075C61-13E9-4C78-B340-6045EA115433}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +178,10 @@ Global
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44075C61-13E9-4C78-B340-6045EA115433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44075C61-13E9-4C78-B340-6045EA115433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44075C61-13E9-4C78-B340-6045EA115433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44075C61-13E9-4C78-B340-6045EA115433}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -204,10 +210,11 @@ Global
 		{CC4AD661-0F2D-4E27-934D-F321B2214E4B} = {33644D67-D9BB-4989-9B7A-98D51967059B}
 		{44F5C82B-412E-485D-B349-BA9A008BD5AC} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
+		{44075C61-13E9-4C78-B340-6045EA115433} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
