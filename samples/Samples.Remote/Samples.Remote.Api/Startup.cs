@@ -45,7 +45,7 @@ namespace Samples.Remote.Api
             app.UseMiniProfiler();
             app.Use((ctx, next) =>
             {
-                // Add the ID of the current to the response headers
+                // Add the ID of the current miniprofiler session to the response headers
                 ctx.Response.Headers.Add("MiniProfiler-Remote-Id", MiniProfiler.Current.Id.ToString());
 
                 return next();
