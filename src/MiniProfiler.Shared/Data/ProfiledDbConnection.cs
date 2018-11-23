@@ -163,7 +163,6 @@ namespace StackExchange.Profiling.Data
                 _connection.Dispose();
             }
             base.Dispose(disposing);
-            _connection = null;
             _profiler = null;
         }
 
