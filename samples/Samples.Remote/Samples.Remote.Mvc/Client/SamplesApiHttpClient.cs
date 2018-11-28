@@ -57,7 +57,8 @@ namespace Samples.Remote.Mvc.Client
                     // the http call issued to the remote service in order to get the remote profiling information 
                     // is executed by miniprofiler so it won't affect your request performance, we just need this simple
                     // delegating handler to record this temporary step.
-                    MiniProfiler.Current.Step($"RemoteStep:{request.RequestUri.GetLeftPart(UriPartial.Authority)}:{s.Single()}");
+                    var remoteStep = MiniProfiler.Current.Step($"RemoteStep:{request.RequestUri.GetLeftPart(UriPartial.Authority)}");
+                    remoteStep.Id = Guid.Parse(s.Single());
                 }
 
                 return response;
@@ -148,11 +149,10 @@ namespace Samples.Remote.Mvc.Client
 
         private async Task<MiniProfiler> LoadRemoteProfilingSessionAsync(Timing timing)
         {
-            string stepName = timing.Name;
+            var stepName = timing.Name;
             int firstColonIndex = RemotePrefix.Length;
-            int lastColonIndex = stepName.LastIndexOf(":", StringComparison.Ordinal);
-            var remoteHost = stepName.Substring(firstColonIndex, lastColonIndex - firstColonIndex);
-            var remoteSessionId = Guid.Parse(stepName.Substring(lastColonIndex + 1));
+            var remoteHost = stepName.Substring(firstColonIndex);
+            var remoteSessionId = timing.Id;
 
             // Make an http call to the remote service miniprofiler middelware to retrive the remote profiling session
             using (var client = new HttpClient())
@@ -161,7 +161,7 @@ namespace Samples.Remote.Mvc.Client
 
                 // NOTE this paths need to match the one used to configure miniprofiler in the Api project.
                 // The actual value is the default setting, make sure to keep this and the remote one in sync!
-                string path = "mini-profiler-resources/results";
+                var path = "mini-profiler-resources/results";
                 var response = await client.PostAsync($"{remoteHost}/{path}",
                     new StringContent(JsonConvert.SerializeObject(new MiniProfilerRequest(remoteSessionId)), Encoding.UTF8));
 
