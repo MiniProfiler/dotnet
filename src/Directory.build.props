@@ -24,13 +24,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <IncludeSymbols>false</IncludeSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.17" PrivateAssets="all" />
-    <PackageReference Include="SourceLink.Create.GitHub" Version="2.5.0" PrivateAssets="All" /> 
-    <DotNetCliToolReference Include="dotnet-sourcelink" Version="2.5.0" />
-    <DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.5.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
   </ItemGroup>
 </Project>
