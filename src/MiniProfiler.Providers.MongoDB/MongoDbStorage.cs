@@ -26,9 +26,12 @@ namespace StackExchange.Profiling
                 BsonClassMapFields();
             }
 
-            _client = new MongoClient(connectionString);
+            var url = new MongoUrl(connectionString);
+            var databaseName = url.DatabaseName ?? "MiniProfiler";
+
+            _client = new MongoClient(url);
             _collection = _client
-                .GetDatabase("MiniProfiler")
+                .GetDatabase(databaseName)
                 .GetCollection<MiniProfiler>("profilers");
         }
 
