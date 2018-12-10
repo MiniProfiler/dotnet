@@ -46,7 +46,8 @@ namespace StackExchange.Profiling.Tests.Storage
         /// <param name="storage">The storage to drop schema for.</param>
         public static void DropDatabase(this MongoDbStorage storage)
         {
-            storage.GetClient().DropDatabase("MiniProfiler");
+            var url = new MongoDB.Driver.MongoUrl(TestConfig.Current.MongoDbConnectionString);
+            storage.GetClient().DropDatabase(url.DatabaseName);
         }
     }
 }
