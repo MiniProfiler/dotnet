@@ -167,10 +167,18 @@ namespace StackExchange.Profiling
             {
                 var timing = timings.Pop();
 
-                text.AppendFormat("{0} {1} = {2:###,##0.##}ms",
-                    new string('>', timing.Depth),
-                    htmlEncode ? WebUtility.HtmlEncode(timing.Name) : timing.Name,
-                    timing.DurationMilliseconds);
+                for (var i = 0; i < timing.Depth; i++)
+                {
+                    text.Append('>');
+                }
+                if (timing.Depth > 0)
+                {
+                    text.Append(' ');
+                }
+                text.Append(htmlEncode ? WebUtility.HtmlEncode(timing.Name) : timing.Name)
+                    .Append(' ')
+                    .Append((timing.DurationMilliseconds ?? 0).ToString("###,##0.##"))
+                    .Append("ms");
 
                 if (timing.HasCustomTimings)
                 {
@@ -179,11 +187,14 @@ namespace StackExchange.Profiling
                         var type = pair.Key;
                         var customTimings = pair.Value;
 
-                        text.AppendFormat(" ({0} = {1:###,##0.##}ms in {2} cmd{3})",
-                            type,
-                            customTimings.Sum(ct => ct.DurationMilliseconds),
-                            customTimings.Count,
-                            customTimings.Count == 1 ? string.Empty : "s");
+                        text.Append(" (")
+                            .Append(type)
+                            .Append(" = ")
+                            .Append((customTimings.Sum(ct => ct.DurationMilliseconds) ?? 0).ToString("###,##0.##"))
+                            .Append("ms in ")
+                            .Append(customTimings.Count)
+                            .Append(" cmd")
+                            .Append(customTimings.Count == 1 ? string.Empty : "s");
                     }
                 }
 
