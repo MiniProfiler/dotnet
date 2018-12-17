@@ -79,6 +79,7 @@ namespace StackExchange.Profiling.Internal
         private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver()
         };
 
@@ -86,6 +87,7 @@ namespace StackExchange.Profiling.Internal
         {
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,
             NullValueHandling = NullValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver()
         };
 
