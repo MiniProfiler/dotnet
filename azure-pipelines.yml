@@ -1,0 +1,39 @@
+resources:
+- repo: self
+queue:
+  name: Hosted VS2017
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Install DotNet Core 2.1.3'
+  inputs:
+    version: 2.1.300
+
+
+- task: NuGetToolInstaller@0
+  displayName: 'Install NuGet CLI 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+
+- task: PowerShell@2
+  displayName: 'Build / Test / Create Packages'
+  inputs:
+    targetType: ./
+
+    filePath: build.azuredevops.ps1
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/Test-*.xml'
+  inputs:
+    testResultsFormat: XUnit
+
+    testResultsFiles: '**/Test-*.xml'
+
+    mergeTestResults: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: packages'
+  inputs:
+    PathtoPublish: .nupkgs
+
+    ArtifactName: packages
