@@ -1,5 +1,6 @@
 resources:
 - repo: self
+  clean: true
 queue:
   name: Hosted VS2017
 steps:
@@ -20,7 +21,8 @@ steps:
   inputs:
     targetType: ./
 
-    filePath: build.azuredevops.ps1
+    filePath: build.azureDevops.ps1
+
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/Test-*.xml'
@@ -31,9 +33,13 @@ steps:
 
     mergeTestResults: true
 
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: packages'
   inputs:
     PathtoPublish: .nupkgs
 
     ArtifactName: packages
+
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) 
+
