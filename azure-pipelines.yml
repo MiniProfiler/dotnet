@@ -1,0 +1,67 @@
+resources:
+- repo: self
+  clean: true
+queue:
+  name: Hosted VS2017
+
+# Build Variables
+variables:
+  MySQLConnectionString: server=localhost;uid=root;pwd='';database=test;Allow User Variables=true
+  PGPASSWORD: Password12! #Needed for PostgreSQL Installation
+  PGUSER: postgres #Needed for PostgreSQL Installation
+  PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
+  SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
+  system.debug: true
+
+# CI Trigger on master branch
+trigger:
+  batch: false
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - docs/*
+    - '**/*.md'    
+
+# Trigger builds for PR's targeting master 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - docs/*
+    - '**/*.md' 
+
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Install DotNet Core 2.1.3'
+  inputs:
+    version: 2.1.300
+
+- task: NuGetToolInstaller@0
+  displayName: 'Install NuGet CLI 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: PowerShell@2
+  displayName: 'Build / Test / Create Packages'
+  inputs:
+    targetType: filePath
+    filePath: build.AzureDevops.ps1
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/Test-*.xml'
+  inputs:
+    testResultsFormat: XUnit
+    testResultsFiles: '**/Test-*.xml'
+    mergeTestResults: true
+
+# PR doesn't create nuget packages. So publish artifact step disabled for PR's
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: packages'
+  inputs:
+    PathtoPublish: .nupkgs
+    ArtifactName: packages
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
