@@ -28,6 +28,9 @@ namespace StackExchange.Profiling
             lock (_dbLocker)
             {
                 _inProgress = _inProgress ?? new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
+            }
+            lock (_inProgress)
+            {
                 _inProgress[id] = timing;
             }
         }
@@ -47,7 +50,7 @@ namespace StackExchange.Profiling
 
             var id = Tuple.Create((object)profiledDbCommand, executeType);
             CustomTiming current;
-            lock (_dbLocker)
+            lock (_inProgress)
             {
                 if (!_inProgress.TryRemove(id, out current))
                 {
@@ -60,6 +63,9 @@ namespace StackExchange.Profiling
                 lock (_dbLocker)
                 {
                     _inProgressReaders = _inProgressReaders ?? new Dictionary<IDataReader, CustomTiming>();
+                }
+                lock (_inProgressReaders)
+                {
                     _inProgressReaders[reader] = current;
                 }
                 current.FirstFetchCompleted();
