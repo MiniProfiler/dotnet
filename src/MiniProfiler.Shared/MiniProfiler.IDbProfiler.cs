@@ -47,7 +47,7 @@ namespace StackExchange.Profiling
 
             var id = Tuple.Create((object)profiledDbCommand, executeType);
             CustomTiming current;
-            lock (_inProgress)
+            lock (_dbLocker)
             {
                 if (!_inProgress.TryRemove(id, out current))
                 {
