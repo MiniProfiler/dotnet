@@ -3,7 +3,7 @@ using StackExchange.Profiling.Internal;
 
 namespace Benchmarks.Benchmarks
 {
-    [Config(typeof(Configs.MemoryFast))]
+    [Config(typeof(Configs.Memory))]
     public class CreationBenchmarks
     {
         private static readonly MiniProfilerBaseOptions BaseOptions = new MiniProfilerBenchmarkOptions()

@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Internal;
 

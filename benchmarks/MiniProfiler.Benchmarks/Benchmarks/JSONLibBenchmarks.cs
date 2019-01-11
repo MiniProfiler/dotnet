@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
 using Jil;
 using Newtonsoft.Json;
 using ServiceStack.Text;

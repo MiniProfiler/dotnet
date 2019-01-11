@@ -1,7 +1,5 @@
-﻿#if NET461
+﻿#if NET472
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
-using StackExchange.Profiling;
 using System.Collections.Generic;
 using System.Web.Script.Serialization;
 
