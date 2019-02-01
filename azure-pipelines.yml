@@ -22,9 +22,9 @@ trigger:
   paths:
     exclude:
     - docs/*
-    - '**/*.md'    
+    - '**/*.md'
 
-# Trigger builds for PR's targeting master 
+# Trigger builds for PR's targeting master
 pr:
   branches:
     include:
@@ -32,13 +32,15 @@ pr:
   paths:
     exclude:
     - docs/*
-    - '**/*.md' 
+    - '**/*.md'
 
 steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Install DotNet Core 2.1.3'
   inputs:
     version: 2.1.300
+  env:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 - task: NuGetToolInstaller@0
   displayName: 'Install NuGet CLI 4.4.1'
