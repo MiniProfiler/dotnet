@@ -30,7 +30,7 @@ services:
   postgres: postgres
 
 pool:
-  name: Default
+  name: Hosted Windows Container
   vmImage: win1803
 
 # Build Variables
