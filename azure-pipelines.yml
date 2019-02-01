@@ -1,15 +1,44 @@
 resources:
-- repo: self
-  clean: true
-queue:
+  containers:
+  - container: redis
+    image: redis
+    ports:
+    - 6379:6379
+  - container: mongo
+    image: mongo
+    ports:
+    - 27017:27017
+  - container: mysql
+    image: mysql
+    ports:
+    - 3306:3306
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+  - container: postgres
+    image: postgres
+    ports:
+    - 5432:5432
+    env:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test
+
+services:
+  redis: redis
+  mongo: mongo
+  mysql: mysql
+  postgres: postgres
+
+pool:
   name: Hosted VS2017
+  vmImage: vs2017-win2016
 
 # Build Variables
 variables:
-  MySQLConnectionString: server=localhost;uid=root;pwd='';database=test;Allow User Variables=true
-  PGPASSWORD: Password12! #Needed for PostgreSQL Installation
-  PGUSER: postgres #Needed for PostgreSQL Installation
-  PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
+  RedisConnectionString: localhost:6379
+  MongoDbConnectionString: mongodb://localhost:27017/test
+  MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
+  PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;
   SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
   system.debug: true
 
@@ -35,18 +64,6 @@ pr:
     - '**/*.md'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Install DotNet Core 2.1.3'
-  inputs:
-    version: 2.1.300
-  env:
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-
-- task: NuGetToolInstaller@0
-  displayName: 'Install NuGet CLI 4.4.1'
-  inputs:
-    versionSpec: 4.4.1
-
 - task: PowerShell@2
   displayName: 'Build / Test / Create Packages'
   inputs:
