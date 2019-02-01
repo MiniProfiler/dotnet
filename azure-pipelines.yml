@@ -35,6 +35,7 @@ pool:
 
 # Build Variables
 variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   RedisConnectionString: localhost:6379
   MongoDbConnectionString: mongodb://localhost:27017/test
   MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
