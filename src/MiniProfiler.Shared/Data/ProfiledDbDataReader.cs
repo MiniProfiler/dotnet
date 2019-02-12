@@ -15,19 +15,27 @@ namespace StackExchange.Profiling.Data
         private readonly IDbProfiler _profiler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class.
+        /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class (with <see cref="CommandBehavior.Default"/>).
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="profiler">The profiler.</param>
-        public ProfiledDbDataReader(DbDataReader reader, IDbProfiler profiler)
+        public ProfiledDbDataReader(DbDataReader reader, IDbProfiler profiler) : this(reader, CommandBehavior.Default, profiler) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="behavior">The behavior specified during command execution.</param>
+        /// <param name="profiler">The profiler.</param>
+        public ProfiledDbDataReader(DbDataReader reader, CommandBehavior behavior, IDbProfiler profiler)
         {
             WrappedReader = reader;
-
-            if (profiler != null)
-            {
-                _profiler = profiler;
-            }
+            Behavior = behavior;
+            _profiler = profiler;
         }
+
+        /// <summary>Gets the behavior specified during command execution.</summary>
+        public CommandBehavior Behavior { get; }
 
         /// <summary>Gets a value indicating the depth of nesting for the current row.</summary>
         public override int Depth => WrappedReader.Depth;
