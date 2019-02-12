@@ -200,7 +200,7 @@ namespace StackExchange.Profiling.Data
         /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
         /// </summary>
         protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler profiler)
-            => new ProfiledDbDataReader(original, profiler);
+            => new ProfiledDbDataReader(original, behavior, profiler);
 
         /// <summary>
         /// Executes a database data reader.
