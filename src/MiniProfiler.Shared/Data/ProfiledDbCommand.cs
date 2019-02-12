@@ -199,14 +199,8 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
         /// </summary>
-        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, IDbProfiler profiler)
-            => new ProfiledDbDataReader(original, profiler);
-
-        /// <summary>
-        /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
-        /// </summary>
         protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler profiler)
-            => CreateDbDataReader(original, profiler); // call the v1 API that lacked the behavior, so pre-existing overrides work correctly
+            => new ProfiledDbDataReader(original, profiler);
 
         /// <summary>
         /// Executes a database data reader.
