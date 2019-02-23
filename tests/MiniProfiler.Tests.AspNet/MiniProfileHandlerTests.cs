@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.IO.Compression;
+using System.Reflection;
 using System.Web;
 
 using Subtext.TestLibrary;
@@ -25,6 +26,30 @@ namespace StackExchange.Profiling.Tests
 
             var res = GetRequestResponseHttpStatus(sut, resourceName);
             Assert.Equal(expectedHttpStatus, res);
+        }
+
+        private static readonly FieldInfo _cacheability = typeof(HttpCachePolicy).GetField("_cacheability", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo _maxAge = typeof(HttpCachePolicy).GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        [Theory]
+        [InlineData("BRILLANT", (HttpCacheability)6, null)]
+        [InlineData("underscore.js", (HttpCacheability)6, null)]
+        [InlineData("results-list", (HttpCacheability)6, null)]
+        [InlineData("includes.min.js", HttpCacheability.Public, 2592000)]
+        [InlineData("includes.min.css", HttpCacheability.Public, 2592000)]
+        public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpCacheControlIsReturned(string resourceName, HttpCacheability expectedCacheability, int? expectedMaxAgeSeconds)
+        {
+            var sut = new MiniProfilerHandler(new MiniProfilerOptions()
+            {
+                ResultsListAuthorize = null
+            });
+
+            var res = GetRequestResponseCacheControl(sut, resourceName);
+            Assert.Equal(expectedCacheability, (HttpCacheability)_cacheability.GetValue(res));
+            if (expectedMaxAgeSeconds.HasValue)
+            {
+                Assert.Equal(TimeSpan.FromSeconds(expectedMaxAgeSeconds.Value), (TimeSpan)_maxAge.GetValue(res));
+            }
         }
 
         [Theory]
@@ -75,6 +100,15 @@ namespace StackExchange.Profiling.Tests
             {
                 handler.ProcessRequest(HttpContext.Current);
                 return HttpContext.Current.Response.StatusCode;
+            }
+        }
+
+        private static HttpCachePolicy GetRequestResponseCacheControl(MiniProfilerHandler handler, string resourceName)
+        {
+            using (new HttpSimulator("/mini-profiler-resources/", @"c:\").SimulateRequest(new Uri("http://localhost/mini-profiler-resources" + resourceName)))
+            {
+                handler.ProcessRequest(HttpContext.Current);
+                return HttpContext.Current.Response.Cache;
             }
         }
 

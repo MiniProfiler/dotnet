@@ -40,6 +40,8 @@ namespace StackExchange.Profiling
 
             if (TryGetResource(Path.GetFileName(path), out string resource))
             {
+                // Cache for one month - we cache break based on version and fetching these every request is crazy
+                response.Headers["Cache-Control"] = "public,max-age=2592000";
                 return resource;
             }
 

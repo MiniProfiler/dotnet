@@ -138,7 +138,15 @@ namespace StackExchange.Profiling
                     return NotFound(context);
             }
 
-            return TryGetResource(Path.GetFileName(path), out string resource) ? resource : NotFound(context);
+            if (TryGetResource(Path.GetFileName(path), out string resource))
+            {
+                // Cache for one month - we cache break based on version and fetching these every request is crazy
+                response.Cache.SetCacheability(HttpCacheability.Public);
+                response.Cache.SetMaxAge(TimeSpan.FromDays(30));
+                response.Cache.SetSlidingExpiration(true);
+                return resource;
+            }
+            return NotFound(context);
         }
 
         private string ResultsIndex(HttpContext context)

@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -74,6 +77,41 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal("Select 1", customTimings[0].CommandString);
                 Assert.Equal("Reader", customTimings[0].ExecuteType);
                 Assert.True(customTimings[0].DurationMilliseconds >= 20);
+            }
+        }
+
+        [Fact]
+        public async Task StaticFileFetch()
+        {
+            var builder = new WebHostBuilder()
+                .ConfigureServices(services => services
+                .AddMemoryCache()
+                .AddMiniProfiler(_ => { }))
+                .Configure(app =>
+                {
+                    app.UseMiniProfiler();
+                    app.Run(_ => Task.CompletedTask);
+                });
+            using (var server = new TestServer(builder))
+            {
+                // Test CSS
+                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.css").ConfigureAwait(false))
+                {
+                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl.MaxAge);
+                    Assert.True(response.Headers.CacheControl.Public);
+                    Assert.Equal("text/css", response.Content.Headers.ContentType.MediaType);
+                    // Checking for wrapping/scoping class
+                    Assert.StartsWith(".mp", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+                // Test JS
+                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js").ConfigureAwait(false))
+                {
+                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl.MaxAge);
+                    Assert.True(response.Headers.CacheControl.Public);
+                    Assert.Equal("application/javascript", response.Content.Headers.ContentType.MediaType);
+                    // Checking for license header
+                    Assert.Contains("jQuery", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
             }
         }
     }
