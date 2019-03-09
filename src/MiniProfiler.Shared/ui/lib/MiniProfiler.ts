@@ -354,6 +354,9 @@ namespace StackExchange.Profiling {
                 }
             };
 
+            // hide the container before it's styled
+            $('head').append('<style>.mp-results { display: none }</style>');
+
             $(mp.installAjaxHandlers);
             $(deferInit);
 
