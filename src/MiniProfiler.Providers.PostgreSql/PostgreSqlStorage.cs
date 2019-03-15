@@ -418,7 +418,7 @@ Select Id
                     : "Where Started > @start");
             }
             sb.Append("Order By ").AppendLine(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc")
-                .AppendLine("Limit {= maxResults} ");
+                .AppendLine("Limit {=maxResults} ");
 
             return sb.ToStringRecycle();
         }
