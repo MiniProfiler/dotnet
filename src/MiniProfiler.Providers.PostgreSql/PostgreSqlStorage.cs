@@ -406,7 +406,7 @@ Order By Started");
             sb.Append(@"
 Select Id
   From ").Append(MiniProfilersTableWithSchema).Append(@"
-Limit {=maxResults}");
+");
             if (finish != null)
             {
                 sb.AppendLine("Where Started < @finish");
@@ -417,7 +417,8 @@ Limit {=maxResults}");
                     ? "  And Started > @start"
                     : "Where Started > @start");
             }
-            sb.Append("Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
+            sb.Append("Order By ").AppendLine(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc")
+                .AppendLine("Limit {= maxResults} ");
 
             return sb.ToStringRecycle();
         }
