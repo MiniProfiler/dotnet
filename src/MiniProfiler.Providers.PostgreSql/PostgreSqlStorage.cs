@@ -337,7 +337,7 @@ Update {MiniProfilersTableWithSchema}
   Select Id
     From {MiniProfilersTableWithSchema}
    Where ""User"" = @user
-     And HasUserViewed = 0
+     And HasUserViewed = false
 Order By Started");
 
         /// <summary>
