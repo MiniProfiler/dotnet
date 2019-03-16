@@ -415,7 +415,7 @@ namespace StackExchange.Profiling {
                     continue; // already fetching
                 }
 
-                const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+                const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)(?:Z|(\+|-)([\d|:]*))?$/;
                 const parseDates = (key: string, value: any) =>
                           key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
 
