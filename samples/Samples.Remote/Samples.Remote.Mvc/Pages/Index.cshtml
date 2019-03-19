@@ -1,0 +1,27 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form asp-page-handler="all">
+                <input type="submit" class="btn btn-success" value="Get all">
+            </form>
+        </div>
+        <div class="col">
+            <form asp-page-handler="odd">
+                <input type="submit" class="btn btn-success" value="Get odd">
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.Samples != null)
+        {
+            <pre>@Model.Samples.ToString()</pre>
+        }
+    </div>
+</div>
