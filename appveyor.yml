@@ -18,6 +18,7 @@ skip_commits:
 
 environment:
   Appveyor: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   # Postgres
   POSTGRES_PATH: C:\Program Files\PostgreSQL\9.6
   PGUSER: postgres
