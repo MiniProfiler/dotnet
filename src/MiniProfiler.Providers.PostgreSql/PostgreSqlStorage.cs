@@ -15,36 +15,10 @@ namespace StackExchange.Profiling.Storage
     public class PostgreSqlStorage : DatabaseStorageBase
     {
         /// <summary>
-        /// The schema that the tables are stored in. 
-        /// </summary>
-        public readonly string Schema = null;
-
-
-        private readonly string MiniProfilersTableWithSchema;
-        private readonly string MiniProfilerTimingsTableWithSchema;
-        private readonly string MiniProfilerClientTimingsTableWithSchema;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="PostgreSqlStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        /// <param name="schema">The schema that the tables are stored in.</param>
-        public PostgreSqlStorage(string connectionString, string schema = null) : base(connectionString)
-        {
-            Schema = schema;
-            if (Schema != null)
-            {
-                MiniProfilersTableWithSchema = $"{Schema}.{MiniProfilersTable}";
-                MiniProfilerTimingsTableWithSchema = $"{Schema}.{MiniProfilerTimingsTable}";
-                MiniProfilerClientTimingsTableWithSchema = $"{Schema}.{MiniProfilerClientTimingsTable}";
-            }
-            else
-            {
-                MiniProfilersTableWithSchema = MiniProfilersTable;
-                MiniProfilerTimingsTableWithSchema = MiniProfilerTimingsTable;
-                MiniProfilerClientTimingsTableWithSchema = MiniProfilerClientTimingsTable;
-            }
-        }
+        public PostgreSqlStorage(string connectionString) : base(connectionString) { /* base call */ }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PostgreSqlStorage"/> class with the specified connection string
@@ -54,45 +28,29 @@ namespace StackExchange.Profiling.Storage
         /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
         /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
         /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
-        /// <param name="schema">The schema that the tables are stored in.</param>
-        public PostgreSqlStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable, string schema = null)
-            : base(connectionString, profilersTable, timingsTable, clientTimingsTable)
-        {
-            Schema = schema;
-            if (Schema != null)
-            {
-                MiniProfilersTableWithSchema = $"{Schema}.{MiniProfilersTable}";
-                MiniProfilerTimingsTableWithSchema = $"{Schema}.{MiniProfilerTimingsTable}";
-                MiniProfilerClientTimingsTableWithSchema = $"{Schema}.{MiniProfilerClientTimingsTable}";
-            }
-            else
-            {
-                MiniProfilersTableWithSchema = MiniProfilersTable;
-                MiniProfilerTimingsTableWithSchema = MiniProfilerTimingsTable;
-                MiniProfilerClientTimingsTableWithSchema = MiniProfilerClientTimingsTable;
-            }
-        }
+        public PostgreSqlStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql;
         private string SaveSql => _saveSql ?? (_saveSql = $@"
-INSERT INTO {MiniProfilersTableWithSchema}
+INSERT INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, ""User"", HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTableWithSchema} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)");
 
         private string _saveTimingsSql;
         private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
-INSERT INTO {MiniProfilerTimingsTableWithSchema}
+INSERT INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTableWithSchema} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)");
 
         private string _saveClientTimingsSql;
         private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
-INSERT INTO {MiniProfilerClientTimingsTableWithSchema}
+INSERT INTO {MiniProfilerClientTimingsTable}
             (Id, MiniProfilerId, Name, Start, Duration)
 SELECT      @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTableWithSchema} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)");
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -221,9 +179,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTableWithSchema} WHERE
 
         private string _loadSql;
         private string LoadSql => _loadSql ?? (_loadSql = $@"
-SELECT * FROM {MiniProfilersTableWithSchema} WHERE Id = @id;
-SELECT * FROM {MiniProfilerTimingsTableWithSchema} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {MiniProfilerClientTimingsTableWithSchema} WHERE MiniProfilerId = @id ORDER BY Start;");
+SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
+SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -311,7 +269,7 @@ SELECT * FROM {MiniProfilerClientTimingsTableWithSchema} WHERE MiniProfilerId = 
 
         private string _toggleViewedSql;
         private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
-Update {MiniProfilersTableWithSchema} 
+Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
    And ""User"" = @user");
@@ -335,7 +293,7 @@ Update {MiniProfilersTableWithSchema}
         private string _getUnviewedIdsSql;
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
   Select Id
-    From {MiniProfilersTableWithSchema}
+    From {MiniProfilersTable}
    Where ""User"" = @user
      And HasUserViewed = false
 Order By Started");
@@ -405,7 +363,7 @@ Order By Started");
             var sb = StringBuilderCache.Get();
             sb.Append(@"
 Select Id
-  From ").Append(MiniProfilersTableWithSchema).Append(@"
+  From ").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -434,7 +392,7 @@ Select Id
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"
-CREATE TABLE {MiniProfilersTableWithSchema}
+CREATE TABLE {MiniProfilersTable}
 (
     RowId                                serial primary key,
     Id                                   uuid not null, -- don't cluster on a guid
@@ -449,12 +407,12 @@ CREATE TABLE {MiniProfilersTableWithSchema}
     ClientTimingsRedirectCount           integer null
 );
 -- displaying results selects everything based on the main MiniProfilers.Id column
-CREATE UNIQUE INDEX IX_{MiniProfilersTable}_Id ON {MiniProfilersTableWithSchema} (Id);
+CREATE UNIQUE INDEX IX_{MiniProfilersTable}_Id ON {MiniProfilersTable} (Id);
                 
 -- speeds up a query that is called on every .Stop()
-CREATE INDEX IX_{MiniProfilersTable}_User_HasUserViewed_Includes ON {MiniProfilersTableWithSchema} (""User"", HasUserViewed); 
+CREATE INDEX IX_{MiniProfilersTable}_User_HasUserViewed_Includes ON {MiniProfilersTable} (""User"", HasUserViewed); 
 
-CREATE TABLE {MiniProfilerTimingsTableWithSchema}
+CREATE TABLE {MiniProfilerTimingsTable}
 (
     RowId                               serial primary key,
     Id                                  uuid not null,
@@ -468,10 +426,10 @@ CREATE TABLE {MiniProfilerTimingsTableWithSchema}
     CustomTimingsJson                   varchar null
 );
 
-CREATE UNIQUE INDEX IX_{MiniProfilerTimingsTable}_Id ON {MiniProfilerTimingsTableWithSchema} (Id);
-CREATE INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId ON {MiniProfilerTimingsTableWithSchema} (MiniProfilerId);
+CREATE UNIQUE INDEX IX_{MiniProfilerTimingsTable}_Id ON {MiniProfilerTimingsTable} (Id);
+CREATE INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
 
-CREATE TABLE {MiniProfilerClientTimingsTableWithSchema}
+CREATE TABLE {MiniProfilerClientTimingsTable}
 (
     RowId                               serial primary key,
     Id                                  uuid not null,
@@ -481,8 +439,8 @@ CREATE TABLE {MiniProfilerClientTimingsTableWithSchema}
     Duration                            decimal(9, 3) not null
 );
 
-CREATE UNIQUE INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTableWithSchema} (Id);
-CREATE INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTableWithSchema} (MiniProfilerId);             
+CREATE UNIQUE INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);
+CREATE INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);             
 ";
         }
     }
