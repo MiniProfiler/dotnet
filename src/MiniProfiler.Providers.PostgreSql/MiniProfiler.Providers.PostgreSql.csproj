@@ -3,7 +3,7 @@
     <AssemblyName>MiniProfiler.Providers.PostgreSql</AssemblyName>
     <Title>MiniProfiler.Providers.PostgreSql</Title>
     <Description>MiniProfiler: Profiler storage for PostgreSQL Server</Description>
-    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver, Douglas Cleghorn</Authors>
+    <Authors>Nick Craver, Douglas Cleghorn</Authors>
     <PackageTags>SQL;Npgsql;PostgreSql;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
@@ -11,10 +11,5 @@
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
   </ItemGroup>
 </Project>
