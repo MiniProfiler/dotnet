@@ -163,12 +163,18 @@ namespace StackExchange.Profiling.Tests.Async
             AssertNear(5, profiler.DurationMilliseconds, maxDelta: 2);
 
             // Parent durations are sum of itself and children
+            Assert.NotNull(timing10);
+            Assert.NotNull(timing11);
             AssertNear(2, timing10.DurationMilliseconds, maxDelta: 2);
             AssertNear(1, timing11.DurationMilliseconds, maxDelta: 2);
 
+            Assert.NotNull(timing20);
+            Assert.NotNull(timing21);
             AssertNear(3, timing20.DurationMilliseconds, maxDelta: 2);
             AssertNear(1, timing21.DurationMilliseconds, maxDelta: 2);
 
+            Assert.NotNull(timing30);
+            Assert.NotNull(timing31);
             AssertNear(4, timing30.DurationMilliseconds, maxDelta: 2);
             AssertNear(1, timing31.DurationMilliseconds, maxDelta: 2);
         }
