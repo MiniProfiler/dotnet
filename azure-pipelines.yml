@@ -69,11 +69,8 @@ steps:
   inputs:
     version: 2.1.300
 
-- task: PowerShell@2
+- powershell: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
   displayName: 'Build / Test / Create Packages'
-  inputs:
-    targetType: filePath
-    filePath: build.AzureDevops.ps1
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/Test-*.xml'
