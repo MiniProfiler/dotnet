@@ -11,7 +11,7 @@ resources:
   - container: mysql
     image: mysql
     ports:
-    - 3306:3306
+    - 3307:3306
     env:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test
@@ -30,14 +30,14 @@ services:
   postgres: postgres
 
 pool:
-  vmImage: ubuntu-16.04
+  vmImage: ubuntu-16.04 
 
 # Build Variables
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   RedisConnectionString: localhost:6379
   MongoDbConnectionString: mongodb://localhost:27017/test
-  MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
+  MySQLConnectionString: server=localhost:3307;uid=root;pwd=root;database=test;Allow User Variables=true
   PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;
   SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
   system.debug: true
