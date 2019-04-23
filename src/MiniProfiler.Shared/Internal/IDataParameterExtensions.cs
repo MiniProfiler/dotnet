@@ -71,7 +71,7 @@ namespace StackExchange.Profiling.Internal
                 return Convert.ChangeType(rawValue, Enum.GetUnderlyingType(rawType)).ToString();
             }
 
-            return rawValue.ToString();
+            return Convert.ToString(rawValue, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <summary>
