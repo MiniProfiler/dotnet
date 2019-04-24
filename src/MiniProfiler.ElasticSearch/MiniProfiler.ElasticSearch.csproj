@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.ElasticSearch</AssemblyName>
+    <Title>MiniProfiler.ElasticSearch</Title>
+    <Description>MiniProfiler: Profiler storage for ElasticSearch</Description>
+    <Authors>Reinaldo Coelho Sartorelli</Authors>
+    <PackageTags>NoSQL;ElasticSearch;$(PackageBaseTags)</PackageTags>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <Company>enContact</Company>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NEST" Version="6.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+  </ItemGroup>
+</Project>
