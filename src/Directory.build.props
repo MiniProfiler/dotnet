@@ -26,6 +26,10 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.1" PrivateAssets="All" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.17" PrivateAssets="all" />
