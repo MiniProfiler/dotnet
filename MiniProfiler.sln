@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28822.285
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
+		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
 		nuget.config = nuget.config
@@ -220,8 +221,8 @@ Global
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
