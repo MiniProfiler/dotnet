@@ -31,9 +31,9 @@ MiniProfiler v4 runs on .NET 4.6 and above or .NET Standard 1.5 and above. .NET 
 
 #### White Listing
 MiniProfiler exposes the following end points for profiling:
-- /results-index
-- /results-list
-- /results
+* /results-index
+* /results-list
+* /results
 
 #### Links
 * The MiniProfiler for .NET GitHub repo [is located at MiniProfiler/dotnet](https://github.com/MiniProfiler/dotnet).
