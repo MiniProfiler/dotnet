@@ -91,7 +91,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 <mini-profiler />
 ```
 <sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>  
-<sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're wokring on smoother alternatives here.</sub>
+<sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're working on smoother alternatives here.</sub>
 
 
 
