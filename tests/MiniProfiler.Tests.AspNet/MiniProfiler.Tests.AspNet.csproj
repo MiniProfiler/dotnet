@@ -14,6 +14,8 @@
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.110" />
+    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.110" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
