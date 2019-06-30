@@ -15,6 +15,7 @@ $projectsToBuild =
     'MiniProfiler.Shared',
     'MiniProfiler',
     'MiniProfiler.EF6',
+    'MiniProfiler.EFC7',
     'MiniProfiler.EntityFrameworkCore',
     'MiniProfiler.Mvc5',
     'MiniProfiler.AspNetCore',
