@@ -27,3 +27,4 @@ src/MiniProfiler.Shared/ui/lib/MiniProfiler.js.map
 src/MiniProfiler.Shared/ui/includes.js
 src/MiniProfiler.Shared/ui/includes.min.js
 tests/MiniProfiler.Tests/Test-*.xml
+*.trx
