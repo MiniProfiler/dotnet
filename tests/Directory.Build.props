@@ -32,4 +32,8 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json" Condition="'$(OS)' == 'Unix'" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
