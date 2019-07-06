@@ -129,10 +129,7 @@ namespace StackExchange.Profiling.Tests
             // overwrite the formatter
             _formatter = new VerboseSqlServerFormatter(true);
             _commandText = "select 1";
-            const string expectedOutput = @"-- Command Type: Text
--- Database: TestDatabase
-
-select 1;";
+            const string expectedOutput = "-- Command Type: Text\n-- Database: TestDatabase\n\nselect 1;";
             CreateDbCommand(CommandType.Text);
 
             // act
@@ -154,20 +151,13 @@ select 1;";
             _commandText = "select 1";
             CreateDbCommand(CommandType.Text);
 #if NET461
-            const string expectedOutput = @"-- Command Type: Text
--- Database: TestDatabase
--- Transaction Scope Iso Level: Serializable
-
-select 1;";
+            const string expectedOutput = "-- Command Type: Text\n-- Database: TestDatabase\n-- Transaction Scope Iso Level: Serializable\n\nselect 1;";
             var transactionScope = new TransactionScope();
             // act
             var actualOutput = GenerateOutput();
             transactionScope.Dispose();
 #else
-            const string expectedOutput = @"-- Command Type: Text
--- Database: TestDatabase
-
-select 1;";
+            const string expectedOutput = "-- Command Type: Text\n-- Database: TestDatabase\n\nselect 1;";
             var actualOutput = GenerateOutput();
 #endif
 
@@ -196,9 +186,7 @@ select 1;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @a";
-            const string expectedOutput = @"DECLARE @a int = 123;
-
-select 1 from dbo.Table where x = @a;";
+            const string expectedOutput = "DECLARE @a int = 123;\n\nselect 1 from dbo.Table where x = @a;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<int>(at + "a", 123);
 
@@ -215,10 +203,7 @@ select 1 from dbo.Table where x = @a;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x int = 123,
-        @y bigint = 123;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<int>(at + "x", 123);
             AddDbParameter<long>(at + "y", 123);
@@ -238,10 +223,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x bit = 1,
-        @y bit = null;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x bit = 1,\n        @y bit = null;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<bool?>(at + "x", true, type: DbType.Boolean);
             AddDbParameter<bool?>(at + "y", null, type: DbType.Boolean);
@@ -259,10 +241,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x varchar(20) = 'bob',
-        @y varchar(max) = 'bob2';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x varchar(20) = 'bob',\n        @y varchar(max) = 'bob2';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<string>(at + "x", "bob", size: 20, type: DbType.AnsiString);
             AddDbParameter<string>(at + "y", "bob2", size: -1, type: DbType.AnsiString);
@@ -280,10 +259,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x datetime = '2017-01-30',
-        @y datetime = '2001-01-01';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x datetime = '2017-01-30',\n        @y datetime = '2001-01-01';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.Date);
             AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.Date);
@@ -301,10 +277,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x datetime = '05:13:21',
-        @y datetime = '18:12:11';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x datetime = '05:13:21',\n        @y datetime = '18:12:11';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.Time);
             AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.Time);
@@ -322,10 +295,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x datetime = '2017-01-30T05:13:21',
-        @y datetime = '2001-01-01T18:12:11';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x datetime = '2017-01-30T05:13:21',\n        @y datetime = '2001-01-01T18:12:11';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.DateTime);
             AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.DateTime);
@@ -343,10 +313,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x datetime2 = '2017-01-30T05:13:21',
-        @y datetime2 = '2001-01-01T18:12:11';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x datetime2 = '2017-01-30T05:13:21',\n        @y datetime2 = '2001-01-01T18:12:11';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<DateTime>(at + "x", new DateTime(2017, 1, 30, 5, 13, 21), type: DbType.DateTime2);
             AddDbParameter<DateTime>(at + "y", new DateTime(2001, 1, 1, 18, 12, 11), type: DbType.DateTime2);
@@ -364,10 +331,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x datetimeoffset = '2017-01-30T05:13:21+04:30',
-        @y datetimeoffset = '2001-01-01T18:12:11-04:30';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x datetimeoffset = '2017-01-30T05:13:21+04:30',\n        @y datetimeoffset = '2001-01-01T18:12:11-04:30';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<DateTimeOffset>(at + "x", new DateTimeOffset(2017, 1, 30, 5, 13, 21, TimeSpan.FromHours(4.5)), type: DbType.DateTimeOffset);
             AddDbParameter<DateTimeOffset>(at + "y", new DateTimeOffset(2001, 1, 1, 18, 12, 11, TimeSpan.FromHours(-4.5)), type: DbType.DateTimeOffset);
@@ -385,10 +349,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x float = 123.45,
-        @y float = -54.321;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x float = 123.45,\n        @y float = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<double>(at + "x", 123.45, type: DbType.Double);
             AddDbParameter<double>(at + "y", -54.321, type: DbType.Double);
@@ -406,10 +367,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x real = 123.45,
-        @y real = -54.321;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x real = 123.45,\n        @y real = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<float>(at + "x", 123.45, type: DbType.Single);
             AddDbParameter<float>(at + "y", -54.321, type: DbType.Single);
@@ -427,10 +385,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x money = 123.45,
-        @y money = -54.321;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x money = 123.45,\n        @y money = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<decimal>(at + "x", 123.45, type: DbType.Currency);
             AddDbParameter<decimal>(at + "y", -54.321, type: DbType.Currency);
@@ -448,10 +403,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x decimal(5,2) = 123.45,
-        @y decimal(5,3) = -54.321;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\n        @y decimal(5,3) = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<decimal>(at + "x", 123.45, type: DbType.Decimal);
             AddDbParameter<decimal>(at + "y", -54.321, type: DbType.Decimal);
@@ -469,10 +421,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x decimal(5,2) = 123.45,
-        @y decimal = null;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\n        @y decimal = null;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<decimal?>(at + "x", 123.45);
             AddDbParameter<decimal?>(at + "y", null);
@@ -490,10 +439,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x decimal(5,0) = 12345,
-        @y decimal(5,0) = -54321;
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x decimal(5,0) = 12345,\n        @y decimal(5,0) = -54321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<decimal>(at + "x", 12345.0, type: DbType.Decimal);
             AddDbParameter<decimal>(at + "y", -54321.0, type: DbType.Decimal);
@@ -511,10 +457,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
         {
             // arrange
             _commandText = "select 1 from dbo.Table where x = @x, y = @y";
-            const string expectedOutput = @"DECLARE @x xml = '<root></root>',
-        @y xml = '<root><node/></root>';
-
-select 1 from dbo.Table where x = @x, y = @y;";
+            const string expectedOutput = "DECLARE @x xml = '<root></root>',\n        @y xml = '<root><node/></root>';\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             CreateDbCommand(CommandType.Text);
             AddDbParameter<string>(at + "x", "<root></root>", type: DbType.Xml);
             AddDbParameter<string>(at + "y", "<root><node/></root>", type: DbType.Xml);
@@ -551,9 +494,7 @@ select 1 from dbo.Table where x = @x, y = @y;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123;
-
-EXEC dbo.SOMEPROCEDURE @x = @x;";
+            const string expectedOutput = "DECLARE @x int = 123;\n\nEXEC dbo.SOMEPROCEDURE @x = @x;";
             CreateDbCommand(CommandType.StoredProcedure);
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
 
@@ -571,10 +512,7 @@ EXEC dbo.SOMEPROCEDURE @x = @x;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123,
-        @y bigint = 123;
-
-EXEC dbo.SOMEPROCEDURE @x = @x, @y = @y;";
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nEXEC dbo.SOMEPROCEDURE @x = @x, @y = @y;";
             CreateDbCommand(CommandType.StoredProcedure);
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
             AddDbParameter<long>(at + "y", 123, ParameterDirection.Input);
@@ -593,10 +531,7 @@ EXEC dbo.SOMEPROCEDURE @x = @x, @y = @y;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @retval int;
-
-EXEC @retval = dbo.SOMEPROCEDURE;
-SELECT @retval AS ReturnValue;";
+            const string expectedOutput = "DECLARE @retval int;\n\nEXEC @retval = dbo.SOMEPROCEDURE;\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
             AddDbParameter<int>(at + "retval", null, ParameterDirection.ReturnValue);
 
@@ -614,11 +549,7 @@ SELECT @retval AS ReturnValue;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123,
-        @retval int;
-
-EXEC @retval = dbo.SOMEPROCEDURE @x = @x;
-SELECT @retval AS ReturnValue;";
+            const string expectedOutput = "DECLARE @x int = 123,\n        @retval int;\n\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x;\nSELECT @retval AS ReturnValue;";
             CreateDbCommand(CommandType.StoredProcedure);
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Input);
             AddDbParameter<int>(at + "retval", null, ParameterDirection.ReturnValue);
@@ -637,10 +568,7 @@ SELECT @retval AS ReturnValue;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123;
-
-EXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;
-SELECT @x AS x;";
+            const string expectedOutput = "DECLARE @x int = 123;\n\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
@@ -659,11 +587,7 @@ SELECT @x AS x;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123,
-        @y int = 123;
-
-EXEC dbo.SOMEPROCEDURE @x = @x OUTPUT, @y = @y OUTPUT;
-SELECT @x AS x, @y AS y;";
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y int = 123;\n\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT, @y = @y OUTPUT;\nSELECT @x AS x, @y AS y;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
@@ -683,11 +607,7 @@ SELECT @x AS x, @y AS y;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123,
-        @retval int;
-
-EXEC @retval = dbo.SOMEPROCEDURE @x = @x OUTPUT;
-SELECT @retval AS ReturnValue, @x AS x;";
+            const string expectedOutput = "DECLARE @x int = 123,\n        @retval int;\n\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x OUTPUT;\nSELECT @retval AS ReturnValue, @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
             AddDbParameter<int>(at + "x", 123, ParameterDirection.Output);
@@ -707,10 +627,7 @@ SELECT @retval AS ReturnValue, @x AS x;";
             // arrange
             _formatter = new VerboseSqlServerFormatter();
             _commandText = "dbo.SOMEPROCEDURE";
-            const string expectedOutput = @"DECLARE @x int = 123;
-
-EXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;
-SELECT @x AS x;";
+            const string expectedOutput = "DECLARE @x int = 123;\n\nEXEC dbo.SOMEPROCEDURE @x = @x OUTPUT;\nSELECT @x AS x;";
             CreateDbCommand(CommandType.StoredProcedure);
             // note: since the sql-OUTPUT parameters can be read within the procedure, we need to support setting the value
             AddDbParameter<int>(at + "x", 123, ParameterDirection.InputOutput);
