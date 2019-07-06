@@ -9,6 +9,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <xUnitVersion>2.4.1</xUnitVersion>
+    <IsTestProject Condition="'$(OS)' != 'Windows_NT' AND $(TargetFramework.StartsWith('net4'))">false</IsTestProject>
   </PropertyGroup>
   
   <ItemGroup>
