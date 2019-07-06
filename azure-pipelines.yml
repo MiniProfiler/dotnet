@@ -81,11 +81,11 @@ steps:
     script: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results **/Test-*.xml'
+  displayName: 'Publish Test Results **/*.trx'
+  condition: succeededOrFailed()
   inputs:
-    testResultsFormat: XUnit
-    testResultsFiles: '**/Test-*.xml'
-    mergeTestResults: true
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
 
 # PR doesn't create nuget packages. So publish artifact step disabled for PR's
 - task: PublishBuildArtifacts@1
