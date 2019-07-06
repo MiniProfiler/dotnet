@@ -3,11 +3,11 @@ resources:
   - container: redis
     image: redis
     ports:
-    - 6379
+    - 6379:6379
   - container: mongo
     image: mongo
     ports:
-    - 27017
+    - 27017:27017
   - container: mysql
     image: mysql
     ports:
