@@ -51,7 +51,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
         public void Dispose()
         {
-            Storage.DropSchema();
+            Storage?.DropSchema();
         }
     }
 }
