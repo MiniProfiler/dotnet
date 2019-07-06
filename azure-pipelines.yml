@@ -66,6 +66,11 @@ pr:
 steps:
 - task: UseDotNet@2
   inputs:
+    packageType: 'runtime'
+    version: '2.2.5'
+
+- task: UseDotNet@2
+  inputs:
     packageType: 'sdk'
     version: '3.0.100-preview6-012264'
 
