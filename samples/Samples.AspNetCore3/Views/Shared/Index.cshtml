@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="col-md-12">
+    <div class="page-header">
+        <h2>ASP.NET Core: Behold MiniProfiler in the top right!</h2>
+    </div>
+</div>
+<div class="row">
+    <partial name="Index.LeftPanel" />
+    <partial name="Index.RightPanel" />
+</div>
+@section scripts {
+<script>
+    $(function () {
+        // these links should fire ajax requests, not do navigation
+        $('.ajax-requests a').click(function () {
+            var $clicked = $(this),
+                $spinner = $('<span class="glyphicon glyphicon-refresh spinning" title="Working..."></span>').appendTo($clicked.parent()),
+                $results = $('.ajax-results');
+
+            $.ajax({
+                type: 'GET',
+                url: this.href,
+                success: function (data) {
+                    $('<p class="ajax-result">').append(data).appendTo($results);
+                },
+                error: function () { $results.append('<p>ERROR!</p>'); },
+                complete: function () { $spinner.remove(); }
+            });
+            return false;
+        });
+    });
+</script>
+}
