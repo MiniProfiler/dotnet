@@ -11,14 +11,14 @@ resources:
   - container: mysql
     image: mysql
     ports:
-    - 3306
+    - 3306:3306
     env:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test
   - container: postgres
     image: postgres
     ports:
-    - 5432
+    - 5432:5432
     env:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test
