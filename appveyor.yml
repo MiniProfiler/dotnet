@@ -1,7 +1,6 @@
 image: Visual Studio 2017
 
 init:
-  - git config --global core.autocrlf input
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
 
 install:
