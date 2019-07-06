@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Tests
     {
         public BasicTests(ITestOutputHelper output) : base(output) { }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void Simple()
         {
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
@@ -27,7 +27,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void StepIf_Basic()
         {
             using (GetRequest())
@@ -53,7 +53,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void StepIf_IncludeChildren()
         {
             using (GetRequest())
@@ -95,7 +95,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void CustomTimingIf_Basic()
         {
             using (GetRequest())
@@ -121,7 +121,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void DiscardResults()
         {
             using (GetRequest(startAndStopProfiler: false))
@@ -135,7 +135,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void GetProfiler_NoChildren()
         {
             // this won't create any child steps
@@ -146,7 +146,7 @@ namespace StackExchange.Profiling.Tests
             Assert.False(mp.Root.HasChildren);
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void GetProfiler_Children()
         {
             const int depth = 5;
@@ -166,7 +166,7 @@ namespace StackExchange.Profiling.Tests
             Assert.Equal(depth, children);
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void GetRequest_StartAndStopProfiler()
         {
             MiniProfiler mp;

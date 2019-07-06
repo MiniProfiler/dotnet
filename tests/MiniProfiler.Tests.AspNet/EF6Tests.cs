@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Tests
             MiniProfilerEF6.Initialize();
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void ServicesCheck()
         {
             const string providerKey = "System.Data.SQLite";

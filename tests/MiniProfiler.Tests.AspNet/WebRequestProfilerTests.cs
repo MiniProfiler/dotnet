@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Tests
             Options = null;
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void WebRequestEnsureName()
         {
             using (var rq = GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))

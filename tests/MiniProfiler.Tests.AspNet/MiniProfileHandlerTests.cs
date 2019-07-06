@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests
 {
     public class MiniProfilerHandlerTests
     {
-        [Theory]
+        [Theory(WindowsOnly = true)]
         [InlineData("BRILLANT", 404)]
         [InlineData("underscore.js", 404)]
         [InlineData("results-list", 200)]
@@ -31,7 +31,7 @@ namespace StackExchange.Profiling.Tests
         private static readonly FieldInfo _cacheability = typeof(HttpCachePolicy).GetField("_cacheability", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo _maxAge = typeof(HttpCachePolicy).GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        [Theory]
+        [Theory(WindowsOnly = true)]
         [InlineData("BRILLANT", (HttpCacheability)6, null)]
         [InlineData("underscore.js", (HttpCacheability)6, null)]
         [InlineData("results-list", (HttpCacheability)6, null)]
@@ -52,7 +52,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Theory]
+        [Theory(WindowsOnly = true)]
         [InlineData(true, 200)]
         [InlineData(false, 401)]
         public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(bool isRequestAuthorized, int expectedHttpStatus)
@@ -66,7 +66,7 @@ namespace StackExchange.Profiling.Tests
             Assert.Equal(expectedHttpStatus, res);
         }
 
-		[Theory]
+        [Theory(WindowsOnly = true)]
 		[InlineData("gzip", typeof(GZipStream))]
 		[InlineData("deflate", typeof(DeflateStream))]
 		[InlineData("unknown", null)]
