@@ -64,16 +64,16 @@ pr:
     - '**/*.md'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Install DotNet Core 2.1.3'
+- task: UseDotNet@2
   inputs:
-    version: 2.1.300
+    packageType: 'sdk'
+    version: '3.0.100-preview6-012264'
 
 - task: PowerShell@2
   displayName: 'Build / Test / Create Packages'
   inputs:
-    targetType: filePath
-    filePath: build.AzureDevops.ps1
+    targetType: inline
+    script: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/Test-*.xml'
