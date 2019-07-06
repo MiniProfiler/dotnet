@@ -16,12 +16,6 @@ resources:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test
 
-services:
-  redis: redis
-  mongo: mongo
-  mysql: mysql
-  postgres: postgres
-
 pool:
   vmImage: 'ubuntu-16.04'
 
