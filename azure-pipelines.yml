@@ -8,13 +8,6 @@ resources:
     image: mongo
     ports:
     - 27017:27017
-  - container: mysql
-    image: mysql
-    ports:
-    - 3306:3306
-    env:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
   - container: postgres
     image: postgres
     ports:
@@ -35,6 +28,7 @@ pool:
 # Build Variables
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  MYSQL_DATABASE: test
   RedisConnectionString: localhost:6379
   MongoDbConnectionString: mongodb://localhost:27017/test
   MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
