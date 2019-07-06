@@ -29,7 +29,8 @@ $projectsToBuild =
 
 $testsToRun =
     'MiniProfiler.Tests',
-    'MiniProfiler.Tests.AspNet'
+    'MiniProfiler.Tests.AspNet',
+    'MiniProfiler.Tests.AspNetCore'
 
 if ($PullRequestNumber) {
     Write-Host "Building for a pull request (#$PullRequestNumber), skipping packaging." -ForegroundColor Yellow
