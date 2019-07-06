@@ -34,6 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="xunit.runner.json" Condition="'$(OS)' == 'Unix'" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="xunit.runner.json" Condition="'$(OS)' == 'Unix'" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
