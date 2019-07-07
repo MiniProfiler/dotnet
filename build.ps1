@@ -60,7 +60,7 @@ if ($RunTests) {
 }
 
 if ($CreatePackages) {
-    mkdir -Force $packageOutputFolder | Out-Null
+    New-Item -ItemType Directory -Path $packageOutputFolder -Force | Out-Null
     Write-Host "Clearing existing $packageOutputFolder..." -NoNewline
     Get-ChildItem $packageOutputFolder | Remove-Item
     Write-Host "done." -ForegroundColor "Green"
