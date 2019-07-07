@@ -75,6 +75,10 @@ namespace Samples.AspNetCore
 
                 // Optionally disable "Connection Open()", "Connection Close()" (and async variants).
                 //options.TrackConnectionOpenClose = false;
+
+                options.IgnoredPaths.Add("/lib");
+                options.IgnoredPaths.Add("/css");
+                options.IgnoredPaths.Add("/js");
             }).AddEntityFramework();
         }
 
