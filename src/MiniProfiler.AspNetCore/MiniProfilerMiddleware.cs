@@ -17,7 +17,11 @@ namespace StackExchange.Profiling
     public class MiniProfilerMiddleware
     {
         private readonly RequestDelegate _next;
+#if NETCOREAPP3_0
+        private readonly IWebHostEnvironment _env;
+#else
         private readonly IHostingEnvironment _env;
+#endif
         private readonly IOptions<MiniProfilerOptions> _options;
 
         internal readonly EmbeddedProvider Embedded;
@@ -32,7 +36,11 @@ namespace StackExchange.Profiling
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
+#if NETCOREAPP3_0
+            IWebHostEnvironment hostingEnvironment,
+#else
             IHostingEnvironment hostingEnvironment,
+#endif
             IOptions<MiniProfilerOptions> options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -121,7 +129,7 @@ namespace StackExchange.Profiling
                         .Append(context.Request.QueryString.Value)
                         .ToStringRecycle();
 
-                var routeData = (context.Features[typeof(IRoutingFeature)] as IRoutingFeature)?.RouteData;
+                var routeData = context.GetRouteData();
                 if (routeData != null)
                 {
                     profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
