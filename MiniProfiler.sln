@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC40098D-04F2-4F43-B5CF-B74F74351761}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.SqlS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5", "samples\Samples.Mvc5\Samples.Mvc5.csproj", "{C179CF56-7AC2-4340-8D43-2A3DCDB2E448}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore", "samples\Samples.AspNetCore\Samples.AspNetCore.csproj", "{A3946CAB-4BF9-47C1-A517-104CD8D7F46C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore2", "samples\Samples.AspNetCore2\Samples.AspNetCore2.csproj", "{A3946CAB-4BF9-47C1-A517-104CD8D7F46C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.AspNetCore", "src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj", "{6A2B5B70-1C32-482F-B5C6-0597E2D4E376}"
 EndProject
@@ -78,9 +78,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5.EFCore", "samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.MongoDB", "src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj", "{001EFFB2-E56C-4A63-9954-79D7AEB052DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Misc", "samples\Misc\Misc.csproj", "{44075C61-13E9-4C78-B340-6045EA115433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Misc", "samples\Misc\Misc.csproj", "{44075C61-13E9-4C78-B340-6045EA115433}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.PostgreSql", "src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj", "{61E02A52-EB05-4B48-9AAE-BC7C1741E557}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore3", "samples\Samples.AspNetCore3\Samples.AspNetCore3.csproj", "{D95A09CD-A291-42D0-AA41-8426090D0476}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,6 +190,10 @@ Global
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95A09CD-A291-42D0-AA41-8426090D0476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95A09CD-A291-42D0-AA41-8426090D0476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,10 +224,11 @@ Global
 		{001EFFB2-E56C-4A63-9954-79D7AEB052DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{44075C61-13E9-4C78-B340-6045EA115433} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
+		{D95A09CD-A291-42D0-AA41-8426090D0476} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

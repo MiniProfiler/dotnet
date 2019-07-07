@@ -8,13 +8,6 @@ resources:
     image: mongo
     ports:
     - 27017:27017
-  - container: mysql
-    image: mysql
-    ports:
-    - 3306:3306
-    env:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
   - container: postgres
     image: postgres
     ports:
@@ -23,19 +16,13 @@ resources:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test
 
-services:
-  redis: redis
-  mongo: mongo
-  mysql: mysql
-  postgres: postgres
-
 pool:
-  name: Hosted Windows Container
-  vmImage: win1803
+  vmImage: 'ubuntu-16.04'
 
 # Build Variables
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  MYSQL_DATABASE: test
   RedisConnectionString: localhost:6379
   MongoDbConnectionString: mongodb://localhost:27017/test
   MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
@@ -65,23 +52,28 @@ pr:
     - '**/*.md'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Install DotNet Core 2.1.3'
+- task: UseDotNet@2
   inputs:
-    version: 2.1.300
+    packageType: 'runtime'
+    version: '2.2.5'
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '3.0.100-preview6-012264'
 
 - task: PowerShell@2
   displayName: 'Build / Test / Create Packages'
   inputs:
-    targetType: filePath
-    filePath: build.AzureDevops.ps1
+    targetType: inline
+    script: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results **/Test-*.xml'
+  displayName: 'Publish Test Results **/*.trx'
+  condition: succeededOrFailed()
   inputs:
-    testResultsFormat: XUnit
-    testResultsFiles: '**/Test-*.xml'
-    mergeTestResults: true
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
 
 # PR doesn't create nuget packages. So publish artifact step disabled for PR's
 - task: PublishBuildArtifacts@1

@@ -17,7 +17,7 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.110" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.110" />
   </ItemGroup>
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461' AND '$(OS)' == 'Windows_NT'">
     <PostBuildEvent>
       if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
       xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"

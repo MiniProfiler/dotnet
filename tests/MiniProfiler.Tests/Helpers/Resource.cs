@@ -1,5 +1,5 @@
 ﻿using System.IO;
-#if NETCOREAPP1_1 || NETCOREAPP2_0
+#if NETCOREAPP2_0
 using System.Reflection;
 #endif
 
@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Tests
         public static string Get(string name)
         {
             using (var stream = typeof(Resource)
-#if NETCOREAPP1_1 || NETCOREAPP2_0
+#if NETCOREAPP2_0
                     .GetTypeInfo()
 #endif
                     .Assembly.GetManifestResourceStream("StackExchange.Pofiling.Tests." + name))
