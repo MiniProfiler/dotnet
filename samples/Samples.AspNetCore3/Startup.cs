@@ -76,6 +76,9 @@ namespace Samples.AspNetCore
                 // Optionally disable "Connection Open()", "Connection Close()" (and async variants).
                 //options.TrackConnectionOpenClose = false;
 
+                // Enabled sending the Server-Timing header on responses
+                options.EnableServerTimingHeader = true;
+
                 options.IgnoredPaths.Add("/lib");
                 options.IgnoredPaths.Add("/css");
                 options.IgnoredPaths.Add("/js");

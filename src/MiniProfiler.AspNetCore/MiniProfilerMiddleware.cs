@@ -89,6 +89,16 @@ namespace StackExchange.Profiling
                 {
                     await SetHeadersAndState(context, mp).ConfigureAwait(false);
                 }
+
+#if NETCOREAPP3_0
+                var appendServerTimingHeader = Options.EnableServerTimingHeader && context.Response.SupportsTrailers();
+                if (appendServerTimingHeader)
+                {
+                    context.Response.DeclareTrailer("Server-Timing");
+                    appendServerTimingHeader = true;
+                }
+#endif
+
                 // Execute the pipe
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
@@ -97,6 +107,13 @@ namespace StackExchange.Profiling
                 EnsureName(mp, context);
                 // Stop (and record)
                 await mp.StopAsync().ConfigureAwait(false);
+
+#if NETCOREAPP3_0 // TODO: Evaluate if this works after http/2 local support in preview 7, maybe backport to netcoreapp2.2
+                if (appendServerTimingHeader && mp != null)
+                {
+                    context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                }
+#endif
             }
             else
             {
