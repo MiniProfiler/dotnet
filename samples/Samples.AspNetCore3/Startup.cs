@@ -34,7 +34,12 @@ namespace Samples.AspNetCore
         {
             // Add framework services.
             services.AddDbContext<SampleContext>();
-            services.AddMvc();
+            services.AddMvc(options => 
+            {
+                // Because the samples have some MyAction and MyActionAsync duplicates
+                // See: https://github.com/aspnet/AspNetCore/issues/8998
+                options.SuppressAsyncSuffixInActionNames = false; 
+            });
 
             // Add MiniProfiler services
             // If using Entity Framework Core, add profiling for it as well (see the end)

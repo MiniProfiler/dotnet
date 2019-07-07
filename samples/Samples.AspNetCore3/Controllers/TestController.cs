@@ -59,7 +59,7 @@ namespace Samples.AspNetCore.Controllers
                 {
                     total += await conn.QueryFirstAsync<long>("select count(1) from RouteHits where HitCount = @i", new { i }).ConfigureAwait(false);
                 }
-                return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+                return Content(string.Format("Duplicated Queries Async (N+1) completed {0}", total));
             }
         }
 
