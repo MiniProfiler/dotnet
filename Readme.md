@@ -1,6 +1,7 @@
 ## MiniProfiler for .NET (and .NET Core)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
+[![Azure Pipelines Build Status](https://stackoverflowoss.visualstudio.com/StackOSS/_apis/build/status/MiniProfiler.dotnet?branchName=master)](https://stackoverflowoss.visualstudio.com/StackOSS/_build/latest?definitionId=2&branchName=master)
 
 Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](http://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](http://miniprofiler.com/).
 
