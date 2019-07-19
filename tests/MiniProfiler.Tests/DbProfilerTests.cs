@@ -265,7 +265,24 @@ namespace StackExchange.Profiling.Tests
             const string cmdString = "Select 1";
             GetUnopenedConnection(profiler).Query(cmdString);
 
-            CheckConnectionTracking(track, profiler, cmdString, false);
+            CheckConnectionTracking(track, profiler, cmdString, false, false);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TrackingOptionsExplicitClose(bool track)
+        {
+            var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
+            var profiler = options.StartProfiler("Tracking: " + track);
+
+            const string cmdString = "Select 1";
+            var conn = GetUnopenedConnection(profiler);
+            conn.Open();
+            conn.Query(cmdString);
+            conn.Close();
+
+            CheckConnectionTracking(track, profiler, cmdString, false, true);
         }
 
         [Theory]
@@ -279,7 +296,7 @@ namespace StackExchange.Profiling.Tests
             const string cmdString = "Select 1";
             await GetUnopenedConnection(profiler).QueryAsync(cmdString).ConfigureAwait(false);
 
-            CheckConnectionTracking(track, profiler, cmdString, true);
+            CheckConnectionTracking(track, profiler, cmdString, true, true);
         }
 
         [Fact]
@@ -292,7 +309,7 @@ namespace StackExchange.Profiling.Tests
             const string cmdString = "Select 1";
             GetUnopenedConnection(currentDbProfiler).Query(cmdString);
 
-            CheckConnectionTracking(false, profiler, cmdString, false);
+            CheckConnectionTracking(false, profiler, cmdString, false, false);
         }
 
         private class CurrentDbProfiler : IDbProfiler
@@ -314,7 +331,7 @@ namespace StackExchange.Profiling.Tests
             public void ReaderFinish(IDataReader reader) => GetProfiler()?.ReaderFinish(reader);
         }
 
-        private void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async)
+        private void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async, bool expectClose)
         {
             Assert.NotNull(profiler.Root.CustomTimings);
             Assert.Single(profiler.Root.CustomTimings);
@@ -323,9 +340,13 @@ namespace StackExchange.Profiling.Tests
 
             if (track)
             {
-                Assert.Equal(2, sqlTimings.Count);
+                Assert.Equal(expectClose ? 3 : 2, sqlTimings.Count);
                 Assert.Equal(async ? "Connection OpenAsync()" : "Connection Open()", sqlTimings[0].CommandString);
                 Assert.Equal(command, sqlTimings[1].CommandString);
+                if (expectClose)
+                {
+                    Assert.Equal("Connection Close()", sqlTimings[2].CommandString);
+                }
             }
             else
             {
