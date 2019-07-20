@@ -1,4 +1,5 @@
 ﻿using System;
+using Nest;
 using StackExchange.Profiling.Storage;
 using Xunit;
 using Xunit.Abstractions;
@@ -12,7 +13,7 @@ namespace StackExchange.Profiling.Tests.Storage
         }
     }
 
-    public class ElasticSearchStorageFixture : StorageFixtureBase<ElasticSearchStorage>, IDisposable
+    public class ElasticSearchStorageFixture : StorageFixtureBase<ElasticsearchStorage>, IDisposable
     {
         public ElasticSearchStorageFixture()
         {
@@ -20,7 +21,10 @@ namespace StackExchange.Profiling.Tests.Storage
 
             try
             {
-                Storage = new ElasticSearchStorage(TestConfig.Current.ElasticSearchConnectionString);
+                var indexName = "mp-" + Guid.NewGuid().ToString();
+                Storage = new ElasticsearchStorage(TestConfig.Current.ElasticSearchConnectionString, indexName);
+                var response = Storage.CreateIndex();
+
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)
@@ -34,7 +38,7 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage.DropDatabase();
+                Storage.DropIndex();
             }
         }
     }
@@ -42,12 +46,22 @@ namespace StackExchange.Profiling.Tests.Storage
     public static class ElasticSearchStorageExtensions
     {
         /// <summary>
+        /// Creates an index.
+        /// </summary>
+        /// <param name="storage">The storage to drop schema for.</param>
+        public static ICreateIndexResponse CreateIndex(this ElasticsearchStorage storage)
+        {
+            return ((IElasticstorageConnectable)storage).GetClient()
+                .CreateIndex(IndexName.From<string>(storage.IndexName));
+        }
+
+        /// <summary>
         /// Drop database for ElasticSearch storage.
         /// </summary>
         /// <param name="storage">The storage to drop schema for.</param>
-        public static void DropDatabase(this ElasticSearchStorage storage)
+        public static void DropIndex(this ElasticsearchStorage storage)
         {
-            storage.GetClient().DeleteIndex(storage.IndexName);
+            ((IElasticstorageConnectable)storage).GetClient().DeleteIndex(storage.IndexName);
         }
     }
 }
