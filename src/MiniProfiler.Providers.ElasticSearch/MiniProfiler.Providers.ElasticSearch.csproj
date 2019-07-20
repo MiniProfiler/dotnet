@@ -6,14 +6,9 @@
     <Authors>Reinaldo Coelho Sartorelli</Authors>
     <PackageTags>NoSQL;ElasticSearch;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>false</SignAssembly>
-    <Company>enContact</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NEST" Version="6.6.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="NEST" Version="6.6.0" />
   </ItemGroup>
 </Project>
