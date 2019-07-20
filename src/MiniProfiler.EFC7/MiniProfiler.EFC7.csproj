@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.EFC7</AssemblyName>
+    <Title>MiniProfiler for Entity Framework Classic 7</Title>
+    <Description>MiniProfiler: Integration for Entity Framework Classic 7</Description>
+    <Authors>Jarrod Dixon, Yaakov Ellis, Nick Craver, Jan Krynicky</Authors>
+    <PackageTags>Entity Framework;Entity Framework Classic 7;$(PackageBaseTags)</PackageTags>
+    <TargetFrameworks>net461</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="Z.EntityFramework.Classic" Version="7.0.0" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+</Project>

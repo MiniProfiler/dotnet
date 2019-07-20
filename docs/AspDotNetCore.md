@@ -3,7 +3,7 @@ title: "ASP.NET Core"
 layout: "default"
 ---
 ### ASP.NET Core
-If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.AspNetCore/Startup.cs).
+If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore2), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.AspNetCore2/Startup.cs).
 
 #### Installation and Configuration
 
