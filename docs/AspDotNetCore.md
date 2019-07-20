@@ -96,7 +96,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 
 
 #### Profiling
-Now you're ready to profile. In addition to [the usual `using` wrap method](TODO) for profiling sections of code, ASP.NET Core includes a tag helper you can use in views like this:
+Now you're ready to profile. In addition to [the usual `using` wrap method]({{ site.baseurl }}/HowTo/ProfileCode) for profiling sections of code, ASP.NET Core includes a tag helper you can use in views like this:
 
 ```html
 <profile name="My Profiling Step via a <profile> Tag">
