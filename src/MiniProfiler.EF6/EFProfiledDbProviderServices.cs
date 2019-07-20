@@ -61,7 +61,8 @@ namespace StackExchange.Profiling.Data
         {
             var cmdDef = _tail.CreateCommandDefinition(providerManifest, commandTree);
             var cmd = cmdDef.CreateCommand();
-            return CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, MiniProfiler.Current));
+            var profiler = cmd.Connection is ProfiledDbConnection profiledConn ? profiledConn.Profiler : MiniProfiler.Current;
+            return CreateCommandDefinition(new ProfiledDbCommand(cmd, cmd.Connection, profiler));
         }
 
         /// <summary>

@@ -89,7 +89,20 @@ namespace StackExchange.Profiling.Data
         /// Closes the connection to the database.
         /// This is the preferred method of closing any open connection.
         /// </summary>
-        public override void Close() => _connection.Close();
+        public override void Close()
+        {
+            var miniProfiler = _profiler as MiniProfiler;
+            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            {
+                _connection.Close();
+                return;
+            }
+
+            using (miniProfiler.CustomTiming("sql", "Connection Close()", nameof(Close)))
+            {
+                _connection.Close();
+            }
+        }
 
         /// <summary>
         /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
@@ -137,7 +150,7 @@ namespace StackExchange.Profiling.Data
         {
             return new ProfiledDbTransaction(_connection.BeginTransaction(isolationLevel), this);
         }
-        
+
         /// <summary>
         /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
         /// </summary>

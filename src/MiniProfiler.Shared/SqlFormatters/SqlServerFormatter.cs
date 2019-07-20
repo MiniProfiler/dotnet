@@ -106,8 +106,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 GenerateParamText(buffer, parameters);
                 // finish the parameter declaration
                 buffer.Append(';')
-                    .AppendLine()
-                    .AppendLine();
+                      .Append("\n\n");
             }
 
             // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' or 'StoredProcedure'
@@ -166,7 +165,7 @@ namespace StackExchange.Profiling.SqlFormatters
 
             if (parametersToSelect.Count == 0) return;
 
-            buffer.AppendLine().Append("SELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
+            buffer.Append("\nSELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
         }
 
         private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
@@ -237,7 +236,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     }
                     else
                     {
-                        buffer.AppendLine(",").Append(new string(' ', 8));
+                        buffer.Append(",\n").Append(new string(' ', 8));
                     }
 
                     string resolvedType = null;

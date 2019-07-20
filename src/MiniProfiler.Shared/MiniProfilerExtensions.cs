@@ -96,8 +96,7 @@ namespace StackExchange.Profiling
                 Category = category
             };
 
-            // THREADING: revisit
-            profiler.Head.AddCustomTiming(category, result);
+            profiler.Head?.AddCustomTiming(category, result);
 
             return result;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETCOREAPP3_0
+using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
@@ -45,3 +46,4 @@ namespace StackExchange.Profiling.Internal
             );
     }
 }
+#endif

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
@@ -19,6 +20,19 @@ namespace StackExchange.Profiling.Tests
     [XunitTestCaseDiscoverer("StackExchange.Profiling.Tests.FactDiscoverer", "MiniProfiler.Tests")]
     public class FactAttribute : Xunit.FactAttribute
     {
+        private bool _windowsOnly;
+        public bool WindowsOnly 
+        {
+            get => _windowsOnly;
+            set 
+            {
+                _windowsOnly = value;
+                if (_windowsOnly && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Skip = "Only runnable on Windows";
+                }
+            }
+        }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -45,6 +59,19 @@ namespace StackExchange.Profiling.Tests
     [XunitTestCaseDiscoverer("StackExchange.Profiling.Tests.TheoryDiscoverer", "MiniProfiler.Tests")]
     public class TheoryAttribute : Xunit.TheoryAttribute
     {
+        private bool _windowsOnly;
+        public bool WindowsOnly 
+        {
+            get => _windowsOnly;
+            set 
+            {
+                _windowsOnly = value;
+                if (_windowsOnly && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Skip = "Only runnable on Windows";
+                }
+            }
+        }
     }
 
     public class FactDiscoverer : Xunit.Sdk.FactDiscoverer

@@ -17,7 +17,7 @@ namespace StackExchange.Profiling.Tests.Storage
             };
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void TestWeCanSaveTheSameProfilerTwice()
         {
             var profiler = new MiniProfiler("/", Options) { Started = DateTime.UtcNow, Id = Guid.NewGuid() };
@@ -28,7 +28,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Assert.Single(guids);
         }
 
-        [Fact]
+        [Fact(WindowsOnly = true)]
         public void TestRangeQueries()
         {
             var now = DateTime.UtcNow;

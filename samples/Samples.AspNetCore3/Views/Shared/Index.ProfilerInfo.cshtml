@@ -1,0 +1,22 @@
+﻿@using StackExchange.Profiling
+@using Microsoft.Extensions.Options
+@inject IOptions<MiniProfilerOptions> Options
+@functions{
+    public string GetVal(object o) =>
+        o?.ToString().Replace("StackExchange.Profiling.", string.Empty);
+}
+<div class="panel panel-default">
+    <div class="panel-heading">MiniProfiler Info</div>
+    <div class="panel-body">
+        <ul>
+            <li><label>Version</label>: @GetVal(MiniProfilerOptions.Version)</li>
+            <li><label>Path</label>: @GetVal(Options.Value?.RouteBasePath)</li>
+            <li><label>Provider</label>: @GetVal(Options.Value?.ProfilerProvider)</li>
+            <li><label>Storage</label>: @GetVal(Options.Value?.Storage)</li>
+            <li><label>SQL Formatter</label>: @GetVal(Options.Value?.SqlFormatter)</li>
+            <li><label>Trivial Threshold (ms)</label>: @GetVal(Options.Value?.TrivialDurationThresholdMilliseconds)</li>
+            <li><label>Toggle Shortcut</label>: @GetVal(Options.Value?.PopupToggleKeyboardShortcut)</li>
+            <li><label>Current UserId</label>: @MiniProfiler.Current?.User</li>
+        </ul>
+    </div>
+</div>

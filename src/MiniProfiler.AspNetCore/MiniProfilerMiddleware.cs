@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#if NETCOREAPP3_0 // Only in netcoreapp3.0 while in preview
+using System.Text.Json.Serialization;
+#endif
 
 namespace StackExchange.Profiling
 {
@@ -17,7 +20,11 @@ namespace StackExchange.Profiling
     public class MiniProfilerMiddleware
     {
         private readonly RequestDelegate _next;
+#if NETCOREAPP3_0
+        private readonly IWebHostEnvironment _env;
+#else
         private readonly IHostingEnvironment _env;
+#endif
         private readonly IOptions<MiniProfilerOptions> _options;
 
         internal readonly EmbeddedProvider Embedded;
@@ -32,7 +39,11 @@ namespace StackExchange.Profiling
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
+#if NETCOREAPP3_0
+            IWebHostEnvironment hostingEnvironment,
+#else
             IHostingEnvironment hostingEnvironment,
+#endif
             IOptions<MiniProfilerOptions> options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -78,6 +89,16 @@ namespace StackExchange.Profiling
                 {
                     await SetHeadersAndState(context, mp).ConfigureAwait(false);
                 }
+
+#if NETCOREAPP3_0
+                var appendServerTimingHeader = Options.EnableServerTimingHeader && context.Response.SupportsTrailers();
+                if (appendServerTimingHeader)
+                {
+                    context.Response.DeclareTrailer("Server-Timing");
+                    appendServerTimingHeader = true;
+                }
+#endif
+
                 // Execute the pipe
 #pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
@@ -86,6 +107,13 @@ namespace StackExchange.Profiling
                 EnsureName(mp, context);
                 // Stop (and record)
                 await mp.StopAsync().ConfigureAwait(false);
+
+#if NETCOREAPP3_0 // TODO: Evaluate if this works after http/2 local support in preview 7, maybe backport to netcoreapp2.2
+                if (appendServerTimingHeader && mp != null)
+                {
+                    context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                }
+#endif
             }
             else
             {
@@ -121,7 +149,7 @@ namespace StackExchange.Profiling
                         .Append(context.Request.QueryString.Value)
                         .ToStringRecycle();
 
-                var routeData = (context.Features[typeof(IRoutingFeature)] as IRoutingFeature)?.RouteData;
+                var routeData = context.GetRouteData();
                 if (routeData != null)
                 {
                     profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
@@ -290,11 +318,15 @@ namespace StackExchange.Profiling
             // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
             // If that's absent, we're rendering results as a full page for sharing.
             bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
-
+ 
             // Try to parse from the JSON payload first
             if (jsonRequest
                 && context.Request.ContentLength > 0
+#if NETCOREAPP3_0
+                && ((clientRequest = await JsonSerializer.ReadAsync<ResultRequest>(context.Request.Body)) != null)
+#else
                 && ResultRequest.TryParse(context.Request.Body, out clientRequest)
+#endif
                 && clientRequest.Id.HasValue)
             {
                 id = clientRequest.Id.Value;
