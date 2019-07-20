@@ -5,10 +5,7 @@
     <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\MiniProfiler.ElasticSearch\MiniProfiler.ElasticSearch.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.ElasticSearch\MiniProfiler.Providers.ElasticSearch.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MySql\MiniProfiler.Providers.MySql.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj" />

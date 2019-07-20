@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>MiniProfiler.ElasticSearch</AssemblyName>
-    <Title>MiniProfiler.ElasticSearch</Title>
+    <AssemblyName>MiniProfiler.Providers.ElasticSearch</AssemblyName>
+    <Title>MiniProfiler.Providers.ElasticSearch</Title>
     <Description>MiniProfiler: Profiler storage for ElasticSearch</Description>
     <Authors>Reinaldo Coelho Sartorelli</Authors>
     <PackageTags>NoSQL;ElasticSearch;$(PackageBaseTags)</PackageTags>

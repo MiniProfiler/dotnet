@@ -82,7 +82,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Misc", "samples\Misc\Misc.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.PostgreSql", "src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj", "{61E02A52-EB05-4B48-9AAE-BC7C1741E557}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.ElasticSearch", "src\MiniProfiler.ElasticSearch\MiniProfiler.ElasticSearch.csproj", "{59250E2A-F7DC-4BF8-85C5-369D7F4B706C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.ElasticSearch", "src\MiniProfiler.Providers.ElasticSearch\MiniProfiler.Providers.ElasticSearch.csproj", "{59250E2A-F7DC-4BF8-85C5-369D7F4B706C}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore3", "samples\Samples.AspNetCore3\Samples.AspNetCore3.csproj", "{D95A09CD-A291-42D0-AA41-8426090D0476}"
 EndProject
 Global
@@ -233,8 +234,8 @@ Global
 		{D95A09CD-A291-42D0-AA41-8426090D0476} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
