@@ -10,8 +10,8 @@ MiniProfiler V4 has major breaking changes in layout compared to V3 due to needi
   * Fix: change `MiniProfiler.RenderIncludes()` to `MiniProfiler.Current.RenderIncludes()`
 * A `Name` field has been added to the SQL Server Profiler storage
   * Fix: Add a `nvarchar(200) null` field to your `MiniProfilers` table.
-* .NET 4.6+ (or `netstandard1.5`) are required (due to lack of the framework bits needed to really make async profiling work correctly).
-  * Fix: If you need .NET 4.5 and below support, continue to use MiniProfiler V3.
+* .NET 4.6.1+ (or `netstandard1.5`) are required (due to lack of the framework bits needed to really make async profiling work correctly).
+  * Fix: If you need .NET 4.6 and below, continue to use MiniProfiler V3.
 * `MiniProfiler.Step()` and `MiniProfiler.StepIf()` methods now return `Timing` (the same previous underlying type) instead of `IDisposable`.
   * Fix: this shouldn't require changes beyond a recompile, but adds functionality.
 * `IProfilerProvider` replaced with [`IAsyncProfilerProvider`](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.Shared/ProfileProviders/IAsyncProfilerProvider.cs) (which adds `StopAsync(bool discardResults)`)

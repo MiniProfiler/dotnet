@@ -33,8 +33,10 @@ namespace Microsoft.Extensions.DependencyInjection
             // Blocked on https://github.com/aspnet/Mvc/issues/6222
             //services.AddSingleton<IMiniProfilerDiagnosticListener, MvcViewDiagnosticListener>();
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
-                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>()
-                    .AddTransient<IViewComponentInvokerFactory, ProfilingViewComponentInvokerFactory>();
+                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>();
+#if !NETCOREAPP3_0
+            services.AddTransient<IViewComponentInvokerFactory, ProfilingViewComponentInvokerFactory>();
+#endif
             return new MiniProfilerBuilder(services);
         }
     }

@@ -13,14 +13,24 @@ namespace StackExchange.Profiling
         /// Embedded resource contents keyed by filename.
         /// </summary>
         private ConcurrentDictionary<string, string> _resourceCache { get; } = new ConcurrentDictionary<string, string>();
-        private readonly IHostingEnvironment _env;
         private readonly IOptions<MiniProfilerOptions> _options;
+#if NETCOREAPP3_0 
+        private readonly IWebHostEnvironment _env;
+
+        public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IWebHostEnvironment env)
+        {
+            _options = options;
+            _env = env;
+        }
+#else
+        private readonly IHostingEnvironment _env;
 
         public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IHostingEnvironment env)
         {
             _options = options;
             _env = env;
         }
+#endif
 
         public string GetFile(HttpContext context, PathString file)
         {
