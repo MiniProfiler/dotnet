@@ -3,7 +3,7 @@ layout: "default"
 ---
 ### How-To Profile Code
 
-Once you've setup MiniProfiler, there are several ways to profile code. MiniProfiler is generally setup as 1 profiler per "action" (e.g. an HTTP Request, or startup, or some job) of an application. Inside that profiler, there are steps. Inside steps, you can also have custom timings. The general stucture is:
+Once you've setup MiniProfiler, there are several ways to profile code. MiniProfiler is generally setup as 1 profiler per "action" (e.g. an HTTP Request, or startup, or some job) of an application. Inside that profiler, there are steps. Inside steps, you can also have custom timings. The general structure is:
 
 * Profiler
   * Root Timing (generally unused, but it's there)
