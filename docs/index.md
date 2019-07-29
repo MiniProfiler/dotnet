@@ -16,7 +16,7 @@ Once you're setup, see [**how to profile code**]({{ site.baseurl }}/HowTo/Profil
 
 #### About
 
-MiniProfiler is a library and UI for profiling your application. By letting you see where you time is spent, which queries are run, and any other custom timings you want to add, MiniProfiler helps you debug issues and optimize performance.
+MiniProfiler is a library and UI for profiling your application. By letting you see where your time is spent, which queries are run, and any other custom timings you want to add, MiniProfiler helps you debug issues and optimize performance.
 
 The default setup is for every page to have an indicator so performance is always on your mind, like this:
 
