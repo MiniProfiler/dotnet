@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 #if NETCOREAPP3_0 // Only in netcoreapp3.0 while in preview
-using System.Text.Json.Serialization;
+using System.Text.Json;
 #endif
 
 namespace StackExchange.Profiling
@@ -318,12 +318,12 @@ namespace StackExchange.Profiling
             // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
             // If that's absent, we're rendering results as a full page for sharing.
             bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
- 
+
             // Try to parse from the JSON payload first
             if (jsonRequest
                 && context.Request.ContentLength > 0
 #if NETCOREAPP3_0
-                && ((clientRequest = await JsonSerializer.ReadAsync<ResultRequest>(context.Request.Body)) != null)
+                && ((clientRequest = await JsonSerializer.DeserializeAsync<ResultRequest>(context.Request.Body)) != null)
 #else
                 && ResultRequest.TryParse(context.Request.Body, out clientRequest)
 #endif
@@ -341,7 +341,7 @@ namespace StackExchange.Profiling
                 id = (await Options.Storage.ListAsync(1).ConfigureAwait(false)).FirstOrDefault();
             }
 
-            if (id == default(Guid))
+            if (id == default)
             {
                 return NotFound(context, jsonRequest ? null : "No GUID id specified on the query string");
             }
