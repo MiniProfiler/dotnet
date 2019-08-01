@@ -30,3 +30,12 @@ public static void Main()
     }
 }
 ```
+
+#### Viewing the results
+
+To output the results you can do so from shared storage anywhere or in the simple console case you may just want some plain text output. To see the profiler tree rendered as simple text you can use:
+```c#
+Console.WriteLine(profiler.RenderPlainText());
+// or for the active profiler:
+Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+```

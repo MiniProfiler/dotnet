@@ -31,3 +31,12 @@ public static void Main()
 }
 ```
 > Note that we're using `DefaultProfilerProvider` here because we're not in a web context, e.g. we don't want pofiles accessed via `HttpContext.Items` in a console application.
+
+#### Viewing the results
+
+To output the results you can do so from shared storage anywhere or in the simple console case you may just want some plain text output. To see the profiler tree rendered as simple text you can use:
+```c#
+Console.WriteLine(profiler.RenderPlainText());
+// or for the active profiler:
+Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+```
