@@ -7,7 +7,7 @@ If you'd rather learn by example, sample apps are available. [The .NET Core Cons
 
 #### Installation and Configuration
 
-* Install the NuGet Package: [MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/)
+* Install the NuGet Package: [MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) (There is no package for just .NET Core Console applications, see [this GitHub issue](https://github.com/MiniProfiler/dotnet/issues/363))
    * Either use the NuGet UI to install `MiniProfiler.AspNetCore` (which has all needed dependencies)
    * Or use the Package Manager Console:
 
