@@ -1,0 +1,54 @@
+name: Main Build
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+    paths:
+    - '*'
+    - '!/docs/*' # Don't run workflow when files are only in the /docs directory
+
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-2019
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+      mongo:
+        image: mongo
+        ports:
+        - 27017:27017
+      postgres:
+        image: postgres
+        ports:
+        - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+      mysql:
+        image: mysql
+        ports:
+        - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+    steps:
+    - name: Install .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100-preview8-013656'
+      env:
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    - name: Build / Test / Create Packages
+      run: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+        shell: powershell
+      env:
+        RedisConnectionString: localhost:6379
+        MongoDbConnectionString: mongodb://localhost:27017/test
+        MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
+        PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;
+        SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
