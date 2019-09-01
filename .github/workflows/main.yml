@@ -45,7 +45,6 @@ jobs:
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     - name: Build / Test / Create Packages
       run: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-        shell: powershell
       env:
         RedisConnectionString: localhost:6379
         MongoDbConnectionString: mongodb://localhost:27017/test
