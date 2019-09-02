@@ -37,15 +37,16 @@ jobs:
       #     MYSQL_ROOT_PASSWORD: root
       #     MYSQL_DATABASE: test
     steps:
+    - uses: actions/checkout@v1
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.0.100-preview8-013656'
+        dotnet-version: 3.0.100-preview8-013656
       env:
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     - name: Build / Test / Create Packages
       shell: pwsh
-      run: .\build.ps1 -CreatePackages $true -PullRequestNumber $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+      run: .\build.ps1 -CreatePackages $true
       env:
         RedisConnectionString: localhost:6379
         MongoDbConnectionString: mongodb://localhost:27017/test
