@@ -39,7 +39,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: Install .NET Core SDK
+    - name: Install .NET Core 2.2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.401 # For tests
+      env:
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    - name: Install .NET Core 3.0
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100-preview8-013656
