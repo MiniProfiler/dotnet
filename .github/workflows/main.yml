@@ -51,6 +51,8 @@ jobs:
         dotnet-version: 3.0.100-preview8-013656
       env:
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    - name: dotnet --info
+      run: dotnet --info
     - name: Build / Test / Create Packages
       shell: pwsh
       run: .\build.ps1 -CreatePackages $true
