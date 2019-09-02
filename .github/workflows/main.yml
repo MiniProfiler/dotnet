@@ -37,7 +37,8 @@ jobs:
       #     MYSQL_ROOT_PASSWORD: root
       #     MYSQL_DATABASE: test
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout code
+      uses: actions/checkout@v1
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
