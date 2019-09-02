@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
     <PackageReference Include="Npgsql" Version="4.0.5" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
   </ItemGroup>
