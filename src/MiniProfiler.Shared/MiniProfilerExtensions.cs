@@ -168,7 +168,7 @@ namespace StackExchange.Profiling
 
                 for (var i = 0; i < timing.Depth; i++)
                 {
-                    text.Append('>');
+                    text.Append(">>");
                 }
                 if (timing.Depth > 0)
                 {
@@ -193,7 +193,8 @@ namespace StackExchange.Profiling
                             .Append("ms in ")
                             .Append(customTimings.Count)
                             .Append(" cmd")
-                            .Append(customTimings.Count == 1 ? string.Empty : "s");
+                            .Append(customTimings.Count == 1 ? string.Empty : "s")
+                            .Append(")");
                     }
                 }
 

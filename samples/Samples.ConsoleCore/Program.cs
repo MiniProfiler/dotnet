@@ -75,7 +75,10 @@ namespace Samples.Console
 
                     using (mp.Step("step " + i))
                     {
-                        doWork();
+                        using (mp.CustomTiming("MyCustom", "test command"))
+                        {
+                            doWork();
+                        }
 
                         using (mp.Step("sub-step" + i))
                         {
