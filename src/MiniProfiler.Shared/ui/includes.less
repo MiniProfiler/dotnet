@@ -217,6 +217,11 @@
             .mp-number, .mp-unit {
                 color: #0077cc;
             }
+
+            &.mp-queries-warning {
+                color: #C91D2E;
+                font-weight: bold;
+            }
         }
 
         .mp-queries-duration {
@@ -528,6 +533,15 @@
 
     .mp-button {
         user-select: none;
+
+        &.mp-button-warning {
+            font-weight: bold;
+            background-color: #E06C77;
+
+            .mp-unit {
+                color: #ddd;
+            }
+        }
 
         .mp-warning {
             font-weight: bold;
