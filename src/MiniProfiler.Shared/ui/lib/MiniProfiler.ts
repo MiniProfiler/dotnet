@@ -20,6 +20,7 @@ namespace StackExchange.Profiling {
         CustomTimingStats: { [id: string]: ICustomTimingStat };
         HasCustomTimings: boolean;
         HasDuplicateCustomTimings: boolean;
+        HasWarning: boolean;
         HasTrivialTimings: boolean;
         AllCustomTimings: ICustomTiming[];
     }
@@ -53,6 +54,7 @@ namespace StackExchange.Profiling {
         Depth: number;
         HasCustomTimings: boolean;
         HasDuplicateCustomTimings: { [id: string]: boolean };
+        HasWarnings: { [id: string]: boolean };
         IsTrivial: boolean;
         Parent: ITiming;
         // added for gaps (TODO: change all this)
@@ -457,6 +459,7 @@ namespace StackExchange.Profiling {
                 timing.Parent = parent;
                 timing.Depth = depth;
                 timing.HasDuplicateCustomTimings = {};
+                timing.HasWarnings = {};
 
                 for (const child of timing.Children || []) {
                     processTiming(child, timing, depth + 1);
@@ -495,6 +498,10 @@ namespace StackExchange.Profiling {
                             const ignored = ignoreDuplicateCustomTiming(customTiming);
                             if (!ignored) {
                                 customStat.Count++;
+                            }
+                            if (customTiming.Errored) {
+                                timing.HasWarnings[customType] = true;
+                                result.HasWarning = true;
                             }
 
                             if (customTiming.CommandString && duplicates[customTiming.CommandString]) {
@@ -665,9 +672,9 @@ namespace StackExchange.Profiling {
     </td>
     ${customTimingTypes.map((tk) => timing.CustomTimings[tk] ? `
     <td class="mp-duration">
-      <a class="mp-queries-show" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimingStats[tk].Count} ${encode(tk)} call(s)${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
+      <a class="mp-queries-show${(timing.HasWarnings[tk] ? ' mp-queries-warning' : '')}" title="${duration(timing.CustomTimingStats[tk].Duration)} ms in ${timing.CustomTimingStats[tk].Count} ${encode(tk)} call(s)${timing.HasDuplicateCustomTimings[tk] ? '; duplicate calls detected!' : ''}">
         ${duration(timing.CustomTimingStats[tk].Duration)}
-        (${timing.CustomTimingStats[tk].Count}${(timing.HasDuplicateCustomTimings[tk] ? '<span class="mp-warning">!</span>' : '')})
+        (${timing.CustomTimingStats[tk].Count}${((timing.HasDuplicateCustomTimings[tk] || timing.HasWarnings[tk]) ? '<span class="mp-warning">!</span>' : '')})
       </a>
     </td>` : '<td></td>').join('')}
   </tr>`;
@@ -811,7 +818,7 @@ namespace StackExchange.Profiling {
             ${renderGap(ct.PrevGap)}
             <tr class="${(index % 2 === 1 ? 'mp-odd' : '')}" data-timing-id="${ct.Parent.Id}">
               <td>
-                <div class="mp-call-type">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}${(ct.IsDuplicate ? ' <span class="mp-warning" title="Duplicate">!</span>' : '')}</div>
+                <div class="mp-call-type${(ct.Errored ? ' mp-warning' : '')}">${encode(ct.CallType)}${encode(!ct.ExecuteType || ct.CallType === ct.ExecuteType ? '' : ' - ' + ct.ExecuteType)}${((ct.IsDuplicate || ct.Errored) ? ' <span class="mp-warning" title="Duplicate">!</span>' : '')}</div>
                 <div>${encode(ct.Parent.Name)}</div>
                 <div class="mp-number">
                   ${duration(ct.DurationMilliseconds)} <span class="mp-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
@@ -836,9 +843,9 @@ namespace StackExchange.Profiling {
 
             return mp.jq(`
   <div class="mp-result${(this.options.showTrivial ? ' show-trivial' : '')}${(this.options.showChildrenTime ? ' show-columns' : '')}">
-    <div class="mp-button" title="${encode(p.Name)}">
+    <div class="mp-button${(p.HasWarning ? ' mp-button-warning' : '')}" title="${encode(p.Name)}">
       <span class="mp-number">${duration(p.DurationMilliseconds)} <span class="mp-unit">ms</span></span>
-      ${(p.HasDuplicateCustomTimings ? '<span class="mp-warning">!</span>' : '')}
+      ${((p.HasDuplicateCustomTimings || p.HasWarning) ? '<span class="mp-warning">!</span>' : '')}
     </div>
     <div class="mp-popup">
       <div class="mp-info">

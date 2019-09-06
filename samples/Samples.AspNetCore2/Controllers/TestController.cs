@@ -266,6 +266,41 @@ Order By RouteName");
             return Content("All good");
         }
 
+        public IActionResult Errored()
+        {
+            var profiler = MiniProfiler.Current;
+
+            using (profiler.StepIf("Stall step", 50))
+            {
+                Thread.Sleep(60);
+            }
+
+            using (profiler.StepIf("Show show up with children", 10, true))
+            {
+                Thread.Sleep(5);
+                using (profiler.Step("Step A"))
+                {
+                    Thread.Sleep(10);
+                }
+                using (profiler.Step("Step B"))
+                {
+                    Thread.Sleep(10);
+                }
+                using (profiler.StepIf("Should not show up", 15))
+                {
+                    Thread.Sleep(10);
+                }
+            }
+
+            using (var step = profiler.CustomTimingIf("error", "Should show up as warning: some exception message", 5))
+            {
+                step.Errored = true;
+                Thread.Sleep(10);
+            }
+
+            return Content("All good...except the error!");
+        }
+
         public IActionResult ParameterizedSqlWithEnums()
         {
             using (var conn = GetConnection())

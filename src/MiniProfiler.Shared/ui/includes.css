@@ -191,6 +191,10 @@
 .mp-result .mp-timings .mp-queries-show .mp-unit {
   color: #0077cc;
 }
+.mp-result .mp-timings .mp-queries-show.mp-queries-warning {
+  color: #C91D2E;
+  font-weight: bold;
+}
 .mp-result .mp-timings .mp-queries-duration {
   padding-left: 6px;
 }
@@ -452,6 +456,13 @@
 }
 .mp-results .mp-button {
   user-select: none;
+}
+.mp-results .mp-button.mp-button-warning {
+  font-weight: bold;
+  background-color: #E06C77;
+}
+.mp-results .mp-button.mp-button-warning .mp-unit {
+  color: #ddd;
 }
 .mp-results .mp-button .mp-warning {
   font-weight: bold;
