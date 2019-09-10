@@ -79,11 +79,7 @@ namespace StackExchange.Profiling.Data
                 return action;
             }
 
-            var prop = commandType
-#if NETSTANDARD1_5
-                .GetTypeInfo()
-#endif
-                .GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
+            var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
             action = null;
             ParameterInfo[] indexers;
             MethodInfo setter;

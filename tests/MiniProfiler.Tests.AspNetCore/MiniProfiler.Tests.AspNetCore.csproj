@@ -8,8 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' OR '$(TargetFramework)' == 'net461'">
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.0" />
   </ItemGroup>
 </Project>

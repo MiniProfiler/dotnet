@@ -1,6 +1,4 @@
-﻿// Entity Framework 6 needs ICloneable
-#if !NETSTANDARD1_5
-using System;
+﻿using System;
 using System.Data.Common;
 
 namespace StackExchange.Profiling.Data
@@ -19,4 +17,3 @@ namespace StackExchange.Profiling.Data
         }
     }
 }
-#endif

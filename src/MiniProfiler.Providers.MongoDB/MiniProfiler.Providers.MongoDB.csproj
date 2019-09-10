@@ -5,15 +5,13 @@
     <Description>MiniProfiler: Profiler storage for MongoDB</Description>
     <Authors>Nick Craver, Roger Calaf</Authors>
     <PackageTags>NoSQL;MongoDB;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461;netstandard1.5;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>false</SignAssembly>
     <Company>Nick Craver, Roger Calaf</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
+    <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
   </ItemGroup>
 </Project>
