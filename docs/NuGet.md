@@ -12,7 +12,7 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
   1. Reference the [`MiniProfiler.Providers.SqlServer`](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer) NuGet package.
   2. Use it via `MiniProfiler.Settings.Storage = new SqlServerStorage(ConnectionString);`
 
-#### NuGet Package list for ASP.NET Core (.NET Standard: `netstandard1.5`+)
+#### NuGet Package list for ASP.NET Core (.NET Standard: `netstandard2.0`+)
 * [MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) - The core functionality (for .NET Standard applications)
 * [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) - ASP.NET Core MVC Integration 
 
