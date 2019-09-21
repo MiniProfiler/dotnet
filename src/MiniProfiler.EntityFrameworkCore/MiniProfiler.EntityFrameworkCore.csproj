@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MiniProfiler.EntityFrameworkCore</AssemblyName>
+    <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
     <Title>MiniProfiler for Entity Framework Core</Title>
     <Description>MiniProfiler: Integration for Entity Framework Core</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>Entity Framework;Entity Framework Core;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration">
-    <RootNamespace>StackExchange.Profiling.Data</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />

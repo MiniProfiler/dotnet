@@ -12,7 +12,4 @@
     <PackageReference Include="StackExchange.Redis.StrongName" Version="1.2.6" />
     <PackageReference Include="protobuf-net" Version="2.3.2" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <Reference Include="System" />
-  </ItemGroup>
 </Project>
