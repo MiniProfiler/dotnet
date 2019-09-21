@@ -1,20 +1,23 @@
 ## MiniProfiler for .NET (and .NET Core)
 
+[<img align="right" width="100px" src="https://dotnetfoundation.org/img/logo_big.svg" />](https://dotnetfoundation.org/projects)
+
+Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](https://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](https://miniprofiler.com/). It is part of the [.NET Foundation](https://www.dotnetfoundation.org/), and operates under their [code of conduct](https://www.dotnetfoundation.org/code-of-conduct).
+
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
 [![Azure Pipelines Build Status](https://stackoverflowoss.visualstudio.com/StackOSS/_apis/build/status/MiniProfiler.dotnet?branchName=master)](https://stackoverflowoss.visualstudio.com/StackOSS/_build/latest?definitionId=2&branchName=master)
 
-Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](http://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](http://miniprofiler.com/).
 
 The current major version of MiniProfiler is v4.
 
 #### Handy Links
 
 * Documentation
-  * [Getting started for ASP.NET (*not* .NET Core)](http://miniprofiler.com/dotnet/AspDotNet)
-  * [Getting started for ASP.NET Core](http://miniprofiler.com/dotnet/AspDotNetCore)
-  * [How-To Profile Code](http://miniprofiler.com/dotnet/HowTo/ProfileCode)
-  * [NuGet Packages](http://miniprofiler.com/dotnet/NuGet)
-  * [How-To Upgrade From MiniProfiler V3](http://miniprofiler.com/dotnet/HowTo/UpgradeFromV3)
+  * [Getting started for ASP.NET (*not* .NET Core)](https://miniprofiler.com/dotnet/AspDotNet)
+  * [Getting started for ASP.NET Core](https://miniprofiler.com/dotnet/AspDotNetCore)
+  * [How-To Profile Code](https://miniprofiler.com/dotnet/HowTo/ProfileCode)
+  * [NuGet Packages](https://miniprofiler.com/dotnet/NuGet)
+  * [How-To Upgrade From MiniProfiler V3](https://miniprofiler.com/dotnet/HowTo/UpgradeFromV3)
 * Samples
   * [ASP.NET Core Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore)
   * [ASP.NET MVC 5 Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Mvc5)
@@ -22,9 +25,11 @@ The current major version of MiniProfiler is v4.
 
 #### Building
 To build the MiniProfiler solution in Visual Studio, you'll need:
-- Visual Studio 2017 (or the .NET 2.x SDK)
+- Visual Studio 2019 16.3+ (or the .NET 3.x SDK)
 - The [Web Compiler](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.WebCompiler) extension
   - Note: no extension is needed if building via `buid.cmd` or `build.ps1` in the repository root. They pull it in via a package.
+
+After a clone, running `build.cmd`. To create packages, use `build.cmd -CreatePackages $true` and it'll output them in the `.nukpgs\` folder.
 
 #### Package Status
 
