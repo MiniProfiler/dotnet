@@ -191,6 +191,10 @@
 .mp-result .mp-timings .mp-queries-show .mp-unit {
   color: #0077cc;
 }
+.mp-result .mp-timings .mp-queries-show.mp-queries-warning {
+  color: #c91d2e;
+  font-weight: bold;
+}
 .mp-result .mp-timings .mp-queries-duration {
   padding-left: 6px;
 }
@@ -453,6 +457,19 @@
 .mp-results .mp-button {
   user-select: none;
 }
+.mp-results .mp-button.mp-button-warning {
+  font-weight: bold;
+  background-color: #c91d2e;
+  color: white;
+}
+.mp-results .mp-button.mp-button-warning .mp-unit {
+  color: #ddd;
+}
+.mp-results .mp-button.mp-button-warning .mp-number,
+.mp-results .mp-button.mp-button-warning .mp-unit,
+.mp-results .mp-button.mp-button-warning .mp-warning {
+  color: white;
+}
 .mp-results .mp-button .mp-warning {
   font-weight: bold;
 }
@@ -478,6 +495,9 @@
   background-color: #207ab7;
   animation: none;
   border-radius: 0 !important;
+}
+.mp-results .mp-result.active .mp-button.mp-button-warning {
+  background-color: #c91d2e;
 }
 .mp-results .mp-result.active .mp-button .mp-number,
 .mp-results .mp-result.active .mp-button .mp-warning {

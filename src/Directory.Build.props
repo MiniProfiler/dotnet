@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
     <VersionPrefix>4.0.0</VersionPrefix>
-
     <RootNamespace>StackExchange.Profiling</RootNamespace>
 
     <OutputType>Library</OutputType>
@@ -12,10 +11,11 @@
     <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
 
     <PackageId>$(AssemblyName)</PackageId>
-    <PackageLicenseUrl>https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://miniprofiler.com</PackageProjectUrl>
     <PackageReleaseNotes>See https://miniprofiler.com/dotnet/Releases for more info</PackageReleaseNotes>
     <PackageBaseTags>Profiler;Performance;Profiling;Timing</PackageBaseTags>
+    <Deterministic>false</Deterministic>
     
     <RepositoryUrl>https://github.com/MiniProfiler/dotnet.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -28,8 +28,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.3.183" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19351-01" PrivateAssets="All"/>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.0.25" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All"/>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

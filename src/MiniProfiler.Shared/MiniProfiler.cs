@@ -313,7 +313,6 @@ namespace StackExchange.Profiling
             }
         }
 
-#if !NETSTANDARD1_5
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>
@@ -332,7 +331,6 @@ namespace StackExchange.Profiling
                 return (MiniProfiler)serializer.ReadObject(ms);
             }
         }
-#endif
 
         internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {

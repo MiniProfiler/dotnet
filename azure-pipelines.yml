@@ -60,7 +60,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '3.0.100-preview6-012264'
+    version: '3.0.100-preview9-014004'
 
 - task: PowerShell@2
   displayName: 'Build / Test / Create Packages'

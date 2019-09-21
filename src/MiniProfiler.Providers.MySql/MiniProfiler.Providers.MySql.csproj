@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Profiler storage for MySQL</Description>
     <Authors>Nick Craver, Bradley Grainger</Authors>
     <PackageTags>SQL;MySQL;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />

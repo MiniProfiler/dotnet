@@ -1,9 +1,7 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-#if !NETSTANDARD1_5
 using System.Security;
 using System.Security.Permissions;
-#endif
 
 namespace StackExchange.Profiling.Data
 {
@@ -91,7 +89,6 @@ namespace StackExchange.Profiling.Data
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _factory = tail;
 
-#if !NETSTANDARD1_5
         /// <summary>
         /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
         /// </summary>
@@ -123,7 +120,6 @@ namespace StackExchange.Profiling.Data
         /// <param name="state">One of the <see cref="PermissionState"/> values.</param>
         /// <returns>A <see cref="CodeAccessPermission"/> object for the specified <see cref="PermissionState"/>.</returns>
         public override CodeAccessPermission CreatePermission(PermissionState state) => _factory.CreatePermission(state);
-#endif
 #endif
     }
 }

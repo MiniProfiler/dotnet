@@ -41,17 +41,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.AspNetCore", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A510DBF-E85F-4D2C-B8F7-006DA31B3418}"
 	ProjectSection(SolutionItems) = preProject
-		src\Directory.build.props = src\Directory.build.props
+		src\Directory.Build.props = src\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33644D67-D9BB-4989-9B7A-98D51967059B}"
 	ProjectSection(SolutionItems) = preProject
-		tests\Directory.build.props = tests\Directory.build.props
+		tests\Directory.Build.props = tests\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E0DA4035-4D64-4BB8-8EA1-42197DE62519}"
 	ProjectSection(SolutionItems) = preProject
-		samples\Directory.build.props = samples\Directory.build.props
+		samples\Directory.Build.props = samples\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.AspNetCore.Mvc", "src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj", "{C7E9334A-6BFA-43A7-8FE4-393AC17DD7C1}"

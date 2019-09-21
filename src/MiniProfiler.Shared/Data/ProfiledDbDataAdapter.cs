@@ -1,5 +1,4 @@
-﻿#if !NETSTANDARD1_5
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 
@@ -256,4 +255,3 @@ namespace StackExchange.Profiling.Data
         }
     }
 }
-#endif
