@@ -7,21 +7,17 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MySql\MiniProfiler.Providers.MySql.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <PackageReference Include="Jil" Version="2.15.4" />
+    <PackageReference Include="Npgsql" Version="4.0.5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="sqlite" Version="3.13.0" />
-    <PackageReference Include="Npgsql" Version="4.0.5" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
-    <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
-    <PackageReference Include="Npgsql" Version="4.0.5" />
-    <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
-  </ItemGroup>
+  </ItemGroup> 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net461' AND '$(OS)' == 'Windows_NT'">
     <PostBuildEvent>
       if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
