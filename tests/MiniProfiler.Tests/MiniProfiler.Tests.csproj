@@ -13,12 +13,10 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <PackageReference Include="Jil" Version="2.15.4" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
-    <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="sqlite" Version="3.13.0" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
-  </ItemGroup>
   </ItemGroup> 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net461' AND '$(OS)' == 'Windows_NT'">
     <PostBuildEvent>
