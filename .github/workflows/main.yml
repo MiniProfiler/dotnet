@@ -48,7 +48,7 @@ jobs:
     - name: Install .NET Core 3.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100-preview8-013656
+        dotnet-version: 3.0.100
       env:
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     - name: dotnet --info
