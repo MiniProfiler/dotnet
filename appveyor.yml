@@ -4,7 +4,7 @@ init:
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
 
 install:
-  - choco install dotnetcore-sdk --version 3.0.100-preview9-014004
+  - choco install dotnetcore-sdk --version 3.0.100
   - nuget install redis-64 -excludeversion
   - redis-64\tools\redis-server.exe --service-install
   - redis-64\tools\redis-server.exe --service-start

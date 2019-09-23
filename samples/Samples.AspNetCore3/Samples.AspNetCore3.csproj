@@ -8,6 +8,6 @@
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0-rc1.19456.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
   </ItemGroup>
 </Project>
