@@ -11,8 +11,5 @@
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
     <PackageReference Include="Microsoft.SqlServer.Compact" Version="4.0.8876.1" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
   </ItemGroup>
 </Project>
