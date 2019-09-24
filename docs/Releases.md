@@ -3,7 +3,14 @@ title: "Release Notes"
 layout: "default"
 ---
 ### Release Notes
-This page tracks major changes included in any update starting with version 4.0.0.
+This page tracks major changes included in any update starting with version 4.0.0.3
+
+#### Version 4.1.0
+- ASP.NET Core 3.0 support ([MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) and [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) packages, now with a `netcoreapp3.0` build)
+- Error support via `CustomTiming.Errored = true`, this will turn the UI red to raise error awareness ([#418](https://github.com/MiniProfiler/dotnet/pull/418) & [#420](https://github.com/MiniProfiler/dotnet/pull/420))
+- Adds a `MiniProfiler.EFC7` (Entity Framework Classic 7) provider ([#397](https://github.com/MiniProfiler/dotnet/pull/397))
+- Fix for [`.Close()`tracking](https://github.com/MiniProfiler/dotnet/commit/a7322be1d97be0720832ea9667105c0729d9343d)
+- Drops `netstandard1.x` support ([#422](https://github.com/MiniProfiler/dotnet/pull/422))
 
 #### Version 4.0.0
 - ASP.NET Core 2.0+ support ([MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) and [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) packages)

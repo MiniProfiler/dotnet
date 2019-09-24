@@ -25,6 +25,7 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
 * [MiniProfiler.Shared](https://www.nuget.org/packages/MiniProfiler.Shared/) - Core, shared functionality for all platform-specific packages above
 * [MiniProfiler.EntityFrameworkCore](https://www.nuget.org/packages/MiniProfiler.EntityFrameworkCore) - Entity Framework Core Integration
 * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
+* [MiniProfiler.EFC7](https://www.nuget.org/packages/MiniProfiler.EFC7/) - Entity Framework Classic 7+ Integration
 *  Storage and Profiling Providers
    * [MiniProfiler.Providers.MongoDB](https://www.nuget.org/packages/MiniProfiler.Providers.MongoDB/) - MongoDB MiniProfiler Storage
    * [MiniProfiler.Providers.MySql](https://www.nuget.org/packages/MiniProfiler.Providers.MySql/) - MySQL MiniProfiler Storage
