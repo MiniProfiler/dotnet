@@ -39,26 +39,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: Install .NET Core 2.2
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.401 # For tests
-      env:
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    - name: Install .NET Core 3.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0.100
-      env:
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     - name: dotnet --info
       run: dotnet --info
-    - name: Build / Test / Create Packages
-      shell: pwsh
-      run: .\build.ps1 -CreatePackages $true
+    - name: Build
+      run: dotnet build Build.csproj -c Release /p:CI=true
+    - name: Test
+      run: dotnet test Build.csproj -c Release --no-build /p:CI=true
       env:
         RedisConnectionString: localhost:6379
         MongoDbConnectionString: mongodb://localhost:27017/test
         MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
+    - name: Pack
+      run: dotnet pack Build.csproj --no-build -c Release /p:Packing=true /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
