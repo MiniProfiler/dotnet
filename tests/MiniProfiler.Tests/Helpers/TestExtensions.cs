@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -22,5 +23,13 @@ namespace StackExchange.Profiling.Tests
         /// <param name="milliseconds">The milliseconds.</param>
         public static Task IncrementAsync(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
             Task.Run(() => Increment(profiler, milliseconds));
+
+        internal static void MaybeLog(this Exception ex)
+        {
+            if (TestConfig.Current.EnableTestLogging)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }

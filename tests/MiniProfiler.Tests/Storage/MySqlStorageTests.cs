@@ -29,6 +29,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
+                e.MaybeLog();
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }
