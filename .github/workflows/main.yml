@@ -17,15 +17,15 @@ jobs:
       redis:
         image: redis
         ports:
-        - 6379:6379
+        - 6379/tcp
       mongo:
         image: mongo
         ports:
-        - 27017:27017
+        - 27017/
       postgres:
         image: postgres
         ports:
-        - 5432:5432
+        - 5432/
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test
@@ -45,10 +45,10 @@ jobs:
       run: dotnet test Build.csproj -c Release --no-build /p:CI=true
       env:
         EnableTestLogging: true
-        RedisConnectionString: localhost:6379
-        MongoDbConnectionString: mongodb://localhost:27017/test
+        RedisConnectionString: localhost:${{ job.services.redis.ports['6379'] }}
+        MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports['27017'] }}/test
         MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
-        PostgreSqlConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;
+        PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.redis.ports['5432'] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=tempdb;Trusted_Connection=True;
     - name: Pack
       run: dotnet pack Build.csproj --no-build -c Release /p:Packing=true /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
