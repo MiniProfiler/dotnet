@@ -1,4 +1,4 @@
-﻿#if NET461
+﻿#if NET461 && WINDOWS
 using System;
 using System.Data.SqlServerCe;
 using System.IO;
