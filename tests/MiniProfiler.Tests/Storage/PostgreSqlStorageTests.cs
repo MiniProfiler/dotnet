@@ -30,7 +30,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
-                e.MaybeLog();
+                e.MaybeLog(TestConfig.Current.PostgreSqlConnectionString);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }

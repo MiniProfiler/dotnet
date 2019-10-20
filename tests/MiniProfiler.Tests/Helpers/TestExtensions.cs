@@ -25,11 +25,12 @@ namespace StackExchange.Profiling.Tests
         public static Task IncrementAsync(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
             Task.Run(() => Increment(profiler, milliseconds));
 
-        internal static void MaybeLog(this Exception ex, [CallerFilePath] string file = null, [CallerMemberName] string caller = null)
+        internal static void MaybeLog(this Exception ex, string connectionString, [CallerFilePath] string file = null, [CallerMemberName] string caller = null)
         {
             if (TestConfig.Current.EnableTestLogging)
             {
                 Console.WriteLine($"{file} {caller}: {ex.Message}");
+                Console.WriteLine("  " + connectionString);
             }
         }
     }

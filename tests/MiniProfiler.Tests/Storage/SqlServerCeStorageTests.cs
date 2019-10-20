@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
-                e.MaybeLog();
+                e.MaybeLog(TestConfig.Current.SQLServerCeConnectionString);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }
