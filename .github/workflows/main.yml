@@ -23,6 +23,10 @@ jobs:
         image: mongo
         ports:
         - 27017/tcp
+        env:
+          MONGO_INITDB_ROOT_USERNAME: mongo
+          MONGO_INITDB_ROOT_PASSWORD: mongo
+          MONGO_INITDB_DATABASE: test
       postgres:
         image: postgres
         ports:
@@ -55,7 +59,7 @@ jobs:
       env:
         EnableTestLogging: true
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
-        MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports[27017] }}/test
+        MongoDbConnectionString: mongodb://mongo:mongo@localhost:${{ job.services.mongo.ports[27017] }}/test
         MySQLConnectionString: server=localhost;Port=${{ job.services.mysql.ports[3306] }};Uid=root;Pwd=root;Database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=tcp://localhost:${{ job.services.sqlserver.ports[1433] }};Initial Catalog=tempdb;User Id=sa;Password=sa;
