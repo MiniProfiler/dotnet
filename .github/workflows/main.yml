@@ -39,6 +39,7 @@ jobs:
         ports:
         - 1433/tcp
         env:
+          ACCEPT_EULA: Y
           SA_PASSWORD: sa
       mysql:
         image: mysql
