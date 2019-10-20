@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC4009
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
+		Build.csproj = Build.csproj
 		build.ps1 = build.ps1
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
