@@ -56,7 +56,7 @@ jobs:
         EnableTestLogging: true
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
         MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports[27017] }}/test
-        MySQLConnectionString: server=localhost:${{ job.services.mysql.ports[3306] }};uid=root;pwd=root;database=test;Allow User Variables=true
+        MySQLConnectionString: server=localhost;Port=${{ job.services.mysql.ports[3306] }};Uid=root;Pwd=root;Database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=tcp://localhost:${{ job.services.sqlserver.ports[1433] }};Initial Catalog=tempdb;User Id=sa;Password=sa;
     - name: .NET Lib Pack
