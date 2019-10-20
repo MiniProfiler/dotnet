@@ -76,6 +76,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
+                e.MaybeLog(TestConfig.Current.RedisConnectionString);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }

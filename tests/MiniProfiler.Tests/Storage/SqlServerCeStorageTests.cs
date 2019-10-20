@@ -1,4 +1,4 @@
-﻿#if NET461
+﻿#if NET461 && WINDOWS
 using System;
 using System.Data.SqlServerCe;
 using System.IO;
@@ -44,6 +44,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
+                e.MaybeLog(TestConfig.Current.SQLServerCeConnectionString);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }
