@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC4009
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
+		Build.csproj = Build.csproj
 		build.ps1 = build.ps1
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
@@ -85,6 +86,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EFC7", "src\MiniProfiler.EFC7\MiniProfiler.EFC7.csproj", "{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore3", "samples\Samples.AspNetCore3\Samples.AspNetCore3.csproj", "{D95A09CD-A291-42D0-AA41-8426090D0476}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5C8ED0C0-7DBB-4660-836E-A760E25160A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A14EA029-60E2-485A-B757-3626511CF2C4}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -232,10 +240,11 @@ Global
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{D95A09CD-A291-42D0-AA41-8426090D0476} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
+		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
