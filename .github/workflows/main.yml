@@ -52,7 +52,7 @@ jobs:
       run: dotnet test Build.csproj -c Release --no-build /p:CI=true
       env:
         EnableTestLogging: true
-        RedisConnectionString: localhost:6379
+        RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
         MongoDbConnectionString: mongodb://localhost:27017/test
         MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Database=test;User Id=postgres;Password=postgres;
