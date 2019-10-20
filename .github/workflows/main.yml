@@ -38,13 +38,13 @@ jobs:
         - 1433/tcp
         env:
           SA_PASSWORD: sa
-      # mysql:
-      #   image: mysql
-      #   ports:
-      #   - 3306:3306
-      #   env:
-      #     MYSQL_ROOT_PASSWORD: root
-      #     MYSQL_DATABASE: test
+      mysql:
+        image: mysql
+        ports:
+        - 3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
@@ -56,7 +56,7 @@ jobs:
         EnableTestLogging: true
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
         MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports[27017] }}/test
-        MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
+        MySQLConnectionString: server=localhost:${{ job.services.mysql.ports[3306] }};uid=root;pwd=root;database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=tcp://localhost:${{ job.services.sqlserver.ports[1433] }};Initial Catalog=tempdb;User Id=sa;Password=sa;
     - name: .NET Lib Pack
