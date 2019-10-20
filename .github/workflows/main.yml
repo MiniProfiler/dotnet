@@ -17,22 +17,22 @@ jobs:
       redis:
         image: redis
         ports:
-        - 6379/tcp
+        - 6379
       mongo:
         image: mongo
         ports:
-        - 27017/tcp
+        - 27017
       postgres:
         image: postgres
         ports:
-        - 5432/tcp
+        - 5432
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2017-latest
         ports:
-        - 1433/tcp
+        - 1433
         env:
           SA_PASSWORD: sa
       # mysql:
