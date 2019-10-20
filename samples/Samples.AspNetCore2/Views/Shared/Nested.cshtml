@@ -3,7 +3,6 @@
 }
 @for(var i = 0; i < 3; i++)
 {
-    @Html.Partial("NestedChild")
-    Html.RenderPartial("NestedChild");
+    <partial name="NestedChild" />
     @await Component.InvokeAsync("ComponentTest")
 }

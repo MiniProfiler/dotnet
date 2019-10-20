@@ -2,8 +2,8 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Tests.AspNetCore</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netcoreapp2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Unix'">net461;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />

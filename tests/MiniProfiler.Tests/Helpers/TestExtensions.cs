@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -22,5 +24,14 @@ namespace StackExchange.Profiling.Tests
         /// <param name="milliseconds">The milliseconds.</param>
         public static Task IncrementAsync(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
             Task.Run(() => Increment(profiler, milliseconds));
+
+        internal static void MaybeLog(this Exception ex, string connectionString, [CallerFilePath] string file = null, [CallerMemberName] string caller = null)
+        {
+            if (TestConfig.Current.EnableTestLogging)
+            {
+                Console.WriteLine($"{file} {caller}: {ex.Message}");
+                Console.WriteLine("  " + connectionString);
+            }
+        }
     }
 }

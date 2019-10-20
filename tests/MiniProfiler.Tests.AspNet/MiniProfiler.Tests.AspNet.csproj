@@ -3,6 +3,7 @@
     <AssemblyName>MiniProfiler.Tests.AspNet</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
     <TargetFrameworks>net461</TargetFrameworks>
+    <IsTestProject Condition="'$(OS)' != 'Windows_NT'">false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
