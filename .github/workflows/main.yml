@@ -18,6 +18,7 @@ jobs:
         image: redis
         ports:
         - 6379:6379
+        options: --entrypoint redis-server
       mongo:
         image: mongo
         ports:
