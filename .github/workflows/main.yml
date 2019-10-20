@@ -57,7 +57,7 @@ jobs:
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
         MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports[27017] }}/test
         MySQLConnectionString: server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true
-        PostgreSqlConnectionString: Server=localhost:${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
+        PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Data Source=tcp://localhost:${{ job.services.sqlserver.ports[1433] }};Initial Catalog=tempdb;User Id=sa;Password=sa;
     - name: .NET Lib Pack
       run: dotnet pack Build.csproj --no-build -c Release /p:Packing=true /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
