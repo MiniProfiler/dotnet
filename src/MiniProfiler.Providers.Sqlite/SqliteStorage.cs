@@ -60,6 +60,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         {
             using (var conn = GetConnection())
             {
+                conn.Open();
                 conn.Execute(SaveSql, new
                 {
                     Id = profiler.Id.ToString(),
@@ -123,6 +124,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         {
             using (var conn = GetConnection())
             {
+                await conn.OpenAsync().ConfigureAwait(false);
                 await conn.ExecuteAsync(SaveSql, new
                 {
                     Id = profiler.Id.ToString(),
