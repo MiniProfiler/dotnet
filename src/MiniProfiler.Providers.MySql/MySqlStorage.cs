@@ -56,6 +56,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)");
         {
             using (var conn = GetConnection())
             {
+                conn.Open();
                 conn.Execute(SaveSql, new
                 {
                     profiler.Id,
@@ -119,6 +120,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)");
         {
             using (var conn = GetConnection())
             {
+                await conn.OpenAsync().ConfigureAwait(false);
                 await conn.ExecuteAsync(SaveSql, new
                 {
                     profiler.Id,
