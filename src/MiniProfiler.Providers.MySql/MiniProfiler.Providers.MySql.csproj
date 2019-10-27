@@ -10,6 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="MySqlConnector" Version="0.30.0" />
+    <PackageReference Include="MySqlConnector" Version="0.60.2" />
   </ItemGroup>
 </Project>
