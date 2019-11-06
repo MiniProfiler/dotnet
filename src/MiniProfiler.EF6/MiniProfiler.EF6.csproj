@@ -6,10 +6,10 @@
     <Description>MiniProfiler: Integration for Entity Framework 6</Description>
     <Authors>Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <PackageTags>Entity Framework;Entity Framework 6;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="EntityFramework" Version="6.2.0" />
+    <PackageReference Include="EntityFramework" Version="6.3.0" />
   </ItemGroup>
 </Project>
