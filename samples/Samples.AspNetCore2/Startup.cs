@@ -38,8 +38,6 @@ namespace Samples.AspNetCore
             // Add MiniProfiler services
             // If using Entity Framework Core, add profiling for it as well (see the end)
             // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy Intellisense
-            // If you aren't adding an IMemoryCache for some reason, then:
-            //   you'll need to add: services.AddMemoryCache();
             services.AddMiniProfiler(options =>
             {
                 // ALL of this is optional. You can simply call .AddMiniProfiler() for all defaults

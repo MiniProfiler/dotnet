@@ -21,6 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configureOptions">An Action{MiniProfilerOptions} to configure options for MiniProfiler.</param>
         public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services, Action<MiniProfilerOptions> configureOptions = null)
         {
+            services.AddMemoryCache(); // Unconditionally register an IMemoryCache since it's the most common and default case
             services.AddSingleton<IConfigureOptions<MiniProfilerOptions>, MiniProfilerOptionsDefaults>();
             if (configureOptions != null)
             {
