@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.6.375" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="2.8.3" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="2.9.2" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
   </ItemGroup>
@@ -27,14 +27,7 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ui\includes.less" />
-    <None Include="ui\includes.css" DependentUpon="includes.less" />
     <EmbeddedResource Include="ui\includes.min.css" DependentUpon="includes.css" />
-    
-    <Include Include="ui\lib\MiniProfiler.js" DependentUpon="MiniProfiler.ts" />
-    <Include Include="ui\lib\MiniProfiler.js.map" DependentUpon="MiniProfiler.js" />
-
-    <None Include="ui\includes.js" />
     <EmbeddedResource Include="ui\includes.min.js" DependentUpon="includes.js" />
   </ItemGroup>
 </Project>
