@@ -290,7 +290,7 @@ namespace StackExchange.Profiling {
                     if (mp.options.authorized) {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-                        var container = document.createElement('div');
+                        const container = document.createElement('div');
                         container.className = 'mp-results mp-' + mp.options.renderPosition.toLowerCase()
                         document.body.appendChild(container);
                         mp.container = container;
@@ -910,7 +910,7 @@ namespace StackExchange.Profiling {
             // limit count to maxTracesToShow, remove those before it
             const results = this.container.querySelectorAll('.mp-result');
             const toRemove = results.length - this.options.maxTracesToShow;
-            for (var i = 0; i < toRemove; i++) {
+            for (let i = 0; i < toRemove; i++) {
                 results[i].parentNode.removeChild(results[i]);
             }
         }
@@ -967,7 +967,7 @@ namespace StackExchange.Profiling {
                         parent.classList.remove('new');
 
                         const allChildren = button.parentElement.parentElement.children;
-                        for (var i = 0; i < allChildren.length; i++) {
+                        for (let i = 0; i < allChildren.length; i++) {
                             // Set Active only on the curent button
                             allChildren[i].classList.toggle('active', allChildren[i] == parent);
                         }
@@ -1036,7 +1036,7 @@ namespace StackExchange.Profiling {
                     const keys = mp.options.toggleShortcut.toLowerCase().split("+");
 
                     document.addEventListener('keydown', function (e) {
-                        var element = e.target as HTMLElement;
+                        let element = e.target as HTMLElement;
                         if (element.nodeType == 3) element = element.parentElement;
                         if (element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
 
@@ -1134,7 +1134,7 @@ namespace StackExchange.Profiling {
                             alt: { wanted: false }
                         };
 
-                        for (var i = 0; i < keys.length; i++) {
+                        for (let i = 0; i < keys.length; i++) {
                             const k = keys[i];
                             if (k == 'ctrl' || k == 'control') {
                                 kp++;
@@ -1150,11 +1150,9 @@ namespace StackExchange.Profiling {
 
                             } else { //The special keys did not match
                                 if (character == k) kp++;
-                                else {
-                                    if (shift_nums[character] && e.shiftKey) { //Stupid Shift key bug created by using lowercase
-                                        character = shift_nums[character];
-                                        if (character == k) kp++;
-                                    }
+                                else if (shift_nums[character] && e.shiftKey) { //Stupid Shift key bug created by using lowercase
+                                    character = shift_nums[character];
+                                    if (character == k) kp++;
                                 }
                             }
                         }
@@ -1162,7 +1160,7 @@ namespace StackExchange.Profiling {
                             && e.ctrlKey == modifiers.ctrl.wanted
                             && e.shiftKey == modifiers.shift.wanted
                             && e.altKey == modifiers.alt.wanted) {
-                            var results = document.querySelector('.mp-results') as HTMLElement;
+                            const results = document.querySelector('.mp-results') as HTMLElement;
                             results.style.display = results.style.display == 'none' ? 'block' : 'none';
                         }
                     }, false);
