@@ -454,7 +454,6 @@ namespace StackExchange.Profiling {
                         mp.fetchStatus[id] = 'Fetch complete';
                     })
                     .catch(function (error) {
-                        console.debug(error);
                         mp.fetchStatus[id] = 'Fetch complete';
                     });
             }
