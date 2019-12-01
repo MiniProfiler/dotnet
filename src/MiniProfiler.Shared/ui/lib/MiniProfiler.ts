@@ -621,7 +621,6 @@ namespace StackExchange.Profiling {
             }
 
             let time = 0;
-            let prev = null;
             result.forEach((elem) => {
                 elem.PrevGap = {
                     duration: (elem.StartMilliseconds - time).toFixed(2),
@@ -632,7 +631,6 @@ namespace StackExchange.Profiling {
                 elem.PrevGap.Reason = determineGap(elem.PrevGap, profiler.Root, null);
 
                 time = elem.StartMilliseconds + elem.DurationMilliseconds;
-                prev = elem;
             });
 
 
@@ -915,14 +913,12 @@ namespace StackExchange.Profiling {
             }
         }
 
-        private scrollToQuery = (link: HTMLElement, queries: HTMLElement, whatToScroll: HTMLElement) => {
+        private scrollToQuery = (link: HTMLElement, queries: HTMLElement) => {
             const id = link.closest('tr').dataset['timingId'];
             const rows = queries.querySelectorAll('tr[data-timing-id="' + id + '"]');
             rows.forEach(n => n.classList.add('highlight'));
-            const first = rows && rows[0];
-            if (first) {
-                // ensure they're in view
-                whatToScroll.scrollTop = whatToScroll.scrollTop + first.getBoundingClientRect().top - 100;
+            if (rows && rows[0]) {
+                rows[0].scrollIntoView();
             }
         }
 
@@ -950,7 +946,7 @@ namespace StackExchange.Profiling {
                     const target = event.target as HTMLElement;
                     const queriesButton = target.closest('.mp-popup .mp-queries-show') as HTMLElement;
                     if (queriesButton) {
-                        mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'), document.body);
+                        mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'));
                     }
                 });
             } else {
@@ -998,7 +994,7 @@ namespace StackExchange.Profiling {
                         queries.style.display = 'block';
                         overlay.appendChild(queries);
 
-                        mp.scrollToQuery(queriesButton, queries, queries);
+                        mp.scrollToQuery(queriesButton, queries);
 
                         // syntax highlighting
                         queries.querySelectorAll('pre code').forEach(block => mp.highlight(block as HTMLElement));
@@ -1147,7 +1143,6 @@ namespace StackExchange.Profiling {
                                 modifiers.alt.wanted = true;
                             } else if (k.length > 1) { //If it is a special key
                                 if (special_keys[k] == code) kp++;
-
                             } else { //The special keys did not match
                                 if (character == k) kp++;
                                 else if (shift_nums[character] && e.shiftKey) { //Stupid Shift key bug created by using lowercase
