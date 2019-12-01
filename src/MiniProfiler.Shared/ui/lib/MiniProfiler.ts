@@ -263,7 +263,7 @@ namespace StackExchange.Profiling {
             let alreadyDone = false;
 
             if (!script || !window.fetch) {
-                 return;
+                return;
             }
 
             const bool = (arg: string) => arg === 'true';
@@ -360,9 +360,9 @@ namespace StackExchange.Profiling {
             function onLoad() {
                 mp.installAjaxHandlers();
                 deferInit();
-            } 
+            }
 
-            if (document.readyState === "loading") {
+            if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', onLoad);
             }
             else {
@@ -430,7 +430,7 @@ namespace StackExchange.Profiling {
 
                 const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)(?:Z|(\+|-)([\d|:]*))?$/;
                 const parseDates = (key: string, value: any) =>
-                          key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
+                    key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
 
                 mp.fetchStatus[id] = 'Starting fetch';
 
@@ -496,9 +496,9 @@ namespace StackExchange.Profiling {
                     for (const customType of Object.keys(timing.CustomTimings)) {
                         const customTimings = timing.CustomTimings[customType];
                         const customStat = {
-                                  Duration: 0,
-                                  Count: 0,
-                              };
+                            Duration: 0,
+                            Count: 0,
+                        };
                         const duplicates: { [id: string]: boolean } = {};
                         for (const customTiming of customTimings) {
                             // Add to the overall list for the queries view
@@ -1216,7 +1216,7 @@ namespace StackExchange.Profiling {
 
             // fetch profile results for any AJAX calls
             if (windowjQuery && windowjQuery(document) && windowjQuery(document).ajaxComplete) {
-                windowjQuery(document).ajaxComplete((_e, xhr, _settings) => handleXHR(xhr));
+                windowjQuery(document).ajaxComplete((_e: any, xhr: XMLHttpRequest, _settings: any) => handleXHR(xhr));
             }
 
             // fetch results after ASP Ajax calls
@@ -1263,7 +1263,7 @@ namespace StackExchange.Profiling {
 
             if (typeof (MooTools) !== 'undefined' && typeof (Request) !== 'undefined') {
                 Request.prototype.addEvents({
-                    onComplete: function() {
+                    onComplete: function () {
                         handleXHR(this.xhr);
                     },
                 });
