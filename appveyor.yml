@@ -1,10 +1,9 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 init:
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
 
 install:
-  - choco install dotnetcore-sdk --version 3.0.100
   - nuget install redis-64 -excludeversion
   - redis-64\tools\redis-server.exe --service-install
   - redis-64\tools\redis-server.exe --service-start
@@ -35,7 +34,7 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
   MySQLConnectionString: server=localhost;uid=root;pwd=Password12!;database=test;Allow User Variables=true
 services:
-  - mssql2016
+  - mssql2017
   - mysql
   - postgresql
   - mongodb

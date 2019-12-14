@@ -1,5 +1,4 @@
-﻿/// <reference path="./node_modules/@types/jquery/index.d.ts">
-/// <reference path="./node_modules/@types/extjs/index.d.ts">
+﻿/// <reference path="./node_modules/@types/extjs/index.d.ts">
 /// <reference path="./node_modules/@types/microsoft-ajax/index.d.ts">
 /// <reference path="./MiniProfiler.Globals.d.ts">
 
@@ -224,9 +223,8 @@ namespace StackExchange.Profiling {
 
     export class MiniProfiler {
         public options: IOptions;
-        public container: JQuery;
-        public controls: JQuery;
-        public jq: JQueryStatic = window.jQuery.noConflict();
+        public container: HTMLDivElement;
+        public controls: HTMLDivElement;
         public fetchStatus: { [id: string]: string } = {}; // so we never pull down a profiler twice
         public clientPerfTimings: ITimingInfo[] = [
             // { name: 'navigationStart', description: 'Navigation Start' },
@@ -254,35 +252,36 @@ namespace StackExchange.Profiling {
             ({ name: 'firstContentfulPaintTime', description: 'First Content Paint', lineDescription: 'First Content Paint', type: 'paint', point: true }) as ITimingInfo,
         ];
         private savedJson: IProfiler[] = [];
-        private path: string;
         public highlight = (elem: HTMLElement): void => undefined;
         public initCondition: () => boolean; // Example usage: window.MiniProfiler.initCondition = function() { return myOtherThingIsReady; };
 
         public init = (): MiniProfiler => {
-            this.jq = jQuery.noConflict(true);
             const mp = this;
-            const $ = this.jq;
-            const script = this.jq('#mini-profiler');
-            const data = script.data();
+            const script = document.getElementById('mini-profiler');
+            const data = script.dataset;
+            let wait = 0;
+            let alreadyDone = false;
 
-            if (!script.length) {
-                 return;
+            if (!script || !window.fetch) {
+                return;
             }
+
+            const bool = (arg: string) => arg === 'true';
 
             this.options = {
                 ids: data.ids.split(','),
                 path: data.path,
                 version: data.version,
-                renderPosition: data.position,
-                showTrivial: data.trivial,
+                renderPosition: data.position as RenderPosition,
+                showTrivial: bool(data.trivial),
                 trivialMilliseconds: parseFloat(data.trivialMilliseconds),
-                showChildrenTime: data.children,
-                maxTracesToShow: data.maxTraces,
-                showControls: data.controls,
+                showChildrenTime: bool(data.children),
+                maxTracesToShow: parseInt(data.maxTraces, 10),
+                showControls: bool(data.controls),
                 currentId: data.currentId,
-                authorized: data.authorized,
+                authorized: bool(data.authorized),
                 toggleShortcut: data.toggleShortcut,
-                startHidden: data.startHidden,
+                startHidden: bool(data.startHidden),
                 ignoredDuplicateExecuteTypes: (data.ignoredDuplicateExecuteTypes || '').split(','),
             };
 
@@ -291,9 +290,10 @@ namespace StackExchange.Profiling {
                     if (mp.options.authorized) {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
-                        mp.container = $('<div class="mp-results"/>')
-                            .addClass('mp-' + mp.options.renderPosition.toLowerCase())
-                            .appendTo('body');
+                        const container = document.createElement('div');
+                        container.className = 'mp-results mp-' + mp.options.renderPosition.toLowerCase()
+                        document.body.appendChild(container);
+                        mp.container = container;
 
                         // initialize the controls
                         mp.initControls(mp.container);
@@ -302,7 +302,7 @@ namespace StackExchange.Profiling {
                         mp.fetchResults(mp.options.ids);
 
                         if (mp.options.startHidden) {
-                            mp.container.hide();
+                            mp.container.style.display = 'none';
                         }
 
                         // if any data came in before the view popped up, render now
@@ -317,8 +317,10 @@ namespace StackExchange.Profiling {
                 };
 
                 // when rendering a shared, full page, this div will exist
-                mp.container = $('.mp-result-full');
-                if (mp.container.length) {
+                const fullResults = document.getElementsByClassName('mp-result-full');
+                if (fullResults.length > 0) {
+                    mp.container = fullResults[0] as HTMLDivElement;
+
                     // Full page view
                     if (window.location.href.indexOf('&trivial=1') > 0) {
                         mp.options.showTrivial = true;
@@ -326,10 +328,11 @@ namespace StackExchange.Profiling {
 
                     // profiler will be defined in the full page's head
                     window.profiler.Started = new Date('' + window.profiler.Started); // Ugh, JavaScript
-                    mp.renderProfiler(window.profiler).appendTo(mp.container);
+                    const profilerHtml = mp.renderProfiler(window.profiler, false);
+                    mp.container.insertAdjacentHTML('beforeend', profilerHtml);
 
                     // highight
-                    $('pre code').each((i, block) => mp.highlight(block));
+                    mp.container.querySelectorAll('pre code').forEach(block => mp.highlight(block as HTMLElement));
 
                     mp.bindDocumentEvents(RenderMode.Full);
                 } else {
@@ -338,9 +341,7 @@ namespace StackExchange.Profiling {
                 }
             }
 
-            let wait = 0;
-            let alreadyDone = false;
-            const deferInit = () => {
+            function deferInit() {
                 if (!alreadyDone) {
                     if ((mp.initCondition && !mp.initCondition())
                         || (window.performance && window.performance.timing && window.performance.timing.loadEventEnd === 0 && wait < 10000)) {
@@ -349,37 +350,48 @@ namespace StackExchange.Profiling {
                     } else {
                         alreadyDone = true;
                         if (mp.options.authorized) {
-                            $('head').append(`<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" />`);
+                            document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" />`);
                         }
                         doInit();
                     }
                 }
             };
 
-            $(mp.installAjaxHandlers);
-            $(deferInit);
+            function onLoad() {
+                mp.installAjaxHandlers();
+                deferInit();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', onLoad);
+            }
+            else {
+                onLoad();
+            }
 
             return this;
         }
 
         public listInit = (options: IOptions) => {
             const mp = this;
-            const $ = mp.jq;
             const opt = this.options = options || {} as IOptions;
 
             function updateGrid(id?: string) {
                 const getTiming = (profiler: IProfiler, name: string) =>
                     profiler.ClientTimings.Timings.filter((t) => t.Name === name)[0] || { Name: name, Duration: '', Start: '' };
 
-                $.ajax({
-                    url: opt.path + 'results-list',
-                    data: { 'last-id': id },
-                    dataType: 'json',
-                    type: 'GET',
-                    success: (data: IProfiler[]) => {
-                        let str = '';
+                fetch(opt.path + 'results-list?last-id=' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(data => data.json())
+                    .then((data: IProfiler[]) => {
+                        let html = '';
                         data.forEach((profiler) => {
-                            str += (`
+                            html += (`
 <tr>
   <td><a href="${options.path}results?id=${profiler.Id}">${mp.htmlEscape(profiler.Name)}</a></td>
   <td>${mp.htmlEscape(profiler.MachineName)}</td>
@@ -391,7 +403,7 @@ namespace StackExchange.Profiling {
   <td colspan="3" class="mp-results-none">(no client timings)</td>`) + `
 </tr>`);
                         });
-                        $('table tbody').append(str);
+                        document.querySelector('.mp-results-index').insertAdjacentHTML('beforeend', html);
                         const oldId = id;
                         const oldData = data;
                         setTimeout(() => {
@@ -401,8 +413,7 @@ namespace StackExchange.Profiling {
                             }
                             updateGrid(newId);
                         }, 4000);
-                    },
-                });
+                    })
             }
             updateGrid();
         }
@@ -419,30 +430,32 @@ namespace StackExchange.Profiling {
 
                 const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)(?:Z|(\+|-)([\d|:]*))?$/;
                 const parseDates = (key: string, value: any) =>
-                          key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
+                    key === 'Started' && typeof value === 'string' && isoDate.exec(value) ? new Date(value) : value;
 
                 mp.fetchStatus[id] = 'Starting fetch';
-                this.jq.ajax({
-                    url: this.options.path + 'results',
-                    data: JSON.stringify(request),
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    type: 'POST',
-                    converters: {
-                        'text json': (result) => JSON.parse(result, parseDates),
-                    },
-                    success: (json: IProfiler | string) => {
+
+                fetch(this.options.path + 'results', {
+                    method: 'POST',
+                    body: JSON.stringify(request),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(data => data.text())
+                    .then(text => JSON.parse(text, parseDates))
+                    .then(json => {
                         mp.fetchStatus[id] = 'Fetch succeeded';
                         if (json instanceof String) {
                             // hidden
                         } else {
                             mp.buttonShow(json as IProfiler);
                         }
-                    },
-                    complete: () => {
                         mp.fetchStatus[id] = 'Fetch complete';
-                    },
-                });
+                    })
+                    .catch(function (error) {
+                        mp.fetchStatus[id] = 'Fetch complete';
+                    });
             }
         }
 
@@ -483,9 +496,9 @@ namespace StackExchange.Profiling {
                     for (const customType of Object.keys(timing.CustomTimings)) {
                         const customTimings = timing.CustomTimings[customType];
                         const customStat = {
-                                  Duration: 0,
-                                  Count: 0,
-                              };
+                            Duration: 0,
+                            Count: 0,
+                        };
                         const duplicates: { [id: string]: boolean } = {};
                         for (const customTiming of customTimings) {
                             // Add to the overall list for the queries view
@@ -608,7 +621,6 @@ namespace StackExchange.Profiling {
             }
 
             let time = 0;
-            let prev = null;
             result.forEach((elem) => {
                 elem.PrevGap = {
                     duration: (elem.StartMilliseconds - time).toFixed(2),
@@ -619,7 +631,6 @@ namespace StackExchange.Profiling {
                 elem.PrevGap.Reason = determineGap(elem.PrevGap, profiler.Root, null);
 
                 time = elem.StartMilliseconds + elem.DurationMilliseconds;
-                prev = elem;
             });
 
 
@@ -643,7 +654,7 @@ namespace StackExchange.Profiling {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;')
 
-        private renderProfiler = (json: IProfiler) => {
+        private renderProfiler = (json: IProfiler, isNew: boolean) => {
             const p = this.processJson(json);
             const mp = this;
             const encode = this.htmlEscape;
@@ -725,7 +736,7 @@ namespace StackExchange.Profiling {
         </table>`;
             };
 
-            function clientTimings() {
+            const clientTimings = () => {
                 if (!p.ClientTimings) {
                     return '';
                 }
@@ -782,7 +793,7 @@ namespace StackExchange.Profiling {
         </table>`;
             }
 
-            function profilerQueries() {
+            const profilerQueries = () => {
                 if (!p.HasCustomTimings) {
                     return '';
                 }
@@ -841,8 +852,8 @@ namespace StackExchange.Profiling {
     </div>`;
             }
 
-            return mp.jq(`
-  <div class="mp-result${(this.options.showTrivial ? ' show-trivial' : '')}${(this.options.showChildrenTime ? ' show-columns' : '')}">
+            return `
+  <div class="mp-result${(this.options.showTrivial ? ' show-trivial' : '')}${(this.options.showChildrenTime ? ' show-columns' : '')}${(isNew ? ' new' : '')}">
     <div class="mp-button${(p.HasWarning ? ' mp-button-warning' : '')}" title="${encode(p.Name)}">
       <span class="mp-number">${duration(p.DurationMilliseconds)} <span class="mp-unit">ms</span></span>
       ${((p.HasDuplicateCustomTimings || p.HasWarning) ? '<span class="mp-warning">!</span>' : '')}
@@ -876,7 +887,7 @@ namespace StackExchange.Profiling {
       </div>
     </div>
     ${profilerQueries()}
-  </div>`);
+  </div>`;
         }
 
         private buttonShow = (json: IProfiler) => {
@@ -886,125 +897,299 @@ namespace StackExchange.Profiling {
                 return;
             }
 
-            const result = this.renderProfiler(json).addClass('new');
+            const profilerHtml = this.renderProfiler(json, true);
 
             if (this.controls) {
-                result.insertBefore(this.controls);
+                this.controls.insertAdjacentHTML('beforebegin', profilerHtml);
             } else {
-                result.appendTo(this.container);
+                this.container.insertAdjacentHTML('beforeend', profilerHtml);
             }
 
             // limit count to maxTracesToShow, remove those before it
-            this.container.find('.mp-result:lt(' + -this.options.maxTracesToShow + ')').remove();
+            const results = this.container.querySelectorAll('.mp-result');
+            const toRemove = results.length - this.options.maxTracesToShow;
+            for (let i = 0; i < toRemove; i++) {
+                results[i].parentNode.removeChild(results[i]);
+            }
         }
 
-        private scrollToQuery = (link: JQuery, queries: JQuery, whatToScroll: JQuery) => {
-            const id = link.closest('tr').data('timing-id');
-            const rows = queries.find('tr[data-timing-id="' + id + '"]').addClass('highlight');
-
-            // ensure they're in view
-            whatToScroll.scrollTop(whatToScroll.scrollTop() + rows.position().top - 100);
+        private scrollToQuery = (link: HTMLElement, queries: HTMLElement) => {
+            const id = link.closest('tr').dataset['timingId'];
+            const rows = queries.querySelectorAll('tr[data-timing-id="' + id + '"]');
+            rows.forEach(n => n.classList.add('highlight'));
+            if (rows && rows[0]) {
+                rows[0].scrollIntoView();
+            }
         }
 
         // some elements want to be hidden on certain doc events
         private bindDocumentEvents = (mode: RenderMode) => {
             const mp = this;
-            const $ = this.jq;
             // Common handlers
-            $(document)
-                .on('click', '.mp-toggle-trivial', function(e) {
-                    e.preventDefault();
-                    $(this).closest('.mp-result').toggleClass('show-trivial');
-                }).on('click', '.mp-toggle-columns', function(e) {
-                    e.preventDefault();
-                    $(this).closest('.mp-result').toggleClass('show-columns');
-                }).on('click', '.mp-toggle-trivial-gaps', function(e) {
-                    e.preventDefault();
-                    $(this).closest('.mp-queries').toggleClass('show-trivial');
-                });
+            document.addEventListener('click', function (event) {
+                const target = event.target as HTMLElement;
+                if (target.matches('.mp-toggle-trivial')) {
+                    target.closest('.mp-result').classList.toggle('show-trivial');
+                }
+                if (target.matches('.mp-toggle-columns')) {
+                    target.closest('.mp-result').classList.toggle('show-columns');
+                }
+                if (target.matches('.mp-toggle-trivial-gaps')) {
+                    target.closest('.mp-queries').classList.toggle('show-trivial');
+                }
+            }, false);
 
             // Full vs. Corner handlers
             if (mode === RenderMode.Full) {
                 // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
-                $(document).on('click', '.mp-popup .mp-queries-show', function() {
-                    mp.scrollToQuery($(this), $('.mp-queries'), $(document));
+                document.addEventListener('click', function (event) {
+                    const target = event.target as HTMLElement;
+                    const queriesButton = target.closest('.mp-popup .mp-queries-show') as HTMLElement;
+                    if (queriesButton) {
+                        mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'));
+                    }
                 });
             } else {
-                $(document)
-                    .on('click', '.mp-button', function(e) {
-                        const button = $(this);
-                        const popup = button.siblings('.mp-popup');
-                        const wasActive = button.parent().hasClass('active');
+                document.addEventListener('click', function (event) {
+                    const target = event.target as HTMLElement;
+                    const button = target.closest('.mp-button') as HTMLElement;
+                    if (button) {
+                        const popup = button.parentElement.querySelector('.mp-popup') as HTMLDivElement;
+                        const wasActive = button.parentElement.classList.contains('active');
                         const pos = mp.options.renderPosition;
 
-                        button.parent().removeClass('new').toggleClass('active')
-                            .siblings('.active').removeClass('active');
+
+                        let parent = button.parentElement;
+                        parent.classList.remove('new');
+
+                        const allChildren = button.parentElement.parentElement.children;
+                        for (let i = 0; i < allChildren.length; i++) {
+                            // Set Active only on the curent button
+                            allChildren[i].classList.toggle('active', allChildren[i] == parent);
+                        }
 
                         if (!wasActive) {
                             // move left or right, based on config
-                            popup.css(pos === RenderPosition.Left || pos === RenderPosition.BottomLeft ? 'left' : 'right', button.outerWidth() - 1);
+                            popup.style[pos === RenderPosition.Left || pos === RenderPosition.BottomLeft ? 'left' : 'right'] = `${(button.offsetWidth - 1)}px`;
 
                             // is this rendering on the bottom (if no, then is top by default)
                             if (pos === RenderPosition.BottomLeft || pos === RenderPosition.BottomRight) {
-                                const bottom = $(window).height() - button.offset().top - button.outerHeight() + $(window).scrollTop(); // get bottom of button
-                                popup.css({ 'bottom': 0, 'max-height': 'calc(100vh - ' + (bottom + 25) + 'px)' });
+                                const bottom = window.innerHeight - button.getBoundingClientRect().top - button.offsetHeight + window.scrollY; // get bottom of button
+                                popup.style.bottom = '0';
+                                popup.style.maxHeight = 'calc(100vh - ' + (bottom + 25) + 'px)';
                             } else {
-                                popup.css({ 'top': 0, 'max-height': 'calc(100vh - ' + (button.offset().top - $(window).scrollTop() + 25) + 'px)' });
+                                popup.style.top = '0';
+                                popup.style.maxHeight = 'calc(100vh - ' + (button.getBoundingClientRect().top - window.window.scrollY + 25) + 'px)';
                             }
                         }
-                    }).on('click', '.mp-queries-show', function(e) {
+                        return;
+                    }
+                    const queriesButton = target.closest('.mp-queries-show') as HTMLElement;
+                    if (queriesButton) {
                         // opaque background
-                        const overlay = $('<div class="mp-overlay"><div class="mp-overlay-bg"/></div>').appendTo('body');
-                        const queries = $(this).closest('.mp-result').find('.mp-queries').clone().appendTo(overlay).show();
+                        document.body.insertAdjacentHTML('beforeend', '<div class="mp-overlay"><div class="mp-overlay-bg"/></div>');
+                        const overlay = document.querySelector('.mp-overlay');
+                        const queriesOrig = queriesButton.closest('.mp-result').querySelector('.mp-queries');
+                        const queries = queriesOrig.cloneNode(true) as HTMLDivElement;
+                        queries.style.display = 'block';
+                        overlay.appendChild(queries);
 
-                        mp.scrollToQuery($(this), queries, queries);
+                        mp.scrollToQuery(queriesButton, queries);
 
                         // syntax highlighting
-                        queries.find('pre code').each((i, block) => mp.highlight(block));
-                    }).on('click keyup', (e) => {
-                        const active = $('.mp-result.active');
-                        if (active.length) {
-                            const bg = $('.mp-overlay');
-                            const isEscPress = e.type === 'keyup' && e.which === 27;
-                            const isBgClick = e.type === 'click' && !$(e.target).closest('.mp-queries, .mp-results').length;
+                        queries.querySelectorAll('pre code').forEach(block => mp.highlight(block as HTMLElement));
+                        return;
+                    }
+                });
+                // Background and esc binding to close popups
+                const tryCloseActive = (event: MouseEvent | KeyboardEvent) => {
+                    const target = event.target as HTMLElement;
+                    const active = document.querySelector('.mp-result.active') as HTMLElement;
+                    if (!active) return;
 
-                            if (isEscPress || isBgClick) {
-                                if (bg.is(':visible')) {
-                                    bg.remove();
-                                } else {
-                                    active.removeClass('active');
+                    const bg = document.querySelector('.mp-overlay') as HTMLDivElement;
+                    const isEscPress = event.type === 'keyup' && event.which === 27;
+                    const isBgClick = event.type === 'click' && !target.closest('.mp-queries, .mp-results');
+
+                    if (isEscPress || isBgClick) {
+                        if (bg && bg.offsetParent !== null) {
+                            bg.remove();
+                        } else {
+                            active.classList.remove('active');
+                        }
+                    }
+                }
+                document.addEventListener('click', tryCloseActive);
+                document.addEventListener('keyup', tryCloseActive);
+
+                if (mp.options.toggleShortcut && !mp.options.toggleShortcut.match(/^None$/i)) {
+                    /**
+                     * Based on http://www.openjs.com/scripts/events/keyboard_shortcuts/
+                     * Version : 2.01.B
+                     * By Binny V A
+                     * License : BSD
+                     */
+                    const keys = mp.options.toggleShortcut.toLowerCase().split("+");
+
+                    document.addEventListener('keydown', function (e) {
+                        let element = e.target as HTMLElement;
+                        if (element.nodeType == 3) element = element.parentElement;
+                        if (element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
+
+                        //Find Which key is pressed
+                        let code;
+                        if (e.keyCode) code = e.keyCode;
+                        else if (e.which) code = e.which;
+
+                        let character = String.fromCharCode(code).toLowerCase();
+                        if (code == 188) character = ","; //If the user presses , when the type is onkeydown
+                        if (code == 190) character = "."; //If the user presses , when the type is onkeydown
+
+                        //Key Pressed - counts the number of valid keypresses - if it is same as the number of keys, the shortcut function is invoked
+                        let kp = 0;
+                        //Work around for stupid Shift key bug created by using lowercase - as a result the shift+num combination was broken
+                        const shift_nums = {
+                            "`": "~",
+                            "1": "!",
+                            "2": "@",
+                            "3": "#",
+                            "4": "$",
+                            "5": "%",
+                            "6": "^",
+                            "7": "&",
+                            "8": "*",
+                            "9": "(",
+                            "0": ")",
+                            "-": "_",
+                            "=": "+",
+                            ";": ":",
+                            "'": "\"",
+                            ",": "<",
+                            ".": ">",
+                            "/": "?",
+                            "\\": "|"
+                        }
+                        //Special Keys - and their codes
+                        const special_keys = {
+                            'esc': 27,
+                            'escape': 27,
+                            'tab': 9,
+                            'space': 32,
+                            'return': 13,
+                            'enter': 13,
+                            'backspace': 8,
+
+                            'scrolllock': 145,
+                            'scroll_lock': 145,
+                            'scroll': 145,
+                            'capslock': 20,
+                            'caps_lock': 20,
+                            'caps': 20,
+                            'numlock': 144,
+                            'num_lock': 144,
+                            'num': 144,
+
+                            'pause': 19,
+                            'break': 19,
+
+                            'insert': 45,
+                            'home': 36,
+                            'delete': 46,
+                            'end': 35,
+
+                            'pageup': 33,
+                            'page_up': 33,
+                            'pu': 33,
+
+                            'pagedown': 34,
+                            'page_down': 34,
+                            'pd': 34,
+
+                            'left': 37,
+                            'up': 38,
+                            'right': 39,
+                            'down': 40,
+
+                            'f1': 112,
+                            'f2': 113,
+                            'f3': 114,
+                            'f4': 115,
+                            'f5': 116,
+                            'f6': 117,
+                            'f7': 118,
+                            'f8': 119,
+                            'f9': 120,
+                            'f10': 121,
+                            'f11': 122,
+                            'f12': 123
+                        }
+
+                        const modifiers = {
+                            shift: { wanted: false },
+                            ctrl: { wanted: false },
+                            alt: { wanted: false }
+                        };
+
+                        for (let i = 0; i < keys.length; i++) {
+                            const k = keys[i];
+                            if (k == 'ctrl' || k == 'control') {
+                                kp++;
+                                modifiers.ctrl.wanted = true;
+                            } else if (k == 'shift') {
+                                kp++;
+                                modifiers.shift.wanted = true;
+                            } else if (k == 'alt') {
+                                kp++;
+                                modifiers.alt.wanted = true;
+                            } else if (k.length > 1) { //If it is a special key
+                                if (special_keys[k] == code) kp++;
+                            } else { //The special keys did not match
+                                if (character == k) kp++;
+                                else if (shift_nums[character] && e.shiftKey) { //Stupid Shift key bug created by using lowercase
+                                    character = shift_nums[character];
+                                    if (character == k) kp++;
                                 }
                             }
                         }
-                    });
-                if (mp.options.toggleShortcut && !mp.options.toggleShortcut.match(/^None$/i)) {
-                    $(document).bind('keydown', mp.options.toggleShortcut, (e) => $('.mp-results').toggle());
+                        if (kp == keys.length
+                            && e.ctrlKey == modifiers.ctrl.wanted
+                            && e.shiftKey == modifiers.shift.wanted
+                            && e.altKey == modifiers.alt.wanted) {
+                            const results = document.querySelector('.mp-results') as HTMLElement;
+                            results.style.display = results.style.display == 'none' ? 'block' : 'none';
+                        }
+                    }, false);
                 }
             }
         }
 
-        private initControls = (container: JQuery) => {
-            const $ = this.jq;
+        private initControls = (container: HTMLDivElement) => {
             if (this.options.showControls) {
-                this.controls = $('<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>').appendTo(container);
+                container.insertAdjacentHTML('beforeend', '<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>');
+                this.controls = container.querySelector('mp-controls') as HTMLDivElement;
 
-                $('.mp-controls .mp-min-max').click(() => container.toggleClass('mp-min'));
+                const minMax = container.querySelector('.mp-controls .mp-min-max')[0];
+                minMax.addEventListener('click', function () {
+                    container.classList.toggle('mp-min');
+                });
 
-                container.hover(
-                    function() {
-                        if ($(this).hasClass('mp-min')) {
-                            $(this).find('.mp-min-max').show();
-                        }
-                    },
-                    function() {
-                        if ($(this).hasClass('mp-min')) {
-                            $(this).find('.mp-min-max').hide();
-                        }
-                    });
+                container.addEventListener('mouseover', function () {
+                    if (this.classList.contains('mp-min')) {
+                        minMax.style.display = 'block';
+                    }
+                });
+                container.addEventListener('mouseout', function () {
+                    if (this.classList.contains('mp-min')) {
+                        minMax.style.display = 'none';
+                    }
+                });
 
-                $('.mp-controls .mp-clear').click(() => container.find('.mp-result').remove());
+                const clear = container.querySelector('.mp-result')[0];
+                clear.addEventListener('click', function () {
+                    clear.parentNode.removeChild(clear);
+                });
             } else {
-                container.addClass('mp-no-controls');
+                container.classList.add('mp-no-controls');
             }
         }
 
@@ -1018,7 +1203,7 @@ namespace StackExchange.Profiling {
                 }
             }
 
-            function handleXHR(xhr: XMLHttpRequest | JQuery.jqXHR | Sys.Net.WebRequestExecutor) {
+            function handleXHR(xhr: XMLHttpRequest | Sys.Net.WebRequestExecutor) {
                 // iframed file uploads don't have headers
                 if (xhr && xhr.getResponseHeader) {
                     // should be an array of strings, e.g. ["008c4813-9bd7-443d-9376-9441ec4d6a8c","16ff377b-8b9c-4c20-a7b5-97cd9fa7eea7"]
@@ -1027,11 +1212,11 @@ namespace StackExchange.Profiling {
             }
 
             // we need to attach our AJAX complete handler to the window's (profiled app's) copy, not our internal, no conflict version
-            const window$ = window.jQuery;
+            const windowjQuery = window.jQuery;
 
             // fetch profile results for any AJAX calls
-            if (window$ && window$(document) && window$(document).ajaxComplete) {
-                window$(document).ajaxComplete((e, xhr, settings) => handleXHR(xhr));
+            if (windowjQuery && windowjQuery(document) && windowjQuery(document).ajaxComplete) {
+                windowjQuery(document).ajaxComplete((_e: any, xhr: XMLHttpRequest, _settings: any) => handleXHR(xhr));
             }
 
             // fetch results after ASP Ajax calls
@@ -1078,7 +1263,7 @@ namespace StackExchange.Profiling {
 
             if (typeof (MooTools) !== 'undefined' && typeof (Request) !== 'undefined') {
                 Request.prototype.addEvents({
-                    onComplete() {
+                    onComplete: function () {
                         handleXHR(this.xhr);
                     },
                 });
