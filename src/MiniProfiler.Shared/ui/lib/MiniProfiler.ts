@@ -736,7 +736,7 @@ namespace StackExchange.Profiling {
         </table>`;
             };
 
-            function clientTimings() {
+            const clientTimings = () => {
                 if (!p.ClientTimings) {
                     return '';
                 }
@@ -793,7 +793,7 @@ namespace StackExchange.Profiling {
         </table>`;
             }
 
-            function profilerQueries() {
+            const profilerQueries = () => {
                 if (!p.HasCustomTimings) {
                     return '';
                 }
