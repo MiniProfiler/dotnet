@@ -7,7 +7,7 @@ using StackExchange.Profiling.Internal;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// For ASP.NET NON-Core applications, the MiniPofiler v3 and below style, using <see cref="HttpContext.Items"/> for storage.
+    /// For ASP.NET NON-Core applications, the MiniProfiler v3 and below style, using <see cref="HttpContext.Items"/> for storage.
     /// This is a <see cref="HttpContext"/>-based profiler provider.
     /// </summary>
     public class AspNetRequestProvider : DefaultProfilerProvider
@@ -44,7 +44,7 @@ namespace StackExchange.Profiling
         /// Starts a new MiniProfiler and associates it with the current <see cref="HttpContext.Current"/>.
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
-        /// <param name="options">The options to start the MiniPofiler with. Likely a more-specific type underneath.</param>
+        /// <param name="options">The options to start the MiniProfiler with. Likely a more-specific type underneath.</param>
         public override MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options)
         {
             HttpRequest request;

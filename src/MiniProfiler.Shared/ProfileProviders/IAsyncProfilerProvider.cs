@@ -24,7 +24,7 @@ namespace StackExchange.Profiling
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the URL will be used for the overall session name.
         /// </param>
-        /// <param name="options">The options to start the MiniPofiler with. Likely a more-specific type underneath.</param>
+        /// <param name="options">The options to start the MiniProfiler with. Likely a more-specific type underneath.</param>
         MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options);
 
         /// <summary>
