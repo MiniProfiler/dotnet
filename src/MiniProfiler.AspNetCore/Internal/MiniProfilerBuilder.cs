@@ -4,7 +4,7 @@ using System;
 namespace StackExchange.Profiling.Internal
 {
     /// <summary>
-    /// Allows fine grained configuration of MiniProfilder services.
+    /// Allows fine grained configuration of MiniProfiler services.
     /// </summary>
     public class MiniProfilerBuilder : IMiniProfilerBuilder
     {

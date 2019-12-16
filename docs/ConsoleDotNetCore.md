@@ -20,10 +20,10 @@ Install-Package MiniProfiler.AspNetCore -IncludePrerelease
 ```c#
 public static void Main()
 {
-    // Default configuration usually works for most, but overrde, you can call:
+    // Default configuration usually works for most, but override, you can call:
     // MiniProfiler.Configure(new MiniProfilerOptions { ... });
-    
-    var profiler = MiniProfiler.StartNew("My Pofiler Name");
+
+    var profiler = MiniProfiler.StartNew("My Profiler Name");
     using (profiler.Step("Main Work"))
     {
         // Do some work...

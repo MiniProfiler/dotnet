@@ -21,7 +21,7 @@ Install-Package MiniProfiler.AspNetCore.Mvc -IncludePrerelease
 public void ConfigureServices(IServiceCollection services)
 {
     // ...existing configuration...
-    
+
     // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
     services.AddMiniProfiler(options =>
     {
@@ -51,9 +51,9 @@ public void ConfigureServices(IServiceCollection services)
         options.UserIdProvider =  request => MyGetUserIdFunction(request);
 
         // (Optional) Swap out the entire profiler provider, if you want
-        // (default handles async and works fine for almost all appliations)
+        // (default handles async and works fine for almost all applications)
         options.ProfilerProvider = new MyProfilerProvider();
-        
+
         // (Optional) You can disable "Connection Open()", "Connection Close()" (and async variant) tracking.
         // (defaults to true, and connection opening/closing is tracked)
         options.TrackConnectionOpenClose = true;
@@ -90,7 +90,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 ```html
 <mini-profiler />
 ```
-<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>  
+<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>
 <sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're working on smoother alternatives here.</sub>
 
 
@@ -100,7 +100,7 @@ Now you're ready to profile. In addition to [the usual `using` wrap method]({{ s
 
 ```html
 <profile name="My Profiling Step via a <profile> Tag">
-    @{ SomethingExpnsive(); }
+    @{ SomethingExpensive(); }
     <span>Hello Mars!</span>
 </profile>
 ```

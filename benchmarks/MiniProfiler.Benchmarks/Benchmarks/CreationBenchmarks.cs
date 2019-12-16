@@ -14,7 +14,7 @@ namespace Benchmarks.Benchmarks
         [Benchmark(Description = "Start and Stop MiniProfiler")]
         public void StartStopProfiler()
         {
-            var profiler = BaseOptions.StartProfiler("My Pofiler");
+            var profiler = BaseOptions.StartProfiler("My Profiler");
             profiler.Stop(true);
         }
     }
