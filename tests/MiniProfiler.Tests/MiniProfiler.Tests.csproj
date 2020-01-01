@@ -3,7 +3,6 @@
     <AssemblyName>MiniProfiler.Tests</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
     <TargetFrameworks>net461;netcoreapp2.2</TargetFrameworks>
-    <IsTestProject Condition="'$(OS)' != 'Windows_NT' AND $(TargetFramework.StartsWith('net4'))">false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
