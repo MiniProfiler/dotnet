@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
+    <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
+    <IsTestProject Condition="'$(OS)' != 'Windows_NT' AND $(TargetFramework.StartsWith('net4'))">false</IsTestProject>
+
+    <DebugSymbols>true</DebugSymbols>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="DynamicDependentFile" />
+    <ProjectCapability Include="DynamicFileNesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
+  </ItemGroup>
+</Project>

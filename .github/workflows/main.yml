@@ -63,4 +63,4 @@ jobs:
         PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
         SQLServerConnectionString: Server=tcp:127.0.0.1,${{ job.services.sqlserver.ports[1433] }};Database=tempdb;User Id=sa;Password=g0d4mm!tSQLServer;
     - name: .NET Lib Pack
-      run: dotnet pack Build.csproj --no-build -c Release /p:Packing=true /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
+      run: dotnet pack Build.csproj --no-build -c Release /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true

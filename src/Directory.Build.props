@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
   <PropertyGroup>
     <VersionPrefix>4.0.0</VersionPrefix>
     <RootNamespace>StackExchange.Profiling</RootNamespace>
@@ -6,9 +7,7 @@
     <OutputType>Library</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
 
     <PackageId>$(AssemblyName)</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -21,16 +20,12 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryBranch>master</RepositoryBranch>
 
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectCapability Include="DynamicDependentFile" />
-    <ProjectCapability Include="DynamicFileNesting" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.0.25" PrivateAssets="all" />
