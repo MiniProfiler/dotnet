@@ -1,8 +1,6 @@
-<Project Sdk="Microsoft.Build.Traversal/2.0.19">
+<Project Sdk="Microsoft.Build.Traversal/2.0.24">
   <ItemGroup>
     <ProjectReference Include="src\**\*.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="$(Packing) != 'true'">
     <ProjectReference Include="samples\**\*.csproj" Exclude="samples\**\*Mvc5*.csproj" />
     <ProjectReference Include="tests\**\*.csproj" />
   </ItemGroup>
