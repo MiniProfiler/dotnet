@@ -834,7 +834,7 @@ namespace StackExchange.Profiling {
                 <div class="mp-number">
                   ${duration(ct.DurationMilliseconds)} <span class="mp-unit">ms (T+${duration(ct.StartMilliseconds)} ms)</span>
                 </div>
-                ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.DurationMilliseconds)} <span class="mp-unit">ms</span></div>` : '')}
+                ${(ct.FirstFetchDurationMilliseconds ? `<div>First Result: ${duration(ct.FirstFetchDurationMilliseconds)} <span class="mp-unit">ms</span></div>` : '')}
               </td>
               <td>
                 <div class="query">
