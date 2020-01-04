@@ -85,7 +85,7 @@ namespace StackExchange.Profiling.Data
              * SqlDataAdapter type and would thus work fine with this workaround.
              */
 
-            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
             {
                 return InternalAdapter.Fill(dataSet);
             }
@@ -130,7 +130,7 @@ namespace StackExchange.Profiling.Data
                     "If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
             }
 
-            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
             {
                 return dbDataAdapter.Fill(dataTable);
             }
@@ -200,9 +200,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _selectCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.SelectCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -216,9 +214,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _insertCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.InsertCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -232,9 +228,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _updateCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.UpdateCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -248,9 +242,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _deleteCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.DeleteCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
     }
