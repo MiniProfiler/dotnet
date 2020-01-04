@@ -35,6 +35,7 @@ namespace StackExchange.Profiling.Data
         /// Notifies the observer that the provider has finished sending push-based notifications.
         /// </summary>
         public void OnCompleted() { }
+
         /// <summary>
         /// Notifies the observer that the provider has experienced an error condition.
         /// </summary>

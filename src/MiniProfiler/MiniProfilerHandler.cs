@@ -84,31 +84,15 @@ namespace StackExchange.Profiling
         /// <param name="context">The <see cref="HttpContext"/> to process.</param>
         public void ProcessRequest(HttpContext context)
         {
-            string output;
             string path = context.Request.AppRelativeCurrentExecutionFilePath;
-
-            switch (Path.GetFileNameWithoutExtension(path).ToLowerInvariant())
+            var output = (Path.GetFileNameWithoutExtension(path).ToLowerInvariant()) switch
             {
-                case "includes.min":
-                    output = Includes(context, path);
-                    break;
-
-                case "results-index":
-                    output = ResultsIndex(context);
-                    break;
-
-                case "results-list":
-                    output = ResultsList(context);
-                    break;
-
-                case "results":
-                    output = GetSingleProfilerResult(context);
-                    break;
-
-                default:
-                    output = NotFound(context);
-                    break;
-            }
+                "includes.min" => Includes(context, path),
+                "results-index" => ResultsIndex(context),
+                "results-list" => ResultsList(context),
+                "results" => GetSingleProfilerResult(context),
+                _ => NotFound(context),
+            };
 
             if (Options.EnableCompression && output.HasValue())
             {
@@ -246,7 +230,7 @@ namespace StackExchange.Profiling
                 id = Options.Storage.List(1).FirstOrDefault();
             }
 
-            if (id == default(Guid))
+            if (id == default)
                 return jsonRequest ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             var profiler = Options.Storage.Load(id);
@@ -277,7 +261,7 @@ namespace StackExchange.Profiling
                 Options.Storage.Save(profiler);
             }
 
-            if (!AuthorizeRequest(context, isList: false, message: out string authorizeMessage))
+            if (!AuthorizeRequest(context, isList: false, message: out _))
             {
                 context.Response.ContentType = "application/json";
                 return @"""hidden"""; // JSON

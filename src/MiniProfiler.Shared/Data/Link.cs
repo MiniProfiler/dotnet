@@ -62,7 +62,7 @@ namespace StackExchange.Profiling.Data
                 link = link.Tail;
             }
 
-            value = default(TValue);
+            value = default;
             return false;
         }
 

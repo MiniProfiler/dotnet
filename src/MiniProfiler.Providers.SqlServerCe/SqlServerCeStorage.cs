@@ -34,23 +34,24 @@ namespace StackExchange.Profiling.Storage
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
-        private string SaveSql => _saveSql ?? (_saveSql = $@"
+
+        private string SaveSql => _saveSql ??= $@"
 INSERT INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)"); // this syntax works on both MSSQL and SQLite
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)"; // this syntax works on both MSSQL and SQLite
 
-        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+        private string SaveTimingsSql => _saveTimingsSql ??= $@"
 INSERT INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)";
 
-        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+        private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
 INSERT INTO {MiniProfilerClientTimingsTable}
              (Id, MiniProfilerId, Name, Start, Duration)
 SELECT       @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -177,9 +178,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         }
 
         private string _getSql, _getTimingsSql, _getClientTimingsSql;
-        private string GetSql => _getSql ?? (_getSql = $"SELECT * FROM {MiniProfilersTable} WHERE Id = @id");
-        private string GetTimingsSql => _getTimingsSql ?? (_getTimingsSql = $"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds");
-        private string GetClientTimingsSql => _getClientTimingsSql ?? (_getClientTimingsSql = $"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start");
+        private string GetSql => _getSql ??= $"SELECT * FROM {MiniProfilersTable} WHERE Id = @id";
+        private string GetTimingsSql => _getTimingsSql ??= $"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds";
+        private string GetClientTimingsSql => _getClientTimingsSql ??= $"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start";
 
         /// <summary>
         /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
@@ -264,11 +265,12 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private string _toggleViewedSql;
-        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+
+        private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
-   And [User] = @user");
+   And [User] = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
         {
@@ -287,12 +289,13 @@ Update {MiniProfilersTable}
         }
 
         private string _getUnviewedIdsSql;
-        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
+
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select Id
     From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
-Order By Started");
+Order By Started";
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.

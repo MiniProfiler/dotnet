@@ -2,6 +2,7 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
+    <LangVersion>latest</LangVersion>
 
     <DebugSymbols>true</DebugSymbols>
     <IsPackable>false</IsPackable>

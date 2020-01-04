@@ -27,7 +27,7 @@ namespace StackExchange.Profiling
             var timing = profiledDbCommand.GetTiming(executeType.ToString(), this);
             lock (_dbLocker)
             {
-                _inProgress = _inProgress ?? new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
+                _inProgress ??= new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
             }
             lock (_inProgress)
             {
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling
             {
                 lock (_dbLocker)
                 {
-                    _inProgressReaders = _inProgressReaders ?? new Dictionary<IDataReader, CustomTiming>();
+                    _inProgressReaders ??= new Dictionary<IDataReader, CustomTiming>();
                 }
                 lock (_inProgressReaders)
                 {

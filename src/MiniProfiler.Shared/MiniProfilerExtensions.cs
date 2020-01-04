@@ -137,7 +137,7 @@ namespace StackExchange.Profiling
 
             lock (profiler)
             {
-                profiler.CustomLinks = profiler.CustomLinks ?? new Dictionary<string, string>();
+                profiler.CustomLinks ??= new Dictionary<string, string>();
             }
 
             profiler.CustomLinks[text] = url;

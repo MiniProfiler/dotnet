@@ -77,6 +77,7 @@ namespace StackExchange.Profiling
         public decimal StartMilliseconds { get; set; }
 
         private List<Timing> _children;
+
         /// <summary>
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
@@ -262,10 +263,10 @@ namespace StackExchange.Profiling
         {
             lock (_syncRoot)
             {
-                Children = Children ?? new List<Timing>();
+                Children ??= new List<Timing>();
                 Children.Add(timing);
             }
-            timing.Profiler = timing.Profiler ?? Profiler;
+            timing.Profiler ??= Profiler;
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
             if (Profiler != null)
