@@ -157,7 +157,7 @@ namespace StackExchange.Profiling.Internal
     <title>List of profiling sessions</title>
     <script id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
     <link href=""{path}includes.min.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
+    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme.ToString()}'}});</script>
   </head>
   <body>
     <table class=""mp-results-index"">

@@ -388,6 +388,7 @@ namespace StackExchange.Profiling {
                 const getTiming = (profiler: IProfiler, name: string) =>
                     profiler.ClientTimings.Timings.filter((t) => t.Name === name)[0] || { Name: name, Duration: '', Start: '' };
 
+                document.documentElement.classList.add('mp-scheme-' + opt.colorScheme.toLowerCase());
                 fetch(opt.path + 'results-list?last-id=' + id, {
                     method: 'GET',
                     headers: {
@@ -957,6 +958,7 @@ namespace StackExchange.Profiling {
                         mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'));
                     }
                 });
+                document.documentElement.classList.add('mp-scheme-' + mp.options.colorScheme.toLowerCase());
             } else {
                 document.addEventListener('click', function (event) {
                     const target = event.target as HTMLElement;
