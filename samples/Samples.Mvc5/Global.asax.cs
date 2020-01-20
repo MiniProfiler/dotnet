@@ -112,6 +112,7 @@ namespace Samples.Mvc5
                 // specified position in the .RenderIncludes() call.
                 PopupRenderPosition = RenderPosition.Right,  // defaults to left
                 PopupMaxTracesToShow = 10,                   // defaults to 15
+                ColorScheme = ColorScheme.Auto,              // defaults to light
 
                 // ResultsAuthorize (optional - open to all by default):
                 // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we

@@ -68,6 +68,10 @@ namespace StackExchange.Profiling.Internal
             sb.Append((position ?? options.PopupRenderPosition).ToString());
             sb.Append('"');
 
+            sb.Append("\" data-scheme=\"");
+            sb.Append(options.ColorScheme.ToString());
+            sb.Append('"');
+
             if (isAuthorized)
             {
                 sb.Append(" data-authorized=\"true\"");
