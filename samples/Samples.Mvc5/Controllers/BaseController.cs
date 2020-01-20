@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data.Common;
 using System.Web.Mvc;
-
-using Dapper;
 using StackExchange.Profiling;
 
 namespace Samples.Mvc5.Controllers

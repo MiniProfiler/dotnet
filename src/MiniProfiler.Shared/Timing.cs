@@ -218,10 +218,7 @@ namespace StackExchange.Profiling
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object obj)
-        {
-            return obj is Timing && Id.Equals(((Timing)obj).Id);
-        }
+        public override bool Equals(object obj) => obj is Timing timing && Id.Equals(timing.Id);
 
         /// <summary>
         /// Returns hash code of Id.

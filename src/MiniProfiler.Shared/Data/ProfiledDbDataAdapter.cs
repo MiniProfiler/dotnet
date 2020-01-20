@@ -123,12 +123,8 @@ namespace StackExchange.Profiling.Data
         /// <exception cref="InvalidOperationException">The source table is invalid or being used with an <see cref="IDbDataAdapter"/> implementation that does not inherit from <see cref="DbDataAdapter"/>.</exception>
         public new int Fill(DataTable dataTable)
         {
-            var dbDataAdapter = InternalAdapter as DbDataAdapter;
-            if (dbDataAdapter == null)
-            {
-                throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. " +
-                    "If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
-            }
+            var dbDataAdapter = InternalAdapter as DbDataAdapter
+                ?? throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
 
             if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
             {

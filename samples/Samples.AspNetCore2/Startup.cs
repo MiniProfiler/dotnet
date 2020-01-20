@@ -54,7 +54,7 @@ namespace Samples.AspNetCore
                 options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.SqlServerFormatter();
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
-                options.ResultsAuthorize = request => !Program.DisableProfilingResults;
+                options.ResultsAuthorize = _ => !Program.DisableProfilingResults;
                 //options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
 
                 // To control which requests are profiled, use the Func<HttpRequest, bool> option:
@@ -80,7 +80,7 @@ namespace Samples.AspNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
