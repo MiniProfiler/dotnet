@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
-using StackExchange.Profiling.Internal;
 using System.Runtime.Caching;
 
 namespace StackExchange.Profiling.Storage

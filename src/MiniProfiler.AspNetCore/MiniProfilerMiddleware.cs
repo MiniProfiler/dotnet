@@ -218,7 +218,7 @@ namespace StackExchange.Profiling
                     break;
             }
 
-            result = result ?? NotFound(context, "Not Found: " + subPath);
+            result ??= NotFound(context, "Not Found: " + subPath);
             context.Response.ContentLength = result != null ? Encoding.UTF8.GetByteCount(result) : 0;
 
             await context.Response.WriteAsync(result).ConfigureAwait(false);

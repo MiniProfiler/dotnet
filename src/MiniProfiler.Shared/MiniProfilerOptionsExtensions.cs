@@ -1,5 +1,4 @@
-﻿using System;
-using StackExchange.Profiling.Internal;
+﻿using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {

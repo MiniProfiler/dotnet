@@ -70,22 +70,16 @@ namespace StackExchange.Profiling.SqlFormatters
                     result = string.Format("'{0}'", result);
                     break;
                 case "boolean":
-                    switch (result)
+                    result = result switch
                     {
-                        case "True":
-                            result = "1";
-                            break;
-                        case "False":
-                            result = "0";
-                            break;
-                        default:
-                            result = null;
-                            break;
-                    }
+                        "True" => "1",
+                        "False" => "0",
+                        _ => null,
+                    };
                     break;
             }
 
-            result = result ?? "null";
+            result ??= "null";
             if (includeTypeInfo)
             {
                 result += " /* " + param.Name + " DbType." + param.DbType + " */";

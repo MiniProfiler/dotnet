@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     /// <typeparam name="TKey">The key type.</typeparam>
     /// <typeparam name="TValue">The value type.</typeparam>
-    public class Link<TKey, TValue> where TKey : class
+    public sealed class Link<TKey, TValue> where TKey : class
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Link{TKey,TValue}"/> class.
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling.Data
                 link = link.Tail;
             }
 
-            value = default(TValue);
+            value = default;
             return false;
         }
 

@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{CC4009
 		appveyor.yml = appveyor.yml
 		Build.csproj = Build.csproj
 		build.ps1 = build.ps1
+		Directory.Build.props = Directory.Build.props
 		LICENSE.txt = LICENSE.txt
 		miniprofiler.snk = miniprofiler.snk
 		nuget.config = nuget.config
@@ -243,8 +244,8 @@ Global
 		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

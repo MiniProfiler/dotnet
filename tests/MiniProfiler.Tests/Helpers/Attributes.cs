@@ -21,10 +21,11 @@ namespace StackExchange.Profiling.Tests
     public class FactAttribute : Xunit.FactAttribute
     {
         private bool _windowsOnly;
-        public bool WindowsOnly 
+
+        public bool WindowsOnly
         {
             get => _windowsOnly;
-            set 
+            set
             {
                 _windowsOnly = value;
                 if (_windowsOnly && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -60,10 +61,11 @@ namespace StackExchange.Profiling.Tests
     public class TheoryAttribute : Xunit.TheoryAttribute
     {
         private bool _windowsOnly;
-        public bool WindowsOnly 
+
+        public bool WindowsOnly
         {
             get => _windowsOnly;
-            set 
+            set
             {
                 _windowsOnly = value;
                 if (_windowsOnly && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

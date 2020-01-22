@@ -31,26 +31,25 @@ namespace StackExchange.Profiling.Storage
         public SqlServerStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
-        private string _saveSql;
-        private string SaveSql => _saveSql ?? (_saveSql = $@"
+        private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
+
+        private string SaveSql => _saveSql ??= $@"
 INSERT INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)";
 
-        private string _saveTimingsSql;
-        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+        private string SaveTimingsSql => _saveTimingsSql ??= $@"
 INSERT INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)";
 
-        private string _saveClientTimingsSql;
-        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+        private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
 INSERT INTO {MiniProfilerClientTimingsTable}
             (Id, MiniProfilerId, Name, Start, Duration)
 SELECT      @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)");
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -180,10 +179,11 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         }
 
         private string _loadSql;
-        private string LoadSql => _loadSql ?? (_loadSql = $@"
+
+        private string LoadSql => _loadSql ??= $@"
 SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
 SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -270,11 +270,12 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private string _toggleViewedSql;
-        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+
+        private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
  Where Id = @id 
-   And [User] = @user");
+   And [User] = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
         {
@@ -293,12 +294,13 @@ Update {MiniProfilersTable}
         }
 
         private string _getUnviewedIdsSql;
-        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
+
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select Id
     From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
-Order By Started");
+Order By Started";
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.

@@ -133,11 +133,11 @@ namespace StackExchange.Profiling
         /// <param name="url">The URL the link goes to.</param>
         public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
         {
-            if (profiler == null || !profiler.IsActive) return;
+            if (profiler?.IsActive != true) return;
 
             lock (profiler)
             {
-                profiler.CustomLinks = profiler.CustomLinks ?? new Dictionary<string, string>();
+                profiler.CustomLinks ??= new Dictionary<string, string>();
             }
 
             profiler.CustomLinks[text] = url;

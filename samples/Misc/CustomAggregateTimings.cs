@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using StackExchange.Profiling;
 
@@ -36,11 +35,13 @@ namespace Misc
 
         public void Method1(string name)
         {
+            _ = name ?? throw new ArgumentException("This exception is stupid");
             Thread.Sleep(30);
         }
 
         public void Method2(string name)
         {
+            _ = name ?? throw new ArgumentException("This exception is stupid");
             Thread.Sleep(60);
         }
     }

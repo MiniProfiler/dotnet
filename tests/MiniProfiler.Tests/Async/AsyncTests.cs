@@ -133,7 +133,7 @@ namespace StackExchange.Profiling.Tests.Async
                 }, TaskCreationOptions.LongRunning)
             );
 
-            bool hasPendingTasks(List<CountdownEvent> handlers2) => (handlers2.Count == 0) || handlers2.Any(y => !y.IsSet);
+            static bool hasPendingTasks(List<CountdownEvent> handlers2) => (handlers2.Count == 0) || handlers2.Any(y => !y.IsSet);
 
             // TODO Make this a thread safe signaling lock step to avoid sleeping
             // Wait for tasks to run and call their Step() methods

@@ -35,6 +35,7 @@ namespace StackExchange.Profiling.Data
         /// Notifies the observer that the provider has finished sending push-based notifications.
         /// </summary>
         public void OnCompleted() { }
+
         /// <summary>
         /// Notifies the observer that the provider has experienced an error condition.
         /// </summary>
@@ -65,7 +66,7 @@ namespace StackExchange.Profiling.Data
                 if (val is CommandExecutedEventData data && _commands.TryRemove(data.CommandId, out var current))
                 {
                     // A completion for a DataReader only means we *started* getting data back, not finished.
-                    if (data.Result is RelationalDataReader reader)
+                    if (data.Result is RelationalDataReader)
                     {
                         _readers[data.CommandId] = current;
                         current.FirstFetchCompleted();
