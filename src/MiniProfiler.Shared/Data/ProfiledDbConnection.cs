@@ -92,7 +92,7 @@ namespace StackExchange.Profiling.Data
         public override void Close()
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 _connection.Close();
                 return;
@@ -110,7 +110,7 @@ namespace StackExchange.Profiling.Data
         public override void Open()
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 _connection.Open();
                 return;
@@ -129,7 +129,7 @@ namespace StackExchange.Profiling.Data
         public override async Task OpenAsync(CancellationToken cancellationToken)
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 await _connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                 return;

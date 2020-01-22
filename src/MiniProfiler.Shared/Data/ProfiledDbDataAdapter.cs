@@ -85,7 +85,7 @@ namespace StackExchange.Profiling.Data
              * SqlDataAdapter type and would thus work fine with this workaround.
              */
 
-            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
             {
                 return InternalAdapter.Fill(dataSet);
             }
@@ -123,14 +123,10 @@ namespace StackExchange.Profiling.Data
         /// <exception cref="InvalidOperationException">The source table is invalid or being used with an <see cref="IDbDataAdapter"/> implementation that does not inherit from <see cref="DbDataAdapter"/>.</exception>
         public new int Fill(DataTable dataTable)
         {
-            var dbDataAdapter = InternalAdapter as DbDataAdapter;
-            if (dbDataAdapter == null)
-            {
-                throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. " +
-                    "If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
-            }
+            var dbDataAdapter = InternalAdapter as DbDataAdapter
+                ?? throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
 
-            if (_profiler == null || !_profiler.IsActive || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
             {
                 return dbDataAdapter.Fill(dataTable);
             }
@@ -200,9 +196,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _selectCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.SelectCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.SelectCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -216,9 +210,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _insertCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.InsertCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.InsertCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -232,9 +224,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _updateCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.UpdateCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.UpdateCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
 
@@ -248,9 +238,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _deleteCommand = value;
-
-                var cmd = value as ProfiledDbCommand;
-                InternalAdapter.DeleteCommand = cmd == null ? value : cmd.InternalCommand;
+                InternalAdapter.DeleteCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
             }
         }
     }

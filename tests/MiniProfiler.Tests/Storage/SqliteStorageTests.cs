@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using System.IO;
 using StackExchange.Profiling.Storage;
 using Xunit;

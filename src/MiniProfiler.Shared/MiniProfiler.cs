@@ -114,6 +114,7 @@ namespace StackExchange.Profiling
         }
 
         private Timing _root;
+
         /// <summary>
         /// Gets or sets the root timing.
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.

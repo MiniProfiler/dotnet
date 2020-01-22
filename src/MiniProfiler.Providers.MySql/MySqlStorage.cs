@@ -33,20 +33,21 @@ namespace StackExchange.Profiling.Storage
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
-        private string SaveSql => _saveSql ?? (_saveSql = $@"
+
+        private string SaveSql => _saveSql ??= $@"
 INSERT IGNORE INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, User, HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
-VALUES(@Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount)");
+VALUES(@Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount)";
 
-        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+        private string SaveTimingsSql => _saveTimingsSql ??= $@"
 INSERT IGNORE INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
-VALUES(@Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson)");
+VALUES(@Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson)";
 
-        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+        private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
 INSERT IGNORE INTO {MiniProfilerClientTimingsTable}
             (Id, MiniProfilerId, Name, Start, Duration)
-VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)");
+VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -176,10 +177,11 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)");
         }
 
         private string _sqlStatements;
-        private string SqlStatements => _sqlStatements ?? (_sqlStatements = $@"
+
+        private string SqlStatements => _sqlStatements ??= $@"
 SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
 SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;");
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -266,11 +268,12 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private string _toggleViewedSql;
-        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+
+        private string ToggleViewedSql => _toggleViewedSql ??= $@"
 UPDATE {MiniProfilersTable} 
    SET HasUserViewed = @hasUserViewed 
  WHERE Id = @id 
-   AND User = @user");
+   AND User = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserViewed)
         {
@@ -289,12 +292,13 @@ UPDATE {MiniProfilersTable}
         }
 
         private string _getUnviewedIdsSql;
-        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
+
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   SELECT Id
     FROM {MiniProfilersTable}
    WHERE User = @user
      AND HasUserViewed = 0
-ORDER BY Started");
+ORDER BY Started";
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.

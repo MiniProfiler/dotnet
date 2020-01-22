@@ -11,8 +11,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The <see cref="ProfiledDbCommand"/>.</returns>
         object ICloneable.Clone()
         {
-            var tail = _command as ICloneable;
-            if (tail == null) throw new NotSupportedException("Underlying " + _command.GetType().Name + " is not cloneable");
+            var tail = _command as ICloneable ?? throw new NotSupportedException("Underlying " + _command.GetType().Name + " is not cloneable");
             return new ProfiledDbCommand((DbCommand)tail.Clone(), _connection, MiniProfiler.Current);
         }
     }

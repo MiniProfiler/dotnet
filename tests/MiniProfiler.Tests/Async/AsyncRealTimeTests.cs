@@ -87,7 +87,7 @@ namespace StackExchange.Profiling.Tests.Async
                 }, TaskCreationOptions.LongRunning).Unwrap()
             );
 
-            await whenAllTask;
+            await whenAllTask.ConfigureAwait(false);
 
             profiler.Stop();
 

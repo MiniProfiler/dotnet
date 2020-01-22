@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace Subtext.TestLibrary
@@ -21,7 +21,7 @@ namespace Subtext.TestLibrary
             {
                 return (T)field.GetValue(type);
             }
-            return default(T);
+            return default;
         }
 
         /// <summary>

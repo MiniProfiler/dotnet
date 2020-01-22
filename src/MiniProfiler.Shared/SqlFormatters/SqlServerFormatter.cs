@@ -251,7 +251,7 @@ namespace StackExchange.Profiling.SqlFormatters
                         {
                             resolvedType = translator(parameter);
                         }
-                        resolvedType = resolvedType ?? parameter.DbType;
+                        resolvedType ??= parameter.DbType;
                     }
 
                     var niceName = EnsureParameterPrefix(parameter.Name);

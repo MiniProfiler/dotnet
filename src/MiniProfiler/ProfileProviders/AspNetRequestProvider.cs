@@ -171,12 +171,12 @@ namespace StackExchange.Profiling
         private static void EnsureName(MiniProfiler profiler, HttpContext context)
         {
             string url = null;
-            string GetUrl() => url ?? (url = StringBuilderCache.Get()
+            string GetUrl() => url ??= StringBuilderCache.Get()
                                     .Append(context.Request.Url.Scheme)
                                     .Append("://")
                                     .Append(context.Request.Url.Host)
                                     .Append(context.Request.Url.PathAndQuery)
-                                    .ToStringRecycle());
+                                    .ToStringRecycle();
 
             // also set the profiler name to Controller/Action or /url
             if (profiler.Name.IsNullOrWhiteSpace())

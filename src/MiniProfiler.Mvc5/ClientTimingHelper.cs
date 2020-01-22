@@ -14,6 +14,7 @@ namespace StackExchange.Profiling.Mvc
         /// This needs to be called at the beginning of the layout for client side probe support, returns nothing if mini profiler is not enabled
         /// </summary>
         /// <param name="page">Page being timed</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used in existing public API (extension method)")]
         public static IHtmlString InitClientTimings(this WebPageBase page) =>
             MiniProfiler.Current == null ? null : new HtmlString(ClientTimingHelper.InitScript);
 
@@ -23,6 +24,7 @@ namespace StackExchange.Profiling.Mvc
         /// <param name="page">Page being timed</param>
         /// <param name="name">Name of the script</param>
         /// <param name="html">HTML helper to render</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used in existing public API (extension method)")]
         public static IHtmlString TimeScript(this WebPageBase page, string name, Func<object, HelperResult> html) =>
             new HtmlString(ClientTimingHelper.TimeScript(name, html(null).ToHtmlString()));
 
@@ -32,6 +34,7 @@ namespace StackExchange.Profiling.Mvc
         /// <param name="page">Page being timed</param>
         /// <param name="name">Name of the script</param>
         /// <param name="html">HTML to render</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used in existing public API (extension method)")]
         public static IHtmlString TimeScript(this WebPageBase page, string name, IHtmlString html) =>
             new HtmlString(ClientTimingHelper.TimeScript(name, html.ToHtmlString()));
 
@@ -41,6 +44,7 @@ namespace StackExchange.Profiling.Mvc
         /// <param name="page">Page being timed</param>
         /// <param name="name">Name of the script</param>
         /// <param name="html">HTML to render</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used in existing public API (extension method)")]
         public static IHtmlString TimeScript(this WebPageBase page, string name, string html) =>
             new HtmlString(ClientTimingHelper.TimeScript(name, html));
     }

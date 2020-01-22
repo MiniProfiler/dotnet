@@ -11,6 +11,7 @@ namespace Benchmarks
 
         [Benchmark(Description = "System.Ben Baseline")]
         public void SystemDotBen() { }
+
         [Benchmark(Description = "StackTraceSnippet.Get()")]
         public string StackTraceSnippetGet() => StackTraceSnippet.Get(Options);
     }

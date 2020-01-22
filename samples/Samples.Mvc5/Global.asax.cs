@@ -133,7 +133,7 @@ namespace Samples.Mvc5
 
                 // ResultsListAuthorize (optional - open to all by default)
                 // the list of all sessions in the store is restricted by default, you must return true to allow it
-                ResultsListAuthorize = request =>
+                ResultsListAuthorize = _ =>
                 {
                     // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
                     return true; // all requests are legit in our happy world
