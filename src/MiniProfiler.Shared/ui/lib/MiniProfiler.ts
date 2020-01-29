@@ -424,8 +424,8 @@ namespace StackExchange.Profiling {
                 const request = new ResultRequest(id, id === this.options.currentId ? this.clientPerfTimings : null);
                 const mp = this;
 
-                if (mp.fetchStatus.hasOwnProperty(id)) {
-                    continue; // already fetching
+                if (!id || mp.fetchStatus.hasOwnProperty(id)) {
+                    continue; // empty id or already fetching
                 }
 
                 const isoDate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)(?:Z|(\+|-)([\d|:]*))?$/;
