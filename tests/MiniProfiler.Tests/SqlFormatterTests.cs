@@ -152,7 +152,7 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
-        public void TableQueryWithOneParameters(string at)
+        public void TableQueryWithOneParameter(string at)
         {
             const string text = "select 1 from dbo.Table where x = @a";
             var cmd = CreateDbCommand(CommandType.Text, text);
@@ -162,6 +162,21 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @a int = 123;\n\nselect 1 from dbo.Table where x = @a;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithOneParameterDisabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @a";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "a", 123);
+
+            var formatter = new SqlServerFormatter() { IncludeParameterValues = false };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @a int;\n\nselect 1 from dbo.Table where x = @a;";
             Assert.Equal(expectedOutput, actualOutput);
         }
 
@@ -178,6 +193,22 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithTwoParametersDisabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @x, y = @y";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "x", 123);
+            AddDbParameter<long>(cmd, at + "y", 123);
+
+            var formatter = new SqlServerFormatter() { IncludeParameterValues = false };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int,\n        @y bigint;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
             Assert.Equal(expectedOutput, actualOutput);
         }
 
@@ -408,12 +439,11 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void StoredProcedureCallWithoutParameters()
         {
-            // arrange
-            var formatter = new VerboseSqlServerFormatter();
             const string text = "dbo.SOMEPROCEDURE";
             const string expectedOutput = "EXEC dbo.SOMEPROCEDURE;";
             var cmd = CreateDbCommand(CommandType.StoredProcedure, text);
 
+            var formatter = new VerboseSqlServerFormatter();
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             Assert.Equal(expectedOutput, actualOutput);
@@ -478,6 +508,22 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @x int = 123,\n        @retval int;\n\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x;\nSELECT @retval AS ReturnValue;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void StoredProcedureCallWithNormalAndReturnParameterDisabled(string at)
+        {
+            const string text = "dbo.SOMEPROCEDURE";
+            var cmd = CreateDbCommand(CommandType.StoredProcedure, text);
+            AddDbParameter<int>(cmd, at + "x", 123, ParameterDirection.Input);
+            AddDbParameter<int>(cmd, at + "retval", null, ParameterDirection.ReturnValue);
+
+            var formatter = new VerboseSqlServerFormatter() { IncludeParameterValues = false };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int,\n        @retval int;\n\nEXEC @retval = dbo.SOMEPROCEDURE @x = @x;\nSELECT @retval AS ReturnValue;";
             Assert.Equal(expectedOutput, actualOutput);
         }
 
