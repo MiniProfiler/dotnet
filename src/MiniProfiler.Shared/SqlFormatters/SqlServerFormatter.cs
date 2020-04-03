@@ -13,6 +13,11 @@ namespace StackExchange.Profiling.SqlFormatters
     public class SqlServerFormatter : ISqlFormatter
     {
         /// <summary>
+        /// Whether to include parameter declarations in the formatted output.
+        /// </summary>
+        public bool IncludeParameterValues { get; set; } = true;
+
+        /// <summary>
         /// Lookup a function for translating a parameter by parameter type
         /// </summary>
         protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
@@ -86,10 +91,8 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters)
-        {
-            return FormatSql(commandText, parameters, null);
-        }
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters) => 
+            FormatSql(commandText, parameters, null);
 
         /// <summary>
         /// Formats the SQL in a SQL-Server friendly way, with DECLARE statements for the parameters up top.
@@ -259,7 +262,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     buffer.Append(niceName).Append(' ').Append(resolvedType);
 
                     // return values don't have a value assignment
-                    if (parameter.Direction != nameof(ParameterDirection.ReturnValue))
+                    if (IncludeParameterValues && parameter.Direction != nameof(ParameterDirection.ReturnValue))
                     {
                         buffer.Append(" = ").Append(PrepareValue(parameter));
                     }

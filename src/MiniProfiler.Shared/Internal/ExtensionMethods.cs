@@ -80,7 +80,9 @@ namespace StackExchange.Profiling.Internal
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
-            ContractResolver = new DefaultContractResolver()
+            ContractResolver = new DefaultContractResolver(),
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
@@ -88,7 +90,9 @@ namespace StackExchange.Profiling.Internal
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
-            ContractResolver = new DefaultContractResolver()
+            ContractResolver = new DefaultContractResolver(),
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         /// <summary>
