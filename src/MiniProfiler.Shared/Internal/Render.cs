@@ -84,7 +84,7 @@ namespace StackExchange.Profiling.Internal
             }
             if (renderOptions?.Nonce.HasValue() ?? false)
             {
-                sb.Append(" nonce=\"").Append(renderOptions.Nonce).Append("\"");
+                sb.Append(" nonce=\"").Append(System.Web.HttpUtility.HtmlAttributeEncode(renderOptions.Nonce)).Append("\"");
             }
 
             sb.Append(" data-max-traces=\"");

@@ -104,5 +104,20 @@ namespace StackExchange.Profiling.Tests
             result = Render.Includes(profiler, "/", true, renderOptions);
             Assert.Contains($@"nonce=""{nonce}""", result);
         }
+
+        [Theory]
+        [InlineData("foo", @"nonce=""foo""")]
+        [InlineData("foo!@#$%", @"nonce=""foo!@#$%""")]
+        [InlineData("e31df82b-5102-4134-af97-f29bf724bedd", @"nonce=""e31df82b-5102-4134-af97-f29bf724bedd""")]
+        [InlineData("f\"oo", @"nonce=""f&quot;oo""")]
+        [InlineData("󆲢L軾󯮃򮬛ŝ󅫤򄷌򆰃񟕺􆷀;鮡ƾ󤕵ԁf\'\"&23", @"nonce=""󆲢L軾󯮃򮬛ŝ󅫤򄷌򆰃񟕺􆷀;鮡ƾ󤕵ԁf&#39;&quot;&amp;23""")]
+        public void NonceEncoding(string nonce, string expected)
+        {
+            var profiler = GetBasicProfiler();
+            var renderOptions = new RenderOptions() { Nonce = nonce };
+
+            var result = Render.Includes(profiler, "/", true, renderOptions);
+            Assert.Contains(expected, result);
+        }
     }
 }
