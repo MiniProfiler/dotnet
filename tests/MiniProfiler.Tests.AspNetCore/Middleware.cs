@@ -74,7 +74,8 @@ namespace StackExchange.Profiling.Tests
                 Assert.Single(customTimings);
                 Assert.Equal("Select 1", customTimings[0].CommandString);
                 Assert.Equal("Reader", customTimings[0].ExecuteType);
-                Assert.True(customTimings[0].DurationMilliseconds >= 20);
+                // We can't safely assert this on a test run
+                //Assert.True(customTimings[0].DurationMilliseconds >= 20);
             }
         }
 
