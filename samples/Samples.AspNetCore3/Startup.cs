@@ -75,6 +75,9 @@ namespace Samples.AspNetCore
                 // Optionally disable "Connection Open()", "Connection Close()" (and async variants).
                 //options.TrackConnectionOpenClose = false;
 
+                // Optionally use something other than the "light" color scheme.
+                options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+
                 // Enabled sending the Server-Timing header on responses
                 options.EnableServerTimingHeader = true;
 

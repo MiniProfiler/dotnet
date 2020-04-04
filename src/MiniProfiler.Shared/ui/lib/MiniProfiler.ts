@@ -40,6 +40,12 @@ namespace StackExchange.Profiling {
         }
     }
 
+    enum ColorScheme {
+        Light = 'Light',
+        Dark = 'Dark',
+        Auto = 'Auto',
+    }
+
     interface ITiming {
         Id: string;
         Name: string;
@@ -93,6 +99,7 @@ namespace StackExchange.Profiling {
 
     interface IOptions {
         authorized: boolean;
+        colorScheme: ColorScheme;
         currentId: string;
         ids: string[];
         ignoredDuplicateExecuteTypes: string[];
@@ -273,6 +280,7 @@ namespace StackExchange.Profiling {
                 path: data.path,
                 version: data.version,
                 renderPosition: data.position as RenderPosition,
+                colorScheme: data.scheme as ColorScheme,
                 showTrivial: bool(data.trivial),
                 trivialMilliseconds: parseFloat(data.trivialMilliseconds),
                 showChildrenTime: bool(data.children),
@@ -291,7 +299,7 @@ namespace StackExchange.Profiling {
                         // all fetched profilers will go in here
                         // MiniProfiler.RenderIncludes() sets which corner to render in - default is upper left
                         const container = document.createElement('div');
-                        container.className = 'mp-results mp-' + mp.options.renderPosition.toLowerCase()
+                        container.className = 'mp-results mp-' + mp.options.renderPosition.toLowerCase() + ' mp-scheme-' + mp.options.colorScheme.toLowerCase()
                         document.body.appendChild(container);
                         mp.container = container;
 
@@ -380,6 +388,7 @@ namespace StackExchange.Profiling {
                 const getTiming = (profiler: IProfiler, name: string) =>
                     profiler.ClientTimings.Timings.filter((t) => t.Name === name)[0] || { Name: name, Duration: '', Start: '' };
 
+                document.documentElement.classList.add('mp-scheme-' + opt.colorScheme.toLowerCase());
                 fetch(opt.path + 'results-list?last-id=' + id, {
                     method: 'GET',
                     headers: {
@@ -949,6 +958,7 @@ namespace StackExchange.Profiling {
                         mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'));
                     }
                 });
+                document.documentElement.classList.add('mp-scheme-' + mp.options.colorScheme.toLowerCase());
             } else {
                 document.addEventListener('click', function (event) {
                     const target = event.target as HTMLElement;
@@ -992,6 +1002,7 @@ namespace StackExchange.Profiling {
                         const queriesOrig = queriesButton.closest('.mp-result').querySelector('.mp-queries');
                         const queries = queriesOrig.cloneNode(true) as HTMLDivElement;
                         queries.style.display = 'block';
+                        overlay.classList.add('mp-scheme-' + mp.options.colorScheme.toLowerCase());
                         overlay.appendChild(queries);
 
                         mp.scrollToQuery(queriesButton, queries);

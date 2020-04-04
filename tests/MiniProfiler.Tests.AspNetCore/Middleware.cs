@@ -99,7 +99,7 @@ namespace StackExchange.Profiling.Tests
                     Assert.True(response.Headers.CacheControl.Public);
                     Assert.Equal("text/css", response.Content.Headers.ContentType.MediaType);
                     // Checking for wrapping/scoping class
-                    Assert.StartsWith(".mp", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    Assert.StartsWith(":root", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 }
                 // Test JS
                 using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js").ConfigureAwait(false))

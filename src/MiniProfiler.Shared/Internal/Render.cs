@@ -17,6 +17,109 @@ namespace StackExchange.Profiling.Internal
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <param name="isAuthorized">Whether the current user is authorized for MiniProfiler.</param>
         /// <param name="requestIDs">The request IDs to fetch for this render.</param>
+        /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
+        public static string Includes(
+            MiniProfiler profiler,
+            string path,
+            bool isAuthorized,
+            RenderOptions renderOptions,
+            List<Guid> requestIDs = null)
+        {
+            var sb = StringBuilderCache.Get();
+            var options = profiler.Options;
+
+            sb.Append("<script async=\"async\" id=\"mini-profiler\" src=\"");
+            sb.Append(path);
+            sb.Append("includes.min.js?v=");
+            sb.Append(options.VersionHash);
+            sb.Append("\" data-version=\"");
+            sb.Append(options.VersionHash);
+            sb.Append("\" data-path=\"");
+            sb.Append(path);
+            sb.Append("\" data-current-id=\"");
+            sb.Append(profiler.Id.ToString());
+
+            sb.Append("\" data-ids=\"");
+            if (requestIDs != null)
+            {
+                var length = requestIDs.Count;
+                for (var i = 0; i < length; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(',');
+                    }
+                    var id = requestIDs[i];
+                    sb.Append(id.ToString());
+                }
+            }
+
+            sb.Append("\" data-position=\"");
+            sb.Append((renderOptions?.Position ?? options.PopupRenderPosition).ToString());
+            sb.Append('"');
+
+            sb.Append("\" data-scheme=\"");
+            sb.Append((renderOptions?.ColorScheme ?? options.ColorScheme).ToString());
+            sb.Append('"');
+
+            if (isAuthorized)
+            {
+                sb.Append(" data-authorized=\"true\"");
+            }
+            if (renderOptions?.ShowTrivial ?? options.PopupShowTrivial)
+            {
+                sb.Append(" data-trivial=\"true\"");
+            }
+            if (renderOptions?.ShowTimeWithChildren ?? options.PopupShowTimeWithChildren)
+            {
+                sb.Append(" data-children=\"true\"");
+            }
+            if (renderOptions?.ShowControls ?? options.ShowControls)
+            {
+                sb.Append(" data-controls=\"true\"");
+            }
+            if (renderOptions?.StartHidden ?? options.PopupStartHidden)
+            {
+                sb.Append(" data-start-hidden=\"true\"");
+            }
+
+            sb.Append(" data-max-traces=\"");
+            sb.Append((renderOptions?.MaxTracesToShow ?? options.PopupMaxTracesToShow).ToString(CultureInfo.InvariantCulture));
+
+            sb.Append("\" data-toggle-shortcut=\"");
+            sb.Append(renderOptions?.PopupToggleKeyboardShortcut ?? options.PopupToggleKeyboardShortcut);
+
+            sb.Append("\" data-trivial-milliseconds=\"");
+            sb.Append((renderOptions?.TrivialDurationThresholdMilliseconds ?? options.TrivialDurationThresholdMilliseconds).ToString(CultureInfo.InvariantCulture));
+
+            if (options.IgnoredDuplicateExecuteTypes.Count > 0)
+            {
+                sb.Append("\" data-ignored-duplicate-execute-types=\"");
+                var i = 0;
+                foreach (var executeType in options.IgnoredDuplicateExecuteTypes)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(',');
+                    }
+                    sb.Append(executeType);
+                    i++;
+                }
+            }
+
+            sb.Append("\"></script>");
+
+            return sb.ToStringRecycle();
+        }
+
+
+        /// <summary>
+        /// Renders script tag for including MiniProfiler.
+        /// </summary>
+        /// <param name="profiler">The profiler to render a tag for.</param>
+        /// <param name="path">The root path that MiniProfiler is being served from.</param>
+        /// <param name="isAuthorized">Whether the current user is authorized for MiniProfiler.</param>
+        /// <param name="requestIDs">The request IDs to fetch for this render.</param>
         /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).</param>
         /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTrivial"/>).</param>
         /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTimeWithChildren"/>).</param>
@@ -66,6 +169,10 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("\" data-position=\"");
             sb.Append((position ?? options.PopupRenderPosition).ToString());
+            sb.Append('"');
+
+            sb.Append("\" data-scheme=\"");
+            sb.Append(options.ColorScheme.ToString());
             sb.Append('"');
 
             if (isAuthorized)
@@ -153,7 +260,7 @@ namespace StackExchange.Profiling.Internal
     <title>List of profiling sessions</title>
     <script id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
     <link href=""{path}includes.min.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}'}});</script>
+    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme.ToString()}'}});</script>
   </head>
   <body>
     <table class=""mp-results-index"">
