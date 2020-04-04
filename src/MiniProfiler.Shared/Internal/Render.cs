@@ -28,7 +28,7 @@ namespace StackExchange.Profiling.Internal
             var sb = StringBuilderCache.Get();
             var options = profiler.Options;
 
-            sb.Append("<script async=\"async\" id=\"mini-profiler\" src=\"");
+            sb.Append("<script async id=\"mini-profiler\" src=\"");
             sb.Append(path);
             sb.Append("includes.min.js?v=");
             sb.Append(options.VersionHash);
@@ -81,6 +81,10 @@ namespace StackExchange.Profiling.Internal
             if (renderOptions?.StartHidden ?? options.PopupStartHidden)
             {
                 sb.Append(" data-start-hidden=\"true\"");
+            }
+            if (renderOptions?.Nonce.HasValue() ?? false)
+            {
+                sb.Append(" nonce=\"").Append(System.Web.HttpUtility.HtmlAttributeEncode(renderOptions.Nonce)).Append("\"");
             }
 
             sb.Append(" data-max-traces=\"");

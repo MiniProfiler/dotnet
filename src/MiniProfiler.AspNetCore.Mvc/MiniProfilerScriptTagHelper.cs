@@ -60,6 +60,12 @@ namespace StackExchange.Profiling
         public ColorScheme? ColorScheme { get; set; }
 
         /// <summary>
+        /// The JavaScript nonce (if any) to use on this script tag render.
+        /// </summary>
+        [HtmlAttributeName("nonce")]
+        public string Nonce { get; set; }
+
+        /// <summary>
         /// The options to use when rendering this MiniProfiler.
         /// Note: overrides all other options.
         /// </summary>
@@ -77,6 +83,7 @@ namespace StackExchange.Profiling
             if (ShowControls.HasValue) options.ShowControls = ShowControls;
             if (StartHidden.HasValue) options.StartHidden = StartHidden;
             if (ColorScheme.HasValue) options.ColorScheme = ColorScheme;
+            if (Nonce.HasValue()) options.Nonce = Nonce;
 
             return options;
         }
