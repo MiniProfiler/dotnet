@@ -14,6 +14,38 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The profiler to render a tag for.</param>
         /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
+        /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
+        public static HtmlString RenderIncludes(
+            this MiniProfiler profiler,
+            HttpContext context,
+            RenderOptions renderOptions)
+        {
+            if (profiler == null) return HtmlString.Empty;
+
+            // This is populated in Middleware by SetHeadersAndState
+            var state = RequestState.Get(context);
+
+            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            if (state?.IsAuthorized == false) return HtmlString.Empty;
+
+            var path = (profiler.Options as MiniProfilerOptions)?.RouteBasePath.Value.EnsureTrailingSlash();
+
+            var result = Render.Includes(
+                profiler,
+                path: context.Request.PathBase + path,
+                isAuthorized: state?.IsAuthorized ?? false,
+                renderOptions,
+                requestIDs: state?.RequestIDs);
+
+            return new HtmlString(result);
+        }
+
+
+        /// <summary>
+        /// Renders script tag for including MiniProfiler.
+        /// </summary>
+        /// <param name="profiler">The profiler to render a tag for.</param>
+        /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
         /// <param name="position">The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).</param>
         /// <param name="showTrivial">Whether to show trivial timings column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTrivial"/>).</param>
         /// <param name="showTimeWithChildren">Whether to show time with children column initially or not (defaults to <see cref="MiniProfilerBaseOptions.PopupShowTimeWithChildren"/>).</param>

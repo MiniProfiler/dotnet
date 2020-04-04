@@ -16,6 +16,41 @@ namespace StackExchange.Profiling
         /// Returns the <c>css</c> and <c>javascript</c> includes needed to display the MiniProfiler results UI.
         /// </summary>
         /// <param name="profiler">The profiler this extension method is called on</param>
+        /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
+        /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
+        public static IHtmlString RenderIncludes(
+            this MiniProfiler profiler,
+            RenderOptions renderOptions)
+        {
+            if (profiler == null) return _empty;
+            var settings = profiler.Options as MiniProfilerOptions;
+            if (settings == null) return _empty;
+
+            var authorized = settings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
+            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            if (!authorized) return _empty;
+
+            // unviewed ids are added to this list during Storage.Save, but we know we haven't 
+            // seen the current one yet, so go ahead and add it to the end 
+            var ids = authorized ? settings.Storage.GetUnviewedIds(profiler.User) : new List<Guid>();
+            ids.Add(profiler.Id);
+
+            var path = VirtualPathUtility.ToAbsolute(settings.RouteBasePath).EnsureTrailingSlash();
+
+            var result = Internal.Render.Includes(
+                profiler,
+                path: path,
+                isAuthorized: authorized,
+                renderOptions,
+                requestIDs: ids);
+
+            return new HtmlString(result);
+        }
+
+        /// <summary>
+        /// Returns the <c>css</c> and <c>javascript</c> includes needed to display the MiniProfiler results UI.
+        /// </summary>
+        /// <param name="profiler">The profiler this extension method is called on</param>
         /// <param name="position">Which side of the page the profiler popup button should be displayed on (defaults to left)</param>
         /// <param name="showTrivial">Whether to show trivial timings by default (defaults to false)</param>
         /// <param name="showTimeWithChildren">Whether to show time the time with children column by default (defaults to false)</param>

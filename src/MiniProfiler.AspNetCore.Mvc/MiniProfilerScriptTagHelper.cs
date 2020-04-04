@@ -54,6 +54,34 @@ namespace StackExchange.Profiling
         public bool? StartHidden { get; set; }
 
         /// <summary>
+        /// The color scheme to start with:
+        /// </summary>
+        [HtmlAttributeName("color-scheme")]
+        public ColorScheme? ColorScheme { get; set; }
+
+        /// <summary>
+        /// The options to use when rendering this MiniProfiler.
+        /// Note: overrides all other options.
+        /// </summary>
+        [HtmlAttributeName("options")]
+        public RenderOptions RenderOptions { get; set; }
+
+        private RenderOptions GetOptions()
+        {
+            var options = RenderOptions ?? new RenderOptions();
+
+            if (Position.HasValue) options.Position = Position;
+            if (ShowTrivial.HasValue) options.ShowTrivial = ShowTrivial;
+            if (ShowTimeWithChildren.HasValue) options.ShowTimeWithChildren = ShowTimeWithChildren;
+            if (MaxTraces.HasValue) options.MaxTracesToShow = MaxTraces;
+            if (ShowControls.HasValue) options.ShowControls = ShowControls;
+            if (StartHidden.HasValue) options.StartHidden = StartHidden;
+            if (ColorScheme.HasValue) options.ColorScheme = ColorScheme;
+
+            return options;
+        }
+
+        /// <summary>
         /// Processes this tag, rendering some lovely HTML.
         /// </summary>
         /// <param name="context">The context to render in.</param>
@@ -62,13 +90,8 @@ namespace StackExchange.Profiling
         {
             output.TagName = null;
             var tag = MiniProfiler.Current.RenderIncludes(
-                ViewContext.HttpContext,
-                position: Position,
-                showTrivial: ShowTrivial,
-                showTimeWithChildren: ShowTimeWithChildren,
-                maxTracesToShow: MaxTraces,
-                showControls: ShowControls,
-                startHidden: StartHidden);
+                        ViewContext.HttpContext,
+                        GetOptions());
             output.Content.SetHtmlContent(tag);
         }
     }
