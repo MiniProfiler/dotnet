@@ -6,6 +6,7 @@
 
     <DebugSymbols>true</DebugSymbols>
     <IsPackable>false</IsPackable>
+    <NoWarn>NU5105</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
