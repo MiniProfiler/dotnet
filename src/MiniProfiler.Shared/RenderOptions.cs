@@ -60,5 +60,11 @@ namespace StackExchange.Profiling
         /// Defaults to <see cref="MiniProfilerBaseOptions.ColorScheme"/>.
         /// </summary>
         public ColorScheme? ColorScheme { get; set; }
+
+        /// <summary>
+        /// A one-time-use nonce to render in the script tag.
+        /// </summary>
+        /// <remarks>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script</remarks>
+        public string Nonce { get; set; }
     }
 }
