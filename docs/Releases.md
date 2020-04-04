@@ -5,6 +5,18 @@ layout: "default"
 ### Release Notes
 This page tracks major changes included in any update starting with version 4.0.0.3
 
+#### Version 4.2.0 (In preview)
+- Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))
+- Added dark and "auto" (system preference decides) color themes, total is "Light", "Dark", and "Auto" ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
+  - Generally moves to CSS 3 variables, for easier custom themes as well.
+- Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
+- Fix for ['i.Started.toUTCString is not a function'](https://github.com/MiniProfiler/dotnet/pull/462) when global serializer options are changed.
+- Removed jQuery (built-in) dependency ([#442](https://github.com/MiniProfiler/dotnet/pull/442))
+  - Drops IE 11 support
+- Fix for missing `IMemoryCache` depending on config ([#440](https://github.com/MiniProfiler/dotnet/pull/440))
+- Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432)) (thanks [@bgrainger](https://github.com/bgrainger)!)
+
+
 #### Version 4.1.0
 - ASP.NET Core 3.0 support ([MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) and [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) packages, now with a `netcoreapp3.0` build)
 - Error support via `CustomTiming.Errored = true`, this will turn the UI red to raise error awareness ([#418](https://github.com/MiniProfiler/dotnet/pull/418) & [#420](https://github.com/MiniProfiler/dotnet/pull/420))
