@@ -1179,7 +1179,7 @@ namespace StackExchange.Profiling {
                 container.insertAdjacentHTML('beforeend', '<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>');
                 this.controls = container.querySelector('mp-controls') as HTMLDivElement;
 
-                const minMax = container.querySelector('.mp-controls .mp-min-max')[0];
+                const minMax = container.querySelector('.mp-controls .mp-min-max') as HTMLSpanElement;
                 minMax.addEventListener('click', function () {
                     container.classList.toggle('mp-min');
                 });
