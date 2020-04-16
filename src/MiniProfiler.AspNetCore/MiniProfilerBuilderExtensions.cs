@@ -20,9 +20,8 @@ namespace Microsoft.AspNetCore.Builder
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
             // Register all IMiniProfilerDiagnosticListeners that were registered, e.g. EntityFramework
-            var listeners = builder.ApplicationServices.GetServices<IMiniProfilerDiagnosticListener>();
-            var initializer = new DiagnosticInitializer(listeners);
-            initializer.Start();
+            // Note: this is a no-op after the first pass, e.g. for middleware branching support
+            builder.ApplicationServices.GetService<DiagnosticInitializer>()?.Start();
 
             return builder.UseMiddleware<MiniProfilerMiddleware>();
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace StackExchange.Profiling.Internal
 {
@@ -11,6 +12,7 @@ namespace StackExchange.Profiling.Internal
     {
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
         private readonly IEnumerable<IMiniProfilerDiagnosticListener> _diagnosticListeners;
+        private bool _initialized = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiagnosticInitializer"/> class.
@@ -26,7 +28,11 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         public void Start()
         {
-            DiagnosticListener.AllListeners.Subscribe(this);
+            if (!_initialized)
+            {
+                DiagnosticListener.AllListeners.Subscribe(this);
+                _initialized = true;
+            }
         }
 
         void IObserver<DiagnosticListener>.OnNext(DiagnosticListener value)
