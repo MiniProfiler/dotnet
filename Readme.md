@@ -5,6 +5,7 @@
 Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](https://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](https://miniprofiler.com/). It is part of the [.NET Foundation](https://www.dotnetfoundation.org/), and operates under their [code of conduct](https://www.dotnetfoundation.org/code-of-conduct).
 
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
+![Actions Build](https://github.com/MiniProfiler/dotnet/workflows/Main%20Build/badge.svg)
 [![Azure Pipelines Build Status](https://stackoverflowoss.visualstudio.com/StackOSS/_apis/build/status/MiniProfiler.dotnet?branchName=master)](https://stackoverflowoss.visualstudio.com/StackOSS/_build/latest?definitionId=2&branchName=master)
 
 
