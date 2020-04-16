@@ -18,11 +18,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds MiniProfiler timings for actions and views.
         /// </summary>
         /// <param name="services">The services collection to configure.</param>
-        /// <param name="configureOptions">An Action{MiniProfilerOptions} to configure options for MiniProfiler.</param>
+        /// <param name="configureOptions">An <see cref="Action{MiniProfilerOptions}"/> to configure options for MiniProfiler.</param>
         public static IMiniProfilerBuilder AddMiniProfiler(this IServiceCollection services, Action<MiniProfilerOptions> configureOptions = null)
         {
             services.AddMemoryCache(); // Unconditionally register an IMemoryCache since it's the most common and default case
             services.AddSingleton<IConfigureOptions<MiniProfilerOptions>, MiniProfilerOptionsDefaults>();
+            services.AddSingleton<DiagnosticInitializer>(); // For any IMiniProfilerDiagnosticListener registration
             if (configureOptions != null)
             {
                 services.Configure(configureOptions);
