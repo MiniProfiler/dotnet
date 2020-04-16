@@ -18,6 +18,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The profiler this extension method is called on</param>
         /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Nope.")]
         public static IHtmlString RenderIncludes(
             this MiniProfiler profiler,
             RenderOptions renderOptions)
@@ -58,6 +59,7 @@ namespace StackExchange.Profiling
         /// <param name="showControls">when true, shows buttons to minimize and clear MiniProfiler results</param>
         /// <param name="startHidden">Should the profiler start as hidden. Default to null.</param>
         /// <returns>Script and link elements normally; an empty string when there is no active profiling session.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Nope.")]
         public static IHtmlString RenderIncludes(
             this MiniProfiler profiler,
             RenderPosition? position = null,

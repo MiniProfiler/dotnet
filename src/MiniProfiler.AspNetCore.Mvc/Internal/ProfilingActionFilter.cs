@@ -20,6 +20,7 @@ namespace StackExchange.Profiling.Internal
         /// Happens before the action starts running
         /// </summary>
         /// <param name="context">The filter context to handle the start of.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Nope.")]
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var mp = MiniProfiler.Current;

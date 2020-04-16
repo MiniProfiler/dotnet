@@ -12,6 +12,7 @@ namespace StackExchange.Profiling.Storage
     public class MemoryCacheStorage : IAsyncStorage
     {
         private readonly IMemoryCache _cache;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
         private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
 

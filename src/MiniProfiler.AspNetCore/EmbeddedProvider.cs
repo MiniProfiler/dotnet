@@ -13,8 +13,10 @@ namespace StackExchange.Profiling
         /// Embedded resource contents keyed by filename.
         /// </summary>
         private ConcurrentDictionary<string, string> ResourceCache { get; } = new ConcurrentDictionary<string, string>();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private readonly IOptions<MiniProfilerOptions> _options;
-#if NETCOREAPP3_0 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
+#if NETCOREAPP3_0
         private readonly IWebHostEnvironment _env;
 
         public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IWebHostEnvironment env)

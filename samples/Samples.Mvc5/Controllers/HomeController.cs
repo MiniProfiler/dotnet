@@ -253,13 +253,11 @@ namespace Samples.Mvc5.Controllers
                         newCount = context.Database.SqlQuery<int>(sql).Single();
                     }
                     using (MiniProfiler.Current.Step("Get Count using ProfiledConnection - sql recorded"))
+                    using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
                     {
-                        using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
-                        {
-                            conn.Open();
-                            newCount = conn.Query<int>(sql).Single();
-                            conn.Close();
-                        }
+                        conn.Open();
+                        newCount = conn.Query<int>(sql).Single();
+                        conn.Close();
                     }
                 }
                 finally
@@ -277,16 +275,14 @@ namespace Samples.Mvc5.Controllers
         /// <returns>duplicated query demonstration</returns>
         public ActionResult DuplicatedQueries()
         {
-            using (var conn = GetConnection())
-            {
-              long total = 0;
+            using var conn = GetConnection();
+            long total = 0;
 
-              for (int i = 0; i < 20; i++)
-              {
-                  total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
-              }
-              return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+            for (int i = 0; i < 20; i++)
+            {
+                total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
             }
+            return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
         }
 
         /// <summary>
@@ -435,11 +431,9 @@ namespace Samples.Mvc5.Controllers
         /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult ParameterizedSqlWithEnums()
         {
-            using (var conn = GetConnection())
-            {
-                var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
-                return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
-            }
+            using var conn = GetConnection();
+            var shouldBeOne = conn.Query<long>("select @OK = 200", new { System.Net.HttpStatusCode.OK }).Single();
+            return Content("Parameterized SQL with Enums completed: " + shouldBeOne);
         }
     }
 }

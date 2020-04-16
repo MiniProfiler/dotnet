@@ -77,10 +77,8 @@ Select Id
             sb.Append("Order By ").AppendLine(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
             sb.Append("LIMIT(").Append(maxResults).AppendLine(")");
 
-            using (var conn = GetConnection())
-            {
-                return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
-            }
+            using var conn = GetConnection();
+            return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
         }
 
         protected override IEnumerable<string> GetTableCreationScripts()

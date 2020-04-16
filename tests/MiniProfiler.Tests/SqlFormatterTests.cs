@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.Tests
 {
     public class SqlFormatterTests
     {
-        private static Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap = new Dictionary<RuntimeTypeHandle, DbType>
+        private static readonly Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap = new Dictionary<RuntimeTypeHandle, DbType>
         {
             [typeof(byte).TypeHandle] = DbType.Byte,
             [typeof(sbyte).TypeHandle] = DbType.SByte,
