@@ -1195,7 +1195,7 @@ namespace StackExchange.Profiling {
                     }
                 });
 
-                const clear = container.querySelector('.mp-result')[0];
+                const clear = container.querySelector('.mp-result');
                 clear.addEventListener('click', function () {
                     clear.parentNode.removeChild(clear);
                 });
