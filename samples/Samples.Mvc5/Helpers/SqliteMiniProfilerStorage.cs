@@ -54,6 +54,7 @@ namespace Samples.Mvc5.Helpers
         /// <param name="finish">The finish</param>
         /// <param name="orderBy">The order by.</param>
         /// <returns>The result set</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "This isn't C# 8, silly IDE.")]
         public override IEnumerable<Guid> List(
             int maxResults,
             DateTime? start = null,
@@ -77,8 +78,10 @@ Select Id
             sb.Append("Order By ").AppendLine(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
             sb.Append("LIMIT(").Append(maxResults).AppendLine(")");
 
-            using var conn = GetConnection();
-            return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
+            using (var conn = GetConnection())
+            {
+                return conn.Query<Guid>(sb.ToString(), new { start, finish }).ToList();
+            }
         }
 
         protected override IEnumerable<string> GetTableCreationScripts()
