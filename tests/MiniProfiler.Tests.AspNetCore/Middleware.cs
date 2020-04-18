@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing.Text;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -70,7 +71,7 @@ namespace StackExchange.Profiling.Tests
                     Assert.Equal("MiniProfiler Init", profiler.Root.Children[0].Name);
                 }
 
-                var testStep = profiler.Root.Children[1];
+                var testStep = profiler.Root.Children.Last();
                 Assert.Equal("Test", testStep.Name);
                 Assert.False(testStep.HasChildren);
                 Assert.True(testStep.HasCustomTimings);
