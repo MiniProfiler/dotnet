@@ -50,9 +50,11 @@ namespace StackExchange.Profiling.Data
 
         private static string GetName(IActionResult result) => result switch
         {
-            ViewResult vr => vr.ViewName.HasValue() ? "View: " + vr.ViewName : "ViewResult",
-            ContentResult cr => cr.ContentType.HasValue() ? "Content: " + cr.ContentType : "ContentResult",
-            // TODO: Other main ones?
+            ViewResult vr => vr.ViewName.HasValue() ? "View: " + vr.ViewName : nameof(ViewResult),
+            ContentResult cr => cr.ContentType.HasValue() ? "Content: " + cr.ContentType : nameof(ContentResult),
+            ObjectResult or => or.DeclaredType != null ? "Object: " + or.DeclaredType.Name : nameof(ObjectResult),
+            StatusCodeResult scr => scr.StatusCode > 0 ? "Status Code: " + scr.StatusCode.ToString() : nameof(StatusCodeResult),
+            JsonResult jr => jr.ContentType.HasValue() ? "JSON: " + jr.ContentType : nameof(JsonResult),
             _ => "Result: " + result.GetType().Name
         };
 
