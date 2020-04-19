@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Tests.Storage
             var mp = GetMiniProfiler();
 
             var serialized = mp.ToRedisValue();
-            Assert.NotEqual(default(RedisValue), serialized);
+            Assert.NotEqual(default, serialized);
 
             var deserialized = serialized.ToMiniProfiler();
             Assert.Equal(mp, deserialized);
@@ -76,6 +76,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
+                e.MaybeLog(TestConfig.Current.RedisConnectionString);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }

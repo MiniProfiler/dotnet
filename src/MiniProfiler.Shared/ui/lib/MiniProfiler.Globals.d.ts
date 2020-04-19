@@ -10,8 +10,8 @@
                 firstPaintAfterLoadTime: number;
             }
         };
-        jQuery: JQueryStatic;
         // We only check for these existing to hook up xhr events...we need to know noting about them.
+        jQuery: any;
         angular: any;
         axios: any;
         xhr: any;

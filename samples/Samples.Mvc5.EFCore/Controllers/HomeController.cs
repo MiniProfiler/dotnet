@@ -141,13 +141,11 @@ namespace Samples.Mvc5.Controllers
                         newCount = context.People.FromSql("Select * from People").Count();
                     }
                     using (MiniProfiler.Current.Step("Get Count using ProfiledConnection - sql recorded"))
+                    using (var conn = new ProfiledDbConnection(context.Database.GetDbConnection(), MiniProfiler.Current))
                     {
-                        using (var conn = new ProfiledDbConnection(context.Database.GetDbConnection(), MiniProfiler.Current))
-                        {
-                            conn.Open();
-                            newCount = conn.Query<int>("Select Count(*) from People").Single();
-                            conn.Close();
-                        }
+                        conn.Open();
+                        newCount = conn.Query<int>("Select Count(*) from People").Single();
+                        conn.Close();
                     }
                 }
                 finally

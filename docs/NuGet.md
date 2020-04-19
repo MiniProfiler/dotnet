@@ -12,7 +12,7 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
   1. Reference the [`MiniProfiler.Providers.SqlServer`](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer) NuGet package.
   2. Use it via `MiniProfiler.Settings.Storage = new SqlServerStorage(ConnectionString);`
 
-#### NuGet Package list for ASP.NET Core (.NET Standard: `netstandard1.5`+)
+#### NuGet Package list for ASP.NET Core (.NET Standard: `netstandard2.0`+)
 * [MiniProfiler.AspNetCore](https://www.nuget.org/packages/MiniProfiler.AspNetCore/) - The core functionality (for .NET Standard applications)
 * [MiniProfiler.AspNetCore.Mvc](https://www.nuget.org/packages/MiniProfiler.AspNetCore.Mvc/) - ASP.NET Core MVC Integration 
 
@@ -25,9 +25,11 @@ MiniProfiler is split into the NuGet packages so you can easily select the bits 
 * [MiniProfiler.Shared](https://www.nuget.org/packages/MiniProfiler.Shared/) - Core, shared functionality for all platform-specific packages above
 * [MiniProfiler.EntityFrameworkCore](https://www.nuget.org/packages/MiniProfiler.EntityFrameworkCore) - Entity Framework Core Integration
 * [MiniProfiler.EF6](https://www.nuget.org/packages/MiniProfiler.EF6/) - Entity Framework 6+ Integration
+* [MiniProfiler.EFC7](https://www.nuget.org/packages/MiniProfiler.EFC7/) - Entity Framework Classic 7+ Integration
 *  Storage and Profiling Providers
    * [MiniProfiler.Providers.MongoDB](https://www.nuget.org/packages/MiniProfiler.Providers.MongoDB/) - MongoDB MiniProfiler Storage
    * [MiniProfiler.Providers.MySql](https://www.nuget.org/packages/MiniProfiler.Providers.MySql/) - MySQL MiniProfiler Storage
+   * [MiniProfiler.Providers.PostgreSql](https://www.nuget.org/packages/MiniProfiler.Providers.PostgreSql/) - Postgres MiniProfiler Storage
    * [MiniProfiler.Providers.Redis](https://www.nuget.org/packages/MiniProfiler.Providers.Redis/) - Redis MiniProfiler Storage
    * [MiniProfiler.Providers.Sqlite](https://www.nuget.org/packages/MiniProfiler.Providers.Sqlite/) - SQLite MiniProfiler Storage
    * [MiniProfiler.Providers.SqlServer](https://www.nuget.org/packages/MiniProfiler.Providers.SqlServer/) - SQL Server MiniProfiler Storage

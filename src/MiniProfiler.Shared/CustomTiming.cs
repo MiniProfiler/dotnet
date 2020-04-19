@@ -101,7 +101,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public void FirstFetchCompleted()
         {
-            FirstFetchDurationMilliseconds = FirstFetchDurationMilliseconds ?? _profiler.GetDurationMilliseconds(_startTicks);
+            FirstFetchDurationMilliseconds ??= _profiler.GetDurationMilliseconds(_startTicks);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public void Stop()
         {
-            DurationMilliseconds = DurationMilliseconds ?? _profiler.GetDurationMilliseconds(_startTicks);
+            DurationMilliseconds ??= _profiler.GetDurationMilliseconds(_startTicks);
 
             if (_minSaveMs.HasValue && _minSaveMs.Value > 0 && DurationMilliseconds < _minSaveMs.Value)
             {

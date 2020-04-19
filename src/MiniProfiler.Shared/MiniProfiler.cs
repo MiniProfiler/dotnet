@@ -114,6 +114,7 @@ namespace StackExchange.Profiling
         }
 
         private Timing _root;
+
         /// <summary>
         /// Gets or sets the root timing.
         /// The first <see cref="Timing"/> that is created and started when this profiler is instantiated.
@@ -313,7 +314,6 @@ namespace StackExchange.Profiling
             }
         }
 
-#if !NETSTANDARD1_5
         /// <summary>
         /// Create a DEEP clone of this MiniProfiler.
         /// </summary>
@@ -332,7 +332,6 @@ namespace StackExchange.Profiling
                 return (MiniProfiler)serializer.ReadObject(ms);
             }
         }
-#endif
 
         internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {

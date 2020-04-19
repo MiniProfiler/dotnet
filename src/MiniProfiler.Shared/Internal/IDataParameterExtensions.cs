@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Data;
-#if NETSTANDARD1_5
-using System.Reflection;
-#endif
 
 namespace StackExchange.Profiling.Internal
 {
@@ -61,11 +58,7 @@ namespace StackExchange.Profiling.Internal
 
             // we want the integral value of an enum, not its string representation
             var rawType = rawValue.GetType();
-#if NETSTANDARD1_5
-            if (rawType.GetTypeInfo().IsEnum)
-#else
             if (rawType.IsEnum)
-#endif
             {
                 // use ChangeType, as we can't cast - http://msdn.microsoft.com/en-us/library/exx3b86w(v=vs.80).aspx
                 return Convert.ChangeType(rawValue, Enum.GetUnderlyingType(rawType)).ToString();

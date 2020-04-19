@@ -1,5 +1,3 @@
 <Project>
-  <PropertyGroup>
-    <MSBuildWarningsAsMessages>NETSDK1069</MSBuildWarningsAsMessages>
-  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
 </Project>

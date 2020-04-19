@@ -84,7 +84,7 @@ namespace StackExchange.Profiling.Data
         /// <typeparam name="TResult">the type of result to return.</typeparam>
         private TResult ProfileWith<TResult>(SqlExecuteType type, Func<TResult> func)
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return func();
             }
@@ -122,8 +122,7 @@ namespace StackExchange.Profiling.Data
 
                 _connection = value;
 
-                var wrapped = value as SimpleProfiledConnection;
-                _command.Connection = wrapped != null ? wrapped.WrappedConnection : value;
+                _command.Connection = value is SimpleProfiledConnection wrapped ? wrapped.WrappedConnection : value;
             }
         }
 
@@ -136,8 +135,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _transaction = value;
-                var wrapped = value as SimpleProfiledTransaction;
-                _command.Transaction = wrapped != null ? wrapped.WrappedTransaction : value;
+                _command.Transaction = value is SimpleProfiledTransaction wrapped ? wrapped.WrappedTransaction : value;
             }
         }
 

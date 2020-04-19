@@ -34,11 +34,7 @@ namespace StackExchange.Profiling.Helpers
                 return false;
             }
 
-#if !NETSTANDARD1_5
             var frames = new StackTrace().GetFrames();
-#else // The above works in netstandard2.0 via https://github.com/dotnet/corefx/pull/12527
-            StackFrame[] frames = null;
-#endif
 
             if (frames == null)
             {

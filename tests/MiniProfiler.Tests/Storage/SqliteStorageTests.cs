@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using System.IO;
 using StackExchange.Profiling.Storage;
 using Xunit;
@@ -33,6 +32,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
             catch (Exception e)
             {
+                e.MaybeLog(fileName);
                 ShouldSkip = true;
                 SkipReason = e.Message;
             }

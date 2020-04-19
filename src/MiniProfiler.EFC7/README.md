@@ -2,7 +2,7 @@
 
 This package allows you to profile your Entity Framework Classic 7 requests using MiniProfiler.
 
-You can install a [nuget package](https://www.nuget.org/packages/MiniProfiler.EFC7/) using `Install-Package MiniProfiler.EFC76 -Pre`. 
+You can install a [nuget package](https://www.nuget.org/packages/MiniProfiler.EFC7/) using `Install-Package MiniProfiler.EFC7 -Pre`. 
 
 To initialize, simply call the following in your application startup logic:
 

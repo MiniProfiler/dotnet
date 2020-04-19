@@ -79,11 +79,7 @@ namespace StackExchange.Profiling.Data
                 return action;
             }
 
-            var prop = commandType
-#if NETSTANDARD1_5
-                .GetTypeInfo()
-#endif
-                .GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
+            var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
             action = null;
             ParameterInfo[] indexers;
             MethodInfo setter;
@@ -173,8 +169,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _transaction = value;
-                var awesomeTran = value as ProfiledDbTransaction;
-                _command.Transaction = awesomeTran == null ? value : awesomeTran.WrappedTransaction;
+                _command.Transaction = value is ProfiledDbTransaction awesomeTran ? awesomeTran.WrappedTransaction : value;
             }
         }
 
@@ -209,7 +204,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return _command.ExecuteReader(behavior);
             }
@@ -242,7 +237,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
             }
@@ -273,7 +268,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The number of rows affected.</returns>
         public override int ExecuteNonQuery()
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return _command.ExecuteNonQuery();
             }
@@ -304,7 +299,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The number of rows affected.</returns>
         public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return await _command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -335,7 +330,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The first column of the first row in the result set.</returns>
         public override object ExecuteScalar()
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return _command.ExecuteScalar();
             }
@@ -367,7 +362,7 @@ namespace StackExchange.Profiling.Data
         /// <returns>The first column of the first row in the result set.</returns>
         public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
-            if (_profiler == null || !_profiler.IsActive)
+            if (_profiler?.IsActive != true)
             {
                 return await _command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
             }

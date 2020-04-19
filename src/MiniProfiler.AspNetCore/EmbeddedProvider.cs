@@ -12,9 +12,11 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Embedded resource contents keyed by filename.
         /// </summary>
-        private ConcurrentDictionary<string, string> _resourceCache { get; } = new ConcurrentDictionary<string, string>();
+        private ConcurrentDictionary<string, string> ResourceCache { get; } = new ConcurrentDictionary<string, string>();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private readonly IOptions<MiniProfilerOptions> _options;
-#if NETCOREAPP3_0 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
+#if NETCOREAPP3_0
         private readonly IWebHostEnvironment _env;
 
         public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IWebHostEnvironment env)
@@ -61,7 +63,7 @@ namespace StackExchange.Profiling
         public bool TryGetResource(string filename, out string resource)
         {
             filename = filename.ToLower();
-            if (_resourceCache.TryGetValue(filename, out resource))
+            if (ResourceCache.TryGetValue(filename, out resource))
             {
                 return true;
             }
@@ -79,7 +81,7 @@ namespace StackExchange.Profiling
                 }
             }
 
-            _resourceCache[filename] = resource;
+            ResourceCache[filename] = resource;
 
             return true;
         }

@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing.Text;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,18 +18,13 @@ namespace StackExchange.Profiling.Tests
     {
         public Middleware(ITestOutputHelper output) : base(output) { }
 
-        [Fact]
-        public async Task BasicProfiling()
+        private TestServer GetTestServer(Action<MiniProfilerOptions> configOptions)
         {
             var builder = new WebHostBuilder()
                 .ConfigureServices(services => services
-                .AddMemoryCache()
-                .AddMiniProfiler(o =>
-                {
-                    o.ShouldProfile = _ => true;
-                    o.UserIdProvider = _ => nameof(BasicProfiling);
-                    CurrentOptions = o;
-                }))
+                    .AddMemoryCache()
+                    .AddMiniProfiler(configOptions)
+                )
                 .Configure(app =>
                 {
                     app.UseMiniProfiler();
@@ -43,7 +39,18 @@ namespace StackExchange.Profiling.Tests
                         await context.Response.WriteAsync("Heyyyyyy").ConfigureAwait(false);
                     });
                 });
-            using (var server = new TestServer(builder))
+            return new TestServer(builder);
+        }
+
+        [Fact]
+        public async Task BasicProfiling()
+        {
+            using (var server = GetTestServer(o =>
+            {
+                o.ShouldProfile = _ => true;
+                o.UserIdProvider = _ => nameof(BasicProfiling);
+                CurrentOptions = o;
+            }))
             {
                 using (var response = await server.CreateClient().GetAsync("").ConfigureAwait(false))
                 {
@@ -61,10 +68,10 @@ namespace StackExchange.Profiling.Tests
                 // Prep is a StepIf, for no noise in the fast case
                 if (profiler.Root.Children.Count == 2)
                 {
-                    Assert.Equal("MiniProfiler Prep", profiler.Root.Children[0].Name);
+                    Assert.Equal("MiniProfiler Init", profiler.Root.Children[0].Name);
                 }
 
-                var testStep = profiler.Root.Children[1];
+                var testStep = profiler.Root.Children.Last();
                 Assert.Equal("Test", testStep.Name);
                 Assert.False(testStep.HasChildren);
                 Assert.True(testStep.HasCustomTimings);
@@ -76,7 +83,8 @@ namespace StackExchange.Profiling.Tests
                 Assert.Single(customTimings);
                 Assert.Equal("Select 1", customTimings[0].CommandString);
                 Assert.Equal("Reader", customTimings[0].ExecuteType);
-                Assert.True(customTimings[0].DurationMilliseconds >= 20);
+                // We can't safely assert this on a test run
+                //Assert.True(customTimings[0].DurationMilliseconds >= 20);
             }
         }
 
@@ -101,7 +109,7 @@ namespace StackExchange.Profiling.Tests
                     Assert.True(response.Headers.CacheControl.Public);
                     Assert.Equal("text/css", response.Content.Headers.ContentType.MediaType);
                     // Checking for wrapping/scoping class
-                    Assert.StartsWith(".mp", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    Assert.StartsWith(":root", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 }
                 // Test JS
                 using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js").ConfigureAwait(false))
@@ -111,6 +119,100 @@ namespace StackExchange.Profiling.Tests
                     Assert.Equal("application/javascript", response.Content.Headers.ContentType.MediaType);
                     // Checking for license header
                     Assert.Contains("jQuery", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("All allowed - No config", null, null, null, null, HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.OK)]
+        [InlineData("All allowed - Both", true, true, true, true, HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.OK)]
+        [InlineData("All allowed - Sync", true, null, null, null, HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.OK)]
+        [InlineData("All allowed - Async", null, true, null, null, HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.OK)]
+        [InlineData("Denied - Both", false, false, false, false, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("Denied - Sync", false, null, null, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("Denied - Async", null, false, null, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("Denied - Async Wins", true, false, null, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("Denied - Sync Wins", false, true, null, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("ResultsAuthorize can only deny access - Both", true, true, false, false, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.OK)]
+        [InlineData("ResultsAuthorize can only deny access - Sync", true, null, false, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.OK)]
+        [InlineData("ResultsAuthorize can only deny access - Async", null, true, null, false, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.OK)]
+        [InlineData("ResultsAuthorize can only deny access - Mix 1", null, true, false, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.OK)]
+        [InlineData("ResultsAuthorize can only deny access - Mix 2", true, null, null, false, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.OK)]
+        [InlineData("No lists because no single - Both", false, false, true, true, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("No lists because no single - Sync", false, null, true, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("No lists because no single - Async", null, false, null, true, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("No lists because no single - Mix 1", null, false, true, null, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        [InlineData("No lists because no single - Mix 2", false, null, null, true, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized)]
+        public async Task ResultsAuthorization(
+            string name,
+            bool? auth,
+            bool? authAsync,
+            bool? listAuth,
+            bool? listAuthAsync,
+            HttpStatusCode indexExpected,
+            HttpStatusCode listExpected,
+            HttpStatusCode singleExpected)
+        {
+            using (var server = GetTestServer(o =>
+            {
+                o.ShouldProfile = _ => true;
+                o.UserIdProvider = _ => nameof(ResultsAuthorization);
+                if (auth.HasValue)
+                {
+                    o.ResultsAuthorize = req => auth.Value;
+                }
+                if (authAsync.HasValue)
+                {
+                    o.ResultsAuthorizeAsync = req => Task.FromResult(authAsync.Value);
+                }
+                if (listAuth.HasValue)
+                {
+                    o.ResultsListAuthorize = req => listAuth.Value;
+                }
+                if (listAuthAsync.HasValue)
+                {
+                    o.ResultsListAuthorizeAsync = req => Task.FromResult(listAuthAsync.Value);
+                }
+                CurrentOptions = o;
+            }))
+            {
+                Output.WriteLine("Testing: " + name);
+                var client = server.CreateClient();
+                string id;
+                using (var response = await client.GetAsync(""))
+                {
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                    id = Assert.Single(response.Headers.GetValues("X-MiniProfiler-Ids"));
+                }
+                Assert.NotNull(id);
+
+                string Path(string path) => CurrentOptions.RouteBasePath + "/" + path;
+
+                using (var response = await client.GetAsync(Path("results-index")))
+                {
+                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Code: " + response.StatusCode);
+                    Output.WriteLine("  Expected Code: " + indexExpected);
+                    Assert.Equal(indexExpected, response.StatusCode);
+                }
+
+                using (var response = await client.GetAsync(Path("results-list")))
+                {
+                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Code: " + response.StatusCode);
+                    Output.WriteLine("  Expected Code: " + listExpected);
+                    Assert.Equal(listExpected, response.StatusCode);
+                }
+
+                using (var response = await client.GetAsync(Path("results?id=" + id)))
+                {
+                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Code: " + response.StatusCode);
+                    Output.WriteLine("  Expected Code: " + singleExpected);
+                    Assert.Equal(singleExpected, response.StatusCode);
                 }
             }
         }

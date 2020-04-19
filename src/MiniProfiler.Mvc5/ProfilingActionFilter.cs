@@ -17,6 +17,7 @@ namespace StackExchange.Profiling.Mvc
         /// Happens before the action starts running
         /// </summary>
         /// <param name="filterContext">The filter context to handle the start of.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Nope.")]
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var mp = MiniProfiler.Current;

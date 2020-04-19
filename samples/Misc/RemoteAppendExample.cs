@@ -46,6 +46,7 @@ namespace Misc
 
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending) =>
             Wrapped.List(maxResults, start, finish, orderBy);
+
         public void Save(MiniProfiler profiler) => Wrapped.Save(profiler);
         public void SetUnviewed(string user, Guid id) => Wrapped.SetUnviewed(user, id);
         public void SetViewed(string user, Guid id) => Wrapped.SetViewed(user, id);
@@ -53,6 +54,7 @@ namespace Misc
 
         public Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending) =>
             Wrapped.ListAsync(maxResults, start, finish, orderBy);
+
         public Task SaveAsync(MiniProfiler profiler) => Wrapped.SaveAsync(profiler);
         public Task SetUnviewedAsync(string user, Guid id) => Wrapped.SetUnviewedAsync(user, id);
         public Task SetViewedAsync(string user, Guid id) => Wrapped.SetViewedAsync(user, id);

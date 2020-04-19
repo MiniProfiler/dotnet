@@ -4,7 +4,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Samples.AspNetCore.Models;
 using StackExchange.Profiling.Storage;
 
@@ -34,11 +33,11 @@ namespace Samples.AspNetCore
         {
             // Add framework services.
             services.AddDbContext<SampleContext>();
-            services.AddMvc(options => 
+            services.AddMvc(options =>
             {
                 // Because the samples have some MyAction and MyActionAsync duplicates
                 // See: https://github.com/aspnet/AspNetCore/issues/8998
-                options.SuppressAsyncSuffixInActionNames = false; 
+                options.SuppressAsyncSuffixInActionNames = false;
             });
 
             // Add MiniProfiler services
@@ -60,8 +59,10 @@ namespace Samples.AspNetCore
                 options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.SqlServerFormatter();
 
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
-                options.ResultsAuthorize = request => !Program.DisableProfilingResults;
+                options.ResultsAuthorize = _ => !Program.DisableProfilingResults;
                 //options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+                //options.ResultsAuthorizeAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfiler;
+                //options.ResultsAuthorizeListAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfilerLists;
 
                 // To control which requests are profiled, use the Func<HttpRequest, bool> option:
                 //options.ShouldProfile = request => MyShouldThisBeProfiledFunction(request);
@@ -76,6 +77,9 @@ namespace Samples.AspNetCore
                 // Optionally disable "Connection Open()", "Connection Close()" (and async variants).
                 //options.TrackConnectionOpenClose = false;
 
+                // Optionally use something other than the "light" color scheme.
+                options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+
                 // Enabled sending the Server-Timing header on responses
                 options.EnableServerTimingHeader = true;
 
@@ -86,7 +90,7 @@ namespace Samples.AspNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -100,10 +104,7 @@ namespace Samples.AspNetCore
             app.UseMiniProfiler()
                .UseStaticFiles()
                .UseRouting()
-               .UseEndpoints(endpoints =>
-               {
-                   endpoints.MapDefaultControllerRoute();
-               });
+               .UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
 
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             using (var serviceScope = serviceScopeFactory.CreateScope())

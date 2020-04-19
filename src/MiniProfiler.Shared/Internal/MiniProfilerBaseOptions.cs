@@ -123,6 +123,11 @@ namespace StackExchange.Profiling.Internal
         public RenderPosition PopupRenderPosition { get; set; } = RenderPosition.Left;
 
         /// <summary>
+        /// Determines which color scheme to use when rendering (the class to apply for CSS styling).
+        /// </summary>
+        public ColorScheme ColorScheme { get; set; } = ColorScheme.Light;
+
+        /// <summary>
         /// Allows showing/hiding of popup results buttons via keyboard.
         /// </summary>
         public string PopupToggleKeyboardShortcut { get; set; } = "Alt+P";

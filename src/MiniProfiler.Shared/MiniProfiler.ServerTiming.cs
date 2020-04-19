@@ -35,16 +35,16 @@ namespace StackExchange.Profiling
                 }
             }
 
+            // Server-Timing: sql;desc="sql";dur=9,redis;desc="redis";dur=5,aspnet;desc="ASP.NET";dur=20
             var sb = new StringBuilder();
             foreach (var category in summary)
             {
-                sb.Append(category.Key).Append('=').Append(category.Value.ToString(NumberFormatInfo.InvariantInfo))
-                  .Append("; \"").Append(category.Key).Append("\",");
-                total -= category.Value;
+                sb.Append(category.Key)
+                  .Append(";desc=\"").Append(category.Key).Append("\"")
+                  .Append(";dur=").Append(category.Value.ToString("0.##", NumberFormatInfo.InvariantInfo))
+                  .Append(',');
             }
-            sb.Append("aspnet=").Append(total.ToString(NumberFormatInfo.InvariantInfo)).Append("; \"ASP.NET\"");
-
-            // Server-Timing: sql=9; "sql", redis=5; "redis", aspnet=20; "ASP.NET"
+            sb.Append("total;desc=\"Total\";dur=").Append(total.ToString("0.##", NumberFormatInfo.InvariantInfo));
             return sb.ToString();
         }
     }

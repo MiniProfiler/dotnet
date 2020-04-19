@@ -80,7 +80,9 @@ namespace StackExchange.Profiling.Internal
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
-            ContractResolver = new DefaultContractResolver()
+            ContractResolver = new DefaultContractResolver(),
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
@@ -88,7 +90,9 @@ namespace StackExchange.Profiling.Internal
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
-            ContractResolver = new DefaultContractResolver()
+            ContractResolver = new DefaultContractResolver(),
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         /// <summary>
@@ -97,7 +101,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
         /// <param name="htmlEscape">Whether to HTML escape the output.</param>
         public static string ToJson(this MiniProfiler profiler, bool htmlEscape = false) =>
-            profiler != default(object)
+            profiler != default
             ? (htmlEscape ? JsonConvert.SerializeObject(profiler, htmlEscapeSettings) : JsonConvert.SerializeObject(profiler, defaultSettings))
             : null;
 
@@ -129,7 +133,7 @@ namespace StackExchange.Profiling.Internal
         /// <returns></returns>
         public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value)
         {
-            value = default(TValue);
+            value = default;
             if (dict?.TryGetValue(key, out value) == true)
             {
                 return dict.Remove(key);

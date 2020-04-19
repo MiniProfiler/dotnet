@@ -92,7 +92,7 @@ namespace StackExchange.Profiling.Data
         public override void Close()
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 _connection.Close();
                 return;
@@ -110,7 +110,7 @@ namespace StackExchange.Profiling.Data
         public override void Open()
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 _connection.Open();
                 return;
@@ -129,7 +129,7 @@ namespace StackExchange.Profiling.Data
         public override async Task OpenAsync(CancellationToken cancellationToken)
         {
             var miniProfiler = _profiler as MiniProfiler;
-            if (miniProfiler == null || !miniProfiler.IsActive || miniProfiler.Options?.TrackConnectionOpenClose == false)
+            if (miniProfiler?.IsActive != true || miniProfiler.Options?.TrackConnectionOpenClose == false)
             {
                 await _connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                 return;
@@ -190,7 +190,6 @@ namespace StackExchange.Profiling.Data
             OnStateChange(stateChangeEventArguments);
         }
 
-#if !NETSTANDARD1_5
         /// <summary>
         /// Gets a value indicating whether events can be raised.
         /// </summary>
@@ -222,6 +221,5 @@ namespace StackExchange.Profiling.Data
         /// <param name="restrictionValues">The restriction values.</param>
         /// <returns>The <see cref="DataTable"/>.</returns>
         public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
-#endif
     }
 }

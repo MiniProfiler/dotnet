@@ -65,7 +65,7 @@ namespace Samples.Console
         public static void TestMultiThreaded()
         {
             var mp = MiniProfiler.StartNew("Locking");
-            void doWork() => Thread.Sleep(new Random().Next(1, 50));
+            static void doWork() => Thread.Sleep(new Random().Next(1, 50));
 
             using (mp.Step("outer"))
             {
@@ -75,7 +75,10 @@ namespace Samples.Console
 
                     using (mp.Step("step " + i))
                     {
-                        doWork();
+                        using (mp.CustomTiming("MyCustom", "test command"))
+                        {
+                            doWork();
+                        }
 
                         using (mp.Step("sub-step" + i))
                         {

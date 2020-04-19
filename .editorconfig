@@ -78,3 +78,6 @@ csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
+
+# IDE0063: Use simple 'using' statement
+csharp_prefer_simple_using_statement = false:none

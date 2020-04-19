@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.Storage
 {

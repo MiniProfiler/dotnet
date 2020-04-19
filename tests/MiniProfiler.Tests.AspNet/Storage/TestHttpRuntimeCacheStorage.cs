@@ -9,6 +9,7 @@ namespace StackExchange.Profiling.Tests.Storage
     public class TestMemoryCacheStorage
     {
         private MiniProfilerOptions Options { get; }
+
         public TestMemoryCacheStorage()
         {
             Options = new MiniProfilerOptions()

@@ -253,13 +253,11 @@ namespace Samples.Mvc5.Controllers
                         newCount = context.Database.SqlQuery<int>(sql).Single();
                     }
                     using (MiniProfiler.Current.Step("Get Count using ProfiledConnection - sql recorded"))
+                    using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
                     {
-                        using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
-                        {
-                            conn.Open();
-                            newCount = conn.Query<int>(sql).Single();
-                            conn.Close();
-                        }
+                        conn.Open();
+                        newCount = conn.Query<int>(sql).Single();
+                        conn.Close();
                     }
                 }
                 finally
@@ -275,17 +273,18 @@ namespace Samples.Mvc5.Controllers
         /// duplicated queries.
         /// </summary>
         /// <returns>duplicated query demonstration</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "This isn't C# 8, silly IDE.")]
         public ActionResult DuplicatedQueries()
         {
             using (var conn = GetConnection())
             {
-              long total = 0;
+                long total = 0;
 
-              for (int i = 0; i < 20; i++)
-              {
-                  total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
-              }
-              return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
+                for (int i = 0; i < 20; i++)
+                {
+                    total += conn.Query<long>("select count(1) from RouteHits where HitCount = @i", new { i }).First();
+                }
+                return Content(string.Format("Duplicated Queries (N+1) completed {0}", total));
             }
         }
 
@@ -433,6 +432,7 @@ namespace Samples.Mvc5.Controllers
         /// The parameterized SQL with enumerations.
         /// </summary>
         /// <returns>The <see cref="ActionResult"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "This isn't C# 8, silly IDE.")]
         public ActionResult ParameterizedSqlWithEnums()
         {
             using (var conn = GetConnection())

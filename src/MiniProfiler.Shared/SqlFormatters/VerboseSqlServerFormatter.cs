@@ -1,7 +1,6 @@
-using StackExchange.Profiling.Internal;
+﻿using StackExchange.Profiling.Internal;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -38,7 +37,7 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 buffer.Append("-- Command Type: ").Append(command.CommandType.ToString()).Append("\n");
                 buffer.Append("-- Database: ").Append(command.Connection.Database).Append("\n");
-#if !NETSTANDARD1_5
+
                 if (command.Transaction != null)
                 {
                     buffer.Append("-- Command Transaction Iso Level: ").Append(command.Transaction.IsolationLevel.ToString()).Append("\n");
@@ -48,7 +47,7 @@ namespace StackExchange.Profiling.SqlFormatters
                     // transactions issued by TransactionScope are not bound to the database command but exists globally
                     buffer.Append("-- Transaction Scope Iso Level: ").Append(System.Transactions.Transaction.Current.IsolationLevel.ToString()).Append("\n");
 				}
-#endif
+
                 buffer.Append("\n");
             }
 

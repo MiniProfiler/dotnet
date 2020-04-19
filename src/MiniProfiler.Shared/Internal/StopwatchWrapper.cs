@@ -6,7 +6,7 @@ namespace StackExchange.Profiling.Internal
     /// <summary>
     /// The stopwatch wrapper MiniProfile uses, for internal usage.
     /// </summary>
-    public class StopwatchWrapper : IStopwatch
+    public sealed class StopwatchWrapper : IStopwatch
     {
         private readonly Stopwatch _stopwatch;
 

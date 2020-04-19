@@ -133,11 +133,11 @@ namespace StackExchange.Profiling
         /// <param name="url">The URL the link goes to.</param>
         public static void AddCustomLink(this MiniProfiler profiler, string text, string url)
         {
-            if (profiler == null || !profiler.IsActive) return;
+            if (profiler?.IsActive != true) return;
 
             lock (profiler)
             {
-                profiler.CustomLinks = profiler.CustomLinks ?? new Dictionary<string, string>();
+                profiler.CustomLinks ??= new Dictionary<string, string>();
             }
 
             profiler.CustomLinks[text] = url;
@@ -168,7 +168,7 @@ namespace StackExchange.Profiling
 
                 for (var i = 0; i < timing.Depth; i++)
                 {
-                    text.Append('>');
+                    text.Append(">>");
                 }
                 if (timing.Depth > 0)
                 {
@@ -193,7 +193,8 @@ namespace StackExchange.Profiling
                             .Append("ms in ")
                             .Append(customTimings.Count)
                             .Append(" cmd")
-                            .Append(customTimings.Count == 1 ? string.Empty : "s");
+                            .Append(customTimings.Count == 1 ? string.Empty : "s")
+                            .Append(")");
                     }
                 }
 
