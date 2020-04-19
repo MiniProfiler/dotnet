@@ -41,6 +41,9 @@ public void ConfigureServices(IServiceCollection services)
         // (default is everyone can access profilers)
         options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
         options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+        // Or, there are async versions available:
+        options.ResultsAuthorizeAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfiler;
+        options.ResultsAuthorizeListAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfilerLists;
 
         // (Optional)  To control which requests are profiled, use the Func<HttpRequest, bool> option:
         // (default is everything should be profiled)
