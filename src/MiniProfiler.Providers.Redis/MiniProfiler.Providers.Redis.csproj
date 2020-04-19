@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="StackExchange.Redis.StrongName" Version="1.2.6" />
-    <PackageReference Include="protobuf-net" Version="2.3.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
+    <PackageReference Include="protobuf-net" Version="2.4.6" />
   </ItemGroup>
 </Project>
