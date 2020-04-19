@@ -56,6 +56,8 @@ namespace Samples.AspNetCore
                 // To control authorization, you can use the Func<HttpRequest, bool> options:
                 options.ResultsAuthorize = _ => !Program.DisableProfilingResults;
                 //options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+                //options.ResultsAuthorizeAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfiler;
+                //options.ResultsAuthorizeListAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfilerLists;
 
                 // To control which requests are profiled, use the Func<HttpRequest, bool> option:
                 //options.ShouldProfile = request => MyShouldThisBeProfiledFunction(request);

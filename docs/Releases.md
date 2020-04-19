@@ -15,6 +15,8 @@ This page tracks major changes included in any update starting with version 4.0.
   - Drops IE 11 support
 - Fix for missing `IMemoryCache` depending on config ([#440](https://github.com/MiniProfiler/dotnet/pull/440))
 - Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432)) (thanks [@bgrainger](https://github.com/bgrainger)!)
+- **.NET Core only**
+  - Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
 
 
 #### Version 4.1.0
