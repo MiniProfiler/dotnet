@@ -6,17 +6,22 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Version 4.2.0 (In preview)
-- Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))
-- Added dark and "auto" (system preference decides) color themes, total is "Light", "Dark", and "Auto" ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
-  - Generally moves to CSS 3 variables, for easier custom themes as well.
-- Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
-- Fix for ['i.Started.toUTCString is not a function'](https://github.com/MiniProfiler/dotnet/pull/462) when global serializer options are changed.
-- Removed jQuery (built-in) dependency ([#442](https://github.com/MiniProfiler/dotnet/pull/442))
-  - Drops IE 11 support
-- Fix for missing `IMemoryCache` depending on config ([#440](https://github.com/MiniProfiler/dotnet/pull/440))
-- Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432)) (thanks [@bgrainger](https://github.com/bgrainger)!)
-- **.NET Core only**
-  - Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
+- **New**:
+  - Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))
+  - Added dark and "auto" (system preference decides) color themes, total is "Light", "Dark", and "Auto" ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
+  - Generally moves to CSS 3 variables, for easier custom themes as well ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
+  - Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
+  - (**.NET Core only**) Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
+- **Fixes/Changes**:
+  - Fix for ['i.Started.toUTCString is not a function'](https://github.com/MiniProfiler/dotnet/pull/462) when global serializer options are changed.
+  - Removed jQuery (built-in) dependency ([#442](https://github.com/MiniProfiler/dotnet/pull/442))
+    - (**Major**) Drops IE 11 support
+  - Fix for missing `IMemoryCache` depending on config ([#440](https://github.com/MiniProfiler/dotnet/pull/440))
+
+- MySQL Storage:
+  - Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432)) (thanks [@bgrainger](https://github.com/bgrainger)!)
+- Redis Storage
+  - Moves from `StackExchange.Redis.StrongName` to `StackExchange.Redis` 2.1.30 ([#473](https://github.com/MiniProfiler/dotnet/pull/473))
 
 
 #### Version 4.1.0
