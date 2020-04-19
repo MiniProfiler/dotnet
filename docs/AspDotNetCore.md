@@ -101,7 +101,6 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 <sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're working on smoother alternatives here.</sub>
 
 
-
 #### Profiling
 Now you're ready to profile. In addition to [the usual `using` wrap method]({{ site.baseurl }}/HowTo/ProfileCode) for profiling sections of code, ASP.NET Core includes a tag helper you can use in views like this:
 
@@ -111,3 +110,9 @@ Now you're ready to profile. In addition to [the usual `using` wrap method]({{ s
     <span>Hello Mars!</span>
 </profile>
 ```
+
+#### Routes
+
+There are 2 user endpoints for MiniProfiler. The root is determined by `MiniProfilerOptions.RouteBasePath` (defaults to `/mini-profiler-resources`, but can be changed):
+- `/<base>/results-index`: A list of recent profilers, authorization required via `.ResultsAuthorize` (or `.ResultsAuthorizeAsync`) and `.ResultsListAuthorize` (or `.ResultsListAuthorizeAsync`)
+- `/<base>/results`: Views either the very last profiler for the current user or a specific profiler via `?id={guid}`, authorization required via `.ResultsAuthorize` (or `.ResultsAuthorizeAsync`)

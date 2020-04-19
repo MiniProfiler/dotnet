@@ -94,3 +94,9 @@ protected void Application_EndRequest()
     MiniProfiler.Current?.Stop(); // Be sure to stop the profiler!
 }
 ```
+
+#### Routes
+
+There are 2 user endpoints for MiniProfiler. The root is determined by `MiniProfilerOptions.RouteBasePath` (defaults to `/mini-profiler-resources`, but can be changed):
+- `/<base>/results-index`: A list of recent profilers, authorization required via `.ResultsAuthorize` and `.ResultsListAuthorize`
+- `/<base>/results`: Views either the very last profiler for the current user or a specific profiler via `?id={guid}`, authorization required via `.ResultsAuthorize`
