@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Razor;
 using StackExchange.Profiling.Internal;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -39,13 +39,28 @@ namespace StackExchange.Profiling.Data
         /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error) => Trace.WriteLine(error);
 
-        private static string GetName(string label, ActionDescriptor descriptor)
-        {
-            var controller = descriptor.RouteValues.TryGetValue("controller", out var c) ? c : "UnknownController";
-            var action = descriptor.RouteValues.TryGetValue("action", out var a) ? a : "UnknownAction";
+        // So we don't keep allocating strings for the same actions over and over
+        private readonly ConcurrentDictionary<(string, string), string> _descriptorNameCache = new ConcurrentDictionary<(string, string), string>();
 
-            // TODO: Don't allocate this string more than once
-            return label + ": " + controller + "/" + action;
+        private string GetName(string label, ActionDescriptor descriptor)
+        {
+            var key = (label, descriptor.DisplayName);
+            if (!_descriptorNameCache.TryGetValue(key, out var result))
+            {
+                // For the "Samples.AspNetCore.Controllers.HomeController.Index (Samples.AspNetCore3)" format,
+                // ...trim off the assembly on the end.
+                var assemblyNamePos = descriptor.DisplayName.IndexOf(" (");
+                if (assemblyNamePos > 0)
+                {
+                    result = string.Concat(label, ": ", descriptor.DisplayName.AsSpan().Slice(0, assemblyNamePos));
+                }
+                else
+                {
+                    result = label + ": " + descriptor.DisplayName;
+                }
+                _descriptorNameCache[key] = result;
+            }
+            return result;
         }
 
         private static string GetName(IActionResult result) => result switch
@@ -88,7 +103,7 @@ namespace StackExchange.Profiling.Data
         {
             // MVC Bits: https://github.com/dotnet/aspnetcore/blob/v3.0.0/src/Mvc/Mvc.Core/src/Diagnostics/MvcDiagnostics.cs
             // ActionEvent
-            BeforeActionEventData data => Start(data.ActionDescriptor, GetName("Overall Action", data.ActionDescriptor)),
+            BeforeActionEventData data => Start(data.ActionDescriptor, GetName("Action", data.ActionDescriptor)),
             AfterActionEventData data => Complete(data.ActionDescriptor),
             // ControllerActionMethod
             BeforeControllerActionMethodEventData data => Start(data.ActionContext.ActionDescriptor, GetName("Controller Action", data.ActionContext.ActionDescriptor)),
