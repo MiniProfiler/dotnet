@@ -678,8 +678,8 @@ namespace StackExchange.Profiling {
                 const customTimingTypes = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
                 let str = `
   <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}" data-timing-id="${timing.Id}">
-    <td class="mp-label" title="${encode(timing.Name && timing.Name.length > 45 ? timing.Name : '')}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
-      ${encode(timing.Name.slice(0, 45))}${encode(timing.Name && timing.Name.length > 45 ? '...' : '')}
+    <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
+      ${encode(timing.Name)}
     </td>
     <td class="mp-duration" title="duration of this step without any children's durations">
       ${duration(timing.DurationWithoutChildrenMilliseconds)}
