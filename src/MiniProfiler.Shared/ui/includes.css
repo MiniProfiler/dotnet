@@ -14,7 +14,6 @@
   --mp-gap-font-color: #444;
   --mp-gap-bg-color: #e1e5ed;
   --mp-overlay-bg-color: #000;
-  --mp-shadow-color: #555555;
   --mp-info-border-color: #ddd;
   --mp-query-border-color: #efefef;
   /* Timings */
@@ -41,6 +40,8 @@
   /* Borders */
   --mp-result-border: solid 0.5px #ababab;
   --mp-result-border-radius: 10px;
+  /* Shadows */
+  --mp-popup-shadow: 0 1px 5px #55555555;
 }
 @media (prefers-color-scheme: dark) {
   .mp-scheme-auto {
@@ -627,7 +628,7 @@
   text-align: left;
   line-height: 18px;
   overflow: auto;
-  box-shadow: 0 1px 10px var(--mp-shadow-color);
+  box-shadow: var(--mp-popup-shadow);
   border-radius: 2px;
 }
 .mp-results .mp-popup .mp-info {
