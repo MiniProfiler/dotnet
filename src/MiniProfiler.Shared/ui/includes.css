@@ -650,7 +650,10 @@
   padding-bottom: 3px;
 }
 .mp-results .mp-popup .mp-timings .mp-label {
-  max-width: 275px;
+  max-width: 350px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .mp-results .mp-queries {
   display: none;
