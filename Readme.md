@@ -6,7 +6,6 @@ Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and general
 
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
 ![Actions Build](https://github.com/MiniProfiler/dotnet/workflows/Main%20Build/badge.svg)
-[![Azure Pipelines Build Status](https://stackoverflowoss.visualstudio.com/StackOSS/_apis/build/status/MiniProfiler.dotnet?branchName=master)](https://stackoverflowoss.visualstudio.com/StackOSS/_build/latest?definitionId=2&branchName=master)
 
 
 The current major version of MiniProfiler is v4.
