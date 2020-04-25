@@ -29,9 +29,7 @@ namespace StackExchange.Profiling
 
             using (MiniProfiler.Current.Step(Name))
             {
-#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 output.Content = await output.GetChildContentAsync();
-#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
             }
         }
     }
