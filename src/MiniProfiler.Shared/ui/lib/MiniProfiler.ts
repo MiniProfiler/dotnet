@@ -276,7 +276,7 @@ namespace StackExchange.Profiling {
             const bool = (arg: string) => arg === 'true';
 
             this.options = {
-                ids: data.ids.split(','),
+                ids: (data.ids || '').split(','),
                 path: data.path,
                 version: data.version,
                 renderPosition: data.position as RenderPosition,
