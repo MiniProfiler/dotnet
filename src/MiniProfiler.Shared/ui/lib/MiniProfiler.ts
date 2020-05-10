@@ -1180,6 +1180,7 @@ namespace StackExchange.Profiling {
                 this.controls = container.querySelector('mp-controls') as HTMLDivElement;
 
                 const minMax = container.querySelector('.mp-controls .mp-min-max') as HTMLSpanElement;
+                const clear = container.querySelector('.mp-controls .mp-clear') as HTMLSpanElement;
                 minMax.addEventListener('click', function () {
                     container.classList.toggle('mp-min');
                 });
@@ -1195,9 +1196,11 @@ namespace StackExchange.Profiling {
                     }
                 });
 
-                const clear = container.querySelector('.mp-result');
                 clear.addEventListener('click', function () {
-                    clear.parentNode.removeChild(clear);
+                    const results = container.querySelectorAll('.mp-result');
+                    results.forEach(item=>{
+                        item.parentNode.removeChild(item);
+                    });
                 });
             } else {
                 container.classList.add('mp-no-controls');
