@@ -40,5 +40,4 @@ if ($CreatePackages) {
     Write-Host "Building all packages" -ForegroundColor "Green"
     dotnet pack ".\Build.csproj" --no-build -c Release /p:PackageOutputPath=$packageOutputFolder /p:CI=true
 }
-
-Write-Host "Done."
+Write-Host "Build Complete." -ForegroundColor "Green"
