@@ -611,6 +611,7 @@
   text-align: center;
 }
 .mp-results .mp-controls span {
+  color: var(--mp-muted-color);
   border-right: 1px solid var(--mp-muted-color);
   padding-right: 5px;
   margin-right: 5px;
@@ -669,6 +670,9 @@
   border-right: none;
   padding: 0;
   margin: 0;
+}
+.mp-results.mp-min:hover .mp-controls .mp-min-max {
+  display: inline;
 }
 .mp-result-full .mp-result {
   width: 950px;

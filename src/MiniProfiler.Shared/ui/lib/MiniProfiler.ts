@@ -953,7 +953,7 @@ namespace StackExchange.Profiling {
                 // since queries are already shown, just highlight and scroll when clicking a '1 sql' link
                 document.addEventListener('click', function (event) {
                     const target = event.target as HTMLElement;
-                    const queriesButton = target.closest('.mp-popup .mp-queries-show') as HTMLElement;
+                    const queriesButton = target.closest<HTMLElement>('.mp-popup .mp-queries-show');
                     if (queriesButton) {
                         mp.scrollToQuery(queriesButton, document.body.querySelector('.mp-queries'));
                     }
@@ -962,9 +962,9 @@ namespace StackExchange.Profiling {
             } else {
                 document.addEventListener('click', function (event) {
                     const target = event.target as HTMLElement;
-                    const button = target.closest('.mp-button') as HTMLElement;
+                    const button = target.closest<HTMLElement>('.mp-button');
                     if (button) {
-                        const popup = button.parentElement.querySelector('.mp-popup') as HTMLDivElement;
+                        const popup = button.parentElement.querySelector<HTMLDivElement>('.mp-popup');
                         const wasActive = button.parentElement.classList.contains('active');
                         const pos = mp.options.renderPosition;
 
@@ -994,7 +994,7 @@ namespace StackExchange.Profiling {
                         }
                         return;
                     }
-                    const queriesButton = target.closest('.mp-queries-show') as HTMLElement;
+                    const queriesButton = target.closest<HTMLElement>('.mp-queries-show');
                     if (queriesButton) {
                         // opaque background
                         document.body.insertAdjacentHTML('beforeend', '<div class="mp-overlay"><div class="mp-overlay-bg"/></div>');
@@ -1015,10 +1015,10 @@ namespace StackExchange.Profiling {
                 // Background and esc binding to close popups
                 const tryCloseActive = (event: MouseEvent | KeyboardEvent) => {
                     const target = event.target as HTMLElement;
-                    const active = document.querySelector('.mp-result.active') as HTMLElement;
+                    const active = document.querySelector<HTMLElement>('.mp-result.active');
                     if (!active) return;
 
-                    const bg = document.querySelector('.mp-overlay') as HTMLDivElement;
+                    const bg = document.querySelector<HTMLDivElement>('.mp-overlay');
                     const isEscPress = event.type === 'keyup' && event.which === 27;
                     const isBgClick = event.type === 'click' && !target.closest('.mp-queries, .mp-results');
 
@@ -1166,7 +1166,7 @@ namespace StackExchange.Profiling {
                             && e.ctrlKey == modifiers.ctrl.wanted
                             && e.shiftKey == modifiers.shift.wanted
                             && e.altKey == modifiers.alt.wanted) {
-                            const results = document.querySelector('.mp-results') as HTMLElement;
+                            const results = document.querySelector<HTMLElement>('.mp-results');
                             results.style.display = results.style.display == 'none' ? 'block' : 'none';
                         }
                     }, false);
@@ -1176,29 +1176,18 @@ namespace StackExchange.Profiling {
 
         private initControls = (container: HTMLDivElement) => {
             if (this.options.showControls) {
-                container.insertAdjacentHTML('beforeend', '<div class="mp-controls"><span class="mp-min-max">m</span><span class="mp-clear">c</span></div>');
-                this.controls = container.querySelector('mp-controls') as HTMLDivElement;
+                container.insertAdjacentHTML('beforeend', '<div class="mp-controls"><span class="mp-min-max" title="Minimize">m</span><span class="mp-clear" title="Clear">c</span></div>');
+                this.controls = container.querySelector<HTMLDivElement>('.mp-controls');
 
-                const minMax = container.querySelector('.mp-controls .mp-min-max') as HTMLSpanElement;
-                const clear = container.querySelector('.mp-controls .mp-clear') as HTMLSpanElement;
+                const minMax = container.querySelector<HTMLSpanElement>('.mp-controls .mp-min-max');
                 minMax.addEventListener('click', function () {
                     container.classList.toggle('mp-min');
                 });
 
-                container.addEventListener('mouseover', function () {
-                    if (this.classList.contains('mp-min')) {
-                        minMax.style.display = 'block';
-                    }
-                });
-                container.addEventListener('mouseout', function () {
-                    if (this.classList.contains('mp-min')) {
-                        minMax.style.display = 'none';
-                    }
-                });
-
+                const clear = container.querySelector<HTMLSpanElement>('.mp-controls .mp-clear');
                 clear.addEventListener('click', function () {
                     const results = container.querySelectorAll('.mp-result');
-                    results.forEach(item=>{
+                    results.forEach(item => {
                         item.parentNode.removeChild(item);
                     });
                 });
