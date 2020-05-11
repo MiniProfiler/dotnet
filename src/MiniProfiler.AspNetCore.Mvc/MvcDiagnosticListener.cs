@@ -86,6 +86,15 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
+        private object StartFilter<T>(T state, string stepName) where T : class
+        {
+            if (MiniProfiler.Current?.Options is MiniProfilerOptions opts && opts.EnableMvcFilterProfiling)
+            {
+                CurrentTiming.Value = (state, MiniProfiler.Current.StepIf(stepName, opts.MvcFilterMinimumSaveMs ?? 0, true));
+            }
+            return null;
+        }
+
         private object Complete<T>(T state) where T : class
         {
             if (CurrentTiming.Value.State is T currentState && currentState == state)
@@ -113,41 +122,41 @@ namespace StackExchange.Profiling.Data
             AfterActionResultEventData data => Complete(data.Result),
 
             // AuthorizationFilterOnAuthorization
-            BeforeAuthorizationFilterOnAuthorizationEventData data => Start(data.Filter, "Auth Filter: " + GetName(data.Filter)),
+            BeforeAuthorizationFilterOnAuthorizationEventData data => StartFilter(data.Filter, "Auth Filter: " + GetName(data.Filter)),
             AfterAuthorizationFilterOnAuthorizationEventData data => Complete(data.Filter),
 
             // ResourceFilterOnResourceExecution
-            BeforeResourceFilterOnResourceExecutionEventData data => Start(data.Filter, "Resource Filter (Exec): " + GetName(data.Filter)),
+            BeforeResourceFilterOnResourceExecutionEventData data => StartFilter(data.Filter, "Resource Filter (Exec): " + GetName(data.Filter)),
             AfterResourceFilterOnResourceExecutionEventData data => Complete(data.Filter),
             // ResourceFilterOnResourceExecuting
-            BeforeResourceFilterOnResourceExecutingEventData data => Start(data.Filter, "Resource Filter (Execing): " + GetName(data.Filter)),
+            BeforeResourceFilterOnResourceExecutingEventData data => StartFilter(data.Filter, "Resource Filter (Execing): " + GetName(data.Filter)),
             AfterResourceFilterOnResourceExecutingEventData data => Complete(data.Filter),
             // ResourceFilterOnResourceExecuted
-            BeforeResourceFilterOnResourceExecutedEventData data => Start(data.Filter, "Resource Filter (Execed): " + GetName(data.Filter)),
+            BeforeResourceFilterOnResourceExecutedEventData data => StartFilter(data.Filter, "Resource Filter (Execed): " + GetName(data.Filter)),
             AfterResourceFilterOnResourceExecutedEventData data => Complete(data.Filter),
 
             // ExceptionFilterOnException
-            BeforeExceptionFilterOnException data => Start(data.Filter, "Exception Filter: " + GetName(data.Filter)),
+            BeforeExceptionFilterOnException data => StartFilter(data.Filter, "Exception Filter: " + GetName(data.Filter)),
             AfterExceptionFilterOnExceptionEventData data => Complete(data.Filter),
 
             // ActionFilterOnActionExecution
-            BeforeActionFilterOnActionExecutionEventData data => Start(data.Filter, "Action Filter (Exec): " + GetName(data.Filter)),
+            BeforeActionFilterOnActionExecutionEventData data => StartFilter(data.Filter, "Action Filter (Exec): " + GetName(data.Filter)),
             AfterActionFilterOnActionExecutionEventData data => Complete(data.Filter),
             // ActionFilterOnActionExecuting
-            BeforeActionFilterOnActionExecutingEventData data => Start(data.Filter, "Action Filter (Execing): " + GetName(data.Filter)),
+            BeforeActionFilterOnActionExecutingEventData data => StartFilter(data.Filter, "Action Filter (Execing): " + GetName(data.Filter)),
             AfterActionFilterOnActionExecutingEventData data => Complete(data.Filter),
             // ActionFilterOnActionExecuted
-            BeforeActionFilterOnActionExecutedEventData data => Start(data.Filter, "Action Filter (Execed): " + GetName(data.Filter)),
+            BeforeActionFilterOnActionExecutedEventData data => StartFilter(data.Filter, "Action Filter (Execed): " + GetName(data.Filter)),
             AfterActionFilterOnActionExecutedEventData data => Complete(data.Filter),
 
             // ResultFilterOnResultExecution
-            BeforeResultFilterOnResultExecutionEventData data => Start(data.Filter, "Result Filter (Exec): " + GetName(data.Filter)),
+            BeforeResultFilterOnResultExecutionEventData data => StartFilter(data.Filter, "Result Filter (Exec): " + GetName(data.Filter)),
             AfterResultFilterOnResultExecutionEventData data => Complete(data.Filter),
             // ResultFilterOnResultExecuting
-            BeforeResultFilterOnResultExecutingEventData data => Start(data.Filter, "Result Filter (Execing): " + GetName(data.Filter)),
+            BeforeResultFilterOnResultExecutingEventData data => StartFilter(data.Filter, "Result Filter (Execing): " + GetName(data.Filter)),
             AfterResultFilterOnResultExecutingEventData data => Complete(data.Filter),
             // ResultFilterOnResultExecuted
-            BeforeResultFilterOnResultExecutedEventData data => Start(data.Filter, "Result Filter (Execed): " + GetName(data.Filter)),
+            BeforeResultFilterOnResultExecutedEventData data => StartFilter(data.Filter, "Result Filter (Execed): " + GetName(data.Filter)),
             AfterResultFilterOnResultExecutedEventData data => Complete(data.Filter),
 
             // Razor Bits: https://github.com/dotnet/aspnetcore/blob/v3.0.0/src/Mvc/Mvc.Razor/src/Diagnostics/MvcDiagnostics.cs
@@ -161,20 +170,20 @@ namespace StackExchange.Profiling.Data
             AfterHandlerMethodEventData data => Complete(data.Instance),
 
             // PageFilterOnPageHandlerExecution
-            BeforePageFilterOnPageHandlerExecutionEventData data => Start(data.Filter, "Filter (Exec): " + GetName(data.Filter)),
+            BeforePageFilterOnPageHandlerExecutionEventData data => StartFilter(data.Filter, "Filter (Exec): " + GetName(data.Filter)),
             AfterPageFilterOnPageHandlerExecutionEventData data => Complete(data.Filter),
             // PageFilterOnPageHandlerExecuting
-            BeforePageFilterOnPageHandlerExecutingEventData data => Start(data.Filter, "Filter (Execing): " + GetName(data.Filter)),
+            BeforePageFilterOnPageHandlerExecutingEventData data => StartFilter(data.Filter, "Filter (Execing): " + GetName(data.Filter)),
             AfterPageFilterOnPageHandlerExecutingEventData data => Complete(data.Filter),
             // PageFilterOnPageHandlerExecuted
-            BeforePageFilterOnPageHandlerExecutedEventData data => Start(data.Filter, "Filter (Execed): " + GetName(data.Filter)),
+            BeforePageFilterOnPageHandlerExecutedEventData data => StartFilter(data.Filter, "Filter (Execed): " + GetName(data.Filter)),
             AfterPageFilterOnPageHandlerExecutedEventData data => Complete(data.Filter),
 
             // PageFilterOnPageHandlerSelection
-            BeforePageFilterOnPageHandlerSelectionEventData data => Start(data.Filter, "Filter (Selection): " + GetName(data.Filter)),
+            BeforePageFilterOnPageHandlerSelectionEventData data => StartFilter(data.Filter, "Filter (Selection): " + GetName(data.Filter)),
             AfterPageFilterOnPageHandlerSelectionEventData data => Complete(data.Filter),
             // PageFilterOnPageHandlerSelected
-            BeforePageFilterOnPageHandlerSelectedEventData data => Start(data.Filter, "Filter (Selected): " + GetName(data.Filter)),
+            BeforePageFilterOnPageHandlerSelectedEventData data => StartFilter(data.Filter, "Filter (Selected): " + GetName(data.Filter)),
             AfterPageFilterOnPageHandlerSelectedEventData data => Complete(data.Filter),
             _ => null
         };

@@ -60,6 +60,17 @@ namespace StackExchange.Profiling
         /// Whether to add a Server-Timing header after profiling a request. Only supported in .NET Core 3.0 and higher.
         /// </summary>
         public bool EnableServerTimingHeader { get; set; }
+
+        /// <summary>
+        /// Whether to profile MVC filters as individual steps.
+        /// </summary>
+        public bool EnableMvcFilterProfiling { get; set; } = true;
+
+        /// <summary>
+        /// The minimum duration to record for MVC filter timings, anything below this will be discarded as noise.
+        /// Defaults to 0.01 ms
+        /// </summary>
+        public decimal? MvcFilterMinimumSaveMs { get; set; } = -1000.01m;
 #endif
     }
 }

@@ -5,6 +5,11 @@ namespace Samples.AspNetCore.Controllers
 {
     public class HomeController : Controller
     {
+        [ExampleActionFilter]
+        [ExampleLongActionFilter]
+        [ExampleActionFilter]
+        [ExampleActionFilter]
+        [ExampleActionFilter]
         public IActionResult Index()
         {
             using (MiniProfiler.Current.Step("Example Step"))
