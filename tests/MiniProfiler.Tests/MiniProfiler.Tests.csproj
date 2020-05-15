@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MySql\MiniProfiler.Providers.MySql.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.RavenDB\MiniProfiler.Providers.RavenDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Redis\MiniProfiler.Providers.Redis.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />

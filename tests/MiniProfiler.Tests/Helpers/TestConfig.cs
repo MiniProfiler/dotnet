@@ -38,6 +38,8 @@ namespace StackExchange.Profiling.Tests
             public string MySQLConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(MySQLConnectionString)) ?? "server=localhost;uid=root;pwd=root;database=test;Allow User Variables=true;SslMode=none";
             public string PostgreSqlConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(PostgreSqlConnectionString)) ?? "Server=localhost;Port=5432;Database=test;User Id=postgres;Password=postgres;";
             public string MongoDbConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(MongoDbConnectionString)) ?? "mongodb://localhost:27017/test";
+            public string RavenDbUrls { get; set; } = Environment.GetEnvironmentVariable(nameof(RavenDbUrls)) ?? "http://localhost:8080";
+            public string RavenDatabase { get; set; } = Environment.GetEnvironmentVariable(nameof(RavenDatabase)) ?? "test";
         }
     }
 }
