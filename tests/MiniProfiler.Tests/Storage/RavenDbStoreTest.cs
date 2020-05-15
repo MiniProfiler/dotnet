@@ -31,11 +31,9 @@ namespace StackExchange.Profiling.Tests.Storage
                 {
                     Urls = TestConfig.Current.RavenDbUrls.Split(';'), Database = TestConfig.Current.RavenDatabase
                 };
-                
-                Storage = new RavenDbStorage(store);//.WithIndexCreation();
-                
-                store.Initialize();
 
+                store.Initialize();
+                
                 try
                 {
                     store.Maintenance.ForDatabase(TestConfig.Current.RavenDatabase).Send(new GetStatisticsOperation());
@@ -52,6 +50,11 @@ namespace StackExchange.Profiling.Tests.Storage
                     }
                 }
                 
+                store.Dispose();
+                store = null;
+                
+                Storage = new RavenDbStorage(TestConfig.Current.RavenDbUrls.Split(';'), TestConfig.Current.RavenDatabase, waitForIndexes: true);
+                Storage.WithIndexCreation();
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)
@@ -63,9 +66,25 @@ namespace StackExchange.Profiling.Tests.Storage
             }
         }
         
-        
         public void Dispose()
         {
+            if (!ShouldSkip)
+            {
+                Storage.DropDatabase();
+            }
+        }
+    }
+    
+    public static class RavenDbDbStorageExtensions
+    {
+        /// <summary>
+        /// Drop database for RavenDB storage.
+        /// </summary>
+        /// <param name="storage">The storage to drop schema for.</param>
+        public static void DropDatabase(this RavenDbStorage storage)
+        {
+            var store = storage.GetDocumentStore();
+            store.Maintenance.Server.Send(new DeleteDatabasesOperation(store.Database, true));
         }
     }
 }

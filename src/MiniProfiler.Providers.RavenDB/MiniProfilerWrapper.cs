@@ -4,7 +4,7 @@ using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {
-    public class MiniProfilerWrapper
+    public class MiniProfilerWrapper    
     {
         public MiniProfilerWrapper()
         {
