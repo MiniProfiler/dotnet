@@ -51,6 +51,7 @@ namespace StackExchange.Profiling
                 return DocumentConventions.DefaultGetCollectionName(type);
             };
             _store.Initialize();
+            WithIndexCreation();
         }
         
 
@@ -59,8 +60,15 @@ namespace StackExchange.Profiling
         /// </summary>
         public RavenDbStorage WithIndexCreation()
         {
-            new MiniProfilerIdIndex()
+            new MiniProfilerWrapper_ByProfileId()
                 .Execute(_store);
+            
+            new MiniProfilerWrapper_ByHasUserViewedAndUser()
+                .Execute(_store);
+            
+            new MiniProfilerWrapper_ByStarted()
+                .Execute(_store);
+            
             return this;
         }
 
@@ -80,7 +88,7 @@ namespace StackExchange.Profiling
                 NoTracking = true
             });
 
-            var query = session.Query<MiniProfilerWrapper>();
+            var query = session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByStarted>();
 
             if (start.HasValue)
             {
@@ -89,7 +97,7 @@ namespace StackExchange.Profiling
 
             if (finish.HasValue)
             {
-                query = query.Where(x => x.Started <= start.Value);
+                query = query.Where(x => x.Started <= finish.Value);
             }
 
             query.Take(maxResults);
@@ -151,7 +159,8 @@ namespace StackExchange.Profiling
             {
                 NoTracking = true
             });
-            return session.Query<MiniProfilerWrapper>().FirstOrDefault(x => x.ProfileId == id)?.ToMiniProfiler();
+            return session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
+                .FirstOrDefault(x => x.ProfileId == id)?.ToMiniProfiler();
         }
 
         /// <summary>
@@ -164,7 +173,8 @@ namespace StackExchange.Profiling
             using var session = _store.OpenSession();
             ConfigureWait(session);
             
-            var profile = session.Query<MiniProfilerWrapper>().First(x => x.ProfileId == id);
+            var profile = session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
+                .First(x => x.ProfileId == id);
             profile.HasUserViewed = false;
             session.SaveChanges();
         }
@@ -178,7 +188,8 @@ namespace StackExchange.Profiling
         {
             using var session = _store.OpenSession();
             ConfigureWait(session);
-            var profile = session.Query<MiniProfilerWrapper>().First(x => x.ProfileId == id);
+            var profile = session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
+                .First(x => x.ProfileId == id);
             profile.HasUserViewed = true;
             session.SaveChanges();
         }
@@ -193,8 +204,8 @@ namespace StackExchange.Profiling
             {
                 NoTracking = true
             });
-            return session.Query<MiniProfilerWrapper>()
-                .Where(x => x.User == user && !x.HasUserViewed)
+            return session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByHasUserViewedAndUser>()
+                .Where(x => !x.HasUserViewed &&  x.User == user)
                 .Select(x => x.ProfileId)
                 .ToList();
         }
@@ -214,7 +225,7 @@ namespace StackExchange.Profiling
                 NoTracking = true
             });
 
-            var query = session.Query<MiniProfilerWrapper>();
+            var query = session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByStarted>();
 
             if (start.HasValue)
             {
@@ -223,7 +234,7 @@ namespace StackExchange.Profiling
 
             if (finish.HasValue)
             {
-                query = query.Where(x => x.Started <= start.Value);
+                query = query.Where(x => x.Started <= finish.Value);
             }
 
             query.Take(maxResults);
@@ -233,7 +244,10 @@ namespace StackExchange.Profiling
                 : query.OrderBy(x => x.Started);
 
 
-            return await query.Select(x => x.ProfileId).ToListAsync().ConfigureAwait(false);
+            return await query
+                .Select(x => x.ProfileId)
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -259,7 +273,7 @@ namespace StackExchange.Profiling
             {
                 NoTracking = true
             });
-            return (await session.Query<MiniProfilerWrapper>()
+            return (await session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
                 .FirstOrDefaultAsync(x => x.ProfileId == id)
                 .ConfigureAwait(false)).ToMiniProfiler();
         }
@@ -273,7 +287,11 @@ namespace StackExchange.Profiling
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
-            var profile = await session.Query<MiniProfilerWrapper>().FirstAsync(x => x.ProfileId == id).ConfigureAwait(false);
+            
+            var profile = await session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
+                .FirstAsync(x => x.ProfileId == id)
+                .ConfigureAwait(false);
+            
             profile.HasUserViewed = false;
             await session.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -287,7 +305,11 @@ namespace StackExchange.Profiling
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
-            var profile = await session.Query<MiniProfilerWrapper>().FirstAsync(x => x.ProfileId == id).ConfigureAwait(false);
+            
+            var profile = await session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByProfileId>()
+                .FirstAsync(x => x.ProfileId == id)
+                .ConfigureAwait(false);
+            
             profile.HasUserViewed = true;
             await session.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -303,8 +325,8 @@ namespace StackExchange.Profiling
                 NoTracking = true
             });
             
-            return await session.Query<MiniProfilerWrapper>()
-                .Where(x => x.User == user && !x.HasUserViewed)
+            return await session.Query<MiniProfilerWrapper, MiniProfilerWrapper_ByHasUserViewedAndUser>()
+                .Where(x => !x.HasUserViewed && x.User == user)
                 .Select(x => x.ProfileId)
                 .ToListAsync()
                 .ConfigureAwait(false);

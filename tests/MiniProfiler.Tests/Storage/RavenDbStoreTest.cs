@@ -54,7 +54,6 @@ namespace StackExchange.Profiling.Tests.Storage
                 store = null;
                 
                 Storage = new RavenDbStorage(TestConfig.Current.RavenDbUrls.Split(';'), TestConfig.Current.RavenDatabase, waitForIndexes: true);
-                Storage.WithIndexCreation();
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)
