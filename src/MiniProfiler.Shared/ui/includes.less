@@ -217,25 +217,24 @@
             box-shadow: var(--mp-popup-shadow);
             right: 100px;
             max-width: 90%;
-            border-radius: 10px;
+            border-radius: 9px;
             padding: 12px;
-            //margin-top: 22px;
+            margin-top: 18px;
             opacity: 0.95;
             backdrop-filter: blur(4px);
         }
 
-        &:hover {
-            .mp-label {
-                text-decoration: underline;
-            }
+        .mp-nested-timing {
+            margin-left: 16px;
         }
 
-        td:first-child {
-            &:hover .mp-debug-tooltip {
+        td:first-child:hover {
+            .mp-debug-tooltip {
                 display: block;
             }
+
             & > span {
-                color: var(--mp-link-color);
+                text-shadow: var(--mp-button-active-text-color) 0 0 4px;
             }
         }
     }

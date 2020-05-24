@@ -56,6 +56,7 @@ namespace StackExchange.Profiling {
         // additive on client side
         CustomTimingStats: { [id: string]: ICustomTimingStat };
         DurationWithoutChildrenMilliseconds: number;
+        DurationOfChildrenMilliseconds: number;
         Depth: number;
         HasCustomTimings: boolean;
         HasDuplicateCustomTimings: { [id: string]: boolean };
@@ -484,6 +485,7 @@ namespace StackExchange.Profiling {
 
             function processTiming(timing: ITiming, parent: ITiming, depth: number) {
                 timing.DurationWithoutChildrenMilliseconds = timing.DurationMilliseconds;
+                timing.DurationOfChildrenMilliseconds = 0;
                 timing.Parent = parent;
                 timing.Depth = depth;
                 timing.HasDuplicateCustomTimings = {};
@@ -492,6 +494,7 @@ namespace StackExchange.Profiling {
                 for (const child of timing.Children || []) {
                     processTiming(child, timing, depth + 1);
                     timing.DurationWithoutChildrenMilliseconds -= child.DurationMilliseconds;
+                    timing.DurationOfChildrenMilliseconds += child.DurationMilliseconds;
                 }
 
                 // do this after subtracting child durations
@@ -681,16 +684,30 @@ namespace StackExchange.Profiling {
             };
             const renderDebugInfo = (timing: ITiming) => {
                 if (timing.DebugInfo) {
+                    const customTimings = (p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : []).map((tk) => timing.CustomTimings[tk] ? `
+                <div class="mp-nested-timing">
+                    <span class="mp-duration">${timing.CustomTimingStats[tk].Count}</span> ${encode(tk)} call${timing.CustomTimingStats[tk].Count == 1 ? '' : 's'} 
+                    totalling <span class="mp-duration">${duration(timing.CustomTimingStats[tk].Duration)}</span> <span class="mp-unit">ms</span>
+                    ${((timing.HasDuplicateCustomTimings[tk] || timing.HasWarnings[tk]) ? '<span class="mp-warning">(duplicates deletected)</span>' : '')}
+                </div>` : '').join('');
                     return `
           <div class="mp-debug-tooltip">
             <div class="mp-name">Detailed info for ${encode(timing.Name)}</div>
             <div>Starts at: <span class="mp-duration">${duration(timing.StartMilliseconds)}</span> <span class="mp-unit">ms</span></div>
-            <div>Self duration: <span class="mp-duration">${duration(timing.DurationWithoutChildrenMilliseconds)}</span> <span class="mp-unit">ms</span></div>
-            <div>Overall duration (with children): <span class="mp-duration">${duration(timing.DurationMilliseconds)}</span> <span class="mp-unit">ms</span></div>
+            <div>
+                Overall duration (with children): <span class="mp-duration">${duration(timing.DurationMilliseconds)}</span> <span class="mp-unit">ms</span>
+                <div class="mp-nested-timing">
+                  Self duration: <span class="mp-duration">${duration(timing.DurationWithoutChildrenMilliseconds)}</span> <span class="mp-unit">ms</span>
+                  ${customTimings}
+                </div>
+                <div class="mp-nested-timing">
+                  Children (${timing.Children ? timing.Children.length : '0'}) duration: <span class="mp-duration">${duration(timing.DurationOfChildrenMilliseconds)}</span> <span class="mp-unit">ms</span>
+                </div>
+            </div>
             <div>Stack:</div>
             <pre class="mp-stack-trace">${timing.DebugInfo.RichHtmlStack}</pre>
           </div>
-          <span title="Debug Info">⇦</span>`;
+          <span title="Debug Info">🔍</span>`;
                 }
             };
 

@@ -229,19 +229,20 @@
   box-shadow: var(--mp-popup-shadow);
   right: 100px;
   max-width: 90%;
-  border-radius: 10px;
+  border-radius: 9px;
   padding: 12px;
+  margin-top: 18px;
   opacity: 0.95;
   backdrop-filter: blur(4px);
 }
-.mp-result .mp-debug:hover .mp-label {
-  text-decoration: underline;
+.mp-result .mp-debug .mp-nested-timing {
+  margin-left: 16px;
 }
 .mp-result .mp-debug td:first-child:hover .mp-debug-tooltip {
   display: block;
 }
-.mp-result .mp-debug td:first-child > span {
-  color: var(--mp-link-color);
+.mp-result .mp-debug td:first-child:hover > span {
+  text-shadow: var(--mp-button-active-text-color) 0 0 4px;
 }
 .mp-result .mp-stack-trace {
   color: var(--mp-muted-color);

@@ -196,8 +196,9 @@ namespace StackExchange.Profiling.Helpers
         /// Converts a stack trace to formatted HTML with styling and linkifiation.
         /// </summary>
         /// <param name="stackTrace">The stack trace to HTMLify.</param>
+        /// <param name="commonStart">The frame index to start marking as common (e.g. to grey out beneath).</param>
         /// <returns>An HTML-pretty version of the stack trace.</returns>
-        public static string HtmlPrettify(string stackTrace, int? commonStart = null)
+        internal static string HtmlPrettify(string stackTrace, int? commonStart = null)
         {
             string GetBetween(Capture prev, Capture next) =>
                 stackTrace.Substring(prev.Index + prev.Length, next.Index - (prev.Index + prev.Length));
