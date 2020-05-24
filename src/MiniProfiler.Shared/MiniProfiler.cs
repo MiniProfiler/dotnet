@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -333,9 +334,10 @@ namespace StackExchange.Profiling
             }
         }
 
-        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false, int debugStackShave = 0)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
         {
-            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave, debugStackShave);
+            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
         }
 
         /// <summary>
