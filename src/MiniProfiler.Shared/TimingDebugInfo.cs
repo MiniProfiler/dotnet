@@ -29,10 +29,10 @@ namespace StackExchange.Profiling
         private Timing ParentTiming { get; }
         private StackTrace RawStack { get; }
 
-        internal TimingDebugInfo(Timing parent)
+        internal TimingDebugInfo(Timing parent, int debugStackShave = 0)
         {
             ParentTiming = parent;
-            RawStack = new StackTrace(4, true);
+            RawStack = new StackTrace(4 + debugStackShave, true);
 
             if (parent.ParentTiming?.DebugInfo?.RawStack is StackTrace parentStack)
             {

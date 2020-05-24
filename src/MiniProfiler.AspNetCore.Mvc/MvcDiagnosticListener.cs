@@ -82,15 +82,17 @@ namespace StackExchange.Profiling.Data
 
         private object Start<T>(T state, string stepName) where T : class
         {
-            CurrentTiming.Value = (state, MiniProfiler.Current.Step(stepName));
+            var profiler = MiniProfiler.Current;
+            CurrentTiming.Value = (state, profiler != null ? new Timing(profiler, profiler.Head, stepName, null, null, debugStackShave: 4) : null);
             return null;
         }
 
         private object StartFilter<T>(T state, string stepName) where T : class
         {
-            if (MiniProfiler.Current?.Options is MiniProfilerOptions opts && opts.EnableMvcFilterProfiling)
+            var profiler = MiniProfiler.Current;
+            if (profiler?.Options is MiniProfilerOptions opts && opts.EnableMvcFilterProfiling)
             {
-                CurrentTiming.Value = (state, MiniProfiler.Current.StepIf(stepName, opts.MvcFilterMinimumSaveMs ?? 0, true));
+                CurrentTiming.Value = (state, new Timing(profiler, profiler.Head, stepName, opts.MvcFilterMinimumSaveMs ?? 0, true, debugStackShave: 4));
             }
             return null;
         }

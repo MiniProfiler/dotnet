@@ -333,9 +333,9 @@ namespace StackExchange.Profiling
             }
         }
 
-        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
+        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false, int debugStackShave = 0)
         {
-            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
+            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave, debugStackShave);
         }
 
         /// <summary>

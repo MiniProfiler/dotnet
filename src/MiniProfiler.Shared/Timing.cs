@@ -35,7 +35,20 @@ namespace StackExchange.Profiling
         /// <param name="name">The name of this timing.</param>
         /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
         /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
-        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
+        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false) :
+            this(profiler, parent, name, minSaveMs, includeChildrenWithMinSave, 0)
+        { }
+
+        /// <summary>
+        /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> this <see cref="Timing"/> belongs to.</param>
+        /// <param name="parent">The <see cref="Timing"/> this <see cref="Timing"/> is a child of.</param>
+        /// <param name="name">The name of this timing.</param>
+        /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
+        /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
+        /// <param name="debugStackShave">The number of frames to shave off the debug stack.</param>
+        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs, bool? includeChildrenWithMinSave, int debugStackShave)
         {
             Id = Guid.NewGuid();
             Profiler = profiler;
@@ -53,7 +66,7 @@ namespace StackExchange.Profiling
 
             if (profiler.Options.EnableDebugMode)
             {
-                DebugInfo = new TimingDebugInfo(this);
+                DebugInfo = new TimingDebugInfo(this, debugStackShave);
             }
         }
 

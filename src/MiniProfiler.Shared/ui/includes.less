@@ -322,7 +322,7 @@
     .mp-trivial {
         display: none;
 
-        td, td * {
+        td:not(:first-child), td:not(:first-child) * {
             color: var(--mp-muted-color) !important;
         }
     }

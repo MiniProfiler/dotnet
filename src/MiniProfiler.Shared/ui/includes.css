@@ -313,8 +313,8 @@
 .mp-result .mp-trivial {
   display: none;
 }
-.mp-result .mp-trivial td,
-.mp-result .mp-trivial td * {
+.mp-result .mp-trivial td:not(:first-child),
+.mp-result .mp-trivial td:not(:first-child) * {
   color: var(--mp-muted-color) !important;
 }
 .mp-result .mp-number {

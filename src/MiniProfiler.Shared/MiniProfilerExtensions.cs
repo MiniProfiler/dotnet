@@ -36,7 +36,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting Timing's lifetime.</param>
         /// <returns>the profile step</returns>
-        public static Timing Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name);
+        public static Timing Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name, debugStackShave: 1);
 
         /// <summary>
         /// Returns an <see cref="Timing"/> (<see cref="IDisposable"/>) that will time the code between its creation and disposal.
@@ -52,7 +52,7 @@ namespace StackExchange.Profiling
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
         public static Timing StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
         {
-            return profiler?.StepImpl(name, minSaveMs, includeChildren);
+            return profiler?.StepImpl(name, minSaveMs, includeChildren, debugStackShave: 1);
         }
 
         /// <summary>
