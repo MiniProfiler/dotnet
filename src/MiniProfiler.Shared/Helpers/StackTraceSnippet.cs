@@ -49,13 +49,14 @@ namespace StackExchange.Profiling.Helpers
             var sb = StringBuilderCache.Get();
             int stackLength = 0,
                 startFrame = frames.Length - 1;
+
             for (int i = 0; i < frames.Length; i++)
             {
                 var method = frames[i].GetMethod();
                 if (stackLength >= options.StackMaxLength
-                   // ASP.NET: no need to continue up the chain
-                   || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
-                   || (method.Module.Name == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
+                    // ASP.NET: no need to continue up the chain
+                    || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
+                    || (method.Module.Name == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
                 {
                     frames[i] = null;
                     startFrame = i < 0 ? 0 : i - 1;
@@ -73,7 +74,6 @@ namespace StackExchange.Profiling.Helpers
                 }
             }
 
-            //string nextSuffix = null;
             for (var i = startFrame; i >= 0; i--)
             {
                 var f = frames[i];
@@ -85,7 +85,6 @@ namespace StackExchange.Profiling.Helpers
                         sb.Append(" > ");
                     }
                     sb.Append(method.Name);
-                    sb.Append(" (").Append(f.ToString()).Append(")");
                 }
             }
 
