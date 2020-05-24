@@ -84,14 +84,14 @@ namespace Samples.AspNetCore
                 options.EnableServerTimingHeader = true;
 
                 // Optionally disable MVC filter profiling
-                // options.EnableMvcFilterProfiling = false;
+                //options.EnableMvcFilterProfiling = false;
                 // Or only save filters that take over a certain millisecond duration (including their children)
-                // options.MvcFilterMinimumSaveMs = 1.0m;
+                //options.MvcFilterMinimumSaveMs = 1.0m;
 
                 // Optionally disable MVC view profiling
-                // options.EnableMvcFilterProfiling = false;
+                //options.EnableMvcFilterProfiling = false;
                 // Or only save views that take over a certain millisecond duration (including their children)
-                // options.MvcViewMinimumSaveMs = 1.0m;
+                //options.MvcViewMinimumSaveMs = 1.0m;
 
                 // This enables debug mode with stacks and tooltips when using memory storage
                 // It has a lot of overhead vs. normal profiling and should only be used with that in mind
