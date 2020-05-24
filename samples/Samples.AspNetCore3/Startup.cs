@@ -82,7 +82,10 @@ namespace Samples.AspNetCore
 
                 // Enabled sending the Server-Timing header on responses
                 options.EnableServerTimingHeader = true;
-                options.EnableMvcFilterProfiling = false;
+                options.EnableMvcFilterProfiling = true;
+
+                // Alrighty, I'm done screwing around - TIME TO LOG EVERYTHING! ALLOCATIONS BE DAMNED!
+                options.EnableDebugMode = true;
 
                 options.IgnoredPaths.Add("/lib");
                 options.IgnoredPaths.Add("/css");

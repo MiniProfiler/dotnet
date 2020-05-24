@@ -50,6 +50,11 @@ namespace StackExchange.Profiling
             _minSaveMs = minSaveMs;
             _includeChildrenWithMinSave = includeChildrenWithMinSave == true;
             StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
+
+            if (profiler.Options.EnableDebugMode)
+            {
+                DebugInfo = new TimingDebugInfo(this);
+            }
         }
 
         /// <summary>
@@ -106,6 +111,12 @@ namespace StackExchange.Profiling
         /// </summary>
         [DataMember(Order = 6)]
         public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
+
+        /// <summary>
+        /// Present only when <c>EnableDebugMode</c> is <c>true</c>, additional step info in-memory only.
+        /// </summary>
+        [DataMember(Order = 7)]
+        public TimingDebugInfo DebugInfo { get; set; }
 
         /// <summary>
         /// JSON representing the Custom Timings associated with this timing.

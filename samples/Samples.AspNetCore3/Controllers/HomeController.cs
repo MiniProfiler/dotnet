@@ -10,6 +10,9 @@ namespace Samples.AspNetCore.Controllers
         [ExampleActionFilter]
         [ExampleActionFilter]
         [ExampleActionFilter]
+        [ExampleAsyncActionFilter]
+        [ExampleAsyncActionFilter]
+        [ExampleActionFilter]
         public IActionResult Index()
         {
             using (MiniProfiler.Current.Step("Example Step"))

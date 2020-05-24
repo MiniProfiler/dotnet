@@ -64,6 +64,12 @@ namespace StackExchange.Profiling {
         Parent: ITiming;
         // added for gaps (TODO: change all this)
         richTiming: IGapTiming[];
+        // In debug mode only
+        DebugInfo: ITimingDebugInfo;
+    }
+
+    interface ITimingDebugInfo {
+        RichHtmlStack: string;
     }
 
     interface ICustomTiming {
@@ -673,11 +679,26 @@ namespace StackExchange.Profiling {
                 }
                 return (milliseconds || 0).toFixed(decimalPlaces === undefined ? 1 : decimalPlaces);
             };
+            const renderDebugInfo = (timing: ITiming) => {
+                if (timing.DebugInfo) {
+                    return `
+          <div class="mp-debug-tooltip">
+            <div class="mp-name">Detailed info for ${encode(timing.Name)}</div>
+            <div>Starts at: <span class="mp-duration">${duration(timing.StartMilliseconds)}</span> <span class="mp-unit">ms</span></div>
+            <div>Self duration: <span class="mp-duration">${duration(timing.DurationWithoutChildrenMilliseconds)}</span> <span class="mp-unit">ms</span></div>
+            <div>Overall duration (with children): <span class="mp-duration">${duration(timing.DurationMilliseconds)}</span> <span class="mp-unit">ms</span></div>
+            <div>Stack:</div>
+            <pre class="mp-stack-trace">${timing.DebugInfo.RichHtmlStack}</pre>
+          </div>
+          <span title="Debug Info">⇦</span>`;
+                }
+            };
 
             const renderTiming = (timing: ITiming) => {
                 const customTimingTypes = p.CustomTimingStats ? Object.keys(p.CustomTimingStats) : [];
                 let str = `
-  <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}" data-timing-id="${timing.Id}">
+  <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}${timing.DebugInfo ? ' mp-debug' : ''}" data-timing-id="${timing.Id}">
+    <td>${renderDebugInfo(timing)}</td>
     <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
       ${encode(timing.Name)}
     </td>
@@ -709,7 +730,7 @@ namespace StackExchange.Profiling {
         <table class="mp-timings">
           <thead>
             <tr>
-              <th></th>
+              <th colspan="2"></th>
               <th>duration (ms)</th>
               <th class="mp-more-columns">with children (ms)</th>
               <th class="time-from-start mp-more-columns">from start (ms)</th>
@@ -721,7 +742,7 @@ namespace StackExchange.Profiling {
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2"></td>
+              <td colspan="3"></td>
               <td class="mp-more-columns" colspan="2"></td>
             </tr>
           </tfoot>

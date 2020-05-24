@@ -206,6 +206,106 @@
         }
     }
 
+    .mp-debug {
+        position: relative;
+        cursor: pointer;
+
+        .mp-debug-tooltip {
+            display: none;
+            position: fixed;
+            background-color: var(--mp-main-bg-color);
+            box-shadow: var(--mp-popup-shadow);
+            right: 100px;
+            max-width: 90%;
+            border-radius: 10px;
+            padding: 12px;
+            //margin-top: 22px;
+            opacity: 0.95;
+            backdrop-filter: blur(4px);
+        }
+
+        &:hover {
+            .mp-label {
+                text-decoration: underline;
+            }
+        }
+
+        td:first-child {
+            &:hover .mp-debug-tooltip {
+                display: block;
+            }
+            & > span {
+                color: var(--mp-link-color);
+            }
+        }
+    }
+
+    .mp-stack-trace {
+        color: var(--mp-muted-color);
+        margin-bottom: 5px;
+        font-family: Consolas, Monaco, monospace;
+        overflow-x: hidden;
+        overflow-y: auto;
+        white-space: pre-line;
+        max-height: 200px;
+
+        .stack-row {
+            white-space: nowrap;
+
+            &.common {
+                filter: grayscale(80%);
+            }
+        }
+
+        .stack {
+            &.async {
+                opacity: 0.6;
+                display: none;
+            }
+
+            &.leadin, &.file, &.line-prefix, &.path, &.dot {
+                color: var(--mp-muted-color);
+            }
+
+            &.async-tag {
+                color: var(--mp-highlight-attribute-color);
+                font-weight: bold;
+
+                &:before {
+                    content: "(";
+                }
+
+                &:after {
+                    content: ")";
+                }
+            }
+
+            &.type {
+                color: var(--mp-highlight-keyword-color);
+            }
+
+            &.generic-type {
+                color: var(--mp-highlight-fade-color);
+            }
+
+            &.misc, &.parens {
+                color: var(--mp-highlight-comment-color);
+            }
+
+            &.method {
+                color: var(--mp-highlight-string-color);
+            }
+
+            &.paramType {
+                color: var(--mp-highlight-attribute-color);
+            }
+
+            &.paramName {
+                color: var(--mp-highlight-variable-color);
+            }
+        }
+    }
+
     .mp-label {
         color: var(--mp-label-color);
         overflow: hidden;
@@ -423,12 +523,6 @@
 
     .mp-odd {
         background-color: var(--mp-alt-row-color);
-    }
-
-    .mp-stack-trace {
-        padding-bottom: 1px;
-        color: var(--mp-muted-color);
-        margin-bottom: 5px;
     }
 
     .mp-since-start, .mp-duration {
