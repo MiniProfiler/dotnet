@@ -9,7 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace StackExchange.Profiling.Data
 {
@@ -100,9 +99,7 @@ namespace StackExchange.Profiling.Data
             var profiler = MiniProfiler.Current;
             if (profiler?.Options is MiniProfilerOptions opts && opts.EnableMvcFilterProfiling)
             {
-                var stack = GetStack(context.HttpContext);
-                Debug.WriteLine(new string(' ', stack.Count * 2) + "Start (" + state.GetType().Name + "): " + stepName);
-                stack.Push((state, new Timing(profiler, profiler.Head, stepName, opts.MvcFilterMinimumSaveMs, true, debugStackShave: 4)));
+                GetStack(context.HttpContext).Push((state, new Timing(profiler, profiler.Head, stepName, opts.MvcFilterMinimumSaveMs, true, debugStackShave: 4)));
             }
             return null;
         }
@@ -112,9 +109,7 @@ namespace StackExchange.Profiling.Data
             var profiler = MiniProfiler.Current;
             if (profiler?.Options is MiniProfilerOptions opts && opts.EnableMvcViewProfiling)
             {
-                var stack = GetStack(context);
-                Debug.WriteLine(new string(' ', stack.Count * 2) + "Start (" + state.GetType().Name + "): " + stepName);
-                stack.Push((state, new Timing(profiler, profiler.Head, stepName, opts.MvcViewMinimumSaveMs, true, debugStackShave: 4)));
+                GetStack(context).Push((state, new Timing(profiler, profiler.Head, stepName, opts.MvcViewMinimumSaveMs, true, debugStackShave: 4)));
             }
             return null;
         }
@@ -122,9 +117,7 @@ namespace StackExchange.Profiling.Data
         private object Start<T>(HttpContext context, T state, string stepName) where T : class
         {
             var profiler = MiniProfiler.Current;
-            var stack = GetStack(context);
-            Debug.WriteLine(new string(' ', stack.Count * 2) + "Start (" + state.GetType().Name + "): " + stepName);
-            stack.Push((state, profiler != null ? new Timing(profiler, profiler.Head, stepName, null, null, debugStackShave: 4) : null));
+            GetStack(context).Push((state, profiler != null ? new Timing(profiler, profiler.Head, stepName, null, null, debugStackShave: 4) : null));
             return null;
         }
 
@@ -134,22 +127,10 @@ namespace StackExchange.Profiling.Data
         {
             var stack = GetStack(context);
             var top = stack.Pop();
-            if (top.State is T currentState)
+            if (top.State is T currentState && currentState == state)
             {
-                if (currentState == state)
-                {
-                    Debug.WriteLine(new string(' ', stack.Count*2) + "End (" + state.GetType().Name + "): " + state.ToString());
-                    // Set the previous timing explicitly to the stack parent for this context
-                    using (top.Timing) { }
-                }
-                else
-                {
-                    Debug.WriteLine(new string(' ', stack.Count * 2) + "End mismatch on (" + currentState.GetType().ToString() + " vs. " + state.GetType().ToString() + "): " + state.ToString());
-                }
-            }
-            else
-            {
-                Debug.WriteLine(new string(' ', stack.Count * 2) + "End no current state: " + state.ToString());
+                // Set the previous timing explicitly to the stack parent for this context
+                using (top.Timing) { }
             }
             return null;
         }
