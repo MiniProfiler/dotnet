@@ -3,16 +3,12 @@ using StackExchange.Profiling;
 
 namespace Samples.AspNetCore.Controllers
 {
+    [ExampleActionFilter]
     public class HomeController : Controller
     {
-        [ExampleActionFilter]
         [ExampleLongActionFilter]
-        [ExampleActionFilter]
-        [ExampleActionFilter]
-        [ExampleActionFilter]
+        //[ExampleActionFilter]
         [ExampleAsyncActionFilter]
-        [ExampleAsyncActionFilter]
-        [ExampleActionFilter]
         public IActionResult Index()
         {
             using (MiniProfiler.Current.Step("Example Step"))

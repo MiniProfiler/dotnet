@@ -68,9 +68,18 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// The minimum duration to record for MVC filter timings, anything below this will be discarded as noise.
-        /// Defaults to 0.01 ms
         /// </summary>
-        public decimal? MvcFilterMinimumSaveMs { get; set; } = -1000.01m;
+        public decimal? MvcFilterMinimumSaveMs { get; set; }
+
+        /// <summary>
+        /// Whether to profile MVC views as individual steps.
+        /// </summary>
+        public bool EnableMvcViewProfiling { get; set; } = true;
+
+        /// <summary>
+        /// The minimum duration to record for MVC view timings, anything below this will be discarded as noise.
+        /// </summary>
+        public decimal? MvcViewMinimumSaveMs { get; set; }
 #endif
     }
 }

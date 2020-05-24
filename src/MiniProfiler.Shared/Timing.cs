@@ -55,6 +55,12 @@ namespace StackExchange.Profiling
             Profiler.Head = this;
 
             // root will have no parent
+            // Also, due to stack unwinding for minimal frame depth in MVC and such, we may need to traverse up when the
+            // AsyncLocal<Timing> head is not reset properly in the context we expect (it was reset lower down)
+            while (parent?.DurationMilliseconds.HasValue == true)
+            {
+                parent = parent.ParentTiming;
+            }
             parent?.AddChild(this);
 
             Name = name;
