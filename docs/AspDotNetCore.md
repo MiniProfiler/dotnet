@@ -64,6 +64,27 @@ public void ConfigureServices(IServiceCollection services)
         // (Optional) Use something other than the "light" color scheme.
         // (defaults to "light")
         options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+
+        // The below are newer options, available in .NET Core 3.0 and above:
+
+        // (Optional) You can disable MVC filter profiling
+        // (defaults to true, and filters are profiled)
+        options.EnableMvcFilterProfiling = true;
+        // ...or only save filters that take over a certain millisecond duration (including their children)
+        // (defaults to null, and all filters are profiled)
+        // options.MvcFilterMinimumSaveMs = 1.0m;
+
+        // (Optional) You can disable MVC view profiling
+        // (defaults to true, and views are profiled)
+        options.EnableMvcFilterProfiling = true;
+        // ...or only save views that take over a certain millisecond duration (including their children)
+        // (defaults to null, and all views are profiled)
+        // options.MvcViewMinimumSaveMs = 1.0m;
+
+        // (Optional - not recommended) You can enable a heavy debug mode with stacks and tooltips when using memory storage
+        // It has a lot of overhead vs. normal profiling and should only be used with that in mind
+        // (defaults to false, debug/heavy mode is off)
+        //options.EnableDebugMode = true;
     });
 }
 ```
