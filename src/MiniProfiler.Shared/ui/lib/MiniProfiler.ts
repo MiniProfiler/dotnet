@@ -709,6 +709,7 @@ namespace StackExchange.Profiling {
           </div>
           <span title="Debug Info">🔍</span>`;
                 }
+                return '';
             };
 
             const renderTiming = (timing: ITiming) => {
