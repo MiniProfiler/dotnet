@@ -481,6 +481,11 @@
 .mp-queries .mp-odd {
   background-color: var(--mp-alt-row-color);
 }
+.mp-queries .mp-stack-trace {
+  padding-bottom: 1px;
+  color: var(--mp-muted-color);
+  margin-bottom: 5px;
+}
 .mp-queries .mp-since-start,
 .mp-queries .mp-duration {
   text-align: right;
