@@ -11,9 +11,9 @@ using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class RavenDbStoreTest : StorageBaseTest, IClassFixture<RavenDbStoreFixture>
+    public class RavenDbStoreTests : StorageBaseTest, IClassFixture<RavenDbStoreFixture>
     {
-        public RavenDbStoreTest(RavenDbStoreFixture fixture, ITestOutputHelper output) 
+        public RavenDbStoreTests(RavenDbStoreFixture fixture, ITestOutputHelper output) 
             : base(fixture, output)
         {
         }
