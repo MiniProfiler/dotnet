@@ -5,6 +5,19 @@ namespace StackExchange.Profiling.Storage.Internal
 {
     internal class MiniProfilerDoc
     {
+        public string Id { get; set; }
+        public Guid ProfilerId { get; set; }
+        public string Name { get; set; }
+        public DateTime Started { get; set; }
+        public decimal DurationMilliseconds { get; set; }
+        public string MachineName { get; set; }
+        public Dictionary<string, string> CustomLinks { get; set; }
+        public string CustomLinksJson { get; set; }
+        public Timing Root { get; set; }
+        public ClientTimings ClientTimings { get; set; }
+        public string User { get; set; }
+        public bool HasUserViewed { get; set; }
+
         public MiniProfilerDoc() { }
         
         public MiniProfilerDoc(MiniProfiler profiler)
@@ -22,21 +35,7 @@ namespace StackExchange.Profiling.Storage.Internal
             HasUserViewed = profiler.HasUserViewed;
         }
 
-        public string Id { get; set; }
-        public Guid ProfilerId { get; set; }
-        public string Name { get; set; }
-        public DateTime Started { get; set; }
-        public decimal DurationMilliseconds { get; set; }
-        public string MachineName { get; set; }
-        public Dictionary<string, string> CustomLinks { get; set; }
-        public string CustomLinksJson { get; set; }
-        public Timing Root { get; set; }
-        public ClientTimings ClientTimings { get; set; }
-        public string User { get; set; }
-
-        public bool HasUserViewed { get; set; }
-
-#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete (MiniProfiler serialization constructor)
         public MiniProfiler ToMiniProfiler() => new MiniProfiler
         {
             Id = ProfilerId,
@@ -51,6 +50,6 @@ namespace StackExchange.Profiling.Storage.Internal
             User = User,
             HasUserViewed = HasUserViewed
         };
-#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete (MiniProfiler serialization constructor)
     }
 }
