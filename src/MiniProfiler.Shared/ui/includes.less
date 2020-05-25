@@ -206,6 +206,105 @@
         }
     }
 
+    .mp-debug {
+        position: relative;
+        cursor: pointer;
+
+        .mp-debug-tooltip {
+            display: none;
+            position: fixed;
+            background-color: var(--mp-main-bg-color);
+            box-shadow: var(--mp-popup-shadow);
+            right: 100px;
+            max-width: 90%;
+            border-radius: 9px;
+            padding: 12px;
+            margin-top: 18px;
+            opacity: 0.95;
+            backdrop-filter: blur(4px);
+        }
+
+        .mp-nested-timing {
+            margin-left: 16px;
+        }
+
+        td:first-child:hover {
+            .mp-debug-tooltip {
+                display: block;
+            }
+
+            & > span {
+                text-shadow: var(--mp-button-active-text-color) 0 0 4px;
+            }
+        }
+    }
+
+    .mp-stack-trace {
+        color: var(--mp-muted-color);
+        margin-bottom: 5px;
+        font-family: Consolas, Monaco, monospace;
+        overflow-x: hidden;
+        overflow-y: auto;
+        white-space: pre-line;
+        max-height: 200px;
+
+        .stack-row {
+            white-space: nowrap;
+
+            &.common {
+                filter: grayscale(80%);
+            }
+        }
+
+        .stack {
+            &.async {
+                opacity: 0.6;
+                display: none;
+            }
+
+            &.leadin, &.file, &.line-prefix, &.path, &.dot {
+                color: var(--mp-muted-color);
+            }
+
+            &.async-tag {
+                color: var(--mp-highlight-attribute-color);
+                font-weight: bold;
+
+                &:before {
+                    content: "(";
+                }
+
+                &:after {
+                    content: ")";
+                }
+            }
+
+            &.type {
+                color: var(--mp-highlight-keyword-color);
+            }
+
+            &.generic-type {
+                color: var(--mp-highlight-fade-color);
+            }
+
+            &.misc, &.parens {
+                color: var(--mp-highlight-comment-color);
+            }
+
+            &.method {
+                color: var(--mp-highlight-string-color);
+            }
+
+            &.paramType {
+                color: var(--mp-highlight-attribute-color);
+            }
+
+            &.paramName {
+                color: var(--mp-highlight-variable-color);
+            }
+        }
+    }
+
     .mp-label {
         color: var(--mp-label-color);
         overflow: hidden;
@@ -223,7 +322,7 @@
     .mp-trivial {
         display: none;
 
-        td, td * {
+        td:not(:first-child), td:not(:first-child) * {
             color: var(--mp-muted-color) !important;
         }
     }

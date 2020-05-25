@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace StackExchange.Profiling
 {
@@ -36,6 +37,7 @@ namespace StackExchange.Profiling
         /// <param name="profiler">The current profiling session or null.</param>
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting Timing's lifetime.</param>
         /// <returns>the profile step</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Timing Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name);
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace StackExchange.Profiling
         /// <returns></returns>
         /// <remarks>If <paramref name="includeChildren"/> is set to true and a child is removed due to its use of StepIf, then the 
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Timing StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
         {
             return profiler?.StepImpl(name, minSaveMs, includeChildren);
@@ -67,6 +70,7 @@ namespace StackExchange.Profiling
         /// <remarks>
         /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method
         /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static CustomTiming CustomTiming(this MiniProfiler profiler, string category, string commandString, string executeType = null, bool includeStackTrace = true)
         {
             return CustomTimingIf(profiler, category, commandString, 0, executeType: executeType, includeStackTrace: includeStackTrace);
