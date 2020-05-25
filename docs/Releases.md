@@ -11,8 +11,10 @@ This page tracks major changes included in any update starting with version 4.0.
   - Added dark and "auto" (system preference decides) color themes, total is "Light", "Dark", and "Auto" ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
   - Generally moves to CSS 3 variables, for easier custom themes as well ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
   - Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
+  - New "debug" mode (via `.EnableDebugMode`) that outputs stack dumps for every timing (expensive/heavy, and not intended for normal operation - [#482](https://github.com/MiniProfiler/dotnet/pull/482))
   - (**.NET Core only**) Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
-  - (**.NET Core only**) Added profiling to all diagnostic events (views, filters, etc. - [#475](https://github.com/MiniProfiler/dotnet/pull/475))
+  - (**.NET Core only**) Added profiling to all diagnostic events (views, filters, etc. - [#475](https://github.com/MiniProfiler/dotnet/pull/475) & [#482](https://github.com/MiniProfiler/dotnet/pull/482))
+    - New options around this are in the ASP.NET Core docs on the left.
 - **Fixes/Changes**:
   - Fix for ['i.Started.toUTCString is not a function'](https://github.com/MiniProfiler/dotnet/pull/462) when global serializer options are changed.
   - Removed jQuery (built-in) dependency ([#442](https://github.com/MiniProfiler/dotnet/pull/442))

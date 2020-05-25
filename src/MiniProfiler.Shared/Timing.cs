@@ -35,13 +35,32 @@ namespace StackExchange.Profiling
         /// <param name="name">The name of this timing.</param>
         /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
         /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
-        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
+        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false) :
+            this(profiler, parent, name, minSaveMs, includeChildrenWithMinSave, 0)
+        { }
+
+        /// <summary>
+        /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> this <see cref="Timing"/> belongs to.</param>
+        /// <param name="parent">The <see cref="Timing"/> this <see cref="Timing"/> is a child of.</param>
+        /// <param name="name">The name of this timing.</param>
+        /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
+        /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
+        /// <param name="debugStackShave">The number of frames to shave off the debug stack.</param>
+        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs, bool? includeChildrenWithMinSave, int debugStackShave)
         {
             Id = Guid.NewGuid();
             Profiler = profiler;
             Profiler.Head = this;
 
             // root will have no parent
+            // Also, due to stack unwinding for minimal frame depth in MVC and such, we may need to traverse up when the
+            // AsyncLocal<Timing> head is not reset properly in the context we expect (it was reset lower down)
+            while (parent?.DurationMilliseconds.HasValue == true)
+            {
+                parent = parent.ParentTiming;
+            }
             parent?.AddChild(this);
 
             Name = name;
@@ -50,6 +69,11 @@ namespace StackExchange.Profiling
             _minSaveMs = minSaveMs;
             _includeChildrenWithMinSave = includeChildrenWithMinSave == true;
             StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
+
+            if (profiler.Options.EnableDebugMode)
+            {
+                DebugInfo = new TimingDebugInfo(this, debugStackShave);
+            }
         }
 
         /// <summary>
@@ -106,6 +130,12 @@ namespace StackExchange.Profiling
         /// </summary>
         [DataMember(Order = 6)]
         public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
+
+        /// <summary>
+        /// Present only when <c>EnableDebugMode</c> is <c>true</c>, additional step info in-memory only.
+        /// </summary>
+        [DataMember(Order = 7)]
+        public TimingDebugInfo DebugInfo { get; set; }
 
         /// <summary>
         /// JSON representing the Custom Timings associated with this timing.

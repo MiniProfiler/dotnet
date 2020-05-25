@@ -34,4 +34,5 @@ MiniProfiler V4 has major breaking changes in layout compared to V3 due to needi
 * `MiniProfiler.Settings.UseExistingjQuery`
 * `MiniProfilerExtensions.Inline<T>(this MiniProfiler profiler, Func<T> selector, string name, ProfileLevel level)`
 * `MiniProfilerExtensions.Step(this MiniProfiler profiler, string name, ProfileLevel level)`
+* `MiniProfiler.Stop()` (now an instance method: `MiniProfiler.Current?.Stop()`)
 * UI templating has been removed. While Stylesheets and the `.tmpl` are still replaceable, the `share` and `includes` templates are now much more optimized code. Given the very few people customizing these (was anyone using those pieces?), they certainly weren't worth the performance tradeoffs. If there's a loud demand for them to come back, we'll find a more efficient way to do it.

@@ -100,9 +100,7 @@ namespace StackExchange.Profiling
 #endif
 
                 // Execute the pipe
-#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
-#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
                 // Assign name
                 EnsureName(mp, context);
                 // Stop (and record)
@@ -118,9 +116,7 @@ namespace StackExchange.Profiling
             else
             {
                 // Don't profile, only relay
-#pragma warning disable RCS1090 // Call 'ConfigureAwait(false)'.
                 await _next(context);
-#pragma warning restore RCS1090 // Call 'ConfigureAwait(false)'.
             }
         }
 

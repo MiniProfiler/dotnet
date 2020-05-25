@@ -24,6 +24,11 @@ namespace StackExchange.Profiling.Internal
         public virtual string VersionHash { get; set; } = typeof(MiniProfilerBaseOptions).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? Version.ToString();
 
         /// <summary>
+        /// Whether to enable verbose diagnostics mode in MiniProfiler.
+        /// </summary>
+        public bool EnableDebugMode { get; set; }
+
+        /// <summary>
         /// Assemblies to exclude from the stack trace report.
         /// </summary>
         public HashSet<string> ExcludedAssemblies { get; } = new HashSet<string>
