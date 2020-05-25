@@ -330,7 +330,6 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns the <see cref="IDocumentStore"/>.
         /// </summary>
-        /// <returns></returns>
         public IDocumentStore GetDocumentStore() => _store;
     }
 }
