@@ -34,8 +34,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      raven:
-        image: ravendb
+      ravendb:
+        image: ravendb/ravendb
         ports:
           - 8080/tcp
         env:
@@ -69,6 +69,8 @@ jobs:
         MongoDbConnectionString: mongodb://localhost:${{ job.services.mongo.ports[27017] }}/test
         MySQLConnectionString: server=localhost;Port=${{ job.services.mysql.ports[3306] }};Uid=root;Pwd=root;Database=test;Allow User Variables=true
         PostgreSqlConnectionString: Server=localhost;Port=${{ job.services.postgres.ports[5432] }};Database=test;User Id=postgres;Password=postgres;
+        RavenDbUrls: http://localhost:${{ job.services.ravendb.ports[8080] }}
+        RavenDatabase: test
         SQLServerConnectionString: Server=tcp:127.0.0.1,${{ job.services.sqlserver.ports[1433] }};Database=tempdb;User Id=sa;Password=g0d4mm!tSQLServer;
     - name: .NET Lib Pack
       run: dotnet pack Build.csproj --no-build -c Release /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
