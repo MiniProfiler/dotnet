@@ -2,14 +2,14 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Providers.RavenDB</AssemblyName>
     <Title>MiniProfiler for RavenDB</Title>
-    <Description>MiniProfiler: Profilers for RavenDB</Description>
-    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
+    <Description>MiniProfiler: Profiler storage for RavenDB</Description>
+    <Authors>Rafael Lillo, Nick Craver</Authors>
     <PackageTags>Raven;RavenDB;$(PackageBaseTags)</PackageTags>
-    <SignAssembly>false</SignAssembly>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="RavenDB.Client" Version="3.5.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RavenDB.Client" Version="4.2.102" />
   </ItemGroup>
 </Project>

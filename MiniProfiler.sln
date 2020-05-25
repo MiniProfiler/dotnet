@@ -49,6 +49,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33644D67-D9BB-4989-9B7A-98D51967059B}"
 	ProjectSection(SolutionItems) = preProject
 		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\docker-compose.yml = tests\docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E0DA4035-4D64-4BB8-8EA1-42197DE62519}"
@@ -244,8 +245,8 @@ Global
 		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

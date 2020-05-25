@@ -7,11 +7,12 @@ This page tracks major changes included in any update starting with version 4.0.
 
 #### Version 4.2.0 (In preview)
 - **New**:
+  - Added RavenDB Storage provider ([#483](https://github.com/MiniProfiler/dotnet/pull/483) - thanks [@lillo42](https://github.com/lillo42)!)
   - Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))
   - Added dark and "auto" (system preference decides) color themes, total is "Light", "Dark", and "Auto" ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
   - Generally moves to CSS 3 variables, for easier custom themes as well ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
   - Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
-  - New "debug" mode (via `.EnableDebugMode`) that outputs stack dumps for every timing (expensive/heavy, and not intended for normal operation - [#482](https://github.com/MiniProfiler/dotnet/pull/482))
+  - Added "debug" mode (via `.EnableDebugMode`) that outputs stack dumps for every timing (expensive/heavy, and not intended for normal operation - [#482](https://github.com/MiniProfiler/dotnet/pull/482))
   - (**.NET Core only**) Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
   - (**.NET Core only**) Added profiling to all diagnostic events (views, filters, etc. - [#475](https://github.com/MiniProfiler/dotnet/pull/475) & [#482](https://github.com/MiniProfiler/dotnet/pull/482))
     - New options around this are in the ASP.NET Core docs on the left.
@@ -21,7 +22,7 @@ This page tracks major changes included in any update starting with version 4.0.
     - (**Major**) Drops IE 11 support
   - Fix for missing `IMemoryCache` depending on config ([#440](https://github.com/MiniProfiler/dotnet/pull/440))
 - MySQL Storage:
-  - Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432)) (thanks [@bgrainger](https://github.com/bgrainger)!)
+  - Updates `MySqlConnector` to 0.60.1 for misc fixes ([#432](https://github.com/MiniProfiler/dotnet/pull/432) - thanks [@bgrainger](https://github.com/bgrainger)!)
 - Redis Storage
   - Moves from `StackExchange.Redis.StrongName` to `StackExchange.Redis` 2.1.30 ([#473](https://github.com/MiniProfiler/dotnet/pull/473))
 
