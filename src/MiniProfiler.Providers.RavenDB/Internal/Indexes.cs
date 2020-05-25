@@ -8,12 +8,8 @@ namespace StackExchange.Profiling.Storage.Internal
     /// </summary>
     internal class Index_ByHasUserViewedAndUser : AbstractIndexCreationTask<MiniProfilerDoc>
     {
-        public Index_ByHasUserViewedAndUser() => Map = docs => from profiler in docs
-                                                                             select new
-                                                                             {
-                                                                                 profiler.HasUserViewed,
-                                                                                 profiler.User
-                                                                             };
+        public Index_ByHasUserViewedAndUser() =>
+            Map = docs => from profiler in docs select new { profiler.HasUserViewed, profiler.User };
     }
 
     /// <summary>
@@ -21,11 +17,8 @@ namespace StackExchange.Profiling.Storage.Internal
     /// </summary>
     internal class Index_ByProfilerId : AbstractIndexCreationTask<MiniProfilerDoc>
     {
-        public Index_ByProfilerId() => Map = docs => from profiler in docs
-                                                                   select new
-                                                                   {
-                                                                       profiler.ProfilerId
-                                                                   };
+        public Index_ByProfilerId() =>
+            Map = docs => from profiler in docs select new { profiler.ProfilerId };
     }
 
     /// <summary>
@@ -33,10 +26,7 @@ namespace StackExchange.Profiling.Storage.Internal
     /// </summary>
     internal class Index_ByStarted : AbstractIndexCreationTask<MiniProfilerDoc>
     {
-        public Index_ByStarted() => Map = docs => from profiler in docs
-                                                                select new
-                                                                {
-                                                                    profiler.Started
-                                                                };
+        public Index_ByStarted() =>
+            Map = docs => from profiler in docs select new { profiler.Started };
     }
 }
