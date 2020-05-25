@@ -2,8 +2,8 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Providers.RavenDB</AssemblyName>
     <Title>MiniProfiler for RavenDB</Title>
-    <Description>MiniProfiler: Profilers for RavenDB</Description>
-    <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
+    <Description>MiniProfiler: Profiler storage for RavenDB</Description>
+    <Authors>Rafael Lillo, Nick Craver</Authors>
     <PackageTags>Raven;RavenDB;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>

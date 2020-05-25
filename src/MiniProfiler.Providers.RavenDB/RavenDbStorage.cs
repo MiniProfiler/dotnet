@@ -12,7 +12,7 @@ using StackExchange.Profiling.Storage.Internal;
 namespace StackExchange.Profiling.Storage
 {
     /// <summary>
-    /// Understands how to store a <see cref="MiniProfiler"/> to a RavenDb database.
+    /// Understands how to store a <see cref="MiniProfiler"/> to a RavenDB database.
     /// </summary>
     public class RavenDbStorage : IAsyncStorage
     {
