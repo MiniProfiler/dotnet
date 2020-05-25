@@ -34,6 +34,14 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      raven:
+        image: ravendb
+        ports:
+          - 8080/tcp
+        env:
+          RAVEN_ARGS: '--Setup.Mode=None'
+          RAVEN_License_Eula_Accepted: 'true'
+          RAVEN_Security_UnsecuredAccessAllowed: 'PrivateNetwork'
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
         ports:
