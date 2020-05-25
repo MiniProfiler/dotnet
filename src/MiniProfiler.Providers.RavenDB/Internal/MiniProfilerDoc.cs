@@ -19,11 +19,11 @@ namespace StackExchange.Profiling.Storage.Internal
         public bool HasUserViewed { get; set; }
 
         public MiniProfilerDoc() { }
-        
+
         public MiniProfilerDoc(MiniProfiler profiler)
         {
             ProfilerId = profiler.Id;
-            Name =  profiler.Name;
+            Name = profiler.Name;
             Started = profiler.Started;
             DurationMilliseconds = profiler.DurationMilliseconds;
             MachineName = profiler.MachineName;

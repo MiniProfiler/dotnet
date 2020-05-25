@@ -23,20 +23,20 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a new <see cref="RavenDbStorage"/>.
         /// </summary>
-        /// <param name="urls">The ravenDb Urls</param>
-        /// <param name="database">The ravenDb Database</param>
-        /// <param name="identifier">The identifier for store</param>
-        /// <param name="certificate">The client certificate to use for authentication</param>
-        /// <param name="waitForIndexes">If it should wait for Indexes after Save changes</param>
-        /// <param name="waitForReplication">If it should wait for replication after Save changes</param>
-        public RavenDbStorage(string[] urls, string database, string identifier = "mini-profiler",  
+        /// <param name="urls">The RavenDB Urls.</param>
+        /// <param name="database">The RavenDB database name.</param>
+        /// <param name="identifier">The identifier for store.</param>
+        /// <param name="certificate">The client certificate to use for authentication.</param>
+        /// <param name="waitForIndexes">Whether to wait for indexes after save.</param>
+        /// <param name="waitForReplication">whether to wait for replication after save.</param>
+        public RavenDbStorage(string[] urls, string database, string identifier = "mini-profiler",
             X509Certificate2 certificate = null, bool waitForIndexes = false, bool waitForReplication = false)
         {
             _waitForReplication = waitForReplication;
             _waitForIndexes = waitForIndexes;
             _store = new DocumentStore
             {
-                Urls = urls, 
+                Urls = urls,
                 Database = database,
                 Identifier = identifier,
                 Certificate = certificate
@@ -47,13 +47,13 @@ namespace StackExchange.Profiling.Storage
                 {
                     return nameof(MiniProfiler);
                 }
-                
+
                 return DocumentConventions.DefaultGetCollectionName(type);
             };
             _store.Initialize();
             WithIndexCreation();
         }
-        
+
 
         /// <summary>
         /// Creates indexes for faster querying.
@@ -63,18 +63,18 @@ namespace StackExchange.Profiling.Storage
             new Index_ByProfilerId().Execute(_store);
             new Index_ByHasUserViewedAndUser().Execute(_store);
             new Index_ByStarted().Execute(_store);
-            
+
             return this;
         }
 
         /// <summary>
         /// List the MiniProfiler Ids for the given search criteria.
         /// </summary>
-        /// <param name="maxResults">The max number of results</param>
-        /// <param name="start">Search window start</param>
-        /// <param name="finish">Search window end</param>
-        /// <param name="orderBy">Result order</param>
-        /// <returns>The list of GUID keys</returns>
+        /// <param name="maxResults">The max number of results.</param>
+        /// <param name="start">Search window start time (inclusive).</param>
+        /// <param name="finish">Search window end time (inclusive).</param>
+        /// <param name="orderBy">Result order.</param>
+        /// <returns>A list of GUID keys matching the search.</returns>
         public IEnumerable<Guid> List(int maxResults, DateTime? start = null, DateTime? finish = null,
             ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
@@ -117,7 +117,7 @@ namespace StackExchange.Profiling.Storage
                 session.Advanced.WaitForReplicationAfterSaveChanges(throwOnTimeout: false);
             }
         }
-        
+
         private void ConfigureWait(IAsyncDocumentSession session)
         {
             if (_waitForIndexes)
@@ -130,9 +130,9 @@ namespace StackExchange.Profiling.Storage
                 session.Advanced.WaitForReplicationAfterSaveChanges(throwOnTimeout: false);
             }
         }
-        
+
         /// <summary>
-        /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
+        /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public void Save(MiniProfiler profiler)
@@ -144,7 +144,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
+        /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
@@ -159,7 +159,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -167,7 +167,7 @@ namespace StackExchange.Profiling.Storage
         {
             using var session = _store.OpenSession();
             ConfigureWait(session);
-            
+
             var profile = session.Query<MiniProfilerDoc, Index_ByProfilerId>()
                 .First(x => x.ProfilerId == id);
             profile.HasUserViewed = false;
@@ -175,7 +175,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Sets a particular profiler session to "viewed"
+        /// Sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
@@ -192,7 +192,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
+        /// <param name="user">User to get IDs for, identified by <see cref="MiniProfiler.User"/>.</param>
         public List<Guid> GetUnviewedIds(string user)
         {
             using var session = _store.OpenSession(new SessionOptions
@@ -200,7 +200,7 @@ namespace StackExchange.Profiling.Storage
                 NoTracking = true
             });
             return session.Query<MiniProfilerDoc, Index_ByHasUserViewedAndUser>()
-                .Where(x => !x.HasUserViewed &&  x.User == user)
+                .Where(x => !x.HasUserViewed && x.User == user)
                 .Select(x => x.ProfilerId)
                 .ToList();
         }
@@ -208,11 +208,11 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously returns the MiniProfiler Ids for the given search criteria.
         /// </summary>
-        /// <param name="maxResults">The max number of results</param>
-        /// <param name="start">Search window start</param>
-        /// <param name="finish">Search window end</param>
-        /// <param name="orderBy">Result order</param>
-        /// <returns>The list of GUID keys</returns>
+        /// <param name="maxResults">The max number of results.</param>
+        /// <param name="start">Search window start time (inclusive).</param>
+        /// <param name="finish">Search window end time (inclusive).</param>
+        /// <param name="orderBy">Result order.</param>
+        /// <returns>A list of GUID keys matching the search.</returns>
         public async Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             using var session = _store.OpenAsyncSession(new SessionOptions
@@ -258,11 +258,11 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
+        /// Loads the <see cref="MiniProfiler"/> identified by 'id' from the database.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public async Task<MiniProfiler> LoadAsync(Guid id) 
+        public async Task<MiniProfiler> LoadAsync(Guid id)
         {
             using var session = _store.OpenAsyncSession(new SessionOptions
             {
@@ -274,7 +274,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed". 
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -282,17 +282,17 @@ namespace StackExchange.Profiling.Storage
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
-            
+
             var profile = await session.Query<MiniProfilerDoc, Index_ByProfilerId>()
                 .FirstAsync(x => x.ProfilerId == id)
                 .ConfigureAwait(false);
-            
+
             profile.HasUserViewed = false;
             await session.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session to "viewed"
+        /// Asynchronously sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
@@ -300,11 +300,11 @@ namespace StackExchange.Profiling.Storage
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
-            
+
             var profile = await session.Query<MiniProfilerDoc, Index_ByProfilerId>()
                 .FirstAsync(x => x.ProfilerId == id)
                 .ConfigureAwait(false);
-            
+
             profile.HasUserViewed = true;
             await session.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -312,14 +312,14 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
-        /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
+        /// <param name="user">User to get IDs for, identified by <see cref="MiniProfiler.User"/>.</param>
         public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
         {
             using var session = _store.OpenAsyncSession(new SessionOptions
             {
                 NoTracking = true
             });
-            
+
             return await session.Query<MiniProfilerDoc, Index_ByHasUserViewedAndUser>()
                 .Where(x => !x.HasUserViewed && x.User == user)
                 .Select(x => x.ProfilerId)
@@ -328,7 +328,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Returns the <see cref="IDocumentStore"/>.
+        /// Returns the underlying <see cref="IDocumentStore"/>.
         /// </summary>
         public IDocumentStore GetDocumentStore() => _store;
     }
