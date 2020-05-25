@@ -1,15 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
 {
-    public class MiniProfilerWrapper    
+    internal class MiniProfilerWrapper    
     {
-        public MiniProfilerWrapper()
-        {
-            
-        }
+        public MiniProfilerWrapper() { }
         
         public MiniProfilerWrapper(MiniProfiler profiler)
         {
@@ -98,22 +95,21 @@ namespace StackExchange.Profiling
         /// </remarks>
         public bool HasUserViewed { get; set; }
 
-        public MiniProfiler ToMiniProfiler()
+#pragma warning disable CS0618 // Type or member is obsolete
+        public MiniProfiler ToMiniProfiler() => new MiniProfiler
         {
-            return new MiniProfiler
-            {
-                Id = ProfileId,
-                Name = Name,
-                Started = Started,
-                DurationMilliseconds = DurationMilliseconds,
-                MachineName = MachineName,
-                CustomLinks = CustomLinks,
-                CustomLinksJson = CustomLinksJson,
-                Root = Root,
-                ClientTimings = ClientTimings,
-                User = User,
-                HasUserViewed = HasUserViewed
-            };
-        }
+            Id = ProfileId,
+            Name = Name,
+            Started = Started,
+            DurationMilliseconds = DurationMilliseconds,
+            MachineName = MachineName,
+            CustomLinks = CustomLinks,
+            CustomLinksJson = CustomLinksJson,
+            Root = Root,
+            ClientTimings = ClientTimings,
+            User = User,
+            HasUserViewed = HasUserViewed
+        };
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

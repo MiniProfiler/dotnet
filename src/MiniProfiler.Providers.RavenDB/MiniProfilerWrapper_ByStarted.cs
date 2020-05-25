@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Raven.Client.Documents.Indexes;
 
 namespace StackExchange.Profiling
@@ -6,7 +6,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// The MiniProfiler index
     /// </summary>
-    public class MiniProfilerWrapper_ByStarted : AbstractIndexCreationTask<MiniProfilerWrapper>
+    internal class MiniProfilerWrapper_ByStarted : AbstractIndexCreationTask<MiniProfilerWrapper>
     {
         /// <summary>
         /// 
