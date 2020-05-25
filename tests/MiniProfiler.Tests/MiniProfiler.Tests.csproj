@@ -5,6 +5,7 @@
     <TargetFrameworks>net461;netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MiniProfiler.Providers.ElasticSearch\MiniProfiler.Providers.ElasticSearch.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MySql\MiniProfiler.Providers.MySql.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.PostgreSql\MiniProfiler.Providers.PostgreSql.csproj" />
