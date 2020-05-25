@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using StackExchange.Profiling.Internal;
 
-namespace StackExchange.Profiling
+namespace StackExchange.Profiling.Storage.Internal
 {
-    internal class MiniProfilerWrapper    
+    internal class MiniProfilerDoc
     {
-        public MiniProfilerWrapper() { }
+        public MiniProfilerDoc() { }
         
-        public MiniProfilerWrapper(MiniProfiler profiler)
+        public MiniProfilerDoc(MiniProfiler profiler)
         {
-            ProfileId = profiler.Id;
+            ProfilerId = profiler.Id;
             Name =  profiler.Name;
             Started = profiler.Started;
             DurationMilliseconds = profiler.DurationMilliseconds;
@@ -29,7 +29,7 @@ namespace StackExchange.Profiling
         /// Gets or sets the profiler id.
         /// Identifies this Profiler so it may be stored/cached.
         /// </summary>
-        public Guid ProfileId { get; set; }
+        public Guid ProfilerId { get; set; }
         
         /// <summary>
         /// Gets or sets a display name for this profiling session.
@@ -98,7 +98,7 @@ namespace StackExchange.Profiling
 #pragma warning disable CS0618 // Type or member is obsolete
         public MiniProfiler ToMiniProfiler() => new MiniProfiler
         {
-            Id = ProfileId,
+            Id = ProfilerId,
             Name = Name,
             Started = Started,
             DurationMilliseconds = DurationMilliseconds,
