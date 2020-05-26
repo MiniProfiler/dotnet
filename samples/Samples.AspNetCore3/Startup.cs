@@ -89,7 +89,7 @@ namespace Samples.AspNetCore
                 //options.MvcFilterMinimumSaveMs = 1.0m;
 
                 // Optionally disable MVC view profiling
-                //options.EnableMvcFilterProfiling = false;
+                //options.EnableMvcViewProfiling = false;
                 // Or only save views that take over a certain millisecond duration (including their children)
                 //options.MvcViewMinimumSaveMs = 1.0m;
 
