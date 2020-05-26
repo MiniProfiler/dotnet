@@ -76,7 +76,7 @@ public void ConfigureServices(IServiceCollection services)
 
         // (Optional) You can disable MVC view profiling
         // (defaults to true, and views are profiled)
-        options.EnableMvcFilterProfiling = true;
+        options.EnableMvcViewProfiling = true;
         // ...or only save views that take over a certain millisecond duration (including their children)
         // (defaults to null, and all views are profiled)
         // options.MvcViewMinimumSaveMs = 1.0m;
