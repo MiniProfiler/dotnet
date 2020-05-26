@@ -216,6 +216,11 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         protected virtual void OnConfigure() { }
 
+        /// <summary>
+        /// An action to call when MiniProfiler has an internal error. For logging, etc.
+        /// </summary>
+        public Action<Exception> OnInternalError { get; set; }
+
         internal void Configure() => OnConfigure();
     }
 }

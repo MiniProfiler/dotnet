@@ -223,7 +223,14 @@ namespace StackExchange.Profiling
             {
                 return false;
             }
-            Options.ProfilerProvider.Stopped(this, discardResults);
+            try
+            {
+                Options.ProfilerProvider.Stopped(this, discardResults);
+            }
+            catch (Exception ex)
+            {
+                Options.OnInternalError?.Invoke(ex);
+            }
             return true;
         }
 
@@ -241,7 +248,14 @@ namespace StackExchange.Profiling
             {
                 return false;
             }
-            await Options.ProfilerProvider.StoppedAsync(this, discardResults).ConfigureAwait(false);
+            try
+            {
+                await Options.ProfilerProvider.StoppedAsync(this, discardResults).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Options.OnInternalError?.Invoke(ex);
+            }
             return true;
         }
 
