@@ -13,6 +13,8 @@ This page tracks major changes included in any update starting with version 4.0.
   - Generally moves to CSS 3 variables, for easier custom themes as well ([#451](https://github.com/MiniProfiler/dotnet/pull/451))
   - Added `SqlServerFormatter.IncludeParameterValues` for excluding actual values in output if desired ([#463](https://github.com/MiniProfiler/dotnet/pull/463))
   - Added "debug" mode (via `.EnableDebugMode`) that outputs stack dumps for every timing (expensive/heavy, and not intended for normal operation - [#482](https://github.com/MiniProfiler/dotnet/pull/482))
+  - Added `.OnInternalError` API to options (`Action<Exception>`), for logging when an exception during a MiniProfiler occurs ([#486](https://github.com/MiniProfiler/dotnet/pull/486)).
+    - This also means save errors are "swallowed" now (and accessible via this API when desired).
   - (**.NET Core only**) Added `MiniProfilerOptions.ResultsAuthorizeAsync` and `MiniProfiler.ResultsAuthorizeListAsync` ([#472](https://github.com/MiniProfiler/dotnet/pull/472))
   - (**.NET Core only**) Added profiling to all diagnostic events (views, filters, etc. - [#475](https://github.com/MiniProfiler/dotnet/pull/475) & [#482](https://github.com/MiniProfiler/dotnet/pull/482))
     - New options around this are in the ASP.NET Core docs on the left.
