@@ -83,7 +83,9 @@ namespace StackExchange.Profiling.Storage
                 NoTracking = true
             });
 
-            var query = session.Query<MiniProfilerDoc, Index_ByStarted>();
+            var query = session
+                    .Query<MiniProfilerDoc, Index_ByStarted>()
+                    .Take(maxResults);
 
             if (start.HasValue)
             {
@@ -94,9 +96,7 @@ namespace StackExchange.Profiling.Storage
             {
                 query = query.Where(x => x.Started <= finish.Value);
             }
-
-            query.Take(maxResults);
-
+            
             query = orderBy == ListResultsOrder.Descending
                 ? query.OrderByDescending(x => x.Started)
                 : query.OrderBy(x => x.Started);
@@ -220,7 +220,8 @@ namespace StackExchange.Profiling.Storage
                 NoTracking = true
             });
 
-            var query = session.Query<MiniProfilerDoc, Index_ByStarted>();
+            var query = session.Query<MiniProfilerDoc, Index_ByStarted>()
+                    .Take(maxResults);
 
             if (start.HasValue)
             {
@@ -231,8 +232,6 @@ namespace StackExchange.Profiling.Storage
             {
                 query = query.Where(x => x.Started <= finish.Value);
             }
-
-            query.Take(maxResults);
 
             query = orderBy == ListResultsOrder.Descending
                 ? query.OrderByDescending(x => x.Started)
