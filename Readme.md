@@ -19,7 +19,7 @@ The current major version of MiniProfiler is v4.
   * [NuGet Packages](https://miniprofiler.com/dotnet/NuGet)
   * [How-To Upgrade From MiniProfiler V3](https://miniprofiler.com/dotnet/HowTo/UpgradeFromV3)
 * Samples
-  * [ASP.NET Core Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore)
+  * [ASP.NET Core Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore3)
   * [ASP.NET MVC 5 Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Mvc5)
   * [Console Application](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Console)
 
