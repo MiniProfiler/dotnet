@@ -95,7 +95,7 @@ namespace StackExchange.Profiling.Storage
                 query = query.Where(x => x.Started <= finish.Value);
             }
 
-            query.Take(maxResults);
+            query = query.Take(maxResults);
 
             query = orderBy == ListResultsOrder.Descending
                 ? query.OrderByDescending(x => x.Started)
@@ -232,7 +232,7 @@ namespace StackExchange.Profiling.Storage
                 query = query.Where(x => x.Started <= finish.Value);
             }
 
-            query.Take(maxResults);
+            query = query.Take(maxResults);
 
             query = orderBy == ListResultsOrder.Descending
                 ? query.OrderByDescending(x => x.Started)
