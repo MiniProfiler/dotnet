@@ -12,6 +12,7 @@ namespace Samples.AspNetCore
     public class Startup
     {
         public static string SqliteConnectionString { get; } = "Data Source=Samples; Mode=Memory; Cache=Shared";
+
         private static readonly SqliteConnection TrapConnection = new SqliteConnection(SqliteConnectionString);
 
         public Startup(IWebHostEnvironment env)
@@ -118,7 +119,11 @@ namespace Samples.AspNetCore
             app.UseMiniProfiler()
                .UseStaticFiles()
                .UseRouting()
-               .UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
+               .UseEndpoints(endpoints =>
+               {
+                   endpoints.MapDefaultControllerRoute();
+                   endpoints.MapRazorPages();
+               });
 
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             using (var serviceScope = serviceScopeFactory.CreateScope())

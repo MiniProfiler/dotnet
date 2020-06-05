@@ -148,7 +148,14 @@ namespace StackExchange.Profiling
                 var routeData = context.GetRouteData();
                 if (routeData != null)
                 {
-                    profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
+                    if (routeData.Values["page"] != null)
+                    {
+                        profiler.Name = routeData.Values["page"].ToString();
+                    }
+                    else
+                    {
+                        profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
+                    }
                 }
                 else
                 {
