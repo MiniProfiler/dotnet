@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
+    <PackageReference Include="Dapper.StrongName" Version="2.0.35" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
   </ItemGroup>
 </Project>
