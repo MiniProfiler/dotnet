@@ -146,16 +146,13 @@ namespace StackExchange.Profiling
                         .ToStringRecycle();
 
                 var routeData = context.GetRouteData();
-                if (routeData != null)
+                if (routeData?.Values["controller"] != null)
                 {
-                    if (routeData.Values["page"] != null)
-                    {
-                        profiler.Name = routeData.Values["page"].ToString();
-                    }
-                    else
-                    {
-                        profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
-                    }
+                    profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
+                }
+                else if (routeData?.Values["page"] != null)
+                {
+                    profiler.Name = routeData.Values["page"].ToString();
                 }
                 else
                 {
