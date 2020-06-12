@@ -1,12 +1,13 @@
-﻿using Dapper;
-using Oracle.ManagedDataAccess.Client;
-using StackExchange.Profiling.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Dapper;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
+using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.Storage
 {
@@ -64,7 +65,16 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(SaveSql, ToProfilerTiming(profiler));
+                conn.Open();
+
+                try
+                {
+                    conn.Execute(SaveSql, ProfilerToDynamic(conn, profiler));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
 
                 var timings = new List<Timing>();
                 if (profiler.Root != null)
@@ -73,18 +83,37 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                conn.Execute(SaveTimingsSql, timings.Select(timing => ToTiming(timing)));
+                try
+                {
+                    timings.ForEach(timing =>
+                    {
+                        var dt = TimingToDynamic(conn, timing);
+                        conn.Execute(SaveTimingsSql, dt);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
-                    // set the profilerId (isn't needed unless we are storing it)
-                    foreach (var timing in profiler.ClientTimings.Timings)
+                    try
                     {
-                        timing.MiniProfilerId = profiler.Id;
-                        timing.Id = Guid.NewGuid();
-                    }
+                        profiler.ClientTimings.Timings.ForEach(timing =>
+                        {
+                            // set the profilerId (isn't needed unless we are storing it)
+                            timing.Id = Guid.NewGuid();
+                            timing.MiniProfilerId = profiler.Id;
 
-                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => ToClientTiming(timing)));
+                            var dct = ClientTimingToDynamic(timing);
+                            conn.Execute(SaveClientTimingsSql, dct);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString()); throw;
+                    }
                 }
             }
         }
@@ -95,9 +124,13 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public override async Task SaveAsync(MiniProfiler profiler)
         {
+            throw new NotImplementedException();
+
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(SaveSql, ToProfilerTiming(profiler)).ConfigureAwait(false);
+                conn.Open();
+
+                await conn.ExecuteAsync(SaveSql, ProfilerToDynamic(conn, profiler)).ConfigureAwait(false);
 
                 var timings = new List<Timing>();
                 if (profiler.Root != null)
@@ -106,7 +139,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => ToTiming(timing))).ConfigureAwait(false);
+                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => TimingToDynamic(conn, timing))).ConfigureAwait(false);
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
@@ -116,47 +149,141 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
                         timing.MiniProfilerId = profiler.Id;
                         timing.Id = Guid.NewGuid();
                     }
-                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => ToClientTiming(timing))).ConfigureAwait(false);
+                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => ClientTimingToDynamic(timing))).ConfigureAwait(false);
                 }
             }
         }
 
-        private object ToProfilerTiming(MiniProfiler profiler) => new
+
+        private OracleDynamicParameters ProfilerToDynamic(DbConnection conn, MiniProfiler profiler)
         {
-            pId = profiler.Id.ToString(),
-            pStarted = profiler.Started,
-            pName = profiler.Name.Truncate(200),
-            pUser = profiler.User.Truncate(100),
-            pRootTimingId = profiler.Root?.Id.ToString(),
-            pDurationMilliseconds = profiler.DurationMilliseconds,
-            pHasUserViewed = profiler.HasUserViewed ? 1 : 0,
-            pMachineName = profiler.MachineName.Truncate(100),
-            pCustomLinksJson = profiler.CustomLinksJson,
-            pClientTimingsRedirectCount = profiler.ClientTimings?.RedirectCount
+            if (profiler == null) return null;
+
+            var pars = new OracleDynamicParameters();
+            pars.Add("pId", profiler.Id.ToString());
+            pars.Add("pStarted", profiler.Started);
+            pars.Add("pName", profiler.Name.Truncate(200));
+            pars.Add("pUser", profiler.User.Truncate(100));
+            pars.Add("pRootTimingId", profiler.Root?.Id.ToString());
+            pars.Add("pDurationMilliseconds", profiler.DurationMilliseconds);
+            pars.Add("pHasUserViewed", profiler.HasUserViewed ? 1 : 0);
+            pars.Add("pMachineName", profiler.MachineName.Truncate(100));
+            pars.Add("pClientTimingsRedirectCount", profiler.ClientTimings?.RedirectCount);
+
+            if (string.IsNullOrWhiteSpace(profiler.CustomLinksJson))
+            {
+                pars.Add("pCustomLinksJson", null);
+            }
+            else
+            {
+                byte[] newvalue = System.Text.Encoding.Unicode.GetBytes(profiler.CustomLinksJson);
+                var clob = new OracleClob((OracleConnection)conn);
+                clob.Write(newvalue, 0, newvalue.Length);
+    
+                pars.Add("pCustomLinksJson", clob);
+            }
+
+            return pars;
+        }
+
+        private OracleDynamicParameters TimingToDynamic(DbConnection conn, Timing timing)
+        {
+            if (timing == null) return null;
+
+            var pars = new OracleDynamicParameters();
+            pars.Add("pId", timing.Id.ToString());
+            pars.Add("pMiniProfilerId", timing.MiniProfilerId.ToString());
+            pars.Add("pParentTimingId", timing.ParentTimingId == Guid.Empty ? null : timing.ParentTimingId.ToString());
+            pars.Add("pName", timing.Name.Truncate(200));
+            pars.Add("pDurationMilliseconds", timing.DurationMilliseconds);
+            pars.Add("pStartMilliseconds", timing.StartMilliseconds);
+            pars.Add("pIsRoot", timing.IsRoot ? 1 : 0);
+            pars.Add("pDepth", timing.Depth);
+
+            if (string.IsNullOrWhiteSpace(timing.CustomTimingsJson))
+            {
+                pars.Add("pCustomTimingsJson", null);
+            }
+            else
+            {
+                byte[] newvalue = System.Text.Encoding.Unicode.GetBytes(timing.CustomTimingsJson);
+                var clob = new OracleClob((OracleConnection)conn);
+                clob.Write(newvalue, 0, newvalue.Length);
+    
+                pars.Add("pCustomTimingsJson", clob);
+            }
+
+            return pars;
+        }
+
+        private OracleDynamicParameters ClientTimingToDynamic(ClientTiming clientTiming)
+        {
+            if (clientTiming == null) return null;
+
+            var pars = new OracleDynamicParameters();
+            pars.Add("pId", clientTiming.Id.ToString());
+            pars.Add("pMiniProfilerId", clientTiming.MiniProfilerId.ToString());
+            pars.Add("pName", clientTiming.Name.Truncate(200));
+            pars.Add("pStart", clientTiming.Start);
+            pars.Add("pDuration", clientTiming.Duration);
+
+            return pars;
+        }
+
+        private IEnumerable<MiniProfiler> DynamicListToProfiler(IEnumerable<dynamic> profilers)
+        {
+            foreach (var profile in profilers) yield return DynamicToProfiler(profile);
+        }
+
+#pragma warning disable CS0618 // Used for serialization only
+        private MiniProfiler DynamicToProfiler(dynamic profile) => new MiniProfiler
+        {
+            Id = new Guid((string)profile.Id),
+            Started = profile.STARTED,
+            Name = profile.Name,
+            User = profile.User,
+            RootTimingId = profile.ROOTTIMINGID == null ? (Guid?)null : new Guid((string)profile.ROOTTIMINGID),
+            DurationMilliseconds = Convert.ToDecimal(profile.DURATIONMILLISECONDS ?? 0),
+            HasUserViewed = profile.HASUSERVIEWED == 1,
+            MachineName = profile.MACHINENAME,
+            CustomLinksJson = profile.CUSTOMLINKSJSON,
+            ClientTimingsRedirectCount = profile.CLIENTTIMINGSREDIRECTCOUNT
+        };
+#pragma warning restore CS0618 // Used for serialization only
+
+
+        private IEnumerable<Timing> DynamicListToTiming(IEnumerable<dynamic> timings)
+        {
+            foreach (var timing in timings) yield return DynamicToTiming(timing);
+        }
+
+#pragma warning disable CS0618 // Used for serialization only
+        private Timing DynamicToTiming(dynamic timing) => new Timing
+        {
+             Id = new Guid((string)timing.Id),
+             MiniProfilerId = new Guid((string)timing.MINIPROFILERID),
+             ParentTimingId = timing.PARENTTIMINGID == null ? Guid.Empty : new Guid((string)timing.PARENTTIMINGID),
+             Name = timing.Name,
+             DurationMilliseconds = timing.DURATIONMILLISECONDS == null ? null : Convert.ToDecimal(timing.DURATIONMILLISECONDS),
+             StartMilliseconds = Convert.ToDecimal(timing.STARTMILLISECONDS),
+             CustomTimingsJson = timing.CUSTOMTIMINGSJSON
+        };
+#pragma warning restore CS0618 // Used for serialization only
+
+        private IEnumerable<ClientTiming> DynamicListToClientTiming(IEnumerable<dynamic> clientTimings)
+        {
+            foreach (var clientTiming in clientTimings) yield return DynamicToClientTiming(clientTiming);
+        }
+
+        private ClientTiming DynamicToClientTiming(dynamic clientTiming) => new ClientTiming
+        {
+            Id = new Guid((string)clientTiming.Id),
+            MiniProfilerId = new Guid((string)clientTiming.MINIPROFILERID),
+            Name = clientTiming.Name,
+            Start = Convert.ToDecimal(clientTiming.Start),
+            Duration = Convert.ToDecimal(clientTiming.Duration)
         };
 
-        private object ToTiming(Timing timing) => new
-        {
-            pId = timing.Id.ToString(),
-            pMiniProfilerId = timing.MiniProfilerId.ToString(),
-            pParentTimingId = timing.ParentTimingId.ToString(),
-            pName = timing.Name.Truncate(200),
-            pDurationMilliseconds = timing.DurationMilliseconds,
-            pStartMilliseconds = timing.StartMilliseconds,
-            pIsRoot = timing.IsRoot ? 1 : 0,
-            pDepth = timing.Depth,
-            pCustomTimingsJson = timing.CustomTimingsJson
-        };
-
-        private object ToClientTiming(ClientTiming timing) => new
-        {
-            pId = timing.Id.ToString(),
-            pMiniProfilerId = timing.MiniProfilerId.ToString(),
-            pName = timing.Name.Truncate(200),
-            pStart = timing.Start,
-            pDuration = timing.Duration
-        };
-        
         private string _loadSqlProfiler;
         private string _loadSqlTimings;
         private string _loadSqlClientTimings;
@@ -164,7 +291,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         private string LoadSqlProfiler => _loadSqlProfiler ?? (_loadSqlProfiler = $@"SELECT * FROM {MiniProfilersTable} WHERE ""Id"" = :pId");
         private string LoadSqlTimings => _loadSqlTimings ?? (_loadSqlTimings = $@"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = :pId ORDER BY StartMilliseconds");
         private string LoadSqlClientTimings => _loadSqlClientTimings ?? (_loadSqlClientTimings = $@"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = :pId ORDER BY ""Start""");
-        
+
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
@@ -177,18 +304,15 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             {
                 try
                 {
-                    var dresult = conn.Query<dynamic>(LoadSqlProfiler, new { pId = id.ToString() }).FirstOrDefault();
-                    result = 
-                    
-                    result = conn.Query<MiniProfiler>(LoadSqlProfiler, new { pId = id.ToString() }).FirstOrDefault();
-                    var timings = conn.Query<Timing>(LoadSqlTimings,  new { pId = id.ToString() }).AsList();
-                    var clientTimings = conn.Query<ClientTiming>(LoadSqlClientTimings, new { pId = id.ToString() }).AsList();
-
+                    result = DynamicListToProfiler(conn.Query<dynamic>(LoadSqlProfiler, new { pId = id.ToString() })).FirstOrDefault();
+                    var timings = DynamicListToTiming(conn.Query<dynamic>(LoadSqlTimings,  new { pId = id.ToString() })).AsList();
+                    var clientTimings = DynamicListToClientTiming(conn.Query<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() })).AsList();
+    
                     ConnectTimings(result, timings, clientTimings);
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    Debug.WriteLine(ex.ToString()); throw;
                 }
             }
 
@@ -207,12 +331,14 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler> LoadAsync(Guid id)
         {
+            throw new NotImplementedException();
+
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                result = (await conn.QueryAsync<MiniProfiler>(LoadSqlProfiler, new { pId = id.ToString() }).ConfigureAwait(false)).FirstOrDefault();
-                var timings = (await conn.QueryAsync<Timing>(LoadSqlTimings,  new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
-                var clientTimings = (await conn.QueryAsync<ClientTiming>(LoadSqlClientTimings, new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
+                result = DynamicListToProfiler(await conn.QueryAsync<dynamic>(LoadSqlProfiler, new { pId = id.ToString() }).ConfigureAwait(false)).FirstOrDefault();
+                var timings = DynamicListToTiming(await conn.QueryAsync<dynamic>(LoadSqlTimings,  new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
+                var clientTimings = DynamicListToClientTiming(await conn.QueryAsync<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
 
                 ConnectTimings(result, timings, clientTimings);
             }
@@ -256,23 +382,37 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         private string _toggleViewedSql;
         private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
 Update {MiniProfilersTable} 
-   Set HasUserViewed = :hasUserVeiwed 
+   Set HasUserViewed = :pHasUserViewed 
  Where ""Id"" = :pId 
-   And ""User"" = :user");
+   And ""User"" = :pUser");
 
-        private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
+        private void ToggleViewed(string user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(ToggleViewedSql, new { id, user, hasUserVeiwed });
+                try
+                {
+                    conn.Execute(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
-        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserVeiwed)
+        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(ToggleViewedSql, new { id, user, hasUserVeiwed }).ConfigureAwait(false);
+                try
+                {
+                    await conn.ExecuteAsync(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 }).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
@@ -293,8 +433,15 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                var ids = conn.Query<string>(GetUnviewedIdsSql, new { pUser = user }).ToList();
-                return ids.Select(id => new Guid(id)).AsList();
+                try
+                {
+                    var ids = conn.Query<string>(GetUnviewedIdsSql, new { pUser = user }).ToList();
+                    return ids.Select(id => new Guid(id)).AsList();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
@@ -307,8 +454,15 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                var ids = await conn.QueryAsync<string>(GetUnviewedIdsSql, new { pUser = user }).ConfigureAwait(false);
-                return ids.Select(id => new Guid(id)).AsList();
+                try
+                {
+                    var ids = await conn.QueryAsync<string>(GetUnviewedIdsSql, new { pUser = user }).ConfigureAwait(false);
+                    return ids.Select(id => new Guid(id)).AsList();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
@@ -324,9 +478,16 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(start, finish, orderBy);
-                var ids = conn.Query<string>(query, new { maxResults, start, finish });
-                return ids.Select(id => new Guid(id));
+                try
+                {
+                    var query = BuildListQuery(start, finish, orderBy);
+                    var ids = conn.Query<string>(query, new { maxResults, start, finish });
+                    return ids.Select(id => new Guid(id));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
@@ -342,19 +503,26 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                var query = BuildListQuery(start, finish, orderBy);
-                var ids = await conn.QueryAsync<string>(query, new { maxResults, start, finish }).ConfigureAwait(false);
-                return ids.Select(id => new Guid(id));
+                try
+                {
+                    var query = BuildListQuery(start, finish, orderBy);
+                    var ids = await conn.QueryAsync<string>(query, new { maxResults, start, finish }).ConfigureAwait(false);
+                    return ids.Select(id => new Guid(id));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString()); throw;
+                }
             }
         }
 
         private string BuildListQuery(DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending)
         {
             var sb = StringBuilderCache.Get();
-            sb.Append(@"
-Select ""Id""
-  From ").Append(MiniProfilersTable).Append(@"
- Where rownum <= {=maxResults}");
+            sb.AppendLine($@"Select ""Id""")
+              .AppendLine($@"  From {MiniProfilersTable}")
+              .AppendLine(" Where rownum <= {=maxResults}");
+
             if (finish != null)
             {
                 sb.AppendLine("  And Started < :finish");
@@ -363,7 +531,9 @@ Select ""Id""
             {
                 sb.AppendLine("  And Started > :start");
             }
-            sb.Append(" Order By ").Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
+
+            sb.Append(" Order By ")
+              .Append(orderBy == ListResultsOrder.Descending ? "Started Desc" : "Started Asc");
 
             return sb.ToStringRecycle();
         }
@@ -390,7 +560,7 @@ CREATE TABLE {MiniProfilersTable}
     ""User""                               VARCHAR2(100 CHAR) NULL,
     HasUserViewed                        NUMBER(1, 0) NOT NULL,
     MachineName                          VARCHAR2(100 CHAR) NULL,
-    CustomLinksJson                      VARCHAR2(4000 CHAR),
+    CustomLinksJson                      NCLOB NULL,
     ClientTimingsRedirectCount           INTEGER NULL
 );
 ALTER TABLE {MiniProfilersTable} ADD CONSTRAINT PK_{MiniProfilersTable} PRIMARY KEY (""RowId"");
@@ -425,7 +595,7 @@ CREATE TABLE {MiniProfilerTimingsTable}
     StartMilliseconds                   NUMBER(15,3) NOT NULL,
     IsRoot                              NUMBER(1, 0) NOT NULL,
     ""Depth""                             SMALLINT NOT NULL,
-    CustomTimingsJson                   VARCHAR2(4000 CHAR) NULL
+    CustomTimingsJson                   NCLOB NULL
 );
 ALTER TABLE {MiniProfilerTimingsTable} ADD CONSTRAINT PK_{MiniProfilerTimingsTable} PRIMARY KEY (""RowId"");
 
