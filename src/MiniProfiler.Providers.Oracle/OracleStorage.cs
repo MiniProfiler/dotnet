@@ -67,14 +67,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             {
                 conn.Open();
 
-                try
-                {
-                    conn.Execute(SaveSql, ProfilerToDynamic(conn, profiler));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                conn.Execute(SaveSql, ProfilerToDynamic(conn, profiler));
 
                 var timings = new List<Timing>();
                 if (profiler.Root != null)
@@ -83,37 +76,19 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                try
-                {
-                    timings.ForEach(timing =>
-                    {
-                        var dt = TimingToDynamic(conn, timing);
-                        conn.Execute(SaveTimingsSql, dt);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                conn.Execute(SaveTimingsSql, timings.Select(t => TimingToDynamic(conn, t)).AsList());
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
-                    try
+                    profiler.ClientTimings.Timings.ForEach(clientTiming =>
                     {
-                        profiler.ClientTimings.Timings.ForEach(timing =>
-                        {
-                            // set the profilerId (isn't needed unless we are storing it)
-                            timing.Id = Guid.NewGuid();
-                            timing.MiniProfilerId = profiler.Id;
+                        // set the profilerId (isn't needed unless we are storing it)
+                        clientTiming.Id = Guid.NewGuid();
+                        clientTiming.MiniProfilerId = profiler.Id;
 
-                            var dct = ClientTimingToDynamic(timing);
-                            conn.Execute(SaveClientTimingsSql, dct);
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString()); throw;
-                    }
+                    });
+
+                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(t => ClientTimingToDynamic(t)));
                 }
             }
         }
@@ -124,8 +99,6 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
         public override async Task SaveAsync(MiniProfiler profiler)
         {
-            throw new NotImplementedException();
-
             using (var conn = GetConnection())
             {
                 conn.Open();
@@ -139,17 +112,19 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
                     FlattenTimings(profiler.Root, timings);
                 }
 
-                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(timing => TimingToDynamic(conn, timing))).ConfigureAwait(false);
+                await conn.ExecuteAsync(SaveTimingsSql, timings.Select(t => TimingToDynamic(conn, t)).AsList()).ConfigureAwait(false);
 
                 if (profiler.ClientTimings?.Timings?.Any() ?? false)
                 {
-                    // set the profilerId (isn't needed unless we are storing it)
-                    foreach (var timing in profiler.ClientTimings.Timings)
+                    profiler.ClientTimings.Timings.ForEach(clientTiming =>
                     {
-                        timing.MiniProfilerId = profiler.Id;
-                        timing.Id = Guid.NewGuid();
-                    }
-                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(timing => ClientTimingToDynamic(timing))).ConfigureAwait(false);
+                        // set the profilerId (isn't needed unless we are storing it)
+                        clientTiming.Id = Guid.NewGuid();
+                        clientTiming.MiniProfilerId = profiler.Id;
+
+                    });
+
+                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(t => ClientTimingToDynamic(t))).ConfigureAwait(false);
                 }
             }
         }
@@ -302,18 +277,11 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             MiniProfiler result;
             using (var conn = GetConnection())
             {
-                try
-                {
-                    result = DynamicListToProfiler(conn.Query<dynamic>(LoadSqlProfiler, new { pId = id.ToString() })).FirstOrDefault();
-                    var timings = DynamicListToTiming(conn.Query<dynamic>(LoadSqlTimings,  new { pId = id.ToString() })).AsList();
-                    var clientTimings = DynamicListToClientTiming(conn.Query<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() })).AsList();
+                result = DynamicListToProfiler(conn.Query<dynamic>(LoadSqlProfiler, new { pId = id.ToString() })).FirstOrDefault();
+                var timings = DynamicListToTiming(conn.Query<dynamic>(LoadSqlTimings,  new { pId = id.ToString() })).AsList();
+                var clientTimings = DynamicListToClientTiming(conn.Query<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() })).AsList();
     
-                    ConnectTimings(result, timings, clientTimings);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                ConnectTimings(result, timings, clientTimings);
             }
 
             if (result != null)
@@ -331,8 +299,6 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler> LoadAsync(Guid id)
         {
-            throw new NotImplementedException();
-
             MiniProfiler result;
             using (var conn = GetConnection())
             {
@@ -390,14 +356,7 @@ Update {MiniProfilersTable}
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    conn.Execute(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 });
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                conn.Execute(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 });
             }
         }
 
@@ -405,14 +364,7 @@ Update {MiniProfilersTable}
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    await conn.ExecuteAsync(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 }).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                await conn.ExecuteAsync(ToggleViewedSql, new { pId = id.ToString(), pUser = user, pHasUserViewed = hasUserViewed ? 1 : 0 }).ConfigureAwait(false);
             }
         }
 
@@ -433,15 +385,8 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    var ids = conn.Query<string>(GetUnviewedIdsSql, new { pUser = user }).ToList();
-                    return ids.Select(id => new Guid(id)).AsList();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                var ids = conn.Query<string>(GetUnviewedIdsSql, new { pUser = user }).ToList();
+                return ids.Select(id => new Guid(id)).AsList();
             }
         }
 
@@ -454,15 +399,8 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    var ids = await conn.QueryAsync<string>(GetUnviewedIdsSql, new { pUser = user }).ConfigureAwait(false);
-                    return ids.Select(id => new Guid(id)).AsList();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                var ids = await conn.QueryAsync<string>(GetUnviewedIdsSql, new { pUser = user }).ConfigureAwait(false);
+                return ids.Select(id => new Guid(id)).AsList();
             }
         }
 
@@ -478,16 +416,9 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    var query = BuildListQuery(start, finish, orderBy);
-                    var ids = conn.Query<string>(query, new { maxResults, start, finish });
-                    return ids.Select(id => new Guid(id));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                var query = BuildListQuery(start, finish, orderBy);
+                var ids = conn.Query<string>(query, new { maxResults, start, finish });
+                return ids.Select(id => new Guid(id));
             }
         }
 
@@ -503,16 +434,9 @@ Order By Started");
         {
             using (var conn = GetConnection())
             {
-                try
-                {
-                    var query = BuildListQuery(start, finish, orderBy);
-                    var ids = await conn.QueryAsync<string>(query, new { maxResults, start, finish }).ConfigureAwait(false);
-                    return ids.Select(id => new Guid(id));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.ToString()); throw;
-                }
+                var query = BuildListQuery(start, finish, orderBy);
+                var ids = await conn.QueryAsync<string>(query, new { maxResults, start, finish }).ConfigureAwait(false);
+                return ids.Select(id => new Guid(id));
             }
         }
 
@@ -560,7 +484,7 @@ CREATE TABLE {MiniProfilersTable}
     ""User""                               VARCHAR2(100 CHAR) NULL,
     HasUserViewed                        NUMBER(1, 0) NOT NULL,
     MachineName                          VARCHAR2(100 CHAR) NULL,
-    CustomLinksJson                      NCLOB NULL,
+    CustomLinksJson                      CLOB NULL,
     ClientTimingsRedirectCount           INTEGER NULL
 );
 ALTER TABLE {MiniProfilersTable} ADD CONSTRAINT PK_{MiniProfilersTable} PRIMARY KEY (""RowId"");
@@ -595,7 +519,7 @@ CREATE TABLE {MiniProfilerTimingsTable}
     StartMilliseconds                   NUMBER(15,3) NOT NULL,
     IsRoot                              NUMBER(1, 0) NOT NULL,
     ""Depth""                             SMALLINT NOT NULL,
-    CustomTimingsJson                   NCLOB NULL
+    CustomTimingsJson                   CLOB NULL
 );
 ALTER TABLE {MiniProfilerTimingsTable} ADD CONSTRAINT PK_{MiniProfilerTimingsTable} PRIMARY KEY (""RowId"");
 
