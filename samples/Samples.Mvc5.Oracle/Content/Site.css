@@ -1,0 +1,13 @@
+﻿.navbar {
+    margin-bottom: 0;
+}
+
+.glyphicon.spinning {
+    margin-left: 5px;
+    font-size: 0.6em;
+    animation: spin 0.6s infinite linear;
+}
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
