@@ -5,7 +5,7 @@ layout: "default"
 ### Release Notes
 This page tracks major changes included in any update starting with version 4.0.0.3
 
-#### Version 4.2.0 (In preview)
+#### Version 4.2.1
 - **New**:
   - Added RavenDB Storage provider ([#483](https://github.com/MiniProfiler/dotnet/pull/483) - thanks [@lillo42](https://github.com/lillo42)!)
   - Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))
