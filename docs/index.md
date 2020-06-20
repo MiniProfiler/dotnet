@@ -42,4 +42,4 @@ MiniProfiler exposes the following end points for profiling:
 * Questions on Stack Overflow are welcome using the [mvc-mini-profiler tag](https://stackoverflow.com/questions/tagged/mvc-mini-profiler).
 
 #### License
-MiniProfiler is licensed under the [MIT license](https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt).
+MiniProfiler is licensed under the [MIT license](https://github.com/MiniProfiler/dotnet/blob/main/LICENSE.txt).

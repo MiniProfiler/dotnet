@@ -4,7 +4,7 @@
 
 Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and generally all the combinations of those words. Documentation for MiniProfiler for .NET is in `/docs`, accessible via GitHub pages at: [miniprofiler.com/dotnet](https://miniprofiler.com/dotnet/). General information for MiniProfiler across platforms can be found at [miniprofiler.com](https://miniprofiler.com/). It is part of the [.NET Foundation](https://www.dotnetfoundation.org/), and operates under their [code of conduct](https://www.dotnetfoundation.org/code-of-conduct).
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/master?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/master)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/sieyhfuhjww5ur5i/branch/main?svg=true)](https://ci.appveyor.com/project/StackExchange/dotnet/branch/main)
 ![Actions Build](https://github.com/MiniProfiler/dotnet/workflows/Main%20Build/badge.svg)
 
 
@@ -19,9 +19,9 @@ The current major version of MiniProfiler is v4.
   * [NuGet Packages](https://miniprofiler.com/dotnet/NuGet)
   * [How-To Upgrade From MiniProfiler V3](https://miniprofiler.com/dotnet/HowTo/UpgradeFromV3)
 * Samples
-  * [ASP.NET Core Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore3)
-  * [ASP.NET MVC 5 Sample App](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Mvc5)
-  * [Console Application](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.Console)
+  * [ASP.NET Core Sample App](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.AspNetCore3)
+  * [ASP.NET MVC 5 Sample App](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.Mvc5)
+  * [Console Application](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.Console)
 
 #### Building
 To build the MiniProfiler solution in Visual Studio, you'll need:
@@ -56,4 +56,4 @@ MyGet Pre-release feed: https://www.myget.org/gallery/miniprofiler
 
 
 #### License
-MiniProfiler is licensed under the [MIT license](https://github.com/MiniProfiler/dotnet/blob/master/LICENSE.txt).
+MiniProfiler is licensed under the [MIT license](https://github.com/MiniProfiler/dotnet/blob/main/LICENSE.txt).

@@ -3,7 +3,7 @@ title: "ASP.NET Core"
 layout: "default"
 ---
 ### ASP.NET Core
-If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore2), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.AspNetCore2/Startup.cs).
+If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.AspNetCore2), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/main/samples/Samples.AspNetCore2/Startup.cs).
 
 #### Installation and Configuration
 
@@ -113,12 +113,12 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 @addTagHelper *, MiniProfiler.AspNetCore.Mvc
 ```
 
-* Add MiniProfiler to your master layout (`Shared/_Layout.cshtml` by default):
+* Add MiniProfiler to your view layout (`Shared/_Layout.cshtml` by default):
 
 ```html
 <mini-profiler />
 ```
-<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, `color-scheme`, `nonce`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>
+<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, `color-scheme`, `nonce`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/main/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>
 <sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're working on smoother alternatives here.</sub>
 
 
