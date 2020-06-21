@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(result);
             Assert.Contains("id=\"mini-profiler\"", result);
 
-            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Left"""" data-scheme=""Light"" data-authorized=""true"" data-max-traces=""15"" data-toggle-shortcut=""Alt+P"" data-trivial-milliseconds=""2.0"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
+            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Left"" data-scheme=""Light"" data-authorized=""true"" data-max-traces=""15"" data-toggle-shortcut=""Alt+P"" data-trivial-milliseconds=""2.0"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
             Assert.Equal(expected, result);
         }
 
@@ -48,7 +48,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(result);
             Assert.Contains("id=\"mini-profiler\"", result);
 
-            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Right"""" data-scheme=""Auto"" data-authorized=""true"" data-trivial=""true"" data-children=""true"" data-controls=""true"" data-start-hidden=""true"" nonce=""myNonce"" data-max-traces=""12"" data-toggle-shortcut=""Alt+Q"" data-trivial-milliseconds=""23"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
+            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Right"" data-scheme=""Auto"" data-authorized=""true"" data-trivial=""true"" data-children=""true"" data-controls=""true"" data-start-hidden=""true"" nonce=""myNonce"" data-max-traces=""12"" data-toggle-shortcut=""Alt+Q"" data-trivial-milliseconds=""23"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
             Assert.Equal(expected, result);
         }
 
