@@ -80,6 +80,9 @@ public void ConfigureServices(IServiceCollection services)
         // ...or only save views that take over a certain millisecond duration (including their children)
         // (defaults to null, and all views are profiled)
         // options.MvcViewMinimumSaveMs = 1.0m;
+     
+        // (Optional) listen to any errors that occur within MiniProfiler itself
+        // options.OnInternalError = e => MyExceptionLogger(e);
 
         // (Optional - not recommended) You can enable a heavy debug mode with stacks and tooltips when using memory storage
         // It has a lot of overhead vs. normal profiling and should only be used with that in mind

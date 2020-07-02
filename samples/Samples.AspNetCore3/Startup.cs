@@ -97,6 +97,9 @@ namespace Samples.AspNetCore
                 // This enables debug mode with stacks and tooltips when using memory storage
                 // It has a lot of overhead vs. normal profiling and should only be used with that in mind
                 //options.EnableDebugMode = true;
+                
+                // Optionally listen to any errors that occur within MiniProfiler itself
+                //options.OnInternalError = e => MyExceptionLogger(e);
 
                 options.IgnoredPaths.Add("/lib");
                 options.IgnoredPaths.Add("/css");
