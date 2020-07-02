@@ -69,8 +69,8 @@ namespace Samples.Mvc5.Controllers
         {
             var profiler = MiniProfiler.Current;
 
-            // test out using storage for this one request. Only store in SqlLite, not in httpCache
-            //profiler.Storage = new OracleMiniProfilerStorage(MvcApplication.ConnectionString);
+            // test out using storage for this one request. Only store in Oracle Database, not in httpCache
+            profiler.Storage = new OracleMiniProfilerStorage(MvcApplication.ConnectionString);
 
             using (profiler.Step("Set page title"))
             {
@@ -246,7 +246,7 @@ namespace Samples.Mvc5.Controllers
 
                     using (MiniProfiler.Current.Step("Insertion"))
                     {
-                        var p = new Person { Name = "Fernando" };
+                        var p = new Person { Name = "sam" };
                         context.People.Add(p);
                         context.SaveChanges();
                     }
@@ -261,13 +261,12 @@ namespace Samples.Mvc5.Controllers
                         newCount = context.Database.SqlQuery<int>(sql).Single();
                     }
                     using (MiniProfiler.Current.Step("Get Count using ProfiledConnection - sql recorded"))
+
+                    using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
                     {
-                        using (var conn = new ProfiledDbConnection(context.Database.Connection, MiniProfiler.Current))
-                        {
-                            conn.Open();
-                            newCount = conn.Query<int>(sql).Single();
-                            conn.Close();
-                        }
+                        conn.Open();
+                        newCount = conn.Query<int>(sql).Single();
+                        conn.Close();
                     }
 
                     return Content(string.Format("EF Code First complete - count: {0}, sqlQuery count {1}", count, newCount));
@@ -287,6 +286,7 @@ namespace Samples.Mvc5.Controllers
         /// duplicated queries.
         /// </summary>
         /// <returns>duplicated query demonstration</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "This isn't C# 8, silly IDE.")]
         public ActionResult DuplicatedQueries()
         {
             using (var conn = GetConnection())
@@ -445,6 +445,7 @@ namespace Samples.Mvc5.Controllers
         /// The parameterized SQL with enumerations.
         /// </summary>
         /// <returns>The <see cref="ActionResult"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "This isn't C# 8, silly IDE.")]
         public ActionResult ParameterizedSqlWithEnums()
         {
             using (var conn = GetConnection())

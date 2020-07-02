@@ -88,13 +88,13 @@ namespace Samples.Mvc5
                 RouteBasePath = "~/profiler",
 
                 // Setting up a MultiStorage provider. This will store results in the MemoryCacheStorage (normally the default) and in SqlLite as well.
-                //Storage = new MultiStorageProvider(
-                //    new MemoryCacheStorage(new TimeSpan(1, 0, 0)),
-                //    // The RecreateDatabase call is only done for testing purposes, so we don't check in the db to source control.
-                //    new OracleStorage(ConnectionString)  // OracleMiniProfilerStorage(ConnectionString).RecreateDatabase("create table People (\"Id\" integer not null, \"Name\" varchar2(1000) not null)", "create table RouteHits(RouteName varchar2(4000) not null, HitCount integer not null)")
-                //    ),
+                Storage = new MultiStorageProvider(
+                    new MemoryCacheStorage(new TimeSpan(1, 0, 0)),
+                    // The RecreateDatabase call is only done for testing purposes, so we don't check in the db to source control.
+                    new OracleMiniProfilerStorage(ConnectionString).RecreateDatabase("create table People (\"Id\" integer not null, \"Name\" varchar2(1000) not null);", "create table RouteHits(RouteName varchar2(4000) not null, HitCount integer not null);")
+                    ),
 
-                // Different RDBMS have different ways of declaring sql parameters - SQLite can understand inline sql parameters just fine.
+                // Different RDBMS have different ways of declaring sql parameters
                 // By default, sql parameters will be displayed.
                 //SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter(),
 
@@ -107,6 +107,7 @@ namespace Samples.Mvc5
                 // specified position in the .RenderIncludes() call.
                 PopupRenderPosition = RenderPosition.Right,  // defaults to left
                 PopupMaxTracesToShow = 10,                   // defaults to 15
+                ColorScheme = ColorScheme.Auto,              // defaults to light
 
                 // ResultsAuthorize (optional - open to all by default):
                 // because profiler results can contain sensitive data (e.g. sql queries with parameter values displayed), we
@@ -128,7 +129,7 @@ namespace Samples.Mvc5
 
                 // ResultsListAuthorize (optional - open to all by default)
                 // the list of all sessions in the store is restricted by default, you must return true to allow it
-                ResultsListAuthorize = request =>
+                ResultsListAuthorize = _ =>
                 {
                     // you may implement this if you need to restrict visibility of profiling lists on a per request basis 
                     return true; // all requests are legit in our happy world
@@ -149,7 +150,6 @@ namespace Samples.Mvc5
             );
 
             MiniProfilerEF6.Initialize();
-            MiniProfiler.DefaultOptions.Storage = new OracleStorage(ConnectionString);
         }
     }
 }

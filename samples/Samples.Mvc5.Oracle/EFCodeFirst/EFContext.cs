@@ -13,7 +13,9 @@
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("VH4DB");
+            // Set default esquema for Oracle User
+            modelBuilder.HasDefaultSchema("USERID");
+
             base.OnModelCreating(modelBuilder);
         }
 
