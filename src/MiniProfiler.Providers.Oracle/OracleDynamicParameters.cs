@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
+/// <summary>
+/// Handle Parameters for Oracle Storage Provider
+/// </summary>
 public class OracleDynamicParameters : SqlMapper.IDynamicParameters
 {
     private static Dictionary<SqlMapper.Identity, Action<IDbCommand, object>> paramReaderCache = new Dictionary<SqlMapper.Identity, Action<IDbCommand, object>>();
