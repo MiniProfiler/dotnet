@@ -95,9 +95,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Oracle", "src\MiniProfiler.Providers.Oracle\MiniProfiler.Providers.Oracle.csproj", "{A14F7769-55E7-4045-B653-EC4DD44C339C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Mvc5.Oracle", "samples\Samples.Mvc5.Oracle\Samples.Mvc5.Oracle.csproj", "{CB089B96-B68A-4283-A0C3-F50C4483270C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5.Oracle", "samples\Samples.Mvc5.Oracle\Samples.Mvc5.Oracle.csproj", "{7D4F8D50-57F1-4368-A77F-DD20B617ADA0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Oracle", "src\MiniProfiler.Providers.Oracle\MiniProfiler.Providers.Oracle.csproj", "{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -213,14 +214,14 @@ Global
 		{D95A09CD-A291-42D0-AA41-8426090D0476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A14F7769-55E7-4045-B653-EC4DD44C339C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A14F7769-55E7-4045-B653-EC4DD44C339C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A14F7769-55E7-4045-B653-EC4DD44C339C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A14F7769-55E7-4045-B653-EC4DD44C339C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CB089B96-B68A-4283-A0C3-F50C4483270C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB089B96-B68A-4283-A0C3-F50C4483270C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB089B96-B68A-4283-A0C3-F50C4483270C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB089B96-B68A-4283-A0C3-F50C4483270C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4F8D50-57F1-4368-A77F-DD20B617ADA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4F8D50-57F1-4368-A77F-DD20B617ADA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4F8D50-57F1-4368-A77F-DD20B617ADA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4F8D50-57F1-4368-A77F-DD20B617ADA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -254,12 +255,12 @@ Global
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{D95A09CD-A291-42D0-AA41-8426090D0476} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
-		{A14F7769-55E7-4045-B653-EC4DD44C339C} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
-		{CB089B96-B68A-4283-A0C3-F50C4483270C} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
+		{7D4F8D50-57F1-4368-A77F-DD20B617ADA0} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
+		{CF9E8BAF-CCF0-49E3-9431-C31EF6C84B07} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi

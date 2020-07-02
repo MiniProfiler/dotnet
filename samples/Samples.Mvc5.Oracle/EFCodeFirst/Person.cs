@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Samples.Mvc5.EFCodeFirst
+﻿namespace Samples.Mvc5.EFCodeFirst
 {
     /// <summary>
     /// The person.

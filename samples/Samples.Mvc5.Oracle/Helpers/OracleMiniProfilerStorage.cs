@@ -30,7 +30,7 @@ namespace Samples.Mvc5.Helpers
             new OracleConnection(ConnectionString);
 
         /// <summary>
-        /// Used for testing purposes - destroys and recreates the SQLITE file with needed tables.
+        /// Used for testing purposes - create tables in Oracle database
         /// </summary>
         /// <param name="extraTablesToCreate">The Extra Tables To Create.</param>
         public OracleMiniProfilerStorage RecreateDatabase(params string[] extraTablesToCreate)
