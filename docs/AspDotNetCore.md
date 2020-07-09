@@ -32,6 +32,8 @@ public void ConfigureServices(IServiceCollection services)
 
         // (Optional) Control storage
         // (default is 30 minutes in MemoryCacheStorage)
+        // Note: MiniProfiler will not work if a SizeLimit is set on MemoryCache!
+        //   See: https://github.com/MiniProfiler/dotnet/issues/501 for details
         (options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
         // (Optional) Control which SQL formatter to use, InlineFormatter is the default
