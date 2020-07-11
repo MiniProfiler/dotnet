@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Tests.AspNetCore</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-    <TargetFrameworks>net461;netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />

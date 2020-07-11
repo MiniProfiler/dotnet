@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Tests</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-    <TargetFrameworks>net461;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.MongoDB\MiniProfiler.Providers.MongoDB.csproj" />
