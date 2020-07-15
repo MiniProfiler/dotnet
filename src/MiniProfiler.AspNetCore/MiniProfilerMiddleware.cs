@@ -197,6 +197,12 @@ namespace StackExchange.Profiling
                     }
                 }
 
+                // Expose X-MiniProfiler-Ids header if this is a CORS request
+                if (context.Request.Headers.ContainsKey("Origin"))
+                {
+                    context.Response.Headers.Add("Access-Control-Expose-Headers", "X-MiniProfiler-Ids");
+                }
+
                 // Set the state to use in RenderIncludes() down the pipe later
                 new RequestState { IsAuthorized = isAuthorized, RequestIDs = profilerIds }.Store(context);
             }
@@ -205,6 +211,18 @@ namespace StackExchange.Profiling
 
         private async Task HandleRequest(HttpContext context, PathString subPath)
         {
+            // Is this a CORS request
+            if (context.Request.Headers.TryGetValue("Origin", out var originValues)
+                && originValues.Any())
+            {
+                SetCorsHeaders(context.Response, originValues);
+                if (context.Request.Method == "OPTIONS")
+                {
+                    await HandleCorsOptionsRequest(context.Response);
+                    return;
+                }
+            }
+
             context.Response.StatusCode = StatusCodes.Status200OK;
             string result = null;
 
@@ -405,6 +423,25 @@ namespace StackExchange.Profiling
                 context.Response.ContentType = "text/html; charset=utf-8";
                 return Render.SingleResultHtml(profiler, context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
             }
+        }
+
+        private void SetCorsHeaders(HttpResponse response, string origin)
+        {
+            response.Headers.Add("Vary", "Origin");
+
+            if (_options.Value.CorsOrigins != null
+                && _options.Value.CorsOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            {
+                response.Headers.Add("Access-Control-Allow-Origin", origin);
+            }
+        }
+
+        private async Task HandleCorsOptionsRequest(HttpResponse response)
+        {
+            response.StatusCode = 200;
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+            response.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, GET");
+            await response.WriteAsync("").ConfigureAwait(false);
         }
     }
 }
