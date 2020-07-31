@@ -519,7 +519,7 @@ namespace StackExchange.Profiling {
                     timing.HasCustomTimings = true;
                     result.HasCustomTimings = true;
                     for (const customType of Object.keys(timing.CustomTimings)) {
-                        const customTimings = timing.CustomTimings[customType];
+                        const customTimings = timing.CustomTimings[customType] || [] as ICustomTiming[];
                         const customStat = {
                             Duration: 0,
                             Count: 0,
