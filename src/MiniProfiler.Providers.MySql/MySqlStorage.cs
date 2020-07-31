@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.Storage
