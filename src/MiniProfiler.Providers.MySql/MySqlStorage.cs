@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Storage
         /// Initializes a new instance of the <see cref="MySqlStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        public MySqlStorage(string connectionString) : base(connectionString) { }
+        public MySqlStorage(string connectionString) : base(FixConnectionString(connectionString)) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MySqlStorage"/> class with the specified connection string
@@ -30,7 +30,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
         /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
         public MySqlStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
-            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
+            : base(FixConnectionString(connectionString), profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
@@ -190,25 +190,19 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override MiniProfiler Load(Guid id)
         {
-            MiniProfiler result;
             using (var conn = GetConnection())
             {
                 using (var multi = conn.QueryMultiple(SqlStatements, new { id }))
                 {
-                    result = multi.ReadSingleOrDefault<MiniProfiler>();
+                    var result = multi.ReadSingleOrDefault<MiniProfiler>();
                     var timings = multi.Read<Timing>().AsList();
                     var clientTimings = multi.Read<ClientTiming>().AsList();
 
                     ConnectTimings(result, timings, clientTimings);
+                    return result;
                 }
             }
 
-            if (result != null)
-            {
-                // HACK: stored dates are UTC, but are pulled out as unspecified
-                result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
-            }
-            return result;
         }
 
         /// <summary>
@@ -218,25 +212,18 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler> LoadAsync(Guid id)
         {
-            MiniProfiler result;
             using (var conn = GetConnection())
             {
                 using (var multi = await conn.QueryMultipleAsync(SqlStatements, new { id }).ConfigureAwait(false))
                 {
-                    result = await multi.ReadSingleOrDefaultAsync<MiniProfiler>().ConfigureAwait(false);
+                    var result = await multi.ReadSingleOrDefaultAsync<MiniProfiler>().ConfigureAwait(false);
                     var timings = (await multi.ReadAsync<Timing>().ConfigureAwait(false)).AsList();
                     var clientTimings = (await multi.ReadAsync<ClientTiming>().ConfigureAwait(false)).AsList();
 
                     ConnectTimings(result, timings, clientTimings);
+                    return result;
                 }
             }
-
-            if (result != null)
-            {
-                // HACK: stored dates are UTC, but are pulled out as local time
-                result.Started = new DateTime(result.Started.Ticks, DateTimeKind.Utc);
-            }
-            return result;
         }
 
         /// <summary>
@@ -438,5 +425,18 @@ CREATE TABLE {MiniProfilerClientTimingsTable}
     INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId (MiniProfilerId)
 ) engine=InnoDB collate utf8mb4_bin;";
         }
+
+        // Forcibly set connection string properties required for the SQL above to function correctly.
+        private static string FixConnectionString(string connectionString) =>
+            new MySqlConnectionStringBuilder(connectionString)
+            {
+                AllowLoadLocalInfile = false,
+                AllowUserVariables = false,
+                AllowZeroDateTime = false,
+                ConnectionReset = false,
+                DateTimeKind = MySqlDateTimeKind.Utc,
+                GuidFormat = MySqlGuidFormat.Char36,
+                TreatTinyAsBoolean = true,
+            }.ConnectionString;
     }
 }
