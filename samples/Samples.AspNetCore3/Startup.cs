@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -119,13 +120,28 @@ namespace Samples.AspNetCore
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            
             app.UseMiniProfiler()
                .UseStaticFiles()
                .UseRouting()
                .UseEndpoints(endpoints =>
                {
-                   endpoints.MapDefaultControllerRoute();
+                   endpoints.MapAreaControllerRoute("areaRoute", "MySpace",
+                       "MySpace/{controller=Home}/{action=Index}/{id?}");
+                   endpoints.MapControllerRoute("default_route","{controller=Home}/{action=Index}/{id?}");
+                  
                    endpoints.MapRazorPages();
+                   endpoints.MapGet("/named-endpoint", async httpContext =>
+                   {
+                       var endpointName = httpContext.GetEndpoint().DisplayName;
+                       await httpContext.Response.WriteAsync($"Content from an endpoint named {endpointName}");
+                   }).WithDisplayName("Named Endpoint");
+
+                   endpoints.MapGet("implicitly-named-endpoint", async httpContext =>
+                   {
+                       var endpointName = httpContext.GetEndpoint().DisplayName;
+                       await httpContext.Response.WriteAsync($"Content from an endpoint named {endpointName}");
+                   });
                });
 
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
