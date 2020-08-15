@@ -154,7 +154,13 @@ namespace StackExchange.Profiling
                 {
                     profiler.Name = routeData.Values["page"].ToString();
                 }
-                else
+#if NETCOREAPP3_0
+                else if (context.GetEndpoint() is Endpoint endPoint && endPoint.DisplayName.HasValue())
+                {
+                    profiler.Name = endPoint.DisplayName;
+                }    
+#endif
+               else
                 {
                     profiler.Name = url;
                     if (profiler.Name.Length > 50)
