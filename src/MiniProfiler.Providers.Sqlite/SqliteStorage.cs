@@ -18,7 +18,11 @@ namespace StackExchange.Profiling.Storage
         /// Initializes a new instance of the <see cref="SqliteStorage"/> class with the specified connection string.
         /// </summary>
         /// <param name="connectionString">The connection string to use.</param>
-        public SqliteStorage(string connectionString) : base(connectionString) { }
+        /// <param name="additionalSqlStatements">(Optional) Extra SQL to run, e.g. additional tables to create.</param>
+        public SqliteStorage(string connectionString,params string[] additionalSqlStatements) : base(connectionString)
+        {
+            CreateSchema(ConnectionString, additionalSqlStatements);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqliteStorage"/> class with the specified connection string
@@ -28,8 +32,13 @@ namespace StackExchange.Profiling.Storage
         /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
         /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
         /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
-        public SqliteStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
-            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
+        /// <param name="additionalSqlStatements">(Optional) Extra SQL to run, e.g. additional tables to create.</param>
+        public SqliteStorage(string connectionString, string profilersTable, string timingsTable,
+            string clientTimingsTable,params string[] additionalSqlStatements)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable)
+        {
+            CreateSchema(ConnectionString, additionalSqlStatements);
+        }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
@@ -185,7 +194,11 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
          RootTimingId as RootTimingIdString,
          Name,
          Started,
-         DurationMilliseconds,
+         (CASE
+		 WHEN DurationMilliseconds LIKE '%.%'
+		   THEN DurationMilliseconds
+		   ELSE DurationMilliseconds + '.0'
+		  END) as DurationMilliseconds,   
          User,
          HasUserViewed,
          MachineName,
@@ -198,8 +211,16 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
          MiniProfilerId as MiniProfilerIdString,
          ParentTimingId as ParentTimingIdString,
          Name,
-         DurationMilliseconds,
-         StartMilliseconds,
+         (CASE
+		 WHEN DurationMilliseconds LIKE '%.%'
+		   THEN DurationMilliseconds
+		   ELSE DurationMilliseconds + '.0'
+		  END) as DurationMilliseconds,
+         (CASE
+		 WHEN StartMilliseconds LIKE '%.%'
+		   THEN StartMilliseconds
+		   ELSE StartMilliseconds + '.0'
+		  END) as StartMilliseconds,
          IsRoot,
          Depth,
          CustomTimingsJson
@@ -210,8 +231,16 @@ ORDER BY StartMilliseconds;
   SELECT Id as IdString,
          MiniProfilerId as MiniProfilerIdString,
          Name,
-         Start,
-         Duration
+         (CASE
+		 WHEN Start LIKE '%.%'
+		   THEN Start
+		   ELSE Start + '.0'
+		  END) as Start,
+         (CASE
+		 WHEN Duration LIKE '%.%'
+		   THEN Duration
+		   ELSE Duration + '.0'
+		  END) as Duration
     FROM {MiniProfilerClientTimingsTable} 
    WHERE MiniProfilerId = @id 
 ORDER BY Start;";
@@ -447,6 +476,7 @@ Select Cast(Id as text) Id
         /// Creates the database schema from scratch, for initial spinup.
         /// </summary>
         /// <param name="additionalSqlStatements">(Optional) Extra SQL to run, e.g. additional tables to create.</param>
+        [Obsolete("WithSchemaCreation is deprecated. Schema creation is now getting handled at SqliteStorage initialization")]
         public SqliteStorage WithSchemaCreation(params string[] additionalSqlStatements)
         {
             CreateSchema(ConnectionString, additionalSqlStatements);
@@ -475,7 +505,7 @@ Select Cast(Id as text) Id
         /// </summary>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
-            yield return $@"Create Table {MiniProfilersTable}
+            yield return $@"Create Table IF NOT EXISTS {MiniProfilersTable}
                   (
                      RowId                                integer not null primary key,
                      Id                                   nvarchar(36) not null, 
@@ -489,7 +519,7 @@ Select Cast(Id as text) Id
                      CustomLinksJson                      text null,
                      ClientTimingsRedirectCount           int null
                   );";
-            yield return $@"Create Table {MiniProfilerTimingsTable}
+            yield return $@"Create Table IF NOT EXISTS {MiniProfilerTimingsTable}
                   (
                      RowId                               integer not null primary key,
                      Id                                  nvarchar(36) not null,
@@ -502,7 +532,7 @@ Select Cast(Id as text) Id
                      Depth                               smallint not null,
                      CustomTimingsJson                   text null
                   );";
-            yield return $@"Create Table {MiniProfilerClientTimingsTable}
+            yield return $@"Create Table IF NOT EXISTS {MiniProfilerClientTimingsTable}
                   (
                      RowId                               integer not null primary key,
                      Id                                  nvarchar(36) not null,
