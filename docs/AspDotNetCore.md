@@ -21,6 +21,9 @@ Install-Package MiniProfiler.AspNetCore.Mvc -IncludePrerelease
 public void ConfigureServices(IServiceCollection services)
 {
     // ...existing configuration...
+    
+    // Ensure Memory Cache is added for MiniProfiler to work
+    services.AddMemoryCache();
 
     // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
     services.AddMiniProfiler(options =>
