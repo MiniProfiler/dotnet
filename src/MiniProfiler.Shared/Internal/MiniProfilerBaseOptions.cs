@@ -94,7 +94,7 @@ namespace StackExchange.Profiling.Internal
 
         /// <summary>
         /// Whether to track open and close for connections to things like database servers.
-        /// While this ise useful for debugging connection pools and things, it can be noisy in other cases.
+        /// While this is useful for debugging connection pools and things, it can be noisy in other cases.
         /// </summary>
         public bool TrackConnectionOpenClose { get; set; } = true;
 
