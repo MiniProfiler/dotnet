@@ -1,6 +1,7 @@
 ﻿using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -212,6 +213,43 @@ namespace StackExchange.Profiling
             }
 
             return text.ToStringRecycle();
+        }
+        
+        /// <summary>
+        /// Get the default method name.
+        /// </summary>
+        /// <param name="profiler">Should be empty.</param>
+        /// <param name="callerName">Should be empty.</param>
+        /// <param name="fileName">Should be empty.</param>
+        /// <returns></returns>
+        public static string GetDefaultStepName(this MiniProfiler profiler, [CallerMemberName] string callerName = null)
+        {
+            return callerName;
+        }
+        
+        /// <summary>
+        /// Get the default method name.
+        /// </summary>
+        /// <param name="profiler">Should be empty.</param>
+        /// <param name="callerName">Should be empty.</param>
+        /// <param name="fileName">Should be empty.</param>
+        /// <returns></returns>
+        public static string GetDefaultStepNameWithClassName(this MiniProfiler profiler, [CallerMemberName] string callerName = null, [CallerFilePath] string fileName = null)
+        {
+            return $"{Path.GetFileNameWithoutExtension(fileName)}.{callerName}";
+        }
+        
+        /// <summary>
+        /// Get the default method name.
+        /// </summary>
+        /// <param name="profiler">Should be empty.</param>
+        /// <param name="callerName">Should be empty.</param>
+        /// <param name="fileName">Should be empty.</param>
+        /// <param name="line">Should be empty.</param>
+        /// <returns></returns>
+        public static string GetDefaultStepNameWithLine(this MiniProfiler profiler, [CallerMemberName] string callerName = null, [CallerFilePath] string fileName = null, [CallerLineNumber] int line = 0)
+        {
+            return $"{Path.GetFileNameWithoutExtension(fileName)}.{callerName}:{line}";
         }
     }
 }

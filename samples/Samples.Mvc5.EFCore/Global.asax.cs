@@ -67,7 +67,7 @@ namespace Samples.Mvc5
                 profiler = MiniProfiler.StartNew();
             }
 
-            using (profiler.Step("Application_BeginRequest"))
+            using (profiler.Step(profiler.GetDefaultStepName()))
             {
                 // you can start profiling your code immediately
             }
