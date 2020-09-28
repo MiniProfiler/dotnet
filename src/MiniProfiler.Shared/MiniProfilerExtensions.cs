@@ -39,7 +39,7 @@ namespace StackExchange.Profiling
         /// <param name="name">A descriptive name for the code that is encapsulated by the resulting Timing's lifetime.</param>
         /// <returns>the profile step</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Timing Step(this MiniProfiler profiler, string name) => profiler?.StepImpl(name);
+        public static Timing Step(this MiniProfiler profiler, [CallerMemberName] string name = null) => profiler?.StepImpl(name);
 
         /// <summary>
         /// Returns an <see cref="Timing"/> (<see cref="IDisposable"/>) that will time the code between its creation and disposal.
