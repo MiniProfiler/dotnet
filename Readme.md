@@ -8,7 +8,7 @@ Welcome to MiniProfiler for .NET, ASP.NET, ASP.NET Core, ASP.NET MVC and general
 ![Actions Build](https://github.com/MiniProfiler/dotnet/workflows/Main%20Build/badge.svg)
 
 
-The current major version of MiniProfiler is v4.
+The current major version of MiniProfiler is v4 (version 4).
 
 #### Handy Links
 
