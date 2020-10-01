@@ -1,4 +1,4 @@
-## MiniProfiler for .NET (and .NET Core)
+## MiniProfiler for .NET (and .NET Core) [amazing project]
 
 [<img align="right" width="100px" src="https://dotnetfoundation.org/img/logo_big.svg" />](https://dotnetfoundation.org/projects)
 
