@@ -27,7 +27,7 @@ The current major version of MiniProfiler is v4.
 To build the MiniProfiler solution in Visual Studio, you'll need:
 - Visual Studio 2019 16.3+ (or the .NET Core 3.x SDK)
 - The [Web Compiler](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.WebCompiler) extension
-  - Note: no extension is needed if building via `buid.cmd` or `build.ps1` in the repository root. They pull it in via a package.
+  - Note: no extension is needed if building via `build.cmd` or `build.ps1` in the repository root. They pull it in via a package.
 
 After a clone, running `build.cmd`. To create packages, use `build.cmd -CreatePackages $true` and it'll output them in the `.nukpgs\` folder.
 
