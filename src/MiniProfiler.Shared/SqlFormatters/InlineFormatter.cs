@@ -18,18 +18,18 @@ namespace StackExchange.Profiling.SqlFormatters
         /// in comments beside the replaced value
         /// </summary>
         /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
-        public InlineFormatter(bool includeTypeInfo = false) : this(includeTypeInfo, true) { }
+        public InlineFormatter(bool includeTypeInfo = false) : this(true, includeTypeInfo) { }
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info and whether to increase readibility.
         /// in comments beside the replaced value
         /// </summary>
-        /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
         /// <param name="increaseReadability">Modifies the output query to increase readibility by adding spaces around crowded commas.</param>
-        public InlineFormatter(bool includeTypeInfo = false, bool increaseReadability = true)
+        /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
+        public InlineFormatter(bool increaseReadability, bool includeTypeInfo = false)
         {
             InlineFormatter.includeTypeInfo = includeTypeInfo;
-            InlineFormatter.increaseReadability = true;
+            InlineFormatter.increaseReadability = increaseReadability;
         }
 
         /// <summary>
