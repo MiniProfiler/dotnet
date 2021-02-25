@@ -228,6 +228,44 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithIncreasedReadabilityEnabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @x,y = @y";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "x", 123);
+            AddDbParameter<long>(cmd, at + "y", 123);
+
+            var formatter = new SqlServerFormatter()
+            {
+                IncreaseReadability = true
+            };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithIncreasedReadabilityDisabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @x,y = @y";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "x", 123);
+            AddDbParameter<long>(cmd, at + "y", 123);
+
+            var formatter = new SqlServerFormatter()
+            {
+                IncreaseReadability = false
+            };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x,y = @y;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
         public void TableQueryWithBit(string at)
         {
             const string text = "select 1 from dbo.Table where x = @x, y = @y";
