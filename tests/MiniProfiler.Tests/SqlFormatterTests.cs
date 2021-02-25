@@ -91,7 +91,10 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void InlineParameterNamesInParameterValues()
         {
-            var formatter = new InlineFormatter();
+            var formatter = new InlineFormatter()
+            {
+                IncreaseReadability = false
+            };
             var parameters = new List<SqlTimingParameter>
             {
                 new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
@@ -101,7 +104,6 @@ namespace StackExchange.Profiling.Tests
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
-
         [Fact]
         public void InlineParameterValuesDisplayNullForStrings()
         {
@@ -114,6 +116,40 @@ namespace StackExchange.Profiling.Tests
             const string command = "SELECT * FROM urls WHERE url = @url OR @myid IS NULL";
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR null IS NULL", formatted);
+        }
+
+        [Fact]
+        public void InlineIncreaseReadabilityEnabled()
+        {
+            var formatter = new InlineFormatter()
+            {
+                IncreaseReadability = true
+            };
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = "1" }
+            };
+            const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT myid, url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
+        }
+
+        [Fact]
+        public void InlineIncreaseReadabilityDisabled()
+        {
+            var formatter = new InlineFormatter()
+            {
+                IncreaseReadability = false
+            };
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = "1" }
+            };
+            const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT myid,url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
 
         [Fact]
