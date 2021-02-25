@@ -9,16 +9,27 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
+        private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
         private static bool includeTypeInfo;
+        private static bool increaseReadability;
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
         /// in comments beside the replaced value
         /// </summary>
         /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
-        public InlineFormatter(bool includeTypeInfo = false)
+        public InlineFormatter(bool includeTypeInfo = false) : this(includeTypeInfo, true) { }
+
+        /// <summary>
+        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info and whether to increase readibility.
+        /// in comments beside the replaced value
+        /// </summary>
+        /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
+        /// <param name="increaseReadability">Modifies the output query to increase readibility by adding spaces around crowded commas.</param>
+        public InlineFormatter(bool includeTypeInfo = false, bool increaseReadability = true)
         {
             InlineFormatter.includeTypeInfo = includeTypeInfo;
+            InlineFormatter.increaseReadability = true;
         }
 
         /// <summary>
@@ -34,6 +45,11 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
+            if (increaseReadability)
+            {
+                commandText = CommandSpacing.Replace(commandText, ", $1");
+            }
+            
             var paramValuesByName = new Dictionary<string, string>(parameters.Count);
             foreach (var p in parameters)
             {

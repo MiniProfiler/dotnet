@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
         public static string GetFormattedSql(this ISqlFormatter sqlFormatter, IDbCommand command)
         {
-            var commandText = command.GetReadableCommand();
+            var commandText = command.CommandText;
             var parameters = command.GetParameters();
 
             return sqlFormatter.GetFormattedSql(commandText, parameters, command);
