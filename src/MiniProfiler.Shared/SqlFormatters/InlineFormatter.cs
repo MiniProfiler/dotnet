@@ -11,25 +11,20 @@ namespace StackExchange.Profiling.SqlFormatters
     {
         private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
         private static bool includeTypeInfo;
-        private static bool increaseReadability;
+
+        /// <summary>
+        /// Modifies the output query to increase readibility by adding spaces around crowded commas.
+        /// </summary>
+        public bool IncreaseReadability { get; set; } = true;
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
         /// in comments beside the replaced value
         /// </summary>
         /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
-        public InlineFormatter(bool includeTypeInfo = false) : this(true, includeTypeInfo) { }
-
-        /// <summary>
-        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
-        /// in comments beside the replaced value
-        /// </summary>
-        /// <param name="increaseReadability">Modifies the output query to increase readibility by adding spaces around crowded commas.</param>
-        /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
-        public InlineFormatter(bool increaseReadability, bool includeTypeInfo = false)
+        public InlineFormatter(bool includeTypeInfo = false)
         {
             InlineFormatter.includeTypeInfo = includeTypeInfo;
-            InlineFormatter.increaseReadability = increaseReadability;
         }
 
         /// <summary>
@@ -45,7 +40,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
-            if (increaseReadability)
+            if (IncreaseReadability)
             {
                 commandText = CommandSpacing.Replace(commandText, ", $1");
             }
