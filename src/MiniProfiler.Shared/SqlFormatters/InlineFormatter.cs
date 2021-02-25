@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.SqlFormatters
         public InlineFormatter(bool includeTypeInfo = false) : this(true, includeTypeInfo) { }
 
         /// <summary>
-        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info and whether to increase readibility.
+        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
         /// in comments beside the replaced value
         /// </summary>
         /// <param name="increaseReadability">Modifies the output query to increase readibility by adding spaces around crowded commas.</param>
