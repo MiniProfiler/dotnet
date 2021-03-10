@@ -63,20 +63,23 @@ namespace StackExchange.Profiling.SqlFormatters
             var result = param.Value;
             var type = param.DbType ?? string.Empty;
 
-            switch (type.ToLower())
+            if (result != null)
             {
-                case "string":
-                case "datetime":
-                    result = string.Format("'{0}'", result);
-                    break;
-                case "boolean":
-                    result = result switch
-                    {
-                        "True" => "1",
-                        "False" => "0",
-                        _ => null,
-                    };
-                    break;
+                switch (type.ToLower())
+                {
+                    case "string":
+                    case "datetime":
+                        result = string.Format("'{0}'", result);
+                        break;
+                    case "boolean":
+                        result = result switch
+                        {
+                            "True" => "1",
+                            "False" => "0",
+                            _ => null,
+                        };
+                        break;
+                }
             }
 
             result ??= "null";

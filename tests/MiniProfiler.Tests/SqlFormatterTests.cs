@@ -103,6 +103,20 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
+        public void InlineParameterValuesDisplayNullForStrings()
+        {
+            var formatter = new InlineFormatter();
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = null }
+            };
+            const string command = "SELECT * FROM urls WHERE url = @url OR @myid IS NULL";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR null IS NULL", formatted);
+        }
+
+        [Fact]
         public void EnsureVerboseSqlServerFormatterOnlyAddsInformation()
         {
             const string text = "select 1";
