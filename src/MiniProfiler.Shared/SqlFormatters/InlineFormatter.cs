@@ -13,9 +13,9 @@ namespace StackExchange.Profiling.SqlFormatters
         private static bool includeTypeInfo;
 
         /// <summary>
-        /// Modifies the output query to increase readibility by adding spaces around crowded commas.
+        /// Modifies the output query by adding spaces after commas.
         /// </summary>
-        public bool IncreaseReadability { get; set; } = true;
+        public bool SpaceAfterComma { get; set; } = true;
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
@@ -40,7 +40,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
-            if (IncreaseReadability)
+            if (SpaceAfterComma)
             {
                 commandText = CommandSpacing.Replace(commandText, ", $1");
             }

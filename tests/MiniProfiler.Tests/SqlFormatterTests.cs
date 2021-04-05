@@ -93,7 +93,7 @@ namespace StackExchange.Profiling.Tests
         {
             var formatter = new InlineFormatter()
             {
-                IncreaseReadability = false
+                SpaceAfterComma = false
             };
             var parameters = new List<SqlTimingParameter>
             {
@@ -119,11 +119,11 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
-        public void InlineIncreaseReadabilityEnabled()
+        public void InlineSpaceAfterCommaEnabled()
         {
             var formatter = new InlineFormatter()
             {
-                IncreaseReadability = true
+                SpaceAfterComma = true
             };
             var parameters = new List<SqlTimingParameter>
             {
@@ -136,11 +136,11 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
-        public void InlineIncreaseReadabilityDisabled()
+        public void InlineSpaceAfterCommaDisabled()
         {
             var formatter = new InlineFormatter()
             {
-                IncreaseReadability = false
+                SpaceAfterComma = false
             };
             var parameters = new List<SqlTimingParameter>
             {
@@ -264,7 +264,7 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
-        public void TableQueryWithIncreasedReadabilityEnabled(string at)
+        public void TableQueryWithSpaceAfterCommaEnabled(string at)
         {
             const string text = "select 1 from dbo.Table where x = @x,y = @y";
             var cmd = CreateDbCommand(CommandType.Text, text);
@@ -273,7 +273,7 @@ namespace StackExchange.Profiling.Tests
 
             var formatter = new SqlServerFormatter()
             {
-                IncreaseReadability = true
+                SpaceAfterComma = true
             };
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
@@ -283,7 +283,7 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
-        public void TableQueryWithIncreasedReadabilityDisabled(string at)
+        public void TableQueryWithSpaceAfterCommaDisabled(string at)
         {
             const string text = "select 1 from dbo.Table where x = @x,y = @y";
             var cmd = CreateDbCommand(CommandType.Text, text);
@@ -292,7 +292,7 @@ namespace StackExchange.Profiling.Tests
 
             var formatter = new SqlServerFormatter()
             {
-                IncreaseReadability = false
+                SpaceAfterComma = false
             };
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
