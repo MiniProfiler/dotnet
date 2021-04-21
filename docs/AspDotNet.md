@@ -99,7 +99,7 @@ protected void Application_EndRequest()
   ```
   @using StackExchange.Profiling
   ...
-  @(MiniProfiler.Current?.RenderIncludes());
+  @(MiniProfiler.Current?.RenderIncludes())
   </body>
   </html>
   ```
