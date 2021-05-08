@@ -95,6 +95,26 @@ protected void Application_EndRequest()
 }
 ```
 
+* Edit your `Views\Shared\_Layout.cshtml` to render the MiniProfiler:
+  ```
+  @using StackExchange.Profiling
+  ...
+  @(MiniProfiler.Current?.RenderIncludes())
+  </body>
+  </html>
+  ```
+
+* Depending on existing config, you may need to edit your `Web.config` to serve the resources, the `path` attribute should match `RouteBasePath`:
+  ```xml
+  <configuration>
+    <system.webServer>
+      <handlers>
+        <add name="MiniProfiler" path="profiler/*" verb="*" type="System.Web.Routing.UrlRoutingModule" resourceType="Unspecified" preCondition="integratedMode" />
+      </handlers>
+    </system.webServer>
+  </configuration>
+  ```
+
 #### Routes
 
 There are 2 user endpoints for MiniProfiler. The root is determined by `MiniProfilerOptions.RouteBasePath` (defaults to `/mini-profiler-resources`, but can be changed):
