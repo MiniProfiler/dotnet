@@ -104,7 +104,7 @@ protected void Application_EndRequest()
   </html>
   ```
 
-* Edit your `Web.config` to serve the resources, the `path` attribute should match `RouteBasePath`:
+* Depending on existing config, you may need to edit your `Web.config` to serve the resources, the `path` attribute should match `RouteBasePath`:
   ```xml
   <configuration>
     <system.webServer>
