@@ -9,10 +9,11 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.11.3" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
     <PackageReference Include="Jil" Version="2.16" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="System.Ben" Version="1.0.0" />
