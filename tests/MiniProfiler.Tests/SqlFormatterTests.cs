@@ -91,10 +91,7 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void InlineParameterNamesInParameterValues()
         {
-            var formatter = new InlineFormatter()
-            {
-                SpaceAfterComma = false
-            };
+            var formatter = new InlineFormatter();
             var parameters = new List<SqlTimingParameter>
             {
                 new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
