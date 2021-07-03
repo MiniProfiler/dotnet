@@ -5,6 +5,10 @@ layout: "default"
 ### Release Notes
 This page tracks major changes included in any update starting with version 4.0.0.3
 
+#### Unreleased
+- **New**:
+  - Added an option to control `SpacesAfterCommas` to `InlineSqlFormatter` and `SqlServerFormatter` ([#549](https://github.com/MiniProfiler/dotnet/pull/549) - thanks [Turnerj](https://github.com/Turnerj))
+
 #### Version 4.2.1
 - **New**:
   - Added RavenDB Storage provider ([#483](https://github.com/MiniProfiler/dotnet/pull/483) - thanks [@lillo42](https://github.com/lillo42)!)

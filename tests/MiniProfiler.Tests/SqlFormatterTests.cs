@@ -101,7 +101,6 @@ namespace StackExchange.Profiling.Tests
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
-
         [Fact]
         public void InlineParameterValuesDisplayNullForStrings()
         {
@@ -114,6 +113,40 @@ namespace StackExchange.Profiling.Tests
             const string command = "SELECT * FROM urls WHERE url = @url OR @myid IS NULL";
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR null IS NULL", formatted);
+        }
+
+        [Fact]
+        public void InlineSpacesAfterCommasEnabled()
+        {
+            var formatter = new InlineFormatter()
+            {
+                InsertSpacesAfterCommas = true
+            };
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = "1" }
+            };
+            const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT myid, url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
+        }
+
+        [Fact]
+        public void InlineSpacesAfterCommasDisabled()
+        {
+            var formatter = new InlineFormatter()
+            {
+                InsertSpacesAfterCommas = false
+            };
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "string", Name = "url", Value = "http://www.example.com?myid=1" },
+                new SqlTimingParameter() { DbType = "string", Name = "myid", Value = "1" }
+            };
+            const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal("SELECT myid,url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
 
         [Fact]
@@ -223,6 +256,44 @@ namespace StackExchange.Profiling.Tests
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @x int,\n        @y bigint;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithSpacesAfterCommasEnabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @x,y = @y";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "x", 123);
+            AddDbParameter<long>(cmd, at + "y", 123);
+
+            var formatter = new SqlServerFormatter()
+            {
+                InsertSpacesAfterCommas = true
+            };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x, y = @y;";
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetParamPrefixes))]
+        public void TableQueryWithSpacesAfterCommasDisabled(string at)
+        {
+            const string text = "select 1 from dbo.Table where x = @x,y = @y";
+            var cmd = CreateDbCommand(CommandType.Text, text);
+            AddDbParameter<int>(cmd, at + "x", 123);
+            AddDbParameter<long>(cmd, at + "y", 123);
+
+            var formatter = new SqlServerFormatter()
+            {
+                InsertSpacesAfterCommas = false
+            };
+            var actualOutput = GenerateOutput(formatter, cmd, text);
+
+            const string expectedOutput = "DECLARE @x int = 123,\n        @y bigint = 123;\n\nselect 1 from dbo.Table where x = @x,y = @y;";
             Assert.Equal(expectedOutput, actualOutput);
         }
 

@@ -9,7 +9,13 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
+        private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
         private static bool includeTypeInfo;
+
+        /// <summary>
+        /// Whether to modify the output query by adding spaces after commas.
+        /// </summary>
+        public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
@@ -34,6 +40,11 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
+            if (InsertSpacesAfterCommas)
+            {
+                commandText = CommandSpacing.Replace(commandText, ", $1");
+            }
+            
             var paramValuesByName = new Dictionary<string, string>(parameters.Count);
             foreach (var p in parameters)
             {
