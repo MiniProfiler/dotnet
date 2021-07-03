@@ -21,9 +21,9 @@ namespace StackExchange.Profiling.SqlFormatters
         public bool IncludeParameterValues { get; set; } = true;
 
         /// <summary>
-        /// Modifies the output query by adding spaces after commas.
+        /// Whether to modify the output query by adding spaces after commas.
         /// </summary>
-        public bool SpaceAfterComma { get; set; } = true;
+        public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
         /// Lookup a function for translating a parameter by parameter type
@@ -120,7 +120,7 @@ namespace StackExchange.Profiling.SqlFormatters
                       .Append("\n\n");
             }
 
-            if (SpaceAfterComma)
+            if (InsertSpacesAfterCommas)
             {
                 commandText = CommandSpacing.Replace(commandText, ", $1");
             }

@@ -116,11 +116,11 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
-        public void InlineSpaceAfterCommaEnabled()
+        public void InlineSpacesAfterCommasEnabled()
         {
             var formatter = new InlineFormatter()
             {
-                SpaceAfterComma = true
+                InsertSpacesAfterCommas = true
             };
             var parameters = new List<SqlTimingParameter>
             {
@@ -133,11 +133,11 @@ namespace StackExchange.Profiling.Tests
         }
 
         [Fact]
-        public void InlineSpaceAfterCommaDisabled()
+        public void InlineSpacesAfterCommasDisabled()
         {
             var formatter = new InlineFormatter()
             {
-                SpaceAfterComma = false
+                InsertSpacesAfterCommas = false
             };
             var parameters = new List<SqlTimingParameter>
             {
@@ -261,7 +261,7 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
-        public void TableQueryWithSpaceAfterCommaEnabled(string at)
+        public void TableQueryWithSpacesAfterCommasEnabled(string at)
         {
             const string text = "select 1 from dbo.Table where x = @x,y = @y";
             var cmd = CreateDbCommand(CommandType.Text, text);
@@ -270,7 +270,7 @@ namespace StackExchange.Profiling.Tests
 
             var formatter = new SqlServerFormatter()
             {
-                SpaceAfterComma = true
+                InsertSpacesAfterCommas = true
             };
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
@@ -280,7 +280,7 @@ namespace StackExchange.Profiling.Tests
 
         [Theory]
         [MemberData(nameof(GetParamPrefixes))]
-        public void TableQueryWithSpaceAfterCommaDisabled(string at)
+        public void TableQueryWithSpacesAfterCommasDisabled(string at)
         {
             const string text = "select 1 from dbo.Table where x = @x,y = @y";
             var cmd = CreateDbCommand(CommandType.Text, text);
@@ -289,7 +289,7 @@ namespace StackExchange.Profiling.Tests
 
             var formatter = new SqlServerFormatter()
             {
-                SpaceAfterComma = false
+                InsertSpacesAfterCommas = false
             };
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
