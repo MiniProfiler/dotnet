@@ -111,6 +111,7 @@ namespace StackExchange.Profiling {
         ids: string[];
         ignoredDuplicateExecuteTypes: string[];
         maxTracesToShow: number;
+        nonce: string;
         path: string;
         renderPosition: RenderPosition;
         showChildrenTime: boolean;
@@ -298,6 +299,7 @@ namespace StackExchange.Profiling {
                 toggleShortcut: data.toggleShortcut,
                 startHidden: bool(data.startHidden),
                 ignoredDuplicateExecuteTypes: (data.ignoredDuplicateExecuteTypes || '').split(','),
+                nonce: script.nonce,
             };
 
             function doInit() {
@@ -372,7 +374,7 @@ namespace StackExchange.Profiling {
                     } else {
                         alreadyDone = true;
                         if (mp.options.authorized) {
-                            document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" />`);
+                            document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" ${mp.options.nonce ? `nonce="${mp.options.nonce}" ` : ''}/>`);
                         }
                         doInit();
                     }
