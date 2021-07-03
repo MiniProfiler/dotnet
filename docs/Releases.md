@@ -8,6 +8,7 @@ This page tracks major changes included in any update starting with version 4.0.
 #### Unreleased
 - **New**:
   - Added an option to control `SpacesAfterCommas` to `InlineSqlFormatter` and `SqlServerFormatter` ([#549](https://github.com/MiniProfiler/dotnet/pull/549) - thanks [Turnerj](https://github.com/Turnerj))
+  - Fixed `nonce` attribute propagation to generated `<link>` style element for full CSP support ([#565](https://github.com/MiniProfiler/dotnet/pull/565))
 
 #### Version 4.2.1
 - **New**:
