@@ -318,20 +318,20 @@ namespace StackExchange.Profiling
                 guids = guids.TakeWhile(g => g != lastGuid);
             }
 
-            return guids.Reverse()
-                        .Select(g => Options.Storage.Load(g))
-                        .Where(p => p != null)
-                        .Select(p => new
-                        {
-                            p.Id,
-                            p.Name,
-                            p.ClientTimings,
-                            p.Started,
-                            p.HasUserViewed,
-                            p.MachineName,
-                            p.User,
-                            p.DurationMilliseconds
-                        }).ToJson();
+            return guids
+                    .Select(g => Options.Storage.Load(g))
+                    .Where(p => p != null)
+                    .Select(p => new
+                    {
+                        p.Id,
+                        p.Name,
+                        p.ClientTimings,
+                        p.Started,
+                        p.HasUserViewed,
+                        p.MachineName,
+                        p.User,
+                        p.DurationMilliseconds
+                    }).ToJson();
         }
 
         /// <summary>
