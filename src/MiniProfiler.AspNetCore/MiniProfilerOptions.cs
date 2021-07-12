@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Profiling.Internal;
@@ -54,6 +55,11 @@ namespace StackExchange.Profiling
         /// Function to provide the unique user ID based on the request, to store MiniProfiler IDs user
         /// </summary>
         public Func<HttpRequest, string> UserIdProvider { get; set; } = request => request.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        /// <summary>
+        /// Optional list of origins allowed for CORS requests to MiniProfiler
+        /// </summary>
+        public IEnumerable<string> CorsOrigins { get; set; }
 
 #if NETCOREAPP3_0
         /// <summary>
