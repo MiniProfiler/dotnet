@@ -225,15 +225,16 @@ namespace StackExchange.Profiling.Tests.Storage
         /// Drops the tables for this storage provider.
         /// </summary>
         /// <param name="storage">The storage to drop schema for.</param>
-        public static void DropSchema(this IAsyncStorage storage)
+        /// <param name="withSchema">Drop tables with schema name.</param>
+        public static void DropSchema(this IAsyncStorage storage, bool withSchema = false)
         {
             if (storage is DatabaseStorageBase dbs && storage is IDatabaseStorageConnectable dbsc)
             {
                 using (var conn = dbsc.GetConnection())
                 {
-                    conn.Execute("Drop Table " + dbs.MiniProfilerClientTimingsTable);
-                    conn.Execute("Drop Table " + dbs.MiniProfilerTimingsTable);
-                    conn.Execute("Drop Table " + dbs.MiniProfilersTable);
+                    conn.Execute($"Drop Table {(withSchema ? $"{dbs.SchemaName}." : string.Empty)}{dbs.MiniProfilerClientTimingsTable}");
+                    conn.Execute($"Drop Table {(withSchema ? $"{dbs.SchemaName}." : string.Empty)}{dbs.MiniProfilerTimingsTable}");
+                    conn.Execute($"Drop Table {(withSchema ? $"{dbs.SchemaName}." : string.Empty)}{dbs.MiniProfilersTable}");
                 }
             }
         }

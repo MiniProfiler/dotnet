@@ -40,7 +40,7 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage.DropSchema();
+                Storage?.DropSchema(true);
             }
         }
     }
