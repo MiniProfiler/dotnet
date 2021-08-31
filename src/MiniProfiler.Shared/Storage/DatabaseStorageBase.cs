@@ -27,6 +27,11 @@ namespace StackExchange.Profiling.Storage
         public readonly string MiniProfilerClientTimingsTable = "MiniProfilerClientTimings";
 
         /// <summary>
+        /// The database schema to use for MiniProfiler tables.
+        /// </summary>
+        public readonly string SchemaName = "dbo";
+
+        /// <summary>
         /// Gets or sets how we connect to the database used to save/load MiniProfiler results.
         /// </summary>
         protected string ConnectionString { get; set; }
@@ -49,12 +54,14 @@ namespace StackExchange.Profiling.Storage
         /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
         /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
         /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
-        protected DatabaseStorageBase(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+        /// <param name="schemaName">The database schema to use for MiniProfiler tables.</param>
+        protected DatabaseStorageBase(string connectionString, string profilersTable = null, string timingsTable = null, string clientTimingsTable = null, string schemaName = null)
         {
             ConnectionString = connectionString;
-            MiniProfilersTable = profilersTable;
-            MiniProfilerTimingsTable = timingsTable;
-            MiniProfilerClientTimingsTable = clientTimingsTable;
+            MiniProfilersTable = profilersTable ?? MiniProfilersTable;
+            MiniProfilerTimingsTable = timingsTable ?? MiniProfilerTimingsTable;
+            MiniProfilerClientTimingsTable = clientTimingsTable ?? MiniProfilerClientTimingsTable;
+            SchemaName = schemaName ?? SchemaName;
         }
 
         /// <summary>

@@ -22,7 +22,8 @@ namespace StackExchange.Profiling.Tests.Storage
                 TestConfig.Current.SQLServerConnectionString,
                 "MPTest" + TestId,
                 "MPTimingsTest" + TestId,
-                "MPClientTimingsTest" + TestId);
+                "MPClientTimingsTest" + TestId,
+                "MPSchemaNameTest" + TestId);
             try
             {
                 Storage.CreateSchema();
