@@ -399,55 +399,64 @@ Select Top {=maxResults} Id
 -- creating schema name if not exists
 IF NOT EXISTS ( SELECT * FROM sys.schemas WHERE name = N'{SchemaName}') EXEC('CREATE SCHEMA [{SchemaName}]');
 
-CREATE TABLE {SchemaName}.{MiniProfilersTable}
-(
-    RowId                                integer not null identity constraint PK_{SchemaName}_{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
-    Id                                   uniqueidentifier not null, -- don't cluster on a guid
-    RootTimingId                         uniqueidentifier null,
-    Name                                 nvarchar(200) null,
-    Started                              datetime not null,
-    DurationMilliseconds                 decimal(15,1) not null,
-    [User]                               nvarchar(100) null,
-    HasUserViewed                        bit not null,
-    MachineName                          nvarchar(100) null,
-    CustomLinksJson                      nvarchar(max),
-    ClientTimingsRedirectCount           int null
-);
--- displaying results selects everything based on the main MiniProfilers.Id column
-CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_Id ON {SchemaName}.{MiniProfilersTable} (Id);
-                
--- speeds up a query that is called on every .Stop()
-CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_User_HasUserViewed_Includes ON {SchemaName}.{MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]); 
+IF OBJECT_ID(N'{SchemaName}.{MiniProfilersTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {SchemaName}.{MiniProfilersTable}
+    (
+        RowId                                integer not null identity constraint PK_{SchemaName}_{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
+        Id                                   uniqueidentifier not null, -- don't cluster on a guid
+        RootTimingId                         uniqueidentifier null,
+        Name                                 nvarchar(200) null,
+        Started                              datetime not null,
+        DurationMilliseconds                 decimal(15,1) not null,
+        [User]                               nvarchar(100) null,
+        HasUserViewed                        bit not null,
+        MachineName                          nvarchar(100) null,
+        CustomLinksJson                      nvarchar(max),
+        ClientTimingsRedirectCount           int null
+    );
+    -- displaying results selects everything based on the main MiniProfilers.Id column
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_Id ON {SchemaName}.{MiniProfilersTable} (Id);
+                    
+    -- speeds up a query that is called on every .Stop()
+    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_User_HasUserViewed_Includes ON {SchemaName}.{MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]); 
+END;
 
-CREATE TABLE {SchemaName}.{MiniProfilerTimingsTable}
-(
-    RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerTimingsTable} primary key clustered,
-    Id                                  uniqueidentifier not null,
-    MiniProfilerId                      uniqueidentifier not null,
-    ParentTimingId                      uniqueidentifier null,
-    Name                                nvarchar(200) not null,
-    DurationMilliseconds                decimal(15,3) not null,
-    StartMilliseconds                   decimal(15,3) not null,
-    IsRoot                              bit not null,
-    Depth                               smallint not null,
-    CustomTimingsJson                   nvarchar(max) null
-);
+IF OBJECT_ID(N'{SchemaName}.{MiniProfilerTimingsTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {SchemaName}.{MiniProfilerTimingsTable}
+    (
+        RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerTimingsTable} primary key clustered,
+        Id                                  uniqueidentifier not null,
+        MiniProfilerId                      uniqueidentifier not null,
+        ParentTimingId                      uniqueidentifier null,
+        Name                                nvarchar(200) not null,
+        DurationMilliseconds                decimal(15,3) not null,
+        StartMilliseconds                   decimal(15,3) not null,
+        IsRoot                              bit not null,
+        Depth                               smallint not null,
+        CustomTimingsJson                   nvarchar(max) null
+    );
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_Id ON {SchemaName}.{MiniProfilerTimingsTable} (Id);
-CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_MiniProfilerId ON {SchemaName}.{MiniProfilerTimingsTable} (MiniProfilerId);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_Id ON {SchemaName}.{MiniProfilerTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_MiniProfilerId ON {SchemaName}.{MiniProfilerTimingsTable} (MiniProfilerId);
+END;
 
-CREATE TABLE {SchemaName}.{MiniProfilerClientTimingsTable}
-(
-    RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerClientTimingsTable} primary key clustered,
-    Id                                  uniqueidentifier not null,
-    MiniProfilerId                      uniqueidentifier not null,
-    Name                                nvarchar(200) not null,
-    Start                               decimal(9, 3) not null,
-    Duration                            decimal(9, 3) not null
-);
+IF OBJECT_ID(N'{SchemaName}.{MiniProfilerClientTimingsTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {SchemaName}.{MiniProfilerClientTimingsTable}
+    (
+        RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerClientTimingsTable} primary key clustered,
+        Id                                  uniqueidentifier not null,
+        MiniProfilerId                      uniqueidentifier not null,
+        Name                                nvarchar(200) not null,
+        Start                               decimal(9, 3) not null,
+        Duration                            decimal(9, 3) not null
+    );
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_Id on {SchemaName}.{MiniProfilerClientTimingsTable} (Id);
-CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_MiniProfilerId on {SchemaName}.{MiniProfilerClientTimingsTable} (MiniProfilerId);             
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_Id on {SchemaName}.{MiniProfilerClientTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_MiniProfilerId on {SchemaName}.{MiniProfilerClientTimingsTable} (MiniProfilerId);             
+END;             
 ";
         }
     }
