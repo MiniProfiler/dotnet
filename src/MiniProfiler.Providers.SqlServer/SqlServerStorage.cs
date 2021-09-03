@@ -35,22 +35,22 @@ namespace StackExchange.Profiling.Storage
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
         private string SaveSql => _saveSql ??= $@"
-INSERT INTO {SchemaName}.{MiniProfilersTable}
+INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM {SchemaName}.{MiniProfilersTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} WHERE Id = @Id)";
 
         private string SaveTimingsSql => _saveTimingsSql ??= $@"
-INSERT INTO {SchemaName}.{MiniProfilerTimingsTable}
+INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM {SchemaName}.{MiniProfilerTimingsTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} WHERE Id = @Id)";
 
         private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
-INSERT INTO {SchemaName}.{MiniProfilerClientTimingsTable}
+INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}
             (Id, MiniProfilerId, Name, Start, Duration)
 SELECT      @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM {SchemaName}.{MiniProfilerClientTimingsTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} WHERE Id = @Id)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -182,9 +182,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {SchemaName}.{MiniProfilerClientTimingsTable} WH
         private string _loadSql;
 
         private string LoadSql => _loadSql ??= $@"
-SELECT * FROM {SchemaName}.{MiniProfilersTable} WHERE Id = @id;
-SELECT * FROM {SchemaName}.{MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {SchemaName}.{MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
+SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} WHERE Id = @id;
+SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -243,14 +243,14 @@ SELECT * FROM {SchemaName}.{MiniProfilerClientTimingsTable} WHERE MiniProfilerId
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -273,9 +273,9 @@ SELECT * FROM {SchemaName}.{MiniProfilerClientTimingsTable} WHERE MiniProfilerId
         private string _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
-Update {SchemaName}.{MiniProfilersTable} 
-   Set HasUserViewed = @hasUserVeiwed 
- Where Id = @id 
+Update {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
+   Set HasUserViewed = @hasUserVeiwed
+ Where Id = @id
    And [User] = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
@@ -298,7 +298,7 @@ Update {SchemaName}.{MiniProfilersTable}
 
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select Id
-    From {SchemaName}.{MiniProfilersTable}
+    From {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
 Order By Started";
@@ -368,7 +368,7 @@ Order By Started";
             var sb = StringBuilderCache.Get();
             sb.Append(@"
 Select Top {=maxResults} Id
-  From ").Append(SchemaName).Append(".").Append(MiniProfilersTable).Append(@"
+  From ").Append(SchemaName == null ? string.Empty : $"{SchemaName}.").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -399,11 +399,11 @@ Select Top {=maxResults} Id
 -- creating schema name if not exists
 IF NOT EXISTS ( SELECT * FROM sys.schemas WHERE name = N'{SchemaName}') EXEC('CREATE SCHEMA [{SchemaName}]');
 
-IF OBJECT_ID(N'{SchemaName}.{MiniProfilersTable}', N'U') IS NULL
+IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {SchemaName}.{MiniProfilersTable}
+    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
     (
-        RowId                                integer not null identity constraint PK_{SchemaName}_{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
+        RowId                                integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
         Id                                   uniqueidentifier not null, -- don't cluster on a guid
         RootTimingId                         uniqueidentifier null,
         Name                                 nvarchar(200) null,
@@ -416,17 +416,17 @@ BEGIN
         ClientTimingsRedirectCount           int null
     );
     -- displaying results selects everything based on the main MiniProfilers.Id column
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_Id ON {SchemaName}.{MiniProfilersTable} (Id);
-                    
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable}_Id ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} (Id);
+
     -- speeds up a query that is called on every .Stop()
-    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilersTable}_User_HasUserViewed_Includes ON {SchemaName}.{MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]); 
+    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable}_User_HasUserViewed_Includes ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]);
 END;
 
-IF OBJECT_ID(N'{SchemaName}.{MiniProfilerTimingsTable}', N'U') IS NULL
+IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {SchemaName}.{MiniProfilerTimingsTable}
+    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}
     (
-        RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerTimingsTable} primary key clustered,
+        RowId                               integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable} primary key clustered,
         Id                                  uniqueidentifier not null,
         MiniProfilerId                      uniqueidentifier not null,
         ParentTimingId                      uniqueidentifier null,
@@ -438,15 +438,15 @@ BEGIN
         CustomTimingsJson                   nvarchar(max) null
     );
 
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_Id ON {SchemaName}.{MiniProfilerTimingsTable} (Id);
-    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerTimingsTable}_MiniProfilerId ON {SchemaName}.{MiniProfilerTimingsTable} (MiniProfilerId);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable}_Id ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable}_MiniProfilerId ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} (MiniProfilerId);
 END;
 
-IF OBJECT_ID(N'{SchemaName}.{MiniProfilerClientTimingsTable}', N'U') IS NULL
+IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {SchemaName}.{MiniProfilerClientTimingsTable}
+    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}
     (
-        RowId                               integer not null identity constraint PK_{SchemaName}_{MiniProfilerClientTimingsTable} primary key clustered,
+        RowId                               integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable} primary key clustered,
         Id                                  uniqueidentifier not null,
         MiniProfilerId                      uniqueidentifier not null,
         Name                                nvarchar(200) not null,
@@ -454,9 +454,9 @@ BEGIN
         Duration                            decimal(9, 3) not null
     );
 
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_Id on {SchemaName}.{MiniProfilerClientTimingsTable} (Id);
-    CREATE NONCLUSTERED INDEX IX_{SchemaName}_{MiniProfilerClientTimingsTable}_MiniProfilerId on {SchemaName}.{MiniProfilerClientTimingsTable} (MiniProfilerId);             
-END;             
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable}_Id on {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable}_MiniProfilerId on {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} (MiniProfilerId);
+END;
 ";
         }
     }

@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// The database schema to use for MiniProfiler tables.
         /// </summary>
-        public readonly string SchemaName = "dbo";
+        public readonly string SchemaName = null;
 
         /// <summary>
         /// Gets or sets how we connect to the database used to save/load MiniProfiler results.
@@ -61,7 +61,7 @@ namespace StackExchange.Profiling.Storage
             MiniProfilersTable = profilersTable ?? MiniProfilersTable;
             MiniProfilerTimingsTable = timingsTable ?? MiniProfilerTimingsTable;
             MiniProfilerClientTimingsTable = clientTimingsTable ?? MiniProfilerClientTimingsTable;
-            SchemaName = schemaName ?? SchemaName;
+            SchemaName = schemaName;
         }
 
         /// <summary>
