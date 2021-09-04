@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlServerCe;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Dapper;
@@ -237,14 +238,14 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -379,9 +380,20 @@ Select Top {=maxResults} Id
         }
 
         /// <summary>
-        /// Returns a connection to Sql Server.
+        /// Returns a connection to SQL Server CE.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlCeConnection(ConnectionString);
+
+        /// <summary>
+        /// SQL statements to create the SQL Server CE schema names.
+        /// </summary>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> schemaNames)
+        {
+            foreach (var schemaName in schemaNames)
+            {
+                yield return $@"IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'{schemaName}') EXEC('CREATE SCHEMA [{schemaName}]');";
+            }
+        }
 
         /// <summary>
         /// SQL statements to create the SQL Server CE tables.
@@ -402,8 +414,8 @@ Select Top {=maxResults} Id
                      CustomLinksJson                      ntext,
                      ClientTimingsRedirectCount           int null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilersTable}_Id on {MiniProfilersTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilersTable}_User_HasUserViewed on {MiniProfilersTable} ([User], HasUserViewed);";
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilersTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_User_HasUserViewed on {MiniProfilersTable} ([User], HasUserViewed);";
             yield return $@"CREATE TABLE {MiniProfilerTimingsTable}
                   (
                      RowId                               integer not null identity,
@@ -417,8 +429,8 @@ Select Top {=maxResults} Id
                      Depth                               smallint not null,
                      CustomTimingsJson                   ntext null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_Id on {MiniProfilerTimingsTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId on {MiniProfilerTimingsTable} (MiniProfilerId);";
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilerTimingsTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId on {MiniProfilerTimingsTable} (MiniProfilerId);";
             yield return $@"CREATE TABLE {MiniProfilerClientTimingsTable}
                   (
                      RowId                               integer not null identity,
@@ -428,8 +440,8 @@ Select Top {=maxResults} Id
                      Start                               decimal(9, 3) not null,
                      Duration                            decimal(9, 3) not null
                   );";
-            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);";
-            yield return $"CREATE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);";
+            yield return $"CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilerClientTimingsTable} (Id);";
+            yield return $"CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);";
         }
     }
 }

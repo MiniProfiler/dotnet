@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Storage
@@ -28,29 +29,28 @@ namespace StackExchange.Profiling.Storage
         /// <param name="profilersTable">The table name to use for MiniProfilers.</param>
         /// <param name="timingsTable">The table name to use for MiniProfiler Timings.</param>
         /// <param name="clientTimingsTable">The table name to use for MiniProfiler Client Timings.</param>
-        /// <param name="schemaName">The database schema to use for MiniProfiler tables.</param>
-        public SqlServerStorage(string connectionString, string profilersTable = null, string timingsTable = null, string clientTimingsTable = null, string schemaName = null)
-            : base(connectionString, profilersTable, timingsTable, clientTimingsTable, schemaName) { }
+        public SqlServerStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
+            : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
         private string SaveSql => _saveSql ??= $@"
-INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
+INSERT INTO {MiniProfilersTable}
             (Id, RootTimingId, Name, Started, DurationMilliseconds, [User], HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      @Id, @RootTimingId, @Name, @Started, @DurationMilliseconds, @User, @HasUserViewed, @MachineName, @CustomLinksJson, @ClientTimingsRedirectCount
-WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE Id = @Id)";
 
         private string SaveTimingsSql => _saveTimingsSql ??= $@"
-INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}
+INSERT INTO {MiniProfilerTimingsTable}
             (Id, MiniProfilerId, ParentTimingId, Name, DurationMilliseconds, StartMilliseconds, IsRoot, Depth, CustomTimingsJson)
 SELECT      @Id, @MiniProfilerId, @ParentTimingId, @Name, @DurationMilliseconds, @StartMilliseconds, @IsRoot, @Depth, @CustomTimingsJson
-WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE Id = @Id)";
 
         private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
-INSERT INTO {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}
+INSERT INTO {MiniProfilerClientTimingsTable}
             (Id, MiniProfilerId, Name, Start, Duration)
 SELECT      @Id, @MiniProfilerId, @Name, @Start, @Duration
-WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} WHERE Id = @Id)";
+WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -182,9 +182,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {(SchemaName == null ? string.Empty : $"{SchemaN
         private string _loadSql;
 
         private string LoadSql => _loadSql ??= $@"
-SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} WHERE Id = @id;
-SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
-SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
+SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
+SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = @id ORDER BY StartMilliseconds;
+SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER BY Start;";
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -273,7 +273,7 @@ SELECT * FROM {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfi
         private string _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
-Update {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
+Update {MiniProfilersTable}
    Set HasUserViewed = @hasUserVeiwed
  Where Id = @id
    And [User] = @user";
@@ -298,7 +298,7 @@ Update {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTab
 
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select Id
-    From {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
+    From {MiniProfilersTable}
    Where [User] = @user
      And HasUserViewed = 0
 Order By Started";
@@ -368,7 +368,7 @@ Order By Started";
             var sb = StringBuilderCache.Get();
             sb.Append(@"
 Select Top {=maxResults} Id
-  From ").Append(SchemaName == null ? string.Empty : $"{SchemaName}.").Append(MiniProfilersTable).Append(@"
+  From ").Append(MiniProfilersTable).Append(@"
 ");
             if (finish != null)
             {
@@ -386,9 +386,20 @@ Select Top {=maxResults} Id
         }
 
         /// <summary>
-        /// Returns a connection to Sql Server.
+        /// Returns a connection to SQL Server.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
+
+        /// <summary>
+        /// SQL statements to create the SQL Server schema names.
+        /// </summary>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> schemaNames)
+        {
+            foreach (var schemaName in schemaNames)
+            {
+                yield return $@"IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'{schemaName}') EXEC('CREATE SCHEMA [{schemaName}]');";
+            }
+        }
 
         /// <summary>
         /// SQL statements to create the SQL Server tables.
@@ -396,14 +407,11 @@ Select Top {=maxResults} Id
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"
--- creating schema name if not exists
-IF NOT EXISTS ( SELECT * FROM sys.schemas WHERE name = N'{SchemaName}') EXEC('CREATE SCHEMA [{SchemaName}]');
-
-IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}', N'U') IS NULL
+IF OBJECT_ID(N'{MiniProfilersTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable}
+    CREATE TABLE {MiniProfilersTable}
     (
-        RowId                                integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
+        RowId                                integer not null identity constraint PK_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered, -- Need a clustered primary key for SQL Azure
         Id                                   uniqueidentifier not null, -- don't cluster on a guid
         RootTimingId                         uniqueidentifier null,
         Name                                 nvarchar(200) null,
@@ -416,17 +424,17 @@ BEGIN
         ClientTimingsRedirectCount           int null
     );
     -- displaying results selects everything based on the main MiniProfilers.Id column
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable}_Id ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} (Id);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilersTable} (Id);
 
     -- speeds up a query that is called on every .Stop()
-    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilersTable}_User_HasUserViewed_Includes ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]);
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_User_HasUserViewed_Includes ON {MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]);
 END;
 
-IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}', N'U') IS NULL
+IF OBJECT_ID(N'{MiniProfilerTimingsTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable}
+    CREATE TABLE {MiniProfilerTimingsTable}
     (
-        RowId                               integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable} primary key clustered,
+        RowId                               integer not null identity constraint PK_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered,
         Id                                  uniqueidentifier not null,
         MiniProfilerId                      uniqueidentifier not null,
         ParentTimingId                      uniqueidentifier null,
@@ -438,15 +446,15 @@ BEGIN
         CustomTimingsJson                   nvarchar(max) null
     );
 
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable}_Id ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} (Id);
-    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerTimingsTable}_MiniProfilerId ON {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerTimingsTable} (MiniProfilerId);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilerTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
 END;
 
-IF OBJECT_ID(N'{(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}', N'U') IS NULL
+IF OBJECT_ID(N'{MiniProfilerClientTimingsTable}', N'U') IS NULL
 BEGIN
-    CREATE TABLE {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable}
+    CREATE TABLE {MiniProfilerClientTimingsTable}
     (
-        RowId                               integer not null identity constraint PK_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable} primary key clustered,
+        RowId                               integer not null identity constraint PK_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered,
         Id                                  uniqueidentifier not null,
         MiniProfilerId                      uniqueidentifier not null,
         Name                                nvarchar(200) not null,
@@ -454,8 +462,8 @@ BEGIN
         Duration                            decimal(9, 3) not null
     );
 
-    CREATE UNIQUE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable}_Id on {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} (Id);
-    CREATE NONCLUSTERED INDEX IX_{(SchemaName == null ? string.Empty : $"{SchemaName}_")}{MiniProfilerClientTimingsTable}_MiniProfilerId on {(SchemaName == null ? string.Empty : $"{SchemaName}.")}{MiniProfilerClientTimingsTable} (MiniProfilerId);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilerClientTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);
 END;
 ";
         }

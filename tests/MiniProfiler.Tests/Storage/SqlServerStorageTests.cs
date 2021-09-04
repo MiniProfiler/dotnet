@@ -20,12 +20,12 @@ namespace StackExchange.Profiling.Tests.Storage
 
             Storage = new SqlServerStorage(
                 TestConfig.Current.SQLServerConnectionString,
-                "MPTest" + TestId,
-                "MPTimingsTest" + TestId,
-                "MPClientTimingsTest" + TestId,
-                "MPSchemaNameTest" + TestId);
+                $"[{TestSchemaName}].[MPTest{TestId}]",
+                $"[{TestSchemaName}].[MPTimingsTest{TestId}]",
+                $"[{TestSchemaName}].[MPClientTimingsTest{TestId}]");
             try
             {
+                Storage.CreateSchemaName(new[] { TestSchemaName });
                 Storage.CreateSchema();
             }
             catch (Exception e)
@@ -40,7 +40,8 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage?.DropSchema(true);
+                Storage?.DropSchema();
+                Storage?.DropSchemaNames(new [] { TestSchemaName });
             }
         }
     }

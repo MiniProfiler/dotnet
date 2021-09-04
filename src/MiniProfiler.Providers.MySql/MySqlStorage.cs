@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
@@ -227,14 +228,14 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -370,9 +371,20 @@ SELECT Id
         }
 
         /// <summary>
-        /// Returns a connection to MySQL Server.
+        /// Returns a connection to MySQL.
         /// </summary>
         protected override DbConnection GetConnection() => new MySqlConnection(ConnectionString);
+
+        /// <summary>
+        /// SQL statements to create the MySQL schema names.
+        /// </summary>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> schemaNames)
+        {
+            foreach (var schemaName in schemaNames)
+            {
+                yield return $@"CREATE SCHEMA IF NOT EXISTS [{schemaName}]";
+            }
+        }
 
         /// <summary>
         /// SQL statements to create the MySQL tables.
@@ -393,8 +405,8 @@ CREATE TABLE {MiniProfilersTable}
     MachineName                          varchar(100) null,
     CustomLinksJson                      longtext,
     ClientTimingsRedirectCount           int null,
-    UNIQUE INDEX IX_{MiniProfilersTable}_Id (Id), -- displaying results selects everything based on the main MiniProfilers.Id column
-    INDEX IX_{MiniProfilersTable}_User_HasUserViewed (User, HasUserViewed) -- speeds up a query that is called on every .Stop()
+    UNIQUE INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id (Id), -- displaying results selects everything based on the main MiniProfilers.Id column
+    INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_User_HasUserViewed (User, HasUserViewed) -- speeds up a query that is called on every .Stop()
 ) engine=InnoDB collate utf8mb4_bin;";
             yield return $@"
 CREATE TABLE {MiniProfilerTimingsTable}
@@ -409,8 +421,8 @@ CREATE TABLE {MiniProfilerTimingsTable}
     IsRoot                              bool not null,
     Depth                               smallint not null,
     CustomTimingsJson                   longtext null,
-    UNIQUE INDEX IX_{MiniProfilerTimingsTable}_Id (Id),
-    INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId (MiniProfilerId)
+    UNIQUE INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id (Id),
+    INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId (MiniProfilerId)
 ) engine=InnoDB collate utf8mb4_bin;";
             yield return $@"
 CREATE TABLE {MiniProfilerClientTimingsTable}
@@ -421,8 +433,8 @@ CREATE TABLE {MiniProfilerClientTimingsTable}
     Name                                varchar(200) not null,
     Start                               decimal(9, 3) not null,
     Duration                            decimal(9, 3) not null,
-    UNIQUE INDEX IX_{MiniProfilerClientTimingsTable}_Id (Id),
-    INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId (MiniProfilerId)
+    UNIQUE INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id (Id),
+    INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId (MiniProfilerId)
 ) engine=InnoDB collate utf8mb4_bin;";
         }
 
