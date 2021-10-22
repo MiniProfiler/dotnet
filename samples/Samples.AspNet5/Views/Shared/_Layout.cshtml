@@ -25,6 +25,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a href="/RazorPagesSample">Razor Pages</a></li>
                 </ul>
             </div>
         </div>
@@ -45,6 +46,8 @@
 
     @RenderSection("scripts", required: false)
 
-    <mini-profiler position="@RenderPosition.Right" max-traces="5" />
+    @* Simple options are exposed...or make a full options class for customizing. *@
+    <mini-profiler position="@RenderPosition.Right" max-traces="5" color-scheme="ColorScheme.Auto" nonce="45" />
+    @*<mini-profiler options="new RenderOptions { Position = RenderPosition.Right, MaxTracesToShow = 5, ColorScheme = ColorScheme.Auto }" />*@
 </body>
 </html>

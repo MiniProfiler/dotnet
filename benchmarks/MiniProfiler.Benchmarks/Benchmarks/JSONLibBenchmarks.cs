@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Jil;
 using Newtonsoft.Json;
 using ServiceStack.Text;
@@ -7,7 +8,8 @@ using StackExchange.Profiling.Internal;
 
 namespace Benchmarks
 {
-    [ClrJob, CoreJob]
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net50)]
     [Config(typeof(Configs.Memory))]
     public class JSONLibBenchmarks
     {
