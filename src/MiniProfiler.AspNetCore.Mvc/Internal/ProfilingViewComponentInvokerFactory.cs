@@ -1,4 +1,4 @@
-﻿#if !NETCOREAPP3_0
+﻿#if !NETCOREAPP3_1
 using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ViewComponents;

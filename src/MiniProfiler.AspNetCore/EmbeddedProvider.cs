@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private readonly IOptions<MiniProfilerOptions> _options;
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         private readonly IWebHostEnvironment _env;
 
         public EmbeddedProvider(IOptions<MiniProfilerOptions> options, IWebHostEnvironment env)
