@@ -82,6 +82,9 @@ namespace Samples.AspNetCore
                 // Optionally use something other than the "light" color scheme.
                 options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
 
+                // Optionally change the number of decimal places shown for millisecond timings.
+                options.PopupDecimalPlaces = 2;
+
                 // Enabled sending the Server-Timing header on responses
                 options.EnableServerTimingHeader = true;
 

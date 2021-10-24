@@ -128,6 +128,12 @@ namespace StackExchange.Profiling.Internal
         public RenderPosition PopupRenderPosition { get; set; } = RenderPosition.Left;
 
         /// <summary>
+        /// Determines how many decimal places to show in popup timings.
+        /// Note: precision maxes out at 2 decimal places in recorded data.
+        /// </summary>
+        public int PopupDecimalPlaces { get; set; } = 2;
+
+        /// <summary>
         /// Determines which color scheme to use when rendering (the class to apply for CSS styling).
         /// </summary>
         public ColorScheme ColorScheme { get; set; } = ColorScheme.Light;

@@ -66,6 +66,10 @@ public void ConfigureServices(IServiceCollection services)
         // (Optional) Use something other than the "light" color scheme.
         // (defaults to "light")
         options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+        
+        // Optionally change the number of decimal places shown for millisecond timings.
+        // (defaults to 2)
+        options.PopupDecimalPlaces = 1;
 
         // The below are newer options, available in .NET Core 3.0 and above:
 
