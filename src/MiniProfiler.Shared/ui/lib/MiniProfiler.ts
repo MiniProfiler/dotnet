@@ -108,6 +108,7 @@ namespace StackExchange.Profiling {
         authorized: boolean;
         colorScheme: ColorScheme;
         currentId: string;
+        decimalPlaces: number;
         ids: string[];
         ignoredDuplicateExecuteTypes: string[];
         maxTracesToShow: number;
@@ -289,6 +290,7 @@ namespace StackExchange.Profiling {
                 version: data.version,
                 renderPosition: data.position as RenderPosition,
                 colorScheme: data.scheme as ColorScheme,
+                decimalPlaces: parseInt(data.decimalPlaces || '2', 10),
                 showTrivial: bool(data.trivial),
                 trivialMilliseconds: parseFloat(data.trivialMilliseconds),
                 showChildrenTime: bool(data.children),
@@ -689,7 +691,7 @@ namespace StackExchange.Profiling {
                 if (milliseconds === undefined) {
                     return '';
                 }
-                return (milliseconds || 0).toFixed(decimalPlaces === undefined ? 1 : decimalPlaces);
+                return (milliseconds || 0).toFixed(decimalPlaces === undefined ? this.options.decimalPlaces : decimalPlaces);
             };
             const renderDebugInfo = (timing: ITiming) => {
                 if (timing.DebugInfo) {

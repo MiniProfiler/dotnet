@@ -355,14 +355,13 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns milliseconds based on Stopwatch's Frequency, rounded to one decimal place.
+        /// Returns milliseconds based on Stopwatch's Frequency, rounded to two decimal places.
         /// </summary>
         /// <param name="ticks">The tick count to round.</param>
         internal decimal GetRoundedMilliseconds(long ticks)
         {
-            long z = 10000 * ticks;
-            decimal timesTen = (int)(z / Stopwatch.Frequency);
-            return timesTen / 10;
+            long times100 = ticks * 100 / TimeSpan.TicksPerMillisecond;
+            return times100 / 100m;
         }
 
         /// <summary>

@@ -54,10 +54,15 @@ namespace StackExchange.Profiling
         public bool? StartHidden { get; set; }
 
         /// <summary>
-        /// The color scheme to start with:
+        /// The color scheme to start with.
         /// </summary>
         [HtmlAttributeName("color-scheme")]
         public ColorScheme? ColorScheme { get; set; }
+
+        /// <summary>
+        /// The number of decimal places to show on timings (which are in miliseconds).
+        /// </summary>
+        public int? DecimalPlaces { get; set;}
 
         /// <summary>
         /// The JavaScript nonce (if any) to use on this script tag render.
@@ -83,6 +88,7 @@ namespace StackExchange.Profiling
             if (ShowControls.HasValue) options.ShowControls = ShowControls;
             if (StartHidden.HasValue) options.StartHidden = StartHidden;
             if (ColorScheme.HasValue) options.ColorScheme = ColorScheme;
+            if (DecimalPlaces.HasValue) options.DecimalPlaces = DecimalPlaces;
             if (Nonce.HasValue()) options.Nonce = Nonce;
 
             return options;

@@ -59,6 +59,9 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("\" data-scheme=\"");
             sb.Append((renderOptions?.ColorScheme ?? options.ColorScheme).ToString());
+
+            sb.Append("\" data-decimal-places=\"");
+            sb.Append((renderOptions?.DecimalPlaces ?? options.PopupDecimalPlaces).ToString());
             sb.Append('"');
 
             if (isAuthorized)

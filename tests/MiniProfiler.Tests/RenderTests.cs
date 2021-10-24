@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(result);
             Assert.Contains("id=\"mini-profiler\"", result);
 
-            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Left"" data-scheme=""Light"" data-authorized=""true"" data-max-traces=""15"" data-toggle-shortcut=""Alt+P"" data-trivial-milliseconds=""2.0"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
+            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Left"" data-scheme=""Light"" data-decimal-places=""2"" data-authorized=""true"" data-max-traces=""15"" data-toggle-shortcut=""Alt+P"" data-trivial-milliseconds=""2.0"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
             Assert.Equal(expected, result);
         }
 
@@ -40,7 +40,8 @@ namespace StackExchange.Profiling.Tests
                 ShowTimeWithChildren = true,
                 ShowTrivial = true,
                 StartHidden = true,
-                TrivialDurationThresholdMilliseconds = 23
+                TrivialDurationThresholdMilliseconds = 23,
+                DecimalPlaces = 1,
             };
             var result = Render.Includes(profiler, "/", true, renderOptions, new List<Guid>() { profiler.Id });
             Output.WriteLine("Result: " + result);
@@ -48,7 +49,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(result);
             Assert.Contains("id=\"mini-profiler\"", result);
 
-            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Right"" data-scheme=""Auto"" data-authorized=""true"" data-trivial=""true"" data-children=""true"" data-controls=""true"" data-start-hidden=""true"" nonce=""myNonce"" data-max-traces=""12"" data-toggle-shortcut=""Alt+Q"" data-trivial-milliseconds=""23"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
+            var expected = $@"<script async id=""mini-profiler"" src=""/includes.min.js?v={Options.VersionHash}"" data-version=""{Options.VersionHash}"" data-path=""/"" data-current-id=""{profiler.Id}"" data-ids=""{profiler.Id}"" data-position=""Right"" data-scheme=""Auto"" data-decimal-places=""1"" data-authorized=""true"" data-trivial=""true"" data-children=""true"" data-controls=""true"" data-start-hidden=""true"" nonce=""myNonce"" data-max-traces=""12"" data-toggle-shortcut=""Alt+Q"" data-trivial-milliseconds=""23"" data-ignored-duplicate-execute-types=""Open,OpenAsync,Close,CloseAsync""></script>";
             Assert.Equal(expected, result);
         }
 
@@ -79,6 +80,23 @@ namespace StackExchange.Profiling.Tests
         {
             var profiler = GetBasicProfiler();
             var renderOptions = new RenderOptions() { Position = position };
+
+            var result = Render.Includes(profiler, " / ", true, renderOptions);
+            Output.WriteLine("Result: " + result);
+
+            Assert.NotNull(result);
+            Assert.Contains(expected, result);
+        }
+
+        [Theory]
+        [InlineData(null, @"data-decimal-places=""2""")]
+        [InlineData(0, @"data-decimal-places=""0""")]
+        [InlineData(1, @"data-decimal-places=""1""")]
+        [InlineData(2, @"data-decimal-places=""2""")]
+        public void DecimalPlaces(int? decimalPlaces, string expected)
+        {
+            var profiler = GetBasicProfiler();
+            var renderOptions = new RenderOptions() { DecimalPlaces = decimalPlaces };
 
             var result = Render.Includes(profiler, " / ", true, renderOptions);
             Output.WriteLine("Result: " + result);
