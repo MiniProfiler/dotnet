@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -9,8 +9,13 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
-        private static readonly Regex ParamPrefixes = new Regex("[@:?].+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
         private static bool includeTypeInfo;
+
+        /// <summary>
+        /// Whether to modify the output query by adding spaces after commas.
+        /// </summary>
+        public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
         /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
@@ -35,22 +40,26 @@ namespace StackExchange.Profiling.SqlFormatters
                 return commandText;
             }
 
-            var originalCommandText = commandText;
-
+            if (InsertSpacesAfterCommas)
+            {
+                commandText = CommandSpacing.Replace(commandText, ", $1");
+            }
+            
+            var paramValuesByName = new Dictionary<string, string>(parameters.Count);
             foreach (var p in parameters)
             {
-                // If the parameter doesn't have a prefix (@,:,etc), append one
-                var name = ParamPrefixes.IsMatch(p.Name)
-                    ? p.Name
-                    : Regex.Match(originalCommandText, "([@:?])" + Regex.Escape(p.Name), RegexOptions.IgnoreCase).Value;
-                if (name.HasValue())
-                {
-                    var value = GetParameterValue(p);
-                    commandText = Regex.Replace(commandText, "(" + Regex.Escape(name) + ")([^0-9A-z]|$)", m => value + m.Groups[2], RegexOptions.IgnoreCase);
-                }
+                var trimmedName = p.Name.TrimStart('@', ':', '?').ToLower();
+                paramValuesByName[trimmedName] = GetParameterValue(p);
             }
 
-            return commandText;
+            var regexPattern = "[@:?](?:" + string.Join("|", paramValuesByName.Keys.Select(Regex.Escape)) + ")(?![0-9a-z])";
+
+            return Regex.Replace(
+                commandText,
+                regexPattern,
+                m => paramValuesByName[m.Value.Substring(1).ToLower()],
+                RegexOptions.IgnoreCase
+            );
         }
 
         /// <summary>
@@ -63,20 +72,23 @@ namespace StackExchange.Profiling.SqlFormatters
             var result = param.Value;
             var type = param.DbType ?? string.Empty;
 
-            switch (type.ToLower())
+            if (result != null)
             {
-                case "string":
-                case "datetime":
-                    result = string.Format("'{0}'", result);
-                    break;
-                case "boolean":
-                    result = result switch
-                    {
-                        "True" => "1",
-                        "False" => "0",
-                        _ => null,
-                    };
-                    break;
+                switch (type.ToLower())
+                {
+                    case "string":
+                    case "datetime":
+                        result = string.Format("'{0}'", result);
+                        break;
+                    case "boolean":
+                        result = result switch
+                        {
+                            "True" => "1",
+                            "False" => "0",
+                            _ => null,
+                        };
+                        break;
+                }
             }
 
             result ??= "null";

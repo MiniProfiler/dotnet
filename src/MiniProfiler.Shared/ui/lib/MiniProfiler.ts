@@ -108,9 +108,11 @@ namespace StackExchange.Profiling {
         authorized: boolean;
         colorScheme: ColorScheme;
         currentId: string;
+        decimalPlaces: number;
         ids: string[];
         ignoredDuplicateExecuteTypes: string[];
         maxTracesToShow: number;
+        nonce: string;
         path: string;
         renderPosition: RenderPosition;
         showChildrenTime: boolean;
@@ -288,6 +290,7 @@ namespace StackExchange.Profiling {
                 version: data.version,
                 renderPosition: data.position as RenderPosition,
                 colorScheme: data.scheme as ColorScheme,
+                decimalPlaces: parseInt(data.decimalPlaces || '2', 10),
                 showTrivial: bool(data.trivial),
                 trivialMilliseconds: parseFloat(data.trivialMilliseconds),
                 showChildrenTime: bool(data.children),
@@ -298,6 +301,7 @@ namespace StackExchange.Profiling {
                 toggleShortcut: data.toggleShortcut,
                 startHidden: bool(data.startHidden),
                 ignoredDuplicateExecuteTypes: (data.ignoredDuplicateExecuteTypes || '').split(','),
+                nonce: script.nonce,
             };
 
             function doInit() {
@@ -315,8 +319,15 @@ namespace StackExchange.Profiling {
 
                         // fetch and render results
                         mp.fetchResults(mp.options.ids);
+                        
+                        let lsDisplayValue;
+                        try {
+                            lsDisplayValue = window.localStorage.getItem('MiniProfiler-Display');
+                        } catch(e) { }
 
-                        if (mp.options.startHidden) {
+                        if (lsDisplayValue) {
+                            mp.container.style.display = lsDisplayValue;
+                        } else if (mp.options.startHidden) {
                             mp.container.style.display = 'none';
                         }
 
@@ -365,7 +376,7 @@ namespace StackExchange.Profiling {
                     } else {
                         alreadyDone = true;
                         if (mp.options.authorized) {
-                            document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" />`);
+                            document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" type="text/css" href="${mp.options.path}includes.min.css?v=${mp.options.version}" ${mp.options.nonce ? `nonce="${mp.options.nonce}" ` : ''}/>`);
                         }
                         doInit();
                     }
@@ -512,7 +523,7 @@ namespace StackExchange.Profiling {
                     timing.HasCustomTimings = true;
                     result.HasCustomTimings = true;
                     for (const customType of Object.keys(timing.CustomTimings)) {
-                        const customTimings = timing.CustomTimings[customType];
+                        const customTimings = timing.CustomTimings[customType] || [] as ICustomTiming[];
                         const customStat = {
                             Duration: 0,
                             Count: 0,
@@ -680,7 +691,7 @@ namespace StackExchange.Profiling {
                 if (milliseconds === undefined) {
                     return '';
                 }
-                return (milliseconds || 0).toFixed(decimalPlaces === undefined ? 1 : decimalPlaces);
+                return (milliseconds || 0).toFixed(decimalPlaces === undefined ? this.options.decimalPlaces : decimalPlaces);
             };
             const renderDebugInfo = (timing: ITiming) => {
                 if (timing.DebugInfo) {
@@ -1206,7 +1217,11 @@ namespace StackExchange.Profiling {
                             && e.shiftKey == modifiers.shift.wanted
                             && e.altKey == modifiers.alt.wanted) {
                             const results = document.querySelector<HTMLElement>('.mp-results');
-                            results.style.display = results.style.display == 'none' ? 'block' : 'none';
+                            const newValue = results.style.display == 'none' ? 'block' : 'none';
+                            results.style.display = newValue;
+                            try {
+                                window.localStorage.setItem('MiniProfiler-Display', newValue);
+                            } catch(e) { }
                         }
                     }, false);
                 }

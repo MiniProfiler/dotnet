@@ -94,7 +94,7 @@ namespace StackExchange.Profiling.Internal
 
         /// <summary>
         /// Whether to track open and close for connections to things like database servers.
-        /// While this ise useful for debugging connection pools and things, it can be noisy in other cases.
+        /// While this is useful for debugging connection pools and things, it can be noisy in other cases.
         /// </summary>
         public bool TrackConnectionOpenClose { get; set; } = true;
 
@@ -126,6 +126,12 @@ namespace StackExchange.Profiling.Internal
         /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
         /// </summary>
         public RenderPosition PopupRenderPosition { get; set; } = RenderPosition.Left;
+
+        /// <summary>
+        /// Determines how many decimal places to show in popup timings.
+        /// Note: precision maxes out at 2 decimal places in recorded data.
+        /// </summary>
+        public int PopupDecimalPlaces { get; set; } = 2;
 
         /// <summary>
         /// Determines which color scheme to use when rendering (the class to apply for CSS styling).

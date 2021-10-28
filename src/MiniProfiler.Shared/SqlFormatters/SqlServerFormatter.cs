@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace StackExchange.Profiling.SqlFormatters
 {
@@ -12,10 +13,17 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
+        private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
+
         /// <summary>
         /// Whether to include parameter declarations in the formatted output.
         /// </summary>
         public bool IncludeParameterValues { get; set; } = true;
+
+        /// <summary>
+        /// Whether to modify the output query by adding spaces after commas.
+        /// </summary>
+        public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
         /// Lookup a function for translating a parameter by parameter type
@@ -110,6 +118,11 @@ namespace StackExchange.Profiling.SqlFormatters
                 // finish the parameter declaration
                 buffer.Append(';')
                       .Append("\n\n");
+            }
+
+            if (InsertSpacesAfterCommas)
+            {
+                commandText = CommandSpacing.Replace(commandText, ", $1");
             }
 
             // only treat 'StoredProcedure' differently since 'Text' may contain 'TableDirect' or 'StoredProcedure'

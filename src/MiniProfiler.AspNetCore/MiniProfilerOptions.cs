@@ -55,7 +55,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public Func<HttpRequest, string> UserIdProvider { get; set; } = request => request.HttpContext.Connection.RemoteIpAddress?.ToString();
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         /// <summary>
         /// Whether to add a Server-Timing header after profiling a request. Only supported in .NET Core 3.0 and higher.
         /// </summary>

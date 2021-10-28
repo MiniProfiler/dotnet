@@ -62,6 +62,12 @@ namespace StackExchange.Profiling
         public ColorScheme? ColorScheme { get; set; }
 
         /// <summary>
+        /// The number of decimal places to show on timings (which are in miliseconds).
+        /// Defaults to <see cref="MiniProfilerBaseOptions.PopupDecimalPlaces"/>.
+        /// </summary>
+        public int? DecimalPlaces { get; set; }
+
+        /// <summary>
         /// A one-time-use nonce to render in the script tag.
         /// </summary>
         /// <remarks>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script</remarks>

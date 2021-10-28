@@ -3,7 +3,7 @@ title: "ASP.NET Core"
 layout: "default"
 ---
 ### ASP.NET Core
-If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/master/samples/Samples.AspNetCore2), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/master/samples/Samples.AspNetCore2/Startup.cs).
+If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.AspNet5), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/main/samples/Samples.AspNet5/Startup.cs).
 
 #### Installation and Configuration
 
@@ -32,6 +32,8 @@ public void ConfigureServices(IServiceCollection services)
 
         // (Optional) Control storage
         // (default is 30 minutes in MemoryCacheStorage)
+        // Note: MiniProfiler will not work if a SizeLimit is set on MemoryCache!
+        //   See: https://github.com/MiniProfiler/dotnet/issues/501 for details
         (options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
         // (Optional) Control which SQL formatter to use, InlineFormatter is the default
@@ -64,6 +66,10 @@ public void ConfigureServices(IServiceCollection services)
         // (Optional) Use something other than the "light" color scheme.
         // (defaults to "light")
         options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+        
+        // Optionally change the number of decimal places shown for millisecond timings.
+        // (defaults to 2)
+        options.PopupDecimalPlaces = 1;
 
         // The below are newer options, available in .NET Core 3.0 and above:
 
@@ -80,6 +86,9 @@ public void ConfigureServices(IServiceCollection services)
         // ...or only save views that take over a certain millisecond duration (including their children)
         // (defaults to null, and all views are profiled)
         // options.MvcViewMinimumSaveMs = 1.0m;
+     
+        // (Optional) listen to any errors that occur within MiniProfiler itself
+        // options.OnInternalError = e => MyExceptionLogger(e);
 
         // (Optional - not recommended) You can enable a heavy debug mode with stacks and tooltips when using memory storage
         // It has a lot of overhead vs. normal profiling and should only be used with that in mind
@@ -113,12 +122,12 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 @addTagHelper *, MiniProfiler.AspNetCore.Mvc
 ```
 
-* Add MiniProfiler to your master layout (`Shared/_Layout.cshtml` by default):
+* Add MiniProfiler to your view layout (`Shared/_Layout.cshtml` by default):
 
 ```html
 <mini-profiler />
 ```
-<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, `color-scheme`, `nonce`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>
+<sub>Note: `<mini-profiler>` has many options like `max-traces`, `position`, `color-scheme`, `nonce`, etc. [You can find them in code here](https://github.com/MiniProfiler/dotnet/blob/main/src/MiniProfiler.AspNetCore.Mvc/MiniProfilerScriptTagHelper.cs).</sub>
 <sub>Note #2: The above tag helper registration may go away in future versions of ASP.NET Core, they're working on smoother alternatives here.</sub>
 
 

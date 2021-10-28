@@ -14,10 +14,10 @@ MiniProfiler V4 has major breaking changes in layout compared to V3 due to needi
   * Fix: If you need .NET 4.6 and below, continue to use MiniProfiler V3.
 * `MiniProfiler.Step()` and `MiniProfiler.StepIf()` methods now return `Timing` (the same previous underlying type) instead of `IDisposable`.
   * Fix: this shouldn't require changes beyond a recompile, but adds functionality.
-* `IProfilerProvider` replaced with [`IAsyncProfilerProvider`](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.Shared/ProfileProviders/IAsyncProfilerProvider.cs) (which adds `StopAsync(bool discardResults)`)
-  * Fix: if you implemented your own provider, you'll need to change the interface and implement all [the new bits](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.Shared/ProfileProviders/IAsyncProfilerProvider.cs).
+* `IProfilerProvider` replaced with [`IAsyncProfilerProvider`](https://github.com/MiniProfiler/dotnet/blob/main/src/MiniProfiler.Shared/ProfileProviders/IAsyncProfilerProvider.cs) (which adds `StopAsync(bool discardResults)`)
+  * Fix: if you implemented your own provider, you'll need to change the interface and implement all [the new bits](https://github.com/MiniProfiler/dotnet/blob/main/src/MiniProfiler.Shared/ProfileProviders/IAsyncProfilerProvider.cs).
 * `IStorage` replaced with `IAsyncStorage` (which adds `ListAsync`, `SaveAsync`, `LoadAsync`, `SetUnviewedAsync`, `SetViewedAsync`, and `GetUnviewedIdsAsync`)
-  * Fix: if you implemented your own storage, you'll need to change the interface and implement all [the new bits](https://github.com/MiniProfiler/dotnet/blob/master/src/MiniProfiler.Shared/Storage/IAsyncStorage.cs).
+  * Fix: if you implemented your own storage, you'll need to change the interface and implement all [the new bits](https://github.com/MiniProfiler/dotnet/blob/main/src/MiniProfiler.Shared/Storage/IAsyncStorage.cs).
 * `ProfiledDbCommand`, `ProfiledDbConnection`, and `SimpleProfiledCommand` no longer implement `ICloneable` in `netstandard` (it doesn't exist there)
   * Fix: if you need this, please file an issue. The `ICloneable` interface is gone...so, yeah.
 * `MiniProfiler.Settings.(AssembliesToExclude|TypesToExclude|MethodsToExclude)` changed from `IEnumerable<string>` to `HashSet<string>` (for performance)

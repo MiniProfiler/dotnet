@@ -22,6 +22,12 @@ namespace StackExchange.Profiling.Data
         private bool _bindByName;
 
         /// <summary>
+        /// Whether to always wrap data readers, even if there isn't an active profiler on this connect.
+        /// This allows depending on overrides for things inheriting from <see cref="ProfiledDbDataReader"/> to actually execute.
+        /// </summary>
+        protected virtual bool AlwaysWrapReaders => false;
+
+        /// <summary>
         /// Gets or sets a value indicating whether or not to bind by name.
         /// If the underlying command supports BindByName, this sets/clears the underlying
         /// implementation accordingly. This is required to support OracleCommand from Dapper
@@ -204,12 +210,13 @@ namespace StackExchange.Profiling.Data
         /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
+            DbDataReader result = null;
             if (_profiler?.IsActive != true)
             {
-                return _command.ExecuteReader(behavior);
+                result = _command.ExecuteReader(behavior);
+                return AlwaysWrapReaders ? CreateDbDataReader(result, behavior, null) : result;
             }
 
-            DbDataReader result = null;
             _profiler.ExecuteStart(this, SqlExecuteType.Reader);
             try
             {
@@ -237,12 +244,13 @@ namespace StackExchange.Profiling.Data
         /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
+            DbDataReader result = null;
             if (_profiler?.IsActive != true)
             {
-                return await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
+                result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
+                return AlwaysWrapReaders ? CreateDbDataReader(result, behavior, null) : result;
             }
 
-            DbDataReader result = null;
             _profiler.ExecuteStart(this, SqlExecuteType.Reader);
             try
             {

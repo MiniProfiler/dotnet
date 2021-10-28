@@ -1,11 +1,12 @@
 ﻿#if NET472
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using System.Collections.Generic;
 using System.Web.Script.Serialization;
 
 namespace Benchmarks.Benchmarks
 {
-    [ClrJob]
+    [SimpleJob(RuntimeMoniker.Net472)]
     [Config(typeof(Configs.Memory))]
     public class CrazySlowJSONBenchmarks
     {

@@ -19,7 +19,14 @@ namespace StackExchange.Profiling
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
-        public MongoDbStorage(string connectionString)
+        public MongoDbStorage(string connectionString) : this(connectionString, "profilers") { }
+
+        /// <summary>
+        /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
+        /// </summary>
+        /// <param name="connectionString">The MongoDB connection string.</param>
+        /// <param name="collectionName">The collection name to use in the database.</param>
+        public MongoDbStorage(string connectionString, string collectionName)
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
             {
@@ -32,7 +39,7 @@ namespace StackExchange.Profiling
             _client = new MongoClient(url);
             _collection = _client
                 .GetDatabase(databaseName)
-                .GetCollection<MiniProfiler>("profilers");
+                .GetCollection<MiniProfiler>(collectionName);
         }
 
         private static void BsonClassMapFields()

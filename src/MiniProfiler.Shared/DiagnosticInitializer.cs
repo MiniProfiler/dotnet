@@ -40,7 +40,10 @@ namespace StackExchange.Profiling.Internal
             {
                 if (listener.ListenerName == value.Name)
                 {
-                    _subscriptions.Add(value.Subscribe(listener));
+                    lock (_subscriptions)
+                    {
+                        _subscriptions.Add(value.Subscribe(listener));
+                    }
                 }
             }
         }
@@ -60,10 +63,13 @@ namespace StackExchange.Profiling.Internal
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-
-            foreach (var subscription in _subscriptions)
+            
+            lock (_subscriptions)
             {
-                subscription.Dispose();
+                foreach (var subscription in _subscriptions)
+                {
+                    subscription.Dispose();
+                }
             }
         }
     }

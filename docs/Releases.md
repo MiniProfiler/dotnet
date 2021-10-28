@@ -5,7 +5,14 @@ layout: "default"
 ### Release Notes
 This page tracks major changes included in any update starting with version 4.0.0.3
 
-#### Version 4.2.0 (In preview)
+#### Unreleased
+- **New**:
+  - Added an option to control `SpacesAfterCommas` to `InlineSqlFormatter` and `SqlServerFormatter` ([#549](https://github.com/MiniProfiler/dotnet/pull/549) - thanks [Turnerj](https://github.com/Turnerj))
+  - Fixed /results-index ordering (should be newest to oldest) ([#550](https://github.com/MiniProfiler/dotnet/pull/550) - thanks [spaduret](https://github.com/spaduret))
+  - Fixed `nonce` attribute propagation to generated `<link>` style element for full CSP support ([#565](https://github.com/MiniProfiler/dotnet/pull/565))
+  - Changed popup to show 2 decimal places for timings by default, with a new `PopupDecimalPlaces` option to control this (present everywhere settings are) ([#580](https://github.com/MiniProfiler/dotnet/pull/580))
+
+#### Version 4.2.1
 - **New**:
   - Added RavenDB Storage provider ([#483](https://github.com/MiniProfiler/dotnet/pull/483) - thanks [@lillo42](https://github.com/lillo42)!)
   - Added `<script nonce="..." />` to rendering for CSP support ([#465](https://github.com/MiniProfiler/dotnet/pull/465))

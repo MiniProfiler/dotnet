@@ -311,6 +311,46 @@ namespace StackExchange.Profiling.Tests
             CheckConnectionTracking(false, profiler, cmdString, false, false);
         }
 
+        [Fact]
+        public void AlwaysWrapReaders()
+        {
+            var options = new MiniProfilerTestOptions();
+            var profiler = options.StartProfiler(nameof(AlwaysWrapReaders));
+            var currentDbProfiler = new CurrentDbProfiler(() => MiniProfiler.Current);
+
+            const string cmdString = "Select 1";
+            // Profiler is active
+            using (var conn = new OverrideTestConnection(Fixture.GetConnection(), currentDbProfiler))
+            {
+                // Always wrap when active, regardless of setting
+                using (var reader = conn.ExecuteReader(cmdString))
+                {
+                    Assert.True(reader is IWrappedDataReader wrappedReader && wrappedReader.Reader is ProfiledDbDataReader);
+                }
+                conn.AlwaysWrapReaders = true;
+                using (var reader = conn.ExecuteReader(cmdString))
+                {
+                    Assert.True(reader is IWrappedDataReader wrappedReader && wrappedReader.Reader is ProfiledDbDataReader);
+                }
+            }
+
+            // Profile is inactive
+            profiler.Stop();
+            using (var conn = new OverrideTestConnection(Fixture.GetConnection(), currentDbProfiler))
+            {
+                // Should not wrap by default here
+                using (var reader = conn.ExecuteReader(cmdString))
+                {
+                    Assert.False(reader is IWrappedDataReader wrappedReader && wrappedReader.Reader is ProfiledDbDataReader);
+                }
+                conn.AlwaysWrapReaders = true;
+                using (var reader = conn.ExecuteReader(cmdString))
+                {
+                    Assert.True(reader is IWrappedDataReader wrappedReader && wrappedReader.Reader is ProfiledDbDataReader);
+                }
+            }
+        }
+
         private class CurrentDbProfiler : IDbProfiler
         {
             private Func<IDbProfiler> GetProfiler { get; }
@@ -373,6 +413,19 @@ namespace StackExchange.Profiling.Tests
             {
                 CountingProfiler = (CountingDbProfiler)profiler;
             }
+        }
+
+        public class OverrideTestConnection : ProfiledDbConnection
+        {
+            public bool AlwaysWrapReaders { get; set; }
+            public OverrideTestConnection(DbConnection connection, IDbProfiler profiler) : base(connection, profiler) { }
+            protected override DbCommand CreateDbCommand() => new OverrideTestCommand(WrappedConnection.CreateCommand(), this, Profiler);
+        }
+
+        public class OverrideTestCommand : ProfiledDbCommand
+        {
+            protected override bool AlwaysWrapReaders => (Connection as OverrideTestConnection)?.AlwaysWrapReaders == true;
+            public OverrideTestCommand(DbCommand command, DbConnection connection, IDbProfiler profiler) : base(command, connection, profiler) { }
         }
     }
 
