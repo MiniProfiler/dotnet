@@ -198,8 +198,8 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
          MiniProfilerId as MiniProfilerIdString,
          ParentTimingId as ParentTimingIdString,
          Name,
-         DurationMilliseconds,
-         StartMilliseconds,
+         CAST(DurationMilliseconds AS REAL) AS DurationMilliseconds,
+         CAST(StartMilliseconds AS REAL) AS StartMilliseconds,
          IsRoot,
          Depth,
          CustomTimingsJson
@@ -482,7 +482,7 @@ Select Cast(Id as text) Id
                      RootTimingId                         nvarchar(36) null,
                      Name                                 nvarchar(200) not null,
                      Started                              datetime not null,
-                     DurationMilliseconds                 decimal(15,3) not null,
+                     DurationMilliseconds                 real not null,
                      User                                 nvarchar(100) null,
                      HasUserViewed                        bit not null,
                      MachineName                          nvarchar(100) null,
@@ -496,8 +496,8 @@ Select Cast(Id as text) Id
                      MiniProfilerId                      nvarchar(36) not null,
                      ParentTimingId                      nvarchar(36) null,
                      Name                                nvarchar(200) not null,
-                     DurationMilliseconds                decimal(15,3) not null,
-                     StartMilliseconds                   decimal(15,3) not null,
+                     DurationMilliseconds                real not null,
+                     StartMilliseconds                   real not null,
                      IsRoot                              bit not null,
                      Depth                               smallint not null,
                      CustomTimingsJson                   text null
@@ -508,8 +508,8 @@ Select Cast(Id as text) Id
                      Id                                  nvarchar(36) not null,
                      MiniProfilerId                      nvarchar(36) not null,
                      Name                                nvarchar(200) not null,
-                     Start                               decimal(9, 3) not null,
-                     Duration                            decimal(9, 3) not null
+                     Start                               real not null,
+                     Duration                            real not null
                   );";
         }
     }
