@@ -196,6 +196,14 @@ namespace StackExchange.Profiling.Data
                     BeforeViewPageEventData data => StartView(data.Page, "View: " + data.Page.Path),
                     AfterViewPageEventData data => Complete(data.Page),
 
+                    // ViewComponent
+                    BeforeViewComponentEventData data => StartView(data.ViewComponentContext, "Component (Invoke): " + data.ViewComponentContext.ViewComponentDescriptor.ShortName),
+                    AfterViewComponentEventData data => Complete(data.ViewComponentContext),
+
+                    // Intentionally not registering to slim view wrapper due to noise, accounted for in View: above.
+                    //ViewComponentBeforeViewExecuteEventData data => StartView(data.ViewComponentContext, "Component (View): " + data.ViewComponentContext.ViewComponentDescriptor.ShortName),
+                    //ViewComponentAfterViewExecuteEventData data => Complete(data.ViewComponentContext),
+
                     // RazorPage Bits: https://github.com/dotnet/aspnetcore/blob/v3.0.0/src/Mvc/Mvc.RazorPages/src/Diagnostics/MvcDiagnostics.cs
                     // HandlerMethod
                     BeforeHandlerMethodEventData data => Start(data.Instance, "Handler: " + data.HandlerMethodDescriptor.Name),
