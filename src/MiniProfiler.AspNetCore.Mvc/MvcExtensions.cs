@@ -5,7 +5,7 @@ using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
 using System;
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
 using StackExchange.Profiling.Data;
 #else
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<MiniProfilerOptions>(o => MiniProfiler.Configure(o));
             services.AddSingleton<DiagnosticInitializer>(); // For any IMiniProfilerDiagnosticListener registration
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
             services.AddSingleton<IMiniProfilerDiagnosticListener, MvcDiagnosticListener>(); // For view and action profiling
 #else
             services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
     }
 
-#if !NETCOREAPP3_0
+#if !NETCOREAPP3_1
     internal class MiniProfilerSetup : IConfigureOptions<MvcViewOptions>, IConfigureOptions<MvcOptions>
     {
         public void Configure(MvcViewOptions options)

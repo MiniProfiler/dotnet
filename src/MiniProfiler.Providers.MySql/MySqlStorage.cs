@@ -65,7 +65,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
                     Name = profiler.Name.Truncate(200),
                     User = profiler.User.Truncate(100),
                     RootTimingId = profiler.Root?.Id,
-                    profiler.DurationMilliseconds,
+                    DurationMilliseconds = decimal.Round(profiler.DurationMilliseconds, 1),
                     profiler.HasUserViewed,
                     MachineName = profiler.MachineName.Truncate(100),
                     profiler.CustomLinksJson,

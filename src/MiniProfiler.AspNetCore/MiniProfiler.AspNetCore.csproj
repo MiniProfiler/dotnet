@@ -5,12 +5,12 @@
     <Description>Lightweight mini-profiler, designed for ASP.NET Core (not System.Web) websites</Description>
     <Authors>Nick Craver</Authors>
     <PackageTags>ASP.NET Core;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461;netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>

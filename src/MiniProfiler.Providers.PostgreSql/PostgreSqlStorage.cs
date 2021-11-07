@@ -67,7 +67,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
                     Name = profiler.Name.Truncate(200),
                     User = profiler.User.Truncate(100),
                     RootTimingId = profiler.Root?.Id,
-                    profiler.DurationMilliseconds,
+                    DurationMilliseconds = decimal.Round(profiler.DurationMilliseconds, 1),
                     profiler.HasUserViewed,
                     MachineName = profiler.MachineName.Truncate(100),
                     profiler.CustomLinksJson,
