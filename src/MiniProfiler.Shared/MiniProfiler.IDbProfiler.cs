@@ -25,6 +25,12 @@ namespace StackExchange.Profiling
         {
             var id = Tuple.Create((object)profiledDbCommand, executeType);
             var timing = profiledDbCommand.GetTiming(executeType.ToString(), this);
+            
+            if (timing == null)
+            {
+                return;
+            }
+            
             lock (_dbLocker)
             {
                 _inProgress ??= new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
