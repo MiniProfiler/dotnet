@@ -26,7 +26,7 @@ namespace StackExchange.Profiling
             var id = Tuple.Create((object)profiledDbCommand, executeType);
             var timing = profiledDbCommand.GetTiming(executeType.ToString(), this);
             
-            if(timing == null)
+            if (timing == null)
             {
                 return;
             }
