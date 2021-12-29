@@ -33,14 +33,14 @@ namespace StackExchange.Profiling.Internal
                 return null;
             }
 
-            if (parameter.DbType == DbType.Date && rawValue is DateTime)
+            if (parameter.DbType == DbType.Date && rawValue is DateTime time)
             {
-                return ((DateTime) rawValue).ToString("d", System.Globalization.CultureInfo.InvariantCulture);
+                return time.ToString("d", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            if (parameter.DbType == DbType.Time && rawValue is TimeSpan)
+            if (parameter.DbType == DbType.Time && rawValue is TimeSpan span)
             {
-                return ((TimeSpan) rawValue).ToString("hh\\:mm\\:ss");
+                return span.ToString("hh\\:mm\\:ss");
             }
 
             if (rawValue is DateTime dateTime)
