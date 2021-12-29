@@ -27,9 +27,9 @@ namespace StackExchange.Profiling.Tests
             };
         }
 
-        protected MemoryCache GetMemoryCache() => new MemoryCache(new MemoryCacheOptions());
+        protected static MemoryCache GetMemoryCache() => new MemoryCache(new MemoryCacheOptions());
 
-        protected string UserName([CallerMemberName]string name = null) => name;
+        protected static string UserName([CallerMemberName]string name = null) => name;
 
         protected List<Guid> GetProfilerIds([CallerMemberName]string name = null) =>
             CurrentOptions?.Storage.GetUnviewedIds(name);

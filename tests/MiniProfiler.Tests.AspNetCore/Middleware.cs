@@ -17,7 +17,7 @@ namespace StackExchange.Profiling.Tests
     {
         public Middleware(ITestOutputHelper output) : base(output) { }
 
-        private TestServer GetTestServer(Action<MiniProfilerOptions> configOptions)
+        private static TestServer GetTestServer(Action<MiniProfilerOptions> configOptions)
         {
             var builder = new WebHostBuilder()
                 .ConfigureServices(services => services

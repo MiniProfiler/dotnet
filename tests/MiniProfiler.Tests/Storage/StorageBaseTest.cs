@@ -247,9 +247,17 @@ namespace StackExchange.Profiling.Tests.Storage
         public abstract IAsyncStorage GetStorage();
     }
 
-    public abstract class StorageFixtureBase<TStorage> : StorageFixtureBase where TStorage : IAsyncStorage
+    public abstract class StorageFixtureBase<TStorage> : StorageFixtureBase, IDisposable where TStorage : IAsyncStorage
     {
         public TStorage Storage { get; protected set; }
         public override IAsyncStorage GetStorage() => Storage;
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
     }
 }

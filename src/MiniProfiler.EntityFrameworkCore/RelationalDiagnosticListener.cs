@@ -25,11 +25,8 @@ namespace StackExchange.Profiling.Data
         private readonly ConcurrentDictionary<Guid, CustomTiming>
             _commands = new(),
             _opening = new(),
-            _closing = new();
-
-        // See https://github.com/aspnet/EntityFramework/issues/8007
-        private readonly ConcurrentDictionary<Guid, CustomTiming>
-            _readers = new();
+            _closing = new(),
+            _readers = new(); // See https://github.com/aspnet/EntityFramework/issues/8007
 
         /// <summary>
         /// Notifies the observer that the provider has finished sending push-based notifications.
