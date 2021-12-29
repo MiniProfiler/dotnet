@@ -453,6 +453,7 @@ namespace StackExchange.Profiling.Tests
         public void Dispose()
         {
             Doorstop?.Close();
+            GC.SuppressFinalize(this);
         }
     }
 }
