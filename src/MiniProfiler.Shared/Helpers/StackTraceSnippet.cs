@@ -124,7 +124,7 @@ namespace StackExchange.Profiling.Helpers
         private const string EndStack = "--- End of stack trace from previous location where exception was thrown ---";
 
         // TODO: Patterns, or a bunch of these...
-        private static readonly HashSet<string> _asyncFrames = new HashSet<string>()
+        private static readonly HashSet<string> _asyncFrames = new()
             {
                 // 3.1 Stacks
                 "System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetException(Exception exception)",
@@ -419,7 +419,7 @@ namespace StackExchange.Profiling.Helpers
         private static readonly Regex _genericTypeRegex = new Regex($@"(?<BaseClass>{StackTraceUtils.NoSpace}+)`(?<ArgCount>\d+)");
         private static readonly string[] _singleT = new[] { "T" };
 
-        private static readonly Dictionary<string, string[]> _commonGenerics = new Dictionary<string, string[]>
+        private static readonly Dictionary<string, string[]> _commonGenerics = new()
         {
             ["Microsoft.CodeAnalysis.SymbolVisitor`1"] = new[] { "TResult" },
             ["Microsoft.CodeAnalysis.Diagnostics.CodeBlockStartAnalysisContext`1"] = new[] { "TLanguageKindEnum" },

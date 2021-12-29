@@ -36,7 +36,7 @@ namespace StackExchange.Profiling.Storage.Internal
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete (MiniProfiler serialization constructor)
-        public MiniProfiler ToMiniProfiler() => new MiniProfiler
+        public MiniProfiler ToMiniProfiler() => new()
         {
             Id = ProfilerId,
             Name = Name,

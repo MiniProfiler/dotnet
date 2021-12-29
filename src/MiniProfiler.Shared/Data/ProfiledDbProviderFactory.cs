@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Data
         /// Every provider factory must have an Instance public field
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "This does not appear to be used anywhere, we need to refactor it.")]
-        public readonly static ProfiledDbProviderFactory Instance = new ProfiledDbProviderFactory();
+        public readonly static ProfiledDbProviderFactory Instance = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbProviderFactory"/> class.

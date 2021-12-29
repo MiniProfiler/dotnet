@@ -92,7 +92,7 @@ namespace StackExchange.Profiling.Storage
         /// Gets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
-        public List<Guid> GetUnviewedIds(string user) => new List<Guid>();
+        public List<Guid> GetUnviewedIds(string user) => new();
 
         /// <summary>
         /// Gets nothing.

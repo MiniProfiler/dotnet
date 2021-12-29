@@ -36,7 +36,7 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         public int TimingCount => (Performance?.Count ?? 0) + (Probes?.Count ?? 0);
 
-        private static readonly JsonSerializer _serializer = new JsonSerializer();
+        private static readonly JsonSerializer _serializer = new();
 
         /// <summary>
         /// Returns a deserialize object from an input stream, like an HTTP request body.

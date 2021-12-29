@@ -18,7 +18,7 @@ namespace StackExchange.Profiling
         private readonly long _startTicks;
         private readonly decimal? _minSaveMs;
         private readonly bool _includeChildrenWithMinSave;
-        private readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Timing"/> class. 

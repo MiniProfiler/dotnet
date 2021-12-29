@@ -30,8 +30,8 @@ namespace Subtext.TestLibrary
         private const string defaultPhysicalAppPath = @"c:\InetPub\wwwRoot\";
         private StringBuilder builder;
         private Uri _referer;
-        private readonly NameValueCollection _formVars = new NameValueCollection();
-        private readonly NameValueCollection _headers = new NameValueCollection();
+        private readonly NameValueCollection _formVars = new();
+        private readonly NameValueCollection _headers = new();
 
         public HttpSimulator() : this("/", defaultPhysicalAppPath)
         {

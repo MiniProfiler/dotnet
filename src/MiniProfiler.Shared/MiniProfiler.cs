@@ -169,7 +169,7 @@ namespace StackExchange.Profiling
         public bool HasUserViewed { get; set; }
 
         // Allows async to properly track the attachment point
-        private readonly AsyncLocal<Timing> _head = new AsyncLocal<Timing>();
+        private readonly AsyncLocal<Timing> _head = new();
 
         // When async context flows aren't preserved, fallback to enable correct profiling in most cases
         private Timing _lastSetHead;

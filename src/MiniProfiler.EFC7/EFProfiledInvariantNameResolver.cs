@@ -15,8 +15,7 @@ namespace StackExchange.Profiling.EntityFrameworkClassic7
     /// </summary>
     internal class EFProfiledInvariantNameResolver : IDbDependencyResolver
     {
-        private readonly ConcurrentDictionary<DbProviderFactory, IProviderInvariantName> _providerInvariantNameCache =
-            new ConcurrentDictionary<DbProviderFactory, IProviderInvariantName>();
+        private readonly ConcurrentDictionary<DbProviderFactory, IProviderInvariantName> _providerInvariantNameCache = new();
 
         public object GetService(Type type, object key)
         {
