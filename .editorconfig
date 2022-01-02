@@ -87,3 +87,6 @@ dotnet_diagnostic.IDE0079.severity = none
 
 # IDE0090: Use 'new(...)'
 dotnet_diagnostic.IDE0090.severity = silent
+
+# CA1822: Don't run for benchmarks and such
+dotnet_code_quality.CA1822.api_surface = private, internal
