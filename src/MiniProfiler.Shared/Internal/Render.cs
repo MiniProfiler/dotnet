@@ -175,7 +175,6 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("\" data-position=\"");
             sb.Append((position ?? options.PopupRenderPosition).ToString());
-            sb.Append('"');
 
             sb.Append("\" data-scheme=\"");
             sb.Append(options.ColorScheme.ToString());
