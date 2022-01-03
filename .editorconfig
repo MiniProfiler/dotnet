@@ -81,3 +81,12 @@ csharp_new_line_before_members_in_anonymous_types = true
 
 # IDE0063: Use simple 'using' statement
 csharp_prefer_simple_using_statement = false:none
+
+# IDE0079: Remove unnecessary suppression
+dotnet_diagnostic.IDE0079.severity = none
+
+# IDE0090: Use 'new(...)'
+dotnet_diagnostic.IDE0090.severity = silent
+
+# CA1822: Don't run for benchmarks and such
+dotnet_code_quality.CA1822.api_surface = private, internal

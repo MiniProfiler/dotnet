@@ -97,7 +97,7 @@ namespace StackExchange.Profiling.Tests
         /// <typeparam name="T">The argument type to compare.</typeparam>
         /// <param name="t1">The first object to compare.</param>
         /// <param name="t2">The second object to compare.</param>
-        protected void AssertPublicPropertiesAreEqual<T>(T t1, T t2) where T : class
+        protected static void AssertPublicPropertiesAreEqual<T>(T t1, T t2) where T : class
         {
             Assert.NotNull(t1);
             Assert.NotNull(t2);
@@ -184,7 +184,7 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        private DateTime TrimToDecisecond(DateTime dateTime) =>
+        private static DateTime TrimToDecisecond(DateTime dateTime) =>
             new DateTime(dateTime.Ticks - (dateTime.Ticks % (TimeSpan.TicksPerSecond / 10)));
 
         protected void AssertNear(double expected, decimal? actual, double maxDelta = 0.0001)

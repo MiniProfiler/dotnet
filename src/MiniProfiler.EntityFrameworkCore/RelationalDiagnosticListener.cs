@@ -23,13 +23,10 @@ namespace StackExchange.Profiling.Data
 
         // Tracking currently open items, connections, and transactions, for logging upon their completion or error
         private readonly ConcurrentDictionary<Guid, CustomTiming>
-            _commands = new ConcurrentDictionary<Guid, CustomTiming>(),
-            _opening = new ConcurrentDictionary<Guid, CustomTiming>(),
-            _closing = new ConcurrentDictionary<Guid, CustomTiming>();
-
-        // See https://github.com/aspnet/EntityFramework/issues/8007
-        private readonly ConcurrentDictionary<Guid, CustomTiming>
-            _readers = new ConcurrentDictionary<Guid, CustomTiming>();
+            _commands = new(),
+            _opening = new(),
+            _closing = new(),
+            _readers = new(); // See https://github.com/aspnet/EntityFramework/issues/8007
 
         /// <summary>
         /// Notifies the observer that the provider has finished sending push-based notifications.

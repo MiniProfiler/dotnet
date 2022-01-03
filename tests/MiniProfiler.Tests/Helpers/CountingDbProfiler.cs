@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests
     /// </summary>
     public class CountingDbProfiler : IDbProfiler
     {
-        private readonly Stopwatch _watch = new Stopwatch();
+        private readonly Stopwatch _watch = new();
 
         /// <summary>
         /// Gets or sets the execute start count.

@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.Internal
     /// </summary>
     public class DiagnosticInitializer : IObserver<DiagnosticListener>, IDisposable
     {
-        private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+        private readonly List<IDisposable> _subscriptions = new();
         private readonly IEnumerable<IMiniProfilerDiagnosticListener> _diagnosticListeners;
         private bool _initialized = false;
 

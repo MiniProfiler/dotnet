@@ -18,5 +18,7 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             Storage = new MemoryCacheStorage(TimeSpan.FromMinutes(5));
         }
+
+        protected override void Dispose(bool disposing) { }
     }
 }

@@ -65,8 +65,8 @@ namespace StackExchange.Profiling.Tests.Storage
                 SkipReason = e.Message;
             }
         }
-        
-        public void Dispose()
+
+        protected override void Dispose(bool disposing)
         {
             if (!ShouldSkip)
             {

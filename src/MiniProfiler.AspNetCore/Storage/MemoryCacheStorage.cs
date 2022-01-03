@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.Storage
         private readonly IMemoryCache _cache;
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
-        private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
+        private readonly SortedList<ProfilerSortedKey, object> _profiles = new();
 
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.

@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.Tests
 {
     public class SqlFormatterTests
     {
-        private static readonly Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap = new Dictionary<RuntimeTypeHandle, DbType>
+        private static readonly Dictionary<RuntimeTypeHandle, DbType> _dbTypeMap = new()
         {
             [typeof(byte).TypeHandle] = DbType.Byte,
             [typeof(sbyte).TypeHandle] = DbType.SByte,
@@ -61,7 +61,7 @@ namespace StackExchange.Profiling.Tests
             yield return new object[] { At };
         }
 
-        private SqlCommand CreateDbCommand(CommandType commandType, string text)
+        private static SqlCommand CreateDbCommand(CommandType commandType, string text)
         {
             var sqlConnection = new SqlConnection("Initial Catalog=TestDatabase");
             return new SqlCommand(text, sqlConnection)
@@ -70,13 +70,13 @@ namespace StackExchange.Profiling.Tests
             };
         }
 
-        private string GenerateOutput(SqlServerFormatter _formatter, SqlCommand _dbCommand, string _commandText)
+        private static string GenerateOutput(SqlServerFormatter _formatter, SqlCommand _dbCommand, string _commandText)
         {
             var sqlParameters = _dbCommand.GetParameters();
             return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 
-        private void AddDbParameter<T>(SqlCommand command, string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
+        private static void AddDbParameter<T>(SqlCommand command, string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = name;

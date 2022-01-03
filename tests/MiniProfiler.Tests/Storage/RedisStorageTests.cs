@@ -82,6 +82,6 @@ namespace StackExchange.Profiling.Tests.Storage
             }
         }
 
-        public void Dispose() => Storage?.Dispose();
+        protected override void Dispose(bool disposing) => Storage?.Dispose();
     }
 }

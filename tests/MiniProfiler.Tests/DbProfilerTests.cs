@@ -370,7 +370,7 @@ namespace StackExchange.Profiling.Tests
             public void ReaderFinish(IDataReader reader) => GetProfiler()?.ReaderFinish(reader);
         }
 
-        private void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async, bool expectClose)
+        private static void CheckConnectionTracking(bool track, MiniProfiler profiler, string command, bool async, bool expectClose)
         {
             Assert.NotNull(profiler.Root.CustomTimings);
             Assert.Single(profiler.Root.CustomTimings);
@@ -453,6 +453,7 @@ namespace StackExchange.Profiling.Tests
         public void Dispose()
         {
             Doorstop?.Close();
+            GC.SuppressFinalize(this);
         }
     }
 }

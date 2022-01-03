@@ -76,7 +76,7 @@ namespace StackExchange.Profiling.Internal
             return sb.ToString();
         }
 
-        private static readonly JsonSerializerSettings defaultSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings defaultSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
@@ -85,7 +85,7 @@ namespace StackExchange.Profiling.Internal
             DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
-        private static readonly JsonSerializerSettings htmlEscapeSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings htmlEscapeSettings = new()
         {
             StringEscapeHandling = StringEscapeHandling.EscapeHtml,
             NullValueHandling = NullValueHandling.Ignore,

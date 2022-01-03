@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.Storage
     public class MemoryCacheStorage : IAsyncStorage
     {
         private readonly MemoryCache _cache;
-        private readonly SortedList<ProfilerSortedKey, object> _profiles = new SortedList<ProfilerSortedKey, object>();
+        private readonly SortedList<ProfilerSortedKey, object> _profiles = new();
 
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.

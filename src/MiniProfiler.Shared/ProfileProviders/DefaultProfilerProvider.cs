@@ -11,7 +11,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : IAsyncProfilerProvider
     {
-        private static readonly AsyncLocal<MiniProfiler> _profiler = new AsyncLocal<MiniProfiler>();
+        private static readonly AsyncLocal<MiniProfiler> _profiler = new();
 
         /// <summary>
         /// The current profiler instance, statically resolved and backed by AsyncLocal{T}.

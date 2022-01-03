@@ -17,7 +17,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Embedded resource contents keyed by filename.
         /// </summary>
-        private readonly ConcurrentDictionary<string, string> ResourceCache = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, string> ResourceCache = new();
 
         /// <summary>
         /// Gets a value indicating whether to keep things static and reusable.

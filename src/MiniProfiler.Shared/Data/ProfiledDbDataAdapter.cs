@@ -85,7 +85,7 @@ namespace StackExchange.Profiling.Data
              * SqlDataAdapter type and would thus work fine with this workaround.
              */
 
-            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || _selectCommand is not DbCommand)
             {
                 return InternalAdapter.Fill(dataSet);
             }
@@ -126,7 +126,7 @@ namespace StackExchange.Profiling.Data
             var dbDataAdapter = InternalAdapter as DbDataAdapter
                 ?? throw new InvalidOperationException("This function is only supported when profiling a DbDataAdapter object. If you are using an adapter which implements IDbDataAdapter but does not inherit from DbDataAdapter then you cannot use this function.");
 
-            if (_profiler?.IsActive != true || !(_selectCommand is DbCommand))
+            if (_profiler?.IsActive != true || _selectCommand is not DbCommand)
             {
                 return dbDataAdapter.Fill(dataTable);
             }

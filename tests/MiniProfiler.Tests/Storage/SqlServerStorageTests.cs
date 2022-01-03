@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (!ShouldSkip)
             {

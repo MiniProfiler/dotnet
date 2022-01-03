@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.Tests
         public ServerTimingTests(ITestOutputHelper output) : base(output) { }
 
         [Fact]
-        [Obsolete]
+        [Obsolete("Still awaiting browser support")]
         public void ServerTimingFormat()
         {
             var mp = new MiniProfiler("Test", Options);

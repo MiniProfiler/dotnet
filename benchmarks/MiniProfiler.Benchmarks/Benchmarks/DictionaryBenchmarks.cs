@@ -12,11 +12,9 @@ namespace Benchmarks.Benchmarks
     public class DictionaryBenchmarks
     {
         [Benchmark(Description = "new Dictionary<string, CustomTiming>")]
-        public Dictionary<string, CustomTiming> DictionaryCreate() =>
-            new Dictionary<string, CustomTiming>();
+        public Dictionary<string, CustomTiming> DictionaryCreate() => new();
 
         [Benchmark(Description = "new ConcurrentDictionary<string, CustomTiming>")]
-        public ConcurrentDictionary<string, CustomTiming> ConcurrentDictionaryCreate() =>
-            new ConcurrentDictionary<string, CustomTiming>();
+        public ConcurrentDictionary<string, CustomTiming> ConcurrentDictionaryCreate() => new();
     }
 }

@@ -14,11 +14,11 @@ namespace StackExchange.Profiling.EntityFrameworkClassic7
     public static class MiniProfilerEFC7
     {
         private class Lookup<T> : ConcurrentDictionary<object, T> { /* just for brevity */ }
-        private static readonly Lookup<DbProviderServices> _DbProviderServicesCache = new Lookup<DbProviderServices>();
-        private static readonly Lookup<DbProviderFactory> _DbProviderFactoryCache = new Lookup<DbProviderFactory>();
-        private static readonly Lookup<IDbProviderFactoryResolver> _IDbProviderFactoryResolverCache = new Lookup<IDbProviderFactoryResolver>();
-        private static readonly Lookup<IDbConnectionFactory> _IDbConnectionFactoryCache = new Lookup<IDbConnectionFactory>();
-        private static readonly object _nullKeyPlaceholder = new object();
+        private static readonly Lookup<DbProviderServices> _DbProviderServicesCache = new();
+        private static readonly Lookup<DbProviderFactory> _DbProviderFactoryCache = new();
+        private static readonly Lookup<IDbProviderFactoryResolver> _IDbProviderFactoryResolverCache = new();
+        private static readonly Lookup<IDbConnectionFactory> _IDbConnectionFactoryCache = new();
+        private static readonly object _nullKeyPlaceholder = new();
 
         /// <summary>
         /// Registers the WrapProviderService method with the Entity Framework 6 DbConfiguration as a replacement service for DbProviderServices.
