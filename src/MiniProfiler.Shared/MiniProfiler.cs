@@ -360,7 +360,7 @@ namespace StackExchange.Profiling
         /// <param name="ticks">The tick count to round.</param>
         internal decimal GetRoundedMilliseconds(long ticks)
         {
-            long times100 = ticks * 100 / TimeSpan.TicksPerMillisecond;
+            long times100 = ticks * 100000 / Stopwatch.Frequency;
             return times100 / 100m;
         }
 
