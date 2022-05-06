@@ -1,5 +1,6 @@
 ﻿using StackExchange.Profiling.Internal;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
@@ -14,6 +15,9 @@ namespace StackExchange.Profiling.Helpers
     /// </summary>
     public static class StackTraceSnippet
     {
+        private static readonly ConcurrentDictionary<Assembly, string> AssemblyNames = new();
+        private static readonly ConcurrentDictionary<Module, string> ModuleNames = new();
+
         /// <summary>
         /// Gets the current formatted and filtered stack trace.
         /// </summary>
@@ -56,14 +60,14 @@ namespace StackExchange.Profiling.Helpers
                 if (stackLength >= options.StackMaxLength
                     // ASP.NET: no need to continue up the chain
                     || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
-                    || (method.Module.Name == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
+                    || (ModuleNames.GetOrAdd(method.Module, m => m.Name) == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
                 {
                     frames[i] = null;
                     startFrame = i < 0 ? 0 : i - 1;
                     break;
                 }
                 else if (ShouldExcludeType(method)
-                    || options.ExcludedAssemblies.Contains(method.Module.Assembly.GetName().Name)
+                    || options.ExcludedAssemblies.Contains(AssemblyNames.GetOrAdd(method.Module.Assembly, a => a.GetName().Name))
                     || options.ExcludedMethods.Contains(method.Name))
                 {
                     frames[i] = null;
