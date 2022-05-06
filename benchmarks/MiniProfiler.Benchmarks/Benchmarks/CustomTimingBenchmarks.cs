@@ -4,14 +4,14 @@ using StackExchange.Profiling;
 
 namespace Benchmarks
 {
-    [SimpleJob(RuntimeMoniker.Net472)]
-    [SimpleJob(RuntimeMoniker.Net50)]
+    [SimpleJob(RuntimeMoniker.Net472, invocationCount: 50_000)]
+    [SimpleJob(RuntimeMoniker.Net50, invocationCount: 50_000)]
     [Config(typeof(Configs.Memory))]
     public class CustomTimingBenchmarks
     {
         private MiniProfiler Profiler;
 
-        [GlobalSetup]
+        [IterationSetup]
         public void SetupData()
         {
             Profiler = new MiniProfiler("Test", new MiniProfilerBenchmarkOptions());
