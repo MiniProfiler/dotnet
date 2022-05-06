@@ -11,6 +11,9 @@ namespace Benchmarks
     {
         private MiniProfiler Profiler;
 
+        [Params(true, false)]
+        public bool IncludeStackTrace { get; set; }
+
         [IterationSetup]
         public void SetupData()
         {
@@ -18,18 +21,18 @@ namespace Benchmarks
         }
 
         [Benchmark(Description = "Creation of a standalone CustomTiming")]
-        public CustomTiming Creation() => new CustomTiming(Profiler, "Test");
+        public CustomTiming Creation() => new CustomTiming(Profiler, "Test", includeStackTrace: IncludeStackTrace);
 
         [Benchmark(Description = "Creation a CustomTiming via MiniProfiler")]
         public void AddingToMiniProfiler()
         {
-            Profiler.CustomTiming("Test", "MyCategory");
+            Profiler.CustomTiming("Test", "MyCategory", includeStackTrace: IncludeStackTrace);
         }
 
         [Benchmark(Description = "Using a CustomTiming with MiniProfiler")]
         public void UsingWithMiniProfiler()
         {
-            using (Profiler.CustomTiming("Test", "MyCategory"))
+            using (Profiler.CustomTiming("Test", "MyCategory", includeStackTrace: IncludeStackTrace))
             {
                 // Trigger the .Dispose()
             }
