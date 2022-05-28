@@ -11,6 +11,8 @@ This page tracks major changes included in any update starting with version 4.0.
   - Fixed /results-index ordering (should be newest to oldest) ([#550](https://github.com/MiniProfiler/dotnet/pull/550) - thanks [spaduret](https://github.com/spaduret))
   - Fixed `nonce` attribute propagation to generated `<link>` style element for full CSP support ([#565](https://github.com/MiniProfiler/dotnet/pull/565))
   - Changed popup to show 2 decimal places for timings by default, with a new `PopupDecimalPlaces` option to control this (present everywhere settings are) ([#580](https://github.com/MiniProfiler/dotnet/pull/580))
+  - Fix for time duration precision on Linux ([#602](https://github.com/MiniProfiler/dotnet/pull/602) - thanks [benbryant0](https://github.com/benbryant0))
+  - Performance improvement: caching assembly names to reduce allocations during stack trace snippet generation ([#605](https://github.com/MiniProfiler/dotnet/pull/605) - thanks [benbryant0](https://github.com/benbryant0))
 
 #### Version 4.2.1
 - **New**:
