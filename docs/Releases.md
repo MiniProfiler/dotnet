@@ -14,6 +14,10 @@ This page tracks major changes included in any update starting with version 4.0.
   - Fix for time duration precision on Linux ([#602](https://github.com/MiniProfiler/dotnet/pull/602) - thanks [benbryant0](https://github.com/benbryant0))
   - Performance improvement: caching assembly names to reduce allocations during stack trace snippet generation ([#605](https://github.com/MiniProfiler/dotnet/pull/605) - thanks [benbryant0](https://github.com/benbryant0))
 
+#### Version 4.2.22
+- Minor fixes to build versioning
+
+
 #### Version 4.2.1
 - **New**:
   - Added RavenDB Storage provider ([#483](https://github.com/MiniProfiler/dotnet/pull/483) - thanks [@lillo42](https://github.com/lillo42)!)
