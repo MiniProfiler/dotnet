@@ -6,7 +6,6 @@
     <RootNamespace>Benchmarks</RootNamespace>
     <Configuration>Release</Configuration>
     <TargetFrameworks>net472;net5.0</TargetFrameworks>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
     <LangVersion>9</LangVersion>
