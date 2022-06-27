@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using StackExchange.Profiling.Storage;
 
@@ -16,13 +18,19 @@ namespace StackExchange.Profiling
         private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
+        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms. Default is 1 hour.
+        /// </summary>
+        public TimeSpan CacheDuration { get; set; } = TimeSpan.FromHours(1);
+
+        /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
+        /// and collection name to "profilers".
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
         public MongoDbStorage(string connectionString) : this(connectionString, "profilers") { }
 
         /// <summary>
-        /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
+        /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost".
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
         /// <param name="collectionName">The collection name to use in the database.</param>
@@ -44,6 +52,10 @@ namespace StackExchange.Profiling
 
         private static void BsonClassMapFields()
         {
+            // required to serialize decimal fields (e.g. DurationMilliseconds) as decimals instead of strings
+            BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));
+            BsonSerializer.RegisterSerializer(typeof(decimal?), new NullableSerializer<decimal>(new DecimalSerializer(BsonType.Decimal128)));
+
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
                 {
@@ -99,8 +111,23 @@ namespace StackExchange.Profiling
         {
             _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User));
             _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed));
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started));
+
+            CreateIndexOptions expirationOptions;
+            if (CacheDuration != default)
+            {
+                expirationOptions = new CreateIndexOptions
+                {
+                    ExpireAfter = CacheDuration,
+                };
+            }
+            else
+            {
+                expirationOptions = null;
+            }
+
+            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started), expirationOptions);
             _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started));
+
             return this;
         }
 
@@ -210,7 +237,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -221,7 +248,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
