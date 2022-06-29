@@ -6,7 +6,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Operations;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
