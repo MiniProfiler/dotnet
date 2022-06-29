@@ -19,10 +19,10 @@ namespace StackExchange.Profiling
         private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
-        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms. Default is 1 hour.
+        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms. Default is forever.
         /// </summary>
         /// <remarks>You need to call <see cref="WithIndexCreation"/> for this value to have any effect.</remarks>
-        public TimeSpan CacheDuration { get; set; } = TimeSpan.FromHours(1);
+        public TimeSpan CacheDuration { get; set; }
 
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
