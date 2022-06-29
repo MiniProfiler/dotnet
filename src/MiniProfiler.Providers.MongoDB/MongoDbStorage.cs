@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
@@ -20,6 +22,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms. Default is 1 hour.
         /// </summary>
+        /// <remarks>You need to call <see cref="WithIndexCreation"/> for this value to have any effect.</remarks>
         public TimeSpan CacheDuration { get; set; } = TimeSpan.FromHours(1);
 
         /// <summary>
@@ -105,28 +108,43 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Creates indexes for faster querying.
+        /// Creates indexes on the following fields for faster querying:
+        /// <list type="table">
+        /// <listheader><term>Field</term><term>Direction</term><term>Notes</term></listheader>
+        /// <item><term>User</term><term>Ascending</term><term></term></item>
+        /// <item><term>HasUserViewed</term><term>Ascending</term><term></term></item>
+        /// <item><term>Started</term><term>Ascending</term>Used to apply <see cref="CacheDuration"/> if specified</item>
+        /// <item><term>Started</term><term>Descending</term><term></term></item>
+        /// </list>
         /// </summary>
+        /// <remarks>If the indexes already exist, they will be recreated.</remarks>
         public MongoDbStorage WithIndexCreation()
         {
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User));
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User)));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed)));
 
-            CreateIndexOptions expirationOptions;
+            var startedAscendingIndexDefinition = Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started);
+
+            // while mongo is idempotent in regards to index creation, this is only true for indexes created with the
+            // same options. since older versions of this provider didn't include the expiration option, we need to
+            // remove said index regardless of its options, which boils down to removing it by name.
+            _collection.Indexes.DropOne(startedAscendingIndexDefinition);
+
+            CreateIndexOptions startedAscendingIndexOptions;
             if (CacheDuration != default)
             {
-                expirationOptions = new CreateIndexOptions
+                startedAscendingIndexOptions = new CreateIndexOptions
                 {
                     ExpireAfter = CacheDuration,
                 };
             }
             else
             {
-                expirationOptions = null;
+                startedAscendingIndexOptions = null;
             }
 
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started), expirationOptions);
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(startedAscendingIndexDefinition, startedAscendingIndexOptions));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
 
             return this;
         }
@@ -215,7 +233,7 @@ namespace StackExchange.Profiling
             _collection.ReplaceOne(
                 p => p.Id == profiler.Id,
                 profiler,
-                new UpdateOptions
+                new ReplaceOptions
                 {
                     IsUpsert = true
                 });
@@ -230,7 +248,7 @@ namespace StackExchange.Profiling
             return _collection.ReplaceOneAsync(
                 p => p.Id == profiler.Id,
                 profiler,
-                new UpdateOptions
+                new ReplaceOptions
                 {
                     IsUpsert = true
                 });
