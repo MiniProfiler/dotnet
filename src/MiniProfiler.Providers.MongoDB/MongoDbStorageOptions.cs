@@ -36,8 +36,12 @@ namespace StackExchange.Profiling
         /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms.
         /// Defaults to one hour.
         /// </summary>
-        /// <remarks>You need to either set <see cref="AutomaticallyCreateIndexes"/> to true or call
-        /// <see cref="MongoDbStorage.WithIndexCreation(TimeSpan)"/> for this value to have any effect.</remarks>
+        /// <remarks><list type="bullet">
+        /// <item>You need to either set <see cref="AutomaticallyCreateIndexes"/> to true or call
+        /// <see cref="MongoDbStorage.WithIndexCreation(TimeSpan)"/> for this value to have any effect.</item>
+        /// <item>Setting this option will drop any (<see cref="MiniProfiler.Started"/>, ascending) index previously
+        /// defined, including those with custom options.</item>
+        /// </list></remarks>
         public TimeSpan CacheDuration { get; set; } = TimeSpan.FromHours(1);
     }
 }
