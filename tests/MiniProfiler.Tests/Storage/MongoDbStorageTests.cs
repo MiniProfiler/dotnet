@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests.Storage
         }
     }
 
-    public class MongoDbStorageFixture : StorageFixtureBase<MongoDbStorage>, IDisposable
+    public class MongoDbStorageFixture : StorageFixtureBase<MongoDbStorage>
     {
         public MongoDbStorageFixture()
         {
@@ -19,11 +19,14 @@ namespace StackExchange.Profiling.Tests.Storage
 
             try
             {
-                Storage = new MongoDbStorage(
-                    TestConfig.Current.MongoDbConnectionString,
-                    "MPTest" + TestId);
-                
-                Storage.WithIndexCreation();
+                var options = new MongoDbStorageOptions
+                {
+                    ConnectionString = TestConfig.Current.MongoDbConnectionString,
+                    CollectionName = "MPTest" + TestId,
+                };
+
+                Storage = new MongoDbStorage(options);
+
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)

@@ -19,12 +19,6 @@ namespace StackExchange.Profiling
         private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
-        /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms. Default is forever.
-        /// </summary>
-        /// <remarks>You need to call <see cref="WithIndexCreation"/> for this value to have any effect.</remarks>
-        public TimeSpan CacheDuration { get; set; }
-
-        /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
         /// and collection name to "profilers".
         /// </summary>
@@ -36,27 +30,50 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
         /// <param name="collectionName">The collection name to use in the database.</param>
-        public MongoDbStorage(string connectionString, string collectionName)
+        public MongoDbStorage(string connectionString, string collectionName) : this(new MongoDbStorageOptions
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
+           ConnectionString = connectionString,
+           CollectionName = collectionName,
+        }) { }
+
+        /// <summary>
+        /// Creates a new instance of this class using the provided <paramref name="options"/>.
+        /// </summary>
+        /// <param name="options">Options to use for configuring this instance.</param>
+        /// <exception cref="ArgumentException">If <see cref="MongoDbStorageOptions.CollectionName"/> is null or contains only whitespace.</exception>
+        public MongoDbStorage(MongoDbStorageOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.CollectionName))
             {
-                BsonClassMapFields();
+                throw new ArgumentException("Collection name may not be null or contain only whitespace", nameof(options.CollectionName));
             }
 
-            var url = new MongoUrl(connectionString);
+            if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
+            {
+                BsonClassMapFields(options.SerializeDecimalFieldsAsNumberDecimal);
+            }
+
+            var url = new MongoUrl(options.ConnectionString);
             var databaseName = url.DatabaseName ?? "MiniProfiler";
 
             _client = new MongoClient(url);
             _collection = _client
                 .GetDatabase(databaseName)
-                .GetCollection<MiniProfiler>(collectionName);
+                .GetCollection<MiniProfiler>(options.CollectionName);
+
+            if (options.AutomaticallyCreateIndexes)
+            {
+                WithIndexCreation(options.CacheDuration);
+            }
         }
 
-        private static void BsonClassMapFields()
+        private static void BsonClassMapFields(bool serializeDecimalFieldsAsNumberDecimal = false)
         {
-            // required to serialize decimal fields (e.g. DurationMilliseconds) as decimals instead of strings
-            BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));
-            BsonSerializer.RegisterSerializer(typeof(decimal?), new NullableSerializer<decimal>(new DecimalSerializer(BsonType.Decimal128)));
+            if (serializeDecimalFieldsAsNumberDecimal)
+            {
+                BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));
+                BsonSerializer.RegisterSerializer(typeof(decimal?), new NullableSerializer<decimal>(new DecimalSerializer(BsonType.Decimal128)));
+            }
 
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
@@ -107,34 +124,39 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
+        /// Creates indexes for faster querying.
+        /// </summary>
+        public MongoDbStorage WithIndexCreation()
+            => WithIndexCreation(default);
+
+        /// <summary>
         /// Creates indexes on the following fields for faster querying:
         /// <list type="table">
         /// <listheader><term>Field</term><term>Direction</term><term>Notes</term></listheader>
         /// <item><term>User</term><term>Ascending</term><term></term></item>
         /// <item><term>HasUserViewed</term><term>Ascending</term><term></term></item>
-        /// <item><term>Started</term><term>Ascending</term>Used to apply <see cref="CacheDuration"/> if specified</item>
+        /// <item><term>Started</term><term>Ascending</term><term>Used to apply the <paramref name="cacheDuration"/>, if one was specified</term></item>
         /// <item><term>Started</term><term>Descending</term><term></term></item>
         /// </list>
         /// </summary>
-        /// <remarks>If the indexes already exist, they will be recreated.</remarks>
-        public MongoDbStorage WithIndexCreation()
+        public MongoDbStorage WithIndexCreation(TimeSpan cacheDuration)
         {
             _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User)));
             _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed)));
+            CreateStartedAscendingIndex(cacheDuration);
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
 
-            var startedAscendingIndexDefinition = Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started);
+            return this;
+        }
 
-            // while mongo is idempotent in regards to index creation, this is only true for indexes created with the
-            // same options. since older versions of this provider didn't include the expiration option, we need to
-            // remove said index regardless of its options, which boils down to removing it by name.
-            _collection.Indexes.DropOne(startedAscendingIndexDefinition);
-
+        private void CreateStartedAscendingIndex(TimeSpan cacheDuration)
+        {
             CreateIndexOptions startedAscendingIndexOptions;
-            if (CacheDuration != default)
+            if (cacheDuration != default)
             {
                 startedAscendingIndexOptions = new CreateIndexOptions
                 {
-                    ExpireAfter = CacheDuration,
+                    ExpireAfter = cacheDuration,
                 };
             }
             else
@@ -142,10 +164,8 @@ namespace StackExchange.Profiling
                 startedAscendingIndexOptions = null;
             }
 
-            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(startedAscendingIndexDefinition, startedAscendingIndexOptions));
-            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
-
-            return this;
+            _collection.Indexes.CreateOneForce(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started),
+                startedAscendingIndexOptions));
         }
 
         /// <summary>
