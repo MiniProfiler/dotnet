@@ -151,21 +151,19 @@ namespace StackExchange.Profiling
 
         private void CreateStartedAscendingIndex(TimeSpan cacheDuration)
         {
-            CreateIndexOptions startedAscendingIndexOptions;
+            var index = Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started);
             if (cacheDuration != default)
             {
-                startedAscendingIndexOptions = new CreateIndexOptions
-                {
-                    ExpireAfter = cacheDuration,
-                };
+                _collection.Indexes.CreateOneForce(new CreateIndexModel<MiniProfiler>(index,
+                    new CreateIndexOptions
+                    {
+                        ExpireAfter = cacheDuration,
+                    }));
             }
             else
             {
-                startedAscendingIndexOptions = null;
+                _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(index));
             }
-
-            _collection.Indexes.CreateOneForce(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started),
-                startedAscendingIndexOptions));
         }
 
         /// <summary>
