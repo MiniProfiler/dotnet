@@ -243,6 +243,19 @@ namespace StackExchange.Profiling.Storage
 
             return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, id)));
         }
+        
+        /// <summary>
+        /// Asynchronously sets the provided profiler sessions to "viewed"
+        /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="ids">The profiler IDs to set viewed.</param>
+        public async Task SetViewedAsync(string user, IEnumerable<Guid> ids)
+        {
+            foreach (var id in ids)
+            {
+                await this.SetViewedAsync(user, id).ConfigureAwait(false);
+            }
+        }
 
         /// <summary>
         /// Runs <see cref="IAsyncStorage.GetUnviewedIds"/> on each <see cref="IAsyncStorage"/> object in <see cref="Stores"/> and returns the Union of results.

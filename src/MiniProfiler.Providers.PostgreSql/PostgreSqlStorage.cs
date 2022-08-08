@@ -268,20 +268,27 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
+        
+        /// <summary>
+        /// Asynchronously sets the provided profiler sessions to "viewed"
+        /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="ids">The profiler IDs to set viewed.</param>
+        public override Task SetViewedAsync(string user, IEnumerable<Guid> ids) => ToggleViewedAsync(user, ids, true);
 
         private string _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
    Set HasUserViewed = @hasUserVeiwed 
- Where Id = @id 
+ Where Id = ANY(@ids) 
    And ""User"" = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(ToggleViewedSql, new { id, user, hasUserVeiwed });
+                conn.Execute(ToggleViewedSql, new { ids = new [] { id }, user, hasUserVeiwed });
             }
         }
 
@@ -289,7 +296,15 @@ Update {MiniProfilersTable}
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(ToggleViewedSql, new { id, user, hasUserVeiwed }).ConfigureAwait(false);
+                await conn.ExecuteAsync(ToggleViewedSql, new { ids = new [] { id }, user, hasUserVeiwed }).ConfigureAwait(false);
+            }
+        }
+        
+        private async Task ToggleViewedAsync(string user, IEnumerable<Guid> ids, bool hasUserVeiwed)
+        {
+            using (var conn = GetConnection())
+            {
+                await conn.ExecuteAsync(ToggleViewedSql, new { ids = ids.ToArray(), user, hasUserVeiwed }).ConfigureAwait(false);
             }
         }
 
