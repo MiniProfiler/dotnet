@@ -280,31 +280,28 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
-   Set HasUserViewed = @hasUserVeiwed 
+   Set HasUserViewed = @hasUserViewed 
  Where Id = ANY(@ids) 
    And ""User"" = @user";
 
-        private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
+        private void ToggleViewed(string user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(ToggleViewedSql, new { ids = new [] { id }, user, hasUserVeiwed });
+                conn.Execute(ToggleViewedSql, new { ids = new [] { id }, user, hasUserViewed });
             }
         }
 
-        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserVeiwed)
+        private Task ToggleViewedAsync(string user, Guid id, bool hasUserViewed)
         {
-            using (var conn = GetConnection())
-            {
-                await conn.ExecuteAsync(ToggleViewedSql, new { ids = new [] { id }, user, hasUserVeiwed }).ConfigureAwait(false);
-            }
+            return ToggleViewedAsync(user, new [] { id }, hasUserViewed);
         }
         
-        private async Task ToggleViewedAsync(string user, IEnumerable<Guid> ids, bool hasUserVeiwed)
+        private async Task ToggleViewedAsync(string user, IEnumerable<Guid> ids, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
-                await conn.ExecuteAsync(ToggleViewedSql, new { ids = ids.ToArray(), user, hasUserVeiwed }).ConfigureAwait(false);
+                await conn.ExecuteAsync(ToggleViewedSql, new { ids = ids.ToArray(), user, hasUserViewed }).ConfigureAwait(false);
             }
         }
 
