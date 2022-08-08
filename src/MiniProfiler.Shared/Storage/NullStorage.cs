@@ -8,7 +8,7 @@ namespace StackExchange.Profiling.Storage
     /// <summary>
     /// Empty storage no-nothing provider for doing nothing at all. Super efficient.
     /// </summary>
-    public class NullStorage : IAsyncStorage
+    public class NullStorage : IAdvancedAsyncStorage
     {
         /// <summary>
         /// Returns no profilers.
@@ -87,6 +87,13 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
         public Task SetViewedAsync(string user, Guid id) => Task.CompletedTask;
+
+        /// <summary>
+        /// Sets nothing.
+        /// </summary>
+        /// <param name="user">No one cares.</param>
+        /// <param name="ids">No one cares.</param>
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids) => Task.CompletedTask;
 
         /// <summary>
         /// Gets nothing.

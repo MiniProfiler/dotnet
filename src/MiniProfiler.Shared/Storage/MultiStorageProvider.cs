@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Storage
     /// When saving, will save in all Stores.
     /// </summary>
     /// <example>Ideal usage scenario - you want to store requests in Cache and Sql Server, but only want to retrieve from Cache if it is available</example>
-    public class MultiStorageProvider : IAsyncStorage
+    public class MultiStorageProvider : IAdvancedAsyncStorage
     {
         /// <summary>
         /// The stores that are exposed by this <see cref="MultiStorageProvider"/>
@@ -242,6 +242,31 @@ namespace StackExchange.Profiling.Storage
             if (Stores == null) return Task.CompletedTask;
 
             return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, id)));
+        }
+
+        /// <summary>
+        /// Asynchronously sets the provided profiler sessions to "viewed"
+        /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="ids">The profiler IDs to set viewed.</param>
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids)
+        {
+            if (Stores == null) return Task.CompletedTask;
+            
+            return Task.WhenAll(Stores.Select(async s =>
+            {
+                if (s is IAdvancedAsyncStorage storage)
+                {
+                    await storage.SetViewedAsync(user, ids).ConfigureAwait(false); 
+                }
+                else
+                {
+                    foreach (var id in ids)
+                    {
+                        await s.SetViewedAsync(user, id).ConfigureAwait(false);
+                    }
+                }
+            }));
         }
 
         /// <summary>
