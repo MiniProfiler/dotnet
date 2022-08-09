@@ -252,8 +252,10 @@ namespace StackExchange.Profiling.Storage
         public Task SetViewedAsync(string user, IEnumerable<Guid> ids)
         {
             if (Stores == null) return Task.CompletedTask;
+
+            var idsArray = ids.ToArray(); // Prevent multiple enumerations of ids.
             
-            return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, ids)));
+            return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, idsArray)));
         }
 
         /// <summary>
