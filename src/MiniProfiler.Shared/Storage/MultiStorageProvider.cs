@@ -249,12 +249,11 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="ids">The profiler IDs to set viewed.</param>
-        public async Task SetViewedAsync(string user, IEnumerable<Guid> ids)
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids)
         {
-            foreach (var id in ids)
-            {
-                await this.SetViewedAsync(user, id).ConfigureAwait(false);
-            }
+            if (Stores == null) return Task.CompletedTask;
+            
+            return Task.WhenAll(Stores.Select(s => s.SetViewedAsync(user, ids)));
         }
 
         /// <summary>
