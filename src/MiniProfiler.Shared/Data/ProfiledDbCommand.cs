@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
@@ -425,8 +426,15 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Gets the internal command.
+        /// Obsolete - please use <see cref="WrappedCommand"/>.
         /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete($"Please use {nameof(WrappedCommand)}", false)]
         public DbCommand InternalCommand => _command;
+
+        /// <summary>
+        /// Gets the internally wrapped <see cref="DbCommand"/>.
+        /// </summary>
+        public DbCommand WrappedCommand => _command;
     }
 }
