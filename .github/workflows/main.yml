@@ -43,7 +43,7 @@ jobs:
           RAVEN_License_Eula_Accepted: 'true'
           RAVEN_Security_UnsecuredAccessAllowed: 'PrivateNetwork'
       sqlserver:
-        image: mcr.microsoft.com/mssql/server:2019-latest-ubuntu
+        image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
         ports:
         - 1433/tcp
         env:
