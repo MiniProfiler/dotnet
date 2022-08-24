@@ -1,4 +1,4 @@
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 init:
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
@@ -34,7 +34,7 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
   MySQLConnectionString: server=localhost;uid=root;pwd=Password12!;database=test;Allow User Variables=true
 services:
-  - mssql2017
+  - mssql2019
   - mysql
   - postgresql
   - mongodb
