@@ -295,14 +295,14 @@ ORDER BY Start;";
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -439,7 +439,7 @@ Select Cast(Id as text) Id
         }
 
         /// <summary>
-        /// Returns a connection to Sql Server.
+        /// Returns a connection to SQLite.
         /// </summary>
         protected override DbConnection GetConnection() => new SqliteConnection(ConnectionString);
 
@@ -462,12 +462,23 @@ Select Cast(Id as text) Id
         {
             using (var cnn = new SqliteConnection(connectionString))
             {
-                // We need some tiny mods to allow SQLite support 
+                // We need some tiny mods to allow SQLite support
                 foreach (var sql in TableCreationScripts.Union(additionalSqlStatements))
                 {
                     cnn.Execute(sql);
                 }
             }
+        }
+
+        /// <summary>
+        /// SQL statements to create the SQLite schema names.
+        /// </summary>
+        /// <remarks>
+        /// Not implemented yet.
+        /// </remarks>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> _)
+        {
+            yield return string.Empty;
         }
 
         /// <summary>

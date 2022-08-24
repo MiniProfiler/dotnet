@@ -20,9 +20,9 @@ namespace StackExchange.Profiling.Tests.Storage
 
             Storage = new MySqlStorage(
                 TestConfig.Current.MySQLConnectionString,
-                "MPTest" + TestId,
-                "MPTimingsTest" + TestId,
-                "MPClientTimingsTest" + TestId);
+                $"[{TestSchemaName}].[MPTest{TestId}]",
+                $"[{TestSchemaName}].[MPTimingsTest{TestId}]",
+                $"[{TestSchemaName}].[MPClientTimingsTest{TestId}]");
             try
             {
                 Storage.CreateSchema();
@@ -39,7 +39,8 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             if (!ShouldSkip)
             {
-                Storage.DropSchema();
+                Storage?.DropSchema();
+                Storage?.DropSchemaNames(new[] { TestSchemaName });
             }
         }
     }

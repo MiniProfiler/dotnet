@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Storage
@@ -242,14 +243,14 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -272,9 +273,9 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         private string _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
-Update {MiniProfilersTable} 
-   Set HasUserViewed = @hasUserVeiwed 
- Where Id = @id 
+Update {MiniProfilersTable}
+   Set HasUserViewed = @hasUserVeiwed
+ Where Id = @id
    And [User] = @user";
 
         private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
@@ -385,9 +386,20 @@ Select Top {=maxResults} Id
         }
 
         /// <summary>
-        /// Returns a connection to Sql Server.
+        /// Returns a connection to SQL Server.
         /// </summary>
         protected override DbConnection GetConnection() => new SqlConnection(ConnectionString);
+
+        /// <summary>
+        /// SQL statements to create the SQL Server schema names.
+        /// </summary>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> schemaNames)
+        {
+            foreach (var schemaName in schemaNames)
+            {
+                yield return $@"IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'{schemaName}') EXEC('CREATE SCHEMA [{schemaName}]');";
+            }
+        }
 
         /// <summary>
         /// SQL statements to create the SQL Server tables.
@@ -395,55 +407,64 @@ Select Top {=maxResults} Id
         protected override IEnumerable<string> GetTableCreationScripts()
         {
             yield return $@"
-CREATE TABLE {MiniProfilersTable}
-(
-    RowId                                integer not null identity constraint PK_{MiniProfilersTable} primary key clustered, -- Need a clustered primary key for SQL Azure
-    Id                                   uniqueidentifier not null, -- don't cluster on a guid
-    RootTimingId                         uniqueidentifier null,
-    Name                                 nvarchar(200) null,
-    Started                              datetime not null,
-    DurationMilliseconds                 decimal(15,1) not null,
-    [User]                               nvarchar(100) null,
-    HasUserViewed                        bit not null,
-    MachineName                          nvarchar(100) null,
-    CustomLinksJson                      nvarchar(max),
-    ClientTimingsRedirectCount           int null
-);
--- displaying results selects everything based on the main MiniProfilers.Id column
-CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilersTable}_Id ON {MiniProfilersTable} (Id);
-                
--- speeds up a query that is called on every .Stop()
-CREATE NONCLUSTERED INDEX IX_{MiniProfilersTable}_User_HasUserViewed_Includes ON {MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]); 
+IF OBJECT_ID(N'{MiniProfilersTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {MiniProfilersTable}
+    (
+        RowId                                integer not null identity constraint PK_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered, -- Need a clustered primary key for SQL Azure
+        Id                                   uniqueidentifier not null, -- don't cluster on a guid
+        RootTimingId                         uniqueidentifier null,
+        Name                                 nvarchar(200) null,
+        Started                              datetime not null,
+        DurationMilliseconds                 decimal(15,1) not null,
+        [User]                               nvarchar(100) null,
+        HasUserViewed                        bit not null,
+        MachineName                          nvarchar(100) null,
+        CustomLinksJson                      nvarchar(max),
+        ClientTimingsRedirectCount           int null
+    );
+    -- displaying results selects everything based on the main MiniProfilers.Id column
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilersTable} (Id);
 
-CREATE TABLE {MiniProfilerTimingsTable}
-(
-    RowId                               integer not null identity constraint PK_{MiniProfilerTimingsTable} primary key clustered,
-    Id                                  uniqueidentifier not null,
-    MiniProfilerId                      uniqueidentifier not null,
-    ParentTimingId                      uniqueidentifier null,
-    Name                                nvarchar(200) not null,
-    DurationMilliseconds                decimal(15,3) not null,
-    StartMilliseconds                   decimal(15,3) not null,
-    IsRoot                              bit not null,
-    Depth                               smallint not null,
-    CustomTimingsJson                   nvarchar(max) null
-);
+    -- speeds up a query that is called on every .Stop()
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_User_HasUserViewed_Includes ON {MiniProfilersTable} ([User], HasUserViewed) INCLUDE (Id, [Started]);
+END;
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_Id ON {MiniProfilerTimingsTable} (Id);
-CREATE NONCLUSTERED INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
+IF OBJECT_ID(N'{MiniProfilerTimingsTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {MiniProfilerTimingsTable}
+    (
+        RowId                               integer not null identity constraint PK_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered,
+        Id                                  uniqueidentifier not null,
+        MiniProfilerId                      uniqueidentifier not null,
+        ParentTimingId                      uniqueidentifier null,
+        Name                                nvarchar(200) not null,
+        DurationMilliseconds                decimal(15,3) not null,
+        StartMilliseconds                   decimal(15,3) not null,
+        IsRoot                              bit not null,
+        Depth                               smallint not null,
+        CustomTimingsJson                   nvarchar(max) null
+    );
 
-CREATE TABLE {MiniProfilerClientTimingsTable}
-(
-    RowId                               integer not null identity constraint PK_{MiniProfilerClientTimingsTable} primary key clustered,
-    Id                                  uniqueidentifier not null,
-    MiniProfilerId                      uniqueidentifier not null,
-    Name                                nvarchar(200) not null,
-    Start                               decimal(9, 3) not null,
-    Duration                            decimal(9, 3) not null
-);
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilerTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
+END;
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);
-CREATE NONCLUSTERED INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);             
+IF OBJECT_ID(N'{MiniProfilerClientTimingsTable}', N'U') IS NULL
+BEGIN
+    CREATE TABLE {MiniProfilerClientTimingsTable}
+    (
+        RowId                               integer not null identity constraint PK_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")} primary key clustered,
+        Id                                  uniqueidentifier not null,
+        MiniProfilerId                      uniqueidentifier not null,
+        Name                                nvarchar(200) not null,
+        Start                               decimal(9, 3) not null,
+        Duration                            decimal(9, 3) not null
+    );
+
+    CREATE UNIQUE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilerClientTimingsTable} (Id);
+    CREATE NONCLUSTERED INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);
+END;
 ";
         }
     }

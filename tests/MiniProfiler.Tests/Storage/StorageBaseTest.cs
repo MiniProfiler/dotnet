@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -204,6 +205,28 @@ namespace StackExchange.Profiling.Tests.Storage
     public static class DatabaseStorageExtensions
     {
         /// <summary>
+        /// Creates the database schema names for this storage provider to use.
+        /// </summary>
+        /// <param name="storage">The storage to create schema names for.</param>
+        /// <param name="schemaNames">The database schema names to use for MiniProfiler tables.</param>
+        public static void CreateSchemaName(this IAsyncStorage storage, IEnumerable<string> schemaNames)
+        {
+            if (storage is DatabaseStorageBase dbs && storage is IDatabaseStorageConnectable dbsc)
+            {
+                using (var conn = dbsc.GetConnection())
+                {
+                    foreach (var script in dbs.SchemaNameCreationScripts(schemaNames))
+                    {
+                        if (!string.IsNullOrWhiteSpace(script))
+                        {
+                            conn.Execute(script);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Creates the tables for this storage provider to use.
         /// </summary>
         /// <param name="storage">The storage to create schema for.</param>
@@ -216,6 +239,28 @@ namespace StackExchange.Profiling.Tests.Storage
                     foreach (var script in dbs.TableCreationScripts)
                     {
                         conn.Execute(script);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Drops the schema names for this storage provider.
+        /// </summary>
+        /// <param name="schemaNames">The database schema names to use for MiniProfiler tables.</param>
+        /// <param name="storage">The storage to drop schema names for.</param>
+        public static void DropSchemaNames(this IAsyncStorage storage, IEnumerable<string> schemaNames)
+        {
+            if (storage is DatabaseStorageBase dbs && storage is IDatabaseStorageConnectable dbsc)
+            {
+                using (var conn = dbsc.GetConnection())
+                {
+                    foreach (var schemaName in schemaNames)
+                    {
+                        if (!string.IsNullOrWhiteSpace(schemaName))
+                        {
+                            conn.Execute($"Drop Schema IF EXISTS {schemaName}");
+                        }
                     }
                 }
             }
@@ -241,6 +286,7 @@ namespace StackExchange.Profiling.Tests.Storage
 
     public abstract class StorageFixtureBase
     {
+        public string TestSchemaName { get; } = "MPSchemaTest";
         public string TestId { get; } = Guid.NewGuid().ToString("N").Substring(20);
         public bool ShouldSkip { get; protected set; }
         public string SkipReason { get; protected set; }

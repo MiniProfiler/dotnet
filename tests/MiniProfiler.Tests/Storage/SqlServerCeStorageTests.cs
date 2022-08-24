@@ -27,9 +27,9 @@ namespace StackExchange.Profiling.Tests.Storage
 
             Storage = new SqlServerCeStorage(
                 connString,
-                "MPTest" + TestId,
-                "MPTimingsTest" + TestId,
-                "MPClientTimingsTest" + TestId);
+                $"[{TestSchemaName}].[MPTest{TestId}]",
+                $"[{TestSchemaName}].[MPTimingsTest{TestId}]",
+                $"[{TestSchemaName}].[MPClientTimingsTest{TestId}]");
             try
             {
                 try
@@ -55,6 +55,7 @@ namespace StackExchange.Profiling.Tests.Storage
             try
             {
                 Storage?.DropSchema();
+                Storage?.DropSchemaNames(new[] { TestSchemaName });
             }
             catch
             {

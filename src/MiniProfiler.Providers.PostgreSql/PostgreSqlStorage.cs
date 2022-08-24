@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Storage
@@ -242,14 +243,14 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -386,12 +387,23 @@ Select Id
         }
 
         /// <summary>
-        /// Returns a connection to Sql Server.
+        /// Returns a connection to PostgreSQL.
         /// </summary>
         protected override DbConnection GetConnection() => new NpgsqlConnection(ConnectionString);
 
         /// <summary>
-        /// SQL statements to create the SQL Server tables.
+        /// SQL statements to create the PostgreSQL schema names.
+        /// </summary>
+        protected override IEnumerable<string> GetSchemaNameCreationScripts(IEnumerable<string> schemaNames)
+        {
+            foreach (var schemaName in schemaNames)
+            {
+                yield return $@"CREATE SCHEMA IF NOT EXISTS [{schemaName}]";
+            }
+        }
+
+        /// <summary>
+        /// SQL statements to create the PostgreSQL tables.
         /// </summary>
         protected override IEnumerable<string> GetTableCreationScripts()
         {
@@ -411,10 +423,10 @@ CREATE TABLE {MiniProfilersTable}
     ClientTimingsRedirectCount           integer null
 );
 -- displaying results selects everything based on the main MiniProfilers.Id column
-CREATE UNIQUE INDEX IX_{MiniProfilersTable}_Id ON {MiniProfilersTable} (Id);
-                
+CREATE UNIQUE INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilersTable} (Id);
+
 -- speeds up a query that is called on every .Stop()
-CREATE INDEX IX_{MiniProfilersTable}_User_HasUserViewed_Includes ON {MiniProfilersTable} (""User"", HasUserViewed); 
+CREATE INDEX IX_{Regex.Replace(MiniProfilersTable, IndexNameWrongSymbolsReplacePattern, "_")}_User_HasUserViewed_Includes ON {MiniProfilersTable} (""User"", HasUserViewed);
 
 CREATE TABLE {MiniProfilerTimingsTable}
 (
@@ -430,8 +442,8 @@ CREATE TABLE {MiniProfilerTimingsTable}
     CustomTimingsJson                   varchar null
 );
 
-CREATE UNIQUE INDEX IX_{MiniProfilerTimingsTable}_Id ON {MiniProfilerTimingsTable} (Id);
-CREATE INDEX IX_{MiniProfilerTimingsTable}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
+CREATE UNIQUE INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id ON {MiniProfilerTimingsTable} (Id);
+CREATE INDEX IX_{Regex.Replace(MiniProfilerTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId ON {MiniProfilerTimingsTable} (MiniProfilerId);
 
 CREATE TABLE {MiniProfilerClientTimingsTable}
 (
@@ -443,8 +455,8 @@ CREATE TABLE {MiniProfilerClientTimingsTable}
     Duration                            decimal(9, 3) not null
 );
 
-CREATE UNIQUE INDEX IX_{MiniProfilerClientTimingsTable}_Id on {MiniProfilerClientTimingsTable} (Id);
-CREATE INDEX IX_{MiniProfilerClientTimingsTable}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);             
+CREATE UNIQUE INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_Id on {MiniProfilerClientTimingsTable} (Id);
+CREATE INDEX IX_{Regex.Replace(MiniProfilerClientTimingsTable, IndexNameWrongSymbolsReplacePattern, "_")}_MiniProfilerId on {MiniProfilerClientTimingsTable} (MiniProfilerId);
 ";
         }
     }
