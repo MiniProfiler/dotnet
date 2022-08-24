@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\src\MiniProfiler.EntityFrameworkCore\MiniProfiler.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Sqlite\MiniProfiler.Providers.Sqlite.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="5.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
   </ItemGroup>
 </Project>

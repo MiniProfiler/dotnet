@@ -33,6 +33,8 @@ namespace Samples.AspNetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Optional: profile all middleware via Microsoft.AspNetCore.MiddlewareAnalysis package
+            services.AddMiddlewareAnalysis();
             // Add framework services.
             services.AddDbContext<SampleContext>();
             services.AddMvc(options =>
