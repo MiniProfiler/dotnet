@@ -113,7 +113,6 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
     });
 }
 ```
-<sub>Note: most of the above are optional. A config can be as minimal as `app.UseMiniProfiler(new MiniProfilerOptions()));`</sub>
 
 * Add Tag Helpers in `_ViewImports.cshtml`:
 
