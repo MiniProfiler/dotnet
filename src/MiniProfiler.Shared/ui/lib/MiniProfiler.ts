@@ -957,11 +957,24 @@ namespace StackExchange.Profiling {
             }
 
             const profilerHtml = this.renderProfiler(json, true);
+			const nonVisibleElement = document.createElement("div");
+			nonVisibleElement.innerHTML = profilerHtml;
+			
+			// dynamic padding, margin and width
+			nonVisibleElement.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
+				element.style.paddingLeft = element.dataset.paddingLeft;
+			});
+			nonVisibleElement.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
+				element.style.marginLeft = element.dataset.marginLeft;
+			});
+			nonVisibleElement.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
+				element.style.width = element.dataset.width;
+			});
 
             if (this.controls) {
-                this.controls.insertAdjacentHTML('beforebegin', profilerHtml);
+                this.controls.insertAdjacentElement('beforebegin', nonVisibleElement.firstElementChild);
             } else {
-                this.container.insertAdjacentHTML('beforeend', profilerHtml);
+                this.container.insertAdjacentElement('beforeend', nonVisibleElement.firstElementChild);
             }
 
             // limit count to maxTracesToShow, remove those before it
@@ -970,16 +983,6 @@ namespace StackExchange.Profiling {
             for (let i = 0; i < toRemove; i++) {
                 results[i].parentNode.removeChild(results[i]);
             }
-			// dynamic padding, margin and width
-			this.container.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
-				element.style.paddingLeft = element.dataset.paddingLeft;
-			});
-			this.container.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
-				element.style.marginLeft = element.dataset.marginLeft;
-			});
-			this.container.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
-				element.style.width = element.dataset.width;
-			});
         }
 
         private scrollToQuery = (link: HTMLElement, queries: HTMLElement) => {
