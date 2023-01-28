@@ -728,7 +728,7 @@ namespace StackExchange.Profiling {
                 let str = `
   <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}${timing.DebugInfo ? ' mp-debug' : ''}" data-timing-id="${timing.Id}">
     <td>${renderDebugInfo(timing)}</td>
-    <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
+    <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` data-padding-left="${timing.Depth * 11}px"` : ''}>
       ${encode(timing.Name)}
     </td>
     <td class="mp-duration" title="duration of this step without any children's durations">
@@ -830,7 +830,7 @@ namespace StackExchange.Profiling {
         <table class="mp-timings mp-client-timings">
           <thead>
             <tr>
-              <th style="text-align:left">client event</th>
+              <th>client event</th>
               <th></th>
               <th>duration (ms)</th>
               <th class="mp-more-columns">from start (ms)</th>
@@ -840,7 +840,7 @@ namespace StackExchange.Profiling {
             ${list.map((t) => `
             <tr class="${(t.isTrivial ? 'mp-trivial' : '')}">
               <td class="mp-label">${encode(t.name)}</td>
-              <td class="t-${t.type}${t.point ? ' t-point' : ''}"><div style="margin-left: ${t.left}; width: ${t.width};"></div></td>
+              <td class="t-${t.type}${t.point ? ' t-point' : ''}"><div data-margin-left="${t.left}" data-width="${t.width}"></div></td>
               <td class="mp-duration">
                 ${(t.duration >= 0 ? `<span class="mp-unit"></span>${duration(t.duration, 0)}` : '')}
               </td>
@@ -970,6 +970,16 @@ namespace StackExchange.Profiling {
             for (let i = 0; i < toRemove; i++) {
                 results[i].parentNode.removeChild(results[i]);
             }
+			// dynamic padding, margin and width
+			this.container.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
+				element.style.paddingLeft = element.dataset.paddingLeft;
+			});
+			this.container.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
+				element.style.marginLeft = element.dataset.marginLeft;
+			});
+			this.container.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
+				element.style.width = element.dataset.width;
+			});
         }
 
         private scrollToQuery = (link: HTMLElement, queries: HTMLElement) => {
