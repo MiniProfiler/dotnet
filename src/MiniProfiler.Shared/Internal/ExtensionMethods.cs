@@ -79,7 +79,6 @@ namespace StackExchange.Profiling.Internal
         }
 
 #if !MINIMAL
-
         private static readonly JsonSerializerSettings defaultSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,

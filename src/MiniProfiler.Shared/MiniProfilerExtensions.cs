@@ -129,7 +129,6 @@ namespace StackExchange.Profiling
         }
 
 #if !MINIMAL
-
         /// <summary>
         /// Adds the <paramref name="text"/> and <paramref name="url"/> pair to <paramref name="profiler"/>'s 
         /// <see cref="MiniProfiler.CustomLinks"/> dictionary; will be displayed on the client in the bottom of the profiler popup.
