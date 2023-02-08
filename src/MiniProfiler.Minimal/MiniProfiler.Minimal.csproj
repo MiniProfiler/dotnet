@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MiniProfiler.Minimal</AssemblyName>
+    <Title>MiniProfiler.Minimal</Title>
+    <Authors>Nick Craver</Authors>
+    <Description>MiniProfiler's no-frills headless build for no-UI applications.</Description>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <DefineConstants>MINIMAL</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="../MiniProfiler.Shared/**/*.cs" Exclude="../MiniProfiler.Shared/obj/**/*.cs" />
+    
+    <Compile Remove="../MiniProfiler.Shared/ClientTiming*.cs" />
+    <Compile Remove="../MiniProfiler.Shared/ColorScheme.cs" />
+    <Compile Remove="../MiniProfiler.Shared/DiagnosticInitializer.cs" />
+    <Compile Remove="../MiniProfiler.Shared/IMiniProfilerBuilder.cs" />
+    <Compile Remove="../MiniProfiler.Shared/Render*.cs" />
+    
+    <Compile Remove="../MiniProfiler.Shared/Internal/Render.cs" />
+    <Compile Remove="../MiniProfiler.Shared/Internal/ResultRequest.cs" />
+    <Compile Remove="../MiniProfiler.Shared/SqlFormatters/**.cs" />
+    <Compile Remove="../MiniProfiler.Shared/Storage/DatabaseStorageBase.cs" />
+  </ItemGroup>
+</Project>

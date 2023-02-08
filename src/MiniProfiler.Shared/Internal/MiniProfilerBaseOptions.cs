@@ -103,6 +103,7 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         public decimal TrivialDurationThresholdMilliseconds { get; set; } = 2.0M;
 
+#if !MINIMAL
         /// <summary>
         /// Dictates if the "time with children" column is displayed by default, defaults to false.
         /// For a per-page override you can use .RenderIncludes(showTimeWithChildren: true/false)
@@ -164,6 +165,7 @@ namespace StackExchange.Profiling.Internal
             nameof(ProfiledDbConnection.Close),
             "CloseAsync" // RelationalDiagnosticListener
         };
+#endif
 
         /// <summary>
         /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help 
