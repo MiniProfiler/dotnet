@@ -1,16 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
+using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
 using System;
-
-#if NETCOREAPP3_1
-using StackExchange.Profiling.Data;
-#else
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
-#endif
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -36,13 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<MiniProfilerOptions>(o => MiniProfiler.Configure(o));
             services.AddSingleton<DiagnosticInitializer>(); // For any IMiniProfilerDiagnosticListener registration
 
-#if NETCOREAPP3_1
             services.AddSingleton<IMiniProfilerDiagnosticListener, MvcDiagnosticListener>(); // For view and action profiling
-#else
-            services.AddTransient<IConfigureOptions<MvcOptions>, MiniProfilerSetup>()
-                    .AddTransient<IConfigureOptions<MvcViewOptions>, MiniProfilerSetup>()
-                    .AddTransient<IViewComponentInvokerFactory, ProfilingViewComponentInvokerFactory>();
-#endif
 
             return new MiniProfilerBuilder(services);
         }
@@ -64,22 +52,4 @@ namespace Microsoft.Extensions.DependencyInjection
             }
         }
     }
-
-#if !NETCOREAPP3_1
-    internal class MiniProfilerSetup : IConfigureOptions<MvcViewOptions>, IConfigureOptions<MvcOptions>
-    {
-        public void Configure(MvcViewOptions options)
-        {
-            for (var i = 0; i < options.ViewEngines.Count; i++)
-            {
-                options.ViewEngines[i] = new ProfilingViewEngine(options.ViewEngines[i]);
-            }
-        }
-
-        public void Configure(MvcOptions options)
-        {
-            options.Filters.Add(new ProfilingActionFilter());
-        }
-    }
-#endif
 }

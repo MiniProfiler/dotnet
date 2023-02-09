@@ -55,7 +55,6 @@ namespace StackExchange.Profiling
         /// </summary>
         public Func<HttpRequest, string> UserIdProvider { get; set; } = request => request.HttpContext.Connection.RemoteIpAddress?.ToString();
 
-#if NETCOREAPP3_1
         /// <summary>
         /// Whether to add a Server-Timing header after profiling a request. Only supported in .NET Core 3.0 and higher.
         /// </summary>
@@ -80,6 +79,5 @@ namespace StackExchange.Profiling
         /// The minimum duration to record for MVC view timings, anything below this will be discarded as noise.
         /// </summary>
         public decimal? MvcViewMinimumSaveMs { get; set; }
-#endif
     }
 }

@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP3_1
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -261,4 +260,3 @@ namespace StackExchange.Profiling.Data
         }
     }
 }
-#endif

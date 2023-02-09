@@ -3,7 +3,7 @@ title: "ASP.NET Core"
 layout: "default"
 ---
 ### ASP.NET Core
-If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.AspNet5), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/main/samples/Samples.AspNet5/Startup.cs).
+If you'd rather learn by example, sample apps are available. [The ASP.NET Core sample is here](https://github.com/MiniProfiler/dotnet/tree/main/samples/Samples.AspNet), with the important bits in [Startup.cs](https://github.com/MiniProfiler/dotnet/blob/main/samples/Samples.AspNet/Startup.cs).
 
 #### Installation and Configuration
 
@@ -113,7 +113,6 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
     });
 }
 ```
-<sub>Note: most of the above are optional. A config can be as minimal as `app.UseMiniProfiler(new MiniProfilerOptions()));`</sub>
 
 * Add Tag Helpers in `_ViewImports.cshtml`:
 
