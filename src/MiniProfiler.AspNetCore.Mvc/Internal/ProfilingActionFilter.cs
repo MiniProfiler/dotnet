@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Internal
                 }
 
                 var area = context.RouteData.DataTokens.TryGetValue("area", out object areaToken)
-                    ? areaToken as string + "."
+                    ? (areaToken as string) + "."
                     : null;
 
                 switch (context.ActionDescriptor)
