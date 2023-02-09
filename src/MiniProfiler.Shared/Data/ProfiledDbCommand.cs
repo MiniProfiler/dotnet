@@ -35,7 +35,7 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets or sets a value indicating whether or not to bind by name.
         /// If the underlying command supports BindByName, this sets/clears the underlying
-        /// implementation accordingly. This is required to support OracleCommand from Dapper
+        /// implementation accordingly. This is required to support OracleCommand from Dapper.
         /// </summary>
         public bool BindByName
         {
@@ -116,36 +116,28 @@ namespace StackExchange.Profiling.Data
         }
 #endif
 
-        /// <summary>
-        /// Gets or sets the text command to run against the data source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandText"/>
         public override string CommandText
         {
             get => _command.CommandText;
             set => _command.CommandText = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command timeout.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandTimeout"/>
         public override int CommandTimeout
         {
             get => _command.CommandTimeout;
             set => _command.CommandTimeout = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command type.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandType"/>
         public override CommandType CommandType
         {
             get => _command.CommandType;
             set => _command.CommandType = value;
         }
 
-        /// <summary>
-        /// Gets or sets the database connection.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DbConnection"/>
         protected override DbConnection DbConnection
         {
             get => _connection;
@@ -169,14 +161,10 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets the database parameter collection.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DbParameterCollection"/>
         protected override DbParameterCollection DbParameterCollection => _command.Parameters;
 
-        /// <summary>
-        /// Gets or sets the database transaction.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DbTransaction"/>
         protected override DbTransaction DbTransaction
         {
             get => _transaction;
@@ -187,18 +175,14 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the command is design time visible.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DesignTimeVisible"/>
         public override bool DesignTimeVisible
         {
             get => _command.DesignTimeVisible;
             set => _command.DesignTimeVisible = value;
         }
 
-        /// <summary>
-        /// Gets or sets the updated row source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.UpdatedRowSource"/>
         public override UpdateRowSource UpdatedRowSource
         {
             get => _command.UpdatedRowSource;
@@ -211,11 +195,7 @@ namespace StackExchange.Profiling.Data
         protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler profiler)
             => new ProfiledDbDataReader(original, behavior, profiler);
 
-        /// <summary>
-        /// Executes a database data reader.
-        /// </summary>
-        /// <param name="behavior">The command behavior to use.</param>
-        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteDbDataReader(CommandBehavior)"/>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
             DbDataReader result = null;
@@ -244,12 +224,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes a database data reader asynchronously.
-        /// </summary>
-        /// <param name="behavior">The command behavior to use.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteDbDataReaderAsync(CommandBehavior, CancellationToken)"/>
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
             DbDataReader result = null;
@@ -278,10 +253,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes a SQL statement against a connection object.
-        /// </summary>
-        /// <returns>The number of rows affected.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteNonQuery()"/>
         public override int ExecuteNonQuery()
         {
             if (_profiler?.IsActive != true)
@@ -308,11 +280,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Asynchronously executes a SQL statement against a connection object asynchronously.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The number of rows affected.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteNonQueryAsync(CancellationToken)"/>
         public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
             if (_profiler?.IsActive != true)
@@ -339,11 +307,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
-        /// Additional columns or rows are ignored.
-        /// </summary>
-        /// <returns>The first column of the first row in the result set.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteScalar()"/>
         public override object ExecuteScalar()
         {
             if (_profiler?.IsActive != true)
@@ -370,12 +334,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Asynchronously executes the query, and returns the first column of the first row in the result set returned by the query. 
-        /// Additional columns or rows are ignored.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The first column of the first row in the result set.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteScalarAsync(CancellationToken)"/>
         public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
             if (_profiler?.IsActive != true)
@@ -402,20 +361,13 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Attempts to cancels the execution of this command.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.Cancel()"/>
         public override void Cancel() => _command.Cancel();
 
-        /// <summary>
-        /// Creates a prepared (or compiled) version of the command on the data source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.Prepare()"/>
         public override void Prepare() => _command.Prepare();
 
-        /// <summary>
-        /// Creates a new instance of an <see cref="DbParameter"/> object.
-        /// </summary>
-        /// <returns>The <see cref="DbParameter"/>.</returns>
+        /// <inheritdoc cref="DbCommand.CreateDbParameter()"/>
         protected override DbParameter CreateDbParameter() => _command.CreateParameter();
 
         /// <summary>

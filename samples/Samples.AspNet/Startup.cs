@@ -46,7 +46,7 @@ namespace Samples.AspNetCore
 
             // Add MiniProfiler services
             // If using Entity Framework Core, add profiling for it as well (see the end)
-            // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy Intellisense
+            // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy IntelliSense
             services.AddMiniProfiler(options =>
             {
                 // ALL of this is optional. You can simply call .AddMiniProfiler() for all defaults
@@ -124,7 +124,6 @@ namespace Samples.AspNetCore
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
 
             app.UseMiniProfiler()
                .UseStaticFiles()

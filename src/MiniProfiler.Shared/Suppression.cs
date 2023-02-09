@@ -12,14 +12,14 @@ namespace StackExchange.Profiling
         private readonly bool _wasSuppressed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Suppression"/> class. 
+        /// Initializes a new instance of the <see cref="Suppression"/> class.
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
         public Suppression() { /* serialization only */ }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Suppression"/> class. 
+        /// Initializes a new instance of the <see cref="Suppression"/> class.
         /// Creates a new Suppression to deactivate profiling while alive
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to suppress.</param>

@@ -37,14 +37,14 @@ namespace StackExchange.Profiling
         public Func<HttpRequest, Task<bool>> ResultsAuthorizeAsync { get; set; }
 
         /// <summary>
-        /// Special authorization function that is called for the list results (listing all the profiling sessions), 
+        /// Special authorization function that is called for the list results (listing all the profiling sessions),
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// <see cref="HttpRequest"/> parameter is the current request and will not be null.
         /// </summary>
         public Func<HttpRequest, bool> ResultsListAuthorize { get; set; }
 
         /// <summary>
-        /// Special async authorization function that is called for the list results (listing all the profiling sessions), 
+        /// Special async authorization function that is called for the list results (listing all the profiling sessions),
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// <see cref="HttpRequest"/> parameter is the current request and will not be null.
         /// </summary>

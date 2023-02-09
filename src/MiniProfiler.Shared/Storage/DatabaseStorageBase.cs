@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Storage
         protected string ConnectionString { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class.
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
         /// </summary>
         /// <param name="connectionString">The connection String</param>
@@ -42,7 +42,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class.
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
         /// </summary>
         /// <param name="connectionString">The connection String</param>
@@ -94,28 +94,28 @@ namespace StackExchange.Profiling.Storage
         public virtual bool SetUnviewedAfterSave => false;
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public abstract void SetUnviewed(string user, Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
         public abstract Task SetUnviewedAsync(string user, Guid id);
 
         /// <summary>
-        /// Sets a particular profiler session to "viewed"
+        /// Sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
         public abstract void SetViewed(string user, Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session to "viewed"
+        /// Asynchronously sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>

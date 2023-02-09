@@ -49,8 +49,8 @@ namespace StackExchange.Profiling
         /// <param name="minSaveMs">The minimum amount of time that needs to elapse in order for this result to be recorded.</param>
         /// <param name="includeChildren">Should the amount of time spent in child timings be included when comparing total time
         /// profiled with <paramref name="minSaveMs"/>? If true, will include children. If false will ignore children.</param>
-        /// <returns></returns>
-        /// <remarks>If <paramref name="includeChildren"/> is set to true and a child is removed due to its use of StepIf, then the 
+        /// <returns>The created <see cref="Timing"/>, if one was created.</returns>
+        /// <remarks>If <paramref name="includeChildren"/> is set to true and a child is removed due to its use of StepIf, then the
         /// time spent in that time will also not count for the current StepIf calculation.</remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Timing StepIf(this MiniProfiler profiler, string name, decimal minSaveMs, bool includeChildren = false)
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling
         /// <param name="executeType">Execute Type to be associated with the Custom Timing. Example: Get, Set, Insert, Delete</param>
         /// <param name="includeStackTrace">Whether to include the stack trace in this custom timing.</param>
         /// <remarks>
-        /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method 
+        /// Should be used like the <see cref="Step(MiniProfiler, string)"/> extension method.
         /// </remarks>
         public static CustomTiming CustomTimingIf(this MiniProfiler profiler, string category, string commandString, decimal minSaveMs, string executeType = null, bool includeStackTrace = true)
         {
@@ -130,7 +130,7 @@ namespace StackExchange.Profiling
 
 #if !MINIMAL
         /// <summary>
-        /// Adds the <paramref name="text"/> and <paramref name="url"/> pair to <paramref name="profiler"/>'s 
+        /// Adds the <paramref name="text"/> and <paramref name="url"/> pair to <paramref name="profiler"/>'s
         /// <see cref="MiniProfiler.CustomLinks"/> dictionary; will be displayed on the client in the bottom of the profiler popup.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to add the link to.</param>
@@ -149,7 +149,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from 
+        /// Returns a plain-text representation of <paramref name="profiler"/>, suitable for viewing from
         /// <see cref="Console"/>, log, or unit test output.
         /// </summary>
         /// <param name="profiler">A profiling session with child <see cref="Timing"/> instances.</param>

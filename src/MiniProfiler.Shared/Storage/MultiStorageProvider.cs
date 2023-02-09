@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Storage
         public List<IAsyncStorage> Stores { get; set; }
 
         /// <summary>
-        /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit? 
+        /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit?
         /// If False, all operations will run synchronously, in order. Defaults to False.
         /// </summary>
         public bool AllowParallelOps { get; set; }
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
+        /// Run the List command on the first Store from <see cref="Stores"/> that returns a result with any values.
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
         /// <param name="maxResults">The maximum number of results to return.</param>
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
+        /// Asynchronously run the List command on the first Store from <see cref="Stores"/> that returns a result with any values.
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
         /// <param name="maxResults">The maximum number of results to return.</param>
@@ -122,7 +122,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>
@@ -146,7 +146,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>

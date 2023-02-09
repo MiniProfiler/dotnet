@@ -46,10 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public void Configure(MiniProfilerOptions options)
         {
-            if (options.Storage == null)
-            {
-                options.Storage = new MemoryCacheStorage(_cache, TimeSpan.FromMinutes(30));
-            }
+            options.Storage ??= new MemoryCacheStorage(_cache, TimeSpan.FromMinutes(30));
         }
     }
 }

@@ -24,28 +24,20 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <summary>
-        /// Gets the internal wrapped transaction
+        /// Gets the internal wrapped transaction.
         /// </summary>
         public IDbTransaction WrappedTransaction { get; }
 
-        /// <summary>
-        /// Gets the connection.
-        /// </summary>
+        /// <inheritdoc cref="IDbTransaction.Connection"/>
         public IDbConnection Connection => _connection;
 
-        /// <summary>
-        /// Gets the isolation level.
-        /// </summary>
+        /// <inheritdoc cref="IDbTransaction.IsolationLevel"/>
         public IsolationLevel IsolationLevel => WrappedTransaction.IsolationLevel;
 
-        /// <summary>
-        /// Commits the database transaction.
-        /// </summary>
+        /// <inheritdoc cref="IDbTransaction.Commit()"/>
         public void Commit() => WrappedTransaction.Commit();
 
-        /// <summary>
-        /// Rolls back a transaction from a pending state.
-        /// </summary>
+        /// <inheritdoc cref="IDbTransaction.Rollback()"/>
         public void Rollback() => WrappedTransaction.Rollback();
 
         /// <summary>

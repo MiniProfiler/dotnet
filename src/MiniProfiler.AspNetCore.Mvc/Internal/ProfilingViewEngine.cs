@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Internal
         private readonly IViewEngine _wrapped;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class. 
+        /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class.
         /// </summary>
         /// <param name="wrapped">Original view engine to profile</param>
         public ProfilingViewEngine(IViewEngine wrapped) => _wrapped = wrapped;

@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Tests.Storage
 {
     public class RavenDbStoreTests : StorageBaseTest, IClassFixture<RavenDbStoreFixture>
     {
-        public RavenDbStoreTests(RavenDbStoreFixture fixture, ITestOutputHelper output) 
+        public RavenDbStoreTests(RavenDbStoreFixture fixture, ITestOutputHelper output)
             : base(fixture, output)
         {
         }
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Tests.Storage
                 };
 
                 store.Initialize();
-                
+
                 try
                 {
                     store.Maintenance.ForDatabase(TestConfig.Current.RavenDatabase).Send(new GetStatisticsOperation());
@@ -50,10 +50,10 @@ namespace StackExchange.Profiling.Tests.Storage
                         // The database was already created before calling CreateDatabaseOperation
                     }
                 }
-                
+
                 store.Dispose();
                 store = null;
-                
+
                 Storage = new RavenDbStorage(TestConfig.Current.RavenDbUrls.Split(';'), TestConfig.Current.RavenDatabase, waitForIndexes: true);
                 Storage.GetUnviewedIds("");
             }
@@ -74,7 +74,7 @@ namespace StackExchange.Profiling.Tests.Storage
             }
         }
     }
-    
+
     public static class RavenDbDbStorageExtensions
     {
         /// <summary>

@@ -1,4 +1,4 @@
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
 //[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Samples.Mvc5.App_Start.EntityFrameworkSqlServerCompact), "Start")]

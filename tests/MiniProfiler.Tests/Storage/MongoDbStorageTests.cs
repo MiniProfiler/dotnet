@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Tests.Storage
                 Storage = new MongoDbStorage(
                     TestConfig.Current.MongoDbConnectionString,
                     "MPTest" + TestId);
-                
+
                 Storage.WithIndexCreation();
                 Storage.GetUnviewedIds("");
             }

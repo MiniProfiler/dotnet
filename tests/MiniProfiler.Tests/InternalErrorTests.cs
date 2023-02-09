@@ -45,7 +45,6 @@ namespace StackExchange.Profiling.Tests
         }
     }
 
-
     public class KaboomStorage : IAsyncStorage
     {
         public List<Guid> GetUnviewedIds(string user) => throw new BoomBoom();

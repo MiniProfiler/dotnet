@@ -409,7 +409,7 @@ namespace StackExchange.Profiling.Helpers
         }
 
         /// <summary>
-        /// .NET Core changes methods so generics render as as Method[T], this normalizes it.
+        /// .NET Core changes methods so generics render as Method[T], this normalizes it.
         /// </summary>
         private static string NormalizeMethodName(string method)
         {

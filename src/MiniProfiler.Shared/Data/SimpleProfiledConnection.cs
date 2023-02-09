@@ -12,41 +12,33 @@ namespace StackExchange.Profiling.Data
         private IDbProfiler _profiler;
         private IDbConnection _connection;
 
-        /// <summary>
-        /// Gets or sets the connection string.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.ConnectionString"/>
         public string ConnectionString
         {
             get => _connection.ConnectionString;
             set => _connection.ConnectionString = value;
         }
 
-        /// <summary>
-        /// Gets the connection timeout.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.ConnectionTimeout"/>
         public int ConnectionTimeout => _connection.ConnectionTimeout;
 
-        /// <summary>
-        /// Gets the database.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.Database"/>
         public string Database => _connection.Database;
 
-        /// <summary>
-        /// Gets the state.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.State"/>
         public ConnectionState State => _connection.State;
 
         /// <summary>
-        /// Gets the internally wrapped <see cref="IDbConnection"/>
+        /// Gets the internally wrapped <see cref="IDbConnection"/>.
         /// </summary>
         public IDbConnection WrappedConnection => _connection;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleProfiledConnection"/> class. 
+        /// Initializes a new instance of the <see cref="SimpleProfiledConnection"/> class.
         /// Creates a simple profiled connection instance.
         /// </summary>
-        /// <param name="connection">The database connection to wrap</param>
-        /// <param name="profiler">The profiler to use</param>
+        /// <param name="connection">The database connection to wrap.</param>
+        /// <param name="profiler">The profiler to use.</param>
         public SimpleProfiledConnection(IDbConnection connection, IDbProfiler profiler)
         {
             _connection = connection;
@@ -56,42 +48,25 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Starts a database transaction.
-        /// </summary>
-        /// <returns>An object representing the new transaction.</returns>
+        /// <inheritdoc cref="IDbConnection.BeginTransaction()"/>
         public IDbTransaction BeginTransaction() =>
             new SimpleProfiledTransaction(_connection.BeginTransaction(), this);
 
-        /// <summary>
-        /// Starts a database transaction.
-        /// </summary>
-        /// <param name="il">Specifies the isolation level for the transaction.</param>
-        /// <returns>An object representing the new transaction.</returns>
+        /// <inheritdoc cref="IDbConnection.BeginTransaction(IsolationLevel)"/>
         public IDbTransaction BeginTransaction(IsolationLevel il) =>
             new SimpleProfiledTransaction(_connection.BeginTransaction(il), this);
 
-        /// <summary>
-        /// Changes the current database for an open connection.
-        /// </summary>
-        /// <param name="databaseName">The database name.</param>
+        /// <inheritdoc cref="IDbConnection.ChangeDatabase(string)"/>
         public void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 
-        /// <summary>
-        /// Creates and returns a <see cref="IDbCommand"/> object associated with the current connection.
-        /// </summary>
-        /// <returns>A <see cref="IDbCommand"/> object.</returns>
+        /// <inheritdoc cref="IDbConnection.CreateCommand()"/>
         public IDbCommand CreateCommand() =>
             new SimpleProfiledCommand(_connection.CreateCommand(), this, _profiler);
 
-        /// <summary>
-        /// Closes the connection to the database. This is the preferred method of closing any open connection.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.Close()"/>
         public void Close() => _connection.Close();
 
-        /// <summary>
-        /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
-        /// </summary>
+        /// <inheritdoc cref="IDbConnection.Open()"/>
         public void Open() => _connection.Open();
 
         /// <summary>

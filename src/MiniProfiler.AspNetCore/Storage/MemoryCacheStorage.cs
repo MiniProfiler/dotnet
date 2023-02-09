@@ -41,7 +41,7 @@ namespace StackExchange.Profiling.Storage
             CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
         }
 
-        private string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
+        private static string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Task.FromResult(GetUnviewedIds(user));
 
-        private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
+        private static string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
 
         private List<Guid> GetPerUserUnviewedIds(string user)
         {

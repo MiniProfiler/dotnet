@@ -95,7 +95,7 @@ namespace StackExchange.Profiling
         /// diagnostic page for the current request.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/url pair to this dictionary.
+        /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/URL pair to this dictionary.
         /// </remarks>
         [DataMember(Order = 6)]
         public Dictionary<string, string> CustomLinks { get; set; }

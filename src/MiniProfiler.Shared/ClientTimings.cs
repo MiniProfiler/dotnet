@@ -5,13 +5,13 @@ using StackExchange.Profiling.Internal;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Times collected from the client
+    /// Times collected from the client.
     /// </summary>
     [DataContract]
     public class ClientTimings
     {
         /// <summary>
-        /// Gets or sets the list of client side timings
+        /// Gets or sets the list of client side timings.
         /// </summary>
         [DataMember(Order = 2)]
         public List<ClientTiming> Timings { get; set; }

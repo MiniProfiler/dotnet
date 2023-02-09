@@ -30,7 +30,7 @@ namespace StackExchange.Profiling
         public MiniProfilerOptions Options { get; }
 
         /// <summary>
-        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, 
+        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle,
         /// if you do that call this to bring back mini profiler.
         /// </summary>
         /// <param name="options">The options to configure this handler with.</param>
@@ -200,7 +200,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns either json or full page html of a previous <see cref="MiniProfiler"/> session, 
+        /// Returns either json or full page html of a previous <see cref="MiniProfiler"/> session,
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>

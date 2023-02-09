@@ -39,7 +39,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public virtual void Stopped(MiniProfiler profiler, bool discardResults)
@@ -61,7 +61,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public virtual async Task StoppedAsync(MiniProfiler profiler, bool discardResults)
@@ -80,7 +80,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Calls <see cref="Storage.IAsyncStorage.Save(MiniProfiler)"/> to save the current
-        /// profiler using the current storage settings. 
+        /// profiler using the current storage settings.
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>
@@ -98,7 +98,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Asynchronously calls <see cref="Storage.IAsyncStorage.SaveAsync(MiniProfiler)"/> to save the current
-        /// profiler using the current storage settings. 
+        /// profiler using the current storage settings.
         /// If <see cref="MiniProfiler.Storage"/> is set, this will be used.
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to save.</param>

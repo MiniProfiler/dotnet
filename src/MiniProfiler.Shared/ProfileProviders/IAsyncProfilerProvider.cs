@@ -17,7 +17,7 @@ namespace StackExchange.Profiling
 
         /// <summary>
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
-        /// <see cref="CurrentProfiler"/> should return the new MiniProfiler. 
+        /// <see cref="CurrentProfiler"/> should return the new MiniProfiler.
         /// Unless one was not created due to ignore rules, etc.
         /// </summary>
         /// <param name="profilerName">
@@ -32,7 +32,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         void Stopped(MiniProfiler profiler, bool discardResults);
@@ -42,7 +42,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         Task StoppedAsync(MiniProfiler profiler, bool discardResults);

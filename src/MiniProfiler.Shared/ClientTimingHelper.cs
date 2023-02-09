@@ -3,17 +3,17 @@
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Pro
+    /// Helper methods to render timing scripts into the page, old functionality that may be inaccurate today.
     /// </summary>
     public static class ClientTimingHelper
     {
         /// <summary>
-        /// This code needs to be inserted in the page before client timings work
+        /// This code needs to be inserted in the page before client timings work.
         /// </summary>
         public const string InitScript = "<script>mPt=function(){var t={};return{results:function(){return t},start:function(n){t[n]={start:new Date().getTime()}},end:function(n){t[n].end=new Date().getTime()},flush:function(){t={};}}}();</script>";
 
         /// <summary>
-        /// You can wrap an HTML block with timing wrappers using this helper
+        /// You can wrap an HTML block with timing wrappers using this helper.
         /// </summary>
         /// <param name="name">The name of the block to time.</param>
         /// <param name="html">The HTML to wrap in this timing.</param>

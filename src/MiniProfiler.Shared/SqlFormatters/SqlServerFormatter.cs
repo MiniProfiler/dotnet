@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace StackExchange.Profiling.SqlFormatters
 {
     /// <summary>
-    /// Formats SQL server queries with a DECLARE up top for parameter values
+    /// Formats SQL server queries with a DECLARE up top for parameter values.
     /// </summary>
     public class SqlServerFormatter : ISqlFormatter
     {
@@ -26,7 +26,7 @@ namespace StackExchange.Profiling.SqlFormatters
         public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
-        /// Lookup a function for translating a parameter by parameter type
+        /// Lookup a function for translating a parameter by parameter type.
         /// </summary>
         protected static readonly Dictionary<DbType, Func<SqlTimingParameter, string>> ParamTranslator = new Dictionary<DbType, Func<SqlTimingParameter, string>>
         {
@@ -60,7 +60,7 @@ namespace StackExchange.Profiling.SqlFormatters
         };
 
         /// <summary>
-        /// What data types should not be quoted when used in parameters
+        /// What data types should not be quoted when used in parameters.
         /// </summary>
         protected static readonly string[] DontQuote =
         {
@@ -99,7 +99,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters) => 
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters) =>
             FormatSql(commandText, parameters, null);
 
         /// <summary>
