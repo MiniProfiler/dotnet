@@ -5,12 +5,12 @@ using System.Data;
 namespace StackExchange.Profiling.SqlFormatters
 {
     /// <summary>
-    /// Formats SQL server queries with a DECLARE up top for parameter values
+    /// Formats SQL server queries with a DECLARE up top for parameter values.
     /// </summary>
     public class VerboseSqlServerFormatter : SqlServerFormatter, IAdvancedSqlFormatter
     {
         /// <summary>
-        /// Should meta data relating to the command type, database and transaction be included in sql output
+        /// Should meta data relating to the command type, database and transaction be included in SQL output.
         /// </summary>
         public bool IncludeMetaData { get; set; }
 

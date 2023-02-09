@@ -21,7 +21,7 @@ namespace StackExchange.Profiling
         private readonly object _syncRoot = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Timing"/> class. 
+        /// Initializes a new instance of the <see cref="Timing"/> class.
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
@@ -266,7 +266,7 @@ namespace StackExchange.Profiling
             DurationMilliseconds = Profiler.GetDurationMilliseconds(_startTicks);
             Profiler.Head = ParentTiming;
 
-            if (_minSaveMs.HasValue && _minSaveMs.Value > 0 && ParentTiming != null)
+            if (_minSaveMs > 0 && ParentTiming != null)
             {
                 var compareMs = _includeChildrenWithMinSave ? DurationMilliseconds : DurationWithoutChildrenMilliseconds;
                 if (compareMs < _minSaveMs.Value)
@@ -311,8 +311,8 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of 
-        /// custom timings, <see cref="CustomTimings"/>.  Ensures that <see cref="CustomTimings"/> is created, 
+        /// Adds <paramref name="customTiming"/> to this <see cref="Timing"/> step's dictionary of
+        /// custom timings, <see cref="CustomTimings"/>.  Ensures that <see cref="CustomTimings"/> is created,
         /// as well as the <paramref name="category"/>'s list.
         /// </summary>
         /// <param name="category">The kind of custom timing, e.g. "http", "redis", "memcache"</param>

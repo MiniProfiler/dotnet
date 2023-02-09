@@ -466,7 +466,7 @@ namespace StackExchange.Profiling.Tests
             AddDbParameter<decimal>(cmd, at + "x", 123.45, type: DbType.Decimal);
             AddDbParameter<decimal>(cmd, at + "y", -54.321, type: DbType.Decimal);
 
-            var formatter = new SqlServerFormatter(); 
+            var formatter = new SqlServerFormatter();
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\n        @y decimal(5,3) = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";

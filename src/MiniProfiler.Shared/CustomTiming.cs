@@ -81,7 +81,7 @@ namespace StackExchange.Profiling
         public decimal? DurationMilliseconds { get; set; }
 
         /// <summary>
-        /// OPTIONAL - how long this timing took to come back initially from the remote server, 
+        /// OPTIONAL - how long this timing took to come back initially from the remote server,
         /// before all data is fetched and command is completed.
         /// </summary>
         [DataMember(Order = 7)]
@@ -96,7 +96,7 @@ namespace StackExchange.Profiling
         internal string Category { get; set; }
 
         /// <summary>
-        /// OPTIONAL - call after receiving the first response from your Remote Procedure Call to 
+        /// OPTIONAL - call after receiving the first response from your Remote Procedure Call to
         /// properly set <see cref="FirstFetchDurationMilliseconds"/>.
         /// </summary>
         public void FirstFetchCompleted()
@@ -111,7 +111,7 @@ namespace StackExchange.Profiling
         {
             DurationMilliseconds ??= _profiler.GetDurationMilliseconds(_startTicks);
 
-            if (_minSaveMs.HasValue && _minSaveMs.Value > 0 && DurationMilliseconds < _minSaveMs.Value)
+            if (_minSaveMs > 0 && DurationMilliseconds < _minSaveMs.Value)
             {
                 _profiler.Head.RemoveCustomTiming(Category, this);
             }

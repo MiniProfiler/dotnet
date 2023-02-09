@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Tag helper to profile script execution in ASP.NET Core views, e.g. 
+    /// Tag helper to profile script execution in ASP.NET Core views, e.g.
     /// &lt;profile-script name="My Step" /&gt;
     /// ...script blocks...
     /// &lt;/profile-script&gt;

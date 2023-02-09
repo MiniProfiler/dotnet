@@ -10,7 +10,7 @@ using Newtonsoft.Json.Serialization;
 namespace StackExchange.Profiling.Internal
 {
     /// <summary>
-    /// Common extension methods to use only in this project
+    /// Common extension methods to use only in this project.
     /// </summary>
     public static class ExtensionMethods
     {
@@ -58,8 +58,8 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Converts a List{Guid} into a JSON representation
         /// </summary>
-        /// <param name="guids">The guids to convert.</param>
-        /// <returns>A JSON representation of the guids.</returns>
+        /// <param name="guids">The GUIDs to convert.</param>
+        /// <returns>A JSON representation of the GUIDs.</returns>
         public static string ToJson(this List<Guid> guids)
         {
             if (guids == null || guids.Count == 0)
@@ -85,7 +85,7 @@ namespace StackExchange.Profiling.Internal
             TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver(),
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
+            DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         private static readonly JsonSerializerSettings htmlEscapeSettings = new()
@@ -95,7 +95,7 @@ namespace StackExchange.Profiling.Internal
             TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver(),
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
+            DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         /// <summary>
@@ -124,7 +124,6 @@ namespace StackExchange.Profiling.Internal
         /// <returns>The object resulting from the given string.</returns>
         public static T FromJson<T>(this string s) where T : class =>
             !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s, defaultSettings) : null;
-
 #endif
 
         /// <summary>
@@ -135,7 +134,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="dict">The dictionary to attempt removal from.</param>
         /// <param name="key">The key to attempt removal of.</param>
         /// <param name="value">The value found (if it was found) from the dictionary.</param>
-        /// <returns></returns>
+        /// <returns>Whether the key was removed.</returns>
         public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value)
         {
             value = default;

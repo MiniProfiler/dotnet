@@ -60,7 +60,7 @@ namespace StackExchange.Profiling
         public ColorScheme? ColorScheme { get; set; }
 
         /// <summary>
-        /// The number of decimal places to show on timings (which are in miliseconds).
+        /// The number of decimal places to show on timings (which are in milliseconds).
         /// </summary>
         public int? DecimalPlaces { get; set;}
 

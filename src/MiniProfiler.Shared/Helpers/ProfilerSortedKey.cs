@@ -6,16 +6,16 @@ namespace StackExchange.Profiling.Helpers
     /// <summary>
     /// Identifies a MiniProfiler result and only contains the needed info for sorting a list of profiling sessions.
     /// </summary>
-    /// <remarks>SortedList on uses the comparer for both key lookups and insertion</remarks>
+    /// <remarks>SortedList on uses the comparer for both key lookups and insertion.</remarks>
     public class ProfilerSortedKey : IComparable<ProfilerSortedKey>
     {
         /// <summary>
-        /// Profiler Id
+        /// Profiler Id.
         /// </summary>
         public Guid Id { get; }
 
         /// <summary>
-        /// Profiler start date
+        /// Profiler start date.
         /// </summary>
         public DateTime Started { get; }
 
@@ -33,7 +33,6 @@ namespace StackExchange.Profiling.Helpers
         /// Compares this <see cref="ProfilerSortedKey"/> to another.
         /// </summary>
         /// <param name="other">The <see cref="ProfilerSortedKey"/> to compare</param>
-        /// <returns></returns>
         public int CompareTo(ProfilerSortedKey other)
         {
             var comp = Started.CompareTo(other.Started);
@@ -43,7 +42,7 @@ namespace StackExchange.Profiling.Helpers
     }
 
     /// <summary>
-    /// Helpers for <see cref="ProfilerSortedKey"/>
+    /// Helpers for <see cref="ProfilerSortedKey"/>.
     /// </summary>
     public static class ProfilerSortedKeyExtensions
     {

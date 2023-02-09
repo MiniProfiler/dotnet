@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Internal
         private const int DefaultCapacity = 0x10;
 
         /// <summary>
-        /// Obtain a StringBuilder instance; this could be a recycled instance, or could be new
+        /// Obtain a StringBuilder instance; this could be a recycled instance, or could be new.
         /// </summary>
         /// <param name="capacity">The capacity to start the fetched <see cref="StringBuilder"/> at.</param>
         public static StringBuilder Get(int capacity = DefaultCapacity)
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Internal
         }
 
         /// <summary>
-        /// Get the string contents of a StringBuilder and recycle the instance at the same time
+        /// Get the string contents of a StringBuilder and recycle the instance at the same time.
         /// </summary>
         /// <param name="builder">The <see cref="StringBuilder"/> to recycle.</param>
         public static string ToStringRecycle(this StringBuilder builder)
@@ -50,7 +50,7 @@ namespace StackExchange.Profiling.Internal
         }
 
         /// <summary>
-        /// Get the string contents of a StringBuilder and recycle the instance at the same time
+        /// Get the string contents of a StringBuilder and recycle the instance at the same time.
         /// </summary>
         /// <param name="builder">The <see cref="StringBuilder"/> to recycle.</param>
         /// <param name="startIndex">The index to start at.</param>
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Internal
         }
 
         /// <summary>
-        /// Recycles a StringBuilder instance if possible
+        /// Recycles a StringBuilder instance if possible.
         /// </summary>
         /// <param name="builder">The <see cref="StringBuilder"/> to recycle.</param>
         public static void Recycle(StringBuilder builder)

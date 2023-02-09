@@ -50,7 +50,7 @@ namespace StackExchange.Profiling
         public bool IsNullable { get; set; }
 
         /// <summary>
-        /// Returns true if this has the same parent  
+        /// Returns true if this has the same parent
         /// <see cref="Name"/> and <see cref="Value"/> as <paramref name="obj"/>.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare.</param>

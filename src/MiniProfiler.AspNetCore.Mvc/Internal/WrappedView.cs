@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Internal
         public string Path => _wrapped.Path;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WrappedView"/> class. 
+        /// Initializes a new instance of the <see cref="WrappedView"/> class.
         /// </summary>
         /// <param name="wrapped">The view to wrap in a profiler</param>
         public WrappedView(IView wrapped) => _wrapped = wrapped;

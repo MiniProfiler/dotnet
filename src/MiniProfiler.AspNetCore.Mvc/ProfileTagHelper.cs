@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Tag helper to profile child contents in ASP.NET Core views, e.g. 
+    /// Tag helper to profile child contents in ASP.NET Core views, e.g.
     /// &lt;profile name="My Step" /&gt;
     /// ...child content...
     /// &lt;/profile&gt;

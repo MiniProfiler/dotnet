@@ -92,7 +92,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public override void Stopped(MiniProfiler profiler, bool discardResults)
@@ -130,7 +130,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public override async Task StoppedAsync(MiniProfiler profiler, bool discardResults)

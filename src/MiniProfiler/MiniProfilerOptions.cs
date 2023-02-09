@@ -43,7 +43,7 @@ namespace StackExchange.Profiling
         public Func<HttpRequest, bool> ResultsAuthorize { get; set; }
 
         /// <summary>
-        /// Special authorization function that is called for the list results (listing all the profiling sessions), 
+        /// Special authorization function that is called for the list results (listing all the profiling sessions),
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// </summary>
         public Func<HttpRequest, bool> ResultsListAuthorize { get; set; }

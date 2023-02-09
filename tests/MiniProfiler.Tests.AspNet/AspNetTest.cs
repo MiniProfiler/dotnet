@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.Tests
         }
 
         /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time,
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
         /// <param name="url">The URL of the request.</param>
@@ -66,7 +66,7 @@ namespace StackExchange.Profiling.Tests
         }
 
         /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time,
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
         /// <param name="url">The URL of the request.</param>

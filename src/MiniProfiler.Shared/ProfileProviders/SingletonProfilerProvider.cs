@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Mostly for unit testing and single-threaded applications, only allows one 
+    /// Mostly for unit testing and single-threaded applications, only allows one
     /// instance of a <see cref="MiniProfiler"/> to be the <see cref="MiniProfiler.Current"/> one.
     /// </summary>
     public class SingletonProfilerProvider : IAsyncProfilerProvider
@@ -29,7 +29,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public void Stopped(MiniProfiler profiler, bool discardResults)
@@ -45,7 +45,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/>, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public Task StoppedAsync(MiniProfiler profiler, bool discardResults)

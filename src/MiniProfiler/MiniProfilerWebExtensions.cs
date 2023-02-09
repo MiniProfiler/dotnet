@@ -23,12 +23,10 @@ namespace StackExchange.Profiling
             this MiniProfiler profiler,
             RenderOptions renderOptions)
         {
-            if (profiler == null) return _empty;
-            var settings = profiler.Options as MiniProfilerOptions;
-            if (settings == null) return _empty;
+            if (profiler?.Options is not MiniProfilerOptions settings) return _empty;
 
             var authorized = settings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
-            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            // If we're not authorized, we're just rendering a <script> tag for no reason.
             if (!authorized) return _empty;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 
@@ -69,12 +67,10 @@ namespace StackExchange.Profiling
             bool? showControls = null,
             bool? startHidden = null)
         {
-            if (profiler == null) return _empty;
-            var settings = profiler.Options as MiniProfilerOptions;
-            if (settings == null) return _empty;
+            if (profiler?.Options is not MiniProfilerOptions settings) return _empty;
 
             var authorized = settings.ResultsAuthorize?.Invoke(HttpContext.Current.Request) ?? true;
-            // If we're not authroized, we're just rendering a <script> tag for no reason.
+            // If we're not authorized, we're just rendering a <script> tag for no reason.
             if (!authorized) return _empty;
 
             // unviewed ids are added to this list during Storage.Save, but we know we haven't 

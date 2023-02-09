@@ -56,13 +56,13 @@ namespace StackExchange.Profiling
         public int? TrivialDurationThresholdMilliseconds { get; set; }
 
         /// <summary>
-        /// The colorscheme to use when rendering this MiniProfiler.
+        /// The color scheme to use when rendering this MiniProfiler.
         /// Defaults to <see cref="MiniProfilerBaseOptions.ColorScheme"/>.
         /// </summary>
         public ColorScheme? ColorScheme { get; set; }
 
         /// <summary>
-        /// The number of decimal places to show on timings (which are in miliseconds).
+        /// The number of decimal places to show on timings (which are in milliseconds).
         /// Defaults to <see cref="MiniProfilerBaseOptions.PopupDecimalPlaces"/>.
         /// </summary>
         public int? DecimalPlaces { get; set; }

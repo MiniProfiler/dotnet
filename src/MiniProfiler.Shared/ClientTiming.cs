@@ -28,7 +28,7 @@ namespace StackExchange.Profiling
         public decimal Duration { get; set; }
 
         /// <summary>
-        /// Unique Identifier used for sql storage. 
+        /// Unique Identifier used for sql storage.
         /// </summary>
         /// <remarks>Not set unless storing in Sql</remarks>
         public Guid Id { get; set; }

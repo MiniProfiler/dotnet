@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Internal
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            
+
             lock (_subscriptions)
             {
                 foreach (var subscription in _subscriptions)

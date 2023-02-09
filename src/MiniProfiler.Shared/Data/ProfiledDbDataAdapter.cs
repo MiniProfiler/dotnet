@@ -5,12 +5,12 @@ using System.Data.Common;
 namespace StackExchange.Profiling.Data
 {
     /// <summary>
-    /// Provides a wrapper around a native <c>DbDataAdapter</c>, allowing a profiled Fill operation.
+    /// Provides a wrapper around a native <see cref="DbDataAdapter"/>, allowing a profiled Fill operation.
     /// </summary>
     public class ProfiledDbDataAdapter : DbDataAdapter
     {
         /// <summary>
-        /// This static variable is simply used as a non-null placeholder in the MiniProfiler.ExecuteFinish method
+        /// This static variable is simply used as a non-null placeholder in the MiniProfiler.ExecuteFinish method.
         /// </summary>
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.Data
         private IDbCommand _selectCommand, _insertCommand, _updateCommand, _deleteCommand;
 
         /// <summary>
-        /// Gets the underlying adapter.  Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).
+        /// Gets the underlying adapter. Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).
         /// </summary>
         public IDbDataAdapter InternalAdapter { get; }
 
@@ -56,23 +56,10 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Adds a <see cref="T:System.Data.DataTable"/> named "Table" to the specified <see cref="T:System.Data.DataSet"/> and configures the schema to match that in the data source based on the specified <see cref="T:System.Data.SchemaType"/>.
-        /// </summary>
-        /// <param name="dataSet">The <see cref="T:System.Data.DataSet"/> to be filled with the schema from the data source.</param>
-        /// <param name="schemaType">One of the <see cref="T:System.Data.SchemaType"/> values.</param>
-        /// <returns>
-        /// An array of <see cref="T:System.Data.DataTable"/> objects that contain schema information returned from the data source.
-        /// </returns>
+        /// <inheritdoc cref="DbDataAdapter.FillSchema(DataSet, SchemaType)"/>
         public new DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType) => InternalAdapter.FillSchema(dataSet, schemaType);
 
-        /// <summary>
-        /// Adds or updates rows in the <see cref="T:System.Data.DataSet"/> to match those in the data source using the <see cref="T:System.Data.DataSet"/> name, and creates a <see cref="T:System.Data.DataTable"/> named "Table".
-        /// </summary>
-        /// <param name="dataSet">A <see cref="T:System.Data.DataSet"/> to fill with records and, if necessary, schema.</param>
-        /// <returns>
-        /// The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet"/>. This does not include rows affected by statements that do not return rows.
-        /// </returns>
+        /// <inheritdoc cref="DbDataAdapter.Fill(DataSet)"/>
         public new int Fill(DataSet dataSet)
         {
             /* 
@@ -110,17 +97,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataTable"/>. 
-        /// </summary>
-        /// <param name="dataTable">The <see cref="T:System.Data.DataTable"/> to use for table mapping.</param>/// <returns>
-        /// The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet"/>. This does not include rows affected by statements that do not return rows.
-        /// </returns>
-        /// <remarks>
-        /// This function will only work if you are using an <see cref="T:IDbDataAdapter"/> implementation that inherits from <see cref="T:DbDataAdapter"/>. 
-        /// This includes <see cref="T:SqlDataAdapter"/> and most other similar classes. 
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">The source table is invalid or being used with an <see cref="IDbDataAdapter"/> implementation that does not inherit from <see cref="DbDataAdapter"/>.</exception>
+        /// <inheritdoc cref="DbDataAdapter.Fill(DataTable)"/>
         public new int Fill(DataTable dataTable)
         {
             var dbDataAdapter = InternalAdapter as DbDataAdapter
@@ -151,45 +128,27 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Gets the parameters set by the user when executing an SQL SELECT statement.
-        /// </summary>
-        /// <returns>
-        /// An array of <see cref="T:System.Data.IDataParameter"/> objects that contains the parameters set by the user.
-        /// </returns>
+        /// <inheritdoc cref="DbDataAdapter.GetFillParameters()"/>
         public new IDataParameter[] GetFillParameters() => InternalAdapter.GetFillParameters();
 
-        /// <summary>
-        /// Gets or sets whether unmapped source tables or columns are passed with their source names in order to be filtered or to raise an error.
-        /// </summary>
-        /// <returns>One of the <see cref="T:System.Data.MissingMappingAction"/> values. The default is <see cref="MissingMappingAction.Passthrough"/>.</returns>
+        /// <inheritdoc cref="IDataAdapter.MissingMappingAction"/>
         public new MissingMappingAction MissingMappingAction
         {
             get => InternalAdapter.MissingMappingAction;
             set => InternalAdapter.MissingMappingAction = value;
         }
 
-        /// <summary>
-        /// Gets or sets whether missing source tables, columns, and their relationships are added to the dataset schema, ignored, or cause an error to be raised.
-        /// </summary>
-        /// <returns>One of the <see cref="T:System.Data.MissingSchemaAction"/> values. The default is Add.</returns>
-        /// <exception cref="ArgumentException">The value set is not one of the <see cref="T:System.Data.MissingSchemaAction"/> values.</exception>
+        /// <inheritdoc cref="IDataAdapter.MissingSchemaAction"/>
         public new MissingSchemaAction MissingSchemaAction
         {
             get => InternalAdapter.MissingSchemaAction;
             set => InternalAdapter.MissingSchemaAction = value;
         }
 
-        /// <summary>
-        /// Gets how a source table is mapped to a dataset table.
-        /// </summary>
-        /// <returns>A collection that provides the master mapping between the returned records and the <see cref="T:System.Data.DataSet"/>. The default value is an empty collection.</returns>
+        /// <inheritdoc cref="IDataAdapter.TableMappings"/>
         public new ITableMappingCollection TableMappings => InternalAdapter.TableMappings;
 
-        /// <summary>
-        /// Gets or sets an SQL statement used to select records in the data source.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Data.IDbCommand"/> that is used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to select records from data source for placement in the data set.</returns>
+        /// <inheritdoc cref="DbDataAdapter.SelectCommand"/>
         public new IDbCommand SelectCommand
         {
             get => _selectCommand;
@@ -200,10 +159,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets an SQL statement used to insert new records into the data source.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to insert records in the data source for new rows in the data set.</returns>
+        /// <inheritdoc cref="DbDataAdapter.InsertCommand"/>
         public new IDbCommand InsertCommand
         {
             get => _insertCommand;
@@ -214,10 +170,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets an SQL statement used to update records in the data source.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to update records in the data source for modified rows in the data set.</returns>
+        /// <inheritdoc cref="DbDataAdapter.UpdateCommand"/>
         public new IDbCommand UpdateCommand
         {
             get => _updateCommand;
@@ -228,10 +181,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets an SQL statement for deleting records from the data set.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Data.IDbCommand"/> used during <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)"/> to delete records in the data source for deleted rows in the data set.</returns>
+        /// <inheritdoc cref="DbDataAdapter.DeleteCommand"/>
         public new IDbCommand DeleteCommand
         {
             get => _deleteCommand;

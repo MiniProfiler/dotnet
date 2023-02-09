@@ -250,7 +250,7 @@ namespace StackExchange.Profiling
         {
             var req = context.Request;
             // Deny access if we a) have a configured delegate, and b) it says no
-            if (Options.ResultsAuthorize != null && !Options.ResultsAuthorize.Invoke(req)
+            if ((Options.ResultsAuthorize != null && !Options.ResultsAuthorize.Invoke(req))
                 || (Options.ResultsAuthorizeAsync != null && !await Options.ResultsAuthorizeAsync(req))
                 || (isList && Options.ResultsListAuthorize != null && !Options.ResultsListAuthorize(req))
                 || (isList && Options.ResultsListAuthorizeAsync != null && !await Options.ResultsListAuthorizeAsync(req))
@@ -319,7 +319,7 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns either JSON or full page HTML of a previous <c>MiniProfiler</c> session, 
+        /// Returns either JSON or full page HTML of a previous <c>MiniProfiler</c> session,
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>

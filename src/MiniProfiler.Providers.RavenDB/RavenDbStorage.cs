@@ -23,7 +23,7 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a new <see cref="RavenDbStorage"/>.
         /// </summary>
-        /// <param name="urls">The RavenDB Urls.</param>
+        /// <param name="urls">The RavenDB URLs.</param>
         /// <param name="database">The RavenDB database name.</param>
         /// <param name="identifier">The identifier for store.</param>
         /// <param name="certificate">The client certificate to use for authentication.</param>
@@ -53,7 +53,6 @@ namespace StackExchange.Profiling.Storage
             _store.Initialize();
             WithIndexCreation();
         }
-
 
         /// <summary>
         /// Creates indexes for faster querying.
@@ -100,7 +99,6 @@ namespace StackExchange.Profiling.Storage
             query = orderBy == ListResultsOrder.Descending
                 ? query.OrderByDescending(x => x.Started)
                 : query.OrderBy(x => x.Started);
-
 
             return query.Select(x => x.ProfilerId).ToList();
         }
@@ -238,7 +236,6 @@ namespace StackExchange.Profiling.Storage
                 ? query.OrderByDescending(x => x.Started)
                 : query.OrderBy(x => x.Started);
 
-
             return await query
                 .Select(x => x.ProfilerId)
                 .ToListAsync()
@@ -274,7 +271,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed". 
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>

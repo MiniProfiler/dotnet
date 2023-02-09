@@ -48,19 +48,19 @@ namespace StackExchange.Profiling.Storage
         void Save(MiniProfiler profiler);
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
-        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         MiniProfiler Load(Guid id);
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
@@ -102,19 +102,19 @@ namespace StackExchange.Profiling.Storage
         Task SaveAsync(MiniProfiler profiler);
 
         /// <summary>
-        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         /// <remarks>
-        /// Should also update that the resulting profiler has been marked as viewed by its 
+        /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
         Task<MiniProfiler> LoadAsync(Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>

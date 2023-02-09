@@ -168,8 +168,8 @@ namespace StackExchange.Profiling.Internal
 #endif
 
         /// <summary>
-        /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help 
-        /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
+        /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help
+        /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace
         /// will be collected, possibly improving profiler performance.
         /// </summary>
         public bool ExcludeStackTraceSnippetFromCustomTimings { get; set; } = false;
@@ -186,7 +186,7 @@ namespace StackExchange.Profiling.Internal
         /// 4) profiler is stopped
         /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/>
         /// 6) request ends
-        /// 7) page is displayed and profiling results are AJAX-fetched down, pulling cached results from 
+        /// 7) page is displayed and profiling results are AJAX-fetched down, pulling cached results from
         ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
         /// </remarks>
         public IAsyncStorage Storage { get; set; }
@@ -197,7 +197,7 @@ namespace StackExchange.Profiling.Internal
         public ISqlFormatter SqlFormatter { get; set; } = new InlineFormatter();
 
         /// <summary>
-        /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler
+        /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler.
         /// </summary>
         /// <remarks>
         /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
