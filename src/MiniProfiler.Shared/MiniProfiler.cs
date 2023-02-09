@@ -89,6 +89,7 @@ namespace StackExchange.Profiling
         [DataMember(Order = 5)]
         public string MachineName { get; set; }
 
+#if !MINIMAL
         /// <summary>
         /// Keys are names, values are URLs, allowing additional links to be added to a profiler result, e.g. perhaps a deeper
         /// diagnostic page for the current request.
@@ -113,6 +114,7 @@ namespace StackExchange.Profiling
                 }
             }
         }
+#endif
 
         private Timing _root;
 
@@ -137,6 +139,7 @@ namespace StackExchange.Profiling
         /// </summary>
         public Guid? RootTimingId { get; set; }
 
+#if !MINIMAL
         /// <summary>
         /// Gets or sets timings collected from the client
         /// </summary>
@@ -147,6 +150,7 @@ namespace StackExchange.Profiling
         /// RedirectCount in ClientTimings. Used for sql storage.
         /// </summary>
         public int? ClientTimingsRedirectCount { get; set; }
+#endif
 
         /// <summary>
         /// Gets or sets a string identifying the user/client that is profiling this request.
@@ -283,11 +287,13 @@ namespace StackExchange.Profiling
             return true;
         }
 
+#if !MINIMAL
         /// <summary>
         /// Deserializes the JSON string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
         /// <param name="json">The string to deserialize into a <see cref="MiniProfiler"/>.</param>
         public static MiniProfiler FromJson(string json) => json.FromJson<MiniProfiler>();
+#endif
 
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.

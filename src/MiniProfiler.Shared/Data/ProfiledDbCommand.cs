@@ -2,10 +2,12 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+#if !MINIMAL
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace StackExchange.Profiling.Data
 {
@@ -15,18 +17,20 @@ namespace StackExchange.Profiling.Data
     [System.ComponentModel.DesignerCategory("")]
     public partial class ProfiledDbCommand : DbCommand
     {
-        private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
         private DbCommand _command;
         private DbConnection _connection;
         private DbTransaction _transaction;
         private IDbProfiler _profiler;
-        private bool _bindByName;
 
         /// <summary>
         /// Whether to always wrap data readers, even if there isn't an active profiler on this connect.
         /// This allows depending on overrides for things inheriting from <see cref="ProfiledDbDataReader"/> to actually execute.
         /// </summary>
         protected virtual bool AlwaysWrapReaders => false;
+
+#if !MINIMAL
+        private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
+        private bool _bindByName;
 
         /// <summary>
         /// Gets or sets a value indicating whether or not to bind by name.
@@ -49,6 +53,7 @@ namespace StackExchange.Profiling.Data
                 }
             }
         }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbCommand"/> class.
@@ -73,6 +78,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
+#if !MINIMAL
         /// <summary>
         /// Get the binding name.
         /// </summary>
@@ -108,6 +114,7 @@ namespace StackExchange.Profiling.Data
             Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
             return action;
         }
+#endif
 
         /// <summary>
         /// Gets or sets the text command to run against the data source.

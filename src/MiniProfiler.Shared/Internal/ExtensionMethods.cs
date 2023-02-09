@@ -2,8 +2,10 @@
 using System.Text;
 using System;
 using System.Collections.Generic;
+#if !MINIMAL
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+#endif
 
 namespace StackExchange.Profiling.Internal
 {
@@ -76,6 +78,7 @@ namespace StackExchange.Profiling.Internal
             return sb.ToString();
         }
 
+#if !MINIMAL
         private static readonly JsonSerializerSettings defaultSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
@@ -121,6 +124,8 @@ namespace StackExchange.Profiling.Internal
         /// <returns>The object resulting from the given string.</returns>
         public static T FromJson<T>(this string s) where T : class =>
             !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s, defaultSettings) : null;
+
+#endif
 
         /// <summary>
         /// <see cref="Dictionary{TKey, TValue}"/> equivalent of ConcurrentDictionary's .TryRemove();

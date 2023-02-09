@@ -137,6 +137,7 @@ namespace StackExchange.Profiling
         [DataMember(Order = 7)]
         public TimingDebugInfo DebugInfo { get; set; }
 
+#if !MINIMAL
         /// <summary>
         /// JSON representing the Custom Timings associated with this timing.
         /// </summary>
@@ -144,6 +145,7 @@ namespace StackExchange.Profiling
             get => CustomTimings?.ToJson();
             set => CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>();
         }
+#endif
 
         /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
