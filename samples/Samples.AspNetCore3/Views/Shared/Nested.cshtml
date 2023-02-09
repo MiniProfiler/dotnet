@@ -1,8 +1,0 @@
-﻿@{
-    await Task.Delay(50);
-}
-@for(var i = 0; i < 3; i++)
-{
-    <partial name="NestedChild" />
-    @await Component.InvokeAsync("ComponentTest")
-}
