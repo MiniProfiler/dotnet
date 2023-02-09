@@ -126,6 +126,13 @@ namespace StackExchange.Profiling.Storage
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
         Task SetViewedAsync(string user, Guid id);
+        
+        /// <summary>
+        /// Asynchronously sets the provided profiler sessions to "viewed"
+        /// </summary>
+        /// <param name="user">The user to set this profiler ID as viewed for.</param>
+        /// <param name="ids">The profiler IDs to set viewed.</param>
+        Task SetViewedAsync(string user, IEnumerable<Guid> ids);
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.

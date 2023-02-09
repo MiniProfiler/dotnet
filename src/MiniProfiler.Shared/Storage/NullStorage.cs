@@ -89,6 +89,13 @@ namespace StackExchange.Profiling.Storage
         public Task SetViewedAsync(string user, Guid id) => Task.CompletedTask;
 
         /// <summary>
+        /// Sets nothing.
+        /// </summary>
+        /// <param name="user">No one cares.</param>
+        /// <param name="ids">No one cares.</param>
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids) => Task.CompletedTask;
+
+        /// <summary>
         /// Gets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>

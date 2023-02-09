@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dapper;
+using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
 using Xunit;
 using Xunit.Abstractions;
@@ -145,6 +148,35 @@ namespace StackExchange.Profiling.Tests.Storage
             await Storage.SetViewedAsync(mp).ConfigureAwait(false);
             var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
             Assert.DoesNotContain(mp.Id, unviewedIds2);
+        }
+        
+        [Fact]
+        public async Task ExpireAndGetUnviewedAsync()
+        {
+            Options.Storage = Storage;
+            var user = "TestUser";
+            var mps = Enumerable.Range(0, 500)
+                .Select(i => GetMiniProfiler(user: user))
+                .ToList();
+            
+            foreach (var mp in mps)
+            {
+                Assert.False(mp.HasUserViewed);
+                await Storage.SaveAsync(mp).ConfigureAwait(false);
+                Assert.False(mp.HasUserViewed);
+            }
+            
+            var unviewedIds = await Storage.GetUnviewedIdsAsync(user).ConfigureAwait(false);
+            Assert.All(mps, mp => Assert.Contains(mp.Id, unviewedIds));
+            
+            var sw = Stopwatch.StartNew();
+            await Options.ExpireAndGetUnviewedAsync(user);
+            sw.Stop();
+            Output.WriteLine($"{nameof(MiniProfilerBaseOptionsExtensions.ExpireAndGetUnviewedAsync)} completed in {sw.ElapsedMilliseconds}ms");
+            
+            var unviewedIds2 = await Storage.GetUnviewedIdsAsync(user).ConfigureAwait(false);
+            Assert.InRange(unviewedIds2.Count, 0, Options.MaxUnviewedProfiles);
+            Assert.Subset(new HashSet<Guid>(unviewedIds), new HashSet<Guid>(unviewedIds2));
         }
 
         [Fact]

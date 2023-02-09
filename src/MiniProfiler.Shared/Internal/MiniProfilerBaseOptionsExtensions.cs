@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StackExchange.Profiling.Internal
@@ -23,7 +24,7 @@ namespace StackExchange.Profiling.Internal
             {
                 for (var i = 0; i < ids.Count - options.MaxUnviewedProfiles; i++)
                 {
-                    options.Storage.SetViewedAsync(user, ids[i]);
+                    options.Storage.SetViewed(user, ids[i]);
                 }
             }
             return ids;
@@ -45,10 +46,8 @@ namespace StackExchange.Profiling.Internal
             var ids = await options.Storage.GetUnviewedIdsAsync(user).ConfigureAwait(false);
             if (ids?.Count > options.MaxUnviewedProfiles)
             {
-                for (var i = 0; i < ids.Count - options.MaxUnviewedProfiles; i++)
-                {
-                    await options.Storage.SetViewedAsync(user, ids[i]).ConfigureAwait(false);
-                }
+                var idsToSetViewed = ids.Take(ids.Count - options.MaxUnviewedProfiles);
+                await options.Storage.SetViewedAsync(user, idsToSetViewed).ConfigureAwait(false);
             }
             return ids;
         }

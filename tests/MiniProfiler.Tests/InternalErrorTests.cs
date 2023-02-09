@@ -60,6 +60,7 @@ namespace StackExchange.Profiling.Tests
         public Task SetUnviewedAsync(string user, Guid id) => throw new BoomBoom();
         public void SetViewed(string user, Guid id) => throw new BoomBoom();
         public Task SetViewedAsync(string user, Guid id) => throw new BoomBoom();
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids) => throw new BoomBoom();
 
         public class BoomBoom : Exception { }
     }

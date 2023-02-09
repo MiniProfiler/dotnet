@@ -58,6 +58,7 @@ namespace Misc
         public Task SaveAsync(MiniProfiler profiler) => Wrapped.SaveAsync(profiler);
         public Task SetUnviewedAsync(string user, Guid id) => Wrapped.SetUnviewedAsync(user, id);
         public Task SetViewedAsync(string user, Guid id) => Wrapped.SetViewedAsync(user, id);
+        public Task SetViewedAsync(string user, IEnumerable<Guid> ids) => Wrapped.SetViewedAsync(user, ids);
         public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Wrapped.GetUnviewedIdsAsync(user);
 
         /// <summary>
