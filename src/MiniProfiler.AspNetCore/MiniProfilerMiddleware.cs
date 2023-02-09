@@ -7,10 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-#if NETCOREAPP3_1 // Only in netcoreapp3.1 while in preview
 using System.Text.Json;
-#endif
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -20,11 +18,7 @@ namespace StackExchange.Profiling
     public class MiniProfilerMiddleware
     {
         private readonly RequestDelegate _next;
-#if NETCOREAPP3_1
         private readonly IWebHostEnvironment _env;
-#else
-        private readonly IHostingEnvironment _env;
-#endif
         private readonly IOptions<MiniProfilerOptions> _options;
 
         internal readonly EmbeddedProvider Embedded;
@@ -39,11 +33,7 @@ namespace StackExchange.Profiling
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
-#if NETCOREAPP3_1
             IWebHostEnvironment hostingEnvironment,
-#else
-            IHostingEnvironment hostingEnvironment,
-#endif
             IOptions<MiniProfilerOptions> options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -90,14 +80,12 @@ namespace StackExchange.Profiling
                     await SetHeadersAndState(context, mp).ConfigureAwait(false);
                 }
 
-#if NETCOREAPP3_1
                 var appendServerTimingHeader = Options.EnableServerTimingHeader && context.Response.SupportsTrailers();
                 if (appendServerTimingHeader)
                 {
                     context.Response.DeclareTrailer("Server-Timing");
                     appendServerTimingHeader = true;
                 }
-#endif
 
                 // Execute the pipe
                 await _next(context);
@@ -106,12 +94,10 @@ namespace StackExchange.Profiling
                 // Stop (and record)
                 await mp.StopAsync().ConfigureAwait(false);
 
-#if NETCOREAPP3_1 // TODO: Evaluate if this works after http/2 local support in preview 7, maybe backport to netcoreapp2.1
                 if (appendServerTimingHeader && mp != null)
                 {
                     context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
                 }
-#endif
             }
             else
             {
@@ -161,12 +147,10 @@ namespace StackExchange.Profiling
                 {
                     profiler.Name = routeData.Values["page"].ToString();
                 }
-#if NETCOREAPP3_1
                 else if (context.GetEndpoint() is Endpoint endPoint && endPoint.DisplayName.HasValue())
                 {
                     profiler.Name = endPoint.DisplayName;
                 }
-#endif
                 else
                 {
                     profiler.Name = url;
@@ -350,11 +334,7 @@ namespace StackExchange.Profiling
             // Try to parse from the JSON payload first
             if (jsonRequest
                 && context.Request.ContentLength > 0
-#if NETCOREAPP3_1
                 && ((clientRequest = await JsonSerializer.DeserializeAsync<ResultRequest>(context.Request.Body)) != null)
-#else
-                && ResultRequest.TryParse(context.Request.Body, out clientRequest)
-#endif
                 && clientRequest.Id.HasValue)
             {
                 id = clientRequest.Id.Value;

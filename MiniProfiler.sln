@@ -85,8 +85,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Post
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.EFC7", "src\MiniProfiler.EFC7\MiniProfiler.EFC7.csproj", "{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNetCore3", "samples\Samples.AspNetCore3\Samples.AspNetCore3.csproj", "{D95A09CD-A291-42D0-AA41-8426090D0476}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5C8ED0C0-7DBB-4660-836E-A760E25160A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A14EA029-60E2-485A-B757-3626511CF2C4}"
@@ -94,7 +92,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNet5", "samples\Samples.AspNet5\Samples.AspNet5.csproj", "{9C7822CD-BE8E-424F-A0C6-86CC986ABB42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNet", "samples\Samples.AspNet\Samples.AspNet.csproj", "{9C7822CD-BE8E-424F-A0C6-86CC986ABB42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -202,10 +200,6 @@ Global
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D95A09CD-A291-42D0-AA41-8426090D0476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D95A09CD-A291-42D0-AA41-8426090D0476}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D95A09CD-A291-42D0-AA41-8426090D0476}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9C7822CD-BE8E-424F-A0C6-86CC986ABB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C7822CD-BE8E-424F-A0C6-86CC986ABB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C7822CD-BE8E-424F-A0C6-86CC986ABB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -240,13 +234,12 @@ Global
 		{44075C61-13E9-4C78-B340-6045EA115433} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{61E02A52-EB05-4B48-9AAE-BC7C1741E557} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 		{BD7A4E74-ECFE-4BBE-86D9-D6DC2BED86DB} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
-		{D95A09CD-A291-42D0-AA41-8426090D0476} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
 		{9C7822CD-BE8E-424F-A0C6-86CC986ABB42} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
+		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
