@@ -15,6 +15,7 @@ This page tracks major changes included in any update starting with version 4.0.
   - Performance improvement: caching assembly names to reduce allocations during stack trace snippet generation ([#605](https://github.com/MiniProfiler/dotnet/pull/605) - thanks [benbryant0](https://github.com/benbryant0))
   - Added `MiniProfiler.Minimal` headless package with is a standalone bare-bones build with no depdencies and no UI, useful for mass scale applications that are viewing the results elsewhere ([#636](https://github.com/MiniProfiler/dotnet/pull/636))
   - Fixed [#578](https://github.com/MiniProfiler/dotnet/issues/578): Making SQLite data types compatible for more use cases ([#582](https://github.com/MiniProfiler/dotnet/pull/582) - thanks [MarkZither](https://github.com/MarkZither))
+  - Add Nullable Reference Type annotations to the entire codebase ([#640](https://github.com/MiniProfiler/dotnet/pull/640))
 
 #### Version 4.2.22
 - Minor fixes to build versioning

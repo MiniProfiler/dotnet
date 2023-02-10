@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.Tests
 {
     public abstract class AspNetCoreTest : BaseTest
     {
-        protected MiniProfilerOptions CurrentOptions { get; set; }
+        protected MiniProfilerOptions? CurrentOptions { get; set; }
 
         protected AspNetCoreTest(ITestOutputHelper output) : base(output)
         {
@@ -29,15 +29,15 @@ namespace StackExchange.Profiling.Tests
 
         protected static MemoryCache GetMemoryCache() => new MemoryCache(new MemoryCacheOptions());
 
-        protected static string UserName([CallerMemberName]string name = null) => name;
+        protected static string? UserName([CallerMemberName]string? name = null) => name;
 
-        protected List<Guid> GetProfilerIds([CallerMemberName]string name = null) =>
+        protected List<Guid>? GetProfilerIds([CallerMemberName]string? name = null) =>
             CurrentOptions?.Storage.GetUnviewedIds(name);
 
-        protected TestServer GetServer(RequestDelegate requestDelegate, [CallerMemberName]string name = null) =>
+        protected TestServer GetServer(RequestDelegate requestDelegate, [CallerMemberName]string? name = null) =>
             new TestServer(BasicBuilder(requestDelegate, name));
 
-        protected IWebHostBuilder BasicBuilder(RequestDelegate requestDelegate, [CallerMemberName]string name = null) =>
+        protected IWebHostBuilder BasicBuilder(RequestDelegate requestDelegate, [CallerMemberName]string? name = null) =>
             new WebHostBuilder()
                .ConfigureServices(services => services.AddMiniProfiler(o =>
                {

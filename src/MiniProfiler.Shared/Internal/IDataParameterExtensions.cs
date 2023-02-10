@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Internal
         /// Returns the value of <paramref name="parameter"/> suitable for storage/display.
         /// </summary>
         /// <param name="parameter">The parameter to get a value for.</param>
-        public static string GetStringValue(this IDataParameter parameter)
+        public static string? GetStringValue(this IDataParameter parameter)
         {
             object rawValue = parameter.Value;
             if (rawValue == null || rawValue == DBNull.Value)

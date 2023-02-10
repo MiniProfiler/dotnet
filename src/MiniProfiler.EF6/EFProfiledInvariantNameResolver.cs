@@ -17,7 +17,7 @@ namespace StackExchange.Profiling.EntityFramework6
     {
         private readonly ConcurrentDictionary<DbProviderFactory, IProviderInvariantName> _providerInvariantNameCache = new();
 
-        public object GetService(Type type, object key)
+        public object? GetService(Type type, object key)
         {
             if (type != typeof(IProviderInvariantName))
             {

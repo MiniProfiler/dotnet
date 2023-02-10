@@ -57,27 +57,27 @@ namespace StackExchange.Profiling.Storage
         /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        MiniProfiler Load(Guid id);
+        MiniProfiler? Load(Guid id);
 
         /// <summary>
         /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        void SetUnviewed(string user, Guid id);
+        void SetUnviewed(string? user, Guid id);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        void SetViewed(string user, Guid id);
+        void SetViewed(string? user, Guid id);
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        List<Guid> GetUnviewedIds(string user);
+        List<Guid> GetUnviewedIds(string? user);
 
         /// <summary>
         /// Asynchronously list the latest profiling results.
@@ -111,27 +111,27 @@ namespace StackExchange.Profiling.Storage
         /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        Task<MiniProfiler> LoadAsync(Guid id);
+        Task<MiniProfiler?> LoadAsync(Guid id);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        Task SetUnviewedAsync(string user, Guid id);
+        Task SetUnviewedAsync(string? user, Guid id);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        Task SetViewedAsync(string user, Guid id);
+        Task SetViewedAsync(string? user, Guid id);
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        Task<List<Guid>> GetUnviewedIdsAsync(string user);
+        Task<List<Guid>> GetUnviewedIdsAsync(string? user);
     }
 
     /// <summary>

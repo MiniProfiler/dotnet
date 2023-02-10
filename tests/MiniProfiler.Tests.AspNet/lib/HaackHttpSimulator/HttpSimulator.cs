@@ -8,6 +8,8 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
+#nullable disable
+
 namespace Subtext.TestLibrary
 {
     public enum HttpVerb

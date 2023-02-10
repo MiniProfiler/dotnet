@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Storage
         public MySqlStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
             : base(FixConnectionString(connectionString), profilersTable, timingsTable, clientTimingsTable) { }
 
-        private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
+        private string? _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
         private string SaveSql => _saveSql ??= $@"
 INSERT IGNORE INTO {MiniProfilersTable}
@@ -176,7 +176,7 @@ VALUES(@Id, @MiniProfilerId, @Name, @Start, @Duration)";
             }
         }
 
-        private string _sqlStatements;
+        private string? _sqlStatements;
 
         private string SqlStatements => _sqlStatements ??= $@"
 SELECT * FROM {MiniProfilersTable} WHERE Id = @id;
@@ -207,7 +207,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override async Task<MiniProfiler> LoadAsync(Guid id)
+        public override async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             using (var conn = GetConnection())
             {
@@ -228,30 +228,30 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
+        public override void SetUnviewed(string? user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override Task SetUnviewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, false);
+        public override Task SetUnviewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, false);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override void SetViewed(string user, Guid id) => ToggleViewed(user, id, true);
+        public override void SetViewed(string? user, Guid id) => ToggleViewed(user, id, true);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
+        public override Task SetViewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, true);
 
-        private string _toggleViewedSql;
+        private string? _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
 UPDATE {MiniProfilersTable} 
@@ -259,7 +259,7 @@ UPDATE {MiniProfilersTable}
  WHERE Id = @id 
    AND User = @user";
 
-        private void ToggleViewed(string user, Guid id, bool hasUserViewed)
+        private void ToggleViewed(string? user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
@@ -267,7 +267,7 @@ UPDATE {MiniProfilersTable}
             }
         }
 
-        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserViewed)
+        private async Task ToggleViewedAsync(string? user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
@@ -275,7 +275,7 @@ UPDATE {MiniProfilersTable}
             }
         }
 
-        private string _getUnviewedIdsSql;
+        private string? _getUnviewedIdsSql;
 
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   SELECT Id
@@ -289,7 +289,7 @@ ORDER BY Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override List<Guid> GetUnviewedIds(string user)
+        public override List<Guid> GetUnviewedIds(string? user)
         {
             using (var conn = GetConnection())
             {
@@ -302,7 +302,7 @@ ORDER BY Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public override async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             using (var conn = GetConnection())
             {

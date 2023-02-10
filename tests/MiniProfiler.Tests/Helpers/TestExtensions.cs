@@ -11,10 +11,12 @@ namespace StackExchange.Profiling.Tests
         /// </summary>
         /// <param name="profiler">The profile to increment.</param>
         /// <param name="milliseconds">The milliseconds.</param>
-        public static void Increment(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds)
+        public static void Increment(this MiniProfiler? profiler, int milliseconds = BaseTest.StepTimeMilliseconds)
         {
-            var sw = (UnitTestStopwatch)profiler.GetStopwatch();
-            sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
+            if (profiler?.GetStopwatch() is UnitTestStopwatch sw)
+            {
+                sw.ElapsedTicks += milliseconds * UnitTestStopwatch.TicksPerMillisecond;
+            }
         }
 
         /// <summary>
@@ -22,10 +24,12 @@ namespace StackExchange.Profiling.Tests
         /// </summary>
         /// <param name="profiler">The profile to increment.</param>
         /// <param name="milliseconds">The milliseconds.</param>
-        public static Task IncrementAsync(this MiniProfiler profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
-            Task.Run(() => Increment(profiler, milliseconds));
+        public static Task IncrementAsync(this MiniProfiler? profiler, int milliseconds = BaseTest.StepTimeMilliseconds) =>
+            profiler is null 
+            ? Task.CompletedTask
+            : Task.Run(() => Increment(profiler, milliseconds));
 
-        internal static void MaybeLog(this Exception ex, string connectionString, [CallerFilePath] string file = null, [CallerMemberName] string caller = null)
+        internal static void MaybeLog(this Exception ex, string connectionString, [CallerFilePath] string? file = null, [CallerMemberName] string? caller = null)
         {
             if (TestConfig.Current.EnableTestLogging)
             {

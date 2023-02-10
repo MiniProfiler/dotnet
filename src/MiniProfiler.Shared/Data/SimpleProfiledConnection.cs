@@ -9,7 +9,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class SimpleProfiledConnection : IDbConnection
     {
-        private IDbProfiler _profiler;
+        private IDbProfiler? _profiler;
         private IDbConnection _connection;
 
         /// <inheritdoc cref="IDbConnection.ConnectionString"/>
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling.Data
             {
                 _connection.Dispose();
             }
-            _connection = null;
+            _connection = null!;
             _profiler = null;
         }
     }

@@ -1,7 +1,9 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+#if !NETSTANDARD2_0
 using System.Security;
 using System.Security.Permissions;
+#endif
 
 namespace StackExchange.Profiling.Data
 {
@@ -45,9 +47,11 @@ namespace StackExchange.Profiling.Data
 
         /// <summary>
         /// Prevents a default instance of the <see cref="ProfiledDbProviderFactory"/> class from being created.
-        /// Used for database provider APIS internally.
+        /// Used for database provider APIs internally.
         /// </summary>
+#pragma warning disable CS8618
         private ProfiledDbProviderFactory() { }
+#pragma warning restore CS8618
 
         /// <inheritdoc cref="DbProviderFactory.CreateCommand()"/>
         public override DbCommand CreateCommand()

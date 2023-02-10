@@ -175,7 +175,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(1, profiler.ErrorCount);
                 Assert.Equal(1, profiler.ExecuteStartCount);
                 Assert.Equal(1, profiler.ExecuteFinishCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
 
                 try
                 {
@@ -186,7 +186,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(2, profiler.ErrorCount);
                 Assert.Equal(2, profiler.ExecuteStartCount);
                 Assert.Equal(2, profiler.ExecuteFinishCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
 
                 try
                 {
@@ -201,7 +201,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(3, profiler.ExecuteStartCount);
                 Assert.Equal(3, profiler.ExecuteFinishCount);
                 Assert.Equal(3, profiler.ErrorCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
             }
         }
 
@@ -223,7 +223,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(1, profiler.ErrorCount);
                 Assert.Equal(1, profiler.ExecuteStartCount);
                 Assert.Equal(1, profiler.ExecuteFinishCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
 
                 try
                 {
@@ -234,7 +234,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(2, profiler.ErrorCount);
                 Assert.Equal(2, profiler.ExecuteStartCount);
                 Assert.Equal(2, profiler.ExecuteFinishCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
 
                 try
                 {
@@ -249,7 +249,7 @@ namespace StackExchange.Profiling.Tests
                 Assert.Equal(3, profiler.ExecuteStartCount);
                 Assert.Equal(3, profiler.ExecuteFinishCount);
                 Assert.Equal(3, profiler.ErrorCount);
-                Assert.Equal(profiler.ErrorSql, BadSql);
+                Assert.Equal(BadSql, profiler.ErrorSql);
             }
         }
 
@@ -260,6 +260,7 @@ namespace StackExchange.Profiling.Tests
         {
             var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
             var profiler = options.StartProfiler("Tracking: " + track);
+            Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
             GetUnopenedConnection(profiler).Query(cmdString);
@@ -274,6 +275,7 @@ namespace StackExchange.Profiling.Tests
         {
             var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
             var profiler = options.StartProfiler("Tracking: " + track);
+            Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
             var conn = GetUnopenedConnection(profiler);
@@ -291,6 +293,7 @@ namespace StackExchange.Profiling.Tests
         {
             var options = new MiniProfilerTestOptions { TrackConnectionOpenClose = track };
             var profiler = options.StartProfiler("Tracking: " + track);
+            Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
             await GetUnopenedConnection(profiler).QueryAsync(cmdString).ConfigureAwait(false);
@@ -304,6 +307,7 @@ namespace StackExchange.Profiling.Tests
             var options = new MiniProfilerTestOptions();
             var profiler = options.StartProfiler("Shimming");
             var currentDbProfiler = new CurrentDbProfiler(() => MiniProfiler.Current);
+            Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
             GetUnopenedConnection(currentDbProfiler).Query(cmdString);
@@ -317,6 +321,7 @@ namespace StackExchange.Profiling.Tests
             var options = new MiniProfilerTestOptions();
             var profiler = options.StartProfiler(nameof(AlwaysWrapReaders));
             var currentDbProfiler = new CurrentDbProfiler(() => MiniProfiler.Current);
+            Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
             // Profiler is active
@@ -353,12 +358,12 @@ namespace StackExchange.Profiling.Tests
 
         private class CurrentDbProfiler : IDbProfiler
         {
-            private Func<IDbProfiler> GetProfiler { get; }
-            public CurrentDbProfiler(Func<IDbProfiler> getProfiler) => GetProfiler = getProfiler;
+            private Func<IDbProfiler?> GetProfiler { get; }
+            public CurrentDbProfiler(Func<IDbProfiler?> getProfiler) => GetProfiler = getProfiler;
 
             public bool IsActive => GetProfiler()?.IsActive ?? false;
 
-            public void ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader) =>
+            public void ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader? reader) =>
                 GetProfiler()?.ExecuteFinish(profiledDbCommand, executeType, reader);
 
             public void ExecuteStart(IDbCommand profiledDbCommand, SqlExecuteType executeType) =>
@@ -425,13 +430,13 @@ namespace StackExchange.Profiling.Tests
         public class OverrideTestCommand : ProfiledDbCommand
         {
             protected override bool AlwaysWrapReaders => (Connection as OverrideTestConnection)?.AlwaysWrapReaders == true;
-            public OverrideTestCommand(DbCommand command, DbConnection connection, IDbProfiler profiler) : base(command, connection, profiler) { }
+            public OverrideTestCommand(DbCommand command, DbConnection connection, IDbProfiler? profiler) : base(command, connection, profiler) { }
         }
     }
 
     public class SqliteFixture : IDisposable
     {
-        private SqliteConnection Doorstop { get; }
+        private SqliteConnection? Doorstop { get; }
         public SqliteConnection GetConnection() => new SqliteConnection("Data Source= :memory:; Cache = Shared");
 
         public SqliteFixture()
@@ -441,7 +446,6 @@ namespace StackExchange.Profiling.Tests
                 using (var conn = GetConnection())
                 {
                     conn.Open();
-                    conn.Close();
                 }
             }
             catch (Exception e)

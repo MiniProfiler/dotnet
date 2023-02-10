@@ -58,13 +58,15 @@ namespace StackExchange.Profiling.Tests
                 }
 
                 var unviewedIds = GetProfilerIds();
+                Assert.NotNull(unviewedIds);
                 Assert.Single(unviewedIds);
-                var profiler = CurrentOptions.Storage.Load(unviewedIds[0]);
+                var profiler = CurrentOptions?.Storage.Load(unviewedIds[0]);
                 Assert.NotNull(profiler);
                 Assert.Equal(nameof(BasicProfiling), profiler.User);
                 Assert.False(profiler.Stop());
 
                 // Prep is a StepIf, for no noise in the fast case
+                Assert.NotNull(profiler.Root.Children);
                 if (profiler.Root.Children.Count == 2)
                 {
                     Assert.Equal("MiniProfiler Init", profiler.Root.Children[0].Name);
@@ -104,18 +106,18 @@ namespace StackExchange.Profiling.Tests
                 // Test CSS
                 using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.css").ConfigureAwait(false))
                 {
-                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl.MaxAge);
-                    Assert.True(response.Headers.CacheControl.Public);
-                    Assert.Equal("text/css", response.Content.Headers.ContentType.MediaType);
+                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl?.MaxAge);
+                    Assert.True(response.Headers.CacheControl?.Public);
+                    Assert.Equal("text/css", response.Content.Headers.ContentType?.MediaType);
                     // Checking for wrapping/scoping class
                     Assert.StartsWith(":root", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 }
                 // Test JS
                 using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js").ConfigureAwait(false))
                 {
-                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl.MaxAge);
-                    Assert.True(response.Headers.CacheControl.Public);
-                    Assert.Equal("application/javascript", response.Content.Headers.ContentType.MediaType);
+                    Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl?.MaxAge);
+                    Assert.True(response.Headers.CacheControl?.Public);
+                    Assert.Equal("application/javascript", response.Content.Headers.ContentType?.MediaType);
                     // Checking for license header
                     Assert.Contains("jQuery", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 }
@@ -185,11 +187,12 @@ namespace StackExchange.Profiling.Tests
                 }
                 Assert.NotNull(id);
 
+                Assert.NotNull(CurrentOptions);
                 string Path(string path) => CurrentOptions.RouteBasePath + "/" + path;
 
                 using (var response = await client.GetAsync(Path("results-index")))
                 {
-                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
                     Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + indexExpected);
@@ -198,7 +201,7 @@ namespace StackExchange.Profiling.Tests
 
                 using (var response = await client.GetAsync(Path("results-list")))
                 {
-                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
                     Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + listExpected);
@@ -207,7 +210,7 @@ namespace StackExchange.Profiling.Tests
 
                 using (var response = await client.GetAsync(Path("results?id=" + id)))
                 {
-                    Output.WriteLine("Hitting: " + response.RequestMessage.RequestUri);
+                    Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
                     Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + singleExpected);

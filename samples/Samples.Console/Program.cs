@@ -60,7 +60,7 @@ namespace Samples.Console
                 }
             }
 
-            mp.Stop();
+            mp?.Stop();
         }
 
         public static void TestMultiThreaded()

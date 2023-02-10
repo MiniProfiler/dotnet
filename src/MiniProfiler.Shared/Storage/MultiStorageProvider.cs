@@ -131,7 +131,7 @@ namespace StackExchange.Profiling.Storage
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public MiniProfiler Load(Guid id)
+        public MiniProfiler? Load(Guid id)
         {
             if (Stores == null) return null;
             foreach (var store in Stores)
@@ -155,7 +155,7 @@ namespace StackExchange.Profiling.Storage
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             if (Stores == null) return null;
             foreach (var store in Stores)
@@ -180,7 +180,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             if (Stores == null) return;
             if (AllowParallelOps)
@@ -202,7 +202,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public Task SetUnviewedAsync(string user, Guid id)
+        public Task SetUnviewedAsync(string? user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;
 
@@ -215,7 +215,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             if (Stores == null) return;
             if (AllowParallelOps)
@@ -237,7 +237,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public Task SetViewedAsync(string user, Guid id)
+        public Task SetViewedAsync(string? user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;
 
@@ -250,7 +250,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to fetch IDs for</param>
         /// <returns>A distinct list of unviewed IDs</returns>
-        public List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string? user)
         {
             var results = new List<Guid>();
             if (Stores == null) return results;
@@ -280,7 +280,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to fetch IDs for</param>
         /// <returns>A distinct list of unviewed IDs</returns>
-        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             var results = new List<Guid>();
             if (Stores == null) return results;

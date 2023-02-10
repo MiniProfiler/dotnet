@@ -5,20 +5,22 @@ namespace StackExchange.Profiling.Storage.Internal
 {
     internal class MiniProfilerDoc
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public Guid ProfilerId { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime Started { get; set; }
         public decimal DurationMilliseconds { get; set; }
-        public string MachineName { get; set; }
-        public Dictionary<string, string> CustomLinks { get; set; }
-        public string CustomLinksJson { get; set; }
+        public string? MachineName { get; set; }
+        public Dictionary<string, string>? CustomLinks { get; set; }
+        public string? CustomLinksJson { get; set; }
         public Timing Root { get; set; }
-        public ClientTimings ClientTimings { get; set; }
-        public string User { get; set; }
+        public ClientTimings? ClientTimings { get; set; }
+        public string? User { get; set; }
         public bool HasUserViewed { get; set; }
 
-        public MiniProfilerDoc() { }
+#pragma warning disable CS8618
+        public MiniProfilerDoc() { /* for serialization */ }
+#pragma warning restore CS8618
 
         public MiniProfilerDoc(MiniProfiler profiler)
         {

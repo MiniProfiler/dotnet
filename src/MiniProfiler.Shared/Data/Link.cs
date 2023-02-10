@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 
+#nullable disable
+
 namespace StackExchange.Profiling.Data
 {
 #pragma warning disable RCS1158 // Avoid static members in generic types.

@@ -99,7 +99,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters) =>
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter>? parameters) =>
             FormatSql(commandText, parameters, null);
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
         /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
-        public virtual string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command)
+        public virtual string FormatSql(string commandText, List<SqlTimingParameter>? parameters, IDbCommand? command)
         {
             var buffer = new StringBuilder();
 
@@ -145,12 +145,11 @@ namespace StackExchange.Profiling.SqlFormatters
         private string RemoveParameterPrefix(string name) =>
             name.StartsWith("@", StringComparison.Ordinal) ? name.Substring(1) : name;
 
-        private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter> parameters, StringBuilder buffer)
+        private void GenerateStoreProcedureCall(string commandText, List<SqlTimingParameter>? parameters, StringBuilder buffer)
         {
             buffer.Append("EXEC ");
 
-            SqlTimingParameter returnValueParameter = GetReturnValueParameter(parameters);
-            if (returnValueParameter != null)
+            if (GetReturnValueParameter(parameters) is SqlTimingParameter returnValueParameter)
             {
                 buffer.Append(EnsureParameterPrefix(returnValueParameter.Name)).Append(" = ");
             }
@@ -163,7 +162,7 @@ namespace StackExchange.Profiling.SqlFormatters
             GenerateSelectStatement(buffer, parameters);
         }
 
-        private void GenerateSelectStatement(StringBuilder buffer, List<SqlTimingParameter> parameters)
+        private void GenerateSelectStatement(StringBuilder buffer, List<SqlTimingParameter>? parameters)
         {
             if (parameters == null) return;
 
@@ -184,7 +183,7 @@ namespace StackExchange.Profiling.SqlFormatters
             buffer.Append("\nSELECT ").Append(string.Join(", ", parametersToSelect)).Append(';');
         }
 
-        private static SqlTimingParameter GetReturnValueParameter(List<SqlTimingParameter> parameters)
+        private static SqlTimingParameter? GetReturnValueParameter(List<SqlTimingParameter>? parameters)
         {
             if (parameters == null || parameters.Count == 0) return null;
             return parameters.Find(x => x.Direction == nameof(ParameterDirection.ReturnValue));
@@ -203,7 +202,7 @@ namespace StackExchange.Profiling.SqlFormatters
             }
         }
 
-        private void GenerateStoredProcedureParameters(StringBuilder buffer, List<SqlTimingParameter> parameters)
+        private void GenerateStoredProcedureParameters(StringBuilder buffer, List<SqlTimingParameter>? parameters)
         {
             if (parameters == null || parameters.Count == 0) return;
 
@@ -255,7 +254,7 @@ namespace StackExchange.Profiling.SqlFormatters
                         buffer.Append(",\n").Append(new string(' ', 8));
                     }
 
-                    string resolvedType = null;
+                    string? resolvedType = null;
                     if (!Enum.TryParse(parameter.DbType, out DbType parsed))
                     {
                         resolvedType = parameter.DbType;

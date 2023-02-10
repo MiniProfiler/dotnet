@@ -22,13 +22,13 @@ namespace StackExchange.Profiling
         /// </summary>
         [ViewContext]
         [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        public ViewContext ViewContext { get; set; } = null!;
 
         /// <summary>
         /// The name of this <see cref="MiniProfiler"/> step.
         /// </summary>
         [HtmlAttributeName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Renders the tag helper.

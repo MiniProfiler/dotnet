@@ -9,7 +9,7 @@ namespace Misc
     {
         public void Example()
         {
-            var profiler = MiniProfiler.StartNew();
+            var profiler = MiniProfiler.StartNew()!;
 
             var myList = new List<string> { "A", "B", "C", "E" };
             using (profiler.Step("Doing a collection of repeated work"))

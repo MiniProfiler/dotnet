@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// <param name="context">The <see cref="HttpContext"/> this tag is being rendered in.</param>
         /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
         public static HtmlString RenderIncludes(
-            this MiniProfiler profiler,
+            this MiniProfiler? profiler,
             HttpContext context,
             RenderOptions renderOptions)
         {

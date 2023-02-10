@@ -12,8 +12,8 @@ namespace StackExchange.Profiling.Data
     {
         private IDbCommand _command;
         private IDbConnection _connection;
-        private IDbProfiler _profiler;
-        private IDbTransaction _transaction;
+        private IDbProfiler? _profiler;
+        private IDbTransaction? _transaction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleProfiledCommand"/> class, creating a new wrapped command.
@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The wrapped connection the command is attached to.</param>
         /// <param name="profiler">The profiler to use.</param>
         /// <exception cref="ArgumentNullException">Throws then the <paramref name="command"/> is <c>null</c>.</exception>
-        public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler profiler)
+        public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler? profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
             _connection = connection;
@@ -105,7 +105,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="IDbCommand.Transaction"/>
-        public IDbTransaction Transaction
+        public IDbTransaction? Transaction
         {
             get => _transaction;
             set
@@ -164,8 +164,8 @@ namespace StackExchange.Profiling.Data
         {
             if (disposing) _command?.Dispose();
 
-            _command = null;
-            _connection = null;
+            _command = null!;
+            _connection = null!;
             _profiler = null;
         }
     }

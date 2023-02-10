@@ -52,52 +52,52 @@ namespace StackExchange.Profiling.Storage
         /// Returns null.
         /// </summary>
         /// <param name="id">No one cares.</param>
-        public MiniProfiler Load(Guid id) => null;
+        public MiniProfiler? Load(Guid id) => null;
 
         /// <summary>
         /// Returns null.
         /// </summary>
         /// <param name="id">No one cares.</param>
-        public Task<MiniProfiler> LoadAsync(Guid id) => Task.FromResult((MiniProfiler)null);
+        public Task<MiniProfiler?> LoadAsync(Guid id) => Task.FromResult((MiniProfiler?)null);
 
         /// <summary>
         /// Sets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public void SetUnviewed(string user, Guid id) { /* no-op */ }
+        public void SetUnviewed(string? user, Guid id) { /* no-op */ }
 
         /// <summary>
         /// Sets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public Task SetUnviewedAsync(string user, Guid id) => Task.CompletedTask;
+        public Task SetUnviewedAsync(string? user, Guid id) => Task.CompletedTask;
 
         /// <summary>
         /// Sets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public void SetViewed(string user, Guid id) { /* no-op */ }
+        public void SetViewed(string? user, Guid id) { /* no-op */ }
 
         /// <summary>
         /// Sets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
         /// <param name="id">No one cares.</param>
-        public Task SetViewedAsync(string user, Guid id) => Task.CompletedTask;
+        public Task SetViewedAsync(string? user, Guid id) => Task.CompletedTask;
 
         /// <summary>
         /// Gets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
-        public List<Guid> GetUnviewedIds(string user) => new();
+        public List<Guid> GetUnviewedIds(string? user) => new();
 
         /// <summary>
         /// Gets nothing.
         /// </summary>
         /// <param name="user">No one cares.</param>
-        public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Task.FromResult(new List<Guid>());
+        public Task<List<Guid>> GetUnviewedIdsAsync(string? user) => Task.FromResult(new List<Guid>());
     }
 }

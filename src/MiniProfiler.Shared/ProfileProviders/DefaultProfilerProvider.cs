@@ -11,12 +11,12 @@ namespace StackExchange.Profiling
     /// </summary>
     public class DefaultProfilerProvider : IAsyncProfilerProvider
     {
-        private static readonly AsyncLocal<MiniProfiler> _profiler = new();
+        private static readonly AsyncLocal<MiniProfiler?> _profiler = new();
 
         /// <summary>
         /// The current profiler instance, statically resolved and backed by AsyncLocal{T}.
         /// </summary>
-        public virtual MiniProfiler CurrentProfiler
+        public virtual MiniProfiler? CurrentProfiler
         {
             get => _profiler.Value;
             protected set => _profiler.Value = value;
@@ -31,7 +31,7 @@ namespace StackExchange.Profiling
         /// a web request, the URL will be used for the overall session name.
         /// </param>
         /// <param name="options">The options to start the MiniProfiler with. Likely a more-specific type underneath.</param>
-        public virtual MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options) =>
+        public virtual MiniProfiler? Start(string? profilerName, MiniProfilerBaseOptions options) =>
             CurrentProfiler = new MiniProfiler(profilerName ?? nameof(MiniProfiler), options);
 
         /// <summary>

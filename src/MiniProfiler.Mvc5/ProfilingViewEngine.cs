@@ -21,10 +21,10 @@ namespace StackExchange.Profiling.Mvc
             _wrapped = wrapped;
         }
 
-        private ViewEngineResult Find(string name, Func<ViewEngineResult> finder, bool isPartial)
+        private ViewEngineResult? Find(string name, Func<ViewEngineResult> finder, bool isPartial)
         {
             var profiler = MiniProfiler.Current;
-            IDisposable block = null;
+            IDisposable? block = null;
             const string Key = "find-view-or-partial";
 
             if (profiler != null)
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Mvc
         /// <param name="controllerContext">The context to search for this partial with.</param>
         /// <param name="partialViewName">The view name to search for.</param>
         /// <param name="useCache">Whether to use cached lookups.</param>
-        public ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache) =>
+        public ViewEngineResult? FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache) =>
             Find(partialViewName, () => _wrapped.FindPartialView(controllerContext, partialViewName, useCache), isPartial: true);
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace StackExchange.Profiling.Mvc
         /// <param name="viewName">The view name to search for.</param>
         /// <param name="masterName">The master view name.</param>
         /// <param name="useCache">Whether to use cached lookups.</param>
-        public ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache) =>
+        public ViewEngineResult? FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache) =>
             Find(viewName, () => _wrapped.FindView(controllerContext, viewName, masterName, useCache), isPartial: false);
 
         /// <summary>

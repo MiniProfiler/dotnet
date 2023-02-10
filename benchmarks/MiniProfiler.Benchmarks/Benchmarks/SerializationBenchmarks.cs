@@ -25,9 +25,9 @@ namespace Benchmarks
         public string ComplexSerialize() => _complexProfiler.ToJson();
 
         [Benchmark(Description = "Deserialize: Simple MiniProfiler (.FromJson())")]
-        public MiniProfiler SimpleDeserialize() => MiniProfiler.FromJson(_simpleProfilerJson);
+        public MiniProfiler? SimpleDeserialize() => MiniProfiler.FromJson(_simpleProfilerJson);
 
         [Benchmark(Description = "Deserialize: Complex MiniProfiler (.FromJson())")]
-        public MiniProfiler ComplexDeserialize() => MiniProfiler.FromJson(_complexProfilerJson);
+        public MiniProfiler? ComplexDeserialize() => MiniProfiler.FromJson(_complexProfilerJson);
     }
 }

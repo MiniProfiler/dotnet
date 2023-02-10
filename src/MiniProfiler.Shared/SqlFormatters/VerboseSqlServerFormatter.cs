@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
         /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
-        public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+        public override string FormatSql(string commandText, List<SqlTimingParameter>? parameters, IDbCommand? command = null)
         {
             var buffer = StringBuilderCache.Get();
 

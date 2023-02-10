@@ -14,7 +14,7 @@ namespace StackExchange.Profiling
         /// Gets or sets the list of client side timings.
         /// </summary>
         [DataMember(Order = 2)]
-        public List<ClientTiming> Timings { get; set; }
+        public List<ClientTiming>? Timings { get; set; }
 
         /// <summary>
         /// Gets or sets the redirect count.

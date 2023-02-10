@@ -18,7 +18,9 @@ namespace StackExchange.Profiling
         /// Don't use this.
         /// </summary>
         [Obsolete("Used for serialization")]
+#pragma warning disable CS8618
         public CustomTiming() { /* serialization only */ }
+#pragma warning restore CS8618
 
         /// <summary>
         /// Returns a new CustomTiming, also initializing its <see cref="Id"/> and, optionally, its <see cref="StackTraceSnippet"/>.
@@ -53,20 +55,20 @@ namespace StackExchange.Profiling
         /// Gets or sets the command that was executed, e.g. "select * from Table" or "INCR my:redis:key"
         /// </summary>
         [DataMember(Order = 2)]
-        public string CommandString { get; set; }
+        public string? CommandString { get; set; }
 
         // TODO: should this just match the key that the List<CustomTiming> is stored under in Timing.CustomTimings?
         /// <summary>
         /// Short name describing what kind of custom timing this is, e.g. "Get", "Query", "Fetch".
         /// </summary>
         [DataMember(Order = 3)]
-        public string ExecuteType { get; set; }
+        public string? ExecuteType { get; set; }
 
         /// <summary>
         /// Gets or sets roughly where in the calling code that this custom timing was executed.
         /// </summary>
         [DataMember(Order = 4)]
-        public string StackTraceSnippet { get; set; }
+        public string? StackTraceSnippet { get; set; }
 
         /// <summary>
         /// Gets or sets the offset from main <c>MiniProfiler</c> start that this custom command began.
@@ -93,7 +95,7 @@ namespace StackExchange.Profiling
         [DataMember(Order = 8)]
         public bool Errored { get; set; }
 
-        internal string Category { get; set; }
+        internal string? Category { get; set; }
 
         /// <summary>
         /// OPTIONAL - call after receiving the first response from your Remote Procedure Call to
@@ -111,9 +113,9 @@ namespace StackExchange.Profiling
         {
             DurationMilliseconds ??= _profiler.GetDurationMilliseconds(_startTicks);
 
-            if (_minSaveMs > 0 && DurationMilliseconds < _minSaveMs.Value)
+            if (_minSaveMs > 0 && DurationMilliseconds < _minSaveMs.Value && Category is not null)
             {
-                _profiler.Head.RemoveCustomTiming(Category, this);
+                _profiler.Head?.RemoveCustomTiming(Category, this);
             }
         }
 
@@ -122,6 +124,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns <see cref="CommandString"/> for debugging.
         /// </summary>
-        public override string ToString() => CommandString;
+        public override string? ToString() => CommandString;
     }
 }

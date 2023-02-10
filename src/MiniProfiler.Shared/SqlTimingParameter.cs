@@ -17,19 +17,19 @@ namespace StackExchange.Profiling
         /// Parameter name, e.g. "routeName"
         /// </summary>
         [DataMember(Order = 1)]
-        public string Name { get; set; }
+        public string Name { get; set; } = "<unknown>";
 
         /// <summary>
         /// The value submitted to the database.
         /// </summary>
         [DataMember(Order = 2)]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         /// <summary>
         /// System.Data.DbType, e.g. "String", "Bit"
         /// </summary>
         [DataMember(Order = 3)]
-        public string DbType { get; set; }
+        public string? DbType { get; set; }
 
         /// <summary>
         /// How large the type is, e.g. for string, size could be 4000
@@ -41,7 +41,7 @@ namespace StackExchange.Profiling
         /// System.Data.ParameterDirection: "Input", "Output", "InputOutput", "ReturnValue"
         /// </summary>
         [DataMember(Order = 5)]
-        public string Direction { get; set; }
+        public string? Direction { get; set; }
 
         /// <summary>
         /// Gets or sets a value that indicates whether the parameter accepts null values.

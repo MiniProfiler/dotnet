@@ -12,7 +12,7 @@ namespace StackExchange.Profiling
         private const string HttpContextKey = "__MiniProfiler.RequestState";
 
         public void Store(HttpContext context) => context.Items[HttpContextKey] = this;
-        public static RequestState Get(HttpContext context) => context.Items[HttpContextKey] as RequestState;
+        public static RequestState? Get(HttpContext context) => context.Items[HttpContextKey] as RequestState;
 
         /// <summary>
         /// Is the user authorized to see this MiniProfiler?
@@ -22,6 +22,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Store this as a string so we generate it once
         /// </summary>
-        public List<Guid> RequestIDs { get; set; }
+        public List<Guid>? RequestIDs { get; set; }
     }
 }

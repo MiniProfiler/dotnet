@@ -33,7 +33,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
+        public string FormatSql(string commandText, List<SqlTimingParameter>? parameters)
         {
             if (parameters == null || parameters.Count == 0)
             {
