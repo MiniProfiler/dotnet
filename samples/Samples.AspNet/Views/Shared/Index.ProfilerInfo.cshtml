@@ -2,8 +2,8 @@
 @using Microsoft.Extensions.Options
 @inject IOptions<MiniProfilerOptions> Options
 @functions{
-    public string GetVal(object o) =>
-        o?.ToString().Replace("StackExchange.Profiling.", string.Empty);
+    public string? GetVal(object? o) =>
+        o?.ToString()?.Replace("StackExchange.Profiling.", string.Empty);
 }
 <div class="panel panel-default">
     <div class="panel-heading">MiniProfiler Info</div>

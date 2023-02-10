@@ -27,7 +27,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="profiledDbCommand">The profiled DB Command.</param>
         /// <param name="executeType">The execute Type.</param>
         /// <param name="reader">The reader.</param>
-        void ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader);
+        void ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader? reader);
 
         /// <summary>
         /// Called when a reader is done iterating through the data.

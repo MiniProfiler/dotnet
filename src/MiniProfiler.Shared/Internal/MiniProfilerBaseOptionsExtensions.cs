@@ -16,14 +16,14 @@ namespace StackExchange.Profiling.Internal
         /// <param name="options">The options to operate against on.</param>
         /// <param name="user">The user to get profiler IDs for.</param>
         /// <returns>The list of IDs</returns>
-        public static List<Guid> ExpireAndGetUnviewed(this MiniProfilerBaseOptions options, string user)
+        public static List<Guid>? ExpireAndGetUnviewed(this MiniProfilerBaseOptions options, string? user)
         {
             var ids = options.Storage?.GetUnviewedIds(user);
             if (ids?.Count > options.MaxUnviewedProfiles)
             {
                 for (var i = 0; i < ids.Count - options.MaxUnviewedProfiles; i++)
                 {
-                    options.Storage.SetViewedAsync(user, ids[i]);
+                    options.Storage?.SetViewedAsync(user, ids[i]);
                 }
             }
             return ids;
@@ -36,14 +36,14 @@ namespace StackExchange.Profiling.Internal
         /// <param name="options">The options to operate against on.</param>
         /// <param name="user">The user to get profiler IDs for.</param>
         /// <returns>The list of IDs</returns>
-        public static async Task<List<Guid>> ExpireAndGetUnviewedAsync(this MiniProfilerBaseOptions options, string user)
+        public static async Task<List<Guid>?> ExpireAndGetUnviewedAsync(this MiniProfilerBaseOptions options, string? user)
         {
             if (options.Storage == null)
             {
                 return null;
             }
             var ids = await options.Storage.GetUnviewedIdsAsync(user).ConfigureAwait(false);
-            if (ids?.Count > options.MaxUnviewedProfiles)
+            if (ids.Count > options.MaxUnviewedProfiles)
             {
                 for (var i = 0; i < ids.Count - options.MaxUnviewedProfiles; i++)
                 {

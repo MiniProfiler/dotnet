@@ -47,12 +47,12 @@ namespace StackExchange.Profiling.Data
         /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _transaction != null)
+            if (disposing)
             {
-                _transaction.Dispose();
+                _transaction?.Dispose();
             }
-            _transaction = null;
-            _connection = null;
+            _transaction = null!;
+            _connection = null!;
             base.Dispose(disposing);
         }
     }

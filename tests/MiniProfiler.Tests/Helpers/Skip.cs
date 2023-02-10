@@ -27,7 +27,7 @@ namespace StackExchange.Profiling.Tests
 #pragma warning disable RCS1194 // Implement exception constructors.
     public class SkipTestException : Exception
     {
-        public string MissingFeatures { get; set; }
+        public string? MissingFeatures { get; set; }
 
         public SkipTestException(string reason) : base(reason) { }
     }

@@ -18,9 +18,9 @@ namespace StackExchange.Profiling.Data
     public partial class ProfiledDbCommand : DbCommand
     {
         private DbCommand _command;
-        private DbConnection _connection;
-        private DbTransaction _transaction;
-        private IDbProfiler _profiler;
+        private DbConnection? _connection;
+        private DbTransaction? _transaction;
+        private IDbProfiler? _profiler;
 
         /// <summary>
         /// Whether to always wrap data readers, even if there isn't an active profiler on this connect.
@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.Data
         protected virtual bool AlwaysWrapReaders => false;
 
 #if !MINIMAL
-        private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
+        private static Link<Type, Action<IDbCommand, bool>>? bindByNameCache;
         private bool _bindByName;
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The connection.</param>
         /// <param name="profiler">The profiler.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="command"/> is <c>null</c>.</exception>
-        public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbCommand(DbCommand command, DbConnection? connection, IDbProfiler? profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
 
@@ -84,7 +84,7 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         /// <param name="commandType">The command type.</param>
         /// <returns>The <see cref="Action"/>.</returns>
-        private static Action<IDbCommand, bool> GetBindByName(Type commandType)
+        private static Action<IDbCommand, bool>? GetBindByName(Type commandType)
         {
             if (commandType == null) return null; // GIGO
             if (Link<Type, Action<IDbCommand, bool>>.TryGet(bindByNameCache, commandType, out var action))
@@ -110,8 +110,8 @@ namespace StackExchange.Profiling.Data
                 action = (Action<IDbCommand, bool>)method.CreateDelegate(typeof(Action<IDbCommand, bool>));
             }
 
-            // cache it            
-            Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
+            // cache it
+            Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action!);
             return action;
         }
 #endif
@@ -138,7 +138,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbCommand.DbConnection"/>
-        protected override DbConnection DbConnection
+        protected override DbConnection? DbConnection
         {
             get => _connection;
             set
@@ -148,7 +148,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        private void UnwrapAndAssignConnection(DbConnection value)
+        private void UnwrapAndAssignConnection(DbConnection? value)
         {
             if (value is ProfiledDbConnection profiledConn)
             {
@@ -165,7 +165,7 @@ namespace StackExchange.Profiling.Data
         protected override DbParameterCollection DbParameterCollection => _command.Parameters;
 
         /// <inheritdoc cref="DbCommand.DbTransaction"/>
-        protected override DbTransaction DbTransaction
+        protected override DbTransaction? DbTransaction
         {
             get => _transaction;
             set
@@ -192,13 +192,13 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
         /// </summary>
-        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler profiler)
+        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler? profiler)
             => new ProfiledDbDataReader(original, behavior, profiler);
 
         /// <inheritdoc cref="DbCommand.ExecuteDbDataReader(CommandBehavior)"/>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            DbDataReader result = null;
+            DbDataReader? result = null;
             if (_profiler?.IsActive != true)
             {
                 result = _command.ExecuteReader(behavior);
@@ -227,7 +227,7 @@ namespace StackExchange.Profiling.Data
         /// <inheritdoc cref="DbCommand.ExecuteDbDataReaderAsync(CommandBehavior, CancellationToken)"/>
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
-            DbDataReader result = null;
+            DbDataReader? result = null;
             if (_profiler?.IsActive != true)
             {
                 result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
@@ -380,7 +380,7 @@ namespace StackExchange.Profiling.Data
             {
                 _command.Dispose();
             }
-            _command = null;
+            _command = null!;
             base.Dispose(disposing);
         }
 

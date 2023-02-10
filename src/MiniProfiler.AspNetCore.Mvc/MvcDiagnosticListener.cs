@@ -49,8 +49,9 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Gets a cached concatenation since this is such a hot path - don't keep allocating.
         /// </summary>
-        private string GetName(string label, string name, Func<string, string> trim = null)
+        private string GetName(string label, string? name, Func<string, string?>? trim = null)
         {
+            name ??= ""; // If passed nothing, that's the cache we're looking for
             var key = (label, name);
             if (!_descriptorNameCache.TryGetValue(key, out var result))
             {
@@ -64,19 +65,19 @@ namespace StackExchange.Profiling.Data
         private class StackTiming
         {
             public object State { get; set; }
-            public Timing Timing { get; set; }
-            public StackTiming Previous { get; set; }
+            public Timing? Timing { get; set; }
+            public StackTiming? Previous { get; set; }
 
-            public StackTiming(object state, Timing timing, StackTiming previous) =>
+            public StackTiming(object state, Timing? timing, StackTiming? previous) =>
                 (State, Timing, Previous) = (state, timing, previous);
         }
 
         /// <summary>
         /// Stores the current timing in the tree, on each request.
         /// </summary>
-        private readonly AsyncLocal<StackTiming> CurrentTiming = new();
+        private readonly AsyncLocal<StackTiming?> CurrentTiming = new();
 
-        private object StartAction<T>(string label, T descriptor) where T : ActionDescriptor
+        private object? StartAction<T>(string label, T descriptor) where T : ActionDescriptor
         {
             var profiler = MiniProfiler.Current;
             var stepName = GetName(label, descriptor.DisplayName, name =>
@@ -84,7 +85,7 @@ namespace StackExchange.Profiling.Data
                 // For the "Samples.AspNetCore.Controllers.HomeController.Index (Samples.AspNetCore3)" format,
                 // ...trim off the assembly on the end.
                 var assemblyNamePos = name.IndexOf(" (");
-                return assemblyNamePos > 0
+                return assemblyNamePos > 0 && descriptor.DisplayName is not null
                         ? descriptor.DisplayName[..assemblyNamePos]
                         : descriptor.DisplayName;
             });
@@ -93,7 +94,7 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
-        private object StartActionResult<T>(T result) where T : IActionResult
+        private object? StartActionResult<T>(T result) where T : IActionResult
         {
             var profiler = MiniProfiler.Current;
             var stepName = result switch
@@ -110,7 +111,7 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
-        private object StartFilter<T>(string label, T filter) where T : IFilterMetadata
+        private object? StartFilter<T>(string label, T filter) where T : IFilterMetadata
         {
             var profiler = MiniProfiler.Current;
             if (profiler?.Options is MiniProfilerOptions opts && opts.EnableMvcFilterProfiling)
@@ -121,7 +122,7 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
-        private object StartView<T>(T state, string label, string viewName) where T : class
+        private object? StartView<T>(T state, string label, string viewName) where T : class
         {
             var profiler = MiniProfiler.Current;
             if (profiler?.Options is MiniProfilerOptions opts && opts.EnableMvcViewProfiling)
@@ -133,7 +134,7 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
-        private object StartHandler<T>(T state, HandlerMethodDescriptor handler) where T : class
+        private object? StartHandler<T>(T state, HandlerMethodDescriptor handler) where T : class
         {
             var profiler = MiniProfiler.Current;
             var stepName = GetName("Handler", handler.Name);
@@ -141,7 +142,7 @@ namespace StackExchange.Profiling.Data
             return null;
         }
 
-        private object Complete<T>(T state) where T : class
+        private object? Complete<T>(T state) where T : class
         {
             var top = CurrentTiming.Value;
             while (top?.Timing?.DurationMilliseconds.HasValue == true)

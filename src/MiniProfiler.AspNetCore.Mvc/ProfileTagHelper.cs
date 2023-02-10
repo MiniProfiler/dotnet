@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// The name of this <see cref="MiniProfiler"/> step.
         /// </summary>
         [HtmlAttributeName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Processes this section, profiling the contents within.

@@ -24,10 +24,15 @@ namespace StackExchange.Profiling
             _env = env;
         }
 
-        public string GetFile(HttpContext context, PathString file)
+        public string? GetFile(HttpContext context, PathString file)
         {
             var response = context.Response;
             var path = file.Value;
+            if (path is null)
+            {
+                return null;
+            }
+
             switch (Path.GetExtension(path))
             {
                 case ".js":
@@ -40,7 +45,7 @@ namespace StackExchange.Profiling
                     return null;
             }
 
-            if (TryGetResource(Path.GetFileName(path), out string resource))
+            if (TryGetResource(Path.GetFileName(path), out string? resource))
             {
                 // Cache for one month - we cache break based on version and fetching these every request is crazy
                 response.Headers["Cache-Control"] = "public,max-age=2592000";
@@ -50,7 +55,7 @@ namespace StackExchange.Profiling
             return null;
         }
 
-        public bool TryGetResource(string filename, out string resource)
+        public bool TryGetResource(string filename, out string? resource)
         {
             filename = filename.ToLower();
             if (ResourceCache.TryGetValue(filename, out resource))

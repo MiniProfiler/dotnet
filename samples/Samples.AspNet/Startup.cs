@@ -137,13 +137,13 @@ namespace Samples.AspNetCore
                    endpoints.MapRazorPages();
                    endpoints.MapGet("/named-endpoint", async httpContext =>
                    {
-                       var endpointName = httpContext.GetEndpoint().DisplayName;
+                       var endpointName = httpContext.GetEndpoint()?.DisplayName;
                        await httpContext.Response.WriteAsync($"Content from an endpoint named {endpointName}");
                    }).WithDisplayName("Named Endpoint");
 
                    endpoints.MapGet("implicitly-named-endpoint", async httpContext =>
                    {
-                       var endpointName = httpContext.GetEndpoint().DisplayName;
+                       var endpointName = httpContext.GetEndpoint()?.DisplayName;
                        await httpContext.Response.WriteAsync($"Content from an endpoint named {endpointName}");
                    });
                });
@@ -152,7 +152,7 @@ namespace Samples.AspNetCore
             using (var serviceScope = serviceScopeFactory.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<SampleContext>();
-                dbContext.Database.EnsureCreated();
+                dbContext?.Database.EnsureCreated();
             }
             // For nesting test routes
             new SqliteStorage(SqliteConnectionString).WithSchemaCreation();

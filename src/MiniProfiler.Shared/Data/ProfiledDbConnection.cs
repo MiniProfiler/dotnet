@@ -13,12 +13,12 @@ namespace StackExchange.Profiling.Data
     public class ProfiledDbConnection : DbConnection
     {
         private DbConnection _connection;
-        private IDbProfiler _profiler;
+        private IDbProfiler? _profiler;
 
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>
-        public IDbProfiler Profiler => _profiler;
+        public IDbProfiler? Profiler => _profiler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbConnection"/> class.
@@ -28,7 +28,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection"><c>Your provider-specific flavour of connection, e.g. SqlConnection, OracleConnection</c></param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="connection"/> is <c>null</c>.</exception>
-        public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbConnection(DbConnection connection, IDbProfiler? profiler)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _connection.StateChange += StateChangeHandler;
@@ -127,7 +127,7 @@ namespace StackExchange.Profiling.Data
         /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
         /// </summary>
         /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
-        protected virtual DbCommand CreateDbCommand(DbCommand original, IDbProfiler profiler)
+        protected virtual DbCommand CreateDbCommand(DbCommand original, IDbProfiler? profiler)
                 => new ProfiledDbCommand(original, this, profiler);
 
         /// <inheritdoc cref="DbConnection.CreateDbCommand()"/>
@@ -145,7 +145,7 @@ namespace StackExchange.Profiling.Data
                 _connection.Dispose();
             }
             base.Dispose(disposing);
-            _connection = null;
+            _connection = null!;
             _profiler = null;
         }
 

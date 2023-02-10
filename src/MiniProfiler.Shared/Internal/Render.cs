@@ -23,7 +23,7 @@ namespace StackExchange.Profiling.Internal
             string path,
             bool isAuthorized,
             RenderOptions renderOptions,
-            List<Guid> requestIDs = null)
+            List<Guid>? requestIDs = null)
         {
             var sb = StringBuilderCache.Get();
             var options = profiler.Options;
@@ -135,7 +135,7 @@ namespace StackExchange.Profiling.Internal
             MiniProfiler profiler,
             string path,
             bool isAuthorized,
-            List<Guid> requestIDs = null,
+            List<Guid>? requestIDs = null,
             RenderPosition? position = null,
             bool? showTrivial = null,
             bool? showTimeWithChildren = null,

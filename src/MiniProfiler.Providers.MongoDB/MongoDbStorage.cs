@@ -108,13 +108,13 @@ namespace StackExchange.Profiling
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public List<Guid> GetUnviewedIds(string user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
+        public List<Guid> GetUnviewedIds(string? user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToList();
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <see cref="MiniProfiler.User"/>.</param>
-        public Task<List<Guid>> GetUnviewedIdsAsync(string user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToListAsync();
+        public Task<List<Guid>> GetUnviewedIdsAsync(string? user) => _collection.Find(p => p.User == user && !p.HasUserViewed).Project(p => p.Id).ToListAsync();
 
         /// <summary>
         /// List the MiniProfiler Ids for the given search criteria.
@@ -170,14 +170,14 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler Load(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefault();
+        public MiniProfiler? Load(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefault();
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public Task<MiniProfiler> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
+        public Task<MiniProfiler?> LoadAsync(Guid id) => _collection.Find(p => p.Id == id).FirstOrDefaultAsync()!;
 
         /// <summary>
         /// Stores to <c>profilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -214,7 +214,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, false);
             _collection.UpdateOne(p => p.Id == id, set);
@@ -225,7 +225,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public async Task SetUnviewedAsync(string user, Guid id)
+        public async Task SetUnviewedAsync(string? user, Guid id)
         {
             var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, false);
             await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);
@@ -236,7 +236,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, true);
             _collection.UpdateOne(p => p.Id == id, set);
@@ -247,7 +247,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public async Task SetViewedAsync(string user, Guid id)
+        public async Task SetViewedAsync(string? user, Guid id)
         {
             var set = Builders<MiniProfiler>.Update.Set(profiler => profiler.HasUserViewed, true);
             await _collection.UpdateOneAsync(p => p.Id == id, set).ConfigureAwait(false);

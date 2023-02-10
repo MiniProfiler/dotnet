@@ -16,7 +16,9 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
+#pragma warning disable CS8618
         public Suppression() { /* serialization only */ }
+#pragma warning restore CS8618
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Suppression"/> class.

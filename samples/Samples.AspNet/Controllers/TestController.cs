@@ -87,8 +87,8 @@ namespace Samples.AspNetCore.Controllers
         public IActionResult EntityFrameworkCore()
         {
             int count;
-            RouteHit hit;
-            SampleContext context = null;
+            RouteHit? hit;
+            SampleContext? context = null;
             using (MiniProfiler.Current.Step("EF Core Stuff"))
             {
                 const string name = "Test/EntityFrameworkCore";
@@ -131,7 +131,7 @@ namespace Samples.AspNetCore.Controllers
             return Content("EF complete - count: " + count);
         }
 
-        private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler profiler)
+        private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler? profiler)
         {
             Thread.Sleep(5); // ensure we show up in the profiler
 
@@ -294,7 +294,10 @@ Order By RouteName");
 
             using (var step = profiler.CustomTimingIf("error", "Should show up as warning: some exception message", 5))
             {
-                step.Errored = true;
+                if (step is not null)
+                {
+                    step.Errored = true;
+                }
                 Thread.Sleep(10);
             }
 
@@ -321,7 +324,7 @@ Order By RouteName");
         /// </summary>
         /// <param name="profiler">The mini profiler.</param>
         /// <returns>the data connection abstraction.</returns>
-        public DbConnection GetConnection(MiniProfiler profiler = null)
+        public DbConnection GetConnection(MiniProfiler? profiler = null)
         {
             using (profiler.Step(nameof(GetConnection)))
             {
@@ -344,7 +347,7 @@ Order By RouteName");
         /// </summary>
         /// <param name="profiler">The mini profiler.</param>
         /// <returns>the data connection abstraction.</returns>
-        public async Task<DbConnection> GetConnectionAsync(MiniProfiler profiler = null)
+        public async Task<DbConnection> GetConnectionAsync(MiniProfiler? profiler = null)
         {
             using (profiler.Step(nameof(GetConnectionAsync)))
             {

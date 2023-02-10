@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="viewPath">The path to the view.</param>
         /// <param name="isMainPage">Determines if the page being found is the main page for an action.</param>
         /// <returns>The <see cref="ViewEngineResult"/> of locating the view.</returns>
-        public ViewEngineResult GetView(string executingFilePath, string viewPath, bool isMainPage) =>
+        public ViewEngineResult GetView(string? executingFilePath, string viewPath, bool isMainPage) =>
             _wrapped.GetView(executingFilePath, viewPath, isMainPage);
     }
 }

@@ -6,16 +6,13 @@ namespace Benchmarks.Benchmarks
     [Config(typeof(Configs.Memory))]
     public class CreationBenchmarks
     {
-        private static readonly MiniProfilerBaseOptions BaseOptions = new MiniProfilerBenchmarkOptions()
-        {
-            Storage = null
-        };
+        private static readonly MiniProfilerBaseOptions BaseOptions = new MiniProfilerBenchmarkOptions();
 
         [Benchmark(Description = "Start and Stop MiniProfiler")]
         public void StartStopProfiler()
         {
             var profiler = BaseOptions.StartProfiler("My Profiler");
-            profiler.Stop(true);
+            profiler?.Stop(true);
         }
     }
 }

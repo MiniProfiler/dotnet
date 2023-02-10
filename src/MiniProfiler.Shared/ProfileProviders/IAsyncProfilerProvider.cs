@@ -13,7 +13,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns the current MiniProfiler. This is used by <see cref="MiniProfiler.Current"/>.
         /// </summary>
-        MiniProfiler CurrentProfiler { get; }
+        MiniProfiler? CurrentProfiler { get; }
 
         /// <summary>
         /// Starts a new MiniProfiler and sets it to be current.  By the end of this method
@@ -25,7 +25,7 @@ namespace StackExchange.Profiling
         /// a web request, the URL will be used for the overall session name.
         /// </param>
         /// <param name="options">The options to start the MiniProfiler with. Likely a more-specific type underneath.</param>
-        MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options);
+        MiniProfiler? Start(string? profilerName, MiniProfilerBaseOptions options);
 
         /// <summary>
         /// Ends the current profiling session, if one exists.

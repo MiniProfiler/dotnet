@@ -15,7 +15,7 @@ namespace StackExchange.Profiling
         /// The view context of this tag helper, for accessing HttpContext on render.
         /// </summary>
         [ViewContext]
-        public ViewContext ViewContext { get; set; }
+        public ViewContext ViewContext { get; set; } = null!;
 
         /// <summary>
         /// The UI position to render the profiler in (defaults to <see cref="MiniProfilerBaseOptions.PopupRenderPosition"/>).
@@ -68,14 +68,14 @@ namespace StackExchange.Profiling
         /// The JavaScript nonce (if any) to use on this script tag render.
         /// </summary>
         [HtmlAttributeName("nonce")]
-        public string Nonce { get; set; }
+        public string? Nonce { get; set; }
 
         /// <summary>
         /// The options to use when rendering this MiniProfiler.
         /// Note: overrides all other options.
         /// </summary>
         [HtmlAttributeName("options")]
-        public RenderOptions RenderOptions { get; set; }
+        public RenderOptions? RenderOptions { get; set; }
 
         private RenderOptions GetOptions()
         {

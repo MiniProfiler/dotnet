@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Internal
         public async Task RenderAsync(ViewContext context)
         {
             var prof = MiniProfiler.Current;
-            string name = prof != null ? ("Render: " + Path) : null;
+            string? name = prof != null ? ("Render: " + Path) : null;
             using (prof.Step(name))
             {
                 await _wrapped.RenderAsync(context).ConfigureAwait(false);

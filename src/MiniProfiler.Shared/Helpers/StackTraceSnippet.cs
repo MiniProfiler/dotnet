@@ -413,7 +413,7 @@ namespace StackExchange.Profiling.Helpers
         /// </summary>
         private static string NormalizeMethodName(string method)
         {
-            return method?.Replace("[", "<").Replace("]", ">");
+            return method.Replace("[", "<").Replace("]", ">");
         }
     }
 
@@ -527,7 +527,7 @@ namespace StackExchange.Profiling.Helpers
                     // In the known case, BaseClass is "System.Collections.Generic.Dictionary"
                     // In the unknown case, we're hitting here at "Class" only
                     sb.AppendHtmlEncode(match.Groups["BaseClass"].Value);
-                    AppendArgs(args);
+                    AppendArgs(args!);
                 }
                 else
                 {

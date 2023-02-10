@@ -14,6 +14,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
                 var mp = Options.StartProfiler();
+                Assert.NotNull(mp);
                 mp.Increment(); // 1 ms
                 mp.Stop();
 
@@ -33,10 +34,11 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
+                Assert.NotNull(mp);
 
                 mp.Increment(); // 1 ms
-                Timing goodTiming;
-                Timing badTiming;
+                Timing? goodTiming;
+                Timing? badTiming;
 
                 using (goodTiming = mp.StepIf("Yes", 1))
                 {
@@ -48,6 +50,7 @@ namespace StackExchange.Profiling.Tests
                 }
                 mp.Stop();
 
+                Assert.NotNull(mp.Root.Children);
                 Assert.Contains(goodTiming, mp.Root.Children);
                 Assert.DoesNotContain(badTiming, mp.Root.Children);
             }
@@ -59,10 +62,11 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
+                Assert.NotNull(mp);
 
                 mp.Increment(); // 1 ms
-                Timing goodTiming;
-                Timing badTiming;
+                Timing? goodTiming;
+                Timing? badTiming;
 
                 using (goodTiming = mp.StepIf("Yes", 5, true))
                 {
@@ -90,6 +94,7 @@ namespace StackExchange.Profiling.Tests
                 }
                 mp.Stop();
 
+                Assert.NotNull(mp.Root.Children);
                 Assert.Contains(goodTiming, mp.Root.Children);
                 Assert.DoesNotContain(badTiming, mp.Root.Children);
             }
@@ -101,10 +106,11 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
+                Assert.NotNull(mp);
 
                 mp.Increment(); // 1 ms
-                CustomTiming goodTiming;
-                CustomTiming badTiming;
+                CustomTiming? goodTiming;
+                CustomTiming? badTiming;
 
                 using (goodTiming = mp.CustomTimingIf("Cat1", "Yes", 1))
                 {
@@ -116,6 +122,7 @@ namespace StackExchange.Profiling.Tests
                 }
                 mp.Stop();
 
+                Assert.NotNull(mp.Root.CustomTimings);
                 Assert.Contains(goodTiming, mp.Root.CustomTimings["Cat1"]);
                 Assert.DoesNotContain(badTiming, mp.Root.CustomTimings["Cat1"]);
             }
@@ -127,6 +134,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest(startAndStopProfiler: false))
             {
                 var mp = Options.StartProfiler();
+                Assert.NotNull(mp);
                 mp.Stop(discardResults: true);
 
                 var c = MiniProfiler.Current;
@@ -169,10 +177,11 @@ namespace StackExchange.Profiling.Tests
         [Fact(WindowsOnly = true)]
         public void GetRequest_StartAndStopProfiler()
         {
-            MiniProfiler mp;
+            MiniProfiler? mp;
             using (GetRequest())
             {
                 mp = MiniProfiler.Current;
+                Assert.NotNull(mp);
                 mp.Increment();
             }
 

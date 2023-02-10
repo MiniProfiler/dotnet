@@ -47,7 +47,7 @@ namespace StackExchange.Profiling
         /// The keyboard key combination to use toggle profiler visibility.
         /// Defaults to <see cref="MiniProfilerBaseOptions.PopupToggleKeyboardShortcut"/>.
         /// </summary>
-        public string PopupToggleKeyboardShortcut { get; set; }
+        public string? PopupToggleKeyboardShortcut { get; set; }
 
         /// <summary>
         /// The amount of ms before a timing is considered non-trivial.
@@ -71,6 +71,6 @@ namespace StackExchange.Profiling
         /// A one-time-use nonce to render in the script tag.
         /// </summary>
         /// <remarks>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script</remarks>
-        public string Nonce { get; set; }
+        public string? Nonce { get; set; }
     }
 }

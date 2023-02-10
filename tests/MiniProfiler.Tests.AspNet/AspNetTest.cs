@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
@@ -40,7 +41,7 @@ namespace StackExchange.Profiling.Tests
             if (startAndStopProfiler)
             {
                 var mp = Options.StartProfiler();
-                result.OnBeforeDispose += () => mp.Stop();
+                result.OnBeforeDispose += () => mp?.Stop();
             }
 
             return result;
@@ -59,6 +60,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest(url, startAndStopProfiler: false))
             {
                 var result = Options.StartProfiler(url);
+                Assert.NotNull(result);
                 AddRecursiveChildren(result, childDepth, stepMs);
                 result.Stop();
                 return result;
@@ -78,6 +80,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest(url, startAndStopProfiler: false))
             {
                 var result = Options.StartProfiler();
+                Assert.NotNull(result);
                 AddRecursiveChildren(result, childDepth, stepMs);
                 await result.StopAsync().ConfigureAwait(false);
                 return result;

@@ -46,7 +46,7 @@ namespace Benchmarks
         public string ComplexSerializeServiceStack() => ServiceStack.Text.JsonSerializer.SerializeToString(_complexProfiler);
 
         [Benchmark(Description = "Deserialize: Simple MiniProfiler (Newtonsoft)")]
-        public MiniProfiler SimpleDeserializeNewtonsoft() => JsonConvert.DeserializeObject<MiniProfiler>(_simpleProfilerJson);
+        public MiniProfiler? SimpleDeserializeNewtonsoft() => JsonConvert.DeserializeObject<MiniProfiler>(_simpleProfilerJson);
 
         [Benchmark(Description = "Deserialize: Simple MiniProfiler (Jil)")]
         public MiniProfiler SimpleDeserializeBuiltIn() => JSON.Deserialize<MiniProfiler>(_simpleProfilerJson, JilOptions);
@@ -55,7 +55,7 @@ namespace Benchmarks
         public MiniProfiler SimpleDeserializeServiceStack() => ServiceStack.Text.JsonSerializer.DeserializeFromString<MiniProfiler>(_simpleProfilerJson);
 
         [Benchmark(Description = "Deserialize: Complex MiniProfiler (Newtonsoft)")]
-        public MiniProfiler ComplexDeserializeNewtonsoft() => JsonConvert.DeserializeObject<MiniProfiler>(_complexProfilerJson);
+        public MiniProfiler? ComplexDeserializeNewtonsoft() => JsonConvert.DeserializeObject<MiniProfiler>(_complexProfilerJson);
 
         [Benchmark(Description = "Deserialize: Complex MiniProfiler (Jil)")]
         public MiniProfiler ComplexDeserializeBuiltIn() => JSON.Deserialize<MiniProfiler>(_complexProfilerJson, JilOptions);

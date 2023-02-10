@@ -14,8 +14,8 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
-        private readonly IDbProfiler _profiler;
-        private IDbCommand _selectCommand, _insertCommand, _updateCommand, _deleteCommand;
+        private readonly IDbProfiler? _profiler;
+        private IDbCommand? _selectCommand, _insertCommand, _updateCommand, _deleteCommand;
 
         /// <summary>
         /// Gets the underlying adapter. Useful for when APIs can't handle the wrapped adapter (e.g. CommandBuilder).
@@ -28,7 +28,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="wrappedAdapter">The wrapped adapter.</param>
         /// <param name="profiler">The profiler.</param>
         /// <exception cref="ArgumentNullException">Throws when the <paramref name="wrappedAdapter"/> is <c>null</c>.</exception>
-        public ProfiledDbDataAdapter(IDbDataAdapter wrappedAdapter, IDbProfiler profiler = null)
+        public ProfiledDbDataAdapter(IDbDataAdapter wrappedAdapter, IDbProfiler? profiler = null)
         {
             InternalAdapter = wrappedAdapter ?? throw new ArgumentNullException(nameof(wrappedAdapter));
             _profiler = profiler ?? MiniProfiler.Current;
@@ -149,7 +149,7 @@ namespace StackExchange.Profiling.Data
         public new ITableMappingCollection TableMappings => InternalAdapter.TableMappings;
 
         /// <inheritdoc cref="DbDataAdapter.SelectCommand"/>
-        public new IDbCommand SelectCommand
+        public new IDbCommand? SelectCommand
         {
             get => _selectCommand;
             set
@@ -160,7 +160,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbDataAdapter.InsertCommand"/>
-        public new IDbCommand InsertCommand
+        public new IDbCommand? InsertCommand
         {
             get => _insertCommand;
             set
@@ -171,7 +171,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbDataAdapter.UpdateCommand"/>
-        public new IDbCommand UpdateCommand
+        public new IDbCommand? UpdateCommand
         {
             get => _updateCommand;
             set
@@ -182,7 +182,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbDataAdapter.DeleteCommand"/>
-        public new IDbCommand DeleteCommand
+        public new IDbCommand? DeleteCommand
         {
             get => _deleteCommand;
             set

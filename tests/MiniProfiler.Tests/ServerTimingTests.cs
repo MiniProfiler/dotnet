@@ -17,6 +17,7 @@ namespace StackExchange.Profiling.Tests
             {
                 using (mp.Step("Sub Step 1"))
                 {
+                    Assert.NotNull(mp.Head);
                     mp.Head.AddCustomTiming("A", new CustomTiming()
                     {
                         DurationMilliseconds = 5

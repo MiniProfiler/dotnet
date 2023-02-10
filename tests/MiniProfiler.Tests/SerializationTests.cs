@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests
         [Fact]
         public void ParentMapping()
         {
-            var mp = new MiniProfiler("Test", Options);
+            MiniProfiler mp = new MiniProfiler("Test", Options);
             using (mp.Step("Main"))
             {
                 using (mp.Step("Sub Step 1"))
@@ -31,12 +31,15 @@ namespace StackExchange.Profiling.Tests
             var json = mp.ToJson();
 
             var deserialized = MiniProfiler.FromJson(json);
+            Assert.NotNull(deserialized);
             var root = deserialized.Root;
+            Assert.NotNull(root.Children);
             foreach (var t in root.Children)
             {
                 Assert.Equal(root, t.ParentTiming);
                 Assert.True(root == t.ParentTiming);
 
+                Assert.NotNull(t.Children);
                 foreach (var tc in t.Children)
                 {
                     Assert.Equal(t, tc.ParentTiming);

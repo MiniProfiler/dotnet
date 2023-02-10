@@ -12,6 +12,6 @@ namespace StackExchange.Profiling.SqlFormatters
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        string FormatSql(string commandText, List<SqlTimingParameter> parameters);
+        string FormatSql(string commandText, List<SqlTimingParameter>? parameters);
     }
 }

@@ -34,9 +34,10 @@ namespace StackExchange.Profiling.Tests
             });
         }
 
-        protected MiniProfiler GetBasicProfiler([CallerMemberName]string name = null)
+        protected MiniProfiler GetBasicProfiler([CallerMemberName]string? name = null)
         {
             var mp = Options.StartProfiler(name);
+            Assert.NotNull(mp);
             using (mp.Step("Step 1"))
             {
                 using (mp.CustomTiming("Custom", "Custom Command", "Test Exec"))
@@ -51,13 +52,13 @@ namespace StackExchange.Profiling.Tests
         /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time,
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
-        /// <param name="url">The URL of the request.</param>
         /// <param name="childDepth">number of levels of child steps underneath result's <see cref="MiniProfiler.Root"/>.</param>
         /// <param name="stepMs">Amount of time each step will "do work for" in each step.</param>
         /// <returns>The generated <see cref="MiniProfiler"/>.</returns>
         protected virtual MiniProfiler GetProfiler(int childDepth = 0, int stepMs = StepTimeMilliseconds)
         {
             var result = Options.StartProfiler();
+            Assert.NotNull(result);
             AddRecursiveChildren(result, childDepth, stepMs);
             result.Stop();
             return result;
@@ -74,12 +75,13 @@ namespace StackExchange.Profiling.Tests
         protected virtual async Task<MiniProfiler> GetProfilerAsync(int childDepth = 0, int stepMs = StepTimeMilliseconds)
         {
             var result = Options.StartProfiler();
+            Assert.NotNull(result);
             AddRecursiveChildren(result, childDepth, stepMs);
             await result.StopAsync().ConfigureAwait(false);
             return result;
         }
 
-        protected void AddRecursiveChildren(MiniProfiler profiler, int maxDepth, int stepMs, int curDepth = 0)
+        protected void AddRecursiveChildren(MiniProfiler? profiler, int maxDepth, int stepMs, int curDepth = 0)
         {
             if (curDepth++ < maxDepth)
             {
@@ -118,8 +120,8 @@ namespace StackExchange.Profiling.Tests
                     // datetimes are sometimes serialized with different precisions - just look care about the 10th of a second
                     if (p.PropertyType == typeof(DateTime))
                     {
-                        val1 = TrimToDecisecond((DateTime)val1);
-                        val2 = TrimToDecisecond((DateTime)val2);
+                        val1 = TrimToDecisecond((DateTime)val1!);
+                        val2 = TrimToDecisecond((DateTime)val2!);
                     }
 
                     var name = typeof(T).Name + "." + p.Name;

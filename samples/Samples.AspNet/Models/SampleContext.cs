@@ -4,7 +4,7 @@ namespace Samples.AspNetCore.Models
 {
     public class SampleContext : DbContext
     {
-        public DbSet<RouteHit> RouteHits { get; set; }
+        public DbSet<RouteHit> RouteHits { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -15,7 +15,7 @@ namespace Samples.AspNetCore.Models
     public class RouteHit
     {
         public int Id { get; set; }
-        public string RouteName { get; set; }
+        public string? RouteName { get; set; }
         public int HitCount { get; set; }
     }
 }

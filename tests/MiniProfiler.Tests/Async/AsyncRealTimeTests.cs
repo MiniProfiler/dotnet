@@ -22,8 +22,9 @@ namespace StackExchange.Profiling.Tests.Async
         {
             Thread.Sleep(1000); // calm down there stupid laptop
             var profiler = Options.StartProfiler("root");
+            Assert.NotNull(profiler);
 
-            Timing timing10 = null,
+            Timing? timing10 = null,
                 timing11 = null,
                 timing20 = null,
                 timing21 = null,
@@ -98,12 +99,18 @@ namespace StackExchange.Profiling.Tests.Async
             AssertNear(500, profiler.DurationMilliseconds, 125);
 
             // Parent durations are sum of itself and children
+            Assert.NotNull(timing10);
+            Assert.NotNull(timing11);
             AssertNear(200, timing10.DurationMilliseconds, 50);
             AssertNear(100, timing11.DurationMilliseconds, 50);
 
+            Assert.NotNull(timing20);
+            Assert.NotNull(timing21);
             AssertNear(300, timing20.DurationMilliseconds, 50);
             AssertNear(100, timing21.DurationMilliseconds, 50);
 
+            Assert.NotNull(timing30);
+            Assert.NotNull(timing31);
             AssertNear(400, timing30.DurationMilliseconds, 50);
             AssertNear(100, timing31.DurationMilliseconds, 50);
         }
@@ -112,6 +119,7 @@ namespace StackExchange.Profiling.Tests.Async
         public void Step_WithParallelThreads_RealTime()
         {
             var profiler = Options.StartProfiler("root");
+            Assert.NotNull(profiler);
 
             // Add 100ms to root just to offset the starting point
             Thread.Sleep(100);
@@ -142,6 +150,7 @@ namespace StackExchange.Profiling.Tests.Async
             var hierarchy = profiler.GetTimingHierarchy().ToList();
             foreach (var timing in hierarchy)
             {
+                Assert.NotNull(timing.Name);
                 if (timing.Name.StartsWith("thread", StringComparison.Ordinal))
                 {
                     // 3 work items, 50 ms each

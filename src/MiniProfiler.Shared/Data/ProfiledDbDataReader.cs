@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Data
     /// </summary>
     public class ProfiledDbDataReader : DbDataReader
     {
-        private readonly IDbProfiler _profiler;
+        private readonly IDbProfiler? _profiler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbDataReader"/> class (with <see cref="CommandBehavior.Default"/>).
@@ -26,7 +26,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="reader">The reader.</param>
         /// <param name="behavior">The behavior specified during command execution.</param>
         /// <param name="profiler">The profiler.</param>
-        public ProfiledDbDataReader(DbDataReader reader, CommandBehavior behavior, IDbProfiler profiler)
+        public ProfiledDbDataReader(DbDataReader reader, CommandBehavior behavior, IDbProfiler? profiler)
         {
             WrappedReader = reader;
             Behavior = behavior;

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
@@ -15,6 +16,7 @@ namespace StackExchange.Profiling.Tests
             mp.Stop();
 
             var mp1 = MiniProfiler.Current;
+            Assert.NotNull(mp1);
             var ms = new MemoryStream();
             ProtoBuf.Serializer.Serialize(ms, mp1);
 

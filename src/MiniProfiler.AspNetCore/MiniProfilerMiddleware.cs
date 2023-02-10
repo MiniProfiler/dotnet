@@ -72,12 +72,15 @@ namespace StackExchange.Profiling
                 var mp = Options.StartProfiler();
 
                 // Set the user
-                mp.User = Options.UserIdProvider?.Invoke(context.Request);
-
-                // Always add this profiler's header (and any async requests before it)
-                using (mp.StepIf("MiniProfiler Init", minSaveMs: 0.1m))
+                if (mp is not null)
                 {
-                    await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                    mp.User = Options.UserIdProvider?.Invoke(context.Request);
+
+                    // Always add this profiler's header (and any async requests before it)
+                    using (mp.StepIf("MiniProfiler Init", minSaveMs: 0.1m))
+                    {
+                        await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                    }
                 }
 
                 var appendServerTimingHeader = Options.EnableServerTimingHeader && context.Response.SupportsTrailers();
@@ -89,14 +92,18 @@ namespace StackExchange.Profiling
 
                 // Execute the pipe
                 await _next(context);
-                // Assign name
-                EnsureName(mp, context);
-                // Stop (and record)
-                await mp.StopAsync().ConfigureAwait(false);
 
-                if (appendServerTimingHeader && mp != null)
+                if (mp is not null)
                 {
-                    context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                    // Assign name
+                    EnsureName(mp, context);
+                    // Stop (and record)
+                    await mp.StopAsync().ConfigureAwait(false);
+
+                    if (appendServerTimingHeader)
+                    {
+                        context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                    }
                 }
             }
             else
@@ -110,7 +117,7 @@ namespace StackExchange.Profiling
         {
             foreach (var ignored in Options.IgnoredPaths)
             {
-                if (ignored != null && request.Path.Value.Contains(ignored, StringComparison.OrdinalIgnoreCase))
+                if (ignored != null && request.Path.Value?.Contains(ignored, StringComparison.OrdinalIgnoreCase) == true)
                 {
                     return false;
                 }
@@ -134,7 +141,7 @@ namespace StackExchange.Profiling
                 var routeData = context.GetRouteData();
                 if (routeData?.Values["controller"] != null)
                 {
-                    if (routeData.Values.TryGetValue("area", out object area))
+                    if (routeData.Values.TryGetValue("area", out object? area))
                     {
                         profiler.Name = area + "/" + routeData.Values["controller"] + "/" + routeData.Values["action"];
                     }
@@ -143,9 +150,9 @@ namespace StackExchange.Profiling
                         profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
                     }
                 }
-                else if (routeData?.Values["page"] != null)
+                else if (routeData?.Values["page"] is object page)
                 {
-                    profiler.Name = routeData.Values["page"].ToString();
+                    profiler.Name = page.ToString();
                 }
                 else if (context.GetEndpoint() is Endpoint endPoint && endPoint.DisplayName.HasValue())
                 {
@@ -203,10 +210,10 @@ namespace StackExchange.Profiling
         private async Task HandleRequest(HttpContext context, PathString subPath)
         {
             context.Response.StatusCode = StatusCodes.Status200OK;
-            string result = null;
+            string? result = null;
 
             // File embed
-            if (subPath.Value.StartsWith("/includes.min", StringComparison.Ordinal))
+            if (subPath.Value?.StartsWith("/includes.min", StringComparison.Ordinal) == true)
             {
                 result = Embedded.GetFile(context, subPath);
             }
@@ -229,10 +236,13 @@ namespace StackExchange.Profiling
             result ??= NotFound(context, "Not Found: " + subPath);
             context.Response.ContentLength = result != null ? Encoding.UTF8.GetByteCount(result) : 0;
 
-            await context.Response.WriteAsync(result).ConfigureAwait(false);
+            if (result is not null)
+            {
+                await context.Response.WriteAsync(result).ConfigureAwait(false);
+            }
         }
 
-        private static string NotFound(HttpContext context, string message = null, string contentType = "text/plain")
+        private static string? NotFound(HttpContext context, string? message = null, string contentType = "text/plain")
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             context.Response.ContentType = contentType;
@@ -307,7 +317,7 @@ namespace StackExchange.Profiling
                     .Where(p => p != null)
                     .Select(p => new
                     {
-                        p.Id,
+                        p!.Id,
                         p.Name,
                         p.ClientTimings,
                         p.Started,
@@ -323,10 +333,10 @@ namespace StackExchange.Profiling
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>
-        private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
+        private async Task<string?> GetSingleProfilerResultAsync(HttpContext context)
         {
             Guid id;
-            ResultRequest clientRequest = null;
+            ResultRequest? clientRequest = null;
             // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
             // If that's absent, we're rendering results as a full page for sharing.
             bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
@@ -355,7 +365,7 @@ namespace StackExchange.Profiling
             }
 
             var profiler = await Options.Storage.LoadAsync(id).ConfigureAwait(false);
-            string user = Options.UserIdProvider?.Invoke(context.Request);
+            string? user = Options.UserIdProvider?.Invoke(context.Request);
 
             await Options.Storage.SetViewedAsync(user, id).ConfigureAwait(false);
 

@@ -76,7 +76,7 @@ namespace StackExchange.Profiling.Tests
             return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 
-        private static void AddDbParameter<T>(SqlCommand command, string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
+        private static void AddDbParameter<T>(SqlCommand command, string name, object? value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = name;

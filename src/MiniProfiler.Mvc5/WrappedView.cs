@@ -26,7 +26,7 @@ namespace StackExchange.Profiling.Mvc
         /// <summary>
         /// Gets the wrapped view path.
         /// </summary>
-        public string ViewPath => (_wrapped as RazorView)?.ViewPath;
+        public string? ViewPath => (_wrapped as RazorView)?.ViewPath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WrappedView"/> class.
@@ -49,7 +49,7 @@ namespace StackExchange.Profiling.Mvc
         public void Render(ViewContext viewContext, TextWriter writer)
         {
             var prof = MiniProfiler.Current;
-            string name = prof != null ? ("Render" + (IsPartial ? " partial" : string.Empty) + ": " + Name) : null;
+            string? name = prof != null ? ("Render" + (IsPartial ? " partial" : string.Empty) + ": " + Name) : null;
             using (prof.Step(name))
             {
                 _wrapped.Render(viewContext, writer);

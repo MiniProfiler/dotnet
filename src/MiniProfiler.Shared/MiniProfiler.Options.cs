@@ -27,11 +27,12 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Starts a new <see cref="MiniProfiler"/> based on <see cref="DefaultOptions"/>.
         /// Shortcut for DefaultOptions.ProfilerProvider.Start.
+        /// Note that this may be <c>null</c> if the provider did not actually start a profiler (e.g. because of ignore rules).
         /// </summary>
         /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the URL will be used for the overall session name.
         /// </param>
-        public static MiniProfiler StartNew(string profilerName = null) => DefaultOptions?.StartProfiler(profilerName);
+        public static MiniProfiler? StartNew(string? profilerName = null) => DefaultOptions.StartProfiler(profilerName);
     }
 }

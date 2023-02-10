@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// This may be removed in a future major version when <see cref="IAdvancedSqlFormatter"/> can be consolidated back
         /// into <see cref="ISqlFormatter"/>.
         /// </remarks>
-        public static string GetFormattedSql(this ISqlFormatter sqlFormatter, string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+        public static string GetFormattedSql(this ISqlFormatter sqlFormatter, string commandText, List<SqlTimingParameter>? parameters, IDbCommand? command = null)
         {
             var advancedFormatter = sqlFormatter as IAdvancedSqlFormatter;
             return advancedFormatter?.FormatSql(commandText, parameters, command)

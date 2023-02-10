@@ -20,6 +20,7 @@ namespace StackExchange.Profiling.Tests.Async
         public async Task SimpleAsync()
         {
             var profiler = Options.StartProfiler("root");
+            Assert.NotNull(profiler);
 
             // Add 100ms to root
             await profiler.IncrementAsync(100).ConfigureAwait(false);
@@ -62,9 +63,10 @@ namespace StackExchange.Profiling.Tests.Async
         public async Task Step_WithParallelTasks_SimulatedTime()
         {
             var profiler = Options.StartProfiler("root");
+            Assert.NotNull(profiler);
 
             var waiters = new ConcurrentBag<CountdownEvent>();
-            Timing timing10 = null, timing11 = null, timing20 = null, timing21 = null, timing30 = null, timing31 = null;
+            Timing? timing10 = null, timing11 = null, timing20 = null, timing21 = null, timing30 = null, timing31 = null;
 
             // Add 1ms to root
             profiler.Increment();

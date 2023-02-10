@@ -9,19 +9,19 @@ namespace StackExchange.Profiling
     /// </summary>
     public class SingletonProfilerProvider : IAsyncProfilerProvider
     {
-        private static MiniProfiler _profiler;
+        private static MiniProfiler? _profiler;
 
         /// <summary>
         /// The current profiler, 1 instance!
         /// </summary>
-        public MiniProfiler CurrentProfiler => _profiler;
+        public MiniProfiler? CurrentProfiler => _profiler;
 
         /// <summary>
         /// Starts a new profiling session.
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
         /// <param name="options">The options to use for this profiler, including all downstream commands.</param>
-        public MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options) =>
+        public MiniProfiler Start(string? profilerName, MiniProfilerBaseOptions options) =>
             _profiler = new MiniProfiler(profilerName, options);
 
         /// <summary>

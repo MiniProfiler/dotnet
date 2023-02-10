@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Data
     public class SimpleProfiledDataReader : IDataReader
     {
         private readonly IDataReader _reader;
-        private readonly IDbProfiler _profiler;
+        private readonly IDbProfiler? _profiler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleProfiledDataReader"/> class.
@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="reader">The reader.</param>
         /// <param name="profiler">The profiler.</param>
         /// <exception cref="ArgumentNullException">Throws when the <paramref name="reader"/> is <c>null</c>.</exception>
-        public SimpleProfiledDataReader(IDataReader reader, IDbProfiler profiler)
+        public SimpleProfiledDataReader(IDataReader reader, IDbProfiler? profiler)
         {
             _reader = reader ?? throw new ArgumentNullException(nameof(reader));
 

@@ -12,7 +12,7 @@ namespace StackExchange.Profiling.Storage
     /// </summary>
     public class RedisStorage : IAsyncStorage, IDisposable
     {
-        private readonly ConnectionMultiplexer _multiplexer;
+        private readonly ConnectionMultiplexer? _multiplexer;
         private readonly IDatabase _database;
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace StackExchange.Profiling.Storage
         /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public MiniProfiler Load(Guid id)
+        public MiniProfiler? Load(Guid id)
         {
             RedisKey key = ProfilerResultKeyPrefix.Append(id.ToString());
             RedisValue value = _database.StringGet(key);
@@ -141,7 +141,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
@@ -154,7 +154,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
@@ -165,7 +165,7 @@ namespace StackExchange.Profiling.Storage
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        public List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string? user)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             var ids = _database.SetMembers(key);
@@ -230,7 +230,7 @@ namespace StackExchange.Profiling.Storage
         /// Should also update that the resulting profiler has been marked as viewed by its
         /// profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             RedisKey key = ProfilerResultKeyPrefix.Append(id.ToString());
             RedisValue value = await _database.StringGetAsync(key).ConfigureAwait(false);
@@ -242,7 +242,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public async Task SetUnviewedAsync(string user, Guid id)
+        public async Task SetUnviewedAsync(string? user, Guid id)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
@@ -255,7 +255,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public Task SetViewedAsync(string user, Guid id)
+        public Task SetViewedAsync(string? user, Guid id)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             RedisValue value = id.ToString();
@@ -266,7 +266,7 @@ namespace StackExchange.Profiling.Storage
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             RedisKey key = ProfilerResultUnviewedSetKeyPrefix.Append(user ?? "");
             var ids = await _database.SetMembersAsync(key).ConfigureAwait(false);

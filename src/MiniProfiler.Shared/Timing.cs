@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using StackExchange.Profiling.Internal;
@@ -25,7 +26,9 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
+#pragma warning disable CS8618
         public Timing() { /* serialization */ }
+#pragma warning restore CS8618
 
         /// <summary>
         /// Creates a new Timing named 'name' in the 'profiler's session, with 'parent' as this Timing's immediate ancestor.
@@ -35,7 +38,7 @@ namespace StackExchange.Profiling
         /// <param name="name">The name of this timing.</param>
         /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
         /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
-        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false) :
+        public Timing(MiniProfiler profiler, Timing? parent, string? name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false) :
             this(profiler, parent, name, minSaveMs, includeChildrenWithMinSave, 0)
         { }
 
@@ -48,7 +51,7 @@ namespace StackExchange.Profiling
         /// <param name="minSaveMs">(Optional) The minimum threshold (in milliseconds) for saving this timing.</param>
         /// <param name="includeChildrenWithMinSave">(Optional) Whether the children are included when comparing to the <paramref name="minSaveMs"/> threshold.</param>
         /// <param name="debugStackShave">The number of frames to shave off the debug stack.</param>
-        public Timing(MiniProfiler profiler, Timing parent, string name, decimal? minSaveMs, bool? includeChildrenWithMinSave, int debugStackShave)
+        public Timing(MiniProfiler profiler, Timing? parent, string? name, decimal? minSaveMs, bool? includeChildrenWithMinSave, int debugStackShave)
         {
             Id = Guid.NewGuid();
             Profiler = profiler;
@@ -86,7 +89,7 @@ namespace StackExchange.Profiling
         /// Gets or sets Text displayed when this Timing is rendered.
         /// </summary>
         [DataMember(Order = 2)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets How long this Timing step took in ms; includes any <see cref="Children"/> Timings' durations.
@@ -100,13 +103,13 @@ namespace StackExchange.Profiling
         [DataMember(Order = 4)]
         public decimal StartMilliseconds { get; set; }
 
-        private List<Timing> _children;
+        private List<Timing>? _children;
 
         /// <summary>
         /// Gets or sets All sub-steps that occur within this Timing step. Add new children through <see cref="AddChild"/>
         /// </summary>
         [DataMember(Order = 5)]
-        public List<Timing> Children
+        public List<Timing>? Children
         {
             get => _children;
             set
@@ -129,19 +132,19 @@ namespace StackExchange.Profiling
         /// <see cref="CustomTiming"/> lists keyed by their type, e.g. "sql", "memcache", "redis", "http".
         /// </summary>
         [DataMember(Order = 6)]
-        public Dictionary<string, List<CustomTiming>> CustomTimings { get; set; }
+        public Dictionary<string, List<CustomTiming>>? CustomTimings { get; set; }
 
         /// <summary>
         /// Present only when <c>EnableDebugMode</c> is <c>true</c>, additional step info in-memory only.
         /// </summary>
         [DataMember(Order = 7)]
-        public TimingDebugInfo DebugInfo { get; set; }
+        public TimingDebugInfo? DebugInfo { get; set; }
 
 #if !MINIMAL
         /// <summary>
         /// JSON representing the Custom Timings associated with this timing.
         /// </summary>
-        public string CustomTimingsJson {
+        public string? CustomTimingsJson {
             get => CustomTimings?.ToJson();
             set => CustomTimings = value.FromJson<Dictionary<string, List<CustomTiming>>>();
         }
@@ -150,6 +153,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true when there exists any <see cref="CustomTiming"/> objects in this <see cref="CustomTimings"/>.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(CustomTimings))]
         public bool HasCustomTimings => CustomTimings?.Values.Any(v => v?.Count > 0) ?? false;
 
         /// <summary>
@@ -157,7 +161,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         [IgnoreDataMember]
-        public Timing ParentTiming { get; set; }
+        public Timing? ParentTiming { get; set; }
 
         /// <summary>
         /// The Unique Identifier identifying the parent timing of this Timing. Used for sql server storage.
@@ -195,19 +199,20 @@ namespace StackExchange.Profiling
         /// <see cref="MiniProfilerBaseOptions.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
         [IgnoreDataMember]
-        public bool IsTrivial => DurationMilliseconds <= Profiler.Options.TrivialDurationThresholdMilliseconds;
+        public bool IsTrivial => DurationMilliseconds <= Profiler?.Options.TrivialDurationThresholdMilliseconds;
 
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
         [IgnoreDataMember]
+        [MemberNotNullWhen(true, nameof(Children))]
         public bool HasChildren => Children?.Count > 0;
 
         /// <summary>
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
         [IgnoreDataMember]
-        public bool IsRoot => Equals(Profiler.Root);
+        public bool IsRoot => Equals(Profiler?.Root);
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
@@ -233,7 +238,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
-        internal MiniProfiler Profiler { get; set; }
+        internal MiniProfiler? Profiler { get; set; }
 
         /// <summary>
         /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
@@ -244,13 +249,13 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns this Timing's Name.
         /// </summary>
-        public override string ToString() => Name;
+        public override string? ToString() => Name;
 
         /// <summary>
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object obj) => obj is Timing timing && Id.Equals(timing.Id);
+        public override bool Equals(object? obj) => obj is Timing timing && Id.Equals(timing.Id);
 
         /// <summary>
         /// Returns hash code of Id.
@@ -263,8 +268,11 @@ namespace StackExchange.Profiling
         public void Stop()
         {
             if (DurationMilliseconds != null) return;
-            DurationMilliseconds = Profiler.GetDurationMilliseconds(_startTicks);
-            Profiler.Head = ParentTiming;
+            if (Profiler is not null)
+            {
+                DurationMilliseconds = Profiler.GetDurationMilliseconds(_startTicks);
+                Profiler.Head = ParentTiming;
+            }
 
             if (_minSaveMs > 0 && ParentTiming != null)
             {
@@ -304,9 +312,12 @@ namespace StackExchange.Profiling
 
         internal void RemoveChild(Timing timing)
         {
-            lock (Children)
+            if (Children is List<Timing> kiddos)
             {
-                Children?.Remove(timing);
+                lock (kiddos)
+                {
+                    kiddos?.Remove(timing);
+                }
             }
         }
 

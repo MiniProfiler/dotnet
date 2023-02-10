@@ -99,6 +99,7 @@ namespace StackExchange.Profiling.Tests.Storage
             var timings = mp.GetTimingHierarchy();
 
             var fetched = Storage.Load(mp.Id);
+            Assert.NotNull(fetched);
             Assert.Equal(mp, fetched);
             Assert.NotNull(fetched.Options);
             Assert.Equal(timings, fetched.GetTimingHierarchy());
@@ -112,6 +113,7 @@ namespace StackExchange.Profiling.Tests.Storage
             var timings = mp.GetTimingHierarchy();
 
             var fetched = await Storage.LoadAsync(mp.Id).ConfigureAwait(false);
+            Assert.NotNull(fetched);
             Assert.Equal(mp, fetched);
             Assert.NotNull(fetched.Options);
             Assert.Equal(timings, fetched.GetTimingHierarchy());
@@ -183,7 +185,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Assert.Contains(mp.Id, unviewedIds3);
         }
 
-        protected MiniProfiler GetMiniProfiler(string name = "Test", [CallerMemberName]string user = null)
+        protected MiniProfiler GetMiniProfiler(string name = "Test", [CallerMemberName]string? user = null)
         {
             var mp = new MiniProfiler(name, Options)
             {
@@ -243,13 +245,13 @@ namespace StackExchange.Profiling.Tests.Storage
     {
         public string TestId { get; } = Guid.NewGuid().ToString("N").Substring(20);
         public bool ShouldSkip { get; protected set; }
-        public string SkipReason { get; protected set; }
+        public string? SkipReason { get; protected set; }
         public abstract IAsyncStorage GetStorage();
     }
 
     public abstract class StorageFixtureBase<TStorage> : StorageFixtureBase, IDisposable where TStorage : IAsyncStorage
     {
-        public TStorage Storage { get; protected set; }
+        public TStorage Storage { get; protected set; } = default!;
         public override IAsyncStorage GetStorage() => Storage;
 
         void IDisposable.Dispose()
