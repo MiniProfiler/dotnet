@@ -6,6 +6,7 @@
     <Description>You shouldn't reference this - MiniProfiler's shared library for all frameworks</Description>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
@@ -13,6 +14,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
@@ -23,10 +25,12 @@
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="ui\includes.min.css" DependentUpon="includes.css" />
     <EmbeddedResource Include="ui\includes.min.js" DependentUpon="includes.js" />

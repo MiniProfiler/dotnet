@@ -8,8 +8,10 @@
     <PackageTags>Entity Framework;Entity Framework 6;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="EntityFramework" Version="6.3.0" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

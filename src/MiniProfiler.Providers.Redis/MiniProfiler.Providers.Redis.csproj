@@ -7,9 +7,11 @@
     <PackageTags>Redis;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
     <PackageReference Include="protobuf-net" Version="2.4.6" />
+    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

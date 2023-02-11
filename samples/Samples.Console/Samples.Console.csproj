@@ -6,17 +6,21 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
-    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.105.2" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+
+    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.105.2" />
+
+    <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
 </Project>
