@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using StackExchange.Profiling.Internal;
 
 namespace StackExchange.Profiling
@@ -161,18 +162,21 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <remarks>This will be null for the root (initial) Timing.</remarks>
         [IgnoreDataMember]
+        [JsonIgnore]
         public Timing? ParentTiming { get; set; }
 
         /// <summary>
         /// The Unique Identifier identifying the parent timing of this Timing. Used for sql server storage.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public Guid ParentTimingId { get; set; }
 
         /// <summary>
         /// Gets the elapsed milliseconds in this step without any children's durations.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public decimal DurationWithoutChildrenMilliseconds
         {
             get
@@ -199,12 +203,14 @@ namespace StackExchange.Profiling
         /// <see cref="MiniProfilerBaseOptions.TrivialDurationThresholdMilliseconds"/>, by default 2.0 ms.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public bool IsTrivial => DurationMilliseconds <= Profiler?.Options.TrivialDurationThresholdMilliseconds;
 
         /// <summary>
         /// Gets a value indicating whether this Timing has inner Timing steps.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         [MemberNotNullWhen(true, nameof(Children))]
         public bool HasChildren => Children?.Count > 0;
 
@@ -212,12 +218,14 @@ namespace StackExchange.Profiling
         /// Gets a value indicating whether this Timing is the first one created in a MiniProfiler session.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public bool IsRoot => Equals(Profiler?.Root);
 
         /// <summary>
         /// Gets a value indicating whether how far away this Timing is from the Profiler's Root.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public short Depth
         {
             get
@@ -238,12 +246,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets a reference to the containing profiler, allowing this Timing to affect the Head and get Stopwatch readings.
         /// </summary>
+        [JsonIgnore]
         internal MiniProfiler? Profiler { get; set; }
 
         /// <summary>
         /// The unique identifier used to identify the Profiler with which this Timing is associated. Used for sql storage.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public Guid MiniProfilerId { get; set; }
 
         /// <summary>
@@ -352,7 +362,7 @@ namespace StackExchange.Profiling
         /// <param name="category">The kind of custom timings, e.g. "sql", "redis", "memcache"</param>
         private List<CustomTiming> GetCustomTimingList(string category)
         {
-            List<CustomTiming> result;
+            List<CustomTiming>? result;
             if (CustomTimings == null)
             {
                 lock (_syncRoot)

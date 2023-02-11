@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Data
     public class SimpleProfiledCommand : IDbCommand
     {
         private IDbCommand _command;
-        private IDbConnection _connection;
+        private IDbConnection? _connection;
         private IDbProfiler? _profiler;
         private IDbTransaction? _transaction;
 
@@ -54,7 +54,7 @@ namespace StackExchange.Profiling.Data
             ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
 
         /// <inheritdoc cref="IDbCommand.ExecuteScalar()"/>
-        public object ExecuteScalar() => ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
+        public object? ExecuteScalar() => ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
 
         /// <summary>
         /// Profile with results.
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="IDbCommand.Connection"/>
-        public IDbConnection Connection
+        public IDbConnection? Connection
         {
             get => _connection;
             set
@@ -116,6 +116,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="IDbCommand.CommandText"/>
+        [AllowNull]
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Handled elsewhere.")]
         public string CommandText
         {

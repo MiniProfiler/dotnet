@@ -4,7 +4,7 @@
     <Title>MiniProfiler.Minimal</Title>
     <Authors>Nick Craver</Authors>
     <Description>MiniProfiler's no-frills headless build for no-UI applications.</Description>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <DefineConstants>MINIMAL</DefineConstants>
   </PropertyGroup>
 
