@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,11 +13,6 @@ namespace StackExchange.Profiling
     [DataContract]
     public class Timing : IDisposable
     {
-#if NET6_0
-        private static ActivitySource _timingActivitySource = new ActivitySource("MiniProfiler.Timing", Internal.MiniProfilerBaseOptions.Version?.ToString());
-        private readonly Activity _activity;
-#endif
-
         /// <summary>
         /// Offset from parent MiniProfiler's creation that this Timing was created.
         /// </summary>
@@ -26,6 +20,7 @@ namespace StackExchange.Profiling
         private readonly decimal? _minSaveMs;
         private readonly bool _includeChildrenWithMinSave;
         private readonly object _syncRoot = new();
+        private readonly IDisposable? _instrumentation = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Timing"/> class.
@@ -83,10 +78,9 @@ namespace StackExchange.Profiling
             {
                 DebugInfo = new TimingDebugInfo(this, debugStackShave);
             }
-#if NET6_0
+
             // DataContractSerializer doesn't call this so it should be fine
-            _activity = _timingActivitySource.StartActivity(name, ActivityKind.Internal);
-#endif
+            _instrumentation = profiler.Options.TimingInstrumentationProvider?.Invoke(this);
         }
 
         /// <summary>
@@ -292,11 +286,8 @@ namespace StackExchange.Profiling
                     ParentTiming.RemoveChild(this);
                 }
             }
-#if NET6_0
-            _activity?.Stop();
-            _activity = null;
-            // TODO serialize (Custom)Timings and links?
-#endif
+
+            _instrumentation?.Dispose();
         }
 
         /// <summary>
