@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-#if !NETSTANDARD2_0
+#if NET461
 using System.Security;
 using System.Security.Permissions;
 #endif
@@ -108,7 +108,7 @@ namespace StackExchange.Profiling.Data
         /// <inheritdoc cref="DbProviderFactory.CreateDataSourceEnumerator()"/>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator() => _factory.CreateDataSourceEnumerator();
 
-#if !NETSTANDARD2_0
+#if NET461
         /// <inheritdoc cref="DbProviderFactory.CreatePermission(PermissionState)"/>
         public override CodeAccessPermission CreatePermission(PermissionState state) => _factory.CreatePermission(state);
 #endif
