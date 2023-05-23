@@ -16,6 +16,7 @@ This page tracks major changes included in any update starting with version 4.0.
   - Added `MiniProfiler.Minimal` headless package with is a standalone bare-bones build with no depdencies and no UI, useful for mass scale applications that are viewing the results elsewhere ([#636](https://github.com/MiniProfiler/dotnet/pull/636))
   - Fixed [#578](https://github.com/MiniProfiler/dotnet/issues/578): Making SQLite data types compatible for more use cases ([#582](https://github.com/MiniProfiler/dotnet/pull/582) - thanks [MarkZither](https://github.com/MarkZither))
   - Add Nullable Reference Type annotations to the entire codebase ([#640](https://github.com/MiniProfiler/dotnet/pull/640))
+  - Add `MiniProfilerOptions.TimingInstrumentationProvider` allowing to hook when `Timing`s are created, e.g. to drive `Activity` if desired ([#650](https://github.com/MiniProfiler/dotnet/pull/650) - thanks [m0sa](https://github.com/m0sa))
 
 #### Version 4.2.22
 - Minor fixes to build versioning
