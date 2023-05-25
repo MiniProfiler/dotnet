@@ -6,17 +6,22 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Unreleased
+No pending unreleased changes.
+
+#### Version 4.3.8
 - **New**:
   - Added an option to control `SpacesAfterCommas` to `InlineSqlFormatter` and `SqlServerFormatter` ([#549](https://github.com/MiniProfiler/dotnet/pull/549) - thanks [Turnerj](https://github.com/Turnerj))
-  - Fixed /results-index ordering (should be newest to oldest) ([#550](https://github.com/MiniProfiler/dotnet/pull/550) - thanks [spaduret](https://github.com/spaduret))
+  - Performance improvement: caching assembly names to reduce allocations during stack trace snippet generation ([#605](https://github.com/MiniProfiler/dotnet/pull/605) - thanks [benbryant0](https://github.com/benbryant0))
+  - Added `MiniProfiler.Minimal` headless package with is a standalone bare-bones build with no depdencies and no UI, useful for mass scale applications that are viewing the results elsewhere ([#636](https://github.com/MiniProfiler/dotnet/pull/636))
+  - Add Nullable Reference Type annotations to the entire codebase ([#640](https://github.com/MiniProfiler/dotnet/pull/640))
+  - Add `MiniProfilerOptions.TimingInstrumentationProvider` allowing to hook when `Timing`s are created, e.g. to drive `Activity` if desired ([#650](https://github.com/MiniProfiler/dotnet/pull/650) - thanks [m0sa](https://github.com/m0sa))
+- **Fixes/Changes**: 
+  - Fixed `/results-index` ordering (should be newest to oldest) ([#550](https://github.com/MiniProfiler/dotnet/pull/550) - thanks [spaduret](https://github.com/spaduret))
   - Fixed `nonce` attribute propagation to generated `<link>` style element for full CSP support ([#565](https://github.com/MiniProfiler/dotnet/pull/565))
   - Changed popup to show 2 decimal places for timings by default, with a new `PopupDecimalPlaces` option to control this (present everywhere settings are) ([#580](https://github.com/MiniProfiler/dotnet/pull/580))
   - Fix for time duration precision on Linux ([#602](https://github.com/MiniProfiler/dotnet/pull/602) - thanks [benbryant0](https://github.com/benbryant0))
-  - Performance improvement: caching assembly names to reduce allocations during stack trace snippet generation ([#605](https://github.com/MiniProfiler/dotnet/pull/605) - thanks [benbryant0](https://github.com/benbryant0))
-  - Added `MiniProfiler.Minimal` headless package with is a standalone bare-bones build with no depdencies and no UI, useful for mass scale applications that are viewing the results elsewhere ([#636](https://github.com/MiniProfiler/dotnet/pull/636))
   - Fixed [#578](https://github.com/MiniProfiler/dotnet/issues/578): Making SQLite data types compatible for more use cases ([#582](https://github.com/MiniProfiler/dotnet/pull/582) - thanks [MarkZither](https://github.com/MarkZither))
-  - Add Nullable Reference Type annotations to the entire codebase ([#640](https://github.com/MiniProfiler/dotnet/pull/640))
-  - Add `MiniProfilerOptions.TimingInstrumentationProvider` allowing to hook when `Timing`s are created, e.g. to drive `Activity` if desired ([#650](https://github.com/MiniProfiler/dotnet/pull/650) - thanks [m0sa](https://github.com/m0sa))
+
 
 #### Version 4.2.22
 - Minor fixes to build versioning
