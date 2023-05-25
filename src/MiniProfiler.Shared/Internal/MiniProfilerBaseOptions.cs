@@ -222,6 +222,12 @@ namespace StackExchange.Profiling.Internal
         public MiniProfiler? StartProfiler(string? profilerName = null) => ProfilerProvider.Start(profilerName, this);
 
         /// <summary>
+        /// Called whenever a new <cref see="Timing" /> is started.
+        /// The <cref see="IDiposable.Dispose" /> method of the returned object is called at the same time as the <cref see="Timing" /> is <cref see="Timing.Stop" />ed.
+        /// </summary>
+        public Func<Timing, IDisposable>? TimingInstrumentationProvider { get; set; }
+
+        /// <summary>
         /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.
         /// </summary>
         protected virtual void OnConfigure() { }

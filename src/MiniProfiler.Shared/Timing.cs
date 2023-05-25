@@ -21,6 +21,7 @@ namespace StackExchange.Profiling
         private readonly decimal? _minSaveMs;
         private readonly bool _includeChildrenWithMinSave;
         private readonly object _syncRoot = new();
+        private readonly IDisposable? _instrumentation = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Timing"/> class.
@@ -78,6 +79,9 @@ namespace StackExchange.Profiling
             {
                 DebugInfo = new TimingDebugInfo(this, debugStackShave);
             }
+
+            // DataContractSerializer doesn't call this so it should be fine
+            _instrumentation = profiler.Options.TimingInstrumentationProvider?.Invoke(this);
         }
 
         /// <summary>
@@ -292,6 +296,8 @@ namespace StackExchange.Profiling
                     ParentTiming.RemoveChild(this);
                 }
             }
+
+            _instrumentation?.Dispose();
         }
 
         /// <summary>
