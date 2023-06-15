@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Web;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Helpers;
 using StackExchange.Profiling.SqlFormatters;
@@ -226,6 +227,11 @@ namespace StackExchange.Profiling.Internal
         /// The <cref see="IDiposable.Dispose" /> method of the returned object is called at the same time as the <cref see="Timing" /> is <cref see="Timing.Stop" />ed.
         /// </summary>
         public Func<Timing, IDisposable>? TimingInstrumentationProvider { get; set; }
+
+        /// <summary>
+        /// Called whenever a nonce is required for a script or style tag for each request.
+        /// </summary>
+        public Func<IServiceProvider, string?> NonceGetter { get; set; } = _ => null; 
 
         /// <summary>
         /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.

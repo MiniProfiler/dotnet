@@ -35,6 +35,7 @@ namespace StackExchange.Profiling
                 path: context.Request.PathBase + path,
                 isAuthorized: state?.IsAuthorized ?? false,
                 renderOptions,
+                context.RequestServices,
                 requestIDs: state?.RequestIDs);
 
             return new HtmlString(result);

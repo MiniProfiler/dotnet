@@ -406,7 +406,7 @@ namespace StackExchange.Profiling
             else
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
-                return Render.SingleResultHtml(profiler, context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
+                return Render.SingleResultHtml(profiler, context.RequestServices, context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash());
             }
         }
     }
