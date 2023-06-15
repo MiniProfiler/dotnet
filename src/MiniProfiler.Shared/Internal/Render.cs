@@ -268,11 +268,7 @@ namespace StackExchange.Profiling.Internal
             {
                 sb.Append(" nonce=\"");
                 sb.Append(HttpUtility.HtmlAttributeEncode(nonce));
-                sb.Append("\" ");
-            }
-            else
-            {
-                sb.Append(' ');
+                sb.Append("\"");
             }
 
             sb.Append(">var profiler = ");
