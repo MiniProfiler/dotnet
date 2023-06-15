@@ -355,7 +355,7 @@ namespace StackExchange.Profiling {
                     // profiler will be defined in the full page's head
                     window.profiler.Started = new Date('' + window.profiler.Started); // Ugh, JavaScript
                     const profilerHtml = mp.renderProfiler(window.profiler, false);
-                    mp.container.insertAdjacentHTML('beforeend', profilerHtml);
+                    mp.setStylesAndDisplay(profilerHtml);
 
                     // highight
                     mp.container.querySelectorAll('pre code').forEach(block => mp.highlight(block as HTMLElement));
@@ -957,31 +957,35 @@ namespace StackExchange.Profiling {
             }
 
             const profilerHtml = this.renderProfiler(json, true);
-			const nonVisibleElement = document.createElement("div");
-			nonVisibleElement.innerHTML = profilerHtml;
-			
-			// dynamic padding, margin and width
-			nonVisibleElement.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
-				element.style.paddingLeft = element.dataset.paddingLeft;
-			});
-			nonVisibleElement.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
-				element.style.marginLeft = element.dataset.marginLeft;
-			});
-			nonVisibleElement.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
-				element.style.width = element.dataset.width;
-			});
-
-            if (this.controls) {
-                this.controls.insertAdjacentElement('beforebegin', nonVisibleElement.firstElementChild);
-            } else {
-                this.container.insertAdjacentElement('beforeend', nonVisibleElement.firstElementChild);
-            }
+			this.setStylesAndDisplay(profilerHtml);
 
             // limit count to maxTracesToShow, remove those before it
             const results = this.container.querySelectorAll('.mp-result');
             const toRemove = results.length - this.options.maxTracesToShow;
             for (let i = 0; i < toRemove; i++) {
                 results[i].parentNode.removeChild(results[i]);
+            }
+        }
+        
+        private setStylesAndDisplay(profilerHtml: string) {
+            const nonVisibleElement = document.createElement("div");
+            nonVisibleElement.innerHTML = profilerHtml;
+
+            // dynamic padding, margin and width
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
+                element.style.paddingLeft = element.dataset.paddingLeft;
+            });
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
+                element.style.marginLeft = element.dataset.marginLeft;
+            });
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
+                element.style.width = element.dataset.width;
+            });
+
+            if (this.controls) {
+                this.controls.insertAdjacentElement('beforebegin', nonVisibleElement.firstElementChild);
+            } else {
+                this.container.insertAdjacentElement('beforeend', nonVisibleElement.firstElementChild);
             }
         }
 
