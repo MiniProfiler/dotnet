@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -34,28 +33,28 @@ namespace StackExchange.Profiling.Storage
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
         private string _saveSql;
-        private string SaveSql => _saveSql ?? (_saveSql = $@"
+        private string SaveSql => _saveSql ??= $@"
 INSERT INTO {MiniProfilersTable}
             (""Id"", RootTimingId, ""Name"", Started, DurationMilliseconds, ""User"", HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
 SELECT      :pId, :pRootTimingId, :pName, :pStarted, :pDurationMilliseconds, :pUser, :pHasUserViewed, :pMachineName, :pCustomLinksJson, :pClientTimingsRedirectCount
   FROM DUAL
- WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE ""Id"" = :pId)");
+ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE ""Id"" = :pId)";
 
         private string _saveTimingsSql;
-        private string SaveTimingsSql => _saveTimingsSql ?? (_saveTimingsSql = $@"
+        private string SaveTimingsSql => _saveTimingsSql ??= $@"
 INSERT INTO {MiniProfilerTimingsTable}
             (""Id"", MiniProfilerId, ParentTimingId, ""Name"", DurationMilliseconds, StartMilliseconds, IsRoot, ""Depth"", CustomTimingsJson)
 SELECT      :pId, :pMiniProfilerId, :pParentTimingId, :pName, :pDurationMilliseconds, :pStartMilliseconds, :pIsRoot, :pDepth, :pCustomTimingsJson
   FROM DUAL
- WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE ""Id"" = :pId)");
+ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE ""Id"" = :pId)";
 
         private string _saveClientTimingsSql;
-        private string SaveClientTimingsSql => _saveClientTimingsSql ?? (_saveClientTimingsSql = $@"
+        private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
 INSERT INTO {MiniProfilerClientTimingsTable}
             (""Id"", MiniProfilerId, ""Name"", ""Start"", ""Duration"")
 SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
   FROM DUAL
- WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE ""Id"" = :pId)");
+ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE ""Id"" = :pId)";
 
         /// <summary>
         /// Stores to <c>dbo.MiniProfilers</c> under its <see cref="MiniProfiler.Id"/>;
@@ -88,7 +87,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
 
                     });
 
-                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(t => ClientTimingToDynamic(t)));
+                    conn.Execute(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(ClientTimingToDynamic));
                 }
             }
         }
@@ -124,7 +123,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
 
                     });
 
-                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(t => ClientTimingToDynamic(t))).ConfigureAwait(false);
+                    await conn.ExecuteAsync(SaveClientTimingsSql, profiler.ClientTimings.Timings.Select(ClientTimingToDynamic)).ConfigureAwait(false);
                 }
             }
         }
@@ -217,7 +216,7 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             Started = profile.STARTED,
             Name = profile.Name,
             User = profile.User,
-            RootTimingId = profile.ROOTTIMINGID == null ? (Guid?)null : new Guid((string)profile.ROOTTIMINGID),
+            RootTimingId = profile.ROOTTIMINGID == null ? null : new Guid((string)profile.ROOTTIMINGID),
             DurationMilliseconds = Convert.ToDecimal(profile.DURATIONMILLISECONDS ?? 0),
             HasUserViewed = profile.HASUSERVIEWED == 1,
             MachineName = profile.MACHINENAME,
@@ -263,9 +262,9 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         private string _loadSqlTimings;
         private string _loadSqlClientTimings;
         
-        private string LoadSqlProfiler => _loadSqlProfiler ?? (_loadSqlProfiler = $@"SELECT * FROM {MiniProfilersTable} WHERE ""Id"" = :pId");
-        private string LoadSqlTimings => _loadSqlTimings ?? (_loadSqlTimings = $@"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = :pId ORDER BY StartMilliseconds");
-        private string LoadSqlClientTimings => _loadSqlClientTimings ?? (_loadSqlClientTimings = $@"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = :pId ORDER BY ""Start""");
+        private string LoadSqlProfiler => _loadSqlProfiler ??= $@"SELECT * FROM {MiniProfilersTable} WHERE ""Id"" = :pId";
+        private string LoadSqlTimings => _loadSqlTimings ??= $@"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = :pId ORDER BY StartMilliseconds";
+        private string LoadSqlClientTimings => _loadSqlClientTimings ??= $@"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = :pId ORDER BY ""Start""";
 
         /// <summary>
         /// Loads the <c>MiniProfiler</c> identified by 'id' from the database.
@@ -346,11 +345,11 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
 
         private string _toggleViewedSql;
-        private string ToggleViewedSql => _toggleViewedSql ?? (_toggleViewedSql = $@"
+        private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
    Set HasUserViewed = :pHasUserViewed 
  Where ""Id"" = :pId 
-   And ""User"" = :pUser");
+   And ""User"" = :pUser";
 
         private void ToggleViewed(string user, Guid id, bool hasUserViewed)
         {
@@ -369,12 +368,12 @@ Update {MiniProfilersTable}
         }
 
         private string _getUnviewedIdsSql;
-        private string GetUnviewedIdsSql => _getUnviewedIdsSql ?? (_getUnviewedIdsSql = $@"
+        private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select ""Id""
     From {MiniProfilersTable}
    Where ""User"" = :pUser
      And HasUserViewed = 0
-Order By Started");
+Order By Started";
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
