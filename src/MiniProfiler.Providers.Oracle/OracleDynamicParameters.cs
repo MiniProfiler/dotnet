@@ -3,6 +3,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace StackExchange.Profiling
@@ -16,22 +17,21 @@ namespace StackExchange.Profiling
 
         private readonly Dictionary<string, ParamInfo> _parameters = new Dictionary<string, ParamInfo>();
 
-        private List<object> _templates;
+        private List<object>? _templates;
 
         private sealed class ParamInfo
         {
+            public string Name { get; set; } = string.Empty;
 
-            public string Name { get; set; }
+            public object? Value { get; set; }
 
-            public object Value { get; set; }
-
-            public ParameterDirection ParameterDirection { get; set; }
+            public ParameterDirection ParameterDirection { get; set; } = ParameterDirection.Input;
 
             public OracleDbType? DbType { get; set; }
 
             public int? Size { get; set; }
 
-            public IDbDataParameter AttachedParam { get; set; }
+            public OracleParameter AttachedParam { get; set; } = new OracleParameter();
         }
 
         /// <summary>
@@ -52,11 +52,11 @@ namespace StackExchange.Profiling
         /// <param name="param"></param>
         public void AddDynamicParams(
 #if CSHARP30
-		object param
+		    object param
 #else
              dynamic param
 #endif
-     )
+        )
         {
             if (param is object obj)
             {
@@ -111,9 +111,9 @@ namespace StackExchange.Profiling
         /// <param name="size"></param>
         public void Add(
 #if CSHARP30
-		string name, object value, DbType? dbType, ParameterDirection? direction, int? size
+		    string name, object value, DbType? dbType, ParameterDirection? direction, int? size
 #else
-            string name, object value = null, OracleDbType? dbType = null, ParameterDirection? direction = null, int? size = null
+            string name, object? value = null, OracleDbType? dbType = null, ParameterDirection? direction = null, int? size = null
 #endif
         ) => _parameters[Clean(name)] = new ParamInfo() { Name = name, Value = value, ParameterDirection = direction ?? ParameterDirection.Input, DbType = dbType, Size = size };
 
@@ -209,16 +209,15 @@ namespace StackExchange.Profiling
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns>The value, note DBNull.Value is not returned, instead the value is returned as null</returns>
+        [SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "<Pending>")]
         public T Get<T>(string name)
         {
             var val = _parameters[Clean(name)].AttachedParam.Value;
             if (val == DBNull.Value)
             {
-                if (default(T) != null)
-                {
-                    throw new InvalidCastException("Attempting to cast a DBNull to a non nullable type!");
-                }
-                return default;
+#pragma warning disable CS8603 // Possible null reference return.
+                return default(T) == null ? default(T) : throw new InvalidCastException("Attempting to cast a DBNull to a non nullable type!");
+#pragma warning restore CS8603 // Possible null reference return.
             }
             return (T)val;
         }

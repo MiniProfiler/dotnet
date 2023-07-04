@@ -32,7 +32,8 @@ namespace StackExchange.Profiling.Storage
         public OracleStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
-        private string _saveSql;
+        private string? _saveSql, _saveTimingsSql, _saveClientTimingsSql;
+
         private string SaveSql => _saveSql ??= $@"
 INSERT INTO {MiniProfilersTable}
             (""Id"", RootTimingId, ""Name"", Started, DurationMilliseconds, ""User"", HasUserViewed, MachineName, CustomLinksJson, ClientTimingsRedirectCount)
@@ -40,7 +41,6 @@ SELECT      :pId, :pRootTimingId, :pName, :pStarted, :pDurationMilliseconds, :pU
   FROM DUAL
  WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilersTable} WHERE ""Id"" = :pId)";
 
-        private string _saveTimingsSql;
         private string SaveTimingsSql => _saveTimingsSql ??= $@"
 INSERT INTO {MiniProfilerTimingsTable}
             (""Id"", MiniProfilerId, ParentTimingId, ""Name"", DurationMilliseconds, StartMilliseconds, IsRoot, ""Depth"", CustomTimingsJson)
@@ -48,7 +48,6 @@ SELECT      :pId, :pMiniProfilerId, :pParentTimingId, :pName, :pDurationMillisec
   FROM DUAL
  WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerTimingsTable} WHERE ""Id"" = :pId)";
 
-        private string _saveClientTimingsSql;
         private string SaveClientTimingsSql => _saveClientTimingsSql ??= $@"
 INSERT INTO {MiniProfilerClientTimingsTable}
             (""Id"", MiniProfilerId, ""Name"", ""Start"", ""Duration"")
@@ -128,11 +127,10 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             }
         }
 
+        #region Create Oracle Dynamic Parameters
 
         private OracleDynamicParameters ProfilerToDynamic(DbConnection conn, MiniProfiler profiler)
         {
-            if (profiler == null) return null;
-
             var pars = new OracleDynamicParameters();
             pars.Add("pId", profiler.Id.ToString());
             pars.Add("pStarted", profiler.Started);
@@ -162,8 +160,6 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
 
         private OracleDynamicParameters TimingToDynamic(DbConnection conn, Timing timing)
         {
-            if (timing == null) return null;
-
             var pars = new OracleDynamicParameters();
             pars.Add("pId", timing.Id.ToString());
             pars.Add("pMiniProfilerId", timing.MiniProfilerId.ToString());
@@ -192,8 +188,6 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
 
         private OracleDynamicParameters ClientTimingToDynamic(ClientTiming clientTiming)
         {
-            if (clientTiming == null) return null;
-
             var pars = new OracleDynamicParameters();
             pars.Add("pId", clientTiming.Id.ToString());
             pars.Add("pMiniProfilerId", clientTiming.MiniProfilerId.ToString());
@@ -209,40 +203,33 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             foreach (var profile in profilers) yield return DynamicToProfiler(profile);
         }
 
-#pragma warning disable CS0618 // Used for serialization only
-        private MiniProfiler DynamicToProfiler(dynamic profile) => new MiniProfiler
+        private MiniProfiler DynamicToProfiler(dynamic profile) => new MiniProfiler(profile.Name, new MiniProfilerBaseOptions())
         {
             Id = new Guid((string)profile.Id),
             Started = profile.STARTED,
-            Name = profile.Name,
             User = profile.User,
             RootTimingId = profile.ROOTTIMINGID == null ? null : new Guid((string)profile.ROOTTIMINGID),
             DurationMilliseconds = Convert.ToDecimal(profile.DURATIONMILLISECONDS ?? 0),
             HasUserViewed = profile.HASUSERVIEWED == 1,
             MachineName = profile.MACHINENAME,
             CustomLinksJson = profile.CUSTOMLINKSJSON,
-            ClientTimingsRedirectCount = profile.CLIENTTIMINGSREDIRECTCOUNT
+            ClientTimingsRedirectCount = profile.CLIENTTIMINGSREDIRECTCOUNT,
         };
-#pragma warning restore CS0618 // Used for serialization only
 
-
-        private IEnumerable<Timing> DynamicListToTiming(IEnumerable<dynamic> timings)
+        private IEnumerable<Timing> DynamicListToTiming(MiniProfiler profiler, IEnumerable<dynamic> timings)
         {
-            foreach (var timing in timings) yield return DynamicToTiming(timing);
+            foreach (var timing in timings) yield return DynamicToTiming(profiler, timing);
         }
 
-#pragma warning disable CS0618 // Used for serialization only
-        private Timing DynamicToTiming(dynamic timing) => new Timing
+        private Timing DynamicToTiming(MiniProfiler profiler, dynamic timing) => new Timing(profiler, parent: null, name: timing.Name, minSaveMs: null)
         {
              Id = new Guid((string)timing.Id),
              MiniProfilerId = new Guid((string)timing.MINIPROFILERID),
              ParentTimingId = timing.PARENTTIMINGID == null ? Guid.Empty : new Guid((string)timing.PARENTTIMINGID),
-             Name = timing.Name,
              DurationMilliseconds = timing.DURATIONMILLISECONDS == null ? null : Convert.ToDecimal(timing.DURATIONMILLISECONDS),
              StartMilliseconds = Convert.ToDecimal(timing.STARTMILLISECONDS),
              CustomTimingsJson = timing.CUSTOMTIMINGSJSON
         };
-#pragma warning restore CS0618 // Used for serialization only
 
         private IEnumerable<ClientTiming> DynamicListToClientTiming(IEnumerable<dynamic> clientTimings)
         {
@@ -258,12 +245,14 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
             Duration = Convert.ToDecimal(clientTiming.Duration)
         };
 
-        private string _loadSqlProfiler;
-        private string _loadSqlTimings;
-        private string _loadSqlClientTimings;
+        #endregion
+
+        private string? _loadSqlProfiler, _loadSqlTimings, _loadSqlClientTimings;
         
         private string LoadSqlProfiler => _loadSqlProfiler ??= $@"SELECT * FROM {MiniProfilersTable} WHERE ""Id"" = :pId";
+
         private string LoadSqlTimings => _loadSqlTimings ??= $@"SELECT * FROM {MiniProfilerTimingsTable} WHERE MiniProfilerId = :pId ORDER BY StartMilliseconds";
+
         private string LoadSqlClientTimings => _loadSqlClientTimings ??= $@"SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = :pId ORDER BY ""Start""";
 
         /// <summary>
@@ -271,13 +260,13 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override MiniProfiler Load(Guid id)
+        public override MiniProfiler? Load(Guid id)
         {
             MiniProfiler result;
             using (var conn = GetConnection())
             {
                 result = DynamicListToProfiler(conn.Query<dynamic>(LoadSqlProfiler, new { pId = id.ToString() })).FirstOrDefault();
-                var timings = DynamicListToTiming(conn.Query<dynamic>(LoadSqlTimings,  new { pId = id.ToString() })).AsList();
+                var timings = DynamicListToTiming(result, conn.Query<dynamic>(LoadSqlTimings,  new { pId = id.ToString() })).AsList();
                 var clientTimings = DynamicListToClientTiming(conn.Query<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() })).AsList();
     
                 ConnectTimings(result, timings, clientTimings);
@@ -296,13 +285,13 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override async Task<MiniProfiler> LoadAsync(Guid id)
+        public override async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             MiniProfiler result;
             using (var conn = GetConnection())
             {
                 result = DynamicListToProfiler(await conn.QueryAsync<dynamic>(LoadSqlProfiler, new { pId = id.ToString() }).ConfigureAwait(false)).FirstOrDefault();
-                var timings = DynamicListToTiming(await conn.QueryAsync<dynamic>(LoadSqlTimings,  new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
+                var timings = DynamicListToTiming(result, await conn.QueryAsync<dynamic>(LoadSqlTimings,  new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
                 var clientTimings = DynamicListToClientTiming(await conn.QueryAsync<dynamic>(LoadSqlClientTimings, new { pId = id.ToString() }).ConfigureAwait(false)).AsList();
 
                 ConnectTimings(result, timings, clientTimings);
@@ -321,37 +310,38 @@ SELECT      :pId, :pMiniProfilerId, :pName, :pStart, :pDuration
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
+        public override void SetUnviewed(string? user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override Task SetUnviewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, false);
+        public override Task SetUnviewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, false);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override void SetViewed(string user, Guid id) => ToggleViewed(user, id, true);
+        public override void SetViewed(string? user, Guid id) => ToggleViewed(user, id, true);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
+        public override Task SetViewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, true);
 
-        private string _toggleViewedSql;
+        private string? _toggleViewedSql;
+
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
    Set HasUserViewed = :pHasUserViewed 
  Where ""Id"" = :pId 
    And ""User"" = :pUser";
 
-        private void ToggleViewed(string user, Guid id, bool hasUserViewed)
+        private void ToggleViewed(string? user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
@@ -359,7 +349,7 @@ Update {MiniProfilersTable}
             }
         }
 
-        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserViewed)
+        private async Task ToggleViewedAsync(string? user, Guid id, bool hasUserViewed)
         {
             using (var conn = GetConnection())
             {
@@ -367,7 +357,8 @@ Update {MiniProfilersTable}
             }
         }
 
-        private string _getUnviewedIdsSql;
+        private string? _getUnviewedIdsSql;
+
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select ""Id""
     From {MiniProfilersTable}
@@ -380,7 +371,7 @@ Order By Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override List<Guid> GetUnviewedIds(string user)
+        public override List<Guid> GetUnviewedIds(string? user)
         {
             using (var conn = GetConnection())
             {
@@ -394,7 +385,7 @@ Order By Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public override async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             using (var conn = GetConnection())
             {

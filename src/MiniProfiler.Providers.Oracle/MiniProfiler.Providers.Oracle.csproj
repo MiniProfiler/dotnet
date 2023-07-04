@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Providers.Oracle</AssemblyName>
     <Title>MiniProfiler.Providers.Oracle</Title>
@@ -6,7 +6,6 @@
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver, Fernando Paz</Authors>
     <PackageTags>Oracle;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
