@@ -72,7 +72,8 @@ jobs:
         RavenDbUrls: http://localhost:${{ job.services.ravendb.ports[8080] }}
         RavenDatabase: test
         SQLServerConnectionString: Server=tcp:127.0.0.1,${{ job.services.sqlserver.ports[1433] }};Database=tempdb;User Id=sa;Password=g0d4mm!tSQLServer;
-    - uses: dorny/test-reporter@v1
+    - name: .NET Test Results
+      uses: dorny/test-reporter@v1
       continue-on-error: true
       if: success() || failure()
       with:
