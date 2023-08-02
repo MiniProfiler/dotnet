@@ -62,7 +62,7 @@ jobs:
     - name: .NET Build
       run: dotnet build Build.csproj -c Release /p:CI=true
     - name: .NET Test
-      run: dotnet test Build.csproj -c Release --no-build /p:CI=true
+      run: dotnet test Build.csproj -c Release --no-build --logger trx --logger GitHubActions --results-directory ./test-results/ /p:CI=true
       env:
         EnableTestLogging: true
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
