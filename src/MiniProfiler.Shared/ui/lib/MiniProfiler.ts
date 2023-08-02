@@ -319,11 +319,11 @@ namespace StackExchange.Profiling {
 
                         // fetch and render results
                         mp.fetchResults(mp.options.ids);
-                        
+
                         let lsDisplayValue;
                         try {
                             lsDisplayValue = window.localStorage.getItem('MiniProfiler-Display');
-                        } catch(e) { }
+                        } catch (e) { }
 
                         if (lsDisplayValue) {
                             mp.container.style.display = lsDisplayValue;
@@ -957,7 +957,7 @@ namespace StackExchange.Profiling {
             }
 
             const profilerHtml = this.renderProfiler(json, true);
-			this.setStylesAndDisplay(profilerHtml);
+            this.setStylesAndDisplay(profilerHtml);
 
             // limit count to maxTracesToShow, remove those before it
             const results = this.container.querySelectorAll('.mp-result');
@@ -966,7 +966,7 @@ namespace StackExchange.Profiling {
                 results[i].parentNode.removeChild(results[i]);
             }
         }
-        
+
         private setStylesAndDisplay(profilerHtml: string) {
             const nonVisibleElement = document.createElement("div");
             nonVisibleElement.innerHTML = profilerHtml;
@@ -1238,7 +1238,7 @@ namespace StackExchange.Profiling {
                             results.style.display = newValue;
                             try {
                                 window.localStorage.setItem('MiniProfiler-Display', newValue);
-                            } catch(e) { }
+                            } catch (e) { }
                         }
                     }, false);
                 }
