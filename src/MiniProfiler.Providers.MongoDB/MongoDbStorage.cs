@@ -52,7 +52,7 @@ namespace StackExchange.Profiling
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
             {
-                BsonClassMapFields(options.SerializeDecimalFieldsAsNumberDecimal);
+                BsonClassMapFields();
             }
 
             var url = new MongoUrl(options.ConnectionString);
@@ -70,14 +70,9 @@ namespace StackExchange.Profiling
             }
         }
 
-        private static void BsonClassMapFields(bool serializeDecimalFieldsAsNumberDecimal = false)
+        private void BsonClassMapFields()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
-            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            if (serializeDecimalFieldsAsNumberDecimal)
+            if (_options.SerializeDecimalFieldsAsNumberDecimal)
             {
                 BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));
                 BsonSerializer.RegisterSerializer(typeof(decimal?), new NullableSerializer<decimal>(new DecimalSerializer(BsonType.Decimal128)));
