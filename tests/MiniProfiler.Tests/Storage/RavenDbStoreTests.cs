@@ -30,20 +30,21 @@ namespace StackExchange.Profiling.Tests.Storage
             {
                 var store = new DocumentStore
                 {
-                    Urls = TestConfig.Current.RavenDbUrls.Split(';'), Database = TestConfig.Current.RavenDatabase
+                    Urls = TestConfig.Current.RavenDbUrls.Split(';'),
+                    Database = TestConfig.Current.RavenDatabase + TestId
                 };
 
                 store.Initialize();
 
                 try
                 {
-                    store.Maintenance.ForDatabase(TestConfig.Current.RavenDatabase).Send(new GetStatisticsOperation());
+                    store.Maintenance.ForDatabase(store.Database).Send(new GetStatisticsOperation());
                 }
                 catch (DatabaseDoesNotExistException)
                 {
                     try
                     {
-                        store.Maintenance.Server.Send(new CreateDatabaseOperation(new DatabaseRecord(TestConfig.Current.RavenDatabase)));
+                        store.Maintenance.Server.Send(new CreateDatabaseOperation(new DatabaseRecord(store.Database)));
                     }
                     catch (ConcurrencyException)
                     {
@@ -51,10 +52,11 @@ namespace StackExchange.Profiling.Tests.Storage
                     }
                 }
 
+                var dbName = store.Database;
                 store.Dispose();
                 store = null;
 
-                Storage = new RavenDbStorage(TestConfig.Current.RavenDbUrls.Split(';'), TestConfig.Current.RavenDatabase, waitForIndexes: true);
+                Storage = new RavenDbStorage(TestConfig.Current.RavenDbUrls.Split(';'), dbName, waitForIndexes: true);
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)

@@ -30,7 +30,7 @@ namespace StackExchange.Profiling.Tests
         public class Config
         {
             public bool RunLongRunning { get; set; }
-            public bool EnableTestLogging { get; set; } = Environment.GetEnvironmentVariable(nameof(EnableTestLogging)) == "true";
+            public bool EnableTestLogging { get; set; } = bool.TryParse(Environment.GetEnvironmentVariable(nameof(EnableTestLogging)), out var enableTestLogging) && enableTestLogging;
 
             public string RedisConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(RedisConnectionString)) ?? "localhost:6379";
             public string SQLServerConnectionString { get; set; } = Environment.GetEnvironmentVariable(nameof(SQLServerConnectionString)) ?? "Server=.;Database=tempdb;Trusted_Connection=True;";

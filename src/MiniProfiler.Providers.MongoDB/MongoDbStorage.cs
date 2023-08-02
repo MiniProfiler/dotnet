@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
@@ -12,38 +16,69 @@ namespace StackExchange.Profiling
     /// </summary>
     public class MongoDbStorage : IAsyncStorage
     {
+        private readonly MongoDbStorageOptions _options;
         private readonly MongoClient _client;
         private readonly IMongoCollection<MiniProfiler> _collection;
 
         /// <summary>
         /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
+        /// and collection name to "profilers".
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
         public MongoDbStorage(string connectionString) : this(connectionString, "profilers") { }
 
         /// <summary>
-        /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost"
+        /// Returns a new <see cref="MongoDbStorage"/>. MongoDb connection string will default to "mongodb://localhost".
         /// </summary>
         /// <param name="connectionString">The MongoDB connection string.</param>
         /// <param name="collectionName">The collection name to use in the database.</param>
-        public MongoDbStorage(string connectionString, string collectionName)
+        public MongoDbStorage(string connectionString, string collectionName) : this(new MongoDbStorageOptions
         {
+           ConnectionString = connectionString,
+           CollectionName = collectionName,
+        }) { }
+
+        /// <summary>
+        /// Creates a new instance of this class using the provided <paramref name="options"/>.
+        /// </summary>
+        /// <param name="options">Options to use for configuring this instance.</param>
+        /// <exception cref="ArgumentException">If <see cref="MongoDbStorageOptions.CollectionName"/> is null or contains only whitespace.</exception>
+        public MongoDbStorage(MongoDbStorageOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.CollectionName))
+            {
+                throw new ArgumentException("Collection name may not be null or contain only whitespace", nameof(options.CollectionName));
+            }
+
+            _options = options;
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
             {
                 BsonClassMapFields();
             }
 
-            var url = new MongoUrl(connectionString);
+            var url = new MongoUrl(options.ConnectionString);
             var databaseName = url.DatabaseName ?? "MiniProfiler";
 
             _client = new MongoClient(url);
             _collection = _client
                 .GetDatabase(databaseName)
-                .GetCollection<MiniProfiler>(collectionName);
+                .GetCollection<MiniProfiler>(options.CollectionName);
+
+            if (options.AutomaticallyCreateIndexes)
+            {
+                WithIndexCreation(options.CacheDuration);
+            }
         }
 
-        private static void BsonClassMapFields()
+        private void BsonClassMapFields()
         {
+            if (_options.SerializeDecimalFieldsAsNumberDecimal)
+            {
+                BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));
+                BsonSerializer.RegisterSerializer(typeof(decimal?), new NullableSerializer<decimal>(new DecimalSerializer(BsonType.Decimal128)));
+            }
+
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
                 {
@@ -97,11 +132,57 @@ namespace StackExchange.Profiling
         /// </summary>
         public MongoDbStorage WithIndexCreation()
         {
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User));
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed));
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started));
-            _collection.Indexes.CreateOne(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User)));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed)));
+            CreateStartedAscendingIndex();
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
+
             return this;
+        }
+
+        /// <summary>
+        /// Creates indexes on the following fields for faster querying:
+        /// <list type="table">
+        /// <listheader><term>Field</term><term>Direction</term><term>Notes</term></listheader>
+        /// <item><term>User</term><term>Ascending</term><term></term></item>
+        /// <item><term>HasUserViewed</term><term>Ascending</term><term></term></item>
+        /// <item><term>Started</term><term>Ascending</term><term>Used to apply the <paramref name="cacheDuration"/>, if one was specified</term></item>
+        /// <item><term>Started</term><term>Descending</term><term></term></item>
+        /// </list>
+        /// </summary>
+        /// <param name="cacheDuration">The time to persist profiles before they expire.</param>
+        public MongoDbStorage WithIndexCreation(TimeSpan cacheDuration)
+        {
+            _options.CacheDuration = cacheDuration;
+            return WithIndexCreation();
+        }
+
+        private void CreateStartedAscendingIndex()
+        {
+            var index = Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started);
+            var options = _options.CacheDuration != default
+                ? new CreateIndexOptions { ExpireAfter = _options.CacheDuration }
+                : null;
+            var model = new CreateIndexModel<MiniProfiler>(index, options);
+
+            try
+            {
+                _collection.Indexes.CreateOne(model);
+            }
+            catch (MongoCommandException ex) when (_options.AutomaticallyRecreateIndexes && ex.Code == 85)
+            {
+                // Handling the case we found an conflicting existing index, and were told to re-create if this happens
+                var indexNames = _collection.Indexes.List().ToList()
+                                                    .SelectMany(index => index.Elements)
+                                                    .Where(element => element.Name == "name")
+                                                    .Select(name => name.Value.ToString());
+                var indexName = IndexNameHelper.GetIndexName(model.Keys.Render(_collection.Indexes.DocumentSerializer, _collection.Indexes.Settings.SerializerRegistry));
+                if (indexNames.Contains(indexName))
+                {
+                    _collection.Indexes.DropOne(indexName);
+                }
+                _collection.Indexes.CreateOne(model);
+            }
         }
 
         /// <summary>
@@ -188,7 +269,7 @@ namespace StackExchange.Profiling
             _collection.ReplaceOne(
                 p => p.Id == profiler.Id,
                 profiler,
-                new UpdateOptions
+                new ReplaceOptions
                 {
                     IsUpsert = true
                 });
@@ -203,7 +284,7 @@ namespace StackExchange.Profiling
             return _collection.ReplaceOneAsync(
                 p => p.Id == profiler.Id,
                 profiler,
-                new UpdateOptions
+                new ReplaceOptions
                 {
                     IsUpsert = true
                 });
