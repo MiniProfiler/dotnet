@@ -37,7 +37,6 @@ services:
   - mssql2019
   - mysql
   - postgresql
-  - mongodb
 
 nuget:
   disable_publish_on_pr: true
