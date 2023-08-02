@@ -11,7 +11,7 @@ namespace StackExchange.Profiling
         /// The connection string to use for connecting to MongoDB.
         /// Defaults to <c>mongodb://localhost</c>.
         /// </summary>
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
 
         /// <summary>
         /// Name of the collection in which to store <see cref="MiniProfiler"/> sessions in.
