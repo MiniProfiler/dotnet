@@ -3,7 +3,7 @@
     <AssemblyName>MiniProfiler.Providers.MongoDB</AssemblyName>
     <Title>MiniProfiler.Providers.MongoDB</Title>
     <Description>MiniProfiler: Profiler storage for MongoDB</Description>
-    <Authors>Nick Craver, Roger Calaf</Authors>
+    <Authors>Nick Craver, Roger Calaf, Ian Kemp</Authors>
     <PackageTags>NoSQL;MongoDB;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
@@ -11,6 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
   </ItemGroup>
 </Project>
