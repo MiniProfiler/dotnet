@@ -72,5 +72,12 @@ jobs:
         RavenDbUrls: http://localhost:${{ job.services.ravendb.ports[8080] }}
         RavenDatabase: test
         SQLServerConnectionString: Server=tcp:127.0.0.1,${{ job.services.sqlserver.ports[1433] }};Database=tempdb;User Id=sa;Password=g0d4mm!tSQLServer;
+    - uses: dorny/test-reporter@v1
+      continue-on-error: true
+      if: success() || failure()
+      with:
+        name: .NET Test Results
+        path: 'test-results/*.trx'
+        reporter: dotnet-trx
     - name: .NET Lib Pack
       run: dotnet pack Build.csproj --no-build -c Release /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true
