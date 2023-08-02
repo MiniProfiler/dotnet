@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 #if !MINIMAL
@@ -95,7 +96,7 @@ namespace StackExchange.Profiling.Data
             var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
             action = null;
             ParameterInfo[] indexers;
-            MethodInfo setter;
+            MethodInfo? setter;
             if (prop?.CanWrite == true && prop.PropertyType == typeof(bool)
                 && ((indexers = prop.GetIndexParameters()) == null || indexers.Length == 0)
                 && (setter = prop.GetSetMethod()) != null)
@@ -117,6 +118,7 @@ namespace StackExchange.Profiling.Data
 #endif
 
         /// <inheritdoc cref="DbCommand.CommandText"/>
+        [AllowNull]
         public override string CommandText
         {
             get => _command.CommandText;
@@ -308,14 +310,14 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbCommand.ExecuteScalar()"/>
-        public override object ExecuteScalar()
+        public override object? ExecuteScalar()
         {
             if (_profiler?.IsActive != true)
             {
                 return _command.ExecuteScalar();
             }
 
-            object result;
+            object? result;
             _profiler.ExecuteStart(this, SqlExecuteType.Scalar);
             try
             {
@@ -335,14 +337,14 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbCommand.ExecuteScalarAsync(CancellationToken)"/>
-        public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        public override async Task<object?> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
             if (_profiler?.IsActive != true)
             {
                 return await _command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            object result;
+            object? result;
             _profiler.ExecuteStart(this, SqlExecuteType.Scalar);
             try
             {

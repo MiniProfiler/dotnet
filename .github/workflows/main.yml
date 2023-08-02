@@ -62,7 +62,7 @@ jobs:
     - name: .NET Build
       run: dotnet build Build.csproj -c Release /p:CI=true
     - name: .NET Test
-      run: dotnet test Build.csproj -c Release --no-build /p:CI=true
+      run: dotnet test Build.csproj -c Release --no-build --logger trx --logger GitHubActions --results-directory ./test-results/ /p:CI=true
       env:
         EnableTestLogging: true
         RedisConnectionString: localhost:${{ job.services.redis.ports[6379] }}
@@ -72,5 +72,13 @@ jobs:
         RavenDbUrls: http://localhost:${{ job.services.ravendb.ports[8080] }}
         RavenDatabase: test
         SQLServerConnectionString: Server=tcp:127.0.0.1,${{ job.services.sqlserver.ports[1433] }};Database=tempdb;User Id=sa;Password=g0d4mm!tSQLServer;
+    - name: .NET Test Results
+      uses: dorny/test-reporter@v1
+      continue-on-error: true
+      if: success() || failure()
+      with:
+        name: .NET Test Results
+        path: 'test-results/*.trx'
+        reporter: dotnet-trx
     - name: .NET Lib Pack
       run: dotnet pack Build.csproj --no-build -c Release /p:PackageOutputPath=%CD%\.nupkgs /p:CI=true

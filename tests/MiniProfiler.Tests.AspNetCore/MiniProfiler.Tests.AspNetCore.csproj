@@ -4,9 +4,11 @@
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.13" />
+
     <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore.Mvc\MiniProfiler.AspNetCore.Mvc.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.13" />
   </ItemGroup>
 </Project>

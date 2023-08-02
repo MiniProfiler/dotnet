@@ -4,9 +4,11 @@
     <AssemblyName>Samples.Console</AssemblyName>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.0.0" />
+
+    <ProjectReference Include="..\..\src\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
   </ItemGroup>
 </Project>

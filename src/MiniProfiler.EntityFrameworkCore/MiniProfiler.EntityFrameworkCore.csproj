@@ -8,8 +8,10 @@
     <PackageTags>Entity Framework;Entity Framework Core;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.0.0" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

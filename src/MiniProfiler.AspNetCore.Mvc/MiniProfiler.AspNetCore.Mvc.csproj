@@ -7,9 +7,10 @@
     <PackageTags>ASP.NET Core;MVC;MVC Core;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
-    
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
+    <ProjectReference Include="..\MiniProfiler.AspNetCore\MiniProfiler.AspNetCore.csproj" />
   </ItemGroup>
 </Project>

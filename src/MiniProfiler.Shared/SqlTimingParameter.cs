@@ -54,7 +54,7 @@ namespace StackExchange.Profiling
         /// <see cref="Name"/> and <see cref="Value"/> as <paramref name="obj"/>.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare.</param>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is SqlTimingParameter other
                 && string.Equals(Name, other.Name)

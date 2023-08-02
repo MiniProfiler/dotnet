@@ -69,14 +69,14 @@ namespace StackExchange.Profiling.Data
         public override byte GetByte(int ordinal) => WrappedReader.GetByte(ordinal);
 
         /// <inheritdoc cref="DbDataReader.GetBytes(int, long, byte[], int, int)"/>
-        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) =>
+        public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length) =>
             WrappedReader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
 
         /// <inheritdoc cref="DbDataReader.GetChar(int)"/>
         public override char GetChar(int ordinal) => WrappedReader.GetChar(ordinal);
 
         /// <inheritdoc cref="DbDataReader.GetChars(int, long, char[], int, int)"/>
-        public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) =>
+        public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length) =>
             WrappedReader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
 
         /// <inheritdoc cref="DbDataReader.GetData(int)"/>
@@ -164,7 +164,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="DbDataReader.GetSchemaTable()"/>
-        public override DataTable GetSchemaTable() => WrappedReader.GetSchemaTable();
+        public override DataTable? GetSchemaTable() => WrappedReader.GetSchemaTable();
 
         /// <inheritdoc cref="DbDataReader.Dispose(bool)"/>
         protected override void Dispose(bool disposing)

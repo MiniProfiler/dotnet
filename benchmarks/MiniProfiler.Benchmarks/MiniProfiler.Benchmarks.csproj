@@ -8,22 +8,20 @@
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
-    <LangVersion>9</LangVersion>
   </PropertyGroup>
+  
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.4" />
     <PackageReference Include="Jil" Version="2.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ServiceStack.Text" Version="6.6.0" />
     <PackageReference Include="System.Ben" Version="1.0.0" />
+    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+
+    <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="ServiceStack.Text.Core" Version="5.12.0" />
-  </ItemGroup>
-  
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <PackageReference Include="ServiceStack.Text" Version="5.12.0" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 </Project>

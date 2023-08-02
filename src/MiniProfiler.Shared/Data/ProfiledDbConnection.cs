@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,6 +46,7 @@ namespace StackExchange.Profiling.Data
         public DbConnection WrappedConnection => _connection;
 
         /// <inheritdoc cref="DbConnection.ConnectionString"/>
+        [AllowNull]
         public override string ConnectionString
         {
             get => _connection.ConnectionString;
@@ -165,7 +167,7 @@ namespace StackExchange.Profiling.Data
         protected override bool CanRaiseEvents => true;
 
         /// <inheritdoc cref="DbConnection.EnlistTransaction(System.Transactions.Transaction)"/>
-        public override void EnlistTransaction(System.Transactions.Transaction transaction) => _connection.EnlistTransaction(transaction);
+        public override void EnlistTransaction(System.Transactions.Transaction? transaction) => _connection.EnlistTransaction(transaction);
 
         /// <inheritdoc cref="DbConnection.GetSchema()"/>
         public override DataTable GetSchema() => _connection.GetSchema();
@@ -174,6 +176,6 @@ namespace StackExchange.Profiling.Data
         public override DataTable GetSchema(string collectionName) => _connection.GetSchema(collectionName);
 
         /// <inheritdoc cref="DbConnection.GetSchema(string, string[])"/>
-        public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
+        public override DataTable GetSchema(string collectionName, string?[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
     }
 }

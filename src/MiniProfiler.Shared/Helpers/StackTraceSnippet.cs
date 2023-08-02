@@ -43,7 +43,7 @@ namespace StackExchange.Profiling.Helpers
                 return false;
             }
 
-            var frames = new StackTrace().GetFrames();
+            StackFrame?[] frames = new StackTrace().GetFrames();
 
             if (frames == null)
             {
@@ -56,18 +56,22 @@ namespace StackExchange.Profiling.Helpers
 
             for (int i = 0; i < frames.Length; i++)
             {
-                var method = frames[i].GetMethod();
+                var method = frames[i]?.GetMethod();
+                if (method is null)
+                {
+                    continue;
+                }
                 if (stackLength >= options.StackMaxLength
                     // ASP.NET: no need to continue up the chain
                     || method.Name == "System.Web.HttpApplication.IExecutionStep.Execute"
-                    || (ModuleNames.GetOrAdd(method.Module, m => m.Name) == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType.Name == "ObjectMethodExecutor"))
+                    || (ModuleNames.GetOrAdd(method.Module, m => m.Name) == "Microsoft.AspNetCore.Mvc.Core.dll" && method.DeclaringType?.Name == "ObjectMethodExecutor"))
                 {
                     frames[i] = null;
                     startFrame = i < 0 ? 0 : i - 1;
                     break;
                 }
                 else if (ShouldExcludeType(method)
-                    || options.ExcludedAssemblies.Contains(AssemblyNames.GetOrAdd(method.Module.Assembly, a => a.GetName().Name))
+                    || options.ExcludedAssemblies.Contains(AssemblyNames.GetOrAdd(method.Module.Assembly, a => a.GetName().Name ?? "Unknown Assembly"))
                     || options.ExcludedMethods.Contains(method.Name))
                 {
                     frames[i] = null;
@@ -83,7 +87,7 @@ namespace StackExchange.Profiling.Helpers
                 var f = frames[i];
                 if (f != null)
                 {
-                    var method = f.GetMethod();
+                    var method = f.GetMethod()!;
                     if (sb.Length > 0)
                     {
                         sb.Append(" > ");
@@ -494,7 +498,7 @@ namespace StackExchange.Profiling.Helpers
         {
             const string _dotSpan = "<span class=\"stack dot\">.</span>";
             // Check the common framework list above
-            _commonGenerics.TryGetValue(typeOrMethod, out string[] args);
+            _commonGenerics.TryGetValue(typeOrMethod, out string[]? args);
 
             // Break each type down by namespace and class (remember, we *could* have nested generic classes)
             var classes = typeOrMethod.Split(_dot);
@@ -543,11 +547,11 @@ namespace StackExchange.Profiling.Helpers
                 if (tArgs.Length > 5)
                 {
                     sb.Append("<span class=\"stack generic-type\">").Append(tArgs[0]).Append("</span>")
-                      .Append(",")
+                      .Append(',')
                       .Append("<span class=\"stack generic-type\">").Append(tArgs[1]).Append("</span>")
-                      .Append(",")
+                      .Append(',')
                       .Append("<span class=\"stack generic-type\">").Append(tArgs[2]).Append("</span>")
-                      .Append("…")
+                      .Append('…')
                       .Append("<span class=\"stack generic-type\">").Append(tArgs[tArgs.Length - 1]).Append("</span>");
                 }
                 else
@@ -556,7 +560,7 @@ namespace StackExchange.Profiling.Helpers
                     {
                         if (i > 0)
                         {
-                            sb.Append(",");
+                            sb.Append(',');
                         }
                         sb.Append("<span class=\"stack generic-type\">");
                         sb.Append(tArgs[i])

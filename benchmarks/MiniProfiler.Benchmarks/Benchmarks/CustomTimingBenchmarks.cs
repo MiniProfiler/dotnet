@@ -5,7 +5,7 @@ using StackExchange.Profiling;
 namespace Benchmarks
 {
     [SimpleJob(RuntimeMoniker.Net472, invocationCount: 50_000)]
-    [SimpleJob(RuntimeMoniker.Net50, invocationCount: 50_000)]
+    [SimpleJob(RuntimeMoniker.Net60, invocationCount: 50_000)]
     [Config(typeof(Configs.Memory))]
     public class CustomTimingBenchmarks
     {

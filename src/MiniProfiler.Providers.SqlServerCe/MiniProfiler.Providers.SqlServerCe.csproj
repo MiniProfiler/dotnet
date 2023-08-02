@@ -7,9 +7,11 @@
     <PackageTags>SQL Server CE;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
     <PackageReference Include="Microsoft.SqlServer.Compact" Version="4.0.8876.1" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>
