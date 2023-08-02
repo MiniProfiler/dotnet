@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Helpers;
@@ -23,6 +24,7 @@ namespace StackExchange.Profiling
         /// The vast majority of use cases will be a single options instance, so this works pretty well.
         /// </summary>
         [IgnoreDataMember]
+        [JsonIgnore]
         public MiniProfilerBaseOptions Options { get; } = DefaultOptions;
 
         /// <summary>
@@ -105,6 +107,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// JSON used to store Custom Links. Do not touch.
         /// </summary>
+        [JsonIgnore]
         public string? CustomLinksJson
         {
             get => CustomLinks?.ToJson();
@@ -151,6 +154,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// RedirectCount in ClientTimings. Used for sql storage.
         /// </summary>
+        [JsonIgnore]
         public int? ClientTimingsRedirectCount { get; set; }
 #endif
 
@@ -183,6 +187,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets or sets points to the currently executing Timing.
         /// </summary>
+        [JsonIgnore]
         public Timing? Head
         {
             get => _head.Value ?? _lastSetHead;
@@ -214,6 +219,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
         [IgnoreDataMember]
+        [JsonIgnore]
         public IAsyncStorage? Storage { get; set; }
 
         /// <summary>
@@ -268,7 +274,6 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Shared stop bits for <see cref="Stop(bool)"/> and <see cref="StopAsync(bool)"/>
         /// </summary>
-        /// <returns></returns>
         private bool InnerStop()
         {
             if (!Stopwatch.IsRunning)
@@ -307,7 +312,7 @@ namespace StackExchange.Profiling
         /// Returns true if Ids match.
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to compare to.</param>
-        public override bool Equals(object obj) => obj is MiniProfiler miniProfiler && Id.Equals(miniProfiler.Id);
+        public override bool Equals(object? obj) => obj is MiniProfiler miniProfiler && Id.Equals(miniProfiler.Id);
 
         /// <summary>
         /// Returns hash code of Id.
@@ -352,7 +357,7 @@ namespace StackExchange.Profiling
             {
                 serializer.WriteObject(ms, this);
                 ms.Position = 0;
-                return (MiniProfiler)serializer.ReadObject(ms);
+                return (MiniProfiler)serializer.ReadObject(ms)!;
             }
         }
 

@@ -90,3 +90,8 @@ dotnet_diagnostic.IDE0090.severity = silent
 
 # CA1822: Don't run for benchmarks and such
 dotnet_code_quality.CA1822.api_surface = private, internal
+
+# IDE0056: Use index operator
+csharp_style_prefer_index_operator = false
+# IDE0057: Use range operator
+csharp_style_prefer_range_operator = false

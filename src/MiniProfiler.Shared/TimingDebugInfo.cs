@@ -40,8 +40,8 @@ namespace StackExchange.Profiling
                      myIndex >= 0 && parentIndex >= 0;
                      myIndex--, parentIndex--)
                 {
-                    StackFrame myFrame = RawStack.GetFrame(myIndex),
-                               parentFrame = parentStack.GetFrame(parentIndex);
+                    StackFrame myFrame = RawStack.GetFrame(myIndex)!,
+                               parentFrame = parentStack.GetFrame(parentIndex)!;
                     if (myFrame.GetILOffset() == parentFrame.GetILOffset() && myFrame.GetMethod() == parentFrame.GetMethod())
                     {
                         CommonStackStart = myIndex;

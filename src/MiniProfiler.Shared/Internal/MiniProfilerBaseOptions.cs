@@ -16,7 +16,7 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Assembly version of this dank MiniProfiler.
         /// </summary>
-        public static Version Version { get; } = typeof(MiniProfilerBaseOptions).GetTypeInfo().Assembly.GetName().Version;
+        public static Version Version { get; } = typeof(MiniProfilerBaseOptions).GetTypeInfo().Assembly.GetName().Version!;
 
         /// <summary>
         /// The hash to use for file cache breaking, this is automatically calculated.

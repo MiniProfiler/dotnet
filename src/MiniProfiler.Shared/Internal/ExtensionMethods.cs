@@ -3,9 +3,12 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-#if !MINIMAL
+#if NEWTONSOFT
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+#elif STJSON
+using System.Text.Json;
+using System.Text.Json.Serialization;
 #endif
 
 namespace StackExchange.Profiling.Internal
@@ -79,7 +82,7 @@ namespace StackExchange.Profiling.Internal
             return sb.ToString();
         }
 
-#if !MINIMAL
+#if NEWTONSOFT
         private static readonly JsonSerializerSettings defaultSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
@@ -127,6 +130,41 @@ namespace StackExchange.Profiling.Internal
         /// <returns>The object resulting from the given string.</returns>
         public static T? FromJson<T>(this string? s) where T : class =>
             !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s!, defaultSettings) : null;
+#elif STJSON
+        private static readonly JsonSerializerOptions defaultSettings = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+
+        /// <summary>
+        /// Renders the parameter <see cref="MiniProfiler"/> to JSON.
+        /// </summary>
+        /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
+        /// <param name="htmlEscape">Whether to HTML escape the output.</param>
+        [return: NotNullIfNotNull(nameof(profiler))]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Compatibility across versions")]
+        public static string? ToJson(this MiniProfiler? profiler, bool htmlEscape = false) =>
+            profiler != default
+            ? JsonSerializer.Serialize(profiler, defaultSettings)
+            : null;
+
+        /// <summary>
+        /// Serializes <paramref name="o"/> to a JSON string.
+        /// </summary>
+        /// <param name="o">The instance to serialize.</param>
+        /// <returns>The resulting JSON object as a string.</returns>
+        [return: NotNullIfNotNull(nameof(o))]
+        public static string? ToJson(this object? o) =>
+            o != null ? JsonSerializer.Serialize(o, defaultSettings) : null;
+
+        /// <summary>
+        /// Deserializes <paramref name="s"/> to an object of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="s">The string to deserialize.</param>
+        /// <returns>The object resulting from the given string.</returns>
+        public static T? FromJson<T>(this string? s) where T : class =>
+            !string.IsNullOrEmpty(s) ? JsonSerializer.Deserialize<T>(s!, defaultSettings) : null;
 #endif
 
         /// <summary>
@@ -138,7 +176,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="key">The key to attempt removal of.</param>
         /// <param name="value">The value found (if it was found) from the dictionary.</param>
         /// <returns>Whether the key was removed.</returns>
-        public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, [NotNullWhen(true)] out TValue? value)
+        public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, [NotNullWhen(true)] out TValue? value) where TKey : notnull
         {
             value = default;
             if (dict?.TryGetValue(key, out value) == true)

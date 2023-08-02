@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="parameter">The parameter to get a value for.</param>
         public static string? GetStringValue(this IDataParameter parameter)
         {
-            object rawValue = parameter.Value;
+            object? rawValue = parameter.Value;
             if (rawValue == null || rawValue == DBNull.Value)
             {
                 return null;

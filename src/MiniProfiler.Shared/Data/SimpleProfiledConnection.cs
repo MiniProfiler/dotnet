@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StackExchange.Profiling.Data
 {
@@ -13,6 +14,7 @@ namespace StackExchange.Profiling.Data
         private IDbConnection _connection;
 
         /// <inheritdoc cref="IDbConnection.ConnectionString"/>
+        [AllowNull]
         public string ConnectionString
         {
             get => _connection.ConnectionString;

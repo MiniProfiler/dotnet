@@ -7,9 +7,10 @@
     <PackageTags>ASP.NET Core;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

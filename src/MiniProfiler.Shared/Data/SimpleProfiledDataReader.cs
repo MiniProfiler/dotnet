@@ -53,14 +53,14 @@ namespace StackExchange.Profiling.Data
         public byte GetByte(int ordinal) => _reader.GetByte(ordinal);
 
         /// <inheritdoc cref="IDataRecord.GetBytes(int, long, byte[], int, int)"/>
-        public long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) =>
+        public long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length) =>
             _reader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
 
         /// <inheritdoc cref="IDataRecord.GetChar(int)"/>
         public char GetChar(int ordinal) => _reader.GetChar(ordinal);
 
         /// <inheritdoc cref="IDataRecord.GetChars(int, long, char[], int, int)"/>
-        public long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) =>
+        public long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length) =>
             _reader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
 
         /// <inheritdoc cref="IDataRecord.GetData(int)"/>
@@ -124,7 +124,7 @@ namespace StackExchange.Profiling.Data
         }
 
         /// <inheritdoc cref="IDataReader.GetSchemaTable()"/>
-        public DataTable GetSchemaTable() => _reader.GetSchemaTable();
+        public DataTable? GetSchemaTable() => _reader.GetSchemaTable();
 
         /// <inheritdoc cref="IDataReader.NextResult()"/>
         public bool NextResult() => _reader.NextResult();
