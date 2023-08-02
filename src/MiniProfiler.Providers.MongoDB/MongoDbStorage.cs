@@ -74,6 +74,7 @@ namespace StackExchange.Profiling
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 #pragma warning restore CS0618 // Type or member is obsolete
 
             if (serializeDecimalFieldsAsNumberDecimal)
@@ -85,7 +86,7 @@ namespace StackExchange.Profiling
             BsonClassMap.RegisterClassMap<MiniProfiler>(
                 map =>
                 {
-                    map.MapIdField(c => c.Id).SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                    map.MapIdField(c => c.Id);
                     map.MapField(c => c.Name);
                     map.MapField(c => c.Started);
                     map.MapField(c => c.DurationMilliseconds);
@@ -108,7 +109,7 @@ namespace StackExchange.Profiling
             BsonClassMap.RegisterClassMap<CustomTiming>(
                 map =>
                 {
-                    map.MapField(x => x.Id).SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                    map.MapField(x => x.Id);
                     map.MapField(x => x.CommandString);
                     map.MapField(x => x.ExecuteType);
                     map.MapField(x => x.StackTraceSnippet);
@@ -121,7 +122,7 @@ namespace StackExchange.Profiling
             BsonClassMap.RegisterClassMap<Timing>(
                 map =>
                 {
-                    map.MapField(x => x.Id).SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                    map.MapField(x => x.Id);
                     map.MapField(x => x.Name);
                     map.MapField(x => x.DurationMilliseconds);
                     map.MapField(x => x.StartMilliseconds);
