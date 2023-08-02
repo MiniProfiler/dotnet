@@ -155,7 +155,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _selectCommand = value;
-                InternalAdapter.SelectCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
+                InternalAdapter.SelectCommand = value is ProfiledDbCommand cmd ? cmd.WrappedCommand : value;
             }
         }
 
@@ -166,7 +166,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _insertCommand = value;
-                InternalAdapter.InsertCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
+                InternalAdapter.InsertCommand = value is ProfiledDbCommand cmd ? cmd.WrappedCommand : value;
             }
         }
 
@@ -177,7 +177,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _updateCommand = value;
-                InternalAdapter.UpdateCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
+                InternalAdapter.UpdateCommand = value is ProfiledDbCommand cmd ? cmd.WrappedCommand : value;
             }
         }
 
@@ -188,7 +188,7 @@ namespace StackExchange.Profiling.Data
             set
             {
                 _deleteCommand = value;
-                InternalAdapter.DeleteCommand = value is ProfiledDbCommand cmd ? cmd.InternalCommand : value;
+                InternalAdapter.DeleteCommand = value is ProfiledDbCommand cmd ? cmd.WrappedCommand : value;
             }
         }
     }

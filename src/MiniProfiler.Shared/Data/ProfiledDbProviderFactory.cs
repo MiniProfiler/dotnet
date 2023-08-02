@@ -54,32 +54,32 @@ namespace StackExchange.Profiling.Data
 #pragma warning restore CS8618
 
         /// <inheritdoc cref="DbProviderFactory.CreateCommand()"/>
-        public override DbCommand CreateCommand()
+        public override DbCommand? CreateCommand()
         {
             var command = _factory.CreateCommand();
             var profiler = MiniProfiler.Current;
 
-            return profiler != null || _alwaysWrap
+            return command is not null && (profiler is not null || _alwaysWrap)
                 ? new ProfiledDbCommand(command, null, profiler)
                 : command;
         }
 
         /// <inheritdoc cref="DbProviderFactory.CreateConnection()"/>
-        public override DbConnection CreateConnection()
+        public override DbConnection? CreateConnection()
         {
             var connection = _factory.CreateConnection();
             var profiler = MiniProfiler.Current;
 
-            return profiler != null || _alwaysWrap
+            return connection is not null && (profiler is not null || _alwaysWrap)
                 ? new ProfiledDbConnection(connection, profiler)
                 : connection;
         }
 
         /// <inheritdoc cref="DbProviderFactory.CreateConnectionStringBuilder()"/>
-        public override DbConnectionStringBuilder CreateConnectionStringBuilder() => _factory.CreateConnectionStringBuilder();
+        public override DbConnectionStringBuilder? CreateConnectionStringBuilder() => _factory.CreateConnectionStringBuilder();
 
         /// <inheritdoc cref="DbProviderFactory.CreateParameter()"/>
-        public override DbParameter CreateParameter() => _factory.CreateParameter();
+        public override DbParameter? CreateParameter() => _factory.CreateParameter();
 
         /// <summary>
         /// Allow to re-initialize the provider factory.
@@ -91,24 +91,23 @@ namespace StackExchange.Profiling.Data
         public override bool CanCreateDataSourceEnumerator => _factory.CanCreateDataSourceEnumerator;
 
         /// <inheritdoc cref="DbProviderFactory.CreateCommandBuilder()"/>
-        public override DbCommandBuilder CreateCommandBuilder() => _factory.CreateCommandBuilder();
+        public override DbCommandBuilder? CreateCommandBuilder() => _factory.CreateCommandBuilder();
 
         /// <inheritdoc cref="DbProviderFactory.CreateDataAdapter()"/>
-        public override DbDataAdapter CreateDataAdapter()
+        public override DbDataAdapter? CreateDataAdapter()
         {
+            var dataAdapter = _factory.CreateDataAdapter();
             var profiler = MiniProfiler.Current;
 
-            var dataAdapter = _factory.CreateDataAdapter();
-
-            return profiler != null || _alwaysWrap
+            return dataAdapter is not null && (profiler is not null || _alwaysWrap)
                 ? new ProfiledDbDataAdapter(dataAdapter, profiler)
                 : dataAdapter;
         }
 
         /// <inheritdoc cref="DbProviderFactory.CreateDataSourceEnumerator()"/>
-        public override DbDataSourceEnumerator CreateDataSourceEnumerator() => _factory.CreateDataSourceEnumerator();
+        public override DbDataSourceEnumerator? CreateDataSourceEnumerator() => _factory.CreateDataSourceEnumerator();
 
-#if !NETSTANDARD2_0
+#if NET46_OR_GREATER
         /// <inheritdoc cref="DbProviderFactory.CreatePermission(PermissionState)"/>
         public override CodeAccessPermission CreatePermission(PermissionState state) => _factory.CreatePermission(state);
 #endif

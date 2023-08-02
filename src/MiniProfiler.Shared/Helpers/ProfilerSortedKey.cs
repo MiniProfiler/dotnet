@@ -33,10 +33,10 @@ namespace StackExchange.Profiling.Helpers
         /// Compares this <see cref="ProfilerSortedKey"/> to another.
         /// </summary>
         /// <param name="other">The <see cref="ProfilerSortedKey"/> to compare</param>
-        public int CompareTo(ProfilerSortedKey other)
+        public int CompareTo(ProfilerSortedKey? other)
         {
-            var comp = Started.CompareTo(other.Started);
-            if (comp == 0) comp = Id.CompareTo(other.Id);
+            var comp = Started.CompareTo(other?.Started);
+            if (comp == 0) comp = Id.CompareTo(other?.Id);
             return comp;
         }
     }

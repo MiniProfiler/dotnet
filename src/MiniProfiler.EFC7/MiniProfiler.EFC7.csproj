@@ -8,8 +8,10 @@
     <PackageTags>Entity Framework;Entity Framework Classic 7;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="Z.EntityFramework.Classic" Version="7.0.0" />
+
+    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -161,7 +161,7 @@ namespace StackExchange.Profiling.Data
         /// Provides the observer with new data.
         /// </summary>
         /// <param name="kv">The current notification information.</param>
-        public void OnNext(KeyValuePair<string, object> kv)
+        public void OnNext(KeyValuePair<string, object?> kv)
         {
             try
             {

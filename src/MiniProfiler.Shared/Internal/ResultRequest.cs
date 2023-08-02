@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace StackExchange.Profiling.Internal
 {
@@ -37,7 +36,9 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         public int TimingCount => (Performance?.Count ?? 0) + (Probes?.Count ?? 0);
 
-        private static readonly JsonSerializer _serializer = new();
+#if NEWTONSOFT
+        private static readonly Newtonsoft.Json.JsonSerializer _serializer = new();
+#endif
 
         /// <summary>
         /// Returns a deserialize object from an input stream, like an HTTP request body.
@@ -49,8 +50,9 @@ namespace StackExchange.Profiling.Internal
         {
             try
             {
-                using (var sr = new StreamReader(stream))
-                using (var jsonTextReader = new JsonTextReader(sr))
+#if NEWTONSOFT
+                using var sr = new StreamReader(stream);
+                using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(sr))
                 {
                     var tmp = _serializer.Deserialize<ResultRequest>(jsonTextReader);
                     if (tmp?.Id.HasValue == true)
@@ -59,6 +61,14 @@ namespace StackExchange.Profiling.Internal
                         return true;
                     }
                 }
+#elif STJSON
+                var tmp = System.Text.Json.JsonSerializer.Deserialize<ResultRequest>(stream);
+                if (tmp?.Id.HasValue == true)
+                {
+                    result = tmp;
+                    return true;
+                }
+#endif
             }
             catch (Exception e)
             {

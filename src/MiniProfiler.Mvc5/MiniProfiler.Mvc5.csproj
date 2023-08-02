@@ -8,9 +8,12 @@
     <PackageTags>ASP.NET;MVC;MVC 5;$(PackageBaseTags)</PackageTags>
     <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <Reference Include="System.Web" />
+
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
+
+    <ProjectReference Include="..\MiniProfiler\MiniProfiler.csproj" />
   </ItemGroup>
 </Project>

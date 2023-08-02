@@ -35,20 +35,20 @@ namespace StackExchange.Profiling.SqlFormatters
 
             if (command != null && IncludeMetaData)
             {
-                buffer.Append("-- Command Type: ").Append(command.CommandType.ToString()).Append("\n");
-                buffer.Append("-- Database: ").Append(command.Connection.Database).Append("\n");
+                buffer.Append("-- Command Type: ").Append(command.CommandType.ToString()).Append('\n');
+                buffer.Append("-- Database: ").Append(command.Connection?.Database).Append('\n');
 
                 if (command.Transaction != null)
                 {
-                    buffer.Append("-- Command Transaction Iso Level: ").Append(command.Transaction.IsolationLevel.ToString()).Append("\n");
+                    buffer.Append("-- Command Transaction Iso Level: ").Append(command.Transaction.IsolationLevel.ToString()).Append('\n');
                 }
 				if (System.Transactions.Transaction.Current != null)
 				{
                     // transactions issued by TransactionScope are not bound to the database command but exists globally
-                    buffer.Append("-- Transaction Scope Iso Level: ").Append(System.Transactions.Transaction.Current.IsolationLevel.ToString()).Append("\n");
+                    buffer.Append("-- Transaction Scope Iso Level: ").Append(System.Transactions.Transaction.Current.IsolationLevel.ToString()).Append('\n');
 				}
 
-                buffer.Append("\n");
+                buffer.Append('\n');
             }
 
 	        string baseOutput = base.FormatSql(commandText, parameters, command);
