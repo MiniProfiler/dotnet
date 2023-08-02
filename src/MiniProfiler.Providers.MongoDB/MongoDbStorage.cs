@@ -168,8 +168,9 @@ namespace StackExchange.Profiling
             {
                 _collection.Indexes.CreateOne(model);
             }
-            catch (MongoCommandException ex) when (_options.AutomaticallyRecreateIndexes && ex.Message.Contains("already exists with different options"))
+            catch (MongoCommandException ex) when (_options.AutomaticallyRecreateIndexes && ex.Code == 85)
             {
+                // Handling the case we found an conflicting existing index, and were told to re-create if this happens
                 var indexNames = _collection.Indexes.List().ToList()
                                                     .SelectMany(index => index.Elements)
                                                     .Where(element => element.Name == "name")

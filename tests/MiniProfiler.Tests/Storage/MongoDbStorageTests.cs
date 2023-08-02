@@ -28,10 +28,10 @@ namespace StackExchange.Profiling.Tests.Storage
 
             options.CacheDuration = TimeSpan.FromSeconds(20);
 
-            // MongoDB.Driver.MongoCommandException : Command createIndexes failed: Index with name: Started_1 already exists with different options.
+            // MongoDB.Driver.MongoCommandException : Command createIndexes failed: Index with name: Started_1 already exists with different options/An equivalent index already exists with the same name but different options.
             var ex = Assert.Throws<MongoCommandException>(() => new MongoDbStorage(options));
             Assert.NotNull(ex);
-            Assert.Contains("already exists with different options", ex.Message);
+            Assert.Equal(85, ex.Code);
 
             options.AutomaticallyRecreateIndexes = true;
             // Succeeds, because drop/re-create is allowed now
