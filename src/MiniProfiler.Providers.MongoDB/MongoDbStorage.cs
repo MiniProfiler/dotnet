@@ -50,6 +50,8 @@ namespace StackExchange.Profiling
                 throw new ArgumentException("Collection name may not be null or contain only whitespace", nameof(options.CollectionName));
             }
 
+            _options = options;
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(MiniProfiler)))
             {
                 BsonClassMapFields();
@@ -58,7 +60,6 @@ namespace StackExchange.Profiling
             var url = new MongoUrl(options.ConnectionString);
             var databaseName = url.DatabaseName ?? "MiniProfiler";
 
-            _options = options;
             _client = new MongoClient(url);
             _collection = _client
                 .GetDatabase(databaseName)
