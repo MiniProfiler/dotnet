@@ -14,6 +14,5 @@
     <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
 
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
-    <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
 </Project>
