@@ -6,7 +6,8 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Unreleased
-No pending unreleased changes.
+- **Fixes/Changes**: 
+  - Upgraded MongoDB driver, allowing automatic index creation and profiler expiration ([#613](https://github.com/MiniProfiler/dotnet/pull/613) - thanks [IanKemp](https://github.com/IanKemp))
 
 #### Version 4.3.8
 - **New**:
