@@ -16,14 +16,14 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The profiler to render a tag for.</param>
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <param name="isAuthorized">Whether the current user is authorized for MiniProfiler.</param>
-        /// <param name="requestIDs">The request IDs to fetch for this render.</param>
         /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
+        /// <param name="requestIDs">The request IDs to fetch for this render.</param>
         public static string Includes(
             MiniProfiler profiler,
             string path,
             bool isAuthorized,
             RenderOptions renderOptions,
-            List<Guid> requestIDs = null)
+            List<Guid>? requestIDs = null)
         {
             var sb = StringBuilderCache.Get();
             var options = profiler.Options;
@@ -118,7 +118,6 @@ namespace StackExchange.Profiling.Internal
             return sb.ToStringRecycle();
         }
 
-
         /// <summary>
         /// Renders script tag for including MiniProfiler.
         /// </summary>
@@ -136,7 +135,7 @@ namespace StackExchange.Profiling.Internal
             MiniProfiler profiler,
             string path,
             bool isAuthorized,
-            List<Guid> requestIDs = null,
+            List<Guid>? requestIDs = null,
             RenderPosition? position = null,
             bool? showTrivial = null,
             bool? showTimeWithChildren = null,
@@ -265,7 +264,7 @@ namespace StackExchange.Profiling.Internal
     <title>List of profiling sessions</title>
     <script id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
     <link href=""{path}includes.min.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme.ToString()}'}});</script>
+    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme}'}});</script>
   </head>
   <body>
     <table class=""mp-results-index"">

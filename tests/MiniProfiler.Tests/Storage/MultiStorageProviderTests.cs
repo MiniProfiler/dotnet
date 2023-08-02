@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Tests.Storage
             bool errorCaught = false;
             try
             {
-                var p = new MultiStorageProvider(null, null);
+                var p = new MultiStorageProvider(null!, null!);
             }
             catch (ArgumentNullException ex)
             {

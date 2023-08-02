@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The <see cref="MiniProfiler"/> to attach the timing to.</param>
         /// <param name="customType">The type for this command to show up as (which custom column).</param>
         /// <returns>A custom timing (which should be disposed or stopped!) for <paramref name="command"/>.</returns>
-        public static CustomTiming GetTiming(this IDbCommand command, string commandType, MiniProfiler profiler, string customType = "sql")
+        public static CustomTiming? GetTiming(this IDbCommand command, string commandType, MiniProfiler? profiler, string customType = "sql")
         {
             if (command == null || profiler == null) return null;
 
@@ -46,13 +46,13 @@ namespace StackExchange.Profiling.Internal
         /// Returns <c>null</c> if no parameters are present.
         /// </summary>
         /// <param name="command">The command to get parameters for.</param>
-        public static List<SqlTimingParameter> GetParameters(this IDbCommand command)
+        public static List<SqlTimingParameter>? GetParameters(this IDbCommand command)
         {
             if ((command?.Parameters?.Count ?? 0) == 0) return null;
 
             var result = new List<SqlTimingParameter>();
 
-            foreach (DbParameter parameter in command.Parameters)
+            foreach (DbParameter parameter in command!.Parameters)
             {
                 if (parameter.ParameterName.HasValue())
                 {

@@ -36,7 +36,7 @@ namespace StackExchange.Profiling.Tests
         /// <summary>
         /// Gets or sets the error SQL.
         /// </summary>
-        public string ErrorSql { get; set; }
+        public string? ErrorSql { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether is active.
@@ -55,7 +55,7 @@ namespace StackExchange.Profiling.Tests
             ErrorSql = null;
         }
 
-        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, System.Data.Common.DbDataReader reader)
+        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, System.Data.Common.DbDataReader? reader)
         {
             if (reader == null)
             {

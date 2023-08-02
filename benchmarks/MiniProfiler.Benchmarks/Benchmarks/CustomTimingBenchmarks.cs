@@ -9,7 +9,7 @@ namespace Benchmarks
     [Config(typeof(Configs.Memory))]
     public class CustomTimingBenchmarks
     {
-        private MiniProfiler Profiler;
+        private MiniProfiler Profiler = null!;
 
         [Params(true, false)]
         public bool IncludeStackTrace { get; set; }

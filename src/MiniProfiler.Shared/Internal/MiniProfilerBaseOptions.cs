@@ -103,6 +103,7 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         public decimal TrivialDurationThresholdMilliseconds { get; set; } = 2.0M;
 
+#if !MINIMAL
         /// <summary>
         /// Dictates if the "time with children" column is displayed by default, defaults to false.
         /// For a per-page override you can use .RenderIncludes(showTimeWithChildren: true/false)
@@ -164,10 +165,11 @@ namespace StackExchange.Profiling.Internal
             nameof(ProfiledDbConnection.Close),
             "CloseAsync" // RelationalDiagnosticListener
         };
+#endif
 
         /// <summary>
-        /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help 
-        /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace 
+        /// By default, <see cref="CustomTiming"/>s created by this assembly will grab a stack trace to help
+        /// locate where Remote Procedure Calls are being executed.  When this setting is true, no stack trace
         /// will be collected, possibly improving profiler performance.
         /// </summary>
         public bool ExcludeStackTraceSnippetFromCustomTimings { get; set; } = false;
@@ -178,16 +180,17 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         /// <remarks>
         /// The normal profiling session life-cycle is as follows:
-        /// 1) request begins
-        /// 2) profiler is started
-        /// 3) normal page/controller/request execution
-        /// 4) profiler is stopped
-        /// 5) profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/>
-        /// 6) request ends
-        /// 7) page is displayed and profiling results are AJAX-fetched down, pulling cached results from 
-        ///    <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/>
+        /// <list type="number">
+        ///     <item>Request begins</item>
+        ///     <item>Profiler is started</item>
+        ///     <item>Normal page/controller/request execution</item>
+        ///     <item>Profiler is stopped</item>
+        ///     <item>Profiler is cached with <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Save"/></item>
+        ///     <item>Request ends</item>
+        ///     <item>Page is displayed and profiling results are AJAX-fetched down, pulling cached results from <see cref="Storage"/>'s implementation of <see cref="IAsyncStorage.Load"/></item>
+        /// </list>
         /// </remarks>
-        public IAsyncStorage Storage { get; set; }
+        public IAsyncStorage Storage { get; set; } = null!;
 
         /// <summary>
         /// The formatter applied to any SQL before being set in a <see cref="CustomTiming.CommandString"/>.
@@ -195,7 +198,7 @@ namespace StackExchange.Profiling.Internal
         public ISqlFormatter SqlFormatter { get; set; } = new InlineFormatter();
 
         /// <summary>
-        /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler
+        /// The <see cref="IAsyncProfilerProvider"/> class that is used to run MiniProfiler.
         /// </summary>
         /// <remarks>
         /// If not set explicitly, will default to <see cref="DefaultProfilerProvider"/>
@@ -210,12 +213,19 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Starts a new MiniProfiler from the <see cref="ProfilerProvider"/>.
         /// Shortcut for Options.ProfilerProvider.Start.
+        /// Note that this may be <c>null</c> if the provider did not actually start a profiler (e.g. because of ignore rules).
         /// </summary>
         /// <param name="profilerName">
         /// Allows explicit naming of the new profiling session; when null, an appropriate default will be used, e.g. for
         /// a web request, the URL will be used for the overall session name.
         /// </param>
-        public MiniProfiler StartProfiler(string profilerName = null) => ProfilerProvider.Start(profilerName, this);
+        public MiniProfiler? StartProfiler(string? profilerName = null) => ProfilerProvider.Start(profilerName, this);
+
+        /// <summary>
+        /// Called whenever a new <cref see="Timing" /> is started.
+        /// The <cref see="IDiposable.Dispose" /> method of the returned object is called at the same time as the <cref see="Timing" /> is <cref see="Timing.Stop" />ed.
+        /// </summary>
+        public Func<Timing, IDisposable>? TimingInstrumentationProvider { get; set; }
 
         /// <summary>
         /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.
@@ -225,7 +235,7 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// An action to call when MiniProfiler has an internal error. For logging, etc.
         /// </summary>
-        public Action<Exception> OnInternalError { get; set; }
+        public Action<Exception>? OnInternalError { get; set; }
 
         internal void Configure() => OnConfigure();
     }

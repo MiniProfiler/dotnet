@@ -16,8 +16,8 @@ namespace StackExchange.Profiling.Data
         private readonly DbProviderServices _tail;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EFProfiledDbProviderServices"/> class. 
-        /// Used for DB provider APIS internally 
+        /// Initializes a new instance of the <see cref="EFProfiledDbProviderServices"/> class.
+        /// Used for DB provider APIS internally
         /// </summary>
         /// <param name="providerServices">The <see cref="DbProviderServices"/> to wrap.</param>
         /// <exception cref="Exception">Throws when providerServices is <c>null</c>.</exception>
@@ -111,9 +111,9 @@ namespace StackExchange.Profiling.Data
             connection is ProfiledDbConnection profiled ? profiled.WrappedConnection : connection;
 
         /// <summary>
-        /// Called to resolve additional default provider services when a derived type is registered 
-        /// as an EF provider either using an entry in the application's config file or through code-based 
-        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers 
+        /// Called to resolve additional default provider services when a derived type is registered
+        /// as an EF provider either using an entry in the application's config file or through code-based
+        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers
         /// added with the AddDependencyResolver method to resolve dependencies.
         /// </summary>
         /// <param name="type">The type of the service to be resolved.</param>
@@ -123,9 +123,9 @@ namespace StackExchange.Profiling.Data
             _tail.GetService(type, key);
 
         /// <summary>
-        /// Called to resolve additional default provider services when a derived type is registered 
-        /// as an EF provider either using an entry in the application's config file or through code-based 
-        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers 
+        /// Called to resolve additional default provider services when a derived type is registered
+        /// as an EF provider either using an entry in the application's config file or through code-based
+        /// registration in <c>DbConfiguration</c>. The implementation of this method in this class uses the resolvers
         /// added with the AddDependencyResolver method to resolve dependencies.
         /// </summary>
         /// <param name="type">The type of the service to be resolved.</param>

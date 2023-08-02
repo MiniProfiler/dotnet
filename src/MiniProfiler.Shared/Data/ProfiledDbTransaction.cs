@@ -24,9 +24,7 @@ namespace StackExchange.Profiling.Data
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
-        /// <summary>
-        /// Gets the database connection.
-        /// </summary>
+        /// <inheritdoc cref="DbTransaction.DbConnection"/>
         protected override DbConnection DbConnection => _connection;
 
         /// <summary>
@@ -34,19 +32,13 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public DbTransaction WrappedTransaction => _transaction;
 
-        /// <summary>
-        /// Gets the isolation level.
-        /// </summary>
+        /// <inheritdoc cref="DbTransaction.IsolationLevel"/>
         public override IsolationLevel IsolationLevel => _transaction.IsolationLevel;
 
-        /// <summary>
-        /// Commits the database transaction.
-        /// </summary>
+        /// <inheritdoc cref="DbTransaction.Commit()"/>
         public override void Commit() => _transaction.Commit();
 
-        /// <summary>
-        /// Rolls back a transaction from a pending state.
-        /// </summary>
+        /// <inheritdoc cref="DbTransaction.Rollback()"/>
         public override void Rollback() => _transaction.Rollback();
 
         /// <summary>
@@ -55,12 +47,12 @@ namespace StackExchange.Profiling.Data
         /// <param name="disposing">false if being called from a <c>finalizer</c></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _transaction != null)
+            if (disposing)
             {
-                _transaction.Dispose();
+                _transaction?.Dispose();
             }
-            _transaction = null;
-            _connection = null;
+            _transaction = null!;
+            _connection = null!;
             base.Dispose(disposing);
         }
     }

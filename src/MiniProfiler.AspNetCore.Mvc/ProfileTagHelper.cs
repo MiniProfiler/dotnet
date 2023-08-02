@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Tag helper to profile child contents in ASP.NET Core views, e.g. 
+    /// Tag helper to profile child contents in ASP.NET Core views, e.g.
     /// &lt;profile name="My Step" /&gt;
     /// ...child content...
     /// &lt;/profile&gt;
@@ -16,7 +16,7 @@ namespace StackExchange.Profiling
         /// The name of this <see cref="MiniProfiler"/> step.
         /// </summary>
         [HtmlAttributeName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Processes this section, profiling the contents within.

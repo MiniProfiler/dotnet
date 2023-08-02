@@ -7,10 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-#if NETCOREAPP3_1 // Only in netcoreapp3.1 while in preview
 using System.Text.Json;
-#endif
+using System.Threading.Tasks;
 
 namespace StackExchange.Profiling
 {
@@ -20,11 +18,7 @@ namespace StackExchange.Profiling
     public class MiniProfilerMiddleware
     {
         private readonly RequestDelegate _next;
-#if NETCOREAPP3_1
         private readonly IWebHostEnvironment _env;
-#else
-        private readonly IHostingEnvironment _env;
-#endif
         private readonly IOptions<MiniProfilerOptions> _options;
 
         internal readonly EmbeddedProvider Embedded;
@@ -39,11 +33,7 @@ namespace StackExchange.Profiling
         /// <exception cref="ArgumentNullException">Throws when <paramref name="next"/>, <paramref name="hostingEnvironment"/>, or <paramref name="options"/> is <c>null</c>.</exception>
         public MiniProfilerMiddleware(
             RequestDelegate next,
-#if NETCOREAPP3_1
             IWebHostEnvironment hostingEnvironment,
-#else
-            IHostingEnvironment hostingEnvironment,
-#endif
             IOptions<MiniProfilerOptions> options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -82,36 +72,39 @@ namespace StackExchange.Profiling
                 var mp = Options.StartProfiler();
 
                 // Set the user
-                mp.User = Options.UserIdProvider?.Invoke(context.Request);
-
-                // Always add this profiler's header (and any async requests before it)
-                using (mp.StepIf("MiniProfiler Init", minSaveMs: 0.1m))
+                if (mp is not null)
                 {
-                    await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                    mp.User = Options.UserIdProvider?.Invoke(context.Request);
+
+                    // Always add this profiler's header (and any async requests before it)
+                    using (mp.StepIf("MiniProfiler Init", minSaveMs: 0.1m))
+                    {
+                        await SetHeadersAndState(context, mp).ConfigureAwait(false);
+                    }
                 }
 
-#if NETCOREAPP3_1
                 var appendServerTimingHeader = Options.EnableServerTimingHeader && context.Response.SupportsTrailers();
                 if (appendServerTimingHeader)
                 {
                     context.Response.DeclareTrailer("Server-Timing");
                     appendServerTimingHeader = true;
                 }
-#endif
 
                 // Execute the pipe
                 await _next(context);
-                // Assign name
-                EnsureName(mp, context);
-                // Stop (and record)
-                await mp.StopAsync().ConfigureAwait(false);
 
-#if NETCOREAPP3_1 // TODO: Evaluate if this works after http/2 local support in preview 7, maybe backport to netcoreapp2.1
-                if (appendServerTimingHeader && mp != null)
+                if (mp is not null)
                 {
-                    context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                    // Assign name
+                    EnsureName(mp, context);
+                    // Stop (and record)
+                    await mp.StopAsync().ConfigureAwait(false);
+
+                    if (appendServerTimingHeader)
+                    {
+                        context.Response.AppendTrailer("Server-Timing", mp.GetServerTimingHeader());
+                    }
                 }
-#endif
             }
             else
             {
@@ -124,7 +117,7 @@ namespace StackExchange.Profiling
         {
             foreach (var ignored in Options.IgnoredPaths)
             {
-                if (ignored != null && request.Path.Value.Contains(ignored, StringComparison.OrdinalIgnoreCase))
+                if (ignored != null && request.Path.Value?.Contains(ignored, StringComparison.OrdinalIgnoreCase) == true)
                 {
                     return false;
                 }
@@ -148,7 +141,7 @@ namespace StackExchange.Profiling
                 var routeData = context.GetRouteData();
                 if (routeData?.Values["controller"] != null)
                 {
-                    if (routeData.Values.TryGetValue("area", out object area))
+                    if (routeData.Values.TryGetValue("area", out object? area))
                     {
                         profiler.Name = area + "/" + routeData.Values["controller"] + "/" + routeData.Values["action"];
                     }
@@ -157,16 +150,14 @@ namespace StackExchange.Profiling
                         profiler.Name = routeData.Values["controller"] + "/" + routeData.Values["action"];
                     }
                 }
-                else if (routeData?.Values["page"] != null)
+                else if (routeData?.Values["page"] is object page)
                 {
-                    profiler.Name = routeData.Values["page"].ToString();
+                    profiler.Name = page.ToString();
                 }
-#if NETCOREAPP3_1
                 else if (context.GetEndpoint() is Endpoint endPoint && endPoint.DisplayName.HasValue())
                 {
                     profiler.Name = endPoint.DisplayName;
                 }
-#endif
                 else
                 {
                     profiler.Name = url;
@@ -219,10 +210,10 @@ namespace StackExchange.Profiling
         private async Task HandleRequest(HttpContext context, PathString subPath)
         {
             context.Response.StatusCode = StatusCodes.Status200OK;
-            string result = null;
+            string? result = null;
 
             // File embed
-            if (subPath.Value.StartsWith("/includes.min", StringComparison.Ordinal))
+            if (subPath.Value?.StartsWith("/includes.min", StringComparison.Ordinal) == true)
             {
                 result = Embedded.GetFile(context, subPath);
             }
@@ -245,10 +236,13 @@ namespace StackExchange.Profiling
             result ??= NotFound(context, "Not Found: " + subPath);
             context.Response.ContentLength = result != null ? Encoding.UTF8.GetByteCount(result) : 0;
 
-            await context.Response.WriteAsync(result).ConfigureAwait(false);
+            if (result is not null)
+            {
+                await context.Response.WriteAsync(result).ConfigureAwait(false);
+            }
         }
 
-        private static string NotFound(HttpContext context, string message = null, string contentType = "text/plain")
+        private static string? NotFound(HttpContext context, string? message = null, string contentType = "text/plain")
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             context.Response.ContentType = contentType;
@@ -266,7 +260,7 @@ namespace StackExchange.Profiling
         {
             var req = context.Request;
             // Deny access if we a) have a configured delegate, and b) it says no
-            if (Options.ResultsAuthorize != null && !Options.ResultsAuthorize.Invoke(req)
+            if ((Options.ResultsAuthorize != null && !Options.ResultsAuthorize.Invoke(req))
                 || (Options.ResultsAuthorizeAsync != null && !await Options.ResultsAuthorizeAsync(req))
                 || (isList && Options.ResultsListAuthorize != null && !Options.ResultsListAuthorize(req))
                 || (isList && Options.ResultsListAuthorizeAsync != null && !await Options.ResultsListAuthorizeAsync(req))
@@ -323,7 +317,7 @@ namespace StackExchange.Profiling
                     .Where(p => p != null)
                     .Select(p => new
                     {
-                        p.Id,
+                        p!.Id,
                         p.Name,
                         p.ClientTimings,
                         p.Started,
@@ -335,14 +329,14 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns either JSON or full page HTML of a previous <c>MiniProfiler</c> session, 
+        /// Returns either JSON or full page HTML of a previous <c>MiniProfiler</c> session,
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>
-        private async Task<string> GetSingleProfilerResultAsync(HttpContext context)
+        private async Task<string?> GetSingleProfilerResultAsync(HttpContext context)
         {
             Guid id;
-            ResultRequest clientRequest = null;
+            ResultRequest? clientRequest = null;
             // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
             // If that's absent, we're rendering results as a full page for sharing.
             bool jsonRequest = context.Request.Headers["Accept"].FirstOrDefault()?.Contains("application/json") == true;
@@ -350,11 +344,7 @@ namespace StackExchange.Profiling
             // Try to parse from the JSON payload first
             if (jsonRequest
                 && context.Request.ContentLength > 0
-#if NETCOREAPP3_1
                 && ((clientRequest = await JsonSerializer.DeserializeAsync<ResultRequest>(context.Request.Body)) != null)
-#else
-                && ResultRequest.TryParse(context.Request.Body, out clientRequest)
-#endif
                 && clientRequest.Id.HasValue)
             {
                 id = clientRequest.Id.Value;
@@ -375,7 +365,7 @@ namespace StackExchange.Profiling
             }
 
             var profiler = await Options.Storage.LoadAsync(id).ConfigureAwait(false);
-            string user = Options.UserIdProvider?.Invoke(context.Request);
+            string? user = Options.UserIdProvider?.Invoke(context.Request);
 
             await Options.Storage.SetViewedAsync(user, id).ConfigureAwait(false);
 

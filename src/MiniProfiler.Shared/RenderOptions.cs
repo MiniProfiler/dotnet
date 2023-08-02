@@ -47,7 +47,7 @@ namespace StackExchange.Profiling
         /// The keyboard key combination to use toggle profiler visibility.
         /// Defaults to <see cref="MiniProfilerBaseOptions.PopupToggleKeyboardShortcut"/>.
         /// </summary>
-        public string PopupToggleKeyboardShortcut { get; set; }
+        public string? PopupToggleKeyboardShortcut { get; set; }
 
         /// <summary>
         /// The amount of ms before a timing is considered non-trivial.
@@ -56,13 +56,13 @@ namespace StackExchange.Profiling
         public int? TrivialDurationThresholdMilliseconds { get; set; }
 
         /// <summary>
-        /// The colorscheme to use when rendering this MiniProfiler.
+        /// The color scheme to use when rendering this MiniProfiler.
         /// Defaults to <see cref="MiniProfilerBaseOptions.ColorScheme"/>.
         /// </summary>
         public ColorScheme? ColorScheme { get; set; }
 
         /// <summary>
-        /// The number of decimal places to show on timings (which are in miliseconds).
+        /// The number of decimal places to show on timings (which are in milliseconds).
         /// Defaults to <see cref="MiniProfilerBaseOptions.PopupDecimalPlaces"/>.
         /// </summary>
         public int? DecimalPlaces { get; set; }
@@ -71,6 +71,6 @@ namespace StackExchange.Profiling
         /// A one-time-use nonce to render in the script tag.
         /// </summary>
         /// <remarks>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script</remarks>
-        public string Nonce { get; set; }
+        public string? Nonce { get; set; }
     }
 }

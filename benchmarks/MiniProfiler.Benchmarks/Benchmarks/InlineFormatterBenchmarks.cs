@@ -18,10 +18,10 @@ namespace Benchmarks.Benchmarks
         [Params(false, true)]
         public bool ParamNamePrefixed { get; set; }
 
-        private string _queryString;
-        private List<SqlTimingParameter> _params;
+        private string _queryString = null!;
+        private List<SqlTimingParameter> _params = null!;
 
-        private InlineFormatter _formatter;
+        private InlineFormatter _formatter = null!;
 
         [GlobalSetup]
         public void GlobalSetup()

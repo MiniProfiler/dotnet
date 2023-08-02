@@ -14,7 +14,7 @@ namespace StackExchange.Profiling.Storage
         private readonly IMemoryCache _cache;
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "API for later.")]
         private MemoryCacheEntryOptions CacheEntryOptions { get; }
-        private readonly SortedList<ProfilerSortedKey, object> _profiles = new();
+        private readonly SortedList<ProfilerSortedKey, object?> _profiles = new();
 
         /// <summary>
         /// The string that prefixes all keys that MiniProfilers are saved under, e.g.
@@ -41,13 +41,13 @@ namespace StackExchange.Profiling.Storage
             CacheEntryOptions = new MemoryCacheEntryOptions { SlidingExpiration = cacheDuration };
         }
 
-        private string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
+        private static string GetCacheKey(Guid id) => CacheKeyPrefix + id.ToString();
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        public List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string? user)
         {
             var ids = GetPerUserUnviewedIds(user);
             lock (ids)
@@ -60,11 +60,11 @@ namespace StackExchange.Profiling.Storage
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
-        public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Task.FromResult(GetUnviewedIds(user));
+        public Task<List<Guid>> GetUnviewedIdsAsync(string? user) => Task.FromResult(GetUnviewedIds(user));
 
-        private string GetPerUserUnviewedCacheKey(string user) => CacheKeyPrefix + "unviewed-for-user-" + user;
+        private static string GetPerUserUnviewedCacheKey(string? user) => CacheKeyPrefix + "unviewed-for-user-" + user;
 
-        private List<Guid> GetPerUserUnviewedIds(string user)
+        private List<Guid> GetPerUserUnviewedIds(string? user)
         {
             var key = GetPerUserUnviewedCacheKey(user);
             return _cache.Get(key) as List<Guid> ?? new List<Guid>();
@@ -135,7 +135,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler Load(Guid id) => _cache.Get(GetCacheKey(id)) as MiniProfiler;
+        public MiniProfiler? Load(Guid id) => _cache.Get(GetCacheKey(id)) as MiniProfiler;
 
         /// <summary>
         /// Returns the saved <see cref="MiniProfiler"/> identified by <paramref name="id"/>. Also marks the resulting
@@ -143,7 +143,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public Task<MiniProfiler> LoadAsync(Guid id) => Task.FromResult(Load(id));
+        public Task<MiniProfiler?> LoadAsync(Guid id) => Task.FromResult(Load(id));
 
         /// <summary>
         /// Saves <paramref name="profiler"/> to the HttpRuntime.Cache under a key concatenated with <see cref="CacheKeyPrefix"/>
@@ -200,7 +200,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
             lock (ids)
@@ -219,7 +219,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public Task SetUnviewedAsync(string user, Guid id)
+        public Task SetUnviewedAsync(string? user, Guid id)
         {
             SetUnviewed(user, id);
             return Task.CompletedTask;
@@ -230,7 +230,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             var ids = GetPerUserUnviewedIds(user);
             lock (ids)
@@ -244,7 +244,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public Task SetViewedAsync(string user, Guid id)
+        public Task SetViewedAsync(string? user, Guid id)
         {
             SetViewed(user, id);
             return Task.CompletedTask;

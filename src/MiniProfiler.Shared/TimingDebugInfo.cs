@@ -5,7 +5,7 @@ using StackExchange.Profiling.Helpers;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Debug info for a timing, only present when EnableDebugMode is set in options
+    /// Debug info for a timing, only present when <c>EnableDebugMode</c> is set in options.
     /// </summary>
     [DataContract]
     public class TimingDebugInfo

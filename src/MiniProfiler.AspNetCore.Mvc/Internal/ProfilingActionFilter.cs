@@ -33,8 +33,8 @@ namespace StackExchange.Profiling.Internal
                     context.HttpContext.Items[StackKey] = stack;
                 }
 
-                var area = context.RouteData.DataTokens.TryGetValue("area", out object areaToken)
-                    ? areaToken as string + "."
+                var area = context.RouteData.DataTokens.TryGetValue("area", out object? areaToken)
+                    ? (areaToken as string) + "."
                     : null;
 
                 switch (context.ActionDescriptor)

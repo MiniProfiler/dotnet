@@ -48,17 +48,17 @@ namespace Misc
             Wrapped.List(maxResults, start, finish, orderBy);
 
         public void Save(MiniProfiler profiler) => Wrapped.Save(profiler);
-        public void SetUnviewed(string user, Guid id) => Wrapped.SetUnviewed(user, id);
-        public void SetViewed(string user, Guid id) => Wrapped.SetViewed(user, id);
-        public List<Guid> GetUnviewedIds(string user) => Wrapped.GetUnviewedIds(user);
+        public void SetUnviewed(string? user, Guid id) => Wrapped.SetUnviewed(user, id);
+        public void SetViewed(string? user, Guid id) => Wrapped.SetViewed(user, id);
+        public List<Guid> GetUnviewedIds(string? user) => Wrapped.GetUnviewedIds(user);
 
         public Task<IEnumerable<Guid>> ListAsync(int maxResults, DateTime? start = null, DateTime? finish = null, ListResultsOrder orderBy = ListResultsOrder.Descending) =>
             Wrapped.ListAsync(maxResults, start, finish, orderBy);
 
         public Task SaveAsync(MiniProfiler profiler) => Wrapped.SaveAsync(profiler);
-        public Task SetUnviewedAsync(string user, Guid id) => Wrapped.SetUnviewedAsync(user, id);
-        public Task SetViewedAsync(string user, Guid id) => Wrapped.SetViewedAsync(user, id);
-        public Task<List<Guid>> GetUnviewedIdsAsync(string user) => Wrapped.GetUnviewedIdsAsync(user);
+        public Task SetUnviewedAsync(string? user, Guid id) => Wrapped.SetUnviewedAsync(user, id);
+        public Task SetViewedAsync(string? user, Guid id) => Wrapped.SetViewedAsync(user, id);
+        public Task<List<Guid>> GetUnviewedIdsAsync(string? user) => Wrapped.GetUnviewedIdsAsync(user);
 
         /// <summary>
         /// This is a timing name prefix we check to see if we should even be trying to load a remote profiler
@@ -69,7 +69,7 @@ namespace Misc
         /// <summary>
         /// Loads a profiler and appends any remote ones found.
         /// </summary>
-        public MiniProfiler Load(Guid id)
+        public MiniProfiler? Load(Guid id)
         {
             var result = Wrapped.Load(id);
             if (result == null) return null;
@@ -106,7 +106,7 @@ namespace Misc
         /// <summary>
         /// This is just an async version of above.
         /// </summary>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             var result = await Wrapped.LoadAsync(id).ConfigureAwait(false);
             if (result == null) return null;

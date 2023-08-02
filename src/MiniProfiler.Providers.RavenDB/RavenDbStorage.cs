@@ -23,14 +23,14 @@ namespace StackExchange.Profiling.Storage
         /// <summary>
         /// Returns a new <see cref="RavenDbStorage"/>.
         /// </summary>
-        /// <param name="urls">The RavenDB Urls.</param>
+        /// <param name="urls">The RavenDB URLs.</param>
         /// <param name="database">The RavenDB database name.</param>
         /// <param name="identifier">The identifier for store.</param>
         /// <param name="certificate">The client certificate to use for authentication.</param>
         /// <param name="waitForIndexes">Whether to wait for indexes after save.</param>
         /// <param name="waitForReplication">whether to wait for replication after save.</param>
         public RavenDbStorage(string[] urls, string database, string identifier = "mini-profiler",
-            X509Certificate2 certificate = null, bool waitForIndexes = false, bool waitForReplication = false)
+            X509Certificate2? certificate = null, bool waitForIndexes = false, bool waitForReplication = false)
         {
             _waitForReplication = waitForReplication;
             _waitForIndexes = waitForIndexes;
@@ -53,7 +53,6 @@ namespace StackExchange.Profiling.Storage
             _store.Initialize();
             WithIndexCreation();
         }
-
 
         /// <summary>
         /// Creates indexes for faster querying.
@@ -101,7 +100,6 @@ namespace StackExchange.Profiling.Storage
                 ? query.OrderByDescending(x => x.Started)
                 : query.OrderBy(x => x.Started);
 
-
             return query.Select(x => x.ProfilerId).ToList();
         }
 
@@ -148,7 +146,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public MiniProfiler Load(Guid id)
+        public MiniProfiler? Load(Guid id)
         {
             using var session = _store.OpenSession(new SessionOptions
             {
@@ -163,7 +161,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             using var session = _store.OpenSession();
             ConfigureWait(session);
@@ -179,7 +177,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             using var session = _store.OpenSession();
             ConfigureWait(session);
@@ -193,7 +191,7 @@ namespace StackExchange.Profiling.Storage
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User to get IDs for, identified by <see cref="MiniProfiler.User"/>.</param>
-        public List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string? user)
         {
             using var session = _store.OpenSession(new SessionOptions
             {
@@ -238,7 +236,6 @@ namespace StackExchange.Profiling.Storage
                 ? query.OrderByDescending(x => x.Started)
                 : query.OrderBy(x => x.Started);
 
-
             return await query
                 .Select(x => x.ProfilerId)
                 .ToListAsync()
@@ -262,7 +259,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             using var session = _store.OpenAsyncSession(new SessionOptions
             {
@@ -274,11 +271,11 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed". 
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public async Task SetUnviewedAsync(string user, Guid id)
+        public async Task SetUnviewedAsync(string? user, Guid id)
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
@@ -296,7 +293,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public async Task SetViewedAsync(string user, Guid id)
+        public async Task SetViewedAsync(string? user, Guid id)
         {
             using var session = _store.OpenAsyncSession();
             ConfigureWait(session);
@@ -313,7 +310,7 @@ namespace StackExchange.Profiling.Storage
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User to get IDs for, identified by <see cref="MiniProfiler.User"/>.</param>
-        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             using var session = _store.OpenAsyncSession(new SessionOptions
             {

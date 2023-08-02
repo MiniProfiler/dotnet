@@ -21,7 +21,7 @@ namespace StackExchange.Profiling.Mvc
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var mp = MiniProfiler.Current;
-            if (mp != null)
+            if (mp is not null)
             {
                 var stack = HttpContext.Current.Items[StackKey] as Stack<IDisposable>;
                 if (stack == null)

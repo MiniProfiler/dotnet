@@ -19,6 +19,8 @@ using System.IO;
 using System.Text;
 using System.Web.Hosting;
 
+#nullable disable
+
 namespace Subtext.TestLibrary
 {
     /// <summary>

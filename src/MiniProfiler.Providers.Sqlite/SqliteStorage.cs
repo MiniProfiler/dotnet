@@ -31,7 +31,7 @@ namespace StackExchange.Profiling.Storage
         public SqliteStorage(string connectionString, string profilersTable, string timingsTable, string clientTimingsTable)
             : base(connectionString, profilersTable, timingsTable, clientTimingsTable) { }
 
-        private string _saveSql, _saveTimingsSql, _saveClientTimingsSql;
+        private string? _saveSql, _saveTimingsSql, _saveClientTimingsSql;
 
         private string SaveSql => _saveSql ??= $@"
 INSERT INTO {MiniProfilersTable}
@@ -178,7 +178,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
             }
         }
 
-        private string _loadSql;
+        private string? _loadSql;
 
         private string LoadSql => _loadSql ??= $@"
   SELECT Id as IdString,
@@ -198,8 +198,8 @@ WHERE NOT EXISTS (SELECT 1 FROM {MiniProfilerClientTimingsTable} WHERE Id = @Id)
          MiniProfilerId as MiniProfilerIdString,
          ParentTimingId as ParentTimingIdString,
          Name,
-         DurationMilliseconds,
-         StartMilliseconds,
+         CAST(DurationMilliseconds AS REAL) AS DurationMilliseconds,
+         CAST(StartMilliseconds AS REAL) AS StartMilliseconds,
          IsRoot,
          Depth,
          CustomTimingsJson
@@ -243,7 +243,7 @@ ORDER BY Start;";
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override MiniProfiler Load(Guid id)
+        public override MiniProfiler? Load(Guid id)
         {
             MiniProfiler result;
             using (var conn = GetConnection())
@@ -271,7 +271,7 @@ ORDER BY Start;";
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override async Task<MiniProfiler> LoadAsync(Guid id)
+        public override async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             MiniProfiler result;
             using (var conn = GetConnection())
@@ -295,34 +295,34 @@ ORDER BY Start;";
         }
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override void SetUnviewed(string user, Guid id) => ToggleViewed(user, id, false);
+        public override void SetUnviewed(string? user, Guid id) => ToggleViewed(user, id, false);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public override Task SetUnviewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, false);
+        public override Task SetUnviewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, false);
 
         /// <summary>
         /// Sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override void SetViewed(string user, Guid id) => ToggleViewed(user, id, true);
+        public override void SetViewed(string? user, Guid id) => ToggleViewed(user, id, true);
 
         /// <summary>
         /// Asynchronously sets a particular profiler session to "viewed"
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public override Task SetViewedAsync(string user, Guid id) => ToggleViewedAsync(user, id, true);
+        public override Task SetViewedAsync(string? user, Guid id) => ToggleViewedAsync(user, id, true);
 
-        private string _toggleViewedSql;
+        private string? _toggleViewedSql;
 
         private string ToggleViewedSql => _toggleViewedSql ??= $@"
 Update {MiniProfilersTable} 
@@ -330,7 +330,7 @@ Update {MiniProfilersTable}
  Where Id = @id 
    And [User] = @user";
 
-        private void ToggleViewed(string user, Guid id, bool hasUserVeiwed)
+        private void ToggleViewed(string? user, Guid id, bool hasUserVeiwed)
         {
             using (var conn = GetConnection())
             {
@@ -338,7 +338,7 @@ Update {MiniProfilersTable}
             }
         }
 
-        private async Task ToggleViewedAsync(string user, Guid id, bool hasUserVeiwed)
+        private async Task ToggleViewedAsync(string? user, Guid id, bool hasUserVeiwed)
         {
             using (var conn = GetConnection())
             {
@@ -346,7 +346,7 @@ Update {MiniProfilersTable}
             }
         }
 
-        private string _getUnviewedIdsSql;
+        private string? _getUnviewedIdsSql;
 
         private string GetUnviewedIdsSql => _getUnviewedIdsSql ??= $@"
   Select Id
@@ -360,7 +360,7 @@ Order By Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override List<Guid> GetUnviewedIds(string user)
+        public override List<Guid> GetUnviewedIds(string? user)
         {
             using (var conn = GetConnection())
             {
@@ -373,7 +373,7 @@ Order By Started";
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c></param>
         /// <returns>The list of keys for the supplied user</returns>
-        public override async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public override async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             using (var conn = GetConnection())
             {
@@ -482,7 +482,7 @@ Select Cast(Id as text) Id
                      RootTimingId                         nvarchar(36) null,
                      Name                                 nvarchar(200) not null,
                      Started                              datetime not null,
-                     DurationMilliseconds                 decimal(15,3) not null,
+                     DurationMilliseconds                 real not null,
                      User                                 nvarchar(100) null,
                      HasUserViewed                        bit not null,
                      MachineName                          nvarchar(100) null,
@@ -496,8 +496,8 @@ Select Cast(Id as text) Id
                      MiniProfilerId                      nvarchar(36) not null,
                      ParentTimingId                      nvarchar(36) null,
                      Name                                nvarchar(200) not null,
-                     DurationMilliseconds                decimal(15,3) not null,
-                     StartMilliseconds                   decimal(15,3) not null,
+                     DurationMilliseconds                real not null,
+                     StartMilliseconds                   real not null,
                      IsRoot                              bit not null,
                      Depth                               smallint not null,
                      CustomTimingsJson                   text null
@@ -508,8 +508,8 @@ Select Cast(Id as text) Id
                      Id                                  nvarchar(36) not null,
                      MiniProfilerId                      nvarchar(36) not null,
                      Name                                nvarchar(200) not null,
-                     Start                               decimal(9, 3) not null,
-                     Duration                            decimal(9, 3) not null
+                     Start                               real not null,
+                     Duration                            real not null
                   );";
         }
     }

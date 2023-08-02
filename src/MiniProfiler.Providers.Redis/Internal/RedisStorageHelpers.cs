@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Storage.Internal
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to convert.</param>
         /// <returns>The <see cref="RedisValue"/> created.</returns>
-        public static RedisValue ToRedisValue(this MiniProfiler profiler)
+        public static RedisValue ToRedisValue(this MiniProfiler? profiler)
         {
             if (profiler == null)
             {
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Storage.Internal
         /// </summary>
         /// <param name="value">The <see cref="RedisValue"/> to convert.</param>
         /// <returns>The <see cref="MiniProfiler"/> created.</returns>
-        public static MiniProfiler ToMiniProfiler(this RedisValue value)
+        public static MiniProfiler? ToMiniProfiler(this RedisValue value)
         {
             if (!value.HasValue)
             {
@@ -43,7 +43,7 @@ namespace StackExchange.Profiling.Storage.Internal
 
             using (var stream = new MemoryStream(value))
             {
-                return Serializer.Deserialize<MiniProfiler>(stream);
+                return Serializer.Deserialize<MiniProfiler?>(stream);
             }
         }
     }

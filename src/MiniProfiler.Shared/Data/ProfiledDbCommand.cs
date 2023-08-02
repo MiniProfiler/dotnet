@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+#if !MINIMAL
+using System.Reflection;
+using System.Reflection.Emit;
+#endif
 
 namespace StackExchange.Profiling.Data
 {
@@ -14,12 +17,10 @@ namespace StackExchange.Profiling.Data
     [System.ComponentModel.DesignerCategory("")]
     public partial class ProfiledDbCommand : DbCommand
     {
-        private static Link<Type, Action<IDbCommand, bool>> bindByNameCache;
         private DbCommand _command;
-        private DbConnection _connection;
-        private DbTransaction _transaction;
-        private IDbProfiler _profiler;
-        private bool _bindByName;
+        private DbConnection? _connection;
+        private DbTransaction? _transaction;
+        private IDbProfiler? _profiler;
 
         /// <summary>
         /// Whether to always wrap data readers, even if there isn't an active profiler on this connect.
@@ -27,10 +28,14 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected virtual bool AlwaysWrapReaders => false;
 
+#if !MINIMAL
+        private static Link<Type, Action<IDbCommand, bool>>? bindByNameCache;
+        private bool _bindByName;
+
         /// <summary>
         /// Gets or sets a value indicating whether or not to bind by name.
         /// If the underlying command supports BindByName, this sets/clears the underlying
-        /// implementation accordingly. This is required to support OracleCommand from Dapper
+        /// implementation accordingly. This is required to support OracleCommand from Dapper.
         /// </summary>
         public bool BindByName
         {
@@ -48,6 +53,7 @@ namespace StackExchange.Profiling.Data
                 }
             }
         }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfiledDbCommand"/> class.
@@ -56,7 +62,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The connection.</param>
         /// <param name="profiler">The profiler.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="command"/> is <c>null</c>.</exception>
-        public ProfiledDbCommand(DbCommand command, DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbCommand(DbCommand command, DbConnection? connection, IDbProfiler? profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
 
@@ -72,12 +78,13 @@ namespace StackExchange.Profiling.Data
             }
         }
 
+#if !MINIMAL
         /// <summary>
         /// Get the binding name.
         /// </summary>
         /// <param name="commandType">The command type.</param>
         /// <returns>The <see cref="Action"/>.</returns>
-        private static Action<IDbCommand, bool> GetBindByName(Type commandType)
+        private static Action<IDbCommand, bool>? GetBindByName(Type commandType)
         {
             if (commandType == null) return null; // GIGO
             if (Link<Type, Action<IDbCommand, bool>>.TryGet(bindByNameCache, commandType, out var action))
@@ -103,42 +110,35 @@ namespace StackExchange.Profiling.Data
                 action = (Action<IDbCommand, bool>)method.CreateDelegate(typeof(Action<IDbCommand, bool>));
             }
 
-            // cache it            
-            Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action);
+            // cache it
+            Link<Type, Action<IDbCommand, bool>>.TryAdd(ref bindByNameCache, commandType, ref action!);
             return action;
         }
+#endif
 
-        /// <summary>
-        /// Gets or sets the text command to run against the data source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandText"/>
         public override string CommandText
         {
             get => _command.CommandText;
             set => _command.CommandText = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command timeout.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandTimeout"/>
         public override int CommandTimeout
         {
             get => _command.CommandTimeout;
             set => _command.CommandTimeout = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command type.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.CommandType"/>
         public override CommandType CommandType
         {
             get => _command.CommandType;
             set => _command.CommandType = value;
         }
 
-        /// <summary>
-        /// Gets or sets the database connection.
-        /// </summary>
-        protected override DbConnection DbConnection
+        /// <inheritdoc cref="DbCommand.DbConnection"/>
+        protected override DbConnection? DbConnection
         {
             get => _connection;
             set
@@ -148,7 +148,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        private void UnwrapAndAssignConnection(DbConnection value)
+        private void UnwrapAndAssignConnection(DbConnection? value)
         {
             if (value is ProfiledDbConnection profiledConn)
             {
@@ -161,15 +161,11 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets the database parameter collection.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DbParameterCollection"/>
         protected override DbParameterCollection DbParameterCollection => _command.Parameters;
 
-        /// <summary>
-        /// Gets or sets the database transaction.
-        /// </summary>
-        protected override DbTransaction DbTransaction
+        /// <inheritdoc cref="DbCommand.DbTransaction"/>
+        protected override DbTransaction? DbTransaction
         {
             get => _transaction;
             set
@@ -179,18 +175,14 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the command is design time visible.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.DesignTimeVisible"/>
         public override bool DesignTimeVisible
         {
             get => _command.DesignTimeVisible;
             set => _command.DesignTimeVisible = value;
         }
 
-        /// <summary>
-        /// Gets or sets the updated row source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.UpdatedRowSource"/>
         public override UpdateRowSource UpdatedRowSource
         {
             get => _command.UpdatedRowSource;
@@ -200,17 +192,13 @@ namespace StackExchange.Profiling.Data
         /// <summary>
         /// Creates a wrapper data reader for <see cref="ExecuteDbDataReader"/> and <see cref="ExecuteDbDataReaderAsync"/> />
         /// </summary>
-        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler profiler)
+        protected virtual DbDataReader CreateDbDataReader(DbDataReader original, CommandBehavior behavior, IDbProfiler? profiler)
             => new ProfiledDbDataReader(original, behavior, profiler);
 
-        /// <summary>
-        /// Executes a database data reader.
-        /// </summary>
-        /// <param name="behavior">The command behavior to use.</param>
-        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteDbDataReader(CommandBehavior)"/>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            DbDataReader result = null;
+            DbDataReader? result = null;
             if (_profiler?.IsActive != true)
             {
                 result = _command.ExecuteReader(behavior);
@@ -236,15 +224,10 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes a database data reader asynchronously.
-        /// </summary>
-        /// <param name="behavior">The command behavior to use.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The resulting <see cref="DbDataReader"/>.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteDbDataReaderAsync(CommandBehavior, CancellationToken)"/>
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
-            DbDataReader result = null;
+            DbDataReader? result = null;
             if (_profiler?.IsActive != true)
             {
                 result = await _command.ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
@@ -270,10 +253,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes a SQL statement against a connection object.
-        /// </summary>
-        /// <returns>The number of rows affected.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteNonQuery()"/>
         public override int ExecuteNonQuery()
         {
             if (_profiler?.IsActive != true)
@@ -300,11 +280,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Asynchronously executes a SQL statement against a connection object asynchronously.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The number of rows affected.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteNonQueryAsync(CancellationToken)"/>
         public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
             if (_profiler?.IsActive != true)
@@ -331,11 +307,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
-        /// Additional columns or rows are ignored.
-        /// </summary>
-        /// <returns>The first column of the first row in the result set.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteScalar()"/>
         public override object ExecuteScalar()
         {
             if (_profiler?.IsActive != true)
@@ -362,12 +334,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Asynchronously executes the query, and returns the first column of the first row in the result set returned by the query. 
-        /// Additional columns or rows are ignored.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
-        /// <returns>The first column of the first row in the result set.</returns>
+        /// <inheritdoc cref="DbCommand.ExecuteScalarAsync(CancellationToken)"/>
         public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
             if (_profiler?.IsActive != true)
@@ -394,20 +361,13 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Attempts to cancels the execution of this command.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.Cancel()"/>
         public override void Cancel() => _command.Cancel();
 
-        /// <summary>
-        /// Creates a prepared (or compiled) version of the command on the data source.
-        /// </summary>
+        /// <inheritdoc cref="DbCommand.Prepare()"/>
         public override void Prepare() => _command.Prepare();
 
-        /// <summary>
-        /// Creates a new instance of an <see cref="DbParameter"/> object.
-        /// </summary>
-        /// <returns>The <see cref="DbParameter"/>.</returns>
+        /// <inheritdoc cref="DbCommand.CreateDbParameter()"/>
         protected override DbParameter CreateDbParameter() => _command.CreateParameter();
 
         /// <summary>
@@ -420,13 +380,20 @@ namespace StackExchange.Profiling.Data
             {
                 _command.Dispose();
             }
-            _command = null;
+            _command = null!;
             base.Dispose(disposing);
         }
 
         /// <summary>
-        /// Gets the internal command.
+        /// Obsolete - please use <see cref="WrappedCommand"/>.
         /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete($"Please use {nameof(WrappedCommand)}", false)]
         public DbCommand InternalCommand => _command;
+
+        /// <summary>
+        /// Gets the internally wrapped <see cref="DbCommand"/>.
+        /// </summary>
+        public DbCommand WrappedCommand => _command;
     }
 }

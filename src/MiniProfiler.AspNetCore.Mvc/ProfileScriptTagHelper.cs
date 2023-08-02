@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace StackExchange.Profiling
 {
     /// <summary>
-    /// Tag helper to profile script execution in ASP.NET Core views, e.g. 
+    /// Tag helper to profile script execution in ASP.NET Core views, e.g.
     /// &lt;profile-script name="My Step" /&gt;
     /// ...script blocks...
     /// &lt;/profile-script&gt;
@@ -22,13 +22,13 @@ namespace StackExchange.Profiling
         /// </summary>
         [ViewContext]
         [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        public ViewContext ViewContext { get; set; } = null!;
 
         /// <summary>
         /// The name of this <see cref="MiniProfiler"/> step.
         /// </summary>
         [HtmlAttributeName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Renders the tag helper.

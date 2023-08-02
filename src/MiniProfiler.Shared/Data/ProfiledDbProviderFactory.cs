@@ -1,12 +1,14 @@
 ﻿using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+#if !NETSTANDARD2_0
 using System.Security;
 using System.Security.Permissions;
+#endif
 
 namespace StackExchange.Profiling.Data
 {
     /// <summary>
-    /// Wrapper for a database provider factory to enable profiling
+    /// Wrapper for a database provider factory to enable profiling.
     /// </summary>
     public class ProfiledDbProviderFactory : DbProviderFactory
     {
@@ -19,7 +21,7 @@ namespace StackExchange.Profiling.Data
         public DbProviderFactory WrappedDbProviderFactory => _factory;
 
         /// <summary>
-        /// Every provider factory must have an Instance public field
+        /// Every provider factory must have an Instance public field.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "This does not appear to be used anywhere, we need to refactor it.")]
         public readonly static ProfiledDbProviderFactory Instance = new();
@@ -45,14 +47,13 @@ namespace StackExchange.Profiling.Data
 
         /// <summary>
         /// Prevents a default instance of the <see cref="ProfiledDbProviderFactory"/> class from being created.
-        /// Used for database provider APIS internally
+        /// Used for database provider APIs internally.
         /// </summary>
-        private ProfiledDbProviderFactory()
-        {
-        }
+#pragma warning disable CS8618
+        private ProfiledDbProviderFactory() { }
+#pragma warning restore CS8618
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbCommand"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbCommand"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateCommand()"/>
         public override DbCommand CreateCommand()
         {
             var command = _factory.CreateCommand();
@@ -63,8 +64,7 @@ namespace StackExchange.Profiling.Data
                 : command;
         }
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbConnection"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbConnection"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateConnection()"/>
         public override DbConnection CreateConnection()
         {
             var connection = _factory.CreateConnection();
@@ -75,12 +75,10 @@ namespace StackExchange.Profiling.Data
                 : connection;
         }
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbConnectionStringBuilder"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbConnectionStringBuilder"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateConnectionStringBuilder()"/>
         public override DbConnectionStringBuilder CreateConnectionStringBuilder() => _factory.CreateConnectionStringBuilder();
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbParameter"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbParameter"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateParameter()"/>
         public override DbParameter CreateParameter() => _factory.CreateParameter();
 
         /// <summary>
@@ -89,17 +87,13 @@ namespace StackExchange.Profiling.Data
         /// <param name="tail">The tail.</param>
         public void InitProfiledDbProviderFactory(DbProviderFactory tail) => _factory = tail;
 
-        /// <summary>
-        /// Specifies whether the specific <see cref="DbProviderFactory"/> supports the <see cref="DbDataSourceEnumerator"/> class.
-        /// </summary>
+        /// <inheritdoc cref="DbProviderFactory.CanCreateDataSourceEnumerator"/>
         public override bool CanCreateDataSourceEnumerator => _factory.CanCreateDataSourceEnumerator;
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbCommandBuilder"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbCommandBuilder"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateCommandBuilder()"/>
         public override DbCommandBuilder CreateCommandBuilder() => _factory.CreateCommandBuilder();
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbDataAdapter"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbDataAdapter"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateDataAdapter()"/>
         public override DbDataAdapter CreateDataAdapter()
         {
             var profiler = MiniProfiler.Current;
@@ -111,14 +105,11 @@ namespace StackExchange.Profiling.Data
                 : dataAdapter;
         }
 
-        /// <summary>Returns a new instance of the provider's class that implements the <see cref="DbDataSourceEnumerator"/> class.</summary>
-        /// <returns>A new instance of <see cref="DbDataSourceEnumerator"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreateDataSourceEnumerator()"/>
         public override DbDataSourceEnumerator CreateDataSourceEnumerator() => _factory.CreateDataSourceEnumerator();
 
 #if !NETSTANDARD2_0
-        /// <summary>Returns a new instance of the provider's class that implements the provider's version of the <see cref="CodeAccessPermission"/> class.</summary>
-        /// <param name="state">One of the <see cref="PermissionState"/> values.</param>
-        /// <returns>A <see cref="CodeAccessPermission"/> object for the specified <see cref="PermissionState"/>.</returns>
+        /// <inheritdoc cref="DbProviderFactory.CreatePermission(PermissionState)"/>
         public override CodeAccessPermission CreatePermission(PermissionState state) => _factory.CreatePermission(state);
 #endif
     }

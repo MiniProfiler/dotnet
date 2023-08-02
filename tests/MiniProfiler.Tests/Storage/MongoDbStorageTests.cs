@@ -48,14 +48,11 @@ namespace StackExchange.Profiling.Tests.Storage
 
             try
             {
-                var options = new MongoDbStorageOptions
-                {
-                    ConnectionString = TestConfig.Current.MongoDbConnectionString,
-                    CollectionName = "MPTest" + TestId,
-                };
+                Storage = new MongoDbStorage(
+                    TestConfig.Current.MongoDbConnectionString,
+                    "MPTest" + TestId);
 
-                Storage = new MongoDbStorage(options);
-
+                Storage.WithIndexCreation();
                 Storage.GetUnviewedIds("");
             }
             catch (Exception e)

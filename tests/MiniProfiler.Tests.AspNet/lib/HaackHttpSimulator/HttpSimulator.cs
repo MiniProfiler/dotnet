@@ -8,6 +8,8 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
+#nullable disable
+
 namespace Subtext.TestLibrary
 {
     public enum HttpVerb
@@ -20,9 +22,9 @@ namespace Subtext.TestLibrary
     }
 
     /// <summary>
-    /// Useful class for simulating the HttpContext. This does not actually 
-    /// make an HttpRequest, it merely simulates the state that your code 
-    /// would be in "as if" handling a request. Thus the HttpContext.Current 
+    /// Useful class for simulating the HttpContext. This does not actually
+    /// make an HttpRequest, it merely simulates the state that your code
+    /// would be in "as if" handling a request. Thus the HttpContext.Current
     /// property is populated.
     /// </summary>
     public class HttpSimulator : IDisposable
@@ -228,7 +230,7 @@ namespace Subtext.TestLibrary
             /// Gets a value that indicates whether the application is configured for cookieless sessions.
             /// </summary>
             /// <returns>
-            /// One of the <see cref="T:System.Web.HttpCookieMode"></see> values that indicate whether the application is configured for cookieless sessions. 
+            /// One of the <see cref="T:System.Web.HttpCookieMode"></see> values that indicate whether the application is configured for cookieless sessions.
             /// The default is <see cref="F:System.Web.HttpCookieMode.UseCookies"></see>.
             /// </returns>
             public HttpCookieMode CookieMode => HttpCookieMode.UseCookies;
@@ -377,7 +379,7 @@ namespace Subtext.TestLibrary
         private string _page;
 
         /// <summary>
-        /// The same thing as the IIS Virtual directory. It's 
+        /// The same thing as the IIS Virtual directory. It's
         /// what gets returned by Request.ApplicationPath.
         /// </summary>
         public string ApplicationPath

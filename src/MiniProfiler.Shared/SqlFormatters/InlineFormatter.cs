@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace StackExchange.Profiling.SqlFormatters
 {
     /// <summary>
-    /// Formats any SQL query with inline parameters, optionally including the value type
+    /// Formats any SQL query with inline parameters, optionally including the value type.
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
@@ -18,7 +18,7 @@ namespace StackExchange.Profiling.SqlFormatters
         public bool InsertSpacesAfterCommas { get; set; } = true;
 
         /// <summary>
-        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info 
+        /// Creates a new <see cref="InlineFormatter"/>, optionally including the parameter type info
         /// in comments beside the replaced value
         /// </summary>
         /// <param name="includeTypeInfo">Whether to include a comment after the value, indicating the type, e.g. <c>/* @myParam DbType.Int32 */</c></param>
@@ -28,12 +28,12 @@ namespace StackExchange.Profiling.SqlFormatters
         }
 
         /// <summary>
-        /// Formats the SQL in a generic friendly format, including the parameter type information 
-        /// in a comment if it was specified in the InlineFormatter constructor
+        /// Formats the SQL in a generic friendly format, including the parameter type information
+        /// in a comment if it was specified in the InlineFormatter constructor.
         /// </summary>
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
-        public string FormatSql(string commandText, List<SqlTimingParameter> parameters)
+        public string FormatSql(string commandText, List<SqlTimingParameter>? parameters)
         {
             if (parameters == null || parameters.Count == 0)
             {
@@ -44,7 +44,7 @@ namespace StackExchange.Profiling.SqlFormatters
             {
                 commandText = CommandSpacing.Replace(commandText, ", $1");
             }
-            
+
             var paramValuesByName = new Dictionary<string, string>(parameters.Count);
             foreach (var p in parameters)
             {
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.SqlFormatters
         }
 
         /// <summary>
-        /// Returns a string representation of the parameter's value, including the type
+        /// Returns a string representation of the parameter's value, including the type.
         /// </summary>
         /// <param name="param">The timing parameter to get the value for.</param>
         public string GetParameterValue(SqlTimingParameter param)

@@ -3,8 +3,9 @@ using StackExchange.Profiling;
 using System;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Net;
+using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using static System.Console;
 
 namespace Samples.Console
@@ -17,12 +18,11 @@ namespace Samples.Console
         /// <summary>
         /// application entry point.
         /// </summary>
-        /// <param name="args">application command line arguments.</param>
-        public static void Main()
+        public static async Task Main()
         {
             try
             {
-                //Test();
+                await TestAsync();
                 TestMultiThreaded();
                 WriteLine(MiniProfiler.Current.RenderPlainText());
 
@@ -36,9 +36,9 @@ namespace Samples.Console
         }
 
         /// <summary>
-        /// test the profiling.
+        /// Test the profiling.
         /// </summary>
-        public static void Test()
+        public static async Task TestAsync()
         {
             var mp = MiniProfiler.StartNew("Test");
 
@@ -52,14 +52,14 @@ namespace Samples.Console
                     conn.Query<long>("select 1");
                 }
 
-                using (var wc = new WebClient())
+                using (var client = new HttpClient())
                 using (mp.CustomTiming("http", "GET https://google.com"))
                 {
-                    wc.DownloadString("https://google.com");
+                    await client.GetAsync("https://google.com");
                 }
             }
 
-            mp.Stop();
+            mp?.Stop();
         }
 
         public static void TestMultiThreaded()
@@ -69,7 +69,7 @@ namespace Samples.Console
 
             using (mp.Step("outer"))
             {
-                System.Threading.Tasks.Parallel.For(0, 5, i =>
+                Parallel.For(0, 5, i =>
                 {
                     doWork();
 

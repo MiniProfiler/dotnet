@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
@@ -40,14 +41,14 @@ namespace StackExchange.Profiling.Tests
             if (startAndStopProfiler)
             {
                 var mp = Options.StartProfiler();
-                result.OnBeforeDispose += () => mp.Stop();
+                result.OnBeforeDispose += () => mp?.Stop();
             }
 
             return result;
         }
 
         /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time,
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
         /// <param name="url">The URL of the request.</param>
@@ -59,6 +60,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest(url, startAndStopProfiler: false))
             {
                 var result = Options.StartProfiler(url);
+                Assert.NotNull(result);
                 AddRecursiveChildren(result, childDepth, stepMs);
                 result.Stop();
                 return result;
@@ -66,7 +68,7 @@ namespace StackExchange.Profiling.Tests
         }
 
         /// <summary>
-        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time, 
+        /// Returns a profiler for <paramref name="url"/>. Only child steps will take any time,
         /// e.g. when <paramref name="childDepth"/> is 0, the resulting <see cref="MiniProfiler.DurationMilliseconds"/> will be zero.
         /// </summary>
         /// <param name="url">The URL of the request.</param>
@@ -78,6 +80,7 @@ namespace StackExchange.Profiling.Tests
             using (GetRequest(url, startAndStopProfiler: false))
             {
                 var result = Options.StartProfiler();
+                Assert.NotNull(result);
                 AddRecursiveChildren(result, childDepth, stepMs);
                 await result.StopAsync().ConfigureAwait(false);
                 return result;

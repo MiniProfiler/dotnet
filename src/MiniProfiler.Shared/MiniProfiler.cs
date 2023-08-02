@@ -30,7 +30,9 @@ namespace StackExchange.Profiling
         /// Obsolete - used for serialization.
         /// </summary>
         [Obsolete("Used for serialization")]
+#pragma warning disable CS8618
         public MiniProfiler() { /* serialization only */ }
+#pragma warning restore CS8618
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MiniProfiler"/> class. Creates and starts a new MiniProfiler
@@ -38,7 +40,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="name">The name of this <see cref="MiniProfiler"/>, typically a URL.</param>
         /// <param name="options">The options to use for this MiniProfiler.</param>
-        public MiniProfiler(string name, MiniProfilerBaseOptions options)
+        public MiniProfiler(string? name, MiniProfilerBaseOptions options)
         {
             Name = name;
             Id = Guid.NewGuid();
@@ -49,7 +51,7 @@ namespace StackExchange.Profiling
 
             // stopwatch must start before any child Timings are instantiated
             Stopwatch = options.StopwatchProvider();
-            Root = new Timing(this, null, name);
+            _root = Root = new Timing(this, null, name);
             IsActive = true;
         }
 
@@ -69,7 +71,7 @@ namespace StackExchange.Profiling
         /// Gets or sets a display name for this profiling session.
         /// </summary>
         [DataMember(Order = 2)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets when this profiler was instantiated, in UTC time.
@@ -87,22 +89,23 @@ namespace StackExchange.Profiling
         /// Gets or sets where this profiler was run.
         /// </summary>
         [DataMember(Order = 5)]
-        public string MachineName { get; set; }
+        public string? MachineName { get; set; }
 
+#if !MINIMAL
         /// <summary>
         /// Keys are names, values are URLs, allowing additional links to be added to a profiler result, e.g. perhaps a deeper
         /// diagnostic page for the current request.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/url pair to this dictionary.
+        /// Use <see cref="MiniProfilerExtensions.AddCustomLink"/> to easily add a name/URL pair to this dictionary.
         /// </remarks>
         [DataMember(Order = 6)]
-        public Dictionary<string, string> CustomLinks { get; set; }
+        public Dictionary<string, string>? CustomLinks { get; set; }
 
         /// <summary>
         /// JSON used to store Custom Links. Do not touch.
         /// </summary>
-        public string CustomLinksJson
+        public string? CustomLinksJson
         {
             get => CustomLinks?.ToJson();
             set
@@ -113,6 +116,7 @@ namespace StackExchange.Profiling
                 }
             }
         }
+#endif
 
         private Timing _root;
 
@@ -137,16 +141,18 @@ namespace StackExchange.Profiling
         /// </summary>
         public Guid? RootTimingId { get; set; }
 
+#if !MINIMAL
         /// <summary>
         /// Gets or sets timings collected from the client
         /// </summary>
         [DataMember(Order = 8)]
-        public ClientTimings ClientTimings { get; set; }
+        public ClientTimings? ClientTimings { get; set; }
 
         /// <summary>
         /// RedirectCount in ClientTimings. Used for sql storage.
         /// </summary>
         public int? ClientTimingsRedirectCount { get; set; }
+#endif
 
         /// <summary>
         /// Gets or sets a string identifying the user/client that is profiling this request.
@@ -156,7 +162,7 @@ namespace StackExchange.Profiling
         /// by default, this will be the current request's IP address.
         /// </remarks>
         [DataMember(Order = 9)]
-        public string User { get; set; }
+        public string? User { get; set; }
 
         /// <summary>
         /// Returns true when this MiniProfiler has been viewed by the <see cref="User"/> that recorded it.
@@ -169,15 +175,15 @@ namespace StackExchange.Profiling
         public bool HasUserViewed { get; set; }
 
         // Allows async to properly track the attachment point
-        private readonly AsyncLocal<Timing> _head = new();
+        private readonly AsyncLocal<Timing?> _head = new();
 
         // When async context flows aren't preserved, fallback to enable correct profiling in most cases
-        private Timing _lastSetHead;
+        private Timing? _lastSetHead;
 
         /// <summary>
         /// Gets or sets points to the currently executing Timing.
         /// </summary>
-        public Timing Head
+        public Timing? Head
         {
             get => _head.Value ?? _lastSetHead;
             set => _head.Value = _lastSetHead = value;
@@ -201,14 +207,14 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the currently running MiniProfiler for the current context; null if no MiniProfiler was started.
         /// </summary>
-        public static MiniProfiler Current => DefaultOptions.ProfilerProvider?.CurrentProfiler;
+        public static MiniProfiler? Current => DefaultOptions.ProfilerProvider?.CurrentProfiler;
 
         /// <summary>
         /// A <see cref="IAsyncStorage"/> strategy to use for the current profiler.
         /// </summary>
         /// <remarks>Used to set custom storage for an individual request</remarks>
         [IgnoreDataMember]
-        public IAsyncStorage Storage { get; set; }
+        public IAsyncStorage? Storage { get; set; }
 
         /// <summary>
         /// Ends the current profiling session, if one exists.
@@ -283,11 +289,13 @@ namespace StackExchange.Profiling
             return true;
         }
 
+#if !MINIMAL
         /// <summary>
         /// Deserializes the JSON string parameter to a <see cref="MiniProfiler"/>.
         /// </summary>
         /// <param name="json">The string to deserialize into a <see cref="MiniProfiler"/>.</param>
-        public static MiniProfiler FromJson(string json) => json.FromJson<MiniProfiler>();
+        public static MiniProfiler? FromJson(string json) => json.FromJson<MiniProfiler>();
+#endif
 
         /// <summary>
         /// Returns the <see cref="Root"/>'s <see cref="Timing.Name"/> and <see cref="DurationMilliseconds"/> this profiler recorded.
@@ -349,10 +357,8 @@ namespace StackExchange.Profiling
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal Timing StepImpl(string name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false)
-        {
-            return new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
-        }
+        internal Timing StepImpl(string? name, decimal? minSaveMs = null, bool? includeChildrenWithMinSave = false) =>
+            new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
 
         /// <summary>
         /// Returns milliseconds based on Stopwatch's Frequency, rounded to two decimal places.

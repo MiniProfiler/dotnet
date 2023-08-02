@@ -30,7 +30,7 @@ namespace StackExchange.Profiling
         public MiniProfilerOptions Options { get; }
 
         /// <summary>
-        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle, 
+        /// Usually called internally, sometimes you may clear the routes during the apps lifecycle,
         /// if you do that call this to bring back mini profiler.
         /// </summary>
         /// <param name="options">The options to configure this handler with.</param>
@@ -107,7 +107,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> being handled.</param>
         /// <param name="path">The path being requested.</param>
-        private string Includes(HttpContext context, string path)
+        private string? Includes(HttpContext context, string path)
         {
             var response = context.Response;
             switch (Path.GetExtension(path))
@@ -133,9 +133,9 @@ namespace StackExchange.Profiling
             return NotFound(context);
         }
 
-        private string ResultsIndex(HttpContext context)
+        private string? ResultsIndex(HttpContext context)
         {
-            if (!AuthorizeRequest(context, isList: true, message: out string message))
+            if (!AuthorizeRequest(context, isList: true, message: out string? message))
             {
                 return message;
             }
@@ -149,10 +149,10 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Returns true if the current request is allowed to see the profiler response.
         /// </summary>
-        /// <param name="context">The <see cref="HttpContext"/> context for the request being authorixed.</param>
+        /// <param name="context">The <see cref="HttpContext"/> context for the request being authorized.</param>
         /// <param name="isList">Whether this is a list route being accessed.</param>
         /// <param name="message">The access denied message, if present.</param>
-        private bool AuthorizeRequest(HttpContext context, bool isList, out string message)
+        private bool AuthorizeRequest(HttpContext context, bool isList, out string? message)
         {
             message = null;
             var authorize = Options.ResultsAuthorize;
@@ -169,9 +169,9 @@ namespace StackExchange.Profiling
             return true;
         }
 
-        private string ResultsList(HttpContext context)
+        private string? ResultsList(HttpContext context)
         {
-            if (!AuthorizeRequest(context, isList: true, message: out string message))
+            if (!AuthorizeRequest(context, isList: true, message: out string? message))
             {
                 return message;
             }
@@ -188,7 +188,7 @@ namespace StackExchange.Profiling
                         .Where(p => p != null)
                         .Select(p => new
                         {
-                            p.Id,
+                            p!.Id,
                             p.Name,
                             p.ClientTimings,
                             p.Started,
@@ -200,14 +200,14 @@ namespace StackExchange.Profiling
         }
 
         /// <summary>
-        /// Returns either json or full page html of a previous <see cref="MiniProfiler"/> session, 
+        /// Returns either json or full page html of a previous <see cref="MiniProfiler"/> session,
         /// identified by its <c>"?id=GUID"</c> on the query.
         /// </summary>
         /// <param name="context">The context to get a profiler response for.</param>
-        private string GetSingleProfilerResult(HttpContext context)
+        private string? GetSingleProfilerResult(HttpContext context)
         {
             Guid id;
-            ResultRequest clientRequest = null;
+            ResultRequest? clientRequest = null;
             // When we're rendering as a button/popup in the corner, it's an AJAX/JSON request.
             // If that's absent, we're rendering results as a full page for sharing.
             var jsonRequest = context.Request.Headers["Accept"]?.Contains("application/json") == true;
@@ -234,7 +234,7 @@ namespace StackExchange.Profiling
                 return jsonRequest ? NotFound(context) : NotFound(context, "text/plain", "No Guid id specified on the query string");
 
             var profiler = Options.Storage.Load(id);
-            string user = Options.UserIdProvider?.Invoke(context.Request);
+            string? user = Options.UserIdProvider?.Invoke(context.Request);
 
             Options.Storage.SetViewed(user, id);
 
@@ -306,7 +306,7 @@ namespace StackExchange.Profiling
             return true;
         }
 
-        private static string NotFound(HttpContext context, string contentType = "text/plain", string message = null)
+        private static string? NotFound(HttpContext context, string contentType = "text/plain", string? message = null)
         {
             context.Response.StatusCode = 404;
             context.Response.ContentType = contentType;

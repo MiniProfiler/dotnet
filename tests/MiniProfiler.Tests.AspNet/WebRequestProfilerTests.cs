@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Tests
 
         public void Dispose()
         {
-            Options = null;
+            Options = null!;
         }
 
         [Fact(WindowsOnly = true)]

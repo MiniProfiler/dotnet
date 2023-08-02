@@ -10,7 +10,7 @@ namespace StackExchange.Profiling.Internal
     public interface IMiniProfilerDiagnosticListener : IObserver<KeyValuePair<string, object>>
     {
         /// <summary>
-        /// Gets a value indicating which listener this instance should be subscribed to
+        /// Gets a value indicating which listener this instance should be subscribed to.
         /// </summary>
         string ListenerName { get; }
     }

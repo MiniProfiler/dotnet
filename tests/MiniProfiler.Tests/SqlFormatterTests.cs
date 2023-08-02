@@ -76,7 +76,7 @@ namespace StackExchange.Profiling.Tests
             return _formatter.GetFormattedSql(_commandText, sqlParameters, _dbCommand);
         }
 
-        private static void AddDbParameter<T>(SqlCommand command, string name, object value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
+        private static void AddDbParameter<T>(SqlCommand command, string name, object? value, ParameterDirection parameterDirection = ParameterDirection.Input, int? size = null, DbType? type = null)
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = name;
@@ -466,7 +466,7 @@ namespace StackExchange.Profiling.Tests
             AddDbParameter<decimal>(cmd, at + "x", 123.45, type: DbType.Decimal);
             AddDbParameter<decimal>(cmd, at + "y", -54.321, type: DbType.Decimal);
 
-            var formatter = new SqlServerFormatter(); 
+            var formatter = new SqlServerFormatter();
             var actualOutput = GenerateOutput(formatter, cmd, text);
 
             const string expectedOutput = "DECLARE @x decimal(5,2) = 123.45,\n        @y decimal(5,3) = -54.321;\n\nselect 1 from dbo.Table where x = @x, y = @y;";

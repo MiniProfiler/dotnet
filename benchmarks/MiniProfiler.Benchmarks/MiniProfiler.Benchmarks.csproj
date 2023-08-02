@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Benchmarks</RootNamespace>
     <Configuration>Release</Configuration>
-    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
     <LangVersion>9</LangVersion>
@@ -14,11 +14,11 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     <PackageReference Include="Jil" Version="2.16" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Ben" Version="1.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="ServiceStack.Text.Core" Version="5.12.0" />
   </ItemGroup>
   

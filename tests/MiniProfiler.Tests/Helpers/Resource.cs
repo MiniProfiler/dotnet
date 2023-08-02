@@ -1,19 +1,12 @@
 ﻿using System.IO;
-#if NETCOREAPP2_0
-using System.Reflection;
-#endif
 
 namespace StackExchange.Profiling.Tests
 {
     public static class Resource
     {
-        public static string Get(string name)
+        public static string? Get(string name)
         {
-            using (var stream = typeof(Resource)
-#if NETCOREAPP2_0
-                    .GetTypeInfo()
-#endif
-                    .Assembly.GetManifestResourceStream("StackExchange.Pofiling.Tests." + name))
+            using (var stream = typeof(Resource).Assembly.GetManifestResourceStream("StackExchange.Pofiling.Tests." + name))
             {
                 if (stream != null)
                 {

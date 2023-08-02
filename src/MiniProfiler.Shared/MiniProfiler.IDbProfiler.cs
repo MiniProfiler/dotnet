@@ -13,8 +13,8 @@ namespace StackExchange.Profiling
         // They are by far the heaviest memory part of a profiler, so this allocates them when needed
         // Note that these operations almost certainly involve IO, so the critical section behavior is almost certainly insignificant on impact.
         private readonly object _dbLocker = new();
-        private Dictionary<Tuple<object, SqlExecuteType>, CustomTiming> _inProgress;
-        private Dictionary<IDataReader, CustomTiming> _inProgressReaders;
+        private Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>? _inProgress;
+        private Dictionary<IDataReader, CustomTiming>? _inProgressReaders;
 
         /// <summary>
         /// Tracks when 'command' is started.
@@ -25,12 +25,12 @@ namespace StackExchange.Profiling
         {
             var id = Tuple.Create((object)profiledDbCommand, executeType);
             var timing = profiledDbCommand.GetTiming(executeType.ToString(), this);
-            
+
             if (timing == null)
             {
                 return;
             }
-            
+
             lock (_dbLocker)
             {
                 _inProgress ??= new Dictionary<Tuple<object, SqlExecuteType>, CustomTiming>();
@@ -47,7 +47,7 @@ namespace StackExchange.Profiling
         /// <param name="profiledDbCommand">The <see cref="IDbCommand"/> that finished.</param>
         /// <param name="executeType">The execution type of the <paramref name="profiledDbCommand"/>.</param>
         /// <param name="reader">(Optional) the reader piece of the <paramref name="profiledDbCommand"/>, if it exists.</param>
-        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader reader)
+        void IDbProfiler.ExecuteFinish(IDbCommand profiledDbCommand, SqlExecuteType executeType, DbDataReader? reader)
         {
             if (_inProgress == null)
             {
@@ -55,7 +55,7 @@ namespace StackExchange.Profiling
             }
 
             var id = Tuple.Create((object)profiledDbCommand, executeType);
-            CustomTiming current;
+            CustomTiming? current;
             lock (_inProgress)
             {
                 if (!_inProgress.TryRemove(id, out current))
@@ -93,7 +93,7 @@ namespace StackExchange.Profiling
                 return;
             }
 
-            CustomTiming timing;
+            CustomTiming? timing;
             lock (_inProgressReaders)
             {
                 _inProgressReaders.TryRemove(reader, out timing);
@@ -117,7 +117,7 @@ namespace StackExchange.Profiling
             }
 
             var id = Tuple.Create((object)profiledDbCommand, executeType);
-            CustomTiming timing;
+            CustomTiming? timing;
             lock (_inProgress)
             {
                 _inProgress.TryRemove(id, out timing);

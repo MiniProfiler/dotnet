@@ -18,7 +18,7 @@ namespace StackExchange.Profiling
         /// <summary>
         /// Gets the currently running MiniProfiler for the current HttpContext; null if no MiniProfiler was <see cref="Start(string, MiniProfilerBaseOptions)"/>ed.
         /// </summary>
-        public override MiniProfiler CurrentProfiler
+        public override MiniProfiler? CurrentProfiler
         {
             get => HttpContext.Current?.Items[CacheKey] as MiniProfiler ?? (_enableFallback ? base.CurrentProfiler : null);
             protected set
@@ -45,9 +45,9 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profilerName">The name for the started <see cref="MiniProfiler"/>.</param>
         /// <param name="options">The options to start the MiniProfiler with. Likely a more-specific type underneath.</param>
-        public override MiniProfiler Start(string profilerName, MiniProfilerBaseOptions options)
+        public override MiniProfiler? Start(string? profilerName, MiniProfilerBaseOptions options)
         {
-            HttpRequest request;
+            HttpRequest? request;
             try
             {
                 request = HttpContext.Current?.Request;
@@ -59,8 +59,8 @@ namespace StackExchange.Profiling
                 // return a profiler, in that scenario.
                 return new MiniProfiler(profilerName, options);
             }
-            var path = request?.Path;
-            if (path == null) return null;
+
+            if (request?.Path is not string path) return null;
 
             // If the application is hosted in the root directory (appPath.Length == 1), return entire path
             // Otherwise, return the substring after the path (e.g. a virtual directory)
@@ -92,7 +92,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public override void Stopped(MiniProfiler profiler, bool discardResults)
@@ -130,7 +130,7 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to stop.</param>
         /// <param name="discardResults">
-        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to 
+        /// When true, clears the <see cref="MiniProfiler.Current"/> for this HttpContext, allowing profiling to
         /// be prematurely stopped and discarded. Useful for when a specific route does not need to be profiled.
         /// </param>
         public override async Task StoppedAsync(MiniProfiler profiler, bool discardResults)
@@ -170,7 +170,7 @@ namespace StackExchange.Profiling
         /// <param name="context">The <see cref="HttpContext"/> request to get the name from.</param>
         private static void EnsureName(MiniProfiler profiler, HttpContext context)
         {
-            string url = null;
+            string? url = null;
             string GetUrl() => url ??= StringBuilderCache.Get()
                                     .Append(context.Request.Url.Scheme)
                                     .Append("://")

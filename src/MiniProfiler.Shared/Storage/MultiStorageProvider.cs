@@ -19,7 +19,7 @@ namespace StackExchange.Profiling.Storage
         public List<IAsyncStorage> Stores { get; set; }
 
         /// <summary>
-        /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit? 
+        /// Should operations use Parallel.ForEach when it makes sense to do so (all save operations, and data retrieval where all items in <see cref="Stores"/> are hit?
         /// If False, all operations will run synchronously, in order. Defaults to False.
         /// </summary>
         public bool AllowParallelOps { get; set; }
@@ -39,7 +39,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
+        /// Run the List command on the first Store from <see cref="Stores"/> that returns a result with any values.
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
         /// <param name="maxResults">The maximum number of results to return.</param>
@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously run the List command on the first Store from <see cref="Stores"/> that returns a result with any values. 
+        /// Asynchronously run the List command on the first Store from <see cref="Stores"/> that returns a result with any values.
         /// Will NOT return a superset of results from all <see cref="Stores"/>.
         /// </summary>
         /// <param name="maxResults">The maximum number of results to return.</param>
@@ -122,7 +122,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>
@@ -131,7 +131,7 @@ namespace StackExchange.Profiling.Storage
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public MiniProfiler Load(Guid id)
+        public MiniProfiler? Load(Guid id)
         {
             if (Stores == null) return null;
             foreach (var store in Stores)
@@ -146,7 +146,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>, 
+        /// Asynchronously returns a <see cref="MiniProfiler"/> from storage based on <paramref name="id"/>,
         /// which should map to <see cref="MiniProfiler.Id"/>. Will check in all of the <see cref="IAsyncStorage"/>
         /// classes in <see cref="Stores"/>, and will return the first <see cref="MiniProfiler"/> that it finds.
         /// </summary>
@@ -155,7 +155,7 @@ namespace StackExchange.Profiling.Storage
         /// <remarks>
         /// Should also update that the resulting profiler has been marked as viewed by its profiling <see cref="MiniProfiler.User"/>.
         /// </remarks>
-        public async Task<MiniProfiler> LoadAsync(Guid id)
+        public async Task<MiniProfiler?> LoadAsync(Guid id)
         {
             if (Stores == null) return null;
             foreach (var store in Stores)
@@ -180,7 +180,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public void SetUnviewed(string user, Guid id)
+        public void SetUnviewed(string? user, Guid id)
         {
             if (Stores == null) return;
             if (AllowParallelOps)
@@ -202,7 +202,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public Task SetUnviewedAsync(string user, Guid id)
+        public Task SetUnviewedAsync(string? user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;
 
@@ -215,7 +215,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public void SetViewed(string user, Guid id)
+        public void SetViewed(string? user, Guid id)
         {
             if (Stores == null) return;
             if (AllowParallelOps)
@@ -237,7 +237,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public Task SetViewedAsync(string user, Guid id)
+        public Task SetViewedAsync(string? user, Guid id)
         {
             if (Stores == null) return Task.CompletedTask;
 
@@ -250,7 +250,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to fetch IDs for</param>
         /// <returns>A distinct list of unviewed IDs</returns>
-        public List<Guid> GetUnviewedIds(string user)
+        public List<Guid> GetUnviewedIds(string? user)
         {
             var results = new List<Guid>();
             if (Stores == null) return results;
@@ -280,7 +280,7 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="user">The user to fetch IDs for</param>
         /// <returns>A distinct list of unviewed IDs</returns>
-        public async Task<List<Guid>> GetUnviewedIdsAsync(string user)
+        public async Task<List<Guid>> GetUnviewedIdsAsync(string? user)
         {
             var results = new List<Guid>();
             if (Stores == null) return results;

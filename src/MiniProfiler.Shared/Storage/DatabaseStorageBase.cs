@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Storage
         protected string ConnectionString { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class.
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
         /// </summary>
         /// <param name="connectionString">The connection String</param>
@@ -42,7 +42,7 @@ namespace StackExchange.Profiling.Storage
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class. 
+        /// Initializes a new instance of the <see cref="DatabaseStorageBase"/> class.
         /// Returns a new <c>SqlServerDatabaseStorage</c> object that will insert into the database identified by connectionString.
         /// </summary>
         /// <param name="connectionString">The connection String</param>
@@ -79,14 +79,14 @@ namespace StackExchange.Profiling.Storage
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public abstract MiniProfiler Load(Guid id);
+        public abstract MiniProfiler? Load(Guid id);
 
         /// <summary>
         /// Asynchronously returns the MiniProfiler identified by 'id' from the database or null when no MiniProfiler exists under that 'id'.
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public abstract Task<MiniProfiler> LoadAsync(Guid id);
+        public abstract Task<MiniProfiler?> LoadAsync(Guid id);
 
         /// <summary>
         /// Whether this storage provider should call SetUnviewed methods (separately) after saving.
@@ -94,46 +94,46 @@ namespace StackExchange.Profiling.Storage
         public virtual bool SetUnviewedAfterSave => false;
 
         /// <summary>
-        /// Sets a particular profiler session so it is considered "unviewed"  
+        /// Sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public abstract void SetUnviewed(string user, Guid id);
+        public abstract void SetUnviewed(string? user, Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session so it is considered "unviewed"  
+        /// Asynchronously sets a particular profiler session so it is considered "unviewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as unviewed for.</param>
         /// <param name="id">The profiler ID to set unviewed.</param>
-        public abstract Task SetUnviewedAsync(string user, Guid id);
+        public abstract Task SetUnviewedAsync(string? user, Guid id);
 
         /// <summary>
-        /// Sets a particular profiler session to "viewed"
+        /// Sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public abstract void SetViewed(string user, Guid id);
+        public abstract void SetViewed(string? user, Guid id);
 
         /// <summary>
-        /// Asynchronously sets a particular profiler session to "viewed"
+        /// Asynchronously sets a particular profiler session to "viewed".
         /// </summary>
         /// <param name="user">The user to set this profiler ID as viewed for.</param>
         /// <param name="id">The profiler ID to set viewed.</param>
-        public abstract Task SetViewedAsync(string user, Guid id);
+        public abstract Task SetViewedAsync(string? user, Guid id);
 
         /// <summary>
         /// Returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c>.</param>
         /// <returns>The list of keys for the supplied user</returns>
-        public abstract List<Guid> GetUnviewedIds(string user);
+        public abstract List<Guid> GetUnviewedIds(string? user);
 
         /// <summary>
         /// Asynchronously returns a list of <see cref="MiniProfiler.Id"/>s that haven't been seen by <paramref name="user"/>.
         /// </summary>
         /// <param name="user">User identified by the current <c>MiniProfilerOptions.UserProvider</c>.</param>
         /// <returns>The list of keys for the supplied user</returns>
-        public abstract Task<List<Guid>> GetUnviewedIdsAsync(string user);
+        public abstract Task<List<Guid>> GetUnviewedIdsAsync(string? user);
 
         /// <summary>
         /// Returns the MiniProfiler Ids for the given search criteria.
@@ -174,7 +174,7 @@ namespace StackExchange.Profiling.Storage
                         timing.Profiler = profiler;
                     }
                     timings.Remove(rootTiming);
-                    var timingsLookupByParent = timings.ToLookup(x => x.ParentTimingId, x => x);
+                    var timingsLookupByParent = timings.ToLookup(x => (Guid)x.ParentTimingId!, x => x);
                     PopulateChildTimings(rootTiming, timingsLookupByParent);
                 }
                 if (clientTimings.Count > 0 || profiler.ClientTimingsRedirectCount.HasValue)
@@ -223,7 +223,7 @@ namespace StackExchange.Profiling.Storage
             }
         }
 
-        private List<string> _tableCreationScripts;
+        private List<string>? _tableCreationScripts;
 
         /// <summary>
         /// The table creation scripts for this database storage.

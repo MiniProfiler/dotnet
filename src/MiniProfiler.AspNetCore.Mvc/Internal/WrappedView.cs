@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Internal
         public string Path => _wrapped.Path;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WrappedView"/> class. 
+        /// Initializes a new instance of the <see cref="WrappedView"/> class.
         /// </summary>
         /// <param name="wrapped">The view to wrap in a profiler</param>
         public WrappedView(IView wrapped) => _wrapped = wrapped;
@@ -34,7 +34,7 @@ namespace StackExchange.Profiling.Internal
         public async Task RenderAsync(ViewContext context)
         {
             var prof = MiniProfiler.Current;
-            string name = prof != null ? ("Render: " + Path) : null;
+            string? name = prof != null ? ("Render: " + Path) : null;
             using (prof.Step(name))
             {
                 await _wrapped.RenderAsync(context).ConfigureAwait(false);

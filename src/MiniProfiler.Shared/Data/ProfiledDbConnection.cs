@@ -13,22 +13,22 @@ namespace StackExchange.Profiling.Data
     public class ProfiledDbConnection : DbConnection
     {
         private DbConnection _connection;
-        private IDbProfiler _profiler;
+        private IDbProfiler? _profiler;
 
         /// <summary>
         /// Gets the current profiler instance; could be null.
         /// </summary>
-        public IDbProfiler Profiler => _profiler;
+        public IDbProfiler? Profiler => _profiler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProfiledDbConnection"/> class. 
-        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
+        /// Initializes a new instance of the <see cref="ProfiledDbConnection"/> class.
+        /// Returns a new <see cref="ProfiledDbConnection"/> that wraps <paramref name="connection"/>,
         /// providing query execution profiling. If profiler is null, no profiling will occur.
         /// </summary>
         /// <param name="connection"><c>Your provider-specific flavour of connection, e.g. SqlConnection, OracleConnection</c></param>
         /// <param name="profiler">The currently started <see cref="MiniProfiler"/> or null.</param>
         /// <exception cref="ArgumentNullException">Throws when <paramref name="connection"/> is <c>null</c>.</exception>
-        public ProfiledDbConnection(DbConnection connection, IDbProfiler profiler)
+        public ProfiledDbConnection(DbConnection connection, IDbProfiler? profiler)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _connection.StateChange += StateChangeHandler;
@@ -44,51 +44,32 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         public DbConnection WrappedConnection => _connection;
 
-        /// <summary>
-        /// Gets or sets the connection string.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.ConnectionString"/>
         public override string ConnectionString
         {
             get => _connection.ConnectionString;
             set => _connection.ConnectionString = value;
         }
 
-        /// <summary>
-        /// Gets the time to wait while establishing a connection before terminating the attempt and generating an error.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.ConnectionTimeout"/>
         public override int ConnectionTimeout => _connection.ConnectionTimeout;
 
-        /// <summary>
-        /// Gets the name of the current database after a connection is opened, 
-        /// or the database name specified in the connection string before the connection is opened.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.Database"/>
         public override string Database => _connection.Database;
 
-        /// <summary>
-        /// Gets the name of the database server to which to connect.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.DataSource"/>
         public override string DataSource => _connection.DataSource;
 
-        /// <summary>
-        /// Gets a string that represents the version of the server to which the object is connected.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.ServerVersion"/>
         public override string ServerVersion => _connection.ServerVersion;
 
-        /// <summary>
-        /// Gets the current state of the connection.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.State"/>
         public override ConnectionState State => _connection.State;
 
-        /// <summary>
-        /// Changes the current database for an open connection.
-        /// </summary>
-        /// <param name="databaseName">The new database name.</param>
+        /// <inheritdoc cref="DbConnection.ChangeDatabase(string)"/>
         public override void ChangeDatabase(string databaseName) => _connection.ChangeDatabase(databaseName);
 
-        /// <summary>
-        /// Closes the connection to the database.
-        /// This is the preferred method of closing any open connection.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.Close()"/>
         public override void Close()
         {
             var miniProfiler = _profiler as MiniProfiler;
@@ -104,9 +85,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
-        /// </summary>
+        /// <inheritdoc cref="DbConnection.Open()"/>
         public override void Open()
         {
             var miniProfiler = _profiler as MiniProfiler;
@@ -122,10 +101,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Asynchronously opens a database connection with the settings specified by the <see cref="ConnectionString"/>.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for this async operation.</param>
+        /// <inheritdoc cref="DbConnection.OpenAsync(CancellationToken)"/>
         public override async Task OpenAsync(CancellationToken cancellationToken)
         {
             var miniProfiler = _profiler as MiniProfiler;
@@ -141,11 +117,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Starts a database transaction.
-        /// </summary>
-        /// <param name="isolationLevel">Specifies the isolation level for the transaction.</param>
-        /// <returns>An object representing the new transaction.</returns>
+        /// <inheritdoc cref="DbConnection.BeginDbTransaction(IsolationLevel)"/>
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             return new ProfiledDbTransaction(_connection.BeginTransaction(isolationLevel), this);
@@ -155,13 +127,10 @@ namespace StackExchange.Profiling.Data
         /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
         /// </summary>
         /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
-        protected virtual DbCommand CreateDbCommand(DbCommand original, IDbProfiler profiler)
+        protected virtual DbCommand CreateDbCommand(DbCommand original, IDbProfiler? profiler)
                 => new ProfiledDbCommand(original, this, profiler);
 
-        /// <summary>
-        /// Creates and returns a <see cref="DbCommand"/> object associated with the current connection.
-        /// </summary>
-        /// <returns>A <see cref="ProfiledDbCommand"/> wrapping the created <see cref="DbCommand"/>.</returns>
+        /// <inheritdoc cref="DbConnection.CreateDbCommand()"/>
         protected override DbCommand CreateDbCommand() => CreateDbCommand(_connection.CreateCommand(), _profiler);
 
         /// <summary>
@@ -176,7 +145,7 @@ namespace StackExchange.Profiling.Data
                 _connection.Dispose();
             }
             base.Dispose(disposing);
-            _connection = null;
+            _connection = null!;
             _profiler = null;
         }
 
@@ -195,31 +164,16 @@ namespace StackExchange.Profiling.Data
         /// </summary>
         protected override bool CanRaiseEvents => true;
 
-        /// <summary>
-        /// Enlist the transaction.
-        /// </summary>
-        /// <param name="transaction">The transaction.</param>
-        public override void EnlistTransaction(System.Transactions.Transaction transaction) =>_connection.EnlistTransaction(transaction);
+        /// <inheritdoc cref="DbConnection.EnlistTransaction(System.Transactions.Transaction)"/>
+        public override void EnlistTransaction(System.Transactions.Transaction transaction) => _connection.EnlistTransaction(transaction);
 
-        /// <summary>
-        /// Gets the database schema.
-        /// </summary>
-        /// <returns>The <see cref="DataTable"/>.</returns>
+        /// <inheritdoc cref="DbConnection.GetSchema()"/>
         public override DataTable GetSchema() => _connection.GetSchema();
 
-        /// <summary>
-        /// Gets the collection schema.
-        /// </summary>
-        /// <param name="collectionName">The collection name.</param>
-        /// <returns>The <see cref="DataTable"/>.</returns>
+        /// <inheritdoc cref="DbConnection.GetSchema(string)"/>
         public override DataTable GetSchema(string collectionName) => _connection.GetSchema(collectionName);
 
-        /// <summary>
-        /// Gets the filtered collection schema.
-        /// </summary>
-        /// <param name="collectionName">The collection name.</param>
-        /// <param name="restrictionValues">The restriction values.</param>
-        /// <returns>The <see cref="DataTable"/>.</returns>
+        /// <inheritdoc cref="DbConnection.GetSchema(string, string[])"/>
         public override DataTable GetSchema(string collectionName, string[] restrictionValues) => _connection.GetSchema(collectionName, restrictionValues);
     }
 }

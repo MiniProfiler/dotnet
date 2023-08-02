@@ -13,7 +13,7 @@ namespace StackExchange.Profiling
         /// Gets or sets the name.
         /// </summary>
         [DataMember(Order = 1)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the start.
@@ -28,7 +28,7 @@ namespace StackExchange.Profiling
         public decimal Duration { get; set; }
 
         /// <summary>
-        /// Unique Identifier used for sql storage. 
+        /// Unique Identifier used for sql storage.
         /// </summary>
         /// <remarks>Not set unless storing in Sql</remarks>
         public Guid Id { get; set; }

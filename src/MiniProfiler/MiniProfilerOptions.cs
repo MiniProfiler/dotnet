@@ -40,18 +40,18 @@ namespace StackExchange.Profiling
         /// <remarks>
         /// The HttpRequest parameter that will be passed into this function should never be null.
         /// </remarks>
-        public Func<HttpRequest, bool> ResultsAuthorize { get; set; }
+        public Func<HttpRequest, bool>? ResultsAuthorize { get; set; }
 
         /// <summary>
-        /// Special authorization function that is called for the list results (listing all the profiling sessions), 
+        /// Special authorization function that is called for the list results (listing all the profiling sessions),
         /// we also test for results authorize always. This must be set and return true, to enable the listing feature.
         /// </summary>
-        public Func<HttpRequest, bool> ResultsListAuthorize { get; set; }
+        public Func<HttpRequest, bool>? ResultsListAuthorize { get; set; }
 
         /// <summary>
         /// Function to provide the unique user ID based on the request, to store MiniProfiler IDs user
         /// </summary>
-        public Func<HttpRequest, string> UserIdProvider { get; set; } = IpAddressIdentity.GetUser;
+        public Func<HttpRequest, string>? UserIdProvider { get; set; } = IpAddressIdentity.GetUser;
 
         /// <summary>
         /// By default, the output of the MiniProfilerHandler is compressed, if the request supports that.

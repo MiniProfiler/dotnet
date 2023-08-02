@@ -2,13 +2,16 @@
 using System.Text;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+#if !MINIMAL
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+#endif
 
 namespace StackExchange.Profiling.Internal
 {
     /// <summary>
-    /// Common extension methods to use only in this project
+    /// Common extension methods to use only in this project.
     /// </summary>
     public static class ExtensionMethods
     {
@@ -16,20 +19,20 @@ namespace StackExchange.Profiling.Internal
         /// Answers true if this String is either null or empty.
         /// </summary>
         /// <param name="value">The string to check.</param>
-        public static bool IsNullOrWhiteSpace(this string value) => string.IsNullOrWhiteSpace(value);
+        public static bool IsNullOrWhiteSpace(this string? value) => string.IsNullOrWhiteSpace(value);
 
         /// <summary>
         /// Answers true if this String is neither null or empty.
         /// </summary>
         /// <param name="value">The string to check.</param>
-        public static bool HasValue(this string value) => !string.IsNullOrWhiteSpace(value);
+        public static bool HasValue([NotNullWhen(true)]this string? value) => !string.IsNullOrWhiteSpace(value);
 
         /// <summary>
         /// Chops off a string at the specified length and accounts for smaller length
         /// </summary>
         /// <param name="s">The string to truncate.</param>
         /// <param name="maxLength">The length to truncate to.</param>
-        public static string Truncate(this string s, int maxLength) =>
+        public static string? Truncate(this string? s, int maxLength) =>
             s?.Length > maxLength ? s.Substring(0, maxLength) : s;
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace StackExchange.Profiling.Internal
         /// Removes trailing / characters from a path and leaves just one
         /// </summary>
         /// <param name="input">The string to ensure a trailing slash on.</param>
-        public static string EnsureTrailingSlash(this string input)
+        public static string EnsureTrailingSlash(this string? input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
             return Regex.Replace(input, "/+$", string.Empty) + "/";
@@ -56,9 +59,9 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Converts a List{Guid} into a JSON representation
         /// </summary>
-        /// <param name="guids">The guids to convert.</param>
-        /// <returns>A JSON representation of the guids.</returns>
-        public static string ToJson(this List<Guid> guids)
+        /// <param name="guids">The GUIDs to convert.</param>
+        /// <returns>A JSON representation of the GUIDs.</returns>
+        public static string ToJson(this List<Guid>? guids)
         {
             if (guids == null || guids.Count == 0)
             {
@@ -76,13 +79,14 @@ namespace StackExchange.Profiling.Internal
             return sb.ToString();
         }
 
+#if !MINIMAL
         private static readonly JsonSerializerSettings defaultSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver(),
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
+            DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         private static readonly JsonSerializerSettings htmlEscapeSettings = new()
@@ -92,7 +96,7 @@ namespace StackExchange.Profiling.Internal
             TypeNameHandling = TypeNameHandling.None,
             ContractResolver = new DefaultContractResolver(),
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            DateFormatString = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
+            DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK",
         };
 
         /// <summary>
@@ -100,7 +104,8 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
         /// <param name="htmlEscape">Whether to HTML escape the output.</param>
-        public static string ToJson(this MiniProfiler profiler, bool htmlEscape = false) =>
+        [return: NotNullIfNotNull(nameof(profiler))]
+        public static string? ToJson(this MiniProfiler? profiler, bool htmlEscape = false) =>
             profiler != default
             ? (htmlEscape ? JsonConvert.SerializeObject(profiler, htmlEscapeSettings) : JsonConvert.SerializeObject(profiler, defaultSettings))
             : null;
@@ -110,7 +115,8 @@ namespace StackExchange.Profiling.Internal
         /// </summary>
         /// <param name="o">The instance to serialize.</param>
         /// <returns>The resulting JSON object as a string.</returns>
-        public static string ToJson(this object o) =>
+        [return: NotNullIfNotNull(nameof(o))]
+        public static string? ToJson(this object? o) =>
             o != null ? JsonConvert.SerializeObject(o, defaultSettings) : null;
 
         /// <summary>
@@ -119,8 +125,9 @@ namespace StackExchange.Profiling.Internal
         /// <typeparam name="T">The type to deserialize to.</typeparam>
         /// <param name="s">The string to deserialize.</param>
         /// <returns>The object resulting from the given string.</returns>
-        public static T FromJson<T>(this string s) where T : class =>
-            !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s, defaultSettings) : null;
+        public static T? FromJson<T>(this string? s) where T : class =>
+            !string.IsNullOrEmpty(s) ? JsonConvert.DeserializeObject<T>(s!, defaultSettings) : null;
+#endif
 
         /// <summary>
         /// <see cref="Dictionary{TKey, TValue}"/> equivalent of ConcurrentDictionary's .TryRemove();
@@ -130,8 +137,8 @@ namespace StackExchange.Profiling.Internal
         /// <param name="dict">The dictionary to attempt removal from.</param>
         /// <param name="key">The key to attempt removal of.</param>
         /// <param name="value">The value found (if it was found) from the dictionary.</param>
-        /// <returns></returns>
-        public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value)
+        /// <returns>Whether the key was removed.</returns>
+        public static bool TryRemove<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, [NotNullWhen(true)] out TValue? value)
         {
             value = default;
             if (dict?.TryGetValue(key, out value) == true)

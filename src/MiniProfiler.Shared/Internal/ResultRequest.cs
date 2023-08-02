@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -19,12 +20,12 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// The window.performace timings from the client.
         /// </summary>
-        public List<ClientTiming> Performance { get; set; }
+        public List<ClientTiming>? Performance { get; set; }
 
         /// <summary>
         /// The JavaScript client probes, if any.
         /// </summary>
-        public List<ClientTiming> Probes { get; set; }
+        public List<ClientTiming>? Probes { get; set; }
 
         /// <summary>
         /// The amount of redirects made before the pageload.
@@ -44,7 +45,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="stream">The stream to deserialize.</param>
         /// <param name="result">The resulting <see cref="ResultRequest"/>, if successful.</param>
         /// <returns>A <see cref="ResultRequest"/> object.</returns>
-        public static bool TryParse(Stream stream, out ResultRequest result)
+        public static bool TryParse(Stream stream, [NotNullWhen(true)] out ResultRequest? result)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace StackExchange.Profiling.Internal
                 using (var jsonTextReader = new JsonTextReader(sr))
                 {
                     var tmp = _serializer.Deserialize<ResultRequest>(jsonTextReader);
-                    if (tmp.Id.HasValue)
+                    if (tmp?.Id.HasValue == true)
                     {
                         result = tmp;
                         return true;

@@ -12,8 +12,8 @@ namespace StackExchange.Profiling.Data
     {
         private IDbCommand _command;
         private IDbConnection _connection;
-        private IDbProfiler _profiler;
-        private IDbTransaction _transaction;
+        private IDbProfiler? _profiler;
+        private IDbTransaction? _transaction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleProfiledCommand"/> class, creating a new wrapped command.
@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="connection">The wrapped connection the command is attached to.</param>
         /// <param name="profiler">The profiler to use.</param>
         /// <exception cref="ArgumentNullException">Throws then the <paramref name="command"/> is <c>null</c>.</exception>
-        public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler profiler)
+        public SimpleProfiledCommand(IDbCommand command, IDbConnection connection, IDbProfiler? profiler)
         {
             _command = command ?? throw new ArgumentNullException(nameof(command));
             _connection = connection;
@@ -33,51 +33,31 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Prepare the command.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.Prepare()"/>
         public void Prepare() => _command.Prepare();
 
-        /// <summary>
-        /// Cancel the command.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.Cancel()"/>
         public void Cancel() => _command.Cancel();
 
-        /// <summary>
-        /// Create a new parameter.
-        /// </summary>
-        /// <returns>The <see cref="IDbDataParameter"/>.</returns>
+        /// <inheritdoc cref="IDbCommand.CreateParameter()"/>
         public IDbDataParameter CreateParameter() => _command.CreateParameter();
 
-        /// <summary>
-        /// Execute a non query.
-        /// </summary>
-        /// <returns>The <see cref="int"/>.</returns>
+        /// <inheritdoc cref="IDbCommand.ExecuteNonQuery()"/>
         public int ExecuteNonQuery() => ProfileWith(SqlExecuteType.NonQuery, _command.ExecuteNonQuery);
 
-        /// <summary>
-        /// Execute the reader.
-        /// </summary>
-        /// <returns>The <see cref="IDataReader"/>.</returns>
+        /// <inheritdoc cref="IDbCommand.ExecuteReader()"/>
         public IDataReader ExecuteReader() =>
             ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(), _profiler));
 
-        /// <summary>
-        /// Execute the reader.
-        /// </summary>
-        /// <param name="behavior">The <c>behavior</c>.</param>
-        /// <returns>the active reader.</returns>
+        /// <inheritdoc cref="IDbCommand.ExecuteReader(CommandBehavior)"/>
         public IDataReader ExecuteReader(CommandBehavior behavior) =>
             ProfileWith(SqlExecuteType.Reader, () => new SimpleProfiledDataReader(_command.ExecuteReader(behavior), _profiler));
 
-        /// <summary>
-        /// Execute and return a scalar.
-        /// </summary>
-        /// <returns>the scalar value.</returns>
+        /// <inheritdoc cref="IDbCommand.ExecuteScalar()"/>
         public object ExecuteScalar() => ProfileWith(SqlExecuteType.Scalar, () => _command.ExecuteScalar());
 
         /// <summary>
-        /// profile with results.
+        /// Profile with results.
         /// </summary>
         /// <param name="type">The type of execution.</param>
         /// <param name="func">A function to execute against the profile result.</param>
@@ -107,9 +87,7 @@ namespace StackExchange.Profiling.Data
             return result;
         }
 
-        /// <summary>
-        /// Gets or sets the connection.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.Connection"/>
         public IDbConnection Connection
         {
             get => _connection;
@@ -126,10 +104,8 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets the transaction.
-        /// </summary>
-        public IDbTransaction Transaction
+        /// <inheritdoc cref="IDbCommand.Transaction"/>
+        public IDbTransaction? Transaction
         {
             get => _transaction;
             set
@@ -139,9 +115,7 @@ namespace StackExchange.Profiling.Data
             }
         }
 
-        /// <summary>
-        /// Gets or sets the command text.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.CommandText"/>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Handled elsewhere.")]
         public string CommandText
         {
@@ -149,32 +123,24 @@ namespace StackExchange.Profiling.Data
             set => _command.CommandText = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command timeout.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.CommandTimeout"/>
         public int CommandTimeout
         {
             get => _command.CommandTimeout;
             set => _command.CommandTimeout = value;
         }
 
-        /// <summary>
-        /// Gets or sets the command type.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.CommandType"/>
         public CommandType CommandType
         {
             get => _command.CommandType;
             set => _command.CommandType = value;
         }
 
-        /// <summary>
-        /// Gets the parameters.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.Parameters"/>
         public IDataParameterCollection Parameters => _command.Parameters;
 
-        /// <summary>
-        /// Gets or sets the updated row source.
-        /// </summary>
+        /// <inheritdoc cref="IDbCommand.UpdatedRowSource"/>
         public UpdateRowSource UpdatedRowSource
         {
             get => _command.UpdatedRowSource;
@@ -198,8 +164,8 @@ namespace StackExchange.Profiling.Data
         {
             if (disposing) _command?.Dispose();
 
-            _command = null;
-            _connection = null;
+            _command = null!;
+            _connection = null!;
             _profiler = null;
         }
     }

@@ -5,12 +5,12 @@ using System.Data;
 namespace StackExchange.Profiling.SqlFormatters
 {
     /// <summary>
-    /// Formats SQL server queries with a DECLARE up top for parameter values
+    /// Formats SQL server queries with a DECLARE up top for parameter values.
     /// </summary>
     public class VerboseSqlServerFormatter : SqlServerFormatter, IAdvancedSqlFormatter
     {
         /// <summary>
-        /// Should meta data relating to the command type, database and transaction be included in sql output
+        /// Should meta data relating to the command type, database and transaction be included in SQL output.
         /// </summary>
         public bool IncludeMetaData { get; set; }
 
@@ -29,7 +29,7 @@ namespace StackExchange.Profiling.SqlFormatters
         /// <param name="commandText">The SQL command to format.</param>
         /// <param name="parameters">The parameters for the SQL command.</param>
         /// <param name="command">The <see cref="IDbCommand"/> being represented.</param>
-        public override string FormatSql(string commandText, List<SqlTimingParameter> parameters, IDbCommand command = null)
+        public override string FormatSql(string commandText, List<SqlTimingParameter>? parameters, IDbCommand? command = null)
         {
             var buffer = StringBuilderCache.Get();
 

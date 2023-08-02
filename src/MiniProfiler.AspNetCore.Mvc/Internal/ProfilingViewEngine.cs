@@ -13,7 +13,7 @@ namespace StackExchange.Profiling.Internal
         private readonly IViewEngine _wrapped;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class. 
+        /// Initializes a new instance of the <see cref="ProfilingViewEngine"/> class.
         /// </summary>
         /// <param name="wrapped">Original view engine to profile</param>
         public ProfilingViewEngine(IViewEngine wrapped) => _wrapped = wrapped;
@@ -47,7 +47,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="viewPath">The path to the view.</param>
         /// <param name="isMainPage">Determines if the page being found is the main page for an action.</param>
         /// <returns>The <see cref="ViewEngineResult"/> of locating the view.</returns>
-        public ViewEngineResult GetView(string executingFilePath, string viewPath, bool isMainPage) =>
+        public ViewEngineResult GetView(string? executingFilePath, string viewPath, bool isMainPage) =>
             _wrapped.GetView(executingFilePath, viewPath, isMainPage);
     }
 }

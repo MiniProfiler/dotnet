@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 
+#nullable disable
+
 namespace StackExchange.Profiling.Data
 {
 #pragma warning disable RCS1158 // Avoid static members in generic types.
@@ -74,7 +76,7 @@ namespace StackExchange.Profiling.Data
         /// <param name="head">The head.</param>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>return true if a value is located</returns>
+        /// <returns><c>true</c> if a value is located, <c>false</c> otherwise.</returns>
         public static bool TryAdd(ref Link<TKey, TValue> head, TKey key, ref TValue value)
         {
             bool tryAgain;
