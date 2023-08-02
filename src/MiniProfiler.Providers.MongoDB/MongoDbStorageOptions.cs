@@ -33,6 +33,14 @@ namespace StackExchange.Profiling
         public bool AutomaticallyCreateIndexes { get; set; } = true;
 
         /// <summary>
+        /// Specifies whether relevant indexes will automatically recreated if creation fails (e.g. because something with
+        /// different options was previously created).
+        /// *THIS DROPS EXISTING DATA*
+        /// Defaults to <see langword="false" />.
+        /// </summary>
+        public bool AutomaticallyRecreateIndexes { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets how long to cache each <see cref="MiniProfiler"/> for, in absolute terms.
         /// Defaults to one hour.
         /// </summary>

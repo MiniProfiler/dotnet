@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Operations;
 using StackExchange.Profiling.Storage;
 
 namespace StackExchange.Profiling
@@ -15,6 +16,7 @@ namespace StackExchange.Profiling
     /// </summary>
     public class MongoDbStorage : IAsyncStorage
     {
+        private readonly MongoDbStorageOptions _options;
         private readonly MongoClient _client;
         private readonly IMongoCollection<MiniProfiler> _collection;
 
@@ -56,6 +58,7 @@ namespace StackExchange.Profiling
             var url = new MongoUrl(options.ConnectionString);
             var databaseName = url.DatabaseName ?? "MiniProfiler";
 
+            _options = options;
             _client = new MongoClient(url);
             _collection = _client
                 .GetDatabase(databaseName)
@@ -127,7 +130,14 @@ namespace StackExchange.Profiling
         /// Creates indexes for faster querying.
         /// </summary>
         public MongoDbStorage WithIndexCreation()
-            => WithIndexCreation(default);
+        {
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User)));
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed)));
+            CreateStartedAscendingIndex();
+            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
+
+            return this;
+        }
 
         /// <summary>
         /// Creates indexes on the following fields for faster querying:
@@ -139,30 +149,37 @@ namespace StackExchange.Profiling
         /// <item><term>Started</term><term>Descending</term><term></term></item>
         /// </list>
         /// </summary>
+        /// <param name="cacheDuration">The time to persist profiles before they expire.</param>
         public MongoDbStorage WithIndexCreation(TimeSpan cacheDuration)
         {
-            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.User)));
-            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.HasUserViewed)));
-            CreateStartedAscendingIndex(cacheDuration);
-            _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(Builders<MiniProfiler>.IndexKeys.Descending(_ => _.Started)));
-
-            return this;
+            _options.CacheDuration = cacheDuration;
+            return WithIndexCreation();
         }
 
-        private void CreateStartedAscendingIndex(TimeSpan cacheDuration)
+        private void CreateStartedAscendingIndex()
         {
             var index = Builders<MiniProfiler>.IndexKeys.Ascending(_ => _.Started);
-            if (cacheDuration != default)
+            var options = _options.CacheDuration != default
+                ? new CreateIndexOptions { ExpireAfter = _options.CacheDuration }
+                : null;
+            var model = new CreateIndexModel<MiniProfiler>(index, options);
+
+            try
             {
-                _collection.Indexes.CreateOneForce(new CreateIndexModel<MiniProfiler>(index,
-                    new CreateIndexOptions
-                    {
-                        ExpireAfter = cacheDuration,
-                    }));
+                _collection.Indexes.CreateOne(model);
             }
-            else
+            catch (MongoCommandException ex) when (_options.AutomaticallyRecreateIndexes && ex.Message.Contains("already exists with different options"))
             {
-                _collection.Indexes.CreateOne(new CreateIndexModel<MiniProfiler>(index));
+                var indexNames = _collection.Indexes.List().ToList()
+                                                    .SelectMany(index => index.Elements)
+                                                    .Where(element => element.Name == "name")
+                                                    .Select(name => name.Value.ToString());
+                var indexName = IndexNameHelper.GetIndexName(model.Keys.Render(_collection.Indexes.DocumentSerializer, _collection.Indexes.Settings.SerializerRegistry));
+                if (indexNames.Contains(indexName))
+                {
+                    _collection.Indexes.DropOne(indexName);
+                }
+                _collection.Indexes.CreateOne(model);
             }
         }
 
