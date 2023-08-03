@@ -13,7 +13,7 @@
     <partial name="Index.RightPanel" />
 </div>
 @section scripts {
-    <script>
+    <script nonce="@HttpContext.GetNonce()">
         $(function () {
             // these links should fire ajax requests, not do navigation
             $('.ajax-requests a').click(function () {

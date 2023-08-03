@@ -228,6 +228,11 @@ namespace StackExchange.Profiling.Internal
         public Func<Timing, IDisposable>? TimingInstrumentationProvider { get; set; }
 
         /// <summary>
+        /// Called whenever a nonce is required for a script or style tag for each request.
+        /// </summary>
+        public Func<IServiceProvider, string?> NonceProvider { get; set; } = _ => null;
+
+        /// <summary>
         /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.
         /// </summary>
         protected virtual void OnConfigure() { }

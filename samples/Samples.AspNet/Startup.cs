@@ -44,6 +44,9 @@ namespace Samples.AspNetCore
                 options.SuppressAsyncSuffixInActionNames = false;
             });
 
+            // Registering a per-request Nonce provider for use in headers and scripts - this is optional, only demonstrating.
+            services.AddScoped<NonceService>();
+
             // Add MiniProfiler services
             // If using Entity Framework Core, add profiling for it as well (see the end)
             // Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy IntelliSense
@@ -110,6 +113,8 @@ namespace Samples.AspNetCore
                 options.IgnoredPaths.Add("/lib");
                 options.IgnoredPaths.Add("/css");
                 options.IgnoredPaths.Add("/js");
+
+                options.NonceProvider = s => s.GetService<NonceService>()?.RequestNonce;
             }).AddEntityFramework();
         }
 
@@ -128,6 +133,13 @@ namespace Samples.AspNetCore
             app.UseMiniProfiler()
                .UseStaticFiles()
                .UseRouting()
+               // Demonstrating CSP support, this is not required.
+               .Use(async (context, next) =>
+               {
+                   var nonce = context.RequestServices.GetService<NonceService>()?.RequestNonce;
+                   context.Response.Headers.Add("Content-Security-Policy", $"script-src 'self' 'nonce-{nonce}'");
+                   await next();
+               })
                .UseEndpoints(endpoints =>
                {
                    endpoints.MapAreaControllerRoute("areaRoute", "MySpace",

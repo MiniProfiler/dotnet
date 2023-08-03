@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Web;
 
 namespace StackExchange.Profiling.Internal
 {
@@ -17,12 +18,14 @@ namespace StackExchange.Profiling.Internal
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <param name="isAuthorized">Whether the current user is authorized for MiniProfiler.</param>
         /// <param name="renderOptions">The option overrides (if any) to use rendering this MiniProfiler.</param>
+        /// <param name="serviceProvider">The current request service provider.</param>
         /// <param name="requestIDs">The request IDs to fetch for this render.</param>
         public static string Includes(
             MiniProfiler profiler,
             string path,
             bool isAuthorized,
-            RenderOptions renderOptions,
+            RenderOptions? renderOptions,
+            IServiceProvider? serviceProvider = null,
             List<Guid>? requestIDs = null)
         {
             var sb = StringBuilderCache.Get();
@@ -84,9 +87,12 @@ namespace StackExchange.Profiling.Internal
             {
                 sb.Append(" data-start-hidden=\"true\"");
             }
-            if (renderOptions?.Nonce.HasValue() ?? false)
+
+            var nonce = renderOptions?.Nonce ??
+                        (serviceProvider != null ? profiler.Options.NonceProvider?.Invoke(serviceProvider) : null);
+            if (nonce?.HasValue() ?? false)
             {
-                sb.Append(" nonce=\"").Append(System.Web.HttpUtility.HtmlAttributeEncode(renderOptions.Nonce)).Append("\"");
+                sb.Append(" nonce=\"").Append(HttpUtility.HtmlAttributeEncode(nonce)).Append("\"");
             }
 
             sb.Append(" data-max-traces=\"");
@@ -131,6 +137,7 @@ namespace StackExchange.Profiling.Internal
         /// <param name="maxTracesToShow">The maximum number of profilers to show (before the oldest is removed - defaults to <see cref="MiniProfilerBaseOptions.PopupMaxTracesToShow"/>).</param>
         /// <param name="showControls">Whether to show the controls (defaults to <see cref="MiniProfilerBaseOptions.ShowControls"/>).</param>
         /// <param name="startHidden">Whether to start hidden (defaults to <see cref="MiniProfilerBaseOptions.PopupStartHidden"/>).</param>
+        /// <param name="nonce">Content script policy nonce value to use for script and style tags generated.</param>
         public static string Includes(
             MiniProfiler profiler,
             string path,
@@ -141,7 +148,8 @@ namespace StackExchange.Profiling.Internal
             bool? showTimeWithChildren = null,
             int? maxTracesToShow = null,
             bool? showControls = null,
-            bool? startHidden = null)
+            bool? startHidden = null,
+            string? nonce = null)
         {
             var sb = StringBuilderCache.Get();
             var options = profiler.Options;
@@ -150,6 +158,12 @@ namespace StackExchange.Profiling.Internal
             sb.Append(path);
             sb.Append("includes.min.js?v=");
             sb.Append(options.VersionHash);
+
+            if (!string.IsNullOrWhiteSpace(nonce))
+            {
+                sb.Append("\" nonce=\"");
+                sb.Append(HttpUtility.HtmlAttributeEncode(nonce));
+            }
             sb.Append("\" data-version=\"");
             sb.Append(options.VersionHash);
             sb.Append("\" data-path=\"");
@@ -233,19 +247,30 @@ namespace StackExchange.Profiling.Internal
         /// Renders a full HTML page for the share link in MiniProfiler.
         /// </summary>
         /// <param name="profiler">The profiler to render a tag for.</param>
+        /// <param name="serviceProvider">The current request service provider.</param>
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <returns>A full HTML page for this MiniProfiler.</returns>
-        public static string SingleResultHtml(MiniProfiler profiler, string path)
+        public static string SingleResultHtml(MiniProfiler profiler, IServiceProvider serviceProvider, string path)
         {
             var sb = StringBuilderCache.Get();
             sb.Append("<html><head><title>");
             sb.Append(profiler.Name);
             sb.Append(" (");
             sb.Append(profiler.DurationMilliseconds.ToString(CultureInfo.InvariantCulture));
-            sb.Append(" ms) - Profiling Results</title><script>var profiler = ");
+            sb.Append(" ms) - Profiling Results</title><script");
+
+            var nonce = profiler.Options.NonceProvider?.Invoke(serviceProvider) ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(nonce))
+            {
+                sb.Append(" nonce=\"");
+                sb.Append(HttpUtility.HtmlAttributeEncode(nonce));
+                sb.Append("\"");
+            }
+
+            sb.Append(">var profiler = ");
             sb.Append(profiler.ToJson(htmlEscape: true));
             sb.Append(";</script>");
-            sb.Append(Includes(profiler, path: path, isAuthorized: true));
+            sb.Append(Includes(profiler, path: path, isAuthorized: true, nonce: nonce));
             sb.Append(@"</head><body><div class=""mp-result-full""></div></body></html>");
             return sb.ToString();
         }
@@ -254,17 +279,20 @@ namespace StackExchange.Profiling.Internal
         /// Renders a full HTML page for the share link in MiniProfiler.
         /// </summary>
         /// <param name="options">The options to render for.</param>
+        /// <param name="serviceProvider">The current request service provider.</param>
         /// <param name="path">The root path that MiniProfiler is being served from.</param>
         /// <returns>A full HTML page for this MiniProfiler.</returns>
-        public static string ResultListHtml(MiniProfilerBaseOptions options, string path)
+        public static string ResultListHtml(MiniProfilerBaseOptions options, IServiceProvider serviceProvider, string path)
         {
             var version = options.VersionHash;
+            var nonce = options.NonceProvider?.Invoke(serviceProvider) ?? string.Empty;
+            var nonceAttribute = !string.IsNullOrWhiteSpace(nonce) ? " nonce=\"" + HttpUtility.HtmlAttributeEncode(nonce) + "\"" : null;
             return $@"<html>
   <head>
     <title>List of profiling sessions</title>
-    <script id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
+    <script{nonceAttribute} id=""mini-profiler"" data-ids="""" src=""{path}includes.min.js?v={version}""></script>
     <link href=""{path}includes.min.css?v={version}"" rel=""stylesheet"" />
-    <script>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme}'}});</script>
+    <script{nonceAttribute}>MiniProfiler.listInit({{path: '{path}', version: '{version}', colorScheme: '{options.ColorScheme}'}});</script>
   </head>
   <body>
     <table class=""mp-results-index"">
