@@ -193,6 +193,10 @@ namespace StackExchange.Profiling.Internal
             sb.Append(options.ColorScheme.ToString());
             sb.Append('"');
 
+            sb.Append("\" data-decimal-places=\"");
+            sb.Append(options.PopupDecimalPlaces.ToString());
+            sb.Append('"');
+
             if (isAuthorized)
             {
                 sb.Append(" data-authorized=\"true\"");
