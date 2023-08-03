@@ -143,7 +143,7 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html; charset=utf-8";
 
             var path = VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash();
-            return Render.ResultListHtml(Options, path);
+            return Render.ResultListHtml(Options, context, path);
         }
 
         /// <summary>

@@ -291,7 +291,7 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html; charset=utf-8";
 
             var path = context.Request.PathBase + Options.RouteBasePath.Value.EnsureTrailingSlash();
-            return Render.ResultListHtml(Options, path);
+            return Render.ResultListHtml(Options, context.RequestServices, path);
         }
 
         /// <summary>

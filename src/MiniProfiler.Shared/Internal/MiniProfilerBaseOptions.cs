@@ -230,7 +230,7 @@ namespace StackExchange.Profiling.Internal
         /// <summary>
         /// Called whenever a nonce is required for a script or style tag for each request.
         /// </summary>
-        public Func<IServiceProvider, string?> NonceGetter { get; set; } = _ => null; 
+        public Func<IServiceProvider, string?> NonceProvider { get; set; } = _ => null;
 
         /// <summary>
         /// Called when passed to <see cref="MiniProfiler.Configure{T}(T)"/>.
