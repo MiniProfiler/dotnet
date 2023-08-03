@@ -15,7 +15,7 @@ namespace StackExchange.Profiling.Tests
         {
             var profiler = GetBasicProfiler();
             var renderOptions = new RenderOptions();
-            var result = Render.Includes(profiler, "/", true, renderOptions, new List<Guid>() { profiler.Id });
+            var result = Render.Includes(profiler, "/", true, renderOptions, null, new List<Guid>() { profiler.Id });
             Output.WriteLine("Result: " + result);
 
             Assert.NotNull(result);
@@ -43,7 +43,7 @@ namespace StackExchange.Profiling.Tests
                 TrivialDurationThresholdMilliseconds = 23,
                 DecimalPlaces = 1,
             };
-            var result = Render.Includes(profiler, "/", true, renderOptions, new List<Guid>() { profiler.Id });
+            var result = Render.Includes(profiler, "/", true, renderOptions, null, new List<Guid>() { profiler.Id });
             Output.WriteLine("Result: " + result);
 
             Assert.NotNull(result);

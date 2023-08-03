@@ -319,11 +319,11 @@ namespace StackExchange.Profiling {
 
                         // fetch and render results
                         mp.fetchResults(mp.options.ids);
-                        
+
                         let lsDisplayValue;
                         try {
                             lsDisplayValue = window.localStorage.getItem('MiniProfiler-Display');
-                        } catch(e) { }
+                        } catch (e) { }
 
                         if (lsDisplayValue) {
                             mp.container.style.display = lsDisplayValue;
@@ -355,7 +355,7 @@ namespace StackExchange.Profiling {
                     // profiler will be defined in the full page's head
                     window.profiler.Started = new Date('' + window.profiler.Started); // Ugh, JavaScript
                     const profilerHtml = mp.renderProfiler(window.profiler, false);
-                    mp.container.insertAdjacentHTML('beforeend', profilerHtml);
+                    mp.setStylesAndDisplay(profilerHtml);
 
                     // highight
                     mp.container.querySelectorAll('pre code').forEach(block => mp.highlight(block as HTMLElement));
@@ -728,7 +728,7 @@ namespace StackExchange.Profiling {
                 let str = `
   <tr class="${timing.IsTrivial ? 'mp-trivial' : ''}${timing.DebugInfo ? ' mp-debug' : ''}" data-timing-id="${timing.Id}">
     <td>${renderDebugInfo(timing)}</td>
-    <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` style="padding-left:${timing.Depth * 11}px;"` : ''}>
+    <td class="mp-label" title="${encode(timing.Name)}"${timing.Depth > 0 ? ` data-padding-left="${timing.Depth * 11}px"` : ''}>
       ${encode(timing.Name)}
     </td>
     <td class="mp-duration" title="duration of this step without any children's durations">
@@ -830,7 +830,7 @@ namespace StackExchange.Profiling {
         <table class="mp-timings mp-client-timings">
           <thead>
             <tr>
-              <th style="text-align:left">client event</th>
+              <th>client event</th>
               <th></th>
               <th>duration (ms)</th>
               <th class="mp-more-columns">from start (ms)</th>
@@ -840,7 +840,7 @@ namespace StackExchange.Profiling {
             ${list.map((t) => `
             <tr class="${(t.isTrivial ? 'mp-trivial' : '')}">
               <td class="mp-label">${encode(t.name)}</td>
-              <td class="t-${t.type}${t.point ? ' t-point' : ''}"><div style="margin-left: ${t.left}; width: ${t.width};"></div></td>
+              <td class="t-${t.type}${t.point ? ' t-point' : ''}"><div data-margin-left="${t.left}" data-width="${t.width}"></div></td>
               <td class="mp-duration">
                 ${(t.duration >= 0 ? `<span class="mp-unit"></span>${duration(t.duration, 0)}` : '')}
               </td>
@@ -957,18 +957,35 @@ namespace StackExchange.Profiling {
             }
 
             const profilerHtml = this.renderProfiler(json, true);
-
-            if (this.controls) {
-                this.controls.insertAdjacentHTML('beforebegin', profilerHtml);
-            } else {
-                this.container.insertAdjacentHTML('beforeend', profilerHtml);
-            }
+            this.setStylesAndDisplay(profilerHtml);
 
             // limit count to maxTracesToShow, remove those before it
             const results = this.container.querySelectorAll('.mp-result');
             const toRemove = results.length - this.options.maxTracesToShow;
             for (let i = 0; i < toRemove; i++) {
                 results[i].parentNode.removeChild(results[i]);
+            }
+        }
+
+        private setStylesAndDisplay(profilerHtml: string) {
+            const nonVisibleElement = document.createElement("div");
+            nonVisibleElement.innerHTML = profilerHtml;
+
+            // dynamic padding, margin and width
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-padding-left]").forEach(function (element) {
+                element.style.paddingLeft = element.dataset.paddingLeft;
+            });
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-margin-left]").forEach(function (element) {
+                element.style.marginLeft = element.dataset.marginLeft;
+            });
+            nonVisibleElement.querySelectorAll<HTMLElement>("[data-width]").forEach(function (element) {
+                element.style.width = element.dataset.width;
+            });
+
+            if (this.controls) {
+                this.controls.insertAdjacentElement('beforebegin', nonVisibleElement.firstElementChild);
+            } else {
+                this.container.insertAdjacentElement('beforeend', nonVisibleElement.firstElementChild);
             }
         }
 
@@ -1221,7 +1238,7 @@ namespace StackExchange.Profiling {
                             results.style.display = newValue;
                             try {
                                 window.localStorage.setItem('MiniProfiler-Display', newValue);
-                            } catch(e) { }
+                            } catch (e) { }
                         }
                     }, false);
                 }

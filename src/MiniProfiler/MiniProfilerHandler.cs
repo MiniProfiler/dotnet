@@ -143,7 +143,7 @@ namespace StackExchange.Profiling
             context.Response.ContentType = "text/html; charset=utf-8";
 
             var path = VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash();
-            return Render.ResultListHtml(Options, path);
+            return Render.ResultListHtml(Options, context, path);
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace StackExchange.Profiling
         private string ResultsFullPage(HttpContext context, MiniProfiler profiler)
         {
             context.Response.ContentType = "text/html; charset=utf-8";
-            return Render.SingleResultHtml(profiler, VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash());
+            return Render.SingleResultHtml(profiler, context, VirtualPathUtility.ToAbsolute(Options.RouteBasePath).EnsureTrailingSlash());
         }
 
         private bool TryGetResource(string filename, out string resource)

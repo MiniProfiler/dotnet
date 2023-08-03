@@ -179,6 +179,9 @@
 .mp-result table.mp-client-timings {
   margin-top: 10px;
 }
+.mp-result table.mp-client-timings th:first-child {
+  text-align: left;
+}
 .mp-result table.mp-client-timings td:nth-child(2) {
   width: 100%;
   padding: 0;
