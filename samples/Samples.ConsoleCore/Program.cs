@@ -59,7 +59,9 @@ namespace Samples.Console
                 }
             }
 
-            mp?.Stop();
+            await mp!.StopAsync();
+            WriteLine(MiniProfiler.Current.RenderPlainText());
+
         }
 
         public static void TestMultiThreaded()
