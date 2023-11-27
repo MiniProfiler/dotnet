@@ -91,7 +91,7 @@ namespace StackExchange.Profiling.Data
             }
             finally
             {
-                _profiler.ExecuteFinish(cmd, SqlExecuteType.Reader, TokenReader);
+                _profiler.ExecuteFinish(cmd, SqlExecuteType.Reader, null);
             }
 
             return result;
