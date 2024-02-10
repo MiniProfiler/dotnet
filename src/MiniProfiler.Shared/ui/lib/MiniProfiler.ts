@@ -430,13 +430,13 @@ namespace StackExchange.Profiling {
   <td colspan="3" class="mp-results-none">(no client timings)</td>`) + `
 </tr>`);
                         });
-                        document.querySelector('.mp-results-index').insertAdjacentHTML('beforeend', html);
+                        document.querySelector('.mp-results-index').insertAdjacentHTML('afterbegin', html);
                         const oldId = id;
                         const oldData = data;
                         setTimeout(() => {
                             let newId = oldId;
                             if (oldData.length > 0) {
-                                newId = oldData[oldData.length - 1].Id;
+                                newId = oldData[0].Id;
                             }
                             updateGrid(newId);
                         }, 4000);
