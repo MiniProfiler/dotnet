@@ -122,6 +122,7 @@ namespace StackExchange.Profiling {
         toggleShortcut: string;
         trivialMilliseconds: number;
         version: string;
+        additionalHeaders: object;
     }
 
     enum RenderMode {
@@ -302,6 +303,7 @@ namespace StackExchange.Profiling {
                 startHidden: bool(data.startHidden),
                 ignoredDuplicateExecuteTypes: (data.ignoredDuplicateExecuteTypes || '').split(','),
                 nonce: script.nonce,
+                additionalHeaders: {},
             };
 
             function doInit() {
@@ -465,8 +467,9 @@ namespace StackExchange.Profiling {
                     method: 'POST',
                     body: JSON.stringify(request),
                     headers: {
+                        ...(this.options.additionalHeaders ?? {}),
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     }
                 })
                     .then(data => data.text())
