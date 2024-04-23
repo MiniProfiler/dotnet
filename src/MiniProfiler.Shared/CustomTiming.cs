@@ -37,7 +37,7 @@ namespace StackExchange.Profiling
             CommandString = commandString;
 
             Id = Guid.NewGuid();
-            StartMilliseconds = profiler.GetRoundedMilliseconds(profiler.ElapsedTicks);
+            StartMilliseconds = profiler.GetMilliseconds(profiler.ElapsedTicks);
 
             if (includeStackTrace && !profiler.Options.ExcludeStackTraceSnippetFromCustomTimings)
             {
