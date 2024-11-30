@@ -197,7 +197,7 @@ namespace StackExchange.Profiling
                 {
                     using (current.StepIf("Set Headers", 0.1m))
                     {
-                        context.Response.Headers.Add("X-MiniProfiler-Ids", profilerIds.ToJson());
+                        context.Response.Headers.Append("X-MiniProfiler-Ids", profilerIds.ToJson());
                     }
                 }
 

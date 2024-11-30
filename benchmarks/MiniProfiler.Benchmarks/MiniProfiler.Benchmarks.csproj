@@ -5,18 +5,19 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Benchmarks</RootNamespace>
     <Configuration>Release</Configuration>
-    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.4" />
-    <PackageReference Include="Jil" Version="2.16" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="ServiceStack.Text" Version="6.6.0" />
-    <PackageReference Include="System.Ben" Version="1.0.0" />
-    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="Jil" Version="2.17" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ServiceStack.Text" Version="8.5.2" />
+    <PackageReference Include="Sigil" Version="5.0.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
 
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>
