@@ -1,8 +1,5 @@
 image: Visual Studio 2022
 
-init:
-  - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
-
 install:
   - nuget install redis-64 -excludeversion
   - redis-64\tools\redis-server.exe --service-install
