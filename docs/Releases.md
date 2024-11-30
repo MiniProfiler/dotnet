@@ -6,6 +6,9 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Unreleased
+No pending unreleased changes.
+
+#### Version 4.5.4
 - **New**:
   - Support for strict CSP (dynamic inline styles removed) ([#634](https://github.com/MiniProfiler/dotnet/pull/634) - thanks [rwasef1830](https://github.com/rwasef1830))
   - Moved .NET Core to `net8.0` with no `Newtonsoft.Json` dependency ([#641](https://github.com/MiniProfiler/dotnet/pull/641) & [#679](https://github.com/MiniProfiler/dotnet/pull/679))
