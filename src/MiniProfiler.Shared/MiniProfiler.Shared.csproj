@@ -4,38 +4,31 @@
     <Title>MiniProfiler.Shared</Title>
     <Authors>Marc Gravell, Jarrod Dixon, Yaakov Ellis, Nick Craver</Authors>
     <Description>You shouldn't reference this - MiniProfiler's shared library for all frameworks</Description>
-    <TargetFrameworks>net461;netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0;net8.0</TargetFrameworks>
 
-    <DefineConstants Condition="'$(TargetFramework)' == 'net461'">NEWTONSOFT</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net472'">NEWTONSOFT</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">NEWTONSOFT</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">STJSON</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">STJSON</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
     
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.7.2" PrivateAssets="all" />
+    <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.7.1" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
 
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
   </ItemGroup>
   

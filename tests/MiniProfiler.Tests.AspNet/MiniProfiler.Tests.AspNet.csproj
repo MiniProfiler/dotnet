@@ -2,31 +2,21 @@
   <PropertyGroup>
     <AssemblyName>MiniProfiler.Tests.AspNet</AssemblyName>
     <RootNamespace>StackExchange.Profiling.Tests</RootNamespace>
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>net472</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.110" />
-    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.110" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
 
     <ProjectReference Include="..\MiniProfiler.Tests\MiniProfiler.Tests.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.EF6\MiniProfiler.EF6.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServer\MiniProfiler.Providers.SqlServer.csproj" />
-    <ProjectReference Include="..\..\src\MiniProfiler.Providers.SqlServerCe\MiniProfiler.Providers.SqlServerCe.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="App.config" />
     <Content Include="lib\HaackHttpSimulator\ReadMe.txt" />
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461' AND '$(OS)' == 'Windows_NT'">
-    <PostBuildEvent>
-      if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-      if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-      xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Compact\4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>

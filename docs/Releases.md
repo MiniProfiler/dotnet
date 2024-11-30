@@ -8,10 +8,12 @@ This page tracks major changes included in any update starting with version 4.0.
 #### Unreleased
 - **New**:
   - Support for strict CSP (dynamic inline styles removed) ([#634](https://github.com/MiniProfiler/dotnet/pull/634) - thanks [rwasef1830](https://github.com/rwasef1830))
-  - Adds `net6.0` build with no `Newtonsoft.Json` dependency ([#641](https://github.com/MiniProfiler/dotnet/pull/641))
+  - Adds `net8.0` build with no `Newtonsoft.Json` dependency ([#641](https://github.com/MiniProfiler/dotnet/pull/641))
 - **Fixes/Changes**: 
   - Upgraded MongoDB driver, allowing automatic index creation and profiler expiration ([#613](https://github.com/MiniProfiler/dotnet/pull/613) - thanks [IanKemp](https://github.com/IanKemp))
   - Fixed [#652](https://github.com/MiniProfiler/dotnet/issues/652): Respect `PopupDecimalPlaces` in all cases ([#655](https://github.com/MiniProfiler/dotnet/pull/655))
+- **Removed**:
+  - Support for rarely used `MiniProfiler.EFC7`, `MiniProfiler.Providers.RavenDB`, and `MiniProfiler.Providers.SqlServerCe` providers
 
 #### Version 4.3.8
 - **New**:

@@ -71,7 +71,7 @@ namespace StackExchange.Profiling.Tests
 		[InlineData("deflate", typeof(DeflateStream))]
 		[InlineData("unknown", null)]
 		[InlineData("", null)]
-		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturnedType(string acceptEncoding, Type expectedEncodingFilterType)
+		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturnedType(string acceptEncoding, Type? expectedEncodingFilterType)
 		{
 			// Arrange
 			var sut = new MiniProfilerHandler(new MiniProfilerOptions());

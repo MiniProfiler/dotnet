@@ -161,7 +161,7 @@ namespace StackExchange.Profiling.Storage
         /// <param name="profiler">The profiler to connect the timing tree to.</param>
         /// <param name="timings">The raw list of Timings to construct the tree from.</param>
         /// <param name="clientTimings">The client timings to connect to the profiler.</param>
-        protected void ConnectTimings(MiniProfiler profiler, List<Timing> timings, List<ClientTiming> clientTimings)
+        protected void ConnectTimings(MiniProfiler? profiler, List<Timing> timings, List<ClientTiming> clientTimings)
         {
             if (profiler?.RootTimingId.HasValue == true && timings.Count > 0)
             {

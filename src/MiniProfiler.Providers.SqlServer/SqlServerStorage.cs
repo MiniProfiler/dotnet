@@ -3,9 +3,9 @@ using StackExchange.Profiling.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace StackExchange.Profiling.Storage
 {
@@ -192,7 +192,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override MiniProfiler? Load(Guid id)
         {
-            MiniProfiler result;
+            MiniProfiler? result;
             using (var conn = GetConnection())
             {
                 using (var multi = conn.QueryMultiple(LoadSql, new { id }))
@@ -220,7 +220,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler?> LoadAsync(Guid id)
         {
-            MiniProfiler result;
+            MiniProfiler? result;
             using (var conn = GetConnection())
             {
                 using (var multi = await conn.QueryMultipleAsync(LoadSql, new { id }).ConfigureAwait(false))
