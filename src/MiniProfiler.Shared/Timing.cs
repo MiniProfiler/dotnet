@@ -73,7 +73,7 @@ namespace StackExchange.Profiling
             _startTicks = profiler.ElapsedTicks;
             _minSaveMs = minSaveMs;
             _includeChildrenWithMinSave = includeChildrenWithMinSave == true;
-            StartMilliseconds = profiler.GetRoundedMilliseconds(_startTicks);
+            StartMilliseconds = profiler.GetMilliseconds(_startTicks);
 
             if (profiler.Options.EnableDebugMode)
             {
