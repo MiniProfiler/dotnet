@@ -88,6 +88,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.AspNet", "samples\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Minimal", "src\MiniProfiler.Minimal\MiniProfiler.Minimal.csproj", "{A1DCACC2-0D9A-401E-B6A4-856E5DD00541}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.Mvc5.Oracle", "samples\Samples.Mvc5.Oracle\Samples.Mvc5.Oracle.csproj", "{0BCD4266-7820-4945-9ACC-B8F8250DF79F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniProfiler.Providers.Oracle", "src\MiniProfiler.Providers.Oracle\MiniProfiler.Providers.Oracle.csproj", "{63829E59-0A2E-42A2-8EF6-B806257B9ADA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +190,14 @@ Global
 		{A1DCACC2-0D9A-401E-B6A4-856E5DD00541}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1DCACC2-0D9A-401E-B6A4-856E5DD00541}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1DCACC2-0D9A-401E-B6A4-856E5DD00541}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BCD4266-7820-4945-9ACC-B8F8250DF79F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BCD4266-7820-4945-9ACC-B8F8250DF79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BCD4266-7820-4945-9ACC-B8F8250DF79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BCD4266-7820-4945-9ACC-B8F8250DF79F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63829E59-0A2E-42A2-8EF6-B806257B9ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63829E59-0A2E-42A2-8EF6-B806257B9ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63829E59-0A2E-42A2-8EF6-B806257B9ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63829E59-0A2E-42A2-8EF6-B806257B9ADA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -215,10 +227,12 @@ Global
 		{A14EA029-60E2-485A-B757-3626511CF2C4} = {5C8ED0C0-7DBB-4660-836E-A760E25160A0}
 		{9C7822CD-BE8E-424F-A0C6-86CC986ABB42} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
 		{A1DCACC2-0D9A-401E-B6A4-856E5DD00541} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
+		{0BCD4266-7820-4945-9ACC-B8F8250DF79F} = {E0DA4035-4D64-4BB8-8EA1-42197DE62519}
+		{63829E59-0A2E-42A2-8EF6-B806257B9ADA} = {6A510DBF-E85F-4D2C-B8F7-006DA31B3418}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 		SolutionGuid = {9373F37A-A996-4545-A251-1902C8886E3F}
+		LessCompiler = 6a2b5b70-1c32-482f-b5c6-0597e2d4e376
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = StackExchange.Profiling.vsmdi
