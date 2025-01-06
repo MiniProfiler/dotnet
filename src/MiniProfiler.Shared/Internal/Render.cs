@@ -191,7 +191,6 @@ namespace StackExchange.Profiling.Internal
 
             sb.Append("\" data-scheme=\"");
             sb.Append(options.ColorScheme.ToString());
-            sb.Append('"');
 
             sb.Append("\" data-decimal-places=\"");
             sb.Append(options.PopupDecimalPlaces.ToString());
