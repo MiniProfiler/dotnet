@@ -63,7 +63,7 @@ namespace StackExchange.Profiling.Data
                 if (val is CommandExecutedEventData data && _commands.TryRemove(data.CommandId, out var current))
                 {
                     // A completion for a DataReader only means we *started* getting data back, not finished.
-                    if (data.Result is RelationalDataReader)
+                    if (data.Result is RelationalDataReader or SqlDataReader)
                     {
                         _readers[data.CommandId] = current;
                         current.FirstFetchCompleted();
