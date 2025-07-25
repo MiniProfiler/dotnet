@@ -282,7 +282,7 @@ namespace StackExchange.Profiling
             }
 
             Stopwatch.Stop();
-            DurationMilliseconds = GetRoundedMilliseconds(ElapsedTicks);
+            DurationMilliseconds = GetMilliseconds(ElapsedTicks);
 
             foreach (var timing in GetTimingHierarchy())
             {
@@ -366,13 +366,12 @@ namespace StackExchange.Profiling
             new Timing(this, Head, name, minSaveMs, includeChildrenWithMinSave);
 
         /// <summary>
-        /// Returns milliseconds based on Stopwatch's Frequency, rounded to two decimal places.
+        /// Returns milliseconds based on Stopwatch's Frequency.
         /// </summary>
-        /// <param name="ticks">The tick count to round.</param>
-        internal decimal GetRoundedMilliseconds(long ticks)
+        /// <param name="ticks">The tick count.</param>
+        internal decimal GetMilliseconds(long ticks)
         {
-            long times100 = ticks * 100000 / Stopwatch.Frequency;
-            return times100 / 100m;
+            return ticks * 1000M / Stopwatch.Frequency;
         }
 
         /// <summary>
@@ -380,6 +379,6 @@ namespace StackExchange.Profiling
         /// </summary>
         /// <param name="startTicks">The start tick count.</param>
         internal decimal GetDurationMilliseconds(long startTicks) =>
-            GetRoundedMilliseconds(ElapsedTicks - startTicks);
+            GetMilliseconds(ElapsedTicks - startTicks);
     }
 }
