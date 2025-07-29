@@ -18,9 +18,10 @@ namespace StackExchange.Profiling.Tests.Storage
             };
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void TestWeCanSaveTheSameProfilerTwice()
         {
+            Skip.IfNotWindows();
             var profiler = new MiniProfiler("/", Options) { Started = DateTime.UtcNow, Id = Guid.NewGuid() };
             Options.Storage.Save(profiler);
             Options.Storage.Save(profiler);
@@ -29,9 +30,10 @@ namespace StackExchange.Profiling.Tests.Storage
             Assert.Single(guids);
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void TestRangeQueries()
         {
+            Skip.IfNotWindows();
             var now = DateTime.UtcNow;
             var inASec = now.AddSeconds(1);
             var in2Secs = now.AddSeconds(2);

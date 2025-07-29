@@ -1,15 +1,11 @@
 ﻿using System;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class MemoryCacheStorageTests : StorageBaseTest, IClassFixture<MemoryCacheStorageFixture>
+    public class MemoryCacheStorageTests(MemoryCacheStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<MemoryCacheStorageFixture>
     {
-        public MemoryCacheStorageTests(MemoryCacheStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
     }
 
     public class MemoryCacheStorageFixture : StorageFixtureBase<MemoryCacheStorage>

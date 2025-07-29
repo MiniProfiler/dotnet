@@ -6,7 +6,9 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Unreleased
-No pending unreleased changes.
+- **Fixes/Changes**: 
+  - Fixes MiniProfiler.Current.RenderIncludes generating invalid HTML ([#681](https://github.com/MiniProfiler/dotnet/pull/681) - thanks [rikbosch](https://github.com/dazbradbury))
+  - Fixed [#671](https://github.com/MiniProfiler/dotnet/issues/671): SQL profiling network Time for some configurations ([#686](https://github.com/MiniProfiler/dotnet/pull/686) - thanks [dazbradbury](https://github.com/dazbradbury))
 
 #### Version 4.5.4
 - **New**:

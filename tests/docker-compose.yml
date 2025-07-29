@@ -1,12 +1,14 @@
-version: "3"
 services:
   mongo:
-    image: mongo:4
+    image: mongo:8-noble
     container_name: mongo
+    restart: always
     ports:
       - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: test
   mysql:
-    image: mysql:8
+    image: mysql:9
     container_name: mysql
     ports:
       - 3306:3306
@@ -23,7 +25,16 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test
   redis:
-    image: redis:6-alpine
+    image: redis:8-alpine
     container_name: redis
     ports:
-      - 6379:6379
+      - 7379:6379
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: sqlserver
+    ports:
+      - 1433:1433
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Strong!Passw0rd
+      MSSQL_PID: Developer

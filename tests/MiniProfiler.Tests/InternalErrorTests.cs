@@ -4,14 +4,11 @@ using System.Threading.Tasks;
 using StackExchange.Profiling.Internal;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class InternalErrorTests : BaseTest
+    public class InternalErrorTests(ITestOutputHelper output) : BaseTest(output)
     {
-        public InternalErrorTests(ITestOutputHelper output) : base(output) { }
-
         [Fact]
         public async Task StopErrorLogging()
         {
@@ -41,7 +38,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(profiler);
             AddRecursiveChildren(profiler, 1, 10);
             Assert.Equal(1, errorCount);
-            await profiler.StopAsync().ConfigureAwait(false);
+            await profiler.StopAsync();
             Assert.Equal(2, errorCount);
             Assert.IsType<KaboomStorage.BoomBoom>(lastError);
         }

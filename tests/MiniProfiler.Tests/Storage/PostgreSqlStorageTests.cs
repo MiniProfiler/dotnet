@@ -1,16 +1,11 @@
-﻿#if (NETCOREAPP2_0 || NET472)
-using System;
+﻿using System;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class PostgreSqlStorageTests : StorageBaseTest, IClassFixture<PostgreSqlStorageFixture>
+    public class PostgreSqlStorageTests(PostgreSqlStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<PostgreSqlStorageFixture>
     {
-        public PostgreSqlStorageTests(PostgreSqlStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
     }
 
     public class PostgreSqlStorageFixture : StorageFixtureBase<PostgreSqlStorage>, IDisposable
@@ -45,4 +40,3 @@ namespace StackExchange.Profiling.Tests.Storage
         }
     }
 }
-#endif

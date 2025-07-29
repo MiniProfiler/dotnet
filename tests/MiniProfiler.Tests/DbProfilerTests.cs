@@ -7,21 +7,15 @@ using Microsoft.Data.Sqlite;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.Tests.Helpers;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
     /// <summary>
     /// Tests for <see cref="IDbProfiler"/>.
     /// </summary>
-    public class DbProfilerTests : BaseTest, IClassFixture<SqliteFixture>
+    public class DbProfilerTests(SqliteFixture fixture, ITestOutputHelper output) : BaseTest(output), IClassFixture<SqliteFixture>
     {
-        public SqliteFixture Fixture;
-
-        public DbProfilerTests(SqliteFixture fixture, ITestOutputHelper output) : base(output)
-        {
-            Fixture = fixture;
-        }
+        public SqliteFixture Fixture = fixture;
 
         [Fact]
         public void NonQuery()
@@ -52,12 +46,12 @@ namespace StackExchange.Profiling.Tests
                 var profiler = conn.CountingProfiler;
                 conn.Execute("CREATE TABLE TestTable (Id int null)");
 
-                await conn.ExecuteAsync("INSERT INTO TestTable VALUES (1)").ConfigureAwait(false);
+                await conn.ExecuteAsync("INSERT INTO TestTable VALUES (1)");
                 Assert.Equal(2, profiler.ExecuteStartCount);
                 Assert.Equal(2, profiler.ExecuteFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
 
-                await conn.ExecuteAsync("DELETE FROM TestTable WHERE Id = 1").ConfigureAwait(false);
+                await conn.ExecuteAsync("DELETE FROM TestTable WHERE Id = 1");
                 Assert.Equal(3, profiler.ExecuteStartCount);
                 Assert.Equal(3, profiler.ExecuteFinishCount);
                 Assert.True(profiler.CompleteStatementMeasured);
@@ -90,7 +84,7 @@ namespace StackExchange.Profiling.Tests
                 var profiler = conn.CountingProfiler;
 
                 cmd.CommandText = "select 1";
-                await cmd.ExecuteScalarAsync().ConfigureAwait(false);
+                await cmd.ExecuteScalarAsync(TestContext.Current.CancellationToken);
 
                 Assert.Equal(1, profiler.ExecuteStartCount);
                 Assert.Equal(1, profiler.ExecuteFinishCount);
@@ -130,9 +124,9 @@ namespace StackExchange.Profiling.Tests
 
                 cmd.CommandText = "select 1";
 
-                using (var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
+                using (var reader = await cmd.ExecuteReaderAsync(TestContext.Current.CancellationToken))
                 {
-                    while (await reader.NextResultAsync().ConfigureAwait(false)) { }
+                    while (await reader.NextResultAsync(TestContext.Current.CancellationToken)) { }
                 }
 
                 Assert.Equal(1, profiler.ExecuteStartCount);
@@ -214,7 +208,7 @@ namespace StackExchange.Profiling.Tests
 
                 try
                 {
-                    await conn.ExecuteAsync(BadSql).ConfigureAwait(false);
+                    await conn.ExecuteAsync(BadSql);
                 }
                 catch (DbException) { /* yep */ }
 
@@ -227,7 +221,7 @@ namespace StackExchange.Profiling.Tests
 
                 try
                 {
-                    await conn.QueryAsync<int>(BadSql).ConfigureAwait(false);
+                    await conn.QueryAsync<int>(BadSql);
                 }
                 catch (DbException) { /* yep */ }
 
@@ -241,7 +235,7 @@ namespace StackExchange.Profiling.Tests
                     using (var cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = BadSql;
-                        await cmd.ExecuteScalarAsync().ConfigureAwait(false);
+                        await cmd.ExecuteScalarAsync(TestContext.Current.CancellationToken);
                     }
                 }
                 catch (DbException) { /* yep */ }
@@ -296,7 +290,7 @@ namespace StackExchange.Profiling.Tests
             Assert.NotNull(profiler);
 
             const string cmdString = "Select 1";
-            await GetUnopenedConnection(profiler).QueryAsync(cmdString).ConfigureAwait(false);
+            await GetUnopenedConnection(profiler).QueryAsync(cmdString);
 
             CheckConnectionTracking(track, profiler, cmdString, true, true);
         }
@@ -356,10 +350,9 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        private class CurrentDbProfiler : IDbProfiler
+        private class CurrentDbProfiler(Func<IDbProfiler?> getProfiler) : IDbProfiler
         {
-            private Func<IDbProfiler?> GetProfiler { get; }
-            public CurrentDbProfiler(Func<IDbProfiler?> getProfiler) => GetProfiler = getProfiler;
+            private Func<IDbProfiler?> GetProfiler { get; } = getProfiler;
 
             public bool IsActive => GetProfiler()?.IsActive ?? false;
 
@@ -409,28 +402,21 @@ namespace StackExchange.Profiling.Tests
             return result;
         }
 
-        public class CountingConnection : ProfiledDbConnection
+        public class CountingConnection(DbConnection connection, IDbProfiler profiler) : ProfiledDbConnection(connection, profiler)
         {
-            public CountingDbProfiler CountingProfiler { get; set; }
-
-            public CountingConnection(DbConnection connection, IDbProfiler profiler)
-                : base(connection, profiler)
-            {
-                CountingProfiler = (CountingDbProfiler)profiler;
-            }
+            public CountingDbProfiler CountingProfiler { get; set; } = (CountingDbProfiler)profiler;
         }
 
-        public class OverrideTestConnection : ProfiledDbConnection
+        public class OverrideTestConnection(DbConnection connection, IDbProfiler profiler) : ProfiledDbConnection(connection, profiler)
         {
             public bool AlwaysWrapReaders { get; set; }
-            public OverrideTestConnection(DbConnection connection, IDbProfiler profiler) : base(connection, profiler) { }
+
             protected override DbCommand CreateDbCommand() => new OverrideTestCommand(WrappedConnection.CreateCommand(), this, Profiler);
         }
 
-        public class OverrideTestCommand : ProfiledDbCommand
+        public class OverrideTestCommand(DbCommand command, DbConnection connection, IDbProfiler? profiler) : ProfiledDbCommand(command, connection, profiler)
         {
-            protected override bool AlwaysWrapReaders => (Connection as OverrideTestConnection)?.AlwaysWrapReaders == true;
-            public OverrideTestCommand(DbCommand command, DbConnection connection, IDbProfiler? profiler) : base(command, connection, profiler) { }
+            protected override bool AlwaysWrapReaders => Connection is OverrideTestConnection { AlwaysWrapReaders: true };
         }
     }
 

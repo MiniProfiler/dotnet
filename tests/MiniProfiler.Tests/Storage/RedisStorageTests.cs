@@ -3,16 +3,11 @@ using StackExchange.Profiling.Storage;
 using StackExchange.Profiling.Storage.Internal;
 using StackExchange.Redis;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class RedisStorageTests : StorageBaseTest, IClassFixture<RedisStorageFixture>
+    public class RedisStorageTests(RedisStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<RedisStorageFixture>
     {
-        public RedisStorageTests(RedisStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
-
         [Fact]
         public void Serialization()
         {

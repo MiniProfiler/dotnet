@@ -1,15 +1,11 @@
 ﻿using System;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class SqlServerStorageTests : StorageBaseTest, IClassFixture<SqlServerStorageFixture>
+    public class SqlServerStorageTests(SqlServerStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<SqlServerStorageFixture>
     {
-        public SqlServerStorageTests(SqlServerStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
     }
 
     public class SqlServerStorageFixture : StorageFixtureBase<SqlServerStorage>, IDisposable

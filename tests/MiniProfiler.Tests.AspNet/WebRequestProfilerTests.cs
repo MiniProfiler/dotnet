@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Web;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -16,13 +16,23 @@ namespace StackExchange.Profiling.Tests
             Options = null!;
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void WebRequestEnsureName()
         {
-            using (var rq = GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
+            Skip.IfNotWindows();
+            using (var rq = GetRequest("http://localhost/Test.aspx"))
             {
+                try
+                {
+                    _ = HttpContext.Current.Request.Url;
+                }
+                catch (Exception ex)
+                {
+                    Output.WriteLine("eating initial .config load exception: " + ex);
+                }
                 var mp = new MiniProfiler(null, Options);
                 mp.Increment(); // 1 ms
+                Output.WriteLine("Url: " + HttpContext.Current.Request.Url);
                 mp.Stop(false);
 
                 Assert.NotNull(mp);

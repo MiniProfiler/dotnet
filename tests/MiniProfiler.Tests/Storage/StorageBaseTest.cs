@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapper;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
@@ -46,11 +45,11 @@ namespace StackExchange.Profiling.Tests.Storage
             var mp1 = GetMiniProfiler("Test1");
             var mp2 = GetMiniProfiler("Test2");
             var mp3 = GetMiniProfiler("Test3");
-            await Storage.SaveAsync(mp1).ConfigureAwait(false);
-            await Storage.SaveAsync(mp2).ConfigureAwait(false);
-            await Storage.SaveAsync(mp3).ConfigureAwait(false);
+            await Storage.SaveAsync(mp1);
+            await Storage.SaveAsync(mp2);
+            await Storage.SaveAsync(mp3);
 
-            var unviewed = await Storage.GetUnviewedIdsAsync(nameof(GetUnviewedIdsAsync)).ConfigureAwait(false);
+            var unviewed = await Storage.GetUnviewedIdsAsync(nameof(GetUnviewedIdsAsync));
             Assert.Equal(3, unviewed.Count);
             Assert.Contains(mp1.Id, unviewed);
             Assert.Contains(mp2.Id, unviewed);
@@ -84,7 +83,7 @@ namespace StackExchange.Profiling.Tests.Storage
             Storage.Save(mp2);
             Storage.Save(mp3);
 
-            var stored = (await Storage.ListAsync(200).ConfigureAwait(false)).ToList();
+            var stored = (await Storage.ListAsync(200)).ToList();
             Assert.True(stored.Count >= 3);
             Assert.Contains(mp1.Id, stored);
             Assert.Contains(mp2.Id, stored);
@@ -109,10 +108,10 @@ namespace StackExchange.Profiling.Tests.Storage
         public async Task SaveAndLoadAsync()
         {
             var mp = GetMiniProfiler();
-            await Storage.SaveAsync(mp).ConfigureAwait(false);
+            await Storage.SaveAsync(mp);
             var timings = mp.GetTimingHierarchy();
 
-            var fetched = await Storage.LoadAsync(mp.Id).ConfigureAwait(false);
+            var fetched = await Storage.LoadAsync(mp.Id);
             Assert.NotNull(fetched);
             Assert.Equal(mp, fetched);
             Assert.NotNull(fetched.Options);
@@ -139,13 +138,13 @@ namespace StackExchange.Profiling.Tests.Storage
         {
             var mp = GetMiniProfiler();
             Assert.False(mp.HasUserViewed);
-            await Storage.SaveAsync(mp).ConfigureAwait(false);
+            await Storage.SaveAsync(mp);
             Assert.False(mp.HasUserViewed);
 
-            var unviewedIds = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
+            var unviewedIds = await Storage.GetUnviewedIdsAsync(mp.User);
             Assert.Contains(mp.Id, unviewedIds);
-            await Storage.SetViewedAsync(mp).ConfigureAwait(false);
-            var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
+            await Storage.SetViewedAsync(mp);
+            var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User);
             Assert.DoesNotContain(mp.Id, unviewedIds2);
         }
 
@@ -171,17 +170,17 @@ namespace StackExchange.Profiling.Tests.Storage
         public async Task SetUnviewedAsync()
         {
             var mp = GetMiniProfiler();
-            await Storage.SaveAsync(mp).ConfigureAwait(false);
+            await Storage.SaveAsync(mp);
 
-            var unviewedIds = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
+            var unviewedIds = await Storage.GetUnviewedIdsAsync(mp.User);
             Assert.Contains(mp.Id, unviewedIds);
 
-            await Storage.SetViewedAsync(mp).ConfigureAwait(false);
-            var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
+            await Storage.SetViewedAsync(mp);
+            var unviewedIds2 = await Storage.GetUnviewedIdsAsync(mp.User);
             Assert.DoesNotContain(mp.Id, unviewedIds2);
 
-            await Storage.SetUnviewedAsync(mp).ConfigureAwait(false);
-            var unviewedIds3 = await Storage.GetUnviewedIdsAsync(mp.User).ConfigureAwait(false);
+            await Storage.SetUnviewedAsync(mp);
+            var unviewedIds3 = await Storage.GetUnviewedIdsAsync(mp.User);
             Assert.Contains(mp.Id, unviewedIds3);
         }
 

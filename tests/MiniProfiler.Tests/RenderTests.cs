@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using StackExchange.Profiling.Internal;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class RenderTests : BaseTest
+    public class RenderTests(ITestOutputHelper output) : BaseTest(output)
     {
-        public RenderTests(ITestOutputHelper output) : base(output) { }
-
         [Fact]
         public void DefaultRender()
         {

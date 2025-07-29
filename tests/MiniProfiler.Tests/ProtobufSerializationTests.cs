@@ -1,13 +1,10 @@
 ﻿using System.IO;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class ProtobufSerializationTests : BaseTest
+    public class ProtobufSerializationTests(ITestOutputHelper output) : BaseTest(output)
     {
-        public ProtobufSerializationTests(ITestOutputHelper output) : base(output) { }
-
         [Fact]
         public void Simple()
         {

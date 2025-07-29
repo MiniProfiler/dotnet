@@ -1,16 +1,11 @@
 ﻿using System;
 using MongoDB.Driver;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class MongoDbStorageTests : StorageBaseTest, IClassFixture<MongoDbStorageFixture>
+    public class MongoDbStorageTests(MongoDbStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<MongoDbStorageFixture>
     {
-        public MongoDbStorageTests(MongoDbStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
-
         [Fact]
         public void RecreationHandling()
         {

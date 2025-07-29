@@ -8,15 +8,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
     [Collection(NonParallel)]
-    public class Middleware : AspNetCoreTest
+    public class Middleware(ITestOutputHelper output) : AspNetCoreTest(output)
     {
-        public Middleware(ITestOutputHelper output) : base(output) { }
-
         private static TestServer GetTestServer(Action<MiniProfilerOptions> configOptions)
         {
             var builder = new WebHostBuilder()
@@ -51,9 +48,9 @@ namespace StackExchange.Profiling.Tests
                 CurrentOptions = o;
             }))
             {
-                using (var response = await server.CreateClient().GetAsync("").ConfigureAwait(false))
+                using (var response = await server.CreateClient().GetAsync("", TestContext.Current.CancellationToken))
                 {
-                    var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var responseText = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
                     Assert.Contains("Heyyy", responseText);
                 }
 
@@ -104,22 +101,22 @@ namespace StackExchange.Profiling.Tests
             using (var server = new TestServer(builder))
             {
                 // Test CSS
-                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.css").ConfigureAwait(false))
+                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.css", TestContext.Current.CancellationToken))
                 {
                     Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl?.MaxAge);
                     Assert.True(response.Headers.CacheControl?.Public);
                     Assert.Equal("text/css", response.Content.Headers.ContentType?.MediaType);
                     // Checking for wrapping/scoping class
-                    Assert.StartsWith(":root", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    Assert.StartsWith(":root", await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
                 }
                 // Test JS
-                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js").ConfigureAwait(false))
+                using (var response = await server.CreateClient().GetAsync("/mini-profiler-resources/includes.min.js", TestContext.Current.CancellationToken))
                 {
                     Assert.Equal(TimeSpan.FromDays(30), response.Headers.CacheControl?.MaxAge);
                     Assert.True(response.Headers.CacheControl?.Public);
                     Assert.Equal("application/javascript", response.Content.Headers.ContentType?.MediaType);
                     // Checking for license header
-                    Assert.Contains("jQuery", await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    Assert.Contains("jQuery", await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
                 }
             }
         }
@@ -180,7 +177,7 @@ namespace StackExchange.Profiling.Tests
                 Output.WriteLine("Testing: " + name);
                 var client = server.CreateClient();
                 string id;
-                using (var response = await client.GetAsync(""))
+                using (var response = await client.GetAsync("", TestContext.Current.CancellationToken))
                 {
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     id = Assert.Single(response.Headers.GetValues("X-MiniProfiler-Ids"));
@@ -190,28 +187,28 @@ namespace StackExchange.Profiling.Tests
                 Assert.NotNull(CurrentOptions);
                 string Path(string path) => CurrentOptions.RouteBasePath + "/" + path;
 
-                using (var response = await client.GetAsync(Path("results-index")))
+                using (var response = await client.GetAsync(Path("results-index"), TestContext.Current.CancellationToken))
                 {
                     Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
-                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + indexExpected);
                     Assert.Equal(indexExpected, response.StatusCode);
                 }
 
-                using (var response = await client.GetAsync(Path("results-list")))
+                using (var response = await client.GetAsync(Path("results-list"), TestContext.Current.CancellationToken))
                 {
                     Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
-                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + listExpected);
                     Assert.Equal(listExpected, response.StatusCode);
                 }
 
-                using (var response = await client.GetAsync(Path("results?id=" + id)))
+                using (var response = await client.GetAsync(Path("results?id=" + id), TestContext.Current.CancellationToken))
                 {
                     Output.WriteLine("Hitting: " + response.RequestMessage?.RequestUri);
-                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync());
+                    Output.WriteLine("  Response: " + await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
                     Output.WriteLine("  Code: " + response.StatusCode);
                     Output.WriteLine("  Expected Code: " + singleExpected);
                     Assert.Equal(singleExpected, response.StatusCode);
