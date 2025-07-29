@@ -54,10 +54,10 @@ namespace StackExchange.Profiling.Tests
 
         private const string None = "";
         private const string At = "@";
-        public static IEnumerable<object[]> GetParamPrefixes()
+        public static IEnumerable<TheoryDataRow<string>> GetParamPrefixes()
         {
-            yield return new object[] { None };
-            yield return new object[] { At };
+            yield return new(None);
+            yield return new(At);
         }
 
         private static SqlCommand CreateDbCommand(CommandType commandType, string text)
@@ -100,6 +100,7 @@ namespace StackExchange.Profiling.Tests
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
+
         [Fact]
         public void InlineParameterValuesDisplayNullForStrings()
         {
@@ -146,6 +147,23 @@ namespace StackExchange.Profiling.Tests
             const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT myid,url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
+        }
+
+        [Fact]
+        public void InlineGuidsQuoted()
+        {
+            var formatter = new InlineFormatter()
+            {
+                InsertSpacesAfterCommas = false
+            };
+            var guid = Guid.NewGuid();
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "guid", Name = "id", Value = guid.ToString() },
+            };
+            const string command = "SELECT 1 FROM urls WHERE id = @id";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal($"SELECT 1 FROM urls WHERE id = '{guid}'", formatted);
         }
 
         [Fact]

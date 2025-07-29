@@ -78,6 +78,7 @@ namespace StackExchange.Profiling.SqlFormatters
                 {
                     case "string":
                     case "datetime":
+                    case "guid":
                         result = string.Format("'{0}'", result);
                         break;
                     case "boolean":
