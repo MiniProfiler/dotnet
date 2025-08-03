@@ -54,10 +54,10 @@ namespace StackExchange.Profiling.Tests
 
         private const string None = "";
         private const string At = "@";
-        public static IEnumerable<object[]> GetParamPrefixes()
+        public static IEnumerable<TheoryDataRow<string>> GetParamPrefixes()
         {
-            yield return new object[] { None };
-            yield return new object[] { At };
+            yield return new(None);
+            yield return new(At);
         }
 
         private static SqlCommand CreateDbCommand(CommandType commandType, string text)
@@ -100,6 +100,7 @@ namespace StackExchange.Profiling.Tests
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT * FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
         }
+
         [Fact]
         public void InlineParameterValuesDisplayNullForStrings()
         {
@@ -146,6 +147,79 @@ namespace StackExchange.Profiling.Tests
             const string command = "SELECT myid,url FROM urls WHERE url = @url OR myid = @myid";
             var formatted = formatter.FormatSql(command, parameters);
             Assert.Equal("SELECT myid,url FROM urls WHERE url = 'http://www.example.com?myid=1' OR myid = '1'", formatted);
+        }
+
+        [Fact]
+        public void InlineGuidsQuoted()
+        {
+            var formatter = new InlineFormatter()
+            {
+                InsertSpacesAfterCommas = false
+            };
+            var guid = Guid.NewGuid();
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "guid", Name = "id", Value = guid.ToString() },
+            };
+            const string command = "SELECT 1 FROM urls WHERE id = @id";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal($"SELECT 1 FROM urls WHERE id = '{guid}'", formatted);
+        }
+
+        [Fact]
+        public void InlineDatesQuoted()
+        {
+            var formatter = new InlineFormatter()
+            {
+                InsertSpacesAfterCommas = false
+            };
+            var dt = DateTime.UtcNow;
+            var parameters = new List<SqlTimingParameter>
+            {
+                new SqlTimingParameter() { DbType = "datetime", Name = "start", Value = dt.ToString() },
+            };
+            const string command = "SELECT 1 FROM urls WHERE start > @start";
+            var formatted = formatter.FormatSql(command, parameters);
+            Assert.Equal($"SELECT 1 FROM urls WHERE start > '{dt}'", formatted);
+        }
+
+        [Theory]
+        [InlineData(DbType.Decimal, 0.01, "0.01")]
+        [InlineData(DbType.Boolean, true, "1")]
+        [InlineData(DbType.Boolean, false, "0")]
+        [InlineData(DbType.Byte, 255, "255")]
+        [InlineData(DbType.SByte, -128, "-128")]
+        [InlineData(DbType.Int16, -32768, "-32768")]
+        [InlineData(DbType.UInt16, 65535, "65535")]
+        [InlineData(DbType.Int32, 2147483647, "2147483647")]
+        [InlineData(DbType.UInt32, 4294967295, "4294967295")]
+        [InlineData(DbType.Int64, 9223372036854775807, "9223372036854775807")]
+        [InlineData(DbType.UInt64, 18446744073709551615, "18446744073709551615")]
+        [InlineData(DbType.Single, 3.14159, "3.14159")]
+        [InlineData(DbType.Double, 3.141592, "3.141592")]
+        [InlineData(DbType.Currency, 1234.56, "1234.56")]
+        [InlineData(DbType.String, "test string", "'test string'")]
+        [InlineData(DbType.AnsiString, "test ansi", "'test ansi'")]
+        [InlineData(DbType.StringFixedLength, "fixed", "'fixed'")]
+        [InlineData(DbType.AnsiStringFixedLength, "ansi fixed", "'ansi fixed'")]
+        [InlineData(DbType.Date, "2023-01-01", "'2023-01-01'")]
+        [InlineData(DbType.DateTime, "2023-01-01T12:00:00", "'2023-01-01T12:00:00'")]
+        [InlineData(DbType.DateTime2, "2023-01-01T12:00:00.0000000", "'2023-01-01T12:00:00.0000000'")]
+        [InlineData(DbType.DateTimeOffset, "2023-01-01T12:00:00+00:00", "'2023-01-01T12:00:00+00:00'")]
+        [InlineData(DbType.Guid, "12345678-1234-1234-1234-123456789012", "'12345678-1234-1234-1234-123456789012'")]
+        [InlineData(DbType.Time, "12:00:00", "'12:00:00'")]
+        [InlineData(DbType.Xml, "<root><node>value</node></root>", "'<root><node>value</node></root>'")]
+        [InlineData(DbType.Binary, "0x0123456789ABCDEF", "0x0123456789ABCDEF")]
+        public void InlineParameterFormatting(DbType dbType, object input, string expected)
+        {
+            var formatter = new InlineFormatter();
+            var param = new SqlTimingParameter
+            {
+                DbType = dbType.ToString(),
+                Value = input.ToString(),
+                Direction = ParameterDirection.Input.ToString(),
+            };
+            Assert.Equal(expected, formatter.GetParameterValue(param));
         }
 
         [Fact]

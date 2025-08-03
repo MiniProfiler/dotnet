@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Profiling.Internal;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Async
 {
@@ -17,9 +16,10 @@ namespace StackExchange.Profiling.Tests.Async
             Options.StopwatchProvider = StopwatchWrapper.StartNew;
         }
 
-        [FactLongRunning]
+        [Fact]
         public async Task Step_WithParallelTasks_RealTime()
         {
+            Skip.IfNotLongRunning();
             Thread.Sleep(1000); // calm down there stupid laptop
             var profiler = Options.StartProfiler("root");
             Assert.NotNull(profiler);
@@ -32,7 +32,7 @@ namespace StackExchange.Profiling.Tests.Async
                 timing31 = null;
 
             // Add 100ms to root
-            await Task.Delay(100).ConfigureAwait(false);
+            await Task.Delay(100, TestContext.Current.CancellationToken);
 
             // Start tasks in parallel
             var whenAllTask = Task.WhenAll(
@@ -51,7 +51,7 @@ namespace StackExchange.Profiling.Tests.Async
                             }
                         }).ConfigureAwait(false);
                     }
-                }),
+                }, TestContext.Current.CancellationToken),
                 Task.Factory.StartNew(async () =>
                 {
                     // timing20: 200 + 100 = 300 ms
@@ -88,7 +88,7 @@ namespace StackExchange.Profiling.Tests.Async
                 }, TaskCreationOptions.LongRunning).Unwrap()
             );
 
-            await whenAllTask.ConfigureAwait(false);
+            await whenAllTask;
 
             profiler.Stop();
 
@@ -115,9 +115,10 @@ namespace StackExchange.Profiling.Tests.Async
             AssertNear(100, timing31.DurationMilliseconds, 50);
         }
 
-        [FactLongRunning]
+        [Fact]
         public void Step_WithParallelThreads_RealTime()
         {
+            Skip.IfNotLongRunning();
             var profiler = Options.StartProfiler("root");
             Assert.NotNull(profiler);
 

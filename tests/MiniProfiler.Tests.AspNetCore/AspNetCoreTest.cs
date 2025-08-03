@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Profiling.Storage;
-using Xunit.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using System.Collections.Generic;
+using Xunit;
 
 namespace StackExchange.Profiling.Tests
 {

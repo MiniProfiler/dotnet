@@ -1,13 +1,10 @@
 ﻿using System;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class ServerTimingTests : BaseTest
+    public class ServerTimingTests(ITestOutputHelper output) : BaseTest(output)
     {
-        public ServerTimingTests(ITestOutputHelper output) : base(output) { }
-
         [Fact]
         [Obsolete("Still awaiting browser support")]
         public void ServerTimingFormat()

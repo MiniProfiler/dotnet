@@ -1,1 +1,8 @@
-{ "appDomain": "denied" }
+{
+  "methodDisplay": "classAndMethod",
+  "parallelizeAssembly": true,
+  "maxParallelThreads": "2x",
+  "parallelizeTestCollections": true,
+  "diagnosticMessages": false,
+  "longRunningTestSeconds": 60
+}

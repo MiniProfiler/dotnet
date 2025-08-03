@@ -1,20 +1,15 @@
 ﻿using System;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class TimingInstrumentationTest : BaseTest
+    public class TimingInstrumentationTest(ITestOutputHelper output) : BaseTest(output)
     {
-        public TimingInstrumentationTest(ITestOutputHelper output) : base(output) { }
-
-        private class TimingInstrumentation : IDisposable
+        private class TimingInstrumentation(Timing timing) : IDisposable
         {
-            public Timing Timing { get; set; }
+            public Timing Timing { get; set; } = timing;
             public bool Disposed { get; set; }
             public void Dispose() => Disposed = true;
-
-            public TimingInstrumentation(Timing timing) => Timing = timing;
         }
 
         [Fact]

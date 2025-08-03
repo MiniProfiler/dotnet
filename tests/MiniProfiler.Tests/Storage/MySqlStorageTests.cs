@@ -1,15 +1,11 @@
 ﻿using System;
 using StackExchange.Profiling.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Storage
 {
-    public class MySqlStorageTests : StorageBaseTest, IClassFixture<MySqlStorageFixture>
+    public class MySqlStorageTests(MySqlStorageFixture fixture, ITestOutputHelper output) : StorageBaseTest(fixture, output), IClassFixture<MySqlStorageFixture>
     {
-        public MySqlStorageTests(MySqlStorageFixture fixture, ITestOutputHelper output) : base(fixture, output)
-        {
-        }
     }
 
     public class MySqlStorageFixture : StorageFixtureBase<MySqlStorage>, IDisposable

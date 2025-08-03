@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests.Async
 {
@@ -23,7 +22,7 @@ namespace StackExchange.Profiling.Tests.Async
             Assert.NotNull(profiler);
 
             // Add 100ms to root
-            await profiler.IncrementAsync(100).ConfigureAwait(false);
+            await profiler.IncrementAsync(100);
 
             // 100ms + 100ms = 200ms
             var step1 = Task.Run(async () =>
@@ -40,7 +39,7 @@ namespace StackExchange.Profiling.Tests.Async
                         }
                     }).ConfigureAwait(false);
                 }
-            });
+            }, TestContext.Current.CancellationToken);
 
             // 100ms
             var step2 = Task.Run(async () =>
@@ -49,10 +48,10 @@ namespace StackExchange.Profiling.Tests.Async
                 {
                     await profiler.IncrementAsync(100).ConfigureAwait(false);
                 }
-            });
+            }, TestContext.Current.CancellationToken);
 
             // Longest task is 200ms
-            await Task.WhenAll(step1, step2).ConfigureAwait(false);
+            await Task.WhenAll(step1, step2);
 
             profiler.Stop();
 
@@ -92,7 +91,7 @@ namespace StackExchange.Profiling.Tests.Async
                             }
                         }).ConfigureAwait(false);
                     }
-                }),
+                }, TestContext.Current.CancellationToken),
                 Task.Factory.StartNew(async () =>
                 {
                     // timing20: 2 + 1 = 2 ms

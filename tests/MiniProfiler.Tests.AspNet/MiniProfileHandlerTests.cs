@@ -11,7 +11,7 @@ namespace StackExchange.Profiling.Tests
 {
     public class MiniProfilerHandlerTests
     {
-        [Theory(WindowsOnly = true)]
+        [Theory]
         [InlineData("BRILLANT", 404)]
         [InlineData("underscore.js", 404)]
         [InlineData("results-list", 200)]
@@ -19,6 +19,7 @@ namespace StackExchange.Profiling.Tests
         [InlineData("includes.min.css", 200)]
         public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(string resourceName, int expectedHttpStatus)
         {
+            Skip.IfNotWindows();
             var sut = new MiniProfilerHandler(new MiniProfilerOptions()
             {
                 ResultsListAuthorize = null
@@ -31,7 +32,7 @@ namespace StackExchange.Profiling.Tests
         private static readonly FieldInfo _cacheability = typeof(HttpCachePolicy).GetField("_cacheability", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo _maxAge = typeof(HttpCachePolicy).GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        [Theory(WindowsOnly = true)]
+        [Theory]
         [InlineData("BRILLANT", (HttpCacheability)6, null)]
         [InlineData("underscore.js", (HttpCacheability)6, null)]
         [InlineData("results-list", (HttpCacheability)6, null)]
@@ -39,6 +40,7 @@ namespace StackExchange.Profiling.Tests
         [InlineData("includes.min.css", HttpCacheability.Public, 2592000)]
         public void GivenContext_WhenAResourceIsRequested_ThenTheCorrectHttpCacheControlIsReturned(string resourceName, HttpCacheability expectedCacheability, int? expectedMaxAgeSeconds)
         {
+            Skip.IfNotWindows();
             var sut = new MiniProfilerHandler(new MiniProfilerOptions()
             {
                 ResultsListAuthorize = null
@@ -52,11 +54,12 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Theory(WindowsOnly = true)]
+        [Theory]
         [InlineData(true, 200)]
         [InlineData(false, 401)]
         public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturned(bool isRequestAuthorized, int expectedHttpStatus)
         {
+            Skip.IfNotWindows();
             var sut = new MiniProfilerHandler(new MiniProfilerOptions()
             {
                 ResultsListAuthorize = _ => isRequestAuthorized
@@ -66,15 +69,16 @@ namespace StackExchange.Profiling.Tests
             Assert.Equal(expectedHttpStatus, res);
         }
 
-        [Theory(WindowsOnly = true)]
+        [Theory]
 		[InlineData("gzip", typeof(GZipStream))]
 		[InlineData("deflate", typeof(DeflateStream))]
 		[InlineData("unknown", null)]
 		[InlineData("", null)]
 		public void GivenContext_WhenIndexIsRequested_ThenTheCorrectHttpStatusCodeIsReturnedType(string acceptEncoding, Type? expectedEncodingFilterType)
-		{
-			// Arrange
-			var sut = new MiniProfilerHandler(new MiniProfilerOptions());
+        {
+            Skip.IfNotWindows();
+            // Arrange
+            var sut = new MiniProfilerHandler(new MiniProfilerOptions());
 
 			// Act
 			var res = GetRequestResponseEncoding(sut, "includes.min.js", acceptEncoding);

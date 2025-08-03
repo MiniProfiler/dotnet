@@ -1,13 +1,10 @@
 ﻿using StackExchange.Profiling.Internal;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
-    public class SerializationTests : BaseTest
+    public class SerializationTests(ITestOutputHelper output) : BaseTest(output)
     {
-        public SerializationTests(ITestOutputHelper output) : base(output) { }
-
         [Fact]
         public void ParentMapping()
         {

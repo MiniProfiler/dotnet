@@ -5,7 +5,6 @@ using System.Data.Entity.Infrastructure;
 using StackExchange.Profiling.Data;
 using StackExchange.Profiling.EntityFramework6;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
@@ -16,9 +15,10 @@ namespace StackExchange.Profiling.Tests
             MiniProfilerEF6.Initialize();
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void ServicesCheck()
         {
+            Skip.IfNotWindows();
             const string providerKey = "System.Data.SQLite";
 
             Assert.IsType<EFProfiledDbProviderServices>(DbConfiguration.DependencyResolver.GetService(typeof(DbProviderServices), providerKey));

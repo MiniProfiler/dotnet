@@ -1,16 +1,14 @@
 ﻿using Xunit;
-using Xunit.Abstractions;
 
 namespace StackExchange.Profiling.Tests
 {
     [Collection(NonParallel)]
-    public class BasicTests : AspNetTest
+    public class BasicTests(ITestOutputHelper output) : AspNetTest(output)
     {
-        public BasicTests(ITestOutputHelper output) : base(output) { }
-
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void Simple()
         {
+            Skip.IfNotWindows();
             using (GetRequest("http://localhost/Test.aspx", startAndStopProfiler: false))
             {
                 var mp = Options.StartProfiler();
@@ -28,9 +26,10 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void StepIf_Basic()
         {
+            Skip.IfNotWindows();
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
@@ -56,9 +55,10 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void StepIf_IncludeChildren()
         {
+            Skip.IfNotWindows();
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
@@ -100,9 +100,10 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void CustomTimingIf_Basic()
         {
+            Skip.IfNotWindows();
             using (GetRequest())
             {
                 var mp = Options.StartProfiler();
@@ -128,9 +129,10 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void DiscardResults()
         {
+            Skip.IfNotWindows();
             using (GetRequest(startAndStopProfiler: false))
             {
                 var mp = Options.StartProfiler();
@@ -143,9 +145,10 @@ namespace StackExchange.Profiling.Tests
             }
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void GetProfiler_NoChildren()
         {
+            Skip.IfNotWindows();
             // this won't create any child steps
             var mp = GetProfiler();
 
@@ -154,9 +157,10 @@ namespace StackExchange.Profiling.Tests
             Assert.False(mp.Root.HasChildren);
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void GetProfiler_Children()
         {
+            Skip.IfNotWindows();
             const int depth = 5;
 
             var mp = GetProfiler(childDepth: depth);
@@ -174,9 +178,10 @@ namespace StackExchange.Profiling.Tests
             Assert.Equal(depth, children);
         }
 
-        [Fact(WindowsOnly = true)]
+        [Fact]
         public void GetRequest_StartAndStopProfiler()
         {
+            Skip.IfNotWindows();
             MiniProfiler? mp;
             using (GetRequest())
             {
