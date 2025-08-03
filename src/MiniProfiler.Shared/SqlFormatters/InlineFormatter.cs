@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,8 +11,23 @@ namespace StackExchange.Profiling.SqlFormatters
     /// </summary>
     public class InlineFormatter : ISqlFormatter
     {
-        private static readonly Regex CommandSpacing = new Regex(@",([^\s])", RegexOptions.Compiled);
+        private static readonly Regex CommandSpacing = new(@",([^\s])", RegexOptions.Compiled);
         private static bool includeTypeInfo;
+
+        private static readonly HashSet<string> QuotesDbTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            nameof(DbType.AnsiString),
+            nameof(DbType.AnsiStringFixedLength),
+            nameof(DbType.Date),
+            nameof(DbType.DateTime),
+            nameof(DbType.DateTime2),
+            nameof(DbType.DateTimeOffset),
+            nameof(DbType.Guid),
+            nameof(DbType.String),
+            nameof(DbType.StringFixedLength),
+            nameof(DbType.Time),
+            nameof(DbType.Xml),
+        };
 
         /// <summary>
         /// Whether to modify the output query by adding spaces after commas.
@@ -74,21 +91,18 @@ namespace StackExchange.Profiling.SqlFormatters
 
             if (result != null)
             {
-                switch (type.ToLower())
+                if (QuotesDbTypes.Contains(type))
                 {
-                    case "string":
-                    case "datetime":
-                    case "guid":
-                        result = string.Format("'{0}'", result);
-                        break;
-                    case "boolean":
-                        result = result switch
-                        {
-                            "True" => "1",
-                            "False" => "0",
-                            _ => null,
-                        };
-                        break;
+                    result = string.Format("'{0}'", result);
+                }
+                else if (string.Equals(type, nameof(DbType.Boolean), StringComparison.OrdinalIgnoreCase))
+                {
+                    result = result switch
+                    {
+                        "True" => "1",
+                        "False" => "0",
+                        _ => null,
+                    };
                 }
             }
 
