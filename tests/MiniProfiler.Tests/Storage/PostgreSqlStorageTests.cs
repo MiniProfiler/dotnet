@@ -1,4 +1,4 @@
-﻿#if (NETCOREAPP2_0 || NET461)
+﻿#if (NETCOREAPP2_0 || NET472)
 using System;
 using StackExchange.Profiling.Storage;
 using Xunit;

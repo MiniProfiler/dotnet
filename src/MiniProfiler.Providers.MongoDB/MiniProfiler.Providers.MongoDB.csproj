@@ -5,7 +5,7 @@
     <Description>MiniProfiler: Profiler storage for MongoDB</Description>
     <Authors>Nick Craver, Roger Calaf, Ian Kemp</Authors>
     <PackageTags>NoSQL;MongoDB;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\miniprofiler.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>

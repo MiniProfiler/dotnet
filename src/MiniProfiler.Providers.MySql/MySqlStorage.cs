@@ -188,7 +188,7 @@ SELECT * FROM {MiniProfilerClientTimingsTable} WHERE MiniProfilerId = @id ORDER 
         /// </summary>
         /// <param name="id">The profiler ID to load.</param>
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
-        public override MiniProfiler Load(Guid id)
+        public override MiniProfiler? Load(Guid id)
         {
             using (var conn = GetConnection())
             using (var multi = conn.QueryMultiple(SqlStatements, new { id }))

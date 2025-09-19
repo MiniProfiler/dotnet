@@ -245,7 +245,7 @@ ORDER BY Start;";
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override MiniProfiler? Load(Guid id)
         {
-            MiniProfiler result;
+            MiniProfiler? result;
             using (var conn = GetConnection())
             {
                 using (var multi = conn.QueryMultiple(LoadSql, new { id = id.ToString() }))
@@ -273,7 +273,7 @@ ORDER BY Start;";
         /// <returns>The loaded <see cref="MiniProfiler"/>.</returns>
         public override async Task<MiniProfiler?> LoadAsync(Guid id)
         {
-            MiniProfiler result;
+            MiniProfiler? result;
             using (var conn = GetConnection())
             {
                 using (var multi = await conn.QueryMultipleAsync(LoadSql, new { id = id.ToString() }).ConfigureAwait(false))

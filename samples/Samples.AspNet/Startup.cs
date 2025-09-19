@@ -137,7 +137,7 @@ namespace Samples.AspNetCore
                .Use(async (context, next) =>
                {
                    var nonce = context.RequestServices.GetService<NonceService>()?.RequestNonce;
-                   context.Response.Headers.Add("Content-Security-Policy", $"script-src 'self' 'nonce-{nonce}'");
+                   context.Response.Headers.Append("Content-Security-Policy", $"script-src 'self' 'nonce-{nonce}'");
                    await next();
                })
                .UseEndpoints(endpoints =>

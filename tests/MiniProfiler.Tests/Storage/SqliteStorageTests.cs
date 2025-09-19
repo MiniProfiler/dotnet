@@ -22,7 +22,7 @@ namespace StackExchange.Profiling.Tests.Storage
             fileName = Guid.NewGuid() + ".sqlite";
 
             Storage = new SqliteStorage(
-                $"Data Source={fileName}",
+                $"Data Source={fileName},Pooling=False",
                 "MPTest" + TestId,
                 "MPTimingsTest" + TestId,
                 "MPClientTimingsTest" + TestId);

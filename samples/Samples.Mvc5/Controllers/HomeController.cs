@@ -66,7 +66,7 @@ namespace Samples.Mvc5.Controllers
         /// </summary>
         private void DefaultActions()
         {
-            var profiler = MiniProfiler.Current;
+            var profiler = MiniProfiler.Current!;
 
             // test out using storage for this one request. Only store in SqlLite, not in httpCache
             profiler.Storage = new SqliteMiniProfilerStorage(MvcApplication.ConnectionString);
@@ -224,7 +224,7 @@ namespace Samples.Mvc5.Controllers
             int count;
             int? newCount = null;
 
-            EFContext context = null;
+            EFContext? context = null;
             using (MiniProfiler.Current.Step("EF Stuff"))
             {
                 try
@@ -239,7 +239,7 @@ namespace Samples.Mvc5.Controllers
                     using (MiniProfiler.Current.Step("Insertion"))
                     {
                         var p = new Person { Name = "sam" };
-                        context.People.Add(p);
+                        context.People?.Add(p);
                         context.SaveChanges();
                     }
 
@@ -321,7 +321,7 @@ namespace Samples.Mvc5.Controllers
         /// <param name="depth">recursion depth</param>
         /// <param name="connection">the connection</param>
         /// <param name="profiler">The profiler.</param>
-        private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler profiler)
+        private void RecursiveMethod(ref int depth, DbConnection connection, MiniProfiler? profiler)
         {
             Thread.Sleep(5); // ensure we show up in the profiler
 
@@ -420,7 +420,7 @@ namespace Samples.Mvc5.Controllers
             /// <summary>
             /// Gets or sets the route name.
             /// </summary>
-            public string RouteName { get; set; }
+            public string? RouteName { get; set; }
 
             /// <summary>
             /// Gets or sets the hit count.

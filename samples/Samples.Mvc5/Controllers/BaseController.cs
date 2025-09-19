@@ -13,14 +13,14 @@ namespace Samples.Mvc5.Controllers
         /// <summary>
         /// keep track of the profiler to dispose it.
         /// </summary>
-        private IDisposable _resultExecutingToExecuted;
+        private IDisposable? _resultExecutingToExecuted;
 
         /// <summary>
         /// Returns an open connection that will have its queries profiled.
         /// </summary>
         /// <param name="profiler">The mini profiler.</param>
         /// <returns>the data connection abstraction.</returns>
-        public static DbConnection GetConnection(MiniProfiler profiler = null)
+        public static DbConnection GetConnection(MiniProfiler? profiler = null)
         {
             using (profiler.Step("GetOpenConnection"))
             {

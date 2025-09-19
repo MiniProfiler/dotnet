@@ -68,11 +68,9 @@ namespace StackExchange.Profiling.Tests.Storage
             try
             {
                 Storage = new RedisStorage(TestConfig.Current.RedisConnectionString);
-#pragma warning disable CS0612 // Type or member is obsolete
-                Storage.ProfilerResultKeyPrefix += testSuffix;
-                Storage.ProfilerResultSetKey += testSuffix;
-                Storage.ProfilerResultUnviewedSetKeyPrefix += testSuffix;
-#pragma warning restore CS0612 // Type or member is obsolete
+                Storage.ProfilerResultKeyPrefix = Storage.ProfilerResultKeyPrefix.Append(testSuffix);
+                Storage.ProfilerResultSetKey = Storage.ProfilerResultSetKey.Append(testSuffix);
+                Storage.ProfilerResultUnviewedSetKeyPrefix = Storage.ProfilerResultUnviewedSetKeyPrefix.Append(testSuffix);
             }
             catch (Exception e)
             {

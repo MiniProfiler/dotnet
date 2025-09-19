@@ -5,12 +5,12 @@
     <Description>MiniProfiler: Profiler storage for PostgreSQL Server</Description>
     <Authors>Nick Craver, Douglas Cleghorn</Authors>
     <PackageTags>SQL;Npgsql;PostgreSql;$(PackageBaseTags)</PackageTags>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="Npgsql" Version="4.0.5" />
+    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
+    <PackageReference Include="Npgsql" Version="8.0.6" />
 
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
   </ItemGroup>

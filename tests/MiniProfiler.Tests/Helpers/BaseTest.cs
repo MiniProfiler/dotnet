@@ -134,7 +134,7 @@ namespace StackExchange.Profiling.Tests
                 }
                 catch (Exception ex)
                 {
-                    Assert.True(false, "AssertPublicPropertiesAreEqual had an exception on " + p.Name + "; " + ex);
+                    Assert.Fail("AssertPublicPropertiesAreEqual had an exception on " + p.Name + "; " + ex);
                 }
             }
         }

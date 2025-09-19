@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>net472</TargetFrameworks>
     <AssemblyName>Samples.Console</AssemblyName>
     <OutputType>Exe</OutputType>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
 
-    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.105.2" />
+    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
 
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
   </ItemGroup>

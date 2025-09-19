@@ -46,7 +46,7 @@ namespace Samples.Mvc5
         /// </summary>
         protected void Application_BeginRequest()
         {
-            MiniProfiler profiler = null;
+            MiniProfiler? profiler = null;
 
             // might want to decide here (or maybe inside the action) whether you want
             // to profile this request - for example, using an "IsSystemAdmin" flag against
