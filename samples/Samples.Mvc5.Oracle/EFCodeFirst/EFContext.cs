@@ -22,6 +22,6 @@
         /// <summary>
         /// Gets or sets the people.
         /// </summary>
-        public DbSet<Person> People { get; set; }
+        public DbSet<Person>? People { get; set; }
     }
 }

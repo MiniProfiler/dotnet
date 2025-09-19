@@ -10,7 +10,7 @@ using StackExchange.Profiling.Storage;
 namespace Samples.Mvc5.Helpers
 {
     /// <summary>
-    /// The SQLITE mini profiler storage.
+    /// The Oracle mini profiler storage.
     /// </summary>
     public class OracleMiniProfilerStorage : OracleStorage
     {

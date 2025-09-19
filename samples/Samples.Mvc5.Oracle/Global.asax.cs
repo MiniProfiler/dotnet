@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -10,7 +9,6 @@ using StackExchange.Profiling.EntityFramework6;
 using StackExchange.Profiling.Mvc;
 using StackExchange.Profiling.Storage;
 using Samples.Mvc5.Helpers;
-using Oracle.ManagedDataAccess.Client;
 using System.Configuration;
 
 namespace Samples.Mvc5
@@ -20,7 +18,7 @@ namespace Samples.Mvc5
         /// <summary>
         /// Gets the connection string.
         /// </summary>
-        public static string ConnectionString;
+        public static string ConnectionString { get; private set; } = string.Empty;
 
         protected void Application_Start()
         {
@@ -41,7 +39,7 @@ namespace Samples.Mvc5
         /// </summary>
         protected void Application_BeginRequest()
         {
-            MiniProfiler profiler = null;
+            MiniProfiler? profiler = null;
 
             // might want to decide here (or maybe inside the action) whether you want
             // to profile this request - for example, using an "IsSystemAdmin" flag against
@@ -107,6 +105,7 @@ namespace Samples.Mvc5
                 // specified position in the .RenderIncludes() call.
                 PopupRenderPosition = RenderPosition.Right,  // defaults to left
                 PopupMaxTracesToShow = 10,                   // defaults to 15
+                PopupDecimalPlaces = 1,                      // defaults to 2
                 ColorScheme = ColorScheme.Auto,              // defaults to light
 
                 // ResultsAuthorize (optional - open to all by default):

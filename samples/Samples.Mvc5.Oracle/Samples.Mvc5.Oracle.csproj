@@ -5,7 +5,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Samples.Mvc5</RootNamespace>
     <AssemblyName>Samples.Mvc5</AssemblyName>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <UseIISExpress>true</UseIISExpress>
     <OutputPath>bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -20,12 +20,11 @@
     <ProjectReference Include="..\..\src\MiniProfiler.Providers.Oracle\MiniProfiler.Providers.Oracle.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
-    <PackageReference Include="Dapper.StrongName" Version="1.50.2" />
+    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
-    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="1.0.8" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.190" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.220" />
+    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="4.1.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.280" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />

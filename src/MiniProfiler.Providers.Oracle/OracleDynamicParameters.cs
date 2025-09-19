@@ -216,7 +216,7 @@ namespace StackExchange.Profiling
             if (val == DBNull.Value)
             {
 #pragma warning disable CS8603 // Possible null reference return.
-                return default(T) == null ? default(T) : throw new InvalidCastException("Attempting to cast a DBNull to a non nullable type!");
+                return default(T) is null ? default(T) : throw new InvalidCastException("Attempting to cast a DBNull to a non nullable type!");
 #pragma warning restore CS8603 // Possible null reference return.
             }
             return (T)val;
