@@ -1365,6 +1365,18 @@ namespace StackExchange.Profiling {
                                 }
                             };
                         }
+                    } else if (this.onloadend) {
+                        if (typeof (this.miniprofiler) === 'undefined' || typeof (this.miniprofiler.prev_onloadend) === 'undefined') {
+                            this.miniprofiler = { prev_onloadend: this.onloadend };
+
+                            this.onloadend = function onLoadEndReplacement() {
+                                handleXHR(this);
+
+                                if (this.miniprofiler.prev_onloadend != null) {
+                                    return this.miniprofiler.prev_onloadend.apply(this, arguments);
+                                }
+                            };
+                        }
                     } else if (this.onload) {
                         if (typeof (this.miniprofiler) === 'undefined' || typeof (this.miniprofiler.prev_onload) === 'undefined') {
                             this.miniprofiler = { prev_onload: this.onload };
