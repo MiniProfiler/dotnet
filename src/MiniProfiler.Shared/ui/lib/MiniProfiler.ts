@@ -776,6 +776,7 @@ namespace StackExchange.Profiling {
             <tr>
               <td colspan="3"></td>
               <td class="mp-more-columns" colspan="2"></td>
+              ${Object.keys(p.CustomTimingStats).map(() => '<td></td>').join('')}
             </tr>
           </tfoot>
         </table>`;
