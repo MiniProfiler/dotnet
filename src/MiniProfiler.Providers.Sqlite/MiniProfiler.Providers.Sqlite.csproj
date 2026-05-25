@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
 
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
