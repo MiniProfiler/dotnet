@@ -1054,12 +1054,15 @@ namespace StackExchange.Profiling {
 
                             // is this rendering on the bottom (if no, then is top by default)
                             if (pos === RenderPosition.BottomLeft || pos === RenderPosition.BottomRight) {
-                                const bottom = window.innerHeight - button.getBoundingClientRect().top - button.offsetHeight + window.scrollY; // get bottom of button
                                 popup.style.bottom = '0';
-                                popup.style.maxHeight = 'calc(100vh - ' + (bottom + 25) + 'px)';
+                                popup.style.top = '';
+                                const maxHeight = Math.max(0, button.getBoundingClientRect().top - 25);
+                                popup.style.maxHeight = `${maxHeight}px`;
                             } else {
                                 popup.style.top = '0';
-                                popup.style.maxHeight = 'calc(100vh - ' + (button.getBoundingClientRect().top - window.window.scrollY + 25) + 'px)';
+                                popup.style.bottom = '';
+                                const maxHeight = Math.max(0, window.innerHeight - button.getBoundingClientRect().bottom - 25);
+                                popup.style.maxHeight = `${maxHeight}px`;
                             }
                         }
                         return;
