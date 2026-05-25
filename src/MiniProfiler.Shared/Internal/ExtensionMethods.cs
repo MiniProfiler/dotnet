@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 #elif STJSON
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 #endif
@@ -134,6 +135,13 @@ namespace StackExchange.Profiling.Internal
         private static readonly JsonSerializerOptions defaultSettings = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        };
+
+        private static readonly JsonSerializerOptions htmlEscapeSettings = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.Default,
         };
 
         /// <summary>
@@ -142,10 +150,9 @@ namespace StackExchange.Profiling.Internal
         /// <param name="profiler">The <see cref="MiniProfiler"/> to serialize.</param>
         /// <param name="htmlEscape">Whether to HTML escape the output.</param>
         [return: NotNullIfNotNull(nameof(profiler))]
-        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Compatibility across versions")]
         public static string? ToJson(this MiniProfiler? profiler, bool htmlEscape = false) =>
             profiler != default
-            ? JsonSerializer.Serialize(profiler, defaultSettings)
+            ? JsonSerializer.Serialize(profiler, htmlEscape ? htmlEscapeSettings : defaultSettings)
             : null;
 
         /// <summary>
