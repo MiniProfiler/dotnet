@@ -6,7 +6,8 @@ layout: "default"
 This page tracks major changes included in any update starting with version 4.0.0.3
 
 #### Unreleased
-No pending unreleased changes.
+- **Removed**:
+  - `MiniProfiler.Settings.MaxJsonResponseSize` was removed with the legacy `MiniProfiler.Settings` API. JSON responses are no longer truncated server-side; use storage/backend limits or client-side handling if large profiler payloads are a concern ([#677](https://github.com/MiniProfiler/dotnet/issues/677)).
 
 #### Version 4.5.4
 - **New**:
