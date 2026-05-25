@@ -124,7 +124,10 @@ namespace StackExchange.Profiling.Internal
 
         /// <summary>
         /// Dictates on which side of the page the profiler popup button is displayed; defaults to left.
-        /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right)
+        /// For a per-page override you can use .RenderIncludes(position: RenderPosition.Left/Right).
+        /// In ASP.NET Core this setting is applied when rendering the <c>&lt;mini-profiler /&gt;</c> tag helper
+        /// (or an equivalent <c>RenderIncludes</c> call) in the layout; configuring it in
+        /// <c>AddMiniProfiler</c> alone does not render the UI.
         /// </summary>
         public RenderPosition PopupRenderPosition { get; set; } = RenderPosition.Left;
 
