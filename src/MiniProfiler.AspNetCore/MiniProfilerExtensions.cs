@@ -7,7 +7,7 @@ namespace StackExchange.Profiling
     /// <summary>
     /// Extension methods for MiniProfiler
     /// </summary>
-    public static class MiniProfilerExtensions
+    public static class MiniProfilerAspNetCoreExtensions
     {
         /// <summary>
         /// Renders script tag for including MiniProfiler.
