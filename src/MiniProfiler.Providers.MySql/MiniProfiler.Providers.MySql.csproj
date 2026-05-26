@@ -8,8 +8,13 @@
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
     <PackageReference Include="Dapper" Version="2.1.35" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
 
     <ProjectReference Include="..\MiniProfiler.Shared\MiniProfiler.Shared.csproj" />
