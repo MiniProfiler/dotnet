@@ -14,7 +14,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
 
-    <PackageReference Include="Dapper.StrongName" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
 
     <ProjectReference Include="..\..\src\MiniProfiler\MiniProfiler.csproj" />
